@@ -299,12 +299,17 @@ mkdir -p $RPM_BUILD_ROOT
 make install -f Makefile
 
 pushd $RPM_BUILD_ROOT/%{_libdir}/perl5
-for i in  5.8.0/%{_arch}-%{_os}%{thread_arch}/CORE/ 5.8.1/%{_arch}-%{_os}%{thread_arch}/CORE/ 5.8.2/%{_arch}-%{_os}%{thread_arch}/CORE/ 5.8.3/%{_arch}-%{_os}%{thread_arch}/CORE/; do
-  mkdir -p $i
-  pushd $i
-  ln -s ../../../%{perlver}/%{_arch}-%{_os}%{thread_arch}/CORE/libperl.so libperl.so
-  popd
-done
+for i in  5.8.0/%{_arch}-%{_os}%{thread_arch}/CORE/ \
+	5.8.1/%{_arch}-%{_os}%{thread_arch}/CORE/ \
+	5.8.2/%{_arch}-%{_os}%{thread_arch}/CORE/ \
+	5.8.3/%{_arch}-%{_os}%{thread_arch}/CORE/ \
+	5.8.4/%{_arch}-%{_os}%{thread_arch}/CORE/ \
+  do
+    mkdir -p $i
+    pushd $i
+    ln -s ../../../%{perlver}/%{_arch}-%{_os}%{thread_arch}/CORE/libperl.so libperl.so
+    popd
+  done
 popd
 
 %ifarch %{multilib_64_archs}
@@ -391,6 +396,9 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Tue Oct 12 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-7
+- bugzilla: 135303, add more missing 5.8.4 paths
+
 * Mon Oct 11 2004 Tim Waugh <twaugh@redhat.com>
 - Build requires groff (bug #135101).
 
