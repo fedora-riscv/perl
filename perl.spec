@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.3
-%define perlrel 5
+%define perlrel 13
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -19,6 +19,11 @@ Provides: perl(:WITH_THREADS)
 Provides: perl(:WITHOUT_ITHREADS)
 Provides: perl(:WITHOUT_THREADS)
 %endif
+
+Provides: perl(:MODULE_COMPAT_5.8.0)
+Provides: perl(:MODULE_COMPAT_5.8.1)
+Provides: perl(:MODULE_COMPAT_5.8.2)
+Provides: perl(:MODULE_COMPAT_5.8.3)
 
 %if %{largefiles}
 Provides: perl(:WITH_LARGEFILES)
@@ -41,17 +46,14 @@ Source10: system-owned-directories
 Source11: filter-depends.sh
 Source12: perl-5.8.0-libnet.cfg
 
-# Patch1: perl-5.6.0-installman.patch
-# Patch2: perl5.005_03-db1.patch
-# Patch3: perl-5.6.0-nodb.patch
-Patch4: perl-5.6.1-prereq.patch
 Patch5: perl-5.8.0-root.patch
 # Patch6: perl-5.8.0-fhs.patch
 Patch7: perl-5.6.0-buildroot.patch
 Patch8: perl-5.8.0-errno.patch
 Patch9: perl-5.7.3-syslog.patch
 # Patch10: perl-5.8.0-notty.patch
-Patch11: perl-5.8.3-incpush.patch
+Patch11: perl-5.8.3-fullinc.patch
+Patch12: perl-5.8.3-incpush.patch
 
 %define __perl_requires %{SOURCE11}
 
@@ -61,9 +63,9 @@ Obsoletes: perl-Digest-MD5
 Obsoletes: perl-MIME-Base64
 Obsoletes: perl-libnet
 Obsoletes: perl-Storable
-Obsoletes: perl-CGI <= 2:2.81-88
-Obsoletes: perl-CPAN <= 2:1.61-88
-Obsoletes: perl-DB_File <= 2:1.804-88
+Obsoletes: perl-CGI
+Obsoletes: perl-CPAN
+Obsoletes: perl-DB_File
 
 # Configure doesn't listen well when we say no ndbm.  When it links in, it then conflicts with berkeley db.  oops.
 Patch16: perl-5.8.0-nondbm.patch
@@ -173,7 +175,7 @@ system to handle Perl scripts.
 %if %{suidperl}
 %package suidperl
 Version: %{perlver}
-Release: %{perlrel}
+Release: %{perlrel}.1
 Summary: suidperl, for use with setuid perl scripts
 Group: Development/Languages
 Requires: perl = %{perlepoch}:%{perlver}-%{perlrel}
@@ -188,6 +190,7 @@ more secure running of setuid perl scripts.
 %patch5 -p1
 %patch8 -p1 
 %patch11 -p1
+%patch12 -p1
 
 %patch17 -p1
 
@@ -232,7 +235,7 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Dsitelib="/usr/lib/perl5/site_perl/%{version}" \
 	-Dvendorlib="/usr/lib/perl5/vendor_perl/%{version}" \
 	-Darchlib="%{_libdir}/perl5/%{perlver}/%{_arch}-%{_os}%{thread_arch}" \
-	-Dsitearch="%{_libdir}/perl5/site_perl/%{perlver}" \
+	-Dsitearch="%{_libdir}/perl5/site_perl/%{perlver}/%{_arch}-%{_os}%{thread_arch}" \
 	-Dvendorarch="%{_libdir}/perl5/vendor_perl/%{perlver}/%{_arch}-%{_os}%{thread_arch}" \
 %endif
 	-Darchname=%{_arch}-%{_os} \
@@ -241,7 +244,6 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 %endif
 	-Dvendorprefix=%{_prefix} \
 	-Dsiteprefix=%{_prefix} \
-	-Dotherlibdirs=/usr/lib/perl5/5.8.1:/usr/lib/perl5/5.8.0 \
 	-Duseshrplib \
 %if %threading
 	-Dusethreads \
@@ -268,7 +270,7 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Ubincompat5005 \
 	-Uversiononly \
 	-Dpager='/usr/bin/less -isr' \
-	-Dinc_version_list='5.8.2/%{_arch}-%{_os}%{thread_arch} 5.8.2 5.8.1/%{_arch}-%{_os}%{thread_arch} 5.8.1 5.8.0/%{_arch}-%{_os}%{thread_arch} 5.8.0' 
+	-Dinc_version_list='5.8.2 5.8.1 5.8.0' 
 
 make -f Makefile
 
@@ -280,11 +282,11 @@ mkdir -p $RPM_BUILD_ROOT
 
 make install -f Makefile
 
-pushd $RPM_BUILD_ROOT/usr/lib/perl5
-for i in  5.8.0/i386-linux-thread-multi/CORE/ 5.8.1/i386-linux-thread-multi/CORE/; do
+pushd $RPM_BUILD_ROOT/%{_libdir}/perl5
+for i in  5.8.0/%{_arch}-%{_os}%{thread_arch}/CORE/ 5.8.1/%{_arch}-%{_os}%{thread_arch}/CORE/ 5.8.2/%{_arch}-%{_os}%{thread_arch}/CORE/; do
   mkdir -p $i
   pushd $i
-  ln -s ../../../%{perlver}/i386-linux-thread-multi/CORE/libperl.so libperl.so
+  ln -s ../../../%{perlver}/%{_arch}-%{_os}%{thread_arch}/CORE/libperl.so libperl.so
   popd
 done
 popd
@@ -315,6 +317,11 @@ do
 done
 
 %{new_perl} -p -i -e "s|$RPM_BUILD_ROOT||g;" %{new_arch_lib}/Config.pm
+
+for dir in $(%{new_perl} -le 'print join("\n", @INC)' | grep '^%{_libdir}')
+do
+  mkdir -p $RPM_BUILD_ROOT/$dir
+done
 
 mkdir -pm 755 $RPM_BUILD_ROOT%{_libdir}/perl5/site_perl/%{perlver}/%{_arch}-%{_os}%{thread_arch}/auto
 mkdir -pm 755 $RPM_BUILD_ROOT%{_libdir}/perl5/vendor_perl/%{perlver}/%{_arch}-%{_os}%{thread_arch}/auto
@@ -363,6 +370,32 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Tue Mar  9 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-%{perlrel}.1
+- fix i386-specifics in %%install to arch generic
+
+* Tue Mar 02 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
+* Wed Feb 25 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-10
+- add perl(:MODULE_COMPAT_*) provides; make sure all of @INC is owned by perl package
+
+* Thu Feb 19 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-8
+- rebuild
+
+* Thu Feb 19 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-7.9.rhl9
+- rebuild
+
+* Thu Feb 19 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-7.10.fc1
+- rebuild
+
+* Sun Feb 15 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-6
+- fix very broken @INC calculations with slightly less broken @INC
+  calculations (not perfectly handled but the result is correct)
+- fix broken -Dsitearch declaration
+
+* Fri Feb 13 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
 * Wed Jan 28 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-5
 - update incpush patch to better handle multilib
 
