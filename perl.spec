@@ -410,6 +410,9 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* \
 %endif
 
 %changelog
+* Tue Jan 18 2005 Chip Turner <cturner@redhat.com> - 3:5.8.6-2
+- bugzilla: 145448, fix invalid utf8 in changelog
+
 * Tue Jan 18 2005 Chip Turner <cturner@redhat.com> - 3:5.8.6-1
 - bugzilla: 145447, add 5.8.5 to perlmodcompat list
 
@@ -431,7 +434,7 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* \
 - Removed empty .bs files.
 - Eliminated several strip generated messages (bug 127025).
 - Corrected problems mentioned in bug 120772
-  (updated Ville Skytt* Tue Oct 12 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-7
+  (updated Ville Skytta)
 
 * Tue Oct 12 2004 Chip Turner <cturner@redhat.com>
 - bugzilla: 135303, add more missing 5.8.4 paths
