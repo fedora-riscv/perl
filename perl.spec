@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.5
-%define perlrel 11
+%define perlrel 13
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -409,6 +409,9 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* \
 %endif
 
 %changelog
+* Wed Dec  1 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-13
+- rebuild
+
 * Wed Dec  1 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-11
 - bugzilla: 140563, nptl doesn't act like linuxthreads; threads have no PIDs
 
