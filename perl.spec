@@ -4,8 +4,8 @@
 
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
-%define perlver 5.8.4
-%define perlrel 3
+%define perlver 5.8.5
+%define perlrel 1
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -25,6 +25,7 @@ Provides: perl(:MODULE_COMPAT_5.8.1)
 Provides: perl(:MODULE_COMPAT_5.8.2)
 Provides: perl(:MODULE_COMPAT_5.8.3)
 Provides: perl(:MODULE_COMPAT_5.8.4)
+Provides: perl(:MODULE_COMPAT_5.8.5)
 
 %if %{largefiles}
 Provides: perl(:WITH_LARGEFILES)
@@ -40,7 +41,7 @@ Epoch: %{perlepoch}
 License: Artistic
 Group: Development/Languages
 
-Source0: perl-5.8.4.tar.gz
+Source0: perl-5.8.5.tar.gz
 Source1: clean-manifest.pl
 Source9: MANIFEST.suidperl
 Source10: system-owned-directories
@@ -54,7 +55,7 @@ Patch7: perl-5.6.0-buildroot.patch
 Patch9: perl-5.7.3-syslog.patch
 # Patch10: perl-5.8.0-notty.patch
 Patch11: perl-5.8.3-fullinc.patch
-Patch12: perl-5.8.4-incpush.patch
+Patch12: perl-5.8.5-incpush.patch
 
 %define __perl_requires %{SOURCE11}
 
@@ -193,7 +194,7 @@ more secure running of setuid perl scripts.
 %endif
 
 %prep
-%setup -q -n perl-5.8.4
+%setup -q -n perl-5.8.5
 %patch5 -p1
 # %%patch8 -p1 
 %patch11 -p1
@@ -231,7 +232,7 @@ echo "RPM Build arch: %{_arch}"
 %endif
 
 sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
-	-Dversion=5.8.4 \
+	-Dversion=5.8.5 \
 	-Dmyhostname=localhost \
 	-Dperladmin=root@localhost \
 	-Dcc='%{__cc}' \
@@ -384,6 +385,9 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Thu Jul 22 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-1
+- update to 5.8.5
+
 * Mon Jun 28 2004 Chip Turner <cturner@redhat.com> 3:5.8.4-1
 - update to 5.8.4, remove patch 8
 
