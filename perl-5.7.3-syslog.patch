@@ -1,0 +1,30 @@
+--- perl-5.7.3/perl.c.syslog	Thu May 23 22:26:46 2002
++++ perl-5.7.3/perl.c	Thu May 23 22:28:55 2002
+@@ -21,6 +21,10 @@
+ #include <unistd.h>
+ #endif
+ 
++#ifdef I_SYSLOG
++#include <syslog.h>
++#endif
++
+ #if !defined(STANDARD_C) && !defined(HAS_GETENV_PROTOTYPE) && !defined(PERL_MICRO)
+ char *getenv (char *); /* Usually in <stdlib.h> */
+ #endif
+@@ -3017,6 +3021,16 @@
+ 	    if (tmpstatbuf.st_dev != PL_statbuf.st_dev ||
+ 		tmpstatbuf.st_ino != PL_statbuf.st_ino) {
+ 		(void)PerlIO_close(PL_rsfp);
++#ifdef I_SYSLOG
++               openlog("suidperl", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_AUTHPRIV);
++               syslog(LOG_ALERT, "User %ld tried to run dev %ld ino %ld in "
++                      "place of dev %ld ino %ld!", PL_uid,
++                      (long)tmpstatbuf.st_dev, (long)tmpstatbuf.st_ino,
++                      (long)PL_statbuf.st_dev, (long)PL_statbuf.st_ino);
++               syslog(LOG_ALERT, "Filename of setuid script was %s, uid %"
++                      Uid_t_f" gid %"Gid_t_f".", CopFILE(PL_curcop),
++                      PL_statbuf.st_uid, PL_statbuf.st_gid);
++#endif
+ 		Perl_croak(aTHX_ "Permission denied\n");
+ 	    }
+ 	    if (
