@@ -1,0 +1,11 @@
+--- perl-5.8.5/perl.c.dashI	2004-10-01 12:40:40.323519280 -0400
++++ perl-5.8.5/perl.c	2004-10-01 12:40:46.159626512 -0400
+@@ -1421,7 +1421,7 @@
+ 		char *p;
+ 		STRLEN len = strlen(s);
+ 		p = savepvn(s, len);
+-		incpush(p, TRUE, TRUE, FALSE);
++		incpush(p, FALSE, FALSE, FALSE);
+ 		sv_catpvn(sv, "-I", 2);
+ 		sv_catpvn(sv, p, len);
+ 		sv_catpvn(sv, " ", 1);

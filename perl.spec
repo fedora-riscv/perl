@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.5
-%define perlrel 5
+%define perlrel 6
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -57,6 +57,7 @@ Patch9: perl-5.7.3-syslog.patch
 Patch11: perl-5.8.3-fullinc.patch
 Patch12: perl-5.8.5-incpush.patch
 Patch13: perl-5.8.3-perlbug-tag.patch
+Patch14: perl-5.8.5-dashI.patch
 
 %define __perl_requires %{SOURCE11}
 
@@ -203,6 +204,7 @@ more secure running of setuid perl scripts.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
 
 %patch17 -p1
 
