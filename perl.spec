@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.5
-%define perlrel 6
+%define perlrel 7
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -391,6 +391,9 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Tue Oct  5 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-7
+- update perlbug patch to strip build date as well
+
 * Mon Aug 23 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-2
 - fix conflicting file when building on x86_64 and i386
 
