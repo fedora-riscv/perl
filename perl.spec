@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.5
-%define perlrel 8
+%define perlrel 9
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -316,8 +316,6 @@ mkdir -p ${RPM_BUILD_ROOT}/usr/lib64/perl5/vendor_perl/%{perlver}/%{_arch}-%{_os
 
 mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
 install -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/pl2pm
-
-[ -x /usr/lib/rpm/brp-compress ] && /usr/lib/rpm/brp-compress
 
 # build MANIFEST.all
 
