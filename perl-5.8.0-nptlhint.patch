@@ -1,0 +1,15 @@
+Remove the THREADS_HAVE_PIDS hint for NTPL-enabled Linux
+systems.  Otherwise ppids are cached too aggressively,
+resulting in broken behavior.
+
+--- perl-5.8.0/hints/linux.sh.nptl	2004-12-01 12:38:16.021664783 -0500
++++ perl-5.8.0/hints/linux.sh	2004-12-01 12:38:28.213470553 -0500
+@@ -249,7 +249,7 @@
+ cat > UU/usethreads.cbu <<'EOCBU'
+ case "$usethreads" in
+ $define|true|[yY]*)
+-        ccflags="-D_REENTRANT -D_GNU_SOURCE -DTHREADS_HAVE_PIDS $ccflags"
++        ccflags="-D_REENTRANT -D_GNU_SOURCE $ccflags"
+         set `echo X "$libswanted "| sed -e 's/ c / pthread c /'`
+         shift
+         libswanted="$*"

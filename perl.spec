@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.5
-%define perlrel 10
+%define perlrel 11
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -100,6 +100,8 @@ Patch24: perl-5.8.3-empty-rpath.patch
 # arch-specific patches
 Patch100: perl-5.8.1-fpic.patch
 Patch101: perl-5.8.0-libdir64.patch
+
+Patch32002: perl-5.8.0-nptlhint.patch
 
 # module updatesd
 # Patch202: perl-5.8.0-Safe2.09.patch
@@ -220,6 +222,8 @@ more secure running of setuid perl scripts.
 %ifarch %{multilib_64_archs}
 %patch101 -p1
 %endif
+
+%patch32002 -p1
 
 find . -name \*.orig -exec rm -fv {} \;
 
@@ -405,6 +409,9 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* \
 %endif
 
 %changelog
+* Wed Dec  1 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-11
+- bugzilla: 140563, nptl doesn't act like linuxthreads; threads have no PIDs
+
 * Thu Nov 11 2004 Jeff Johnson <jbj@jbj.org> 3:5.8.5-10
 - rebuild against db-4.3.21.
 
