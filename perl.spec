@@ -4,12 +4,9 @@
 
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
-%define perlver 5.8.0
-%define perlrel 88.3
-%define perlepoch 2
-%define cpanver 1.61
-%define dbfilever 1.804
-%define cgiver 2.81
+%define perlver 5.8.1
+%define perlrel 92
+%define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
 
@@ -40,11 +37,8 @@ Group: Development/Languages
 Vendor       : Red Hat, Inc.
 Distribution : Red Hat Linux
 
-Source0: ftp://ftp.perl.org/pub/perl/CPAN/src/perl-%{perlver}.tar.bz2
+Source0: perl-5.8.1.tar.gz
 Source1: clean-manifest.pl
-Source5: MANIFEST.CPAN
-Source6: MANIFEST.CGI
-Source7: MANIFEST.DB_File
 Source9: MANIFEST.suidperl
 Source10: system-owned-directories
 Source11: filter-depends.sh
@@ -54,11 +48,12 @@ Source12: perl-5.8.0-libnet.cfg
 # Patch2: perl5.005_03-db1.patch
 # Patch3: perl-5.6.0-nodb.patch
 Patch4: perl-5.6.1-prereq.patch
-Patch5: perl-5.6.0-root.patch
-Patch6: perl-5.8.0-fhs.patch
+Patch5: perl-5.8.0-root.patch
+# Patch6: perl-5.8.0-fhs.patch
 Patch7: perl-5.6.0-buildroot.patch
 Patch8: perl-5.8.0-errno.patch
 Patch9: perl-5.7.3-syslog.patch
+# Patch10: perl-5.8.0-notty.patch
 
 %define __perl_requires %{SOURCE11}
 
@@ -68,6 +63,9 @@ Obsoletes: perl-Digest-MD5
 Obsoletes: perl-MIME-Base64
 Obsoletes: perl-libnet
 Obsoletes: perl-Storable
+Obsoletes: perl-CGI <= 2:2.81-88
+Obsoletes: perl-CPAN <= 2:1.61-88
+Obsoletes: perl-DB_File <= 2:1.804-88
 
 # Configure doesn't listen well when we say no ndbm.  When it links in, it then conflicts with berkeley db.  oops.
 Patch16: perl-5.8.0-nondbm.patch
@@ -76,7 +74,7 @@ Patch16: perl-5.8.0-nondbm.patch
 Patch17: perl-5.8.0-sharedlinker.patch
 
 # perl 5.8.0 likes to use man3ext for BOTH directories AND files.  not kosher.
-Patch18: perl-5.8.0-manext.patch
+# Patch18: perl-5.8.0-manext.patch
 
 # lynx is depracated, use links instead
 Patch19: perl-5.8.0-links.patch
@@ -84,132 +82,21 @@ Patch19: perl-5.8.0-links.patch
 # work around annoying rpath issue
 Patch21: perl-5.8.0-rpath-make.patch
 
+# bugzilla 101767, make sure threads.so links directly to -lpthread
+Patch22: perl-5.8.1-lpthread-link.patch
+
 # arch-specific patches
-Patch100: perl-5.8.0-s390.patch
+Patch100: perl-5.8.1-fpic.patch
 Patch101: perl-5.8.0-libdir64.patch
 
-# module updates
-Patch202: perl-5.8.0-Safe2.09.patch
-Patch203: perl-5.8.0-CGI2.89.patch
+# module updatesd
+# Patch202: perl-5.8.0-Safe2.09.patch
 
-# security patches
-Patch1000: perl-5.8.0-cssfix.patch
+# backrev; this should be perl 5.8.0, not 5.8.1
+# Patch1000: perl-5.8.0-backrev.patch
 
-# pseudo-official module updates (mostly from cvs, etc)
-# Patch300: perl-5.8.0-makemaker-prefix.patch
-
-# upstream patches
-Patch17649: perl-5.8.0-upstream-17649.patch
-Patch18079: perl-5.8.0-upstream-18079.patch
-Patch18080: perl-5.8.0-upstream-18080.patch
-Patch18081: perl-5.8.0-upstream-18081.patch
-Patch18082: perl-5.8.0-upstream-18082.patch
-Patch18087: perl-5.8.0-upstream-18087.patch
-Patch18089: perl-5.8.0-upstream-18089.patch
-Patch18095: perl-5.8.0-upstream-18095.patch
-Patch18096: perl-5.8.0-upstream-18096.patch
-Patch18097: perl-5.8.0-upstream-18097.patch
-Patch18098: perl-5.8.0-upstream-18098.patch
-Patch18100: perl-5.8.0-upstream-18100.patch
-Patch18101: perl-5.8.0-upstream-18101.patch
-Patch18103: perl-5.8.0-upstream-18103.patch
-Patch18104: perl-5.8.0-upstream-18104.patch
-Patch18110: perl-5.8.0-upstream-18110.patch
-Patch18111: perl-5.8.0-upstream-18111.patch
-Patch18112: perl-5.8.0-upstream-18112.patch
-Patch18126: perl-5.8.0-upstream-18126.patch
-Patch18127: perl-5.8.0-upstream-18127.patch
-Patch18128: perl-5.8.0-upstream-18128.patch
-Patch18129: perl-5.8.0-upstream-18129.patch
-Patch18130: perl-5.8.0-upstream-18130.patch
-Patch18131: perl-5.8.0-upstream-18131.patch
-Patch18132: perl-5.8.0-upstream-18132.patch
-Patch18133: perl-5.8.0-upstream-18133.patch
-Patch18134: perl-5.8.0-upstream-18134.patch
-Patch18143: perl-5.8.0-upstream-18143.patch
-Patch18144: perl-5.8.0-upstream-18144.patch
-Patch18145: perl-5.8.0-upstream-18145.patch
-Patch18146: perl-5.8.0-upstream-18146.patch
-Patch18153: perl-5.8.0-upstream-18153.patch
-Patch18155: perl-5.8.0-upstream-18155.patch
-Patch18156: perl-5.8.0-upstream-18156.patch
-Patch18173: perl-5.8.0-upstream-18173.patch
-Patch18174: perl-5.8.0-upstream-18174.patch
-Patch18187: perl-5.8.0-upstream-18187.patch
-Patch18189: perl-5.8.0-upstream-18189.patch
-Patch18190: perl-5.8.0-upstream-18190.patch
-Patch18191: perl-5.8.0-upstream-18191.patch
-Patch18192: perl-5.8.0-upstream-18192.patch
-Patch18197: perl-5.8.0-upstream-18197.patch
-Patch18202: perl-5.8.0-upstream-18202.patch
-Patch18204: perl-5.8.0-upstream-18204.patch
-Patch18205: perl-5.8.0-upstream-18205.patch
-Patch18206: perl-5.8.0-upstream-18206.patch
-Patch18207: perl-5.8.0-upstream-18207.patch
-Patch18208: perl-5.8.0-upstream-18208.patch
-Patch18209: perl-5.8.0-upstream-18209.patch
-Patch18210: perl-5.8.0-upstream-18210.patch
-Patch18211: perl-5.8.0-upstream-18211.patch
-Patch18214: perl-5.8.0-upstream-18214.patch
-Patch18215: perl-5.8.0-upstream-18215.patch
-Patch18218: perl-5.8.0-upstream-18218.patch
-Patch18219: perl-5.8.0-upstream-18219.patch
-Patch18227: perl-5.8.0-upstream-18227.patch
-Patch18234: perl-5.8.0-upstream-18234.patch
-Patch18235: perl-5.8.0-upstream-18235.patch
-Patch18236: perl-5.8.0-upstream-18236.patch
-Patch18241: perl-5.8.0-upstream-18241.patch
-Patch18242: perl-5.8.0-upstream-18242.patch
-Patch18243: perl-5.8.0-upstream-18243.patch
-Patch18247: perl-5.8.0-upstream-18247.patch
-Patch18248: perl-5.8.0-upstream-18248.patch
-Patch18252: perl-5.8.0-upstream-18252.patch
-Patch18253: perl-5.8.0-upstream-18253.patch
-Patch18254: perl-5.8.0-upstream-18254.patch
-Patch18255: perl-5.8.0-upstream-18255.patch
-Patch18256: perl-5.8.0-upstream-18256.patch
-Patch18257: perl-5.8.0-upstream-18257.patch
-Patch18258: perl-5.8.0-upstream-18258.patch
-Patch18271: perl-5.8.0-upstream-18271.patch
-Patch18273: perl-5.8.0-upstream-18273.patch
-Patch18274: perl-5.8.0-upstream-18274.patch
-Patch18275: perl-5.8.0-upstream-18275.patch
-Patch18276: perl-5.8.0-upstream-18276.patch
-Patch18286: perl-5.8.0-upstream-18286.patch
-Patch18289: perl-5.8.0-upstream-18289.patch
-Patch18290: perl-5.8.0-upstream-18290.patch
-Patch18291: perl-5.8.0-upstream-18291.patch
-Patch18293: perl-5.8.0-upstream-18293.patch
-Patch18294: perl-5.8.0-upstream-18294.patch
-Patch18295: perl-5.8.0-upstream-18295.patch
-Patch18296: perl-5.8.0-upstream-18296.patch
-Patch18297: perl-5.8.0-upstream-18297.patch
-Patch18301: perl-5.8.0-upstream-18301.patch
-Patch18322: perl-5.8.0-upstream-18322.patch
-Patch18347: perl-5.8.0-upstream-18347.patch
-Patch18348: perl-5.8.0-upstream-18348.patch
-Patch18349: perl-5.8.0-upstream-18349.patch
-Patch18352: perl-5.8.0-upstream-18352.patch
-Patch18353: perl-5.8.0-upstream-18353.patch
-Patch18359: perl-5.8.0-upstream-18359.patch
-Patch18360: perl-5.8.0-upstream-18360.patch
-Patch18361: perl-5.8.0-upstream-18361.patch
-Patch18362: perl-5.8.0-upstream-18362.patch
-Patch18363: perl-5.8.0-upstream-18363.patch
-Patch18364: perl-5.8.0-upstream-18364.patch
-Patch18365: perl-5.8.0-upstream-18365.patch
-Patch18366: perl-5.8.0-upstream-18366.patch
-Patch18367: perl-5.8.0-upstream-18367.patch
-Patch18368: perl-5.8.0-upstream-18368.patch
-Patch18369: perl-5.8.0-upstream-18369.patch
-Patch18370: perl-5.8.0-upstream-18370.patch
-Patch18375: perl-5.8.0-upstream-18375.patch
-Patch18379: perl-5.8.0-upstream-18379.patch
-Patch18380: perl-5.8.0-upstream-18380.patch
-
-Patch32000: perl-5.8.0-protofix.patch
-Patch32001: perl-5.8.0-pagerfix.patch
-
+Patch21397: perl-5.8.1-upstream-21397.patch
+Patch21401: perl-5.8.1-upstream-21401.patch
 
 Buildroot: %{_tmppath}/%{name}-root
 BuildRequires: gawk, grep, tcsh, gdbm-devel, db4-devel, dos2unix
@@ -291,36 +178,6 @@ scripts.
 Install this package if you want to program in Perl or enable your
 system to handle Perl scripts.
 
-%package CPAN
-Version: %{cpanver}
-Release: %{perlrel}
-Summary: CPAN module for Perl
-Group: Development/Languages
-Requires: perl >= %{perlepoch}:%{perlver}-%{perlrel}
-
-%description CPAN
-CPAN modules for Perl
-
-%package CGI
-Version: %{cgiver}
-Release: %{perlrel}
-Summary: CGI modules for Perl
-Group: Development/Languages
-Requires: perl >= %{perlepoch}:%{perlver}-%{perlrel}
-
-%description CGI
-CGI modules for Perl
-
-%package DB_File
-Version: %{dbfilever}
-Release: %{perlrel}
-Summary: DB_File module for Perl
-Group: Development/Languages
-Requires: perl >= %{perlepoch}:%{perlver}-%{perlrel}
-
-%description DB_File
-DB_File modules for Perl
-
 %if %{suidperl}
 %package suidperl
 Version: %{perlver}
@@ -335,7 +192,7 @@ more secure running of setuid perl scripts.
 %endif
 
 %prep
-%setup -q
+%setup -q -n perl-5.8.1
 # %patch1 -p1 -b .instman
 # Perl does not have a single entry point to define what db library to use
 # so the patch below is mostly broken...
@@ -343,17 +200,16 @@ more secure running of setuid perl scripts.
 # %patch3 -p1 -b .nodb
 #%patch4 -p1 -b .prereq
 %patch5 -p1
-%patch6 -p1
+# %%patch6 -p1
 #%xpatch7 -p1 -b .buildroot
-%patch8 -p1
-%patch9 -p1
-#%%patch10 -p1 -b .incs
+%patch8 -p1 
+# %%patch10 -p1
 
 # %xpatch16 -p1 -b .nondbm
 
 %patch17 -p1
 
-%patch18 -p1
+# %%patch18 -p1
 %patch19 -p1
 %patch21 -p1
 
@@ -363,124 +219,12 @@ more secure running of setuid perl scripts.
 %patch101 -p1
 %endif
 
-%patch202 -p1
-%patch203 -p1
+# %%patch202 -p1
 
-%patch1000 -p1
+# %%patch1000 -p1
 
-# this is ugly, but apparently necessary.
-/usr/bin/dos2unix win32/Makefile win32/makefile.mk README.win32 README.dos jpl/JNI/JNI.xs jpl/JNI/Makefile.PL
-
-%patch17649 -p1
-%patch18079 -p1
-%patch18080 -p1
-%patch18081 -p1
-%patch18082 -p1
-%patch18087 -p1
-%patch18089 -p1
-%patch18095 -p1
-%patch18096 -p1
-%patch18097 -p1
-%patch18098 -p1 
-%patch18100 -p1
-%patch18101 -p1
-%patch18103 -p1
-%patch18104 -p1
-%patch18110 -p1
-%patch18111 -p1
-%patch18112 -p1
-%patch18126 -p1
-%patch18127 -p1
-%patch18128 -p1
-%patch18129 -p1
-%patch18130 -p1
-%patch18131 -p1
-%patch18132 -p1
-%patch18133 -p1
-%patch18134 -p1
-%patch18143 -p1
-%patch18144 -p1
-%patch18145 -p1
-%patch18146 -p1
-%patch18153 -p1
-%patch18155 -p1
-%patch18156 -p1
-%patch18173 -p1
-%patch18174 -p1
-%patch18187 -p1
-%patch18189 -p1
-%patch18190 -p1
-%patch18191 -p1
-%patch18192 -p1
-%patch18197 -p1
-%patch18202 -p1
-%patch18204 -p1
-%patch18205 -p1
-%patch18206 -p1
-%patch18207 -p1
-%patch18208 -p1
-%patch18209 -p1
-%patch18210 -p1
-%patch18211 -p1
-%patch18214 -p1
-%patch18215 -p1
-%patch18218 -p1
-%patch18219 -p1
-%patch18227 -p1
-%patch18234 -p1
-%patch18235 -p1
-%patch18236 -p1
-%patch18241 -p1
-%patch18242 -p1
-%patch18243 -p1
-%patch18247 -p1
-%patch18248 -p1
-%patch18252 -p1
-%patch18253 -p1
-%patch18254 -p1
-%patch18255 -p1
-%patch18256 -p1
-%patch18257 -p1
-%patch18258 -p1
-%patch18271 -p1
-%patch18273 -p1
-%patch18274 -p1
-%patch18275 -p1
-%patch18276 -p1
-%patch18286 -p1
-%patch18289 -p1
-%patch18290 -p1
-%patch18291 -p1
-%patch18293 -p1
-%patch18294 -p1
-%patch18295 -p1
-%patch18296 -p1
-%patch18297 -p1
-%patch18301 -p1
-%patch18322 -p1
-%patch18347 -p1
-%patch18348 -p1
-%patch18349 -p1
-%patch18352 -p1
-%patch18353 -p1
-%patch18359 -p1
-%patch18360 -p1
-%patch18361 -p1
-%patch18362 -p1
-%patch18363 -p1
-%patch18364 -p1
-%patch18365 -p1
-%patch18366 -p1
-%patch18367 -p1
-%patch18368 -p1
-%patch18369 -p1
-%patch18370 -p1
-%patch18375 -p1
-%patch18379 -p1
-%patch18380 -p1
-
-%patch32000 -p1
-%patch32001 -p1
+%patch21397 -p1
+%patch21401 -p1
 
 find . -name \*.orig -exec rm -fv {} \;
 
@@ -501,6 +245,7 @@ echo "RPM Build arch: %{_arch}"
 %endif
 
 sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
+	-Dversion=5.8.1 \
 	-Dmyhostname=localhost \
 	-Dperladmin=root@localhost \
 	-Dcc='%{__cc}' \
@@ -548,11 +293,12 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Dinstallusrbinperl \
 	-Ubincompat5005 \
 	-Uversiononly \
+	-Dinc_version_list='5.8.0/%{_arch}-%{_os}%{thread_arch} 5.8.0' \
 	-Dpager='/usr/bin/less -isr'
 
 make -f Makefile
 
-make -f Makefile test || /bin/true
+make -f Makefile test < /dev/null || /bin/true
 
 %install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
@@ -567,51 +313,28 @@ mkdir -p ${RPM_BUILD_ROOT}/usr/lib64/perl5/vendor_perl/%{perlver}/%{_arch}-%{_os
 mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
 install -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/pl2pm
 
-# Generate *.ph files with a trick. Is this sick or what ?
-make all -f - <<EOF
-PKGS	= glibc-devel gdbm-devel gpm-devel libgr-devel libjpeg-devel \
-	  libpng-devel libtiff-devel ncurses-devel popt \
-	  zlib-devel binutils libelf e2fsprogs-devel pam pwdb \
-	  rpm-devel
-STDH	= \$(filter %{_includedir}/include/%%, \$(shell rpm -q --queryformat '[%%{FILENAMES}\n]' \$(PKGS)))
-STDH	+=\$(wildcard %{_includedir}/linux/*.h) \
-	  \$(wildcard %{_includedir}/bits/*.h)  \
-	  \$(wildcard %{_includedir}/sys/*.h)  \
-	  \$(wildcard %{_includedir}/scsi/*.h) 
-# \$(wildcard %{_includedir}/asm/*.h)
-GCCDIR	= \$(shell gcc --print-file-name include)
-GCCH	= \$(filter \$(GCCDIR)/%%, \$(shell rpm -q --queryformat '[%%{FILEMODES} %%{FILENAMES}\n]' gcc | grep -v ^4 | awk '{print $NF}'))
-
-PERLLIB = \$(RPM_BUILD_ROOT)%{_libdir}/perl5/%{perlver}
-ARCHLIB = \$(RPM_BUILD_ROOT)%{_libdir}/perl5/%{perlver}/%{_arch}-%{_os}%{thread_arch}
-PERL	= LD_PRELOAD=\$(RPM_BUILD_DIR)/perl-%{perlver}/libperl.so LD_LIBRARY_PATH=\$(ARCHLIB)/CORE PERL5LIB=\$(PERLLIB) \$(RPM_BUILD_ROOT)%{_bindir}/perl
-PHDIR	= \$(PERLLIB)/\${RPM_ARCH}-linux*
-H2PH	= \$(PERL) \$(RPM_BUILD_ROOT)%{_bindir}/h2ph -d \$(PHDIR)/
-
-all: std-headers gcc-headers fix-config
-
-std-headers: \$(STDH)
-	cd %{_includedir} && \$(H2PH) \$(STDH:%{_includedir}/%%=%%)
-
-gcc-headers: \$(GCCH)
-	cd \$(GCCDIR) && \$(H2PH) \$(GCCH:\$(GCCDIR)/%%=%%) || true
-
-fix-config: \$(PHDIR)/Config.pm
-	\$(PERL) -i -p -e "s|\$(RPM_BUILD_ROOT)||g;" \$<
-
-EOF
-
 [ -x /usr/lib/rpm/brp-compress ] && /usr/lib/rpm/brp-compress
 
 # build MANIFEST.all
 
-%define new_perl_lib $RPM_BUILD_ROOT%{_libdir}/perl5/%{perlver}
-%define new_arch_lib $RPM_BUILD_ROOT%{_libdir}/perl5/%{perlver}/%{_arch}-%{_os}%{thread_arch}
-%define new_perl_flags LD_LIBRARY_PATH=%{new_arch_lib}/CORE PERL5LIB=%{new_perl_lib}
+%define new_perl_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{perlver}:$RPM_BUILD_ROOT/usr/lib/perl5/%{perlver}
+%define comp_perl_lib $RPM_BUILD_ROOT/usr/lib/perl5/%{perlver}:$RPM_BUILD_ROOT/usr/lib/perl5/%{perlver}
+%define new_arch_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{perlver}/%{_arch}-%{_os}%{thread_arch}
+%define comp_arch_lib $RPM_BUILD_ROOT/usr/lib/perl5/%{perlver}/%{_arch}-%{_os}%{thread_arch}
+
+%define new_perl_flags LD_PRELOAD=/%{new_arch_lib}/CORE/libperl.so LD_LIBRARY_PATH=%{new_arch_lib}/CORE PERL5LIB=%{new_perl_lib}:%{comp_perl_lib}
 %define new_perl %{new_perl_flags} $RPM_BUILD_ROOT/%{_bindir}/perl
 
-mkdir -p $RPM_BUILD_ROOT/%{_libdir}/perl5/5.8.0/Net
-install -m 0644 %{SOURCE12} $RPM_BUILD_ROOT/%{_libdir}/perl5/5.8.0/Net/libnet.cfg
+for i in asm/termios.h syscall.h syslimits.h syslog.h sys/ioctl.h sys/socket.h sys/time.h wait.h
+do
+  %{new_perl} $RPM_BUILD_ROOT/%{_bindir}/h2ph -a \
+              -d $RPM_BUILD_ROOT%{_libdir}/perl5/%{perlver}/%{_arch}-%{_os}%{thread_arch} $i || /bin/true
+done
+
+%{new_perl} -p -i -e "s|$RPM_BUILD_ROOT||g;" %{new_arch_lib}/Config.pm
+
+mkdir -p $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perlver}/Net
+install -m 0644 %{SOURCE12} $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perlver}/Net/libnet.cfg
 
 find $RPM_BUILD_ROOT -name '*HiRes*' | xargs rm -rfv
 find $RPM_BUILD_ROOT -name '*Filter*' | xargs rm -rfv
@@ -623,7 +346,7 @@ find $RPM_BUILD_ROOT -type d -printf "%%%%dir %p\n" >> MANIFEST.all
 %{new_perl} -i -p -e "s|$RPM_BUILD_ROOT||g;" MANIFEST.all
 cp MANIFEST.all /tmp
 
-for i in  %{SOURCE5} %{SOURCE6} %{SOURCE7} %{SOURCE10} 
+for i in  %{SOURCE10} 
 do
   %{new_perl} %{SOURCE1} %{_arch} $i MANIFEST.all MANIFEST.all.tmp %{_libdir} %{thread_arch}
   mv MANIFEST.all.tmp MANIFEST.all
@@ -643,16 +366,7 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 
 %files -f MANIFEST.all
 %defattr(-,root,root)
-%config %{_libdir}/perl5/5.8.0/Net/libnet.cfg
-
-%files -f %{SOURCE5} CPAN
-%defattr(-,root,root)
-
-%files -f %{SOURCE6} CGI
-%defattr(-,root,root)
-
-%files -f %{SOURCE7} DB_File
-%defattr(-,root,root)
+%config %{_libdir}/perl5/%{perlver}/Net/libnet.cfg
 
 %if %{suidperl}
 %files -f %{SOURCE9} suidperl
@@ -660,8 +374,59 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
-* Tue Aug 12 2003 Chip Turner <cturner@redhat.com> 2:5.8.0-88.1
-- fix for CAN-2003-0615
+* Wed Oct 15 2003 Chip Turner <cturner@redhat.com> 3:5.8.1-92
+- add srand on fork patch from upstream, as well as test case
+
+* Thu Sep 25 2003 Chip Turner <cturner@redhat.com> 3:5.8.1-91
+- perl 5.8.1 final
+
+* Mon Sep 22 2003 Chip Turner <cturner@redhat.com> 3:5.8.1-90.rc5.3
+- ensure inc_version_list is always set properly
+
+* Mon Sep 22 2003 Chip Turner <cturner@redhat.com>
+- update to RC5
+
+* Wed Aug 20 2003 Chip Turner <cturner@redhat.com> 3:5.8.1-90.rc4.2
+- rebuild
+
+* Wed Aug  6 2003 Chip Turner <cturner@redhat.com>
+- bugzilla 101767, make sure threads.so links directly to -lpthread
+
+* Fri Aug  1 2003 Chip Turner <cturner@redhat.com> 3:5.8.1-90.rc2.1
+- RC4
+- remove perl-5.8.0-fhs.patch since it is integrated now
+- remove perl-5.8.0-Safe2.09.patch, unnecessary now
+
+* Fri Jul 11 2003 Chip Turner <cturner@redhat.com> 3:5.8.1-90.rc2.1
+- rc2 snapshot
+
+* Thu Jul 10 2003 Chip Turner <cturner@redhat.com> 3:5.8.0-90.rc1
+- upgrade to 5.8.1 RC1
+
+* Mon Jul  7 2003 Chip Turner <cturner@redhat.com> 3:5.8.0-89.pre%{PRELEVEL}.0
+- integrate another pre-5.8.1 release
+
+* Wed Jun 04 2003 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
+* Mon May 19 2003 Chip Turner <cturner@redhat.com> 3:5.8.0-89.pre%{PRELEVEL}.0
+- bump epoch since we went from perl 5.8.1-pre to 5.8.0-pre (ie,
+  changed what version perl thought of itself as)
+
+* Mon May  5 2003 Chip Turner <cturner@redhat.com> 2:5.8.1-0.pre%{PRELEVEL}.3
+- rebuild
+
+* Thu May  1 2003 Chip Turner <cturner@redhat.com>
+- bump for rebuilg
+
+* Sun Apr 27 2003 Chip Turner <cturner@redhat.com> 2:5.8.1-0.pre%{PRELEVEL}.1
+- fix the fix for RPM_BUILD_ROOT substitution
+
+* Tue Apr 22 2003 Chip Turner <cturner@redhat.com> 2:5.8.1-0.pre%{PRELEVEL}.3
+- fix Config.pm; lost when h2ph changes made
+
+* Thu Apr 17 2003 Chip Turner <cturner@redhat.com> 2:5.8.1-0.pre%{PRELEVEL}
+- move to latest snapshot, 19261
 
 * Tue Feb 18 2003 Chip Turner <cturner@redhat.com>
 - fix MANIFEST.DB_File handling for #83410; problem was unsubstituted
