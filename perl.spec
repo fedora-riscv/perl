@@ -2,11 +2,10 @@ Summary: The Perl programming language.
 Name: perl
 %define perlver 5.6.0
 Version: %{perlver}
-Release: 12b
-Copyright: GPL
+Release: 16
+License: GPL or Artistic
 Group: Development/Languages
 Source0: ftp://ftp.perl.org/pub/perl/CPAN/src/perl-%{perlver}.tar.bz2
-Source1: ftp://ftp.perl.org/pub/CPAN/modules/by-module/Digest/Digest-MD5-2.09.tar.gz
 Source2: find-provides
 Source3: find-requires
 Source4: find-requires.64
@@ -20,13 +19,132 @@ Patch6: perl-5.6.0-fhs.patch
 Patch7: perl-5.6.0-buildroot.patch
 Patch8: perl-5.6.0-errno.patch
 Patch9: perl-5.6.0-syslog.patch
-Patch10: perl-5.6.0-libso.patch
-Patch11: perl-5.6.0-dynaloader.so.patch
-
-Obsoletes: perl-MD5, perl-Digest-MD5
 Buildroot: %{_tmppath}/%{name}-root
 BuildPreReq: gawk, grep, tcsh
 Epoch: 1
+
+# ----- Perl module provides.
+Provides: perl(autouse)  
+Provides: perl(blib)  
+Provides: perl(diagnostics)  
+Provides: perl(integer)  
+Provides: perl(less)  
+Provides: perl(lib)  
+Provides: perl(locale)  
+Provides: perl(ops)  
+Provides: perl(overload)  
+Provides: perl(re)  
+Provides: perl(sigtrap)  
+Provides: perl(strict)  
+Provides: perl(subs)  
+Provides: perl(vmsish)  
+Provides: perl(vars)  
+Provides: perl(AnyDBM_File)  
+Provides: perl(AutoLoader) = 5.57
+Provides: perl(AutoSplit) = 1.0305
+Provides: perl(Benchmark) = 1.00
+Provides: perl(Carp)  
+Provides: perl(CGI)  
+Provides: perl(CGI::Carp)  
+Provides: perl(CGI::Cookie)  
+Provides: perl(CGI::Fast)  
+Provides: perl(CGI::Pretty)  
+Provides: perl(CGI::Push)  
+Provides: perl(Class::Struct) = 0.58
+Provides: perl(Class::Struct::Tie_ISA)  
+Provides: perl(CPAN)  
+Provides: perl(CPAN::Author)  
+Provides: perl(CPAN::Bundle)  
+Provides: perl(CPAN::CacheMgr)  
+Provides: perl(CPAN::Complete)  
+Provides: perl(CPAN::Config)  
+Provides: perl(CPAN::Debug)  
+Provides: perl(CPAN::Distribution)  
+Provides: perl(CPAN::Eval)  
+Provides: perl(CPAN::FirstTime) = 1.38
+Provides: perl(CPAN::FTP)  
+Provides: perl(CPAN::FTP::netrc)  
+Provides: perl(CPAN::Index)  
+Provides: perl(CPAN::InfoObj)  
+Provides: perl(CPAN::Mirrored::By)  
+Provides: perl(CPAN::Module)  
+Provides: perl(CPAN::Nox) = 1.00
+Provides: perl(CPAN::Queue)  
+Provides: perl(CPAN::Shell)  
+Provides: perl(CPAN::Tarzip)  
+Provides: perl(Cwd) = 2.02
+Provides: perl(DB)  
+Provides: perl(Devel::SelfStubber) = 1.01
+Provides: perl(DirHandle)  
+Provides: perl(Dumpvalue)  
+Provides: perl(DynaLoader)  
+Provides: perl(English)  
+Provides: perl(Env)  
+Provides: perl(Env::Array)  
+Provides: perl(Env::Array::VMS)  
+Provides: perl(Exporter)  
+Provides: perl(ExtUtils::Command) = 1.01
+Provides: perl(ExtUtils::Embed) = 1.2505
+Provides: perl(ExtUtils::Install) = 1.28
+Provides: perl(ExtUtils::Installed)  
+Provides: perl(ExtUtils::Install::Warn)  
+Provides: perl(ExtUtils::Liblist)  
+Provides: perl(ExtUtils::MakeMaker)  
+Provides: perl(ExtUtils::Manifest) = 1.33
+Provides: perl(ExtUtils::Miniperl)  
+Provides: perl(ExtUtils::Mkbootstrap) = 1.14
+Provides: perl(ExtUtils::Mksymlists) = 1.17
+Provides: perl(ExtUtils::MM_Cygwin)  
+Provides: perl(ExtUtils::MM_OS2)  
+Provides: perl(ExtUtils::MM_Unix)  
+Provides: perl(ExtUtils::MM_VMS)  
+Provides: perl(ExtUtils::MM_Win32)  
+Provides: perl(ExtUtils::MM_Win95)  
+Provides: perl(ExtUtils::Packlist)  
+Provides: perl(ExtUtils::testlib) = 1.11
+Provides: perl(Fatal) = 1.02
+Provides: perl(Fh)  
+Provides: perl(File::Basename) = 2.6
+Provides: perl(FileCache)  
+Provides: perl(File::CheckTree)  
+Provides: perl(File::Compare) = 1.1002
+Provides: perl(File::Copy) = 2.03
+Provides: perl(File::DosGlob)  
+Provides: perl(File::Find)  
+Provides: perl(FileHandle) = 2.00
+Provides: perl(File::Path)  
+Provides: perl(File::Spec) = 0.8
+Provides: perl(File::Spec::Functions)  
+Provides: perl(File::Spec::Mac)  
+Provides: perl(File::Spec::OS2)  
+Provides: perl(File::Spec::Unix)  
+Provides: perl(File::Spec::VMS)  
+Provides: perl(File::Spec::Win32)  
+Provides: perl(File::stat)  
+Provides: perl(FindBin) = 1.42
+Provides: perl(Getopt::Long) = 2.23
+Provides: perl(Getopt::Std) = 1.02
+Provides: perl(I18N::Collate)  
+Provides: perl(IO::Socket::INET) = 1.25
+Provides: perl(IO::Socket::UNIX) = 1.20
+Provides: perl(IPC::Open2) = 1.01
+Provides: perl(IPC::Open3) = 1.0103
+Provides: perl(main)  
+Provides: perl(Math::BigFloat)  
+Provides: perl(Math::BigInt)  
+Provides: perl(Math::Complex) = 1.26
+Provides: perl(Math::Trig) = 1.00
+Provides: perl(MM)  
+Provides: perl(MultipartBuffer)  
+Provides: perl(MY)  
+Provides: perl(Net::hostent)  
+Provides: perl(Net::netent)  
+Provides: perl(Net::Ping) = 2.02
+Provides: perl(Net::protoent)  
+Provides: perl(Net::servent)  
+Provides: perl(Pod::Checker) = 1.098
+Provides: perl(TempFile)  
+Provides: perl(xsubpp::counter)  
 
 # ----- Perl module dependencies.
 #
@@ -73,7 +191,6 @@ system to handle Perl scripts.
 %prep
 %setup -q
 mkdir modules
-tar xzf %{SOURCE1} -C modules
 %patch0 -p1 -b .buildsys
 %patch1 -p1 -b .instman
 # Perl does not have a single entry point to define what db library to use
@@ -86,8 +203,6 @@ tar xzf %{SOURCE1} -C modules
 %patch7 -p1 -b .buildroot
 %patch8 -p1 -b .errno
 %patch9 -p1 -b .syslog
-%patch10 -p1 -b .libso
-%patch11 -p1 -b .dynaloader.so
 
 find . -name \*.orig -exec rm -fv {} \;
 
@@ -110,28 +225,11 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Di_shadow \
 	-Di_syslog \
 	-Dman3ext=3pm \
-	-Uuselargefiles \
-	-Duseshrplib=\'true\' 
-
+	-Uuselargefiles
 make -f Makefile
-
-# Build the modules we have
-# Trick 17b to allow perl to work with it's shared library
-export LD_LIBRARY_PATH=`pwd`
-MainDir=$(pwd)
-cd modules
-for module in * ; do 
-    cd $module
-    $MainDir/perl -I$MainDir/lib Makefile.PL
-    make
-    cd ..
-done
-cd $MainDir
 
 %install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
-# Trick 17b to allow perl to work with it's shared library
-export LD_LIBRARY_PATH=`pwd`
 mkdir -p $RPM_BUILD_ROOT
 
 make install -f Makefile
@@ -168,17 +266,6 @@ fix-config: \$(PHDIR)/Config.pm
 
 EOF
 
-# Now pay attention to the extra modules
-MainDir=$(pwd)
-pushd modules
-for module in * ; do 
-    eval $($MainDir/perl '-V:installarchlib')
-    mkdir -p $RPM_BUILD_ROOT/$installarchlib
-    make -C $module install
-done
-popd
-#cd $MainDir
-
 # fix the rest of the stuff
 find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 xargs ./perl -i -p -e "s|$RPM_BUILD_ROOT||g;" $packlist
@@ -188,16 +275,28 @@ xargs ./perl -i -p -e "s|$RPM_BUILD_ROOT||g;" $packlist
 
 %files
 %defattr(-,root,root)
+%doc Artistic AUTHORS Changes* Copying README
 %{_bindir}/*
 %{_libdir}/*
 %{_mandir}/*/*
 
 %changelog
-* Wed Mar 13 2002 Phil Knirsch <pknirsch@redhat.com>
-- Fixed none -fPIC problem for DynoLoader on s390x.
+* Mon Jun 19 2001 Nalin Dahyabhai <nalin@redhat.com>
+- unbundle the Digest-MD5 module (noted by Charlie Brady) -- perl
+  dependency checking RPM will do most of the heavy lifting
+- mark License as GPL or Artistic
 
-* Fri May  4 2001 Oliver Paukstadt <oliver.paukstadt@millenux.com>
-- ported to IBM zSeries (s390x, 64 bit)
+* Thu Jun 14 2001 Nalin Dahyabhai <nalin@redhat.com>
+- use /usr/lib/rpm/findprovides.perl to complete the list of perl provides
+- change Copyright: GPL to License: GPL
+- include some of the text documentation files
+
+* Wed Jun 13 2001 Crutcher Dunnavant <crutcher@redhat.com>
+- added provides to close bug #43081
+
+* Fri Jun 08 2001 Florian La Roche <Florian.LaRoche@redhat.de>
+- add s390x change to specfile from Oliver Paukstadt
+  <oliver.paukstadt@millenux.com>
 
 * Fri Mar 23 2001 Preston Brown <pbrown@redhat.com>
 - bzip2 source, save some space.
