@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.5
-%define perlrel 4
+%define perlrel 5
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -102,7 +102,7 @@ Patch101: perl-5.8.0-libdir64.patch
 # Patch202: perl-5.8.0-Safe2.09.patch
 
 Buildroot: %{_tmppath}/%{name}-root
-BuildRequires: gawk, grep, tcsh, gdbm-devel, db4-devel, dos2unix
+BuildRequires: gawk, grep, tcsh, gdbm-devel, db4-devel, dos2unix, man
 
 # By definition of 'do' (see 'man perlfunc') this package provides all
 # versions of perl previous to it.
