@@ -103,7 +103,7 @@ Patch101: perl-5.8.0-libdir64.patch
 # Patch202: perl-5.8.0-Safe2.09.patch
 
 Buildroot: %{_tmppath}/%{name}-root
-BuildRequires: gawk, grep, tcsh, gdbm-devel, db4-devel, dos2unix, man
+BuildRequires: gawk, grep, tcsh, gdbm-devel, db4-devel, dos2unix, man, groff
 
 # By definition of 'do' (see 'man perlfunc') this package provides all
 # versions of perl previous to it.
@@ -391,6 +391,9 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Mon Oct 11 2004 Tim Waugh <twaugh@redhat.com>
+- Build requires groff (bug #135101).
+
 * Tue Oct  5 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-7
 - update perlbug patch to strip build date as well
 
