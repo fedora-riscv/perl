@@ -3,15 +3,15 @@
 %if %{build_rawhide}
 %define threading  0
 %define largefiles 0
-%define suidperl   0
+%define suidperl   1
 %define ndbm       1
-%define rhrelease  .99.5
+%define rhrelease  .99.6
 %else
 %define threading  0
 %define largefiles 0
 %define suidperl   0
 %define ndbm       1
-%define rhrelease  .72.5
+%define rhrelease  .72.6
 %endif
 
 %define perlver 5.6.1
@@ -45,7 +45,6 @@ Epoch: %{perlepoch}
 License: Artistic
 Group: Development/Languages
 
-Packager     : Red Hat, Inc. <http://bugzilla.redhat.com/bugzilla>
 Vendor       : Red Hat, Inc.
 Distribution : Red Hat Linux
 
@@ -352,7 +351,7 @@ do
   mv MANIFEST.all.tmp MANIFEST.all
 done
 
-# rawhide?  if so, strip out suidperl
+# rawhide?  if so, split out suidperl
 %if %{suidperl}
   ./perl -I lib/ %{SOURCE1} %{_arch} %{SOURCE9} MANIFEST.all MANIFEST.all.tmp %{thread_arch} 
   mv MANIFEST.all.tmp MANIFEST.all
@@ -389,7 +388,10 @@ xargs ./perl -I lib/ -i -p -e "s|$RPM_BUILD_ROOT||g;" MANIFEST.all
 %endif
 
 %changelog
-* Tue Mar 26 2002 Chip Turner <cturner@minbar.devel.redhat.com>
+* Sun Mar 31 2002 Chip Turner <cturner@redhat.com>
+- split suidperl back out (bug #62215)
+
+* Tue Mar 26 2002 Chip Turner <cturner@redhat.com>
 - restructuring of some directories, alteration of @INC
 
 * Thu Dec 20 2001 Chip Turner <cturner@redhat.com>
