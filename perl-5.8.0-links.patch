@@ -1,0 +1,40 @@
+--- perl-5.8.0/lib/CPAN/FirstTime.pm.links	2002-08-15 14:58:47.000000000 -0400
++++ perl-5.8.0/lib/CPAN/FirstTime.pm	2002-08-15 14:59:07.000000000 -0400
+@@ -258,7 +258,7 @@
+     my(@path) = split /$Config{'path_sep'}/, $ENV{'PATH'};
+     local $^W = $old_warn;
+     my $progname;
+-    for $progname (qw/gzip tar unzip make lynx wget ncftpget ncftp ftp/){
++    for $progname (qw/gzip tar unzip make links wget ncftpget ncftp ftp/){
+       if ($^O eq 'MacOS') {
+           $CPAN::Config->{$progname} = 'not_here';
+           next;
+--- perl-5.8.0/lib/CPAN.pm.links	2002-08-15 14:58:37.000000000 -0400
++++ perl-5.8.0/lib/CPAN.pm	2002-08-15 15:00:08.000000000 -0400
+@@ -2528,7 +2528,7 @@
+ 
+ 	$self->debug("localizing funkyftpwise[$url]") if $CPAN::DEBUG;
+ 	my($f,$funkyftp);
+-	for $f ('lynx','ncftpget','ncftp','wget') {
++	for $f ('links','ncftpget','ncftp','wget') {
+ 	  next unless exists $CPAN::Config->{$f};
+ 	  $funkyftp = $CPAN::Config->{$f};
+ 	  next unless defined $funkyftp;
+@@ -2537,7 +2537,7 @@
+ 	  ($asl_ungz = $aslocal) =~ s/\.gz//;
+           $asl_gz = "$asl_ungz.gz";
+ 	  my($src_switch) = "";
+-	  if ($f eq "lynx"){
++	  if ($f eq "links"){
+ 	    $src_switch = " -source";
+ 	  } elsif ($f eq "ncftp"){
+ 	    $src_switch = " -c";
+@@ -2561,7 +2561,7 @@
+ 	  my($wstatus);
+ 	  if (($wstatus = system($system)) == 0
+ 	      &&
+-	      ($f eq "lynx" ?
++	      ($f eq "links" ?
+ 	       -s $asl_ungz # lynx returns 0 when it fails somewhere
+ 	       : 1
+ 	      )

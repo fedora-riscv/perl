@@ -3,7 +3,7 @@
 %define suidperl   1
 
 %define perlver 5.8.0
-%define perlrel 49
+%define perlrel 50
 %define perlepoch 2
 %define cpanver 1.61
 %define dbfilever 1.804
@@ -86,6 +86,9 @@ Patch17: perl-5.8.0-sharedlinker.patch
 
 # perl 5.8.0 likes to use man3ext for BOTH directories AND files.  not kosher.
 Patch18: perl-5.8.0-manext.patch
+
+# lynx is depracated, use links instead
+Patch19: perl-5.8.0-links.patch
 
 Buildroot: %{_tmppath}/%{name}-root
 BuildRequires: gawk, grep, tcsh
@@ -230,6 +233,7 @@ more secure running of setuid perl scripts.
 %patch17 -p1 -b .sharedlinker
 
 %patch18 -p1 -b .manext
+%patch19 -p1 -b .links
 
 find . -name \*.orig -exec rm -fv {} \;
 
@@ -378,6 +382,9 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Thu Aug 15 2002 Chip Turner <cturner@redhat.com>
+- change from lynx to links in CPAN.pm
+
 * Tue Aug  6 2002 Chip Turner <cturner@redhat.com>
 - automated release bump and build
 - remove Filter packages and use CPAN ones
