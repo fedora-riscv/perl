@@ -2,7 +2,7 @@ Summary: The Perl programming language.
 Name: perl
 %define perlver 5.6.0
 Version: %{perlver}
-Release: 12
+Release: 12b
 Copyright: GPL
 Group: Development/Languages
 Source0: ftp://ftp.perl.org/pub/perl/CPAN/src/perl-%{perlver}.tar.bz2
@@ -20,6 +20,9 @@ Patch6: perl-5.6.0-fhs.patch
 Patch7: perl-5.6.0-buildroot.patch
 Patch8: perl-5.6.0-errno.patch
 Patch9: perl-5.6.0-syslog.patch
+Patch10: perl-5.6.0-libso.patch
+Patch11: perl-5.6.0-dynaloader.so.patch
+
 Obsoletes: perl-MD5, perl-Digest-MD5
 Buildroot: %{_tmppath}/%{name}-root
 BuildPreReq: gawk, grep, tcsh
@@ -29,7 +32,7 @@ Epoch: 1
 #
 # Provide perl-specific find-{provides,requires} until rpm-3.0.4 catches up.
 %define	__find_provides	%{SOURCE2}
-%ifnarch ia64 sparc64
+%ifnarch ia64 sparc64 s390x
 %define	__find_requires	%{SOURCE3}
 %else
 %define	__find_requires	%{SOURCE4}
@@ -83,6 +86,8 @@ tar xzf %{SOURCE1} -C modules
 %patch7 -p1 -b .buildroot
 %patch8 -p1 -b .errno
 %patch9 -p1 -b .syslog
+%patch10 -p1 -b .libso
+%patch11 -p1 -b .dynaloader.so
 
 find . -name \*.orig -exec rm -fv {} \;
 
@@ -105,10 +110,14 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Di_shadow \
 	-Di_syslog \
 	-Dman3ext=3pm \
-	-Uuselargefiles
+	-Uuselargefiles \
+	-Duseshrplib=\'true\' 
+
 make -f Makefile
 
 # Build the modules we have
+# Trick 17b to allow perl to work with it's shared library
+export LD_LIBRARY_PATH=`pwd`
 MainDir=$(pwd)
 cd modules
 for module in * ; do 
@@ -121,6 +130,8 @@ cd $MainDir
 
 %install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
+# Trick 17b to allow perl to work with it's shared library
+export LD_LIBRARY_PATH=`pwd`
 mkdir -p $RPM_BUILD_ROOT
 
 make install -f Makefile
@@ -182,6 +193,12 @@ xargs ./perl -i -p -e "s|$RPM_BUILD_ROOT||g;" $packlist
 %{_mandir}/*/*
 
 %changelog
+* Wed Mar 13 2002 Phil Knirsch <pknirsch@redhat.com>
+- Fixed none -fPIC problem for DynoLoader on s390x.
+
+* Fri May  4 2001 Oliver Paukstadt <oliver.paukstadt@millenux.com>
+- ported to IBM zSeries (s390x, 64 bit)
+
 * Fri Mar 23 2001 Preston Brown <pbrown@redhat.com>
 - bzip2 source, save some space.
 
