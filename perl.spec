@@ -3,7 +3,7 @@
 %define suidperl   1
 
 %define perlver 5.8.0
-%define perlrel 51
+%define perlrel 54
 %define perlepoch 2
 %define cpanver 1.61
 %define dbfilever 1.804
@@ -89,6 +89,7 @@ Patch18: perl-5.8.0-manext.patch
 
 # lynx is depracated, use links instead
 Patch19: perl-5.8.0-links.patch
+Patch20: perl-5.8.0-pager.patch
 
 Buildroot: %{_tmppath}/%{name}-root
 BuildRequires: gawk, grep, tcsh
@@ -234,6 +235,7 @@ more secure running of setuid perl scripts.
 
 %patch18 -p1 -b .manext
 %patch19 -p1 -b .links
+%patch20 -p1 -b .pager
 
 find . -name \*.orig -exec rm -fv {} \;
 
@@ -280,6 +282,7 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Dinstallusrbinperl \
 	-Ubincompat5005 \
 	-Uversiononly \
+	-Dpager='/usr/bin/less -isr' \
 #        -Dotherlibdirs=/usr/lib/perl5/5.6.0/%{_arch}-linux:/usr/lib/perl5/5.6.0:/usr/lib/perl5/vendor_perl/5.6.0/%{_arch}-linux:/usr/lib/perl5/vendor_perl/5.6.0
 
 make -f Makefile
@@ -384,6 +387,10 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Sun Sep  1 2002 Chip Turner <cturner@redhat.com>
+- fix pager issues; default to /usr/bin/less -isr
+- more work on pager bug (72125)
+
 * Thu Aug 29 2002 Chip Turner <cturner@redhat.com>
 - add a few new directories to h2ph to produce better .ph files
 
