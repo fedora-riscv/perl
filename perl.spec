@@ -3,7 +3,7 @@
 %define suidperl   1
 
 %define perlver 5.8.0
-%define perlrel 54
+%define perlrel 55
 %define perlepoch 2
 %define cpanver 1.61
 %define dbfilever 1.804
