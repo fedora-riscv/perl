@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.3
-%define perlrel 13
+%define perlrel 18
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -84,6 +84,12 @@ Patch21: perl-5.8.0-rpath-make.patch
 
 # bugzilla 101767, make sure threads.so links directly to -lpthread
 Patch22: perl-5.8.1-lpthread-link.patch
+
+# bugzilla 118877
+Patch23: perl-5.8.3-findbin-selinux.patch
+
+# fix empty RPATH security issue
+Patch24: perl-5.8.3-empty-rpath.patch
 
 # arch-specific patches
 Patch100: perl-5.8.1-fpic.patch
@@ -196,6 +202,8 @@ more secure running of setuid perl scripts.
 
 %patch19 -p1
 %patch21 -p1
+%patch23 -p1
+%patch24 -p1
 
 %patch100 -p1
 
@@ -318,6 +326,11 @@ done
 
 %{new_perl} -p -i -e "s|$RPM_BUILD_ROOT||g;" %{new_arch_lib}/Config.pm
 
+for dir in $(%{new_perl} -le 'print join("\n", @INC)' | grep '^/usr/lib')
+do
+  mkdir -p $RPM_BUILD_ROOT/$dir
+done
+
 for dir in $(%{new_perl} -le 'print join("\n", @INC)' | grep '^%{_libdir}')
 do
   mkdir -p $RPM_BUILD_ROOT/$dir
@@ -370,6 +383,16 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Thu Apr 15 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-18
+- add patch to fix empty RPATH issue on perl module compile
+
+* Sat Apr 03 2004 Colin Walters <walters@redhat.com> 3:5.8.3-17
+- Apply patch to fix FindBin module when access to cwd is disallowed,
+  should solve the MRTG/SELinux cron spam issue
+
+* Tue Mar 23 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-14
+- make sure multilib boxes also own the entries in @INC that are in /usr/lib, not just %_libdir
+
 * Tue Mar  9 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-%{perlrel}.1
 - fix i386-specifics in %%install to arch generic
 

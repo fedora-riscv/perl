@@ -1,0 +1,12 @@
+--- perl-5.8.3/lib/ExtUtils/MM_Unix.pm.orig	2004-03-05 15:04:56.000000000 +0000
++++ perl-5.8.3/lib/ExtUtils/MM_Unix.pm	2004-03-05 15:05:20.000000000 +0000
+@@ -1135,7 +1135,7 @@
+     }
+ 
+     push(@m,
+-'	LD_RUN_PATH="$(LD_RUN_PATH)" $(LD) '.$ldrun.' $(LDDLFLAGS) '.$ldfrom.
++'	$(LD) '.$ldrun.' $(LDDLFLAGS) '.$ldfrom.
+ ' $(OTHERLDFLAGS) -o $@ $(MYEXTLIB) $(PERL_ARCHIVE) '.$libs.' $(PERL_ARCHIVE_AFTER) $(EXPORT_LIST) $(INST_DYNAMIC_FIX)');
+     push @m, '
+ 	$(CHMOD) $(PERM_RWX) $@
+
