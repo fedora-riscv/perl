@@ -4,8 +4,8 @@
 
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
-%define perlver 5.8.1
-%define perlrel 92
+%define perlver 5.8.3
+%define perlrel 5
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -34,10 +34,7 @@ Epoch: %{perlepoch}
 License: Artistic
 Group: Development/Languages
 
-Vendor       : Red Hat, Inc.
-Distribution : Red Hat Linux
-
-Source0: perl-5.8.1.tar.gz
+Source0: perl-5.8.3.tar.gz
 Source1: clean-manifest.pl
 Source9: MANIFEST.suidperl
 Source10: system-owned-directories
@@ -54,6 +51,7 @@ Patch7: perl-5.6.0-buildroot.patch
 Patch8: perl-5.8.0-errno.patch
 Patch9: perl-5.7.3-syslog.patch
 # Patch10: perl-5.8.0-notty.patch
+Patch11: perl-5.8.3-incpush.patch
 
 %define __perl_requires %{SOURCE11}
 
@@ -91,12 +89,6 @@ Patch101: perl-5.8.0-libdir64.patch
 
 # module updatesd
 # Patch202: perl-5.8.0-Safe2.09.patch
-
-# backrev; this should be perl 5.8.0, not 5.8.1
-# Patch1000: perl-5.8.0-backrev.patch
-
-Patch21397: perl-5.8.1-upstream-21397.patch
-Patch21401: perl-5.8.1-upstream-21401.patch
 
 Buildroot: %{_tmppath}/%{name}-root
 BuildRequires: gawk, grep, tcsh, gdbm-devel, db4-devel, dos2unix
@@ -192,24 +184,13 @@ more secure running of setuid perl scripts.
 %endif
 
 %prep
-%setup -q -n perl-5.8.1
-# %patch1 -p1 -b .instman
-# Perl does not have a single entry point to define what db library to use
-# so the patch below is mostly broken...
-#%patch2 -p1
-# %patch3 -p1 -b .nodb
-#%patch4 -p1 -b .prereq
+%setup -q -n perl-5.8.3
 %patch5 -p1
-# %%patch6 -p1
-#%xpatch7 -p1 -b .buildroot
 %patch8 -p1 
-# %%patch10 -p1
-
-# %xpatch16 -p1 -b .nondbm
+%patch11 -p1
 
 %patch17 -p1
 
-# %%patch18 -p1
 %patch19 -p1
 %patch21 -p1
 
@@ -218,13 +199,6 @@ more secure running of setuid perl scripts.
 %ifarch %{multilib_64_archs}
 %patch101 -p1
 %endif
-
-# %%patch202 -p1
-
-# %%patch1000 -p1
-
-%patch21397 -p1
-%patch21401 -p1
 
 find . -name \*.orig -exec rm -fv {} \;
 
@@ -245,7 +219,7 @@ echo "RPM Build arch: %{_arch}"
 %endif
 
 sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
-	-Dversion=5.8.1 \
+	-Dversion=5.8.3 \
 	-Dmyhostname=localhost \
 	-Dperladmin=root@localhost \
 	-Dcc='%{__cc}' \
@@ -267,7 +241,7 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 %endif
 	-Dvendorprefix=%{_prefix} \
 	-Dsiteprefix=%{_prefix} \
-	-Dotherlibdirs=/usr/lib/perl5/%{perlver} \
+	-Dotherlibdirs=/usr/lib/perl5/5.8.1:/usr/lib/perl5/5.8.0 \
 	-Duseshrplib \
 %if %threading
 	-Dusethreads \
@@ -293,8 +267,8 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Dinstallusrbinperl \
 	-Ubincompat5005 \
 	-Uversiononly \
-	-Dinc_version_list='5.8.0/%{_arch}-%{_os}%{thread_arch} 5.8.0' \
-	-Dpager='/usr/bin/less -isr'
+	-Dpager='/usr/bin/less -isr' \
+	-Dinc_version_list='5.8.2/%{_arch}-%{_os}%{thread_arch} 5.8.2 5.8.1/%{_arch}-%{_os}%{thread_arch} 5.8.1 5.8.0/%{_arch}-%{_os}%{thread_arch} 5.8.0' 
 
 make -f Makefile
 
@@ -305,6 +279,15 @@ make -f Makefile test < /dev/null || /bin/true
 mkdir -p $RPM_BUILD_ROOT
 
 make install -f Makefile
+
+pushd $RPM_BUILD_ROOT/usr/lib/perl5
+for i in  5.8.0/i386-linux-thread-multi/CORE/ 5.8.1/i386-linux-thread-multi/CORE/; do
+  mkdir -p $i
+  pushd $i
+  ln -s ../../../%{perlver}/i386-linux-thread-multi/CORE/libperl.so libperl.so
+  popd
+done
+popd
 
 %ifarch %{multilib_64_archs}
 mkdir -p ${RPM_BUILD_ROOT}/usr/lib64/perl5/vendor_perl/%{perlver}/%{_arch}-%{_os}
@@ -332,6 +315,13 @@ do
 done
 
 %{new_perl} -p -i -e "s|$RPM_BUILD_ROOT||g;" %{new_arch_lib}/Config.pm
+
+mkdir -pm 755 $RPM_BUILD_ROOT%{_libdir}/perl5/site_perl/%{perlver}/%{_arch}-%{_os}%{thread_arch}/auto
+mkdir -pm 755 $RPM_BUILD_ROOT%{_libdir}/perl5/vendor_perl/%{perlver}/%{_arch}-%{_os}%{thread_arch}/auto
+%ifarch %{multilib_64_archs}
+mkdir -pm 755 $RPM_BUILD_ROOT/usr/lib/perl5/site_perl/%{perlver}
+mkdir -pm 755 $RPM_BUILD_ROOT/usr/lib/perl5/vendor_perl/%{perlver}
+%endif
 
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perlver}/Net
 install -m 0644 %{SOURCE12} $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perlver}/Net/libnet.cfg
@@ -366,7 +356,6 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 
 %files -f MANIFEST.all
 %defattr(-,root,root)
-%config %{_libdir}/perl5/%{perlver}/Net/libnet.cfg
 
 %if %{suidperl}
 %files -f %{SOURCE9} suidperl
@@ -374,8 +363,35 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Wed Jan 28 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-5
+- update incpush patch to better handle multilib
+
+* Fri Jan 23 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-2
+- add a dependency filter on perl(Tie::RangeHash)
+
+* Thu Jan 22 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-7
+- upgrade to 5.8.3
+
+* Mon Dec 15 2003 Chip Turner <cturner@redhat.com> 3:5.8.2-7
+- fix @INC so that all dirs go into it, not just those that exist at buildtime in the build system
+
+* Sat Dec 13 2003 Jeff Johnson <jbj@jbj.org> 3:5.8.2-4
+- rebuild against db-4.2.52.
+
+* Sun Dec  7 2003 Ville Skyttä <ville.skytta at iki.fi> - 3:5.8.2-3
+- Own site and vendor auto directories (#73970).
+
+* Wed Dec  3 2003 Chip Turner <cturner@redhat.com> 3:5.8.2-2
+- upgrade to 5.8.2
+
+* Fri Oct 31 2003 Chip Turner <cturner@redhat.com> 3:5.8.1-92
+- remove Vendor and Distribution macros from specfile (#108567)
+
 * Wed Oct 15 2003 Chip Turner <cturner@redhat.com> 3:5.8.1-92
 - add srand on fork patch from upstream, as well as test case
+
+* Mon Oct 13 2003 Jeff Johnson <jbj@jbj.org> 3:5.8.1-91.1
+- rebuild against db-4.2.42.
 
 * Thu Sep 25 2003 Chip Turner <cturner@redhat.com> 3:5.8.1-91
 - perl 5.8.1 final
