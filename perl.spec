@@ -1,19 +1,21 @@
-%define build_rawhide   0
+%define build_rawhide   1
 
 %if %{build_rawhide}
-%define threading  1
-%define largefiles 1
-%define ndbm       0
-%define rhrelease  %{nil}
+%define threading  0
+%define largefiles 0
+%define suidperl   0
+%define ndbm       1
+%define rhrelease  .99.5
 %else
 %define threading  0
 %define largefiles 0
+%define suidperl   0
 %define ndbm       1
-%define rhrelease  .72.4
+%define rhrelease  .72.5
 %endif
 
 %define perlver 5.6.1
-%define perlrel 26%{rhrelease}
+%define perlrel 34%{rhrelease}
 %define perlepoch 1
 %define cpanver 1.59_54
 %define dbfilever 1.75
@@ -53,7 +55,8 @@ Source5: MANIFEST.CPAN
 Source6: MANIFEST.CGI
 Source7: MANIFEST.DB_File
 Source8: MANIFEST.NDBM_File
-Source9: system-owned-directories
+Source9: MANIFEST.suidperl
+Source10: system-owned-directories
 
 Patch1: perl-5.6.0-installman.patch
 Patch2: perl5.005_03-db1.patch
@@ -98,6 +101,9 @@ Patch12: perl-5.6.1-ia64pagesize.patch
 # have a homedir.  this adds a check to ensude the user's homedir is a
 # directory (normal -d test)
 Patch13: perl-5.6.1-homeglobtest.patch
+
+# let's add INSTALLDIRS=vendor support to MakeMaker
+Patch14: perl-5.6.1-makemaker.patch
 
 Buildroot: %{_tmppath}/%{name}-root
 BuildRequires: gawk, grep, tcsh
@@ -192,6 +198,19 @@ Requires: perl >= %{perlepoch}:%{perlver}-%{perlrel}
 %description NDBM_File
 NDBM_File modules for Perl
 
+%if %{suidperl}
+%package suidperl
+Version: %{perlver}
+Release: %{perlrel}
+Summary: suidperl, for use with setuid perl scripts
+Group: Development/Languages
+Requires: perl = %{perlepoch}:%{perlver}-%{perlrel}
+
+%description suidperl
+suidperl is a setuid binary copy of perl that allows for (hopefully)
+more secure running of setuid perl scripts.
+%endif
+
 %prep
 %setup -q
 %patch1 -p1 -b .instman
@@ -214,6 +233,8 @@ NDBM_File modules for Perl
 
 %patch13 -p1 -b .globtest
 
+%patch14 -p1 -b .makemaker
+
 find . -name \*.orig -exec rm -fv {} \;
 
 %build
@@ -228,6 +249,8 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 %ifarch sparc
 	-Ud_longdbl \
 %endif
+	-Dvendorprefix=%{_prefix} \
+	-Dsiteprefix=%{_prefix} \
 %if %threading
 	-Dusethreads \
         -Duseithreads \
@@ -252,9 +275,12 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Di_shadow \
 	-Di_syslog \
 	-Dman3ext=3pm \
-        -Dlocincpth="" 
-#        -Dinc_version_list='5.6.0/%{_arch}-%{_os} 5.6.0'
-#        -Dotherlibdirs=/usr/lib/perl5/5.6.0/%{_arch}-linux:/usr/lib/perl5/5.6.0:/usr/lib/perl5/site_perl/5.6.0/%{_arch}-linux:/usr/lib/perl5/site_perl/5.6.0
+%if %{build_rawhide}
+#        -Dlocincpth=""
+%else
+        -Dinc_version_list='5.6.0/%{_arch}-%{_os} 5.6.0'
+%endif
+#        -Dotherlibdirs=/usr/lib/perl5/5.6.0/%{_arch}-linux:/usr/lib/perl5/5.6.0:/usr/lib/perl5/vendor_perl/5.6.0/%{_arch}-linux:/usr/lib/perl5/vendor_perl/5.6.0
 
 # temp fix for ugly makefile problems; perl's makedepend adds broken
 # <builtin> amd <command line> targets to some makefiles, for some
@@ -274,6 +300,9 @@ make -f Makefile test
 mkdir -p $RPM_BUILD_ROOT
 
 make install -f Makefile
+
+mkdir -p ${RPM_BUILD_ROOT}/usr/lib/perl5/vendor_perl/%{perlver}/%{_arch}-%{_os}
+
 mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
 install -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/pl2pm
 
@@ -317,11 +346,17 @@ find $RPM_BUILD_ROOT -type d -printf "%%%%dir %p\n" >> MANIFEST.all
 ./perl -I lib/ -i -p -e "s|$RPM_BUILD_ROOT||g;" MANIFEST.all
 cp MANIFEST.all /tmp
 
-for i in  %{SOURCE9} %{SOURCE5} %{SOURCE6} %{SOURCE7} %{SOURCE8}
+for i in  %{SOURCE5} %{SOURCE6} %{SOURCE7} %{SOURCE8} %{SOURCE10} 
 do
   ./perl -I lib/ %{SOURCE1} %{_arch} $i MANIFEST.all MANIFEST.all.tmp %{thread_arch} 
   mv MANIFEST.all.tmp MANIFEST.all
 done
+
+# rawhide?  if so, strip out suidperl
+%if %{suidperl}
+  ./perl -I lib/ %{SOURCE1} %{_arch} %{SOURCE9} MANIFEST.all MANIFEST.all.tmp %{thread_arch} 
+  mv MANIFEST.all.tmp MANIFEST.all
+%endif
 
 
 # fix the rest of the stuff
@@ -334,11 +369,6 @@ xargs ./perl -I lib/ -i -p -e "s|$RPM_BUILD_ROOT||g;" MANIFEST.all
 %files -f MANIFEST.all
 %defattr(-,root,root)
 
-%if %ndbm
-%files -f %{SOURCE8} NDBM_File
-%defattr(-,root,root)
-%endif
-
 %files -f %{SOURCE5} CPAN
 %defattr(-,root,root)
 
@@ -348,9 +378,19 @@ xargs ./perl -I lib/ -i -p -e "s|$RPM_BUILD_ROOT||g;" MANIFEST.all
 %files -f %{SOURCE7} DB_File
 %defattr(-,root,root)
 
+%if %ndbm
+%files -f %{SOURCE8} NDBM_File
+%defattr(-,root,root)
+%endif
+
+%if %{suidperl}
+%files -f %{SOURCE9} suidperl
+%defattr(-,root,root)
+%endif
+
 %changelog
-* Mon Mar 25 2002 Nalin Dahyabhai <nalin@redhat.com>
-- rebuild
+* Tue Mar 26 2002 Chip Turner <cturner@minbar.devel.redhat.com>
+- restructuring of some directories, alteration of @INC
 
 * Thu Dec 20 2001 Chip Turner <cturner@redhat.com>
 - remove ndbm completely
