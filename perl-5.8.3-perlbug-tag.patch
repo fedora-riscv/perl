@@ -1,0 +1,27 @@
+This patch fixes perlbug so that it doesn't contain the exact build
+time in the script.  This allows the script to be shared on multiple
+arches and not generate an RPM conflicts.
+
+--- perl-5.8.4/utils/perlbug.PL.notag	2004-08-23 10:44:45.822726077 -0400
++++ perl-5.8.4/utils/perlbug.PL	2004-08-23 10:46:40.155237161 -0400
+@@ -64,7 +64,7 @@
+     eval 'exec $Config{perlpath} -S \$0 \${1+"\$@"}'
+ 	if \$running_under_some_shell;
+ 
+-my \$config_tag1 = '$extract_version - $Config{cf_time}';
++my \$config_tag1 = '$extract_version';
+ 
+ my \$patchlevel_date = $patchlevel_date;
+ my \$patch_tags = '$patch_tags';
+@@ -598,9 +598,8 @@
+     print OUT <<EFF;
+ ---
+ EFF
+-    print OUT "This perlbug was built using Perl $config_tag1\n",
+-	    "It is being executed now by  Perl $config_tag2.\n\n"
+-	if $config_tag2 ne $config_tag1;
++    print OUT "This perlbug was built using Perl $config_tag1 in the Red Hat build system.\n",
++	    "It is being executed now by Perl $config_tag2.\n\n";
+ 
+     print OUT <<EOF;
+ Site configuration information for perl $perl_version:

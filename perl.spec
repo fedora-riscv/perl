@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.5
-%define perlrel 2
+%define perlrel 3
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -56,6 +56,7 @@ Patch9: perl-5.7.3-syslog.patch
 # Patch10: perl-5.8.0-notty.patch
 Patch11: perl-5.8.3-fullinc.patch
 Patch12: perl-5.8.5-incpush.patch
+Patch13: perl-5.8.3-perlbug-tag.patch
 
 %define __perl_requires %{SOURCE11}
 
@@ -201,6 +202,7 @@ more secure running of setuid perl scripts.
 # %%patch8 -p1 
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
 
 %patch17 -p1
 
@@ -387,6 +389,9 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Mon Aug 23 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-2
+- fix conflicting file when building on x86_64 and i386
+
 * Sat Jul 24 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-1
 - add Provides: Carp::Heavy to fix new dep error (bz 128507)
 
