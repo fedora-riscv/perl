@@ -3,7 +3,7 @@
 %define suidperl   1
 
 %define perlver 5.8.0
-%define perlrel 50
+%define perlrel 51
 %define perlepoch 2
 %define cpanver 1.61
 %define dbfilever 1.804
@@ -305,6 +305,8 @@ PKGS	= glibc-devel gdbm-devel gpm-devel libgr-devel libjpeg-devel \
 	  rpm-devel
 STDH	= \$(filter %{_includedir}/include/%%, \$(shell rpm -q --queryformat '[%%{FILENAMES}\n]' \$(PKGS)))
 STDH	+=\$(wildcard %{_includedir}/linux/*.h) \
+	  \$(wildcard %{_includedir}/bits/*.h)  \
+	  \$(wildcard %{_includedir}/sys/*.h)  \
 	  \$(wildcard %{_includedir}/scsi/*.h) 
 # \$(wildcard %{_includedir}/asm/*.h)
 GCCDIR	= \$(shell gcc --print-file-name include)
@@ -382,6 +384,9 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Thu Aug 29 2002 Chip Turner <cturner@redhat.com>
+- add a few new directories to h2ph to produce better .ph files
+
 * Thu Aug 15 2002 Chip Turner <cturner@redhat.com>
 - change from lynx to links in CPAN.pm
 
