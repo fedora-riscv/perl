@@ -3,7 +3,7 @@
 %define suidperl   1
 
 %define perlver 5.8.0
-%define perlrel 55.1
+%define perlrel 64
 %define perlepoch 2
 %define cpanver 1.61
 %define dbfilever 1.804
@@ -38,10 +38,6 @@ Group: Development/Languages
 Vendor       : Red Hat, Inc.
 Distribution : Red Hat Linux
 
-# temporary til 64bit issues are resolved
-#ExcludeArch: ia64
-#ExcludeArch: alpha
-
 Source0: ftp://ftp.perl.org/pub/perl/CPAN/src/perl-%{perlver}.tar.bz2
 Source1: clean-manifest.pl
 Source5: MANIFEST.CPAN
@@ -61,8 +57,6 @@ Patch6: perl-5.8.0-fhs.patch
 Patch7: perl-5.6.0-buildroot.patch
 Patch8: perl-5.8.0-errno.patch
 Patch9: perl-5.7.3-syslog.patch
-Patch10: perl-5.8.0-s390.patch
-
 
 %define __find_requires %{SOURCE11}
 
@@ -70,15 +64,6 @@ Obsoletes: perl-NDBM_File
 Obsoletes: perl-Digest-MD5
 Obsoletes: perl-MIME-Base64
 Obsoletes: perl-libnet
-
-# for some reason, sys/types.h and sys/socket.h need to be included
-# BEFORE perl.h when the types are used.  TODO: clean this.
-# Patch10: perl-5.6.1-socketinc.patch
-
-# ia64 doesn't include the kernel's define for ia64 page size.
-# according to notting@redhat.com, the RH kernel is usually compiled
-# with 16kb size, so...
-# Patch12: perl-5.6.1-ia64pagesize.patch
 
 # Configure doesn't listen well when we say no ndbm.  When it links in, it then conflicts with berkeley db.  oops.
 Patch16: perl-5.8.0-nondbm.patch
@@ -93,8 +78,19 @@ Patch18: perl-5.8.0-manext.patch
 Patch19: perl-5.8.0-links.patch
 Patch20: perl-5.8.0-pager.patch
 
+# arch-specific patches
+Patch100: perl-5.8.0-s390.patch
+Patch101: perl-5.8.0-libdir64.patch
+
+# some post-5.8.0 patches
+Patch200: perl-5.8.0-local-utf8.patch
+Patch201: perl-5.8.0-upstream-17781.patch
+Patch202: perl-5.8.0-upstream-17927.patch
+Patch206: perl-5.8.0-upstream-18061.patch
+Patch207: perl-5.8.0-upstream-18086.patch
+
 Buildroot: %{_tmppath}/%{name}-root
-BuildRequires: gawk, grep, tcsh
+BuildRequires: gawk, grep, tcsh, gdbm-devel, db4-devel
 
 # By definition of 'do' (see 'man perlfunc') this package provides all
 # versions of perl previous to it.
@@ -229,7 +225,7 @@ more secure running of setuid perl scripts.
 #%xpatch7 -p1 -b .buildroot
 %patch8 -p1 -b .errno
 %patch9 -p1 -b .syslog
-%patch10 -p1 -b .s390
+#%%patch10 -p1 -b .incs
 
 # %xpatch16 -p1 -b .nondbm
 
@@ -239,6 +235,20 @@ more secure running of setuid perl scripts.
 %patch19 -p1 -b .links
 %patch20 -p1 -b .pager
 
+%ifarch s390 s390x
+%patch100 -p1 -b .s390x
+%endif
+
+%ifarch x86_64 sparc64 s390x
+%patch101 -p1 -b .libdir64
+%endif
+
+%patch200 -p0
+%patch201 -p1
+%patch202 -p1
+%patch206 -p1
+# %%xpatch207 -p1
+
 find . -name \*.orig -exec rm -fv {} \;
 
 %build
@@ -246,6 +256,17 @@ find . -name \*.orig -exec rm -fv {} \;
 echo "RPM Build arch: %{_arch}"
 
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
+
+# yes; don't use %_libdir so that noarch packages from other OSs
+# arches work correctly :\ the Configure lines below hardcode lib for
+# similar reasons.
+
+%ifarch x86_64 sparc64 s390x
+	mkdir -p $RPM_BUILD_ROOT/usr/lib/perl5/%{perlver}
+	mkdir -p $RPM_BUILD_ROOT/usr/lib/perl5/site_perl/%{perlver}
+	mkdir -p $RPM_BUILD_ROOT/usr/lib/perl5/vendor_perl/%{perlver}
+%endif
+
 sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Dmyhostname=localhost \
 	-Dperladmin=root@localhost \
@@ -253,12 +274,22 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
         -Dcf_by='Red Hat, Inc.' \
 	-Dinstallprefix=$RPM_BUILD_ROOT%{_prefix} \
 	-Dprefix=%{_prefix} \
+%ifarch x86_64 sparc64 s390x
+	-Dlibpth="/usr/local/lib64 /lib64 /usr/lib64" \
+	-Dprivlib="/usr/lib/perl5/%{version}" \
+	-Dsitelib="/usr/lib/perl5/site_perl/%{version}" \
+	-Dvendorlib="/usr/lib/perl5/vendor_perl/%{version}" \
+	-Darchlib="%{_libdir}/perl5/%{perlver}/%{_arch}-%{_os}%{thread_arch}" \
+	-Dsitearch="%{_libdir}/perl5/site_perl/%{perlver}" \
+	-Dvendorarch="%{_libdir}/perl5/vendor_perl/%{perlver}/%{_arch}-%{_os}%{thread_arch}" \
+%endif
 	-Darchname=%{_arch}-%{_os} \
 %ifarch sparc
 	-Ud_longdbl \
 %endif
 	-Dvendorprefix=%{_prefix} \
 	-Dsiteprefix=%{_prefix} \
+	-Dotherlibdirs=/usr/lib/perl5/%{perlver} \
 	-Duseshrplib \
 %if %threading
 	-Dusethreads \
@@ -284,8 +315,7 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Dinstallusrbinperl \
 	-Ubincompat5005 \
 	-Uversiononly \
-	-Dpager='/usr/bin/less -isr' \
-#        -Dotherlibdirs=/usr/lib/perl5/5.6.0/%{_arch}-linux:/usr/lib/perl5/5.6.0:/usr/lib/perl5/vendor_perl/5.6.0/%{_arch}-linux:/usr/lib/perl5/vendor_perl/5.6.0
+	-Dpager='/usr/bin/less -isr'
 
 make -f Makefile
 
@@ -297,7 +327,9 @@ mkdir -p $RPM_BUILD_ROOT
 
 make install -f Makefile
 
-mkdir -p ${RPM_BUILD_ROOT}/usr/lib/perl5/vendor_perl/%{perlver}/%{_arch}-%{_os}
+%ifarch x86_64 sparc64 s390x
+mkdir -p ${RPM_BUILD_ROOT}/usr/lib64/perl5/vendor_perl/%{perlver}/%{_arch}-%{_os}
+%endif
 
 mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
 install -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/pl2pm
@@ -345,8 +377,15 @@ EOF
 %define new_perl_flags LD_LIBRARY_PATH=%{new_arch_lib}/CORE PERL5LIB=%{new_perl_lib}
 %define new_perl %{new_perl_flags} $RPM_BUILD_ROOT/%{_bindir}/perl
 
-find $RPM_BUILD_ROOT -type f -or -type l | grep -v Filter > MANIFEST.all
-find $RPM_BUILD_ROOT -type d -printf "%%%%dir %p\n" | grep -v Filter >> MANIFEST.all
+mkdir -p $RPM_BUILD_ROOT/%{_libdir}/perl5/5.8.0/Net
+install -m 0644 %{SOURCE12} $RPM_BUILD_ROOT/%{_libdir}/perl5/5.8.0/Net/libnet.cfg
+
+find $RPM_BUILD_ROOT -name '*HiRes*' | xargs rm -rfv
+find $RPM_BUILD_ROOT -name '*Filter*' | xargs rm -rfv
+find $RPM_BUILD_ROOT -name '*NDBM*' | xargs rm -rfv
+
+find $RPM_BUILD_ROOT -type f -or -type l > MANIFEST.all
+find $RPM_BUILD_ROOT -type d -printf "%%%%dir %p\n" >> MANIFEST.all
 
 %{new_perl} -i -p -e "s|$RPM_BUILD_ROOT||g;" MANIFEST.all
 cp MANIFEST.all /tmp
@@ -362,8 +401,6 @@ done
   mv MANIFEST.all.tmp MANIFEST.all
 %endif
 
-install -m 0644 %{SOURCE12} $RPM_BUILD_ROOT/usr/lib/perl5/5.8.0/Net/libnet.cfg
-
 # fix the rest of the stuff
 find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 %{new_perl_flags} xargs $RPM_BUILD_ROOT/%{_bindir}/perl -I lib/ -i -p -e "s|$RPM_BUILD_ROOT||g;" MANIFEST.all
@@ -373,6 +410,7 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 
 %files -f MANIFEST.all
 %defattr(-,root,root)
+%config %{_libdir}/perl5/5.8.0/Net/libnet.cfg
 
 %files -f %{SOURCE5} CPAN
 %defattr(-,root,root)
@@ -389,6 +427,16 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Thu Nov  7 2002 Chip Turner <cturner@redhat.com>
+- multilib support when building noarch perl modules
+- integrate upstream bugfix patches
+
+* Tue Sep 10 2002 Chip Turner <cturner@redhat.com>
+- integrate patch for /usr/lib64 instead of /usr/lib from Than Ngo
+
+* Mon Sep  9 2002 Chip Turner <cturner@redhat.com>
+- integrate s390/s390x patch from Florian La Roche
+
 * Sun Sep  1 2002 Chip Turner <cturner@redhat.com>
 - fix pager issues; default to /usr/bin/less -isr
 - more work on pager bug (72125)
