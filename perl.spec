@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.5
-%define perlrel 3
+%define perlrel 4
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -284,7 +284,7 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Ubincompat5005 \
 	-Uversiononly \
 	-Dpager='/usr/bin/less -isr' \
-	-Dinc_version_list='5.8.3 5.8.2 5.8.1 5.8.0' 
+	-Dinc_version_list='5.8.4 5.8.3 5.8.2 5.8.1 5.8.0' 
 
 make -f Makefile
 
