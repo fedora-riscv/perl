@@ -1,165 +1,130 @@
+%define build_rawhide   0
+
+%if %{build_rawhide}
+%define threading  1
+%define largefiles 1
+%define ndbm       0
+%define rhrelease  %{nil}
+%else
+%define threading  0
+%define largefiles 0
+%define ndbm       1
+%define rhrelease  .72.3
+%endif
+
+%define perlver 5.6.1
+%define perlrel 26%{rhrelease}
+%define perlepoch 1
+%define cpanver 1.59_54
+%define dbfilever 1.75
+%define cgiver 2.752
+
+%if %{threading}
+%define thread_arch -thread-multi
+Provides: perl(:WITH_ITHREADS)
+Provides: perl(:WITH_THREADS)
+%else
+%define thread_arch %{nil}
+Provides: perl(:WITHOUT_ITHREADS)
+Provides: perl(:WITHOUT_THREADS)
+%endif
+
+%if %{largefiles}
+Provides: perl(:WITH_LARGEFILES)
+%else
+Provides: perl(:WITHOUT_LARGEFILES)
+%endif
+
 Summary: The Perl programming language.
 Name: perl
-%define perlver 5.6.0
 Version: %{perlver}
-Release: 17
-License: GPL or Artistic
+Release: %{perlrel}
+Epoch: %{perlepoch}
+License: Artistic
 Group: Development/Languages
-Source0: ftp://ftp.perl.org/pub/perl/CPAN/src/perl-%{perlver}.tar.bz2
-Source2: find-provides
-Source3: find-requires
-Source4: find-requires.64
-Patch0: perl5.005_02-buildsys.patch
+
+Packager     : Red Hat, Inc. <http://bugzilla.redhat.com/bugzilla>
+Vendor       : Red Hat, Inc.
+Distribution : Red Hat Linux
+
+Source0: ftp://ftp.perl.org/pub/perl/CPAN/src/perl-%{perlver}.tar.gz
+Source1: clean-manifest.pl
+Source5: MANIFEST.CPAN
+Source6: MANIFEST.CGI
+Source7: MANIFEST.DB_File
+Source8: MANIFEST.NDBM_File
+Source9: system-owned-directories
+
 Patch1: perl-5.6.0-installman.patch
 Patch2: perl5.005_03-db1.patch
 Patch3: perl-5.6.0-nodb.patch
-Patch4: perl-5.6.0-prereq.patch
+Patch4: perl-5.6.1-prereq.patch
 Patch5: perl-5.6.0-root.patch
 Patch6: perl-5.6.0-fhs.patch
 Patch7: perl-5.6.0-buildroot.patch
-Patch8: perl-5.6.0-errno.patch
-Patch9: perl-5.6.0-syslog.patch
-Buildroot: %{_tmppath}/%{name}-root
-BuildPreReq: gawk, grep, tcsh
-BuildRequires: gdbm-devel, db1-devel
-Requires: gdbm, db1
-Epoch: 1
+Patch8: perl-5.6.1-errno.patch
+Patch9: perl-5.6.1-syslog.patch
 
-# ----- Perl module provides.
-Provides: perl(autouse)  
-Provides: perl(blib)  
-Provides: perl(diagnostics)  
-Provides: perl(integer)  
-Provides: perl(less)  
-Provides: perl(lib)  
-Provides: perl(locale)  
-Provides: perl(ops)  
-Provides: perl(overload)  
-Provides: perl(re)  
-Provides: perl(sigtrap)  
-Provides: perl(strict)  
-Provides: perl(subs)  
-Provides: perl(vmsish)  
-Provides: perl(vars)  
-Provides: perl(AnyDBM_File)  
-Provides: perl(AutoLoader) = 5.57
-Provides: perl(AutoSplit) = 1.0305
-Provides: perl(Benchmark) = 1.00
-Provides: perl(Carp)  
-Provides: perl(CGI)  
-Provides: perl(CGI::Carp)  
-Provides: perl(CGI::Cookie)  
-Provides: perl(CGI::Fast)  
-Provides: perl(CGI::Pretty)  
-Provides: perl(CGI::Push)  
-Provides: perl(Class::Struct) = 0.58
-Provides: perl(Class::Struct::Tie_ISA)  
-Provides: perl(CPAN)  
-Provides: perl(CPAN::Author)  
-Provides: perl(CPAN::Bundle)  
-Provides: perl(CPAN::CacheMgr)  
-Provides: perl(CPAN::Complete)  
-Provides: perl(CPAN::Config)  
-Provides: perl(CPAN::Debug)  
-Provides: perl(CPAN::Distribution)  
-Provides: perl(CPAN::Eval)  
-Provides: perl(CPAN::FirstTime) = 1.38
-Provides: perl(CPAN::FTP)  
-Provides: perl(CPAN::FTP::netrc)  
-Provides: perl(CPAN::Index)  
-Provides: perl(CPAN::InfoObj)  
-Provides: perl(CPAN::Mirrored::By)  
-Provides: perl(CPAN::Module)  
-Provides: perl(CPAN::Nox) = 1.00
-Provides: perl(CPAN::Queue)  
-Provides: perl(CPAN::Shell)  
-Provides: perl(CPAN::Tarzip)  
-Provides: perl(Cwd) = 2.02
-Provides: perl(DB)  
-Provides: perl(Devel::SelfStubber) = 1.01
-Provides: perl(DirHandle)  
-Provides: perl(Dumpvalue)  
-Provides: perl(DynaLoader)  
-Provides: perl(English)  
-Provides: perl(Env)  
-Provides: perl(Env::Array)  
-Provides: perl(Env::Array::VMS)  
-Provides: perl(Exporter)  
-Provides: perl(ExtUtils::Command) = 1.01
-Provides: perl(ExtUtils::Embed) = 1.2505
-Provides: perl(ExtUtils::Install) = 1.28
-Provides: perl(ExtUtils::Installed)  
-Provides: perl(ExtUtils::Install::Warn)  
-Provides: perl(ExtUtils::Liblist)  
-Provides: perl(ExtUtils::MakeMaker)  
-Provides: perl(ExtUtils::Manifest) = 1.33
-Provides: perl(ExtUtils::Miniperl)  
-Provides: perl(ExtUtils::Mkbootstrap) = 1.14
-Provides: perl(ExtUtils::Mksymlists) = 1.17
-Provides: perl(ExtUtils::MM_Cygwin)  
-Provides: perl(ExtUtils::MM_OS2)  
-Provides: perl(ExtUtils::MM_Unix)  
-Provides: perl(ExtUtils::MM_VMS)  
-Provides: perl(ExtUtils::MM_Win32)  
-Provides: perl(ExtUtils::MM_Win95)  
-Provides: perl(ExtUtils::Packlist)  
-Provides: perl(ExtUtils::testlib) = 1.11
-Provides: perl(Fatal) = 1.02
-Provides: perl(Fh)  
-Provides: perl(File::Basename) = 2.6
-Provides: perl(FileCache)  
-Provides: perl(File::CheckTree)  
-Provides: perl(File::Compare) = 1.1002
-Provides: perl(File::Copy) = 2.03
-Provides: perl(File::DosGlob)  
-Provides: perl(File::Find)  
-Provides: perl(FileHandle) = 2.00
-Provides: perl(File::Path)  
-Provides: perl(File::Spec) = 0.8
-Provides: perl(File::Spec::Functions)  
-Provides: perl(File::Spec::Mac)  
-Provides: perl(File::Spec::OS2)  
-Provides: perl(File::Spec::Unix)  
-Provides: perl(File::Spec::VMS)  
-Provides: perl(File::Spec::Win32)  
-Provides: perl(File::stat)  
-Provides: perl(FindBin) = 1.42
-Provides: perl(Getopt::Long) = 2.23
-Provides: perl(Getopt::Std) = 1.02
-Provides: perl(I18N::Collate)  
-Provides: perl(IO::Socket::INET) = 1.25
-Provides: perl(IO::Socket::UNIX) = 1.20
-Provides: perl(IPC::Open2) = 1.01
-Provides: perl(IPC::Open3) = 1.0103
-Provides: perl(main)  
-Provides: perl(Math::BigFloat)  
-Provides: perl(Math::BigInt)  
-Provides: perl(Math::Complex) = 1.26
-Provides: perl(Math::Trig) = 1.00
-Provides: perl(MM)  
-Provides: perl(MultipartBuffer)  
-Provides: perl(MY)  
-Provides: perl(Net::hostent)  
-Provides: perl(Net::netent)  
-Provides: perl(Net::Ping) = 2.02
-Provides: perl(Net::protoent)  
-Provides: perl(Net::servent)  
-Provides: perl(Pod::Checker) = 1.098
-Provides: perl(TempFile)  
-Provides: perl(xsubpp::counter)  
-
-# ----- Perl module dependencies.
-#
-# Provide perl-specific find-{provides,requires} until rpm-3.0.4 catches up.
-%define	__find_provides	%{SOURCE2}
-%ifnarch ia64 sparc64 s390x
-%define	__find_requires	%{SOURCE3}
-%else
-%define	__find_requires	%{SOURCE4}
+# put some requires in so the proper packages are delivered via
+# RHN. it would be nice to have a "recommend" tag so that they aren't
+# hard requirements, but if you want to function like the previous
+# perl rpm, you gotta do this.  price of doing business.  note this
+# still allows those subpackages to be upgraded.
+%if !%{build_rawhide}
+Requires: perl-CPAN, perl-CGI, perl-DB_File, perl-NDBM_File
 %endif
+
+%if !%ndbm
+# obsolete NDBM_File in case people had an interim rawhide release
+Obsoletes: perl-NDBM_File
+%endif
+
+# for some reason, sys/types.h and sys/socket.h need to be included
+# BEFORE perl.h when the types are used.  TODO: clean this.
+Patch10: perl-5.6.1-socketinc.patch
+
+# gcc 3.1 likes to complain if /usr/local/include is in the inc path.
+# unfortunately, perl likes to put it there.  so adjust the hint if
+# gcc 3.1 is detected.
+Patch11: perl-5.6.1-gcc31hint.patch
+
+# ia64 doesn't include the kernel's define for ia64 page size.
+# according to notting@redhat.com, the RH kernel is usually compiled
+# with 16kb size, so...
+Patch12: perl-5.6.1-ia64pagesize.patch
+
+# one glob test involves globbing the user's home dir.  problem is, in
+# some build environments (ahem), the user building the RPM doesn't
+# have a homedir.  this adds a check to ensude the user's homedir is a
+# directory (normal -d test)
+Patch13: perl-5.6.1-homeglobtest.patch
+
+Buildroot: %{_tmppath}/%{name}-root
+BuildRequires: gawk, grep, tcsh
+
 # By definition of 'do' (see 'man perlfunc') this package provides all
 # versions of perl previous to it.
-Provides: perl <= %{version}
+Provides: perl <= %{epoch}:%{version}
+
+# These provides are needed by the perl pkg itself with auto-generated perl.req
+Provides: perl(VMS::Filespec)
+Provides: perl(VMS::Stdio)
+Provides: perl(getopts.pl)
+Provides: perl(v5.6.0)
+Provides: perl(vmsish)
+
+# XXX needed by perl-libnet
+Provides: perl(Mac::Files)
+
+# XXX needed by perl-CGI
+Provides: perl(FCGI)
+
+# XXX needed by am-utils
+Provides: perl(ctime.pl)
+
+# more .pl files probided by perl
+Provides: perl(bigint.pl)
+Provides: perl(ftp.pl)
 
 # These modules appear to be missing or break assumptions made by the
 # dependency analysis tools.  Typical problems include refering to
@@ -170,29 +135,65 @@ Provides: perl <= %{version}
 # Provides: perl(Apache)
 # Provides: perl(ExtUtils::MM_Mac)
 # Provides: perl(ExtUtils::XSSymSet)
-# Provides: perl(FCGI)
 # Provides: perl(LWP::UserAgent)
-# Provides: perl(Mac::Files)
 # Provides: perl(URI::URL)
-# Provides: perl(VMS::Filespec)
 
 %description
-Perl is a high-level programming language with roots in C, sed, awk,
-and shell scripting. Perl is good at handling processes and files,
-and is especially good at handling text. Perl's hallmarks are
-practicality and efficiency. While it is used to do a lot of
+Perl is a high-level programming language with roots in C, sed, awk
+and shell scripting.  Perl is good at handling processes and files,
+and is especially good at handling text.  Perl's hallmarks are
+practicality and efficiency.  While it is used to do a lot of
 different things, Perl's most common applications are system
-administration utilities and Web programming. A large portion of the
-CGI scripts on the Web are written in Perl. You need the perl package
-installed on your system so that your system can handle Perl scripts.
+administration utilities and web programming.  A large proportion of
+the CGI scripts on the web are written in Perl.  You need the perl
+package installed on your system so that your system can handle Perl
+scripts.
 
 Install this package if you want to program in Perl or enable your
 system to handle Perl scripts.
 
+%package CPAN
+Version: %{cpanver}
+Release: %{perlrel}
+Summary: CPAN module for Perl
+Group: Development/Languages
+Requires: perl >= %{perlepoch}:%{perlver}-%{perlrel}
+
+%description CPAN
+CPAN modules for Perl
+
+%package CGI
+Version: %{cgiver}
+Release: %{perlrel}
+Summary: CGI modules for Perl
+Group: Development/Languages
+Requires: perl >= %{perlepoch}:%{perlver}-%{perlrel}
+
+%description CGI
+CGI modules for Perl
+
+%package DB_File
+Version: %{dbfilever}
+Release: %{perlrel}
+Summary: DB_File module for Perl
+Group: Development/Languages
+Requires: perl >= %{perlepoch}:%{perlver}-%{perlrel}
+
+%description DB_File
+DB_File modules for Perl
+
+%package NDBM_File
+Version: %{dbfilever}
+Release: %{perlrel}
+Summary: NDBM_File module for Perl
+Group: Development/Languages
+Requires: perl >= %{perlepoch}:%{perlver}-%{perlrel}
+
+%description NDBM_File
+NDBM_File modules for Perl
+
 %prep
 %setup -q
-mkdir modules
-%patch0 -p1 -b .buildsys
 %patch1 -p1 -b .instman
 # Perl does not have a single entry point to define what db library to use
 # so the patch below is mostly broken...
@@ -204,6 +205,14 @@ mkdir modules
 %patch7 -p1 -b .buildroot
 %patch8 -p1 -b .errno
 %patch9 -p1 -b .syslog
+%patch10 -p1 -b .incs
+%patch11 -p1 -b .gcc31
+
+%ifarch ia64
+%patch12 -p1 -b .ia64pagesize
+%endif
+
+%patch13 -p1 -b .globtest
 
 find . -name \*.orig -exec rm -fv {} \;
 
@@ -211,6 +220,7 @@ find . -name \*.orig -exec rm -fv {} \;
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Dcc='%{__cc}' \
+        -Dcf_by='Red Hat, Inc.' \
 	-Dcccdlflags='-fPIC' \
 	-Dinstallprefix=$RPM_BUILD_ROOT%{_prefix} \
 	-Dprefix=%{_prefix} \
@@ -218,16 +228,46 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 %ifarch sparc
 	-Ud_longdbl \
 %endif
+%if %threading
+	-Dusethreads \
+        -Duseithreads \
+%else
+	-Uusethreads \
+        -Uuseithreads \
+%endif
+%if %largefiles
+        -Duselargefiles \
+%else
+        -Uuselargefiles \
+%endif
 	-Dd_dosuid \
 	-Dd_semctl_semun \
 	-Di_db \
+%if %ndbm
 	-Di_ndbm \
+%else
+	-Ui_ndbm \
+%endif
 	-Di_gdbm \
 	-Di_shadow \
 	-Di_syslog \
 	-Dman3ext=3pm \
-	-Uuselargefiles
+        -Dlocincpth="" 
+#        -Dinc_version_list='5.6.0/%{_arch}-%{_os} 5.6.0'
+#        -Dotherlibdirs=/usr/lib/perl5/5.6.0/%{_arch}-linux:/usr/lib/perl5/5.6.0:/usr/lib/perl5/site_perl/5.6.0/%{_arch}-linux:/usr/lib/perl5/site_perl/5.6.0
+
+# temp fix for ugly makefile problems; perl's makedepend adds broken
+# <builtin> amd <command line> targets to some makefiles, for some
+# reason.  this solvesit for now.
+
+find . -type f -name makefile | xargs perl -p -i -e 's/<(builtin|command line|built-in)>//'
+find . -type f -name Makefile | xargs perl -p -i -e 's/<(builtin|command line)>//'
+
 make -f Makefile
+
+%ifnarch ia64
+make -f Makefile test
+%endif
 
 %install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
@@ -267,40 +307,64 @@ fix-config: \$(PHDIR)/Config.pm
 
 EOF
 
+[ -x /usr/lib/rpm/brp-compress ] && /usr/lib/rpm/brp-compress
+
+# build MANIFEST.all
+
+find $RPM_BUILD_ROOT -type f -or -type l > MANIFEST.all
+find $RPM_BUILD_ROOT -type d -printf "%%%%dir %p\n" >> MANIFEST.all
+
+./perl -I lib/ -i -p -e "s|$RPM_BUILD_ROOT||g;" MANIFEST.all
+cp MANIFEST.all /tmp
+
+for i in  %{SOURCE9} %{SOURCE5} %{SOURCE6} %{SOURCE7} %{SOURCE8}
+do
+  ./perl -I lib/ %{SOURCE1} %{_arch} $i MANIFEST.all MANIFEST.all.tmp %{thread_arch} 
+  mv MANIFEST.all.tmp MANIFEST.all
+done
+
+
 # fix the rest of the stuff
 find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
-xargs ./perl -i -p -e "s|$RPM_BUILD_ROOT||g;" $packlist
+xargs ./perl -I lib/ -i -p -e "s|$RPM_BUILD_ROOT||g;" MANIFEST.all
 
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
-%files
+%files -f MANIFEST.all
 %defattr(-,root,root)
-%doc Artistic AUTHORS Changes* Copying README
-%{_bindir}/*
-%{_libdir}/*
-%{_mandir}/*/*
+
+%if %ndbm
+%files -f %{SOURCE8} NDBM_File
+%defattr(-,root,root)
+%endif
+
+%files -f %{SOURCE5} CPAN
+%defattr(-,root,root)
+
+%files -f %{SOURCE6} CGI
+%defattr(-,root,root)
+
+%files -f %{SOURCE7} DB_File
+%defattr(-,root,root)
 
 %changelog
-* Thu Aug  9 2001 Crutcher Dunnavant <crutcher@redhat.com> 5.6.0-17
-- add deps on gdbm and db1, build deps on gdbm-devel and db1-devel; #49553
+* Thu Dec 20 2001 Chip Turner <cturner@redhat.com>
+- remove ndbm completely
 
-* Mon Jun 19 2001 Nalin Dahyabhai <nalin@redhat.com>
-- unbundle the Digest-MD5 module (noted by Charlie Brady) -- perl
-  dependency checking RPM will do most of the heavy lifting
-- mark License as GPL or Artistic
+* Sun Dec 16 2001 Chip Turner <cturner@redhat.com>
+- make rpmlint happy, split out NDBM_File, clean up other spots
+- stopped doing grep -v etc in favor of custom script
 
-* Thu Jun 14 2001 Nalin Dahyabhai <nalin@redhat.com>
-- use /usr/lib/rpm/findprovides.perl to complete the list of perl provides
-- change Copyright: GPL to License: GPL
-- include some of the text documentation files
+* Wed Dec 12 2001 Chip Turner <cturner@redhat.com>
+- cleaning up of ia64 issues, as well as compatibility with gcc 3.1
+  and glibc 2.2.4
 
-* Wed Jun 13 2001 Crutcher Dunnavant <crutcher@redhat.com>
-- added provides to close bug #43081
+* Mon Sep 24 2001 Chip Turner <cturner@redhat.com>
+- changing building of extra modules out of the core perl rpm
 
-* Fri Jun 08 2001 Florian La Roche <Florian.LaRoche@redhat.de>
-- add s390x change to specfile from Oliver Paukstadt
-  <oliver.paukstadt@millenux.com>
+* Mon Sep 17 2001 Chip Turner <cturner@redhat.com>
+- upgrade to 5.6.1, added old INC dirs to maintain compat
 
 * Fri Mar 23 2001 Preston Brown <pbrown@redhat.com>
 - bzip2 source, save some space.
