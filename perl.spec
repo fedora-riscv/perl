@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.5
-%define perlrel 9
+%define perlrel 10
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -405,6 +405,9 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* \
 %endif
 
 %changelog
+* Thu Nov 11 2004 Jeff Johnson <jbj@jbj.org> 3:5.8.5-10
+- rebuild against db-4.3.21.
+
 * Tue Oct 12 2004 Jose Pedro Oliveira <jpo@di.uminho.pt>
 - Corrected the license information (missing GPL).
 - Added the URL tag.
