@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.0
-%define perlrel 88
+%define perlrel 88.3
 %define perlepoch 2
 %define cpanver 1.61
 %define dbfilever 1.804
@@ -88,9 +88,12 @@ Patch21: perl-5.8.0-rpath-make.patch
 Patch100: perl-5.8.0-s390.patch
 Patch101: perl-5.8.0-libdir64.patch
 
-# module updatesd
+# module updates
 Patch202: perl-5.8.0-Safe2.09.patch
 Patch203: perl-5.8.0-CGI2.89.patch
+
+# security patches
+Patch1000: perl-5.8.0-cssfix.patch
 
 # pseudo-official module updates (mostly from cvs, etc)
 # Patch300: perl-5.8.0-makemaker-prefix.patch
@@ -339,29 +342,31 @@ more secure running of setuid perl scripts.
 #%patch2 -p1
 # %patch3 -p1 -b .nodb
 #%patch4 -p1 -b .prereq
-%patch5 -p1 -b .root
+%patch5 -p1
 %patch6 -p1
 #%xpatch7 -p1 -b .buildroot
-%patch8 -p1 -b .errno
-%patch9 -p1 -b .syslog
+%patch8 -p1
+%patch9 -p1
 #%%patch10 -p1 -b .incs
 
 # %xpatch16 -p1 -b .nondbm
 
-%patch17 -p1 -b .sharedlinker
+%patch17 -p1
 
 %patch18 -p1
-%patch19 -p1 -b .links
-%patch21 -p1 -b .rpathmake
+%patch19 -p1
+%patch21 -p1
 
-%patch100 -p1 -b .s390x
+%patch100 -p1
 
 %ifarch %{multilib_64_archs}
-%patch101 -p1 -b .libdir64
+%patch101 -p1
 %endif
 
-%patch202 -p1 -b .safe
-%patch203 -p1 -b .newcgi
+%patch202 -p1
+%patch203 -p1
+
+%patch1000 -p1
 
 # this is ugly, but apparently necessary.
 /usr/bin/dos2unix win32/Makefile win32/makefile.mk README.win32 README.dos jpl/JNI/JNI.xs jpl/JNI/Makefile.PL
@@ -474,7 +479,7 @@ more secure running of setuid perl scripts.
 %patch18379 -p1
 %patch18380 -p1
 
-%patch32000 -p1 -b .protofix
+%patch32000 -p1
 %patch32001 -p1
 
 find . -name \*.orig -exec rm -fv {} \;
@@ -655,6 +660,9 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Tue Aug 12 2003 Chip Turner <cturner@redhat.com> 2:5.8.0-88.1
+- fix for CAN-2003-0615
+
 * Tue Feb 18 2003 Chip Turner <cturner@redhat.com>
 - fix MANIFEST.DB_File handling for #83410; problem was unsubstituted
   %{_libdir} that crept in with multilib
