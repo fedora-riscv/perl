@@ -3,7 +3,7 @@
 %define suidperl   1
 
 %define perlver 5.8.0
-%define perlrel 55
+%define perlrel 55.1
 %define perlepoch 2
 %define cpanver 1.61
 %define dbfilever 1.804
@@ -61,6 +61,8 @@ Patch6: perl-5.8.0-fhs.patch
 Patch7: perl-5.6.0-buildroot.patch
 Patch8: perl-5.8.0-errno.patch
 Patch9: perl-5.7.3-syslog.patch
+Patch10: perl-5.8.0-s390.patch
+
 
 %define __find_requires %{SOURCE11}
 
@@ -227,7 +229,7 @@ more secure running of setuid perl scripts.
 #%xpatch7 -p1 -b .buildroot
 %patch8 -p1 -b .errno
 %patch9 -p1 -b .syslog
-#%%patch10 -p1 -b .incs
+%patch10 -p1 -b .s390
 
 # %xpatch16 -p1 -b .nondbm
 
