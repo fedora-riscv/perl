@@ -4,8 +4,8 @@
 
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
-%define perlver 5.8.3
-%define perlrel 18
+%define perlver 5.8.4
+%define perlrel 3
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -24,6 +24,7 @@ Provides: perl(:MODULE_COMPAT_5.8.0)
 Provides: perl(:MODULE_COMPAT_5.8.1)
 Provides: perl(:MODULE_COMPAT_5.8.2)
 Provides: perl(:MODULE_COMPAT_5.8.3)
+Provides: perl(:MODULE_COMPAT_5.8.4)
 
 %if %{largefiles}
 Provides: perl(:WITH_LARGEFILES)
@@ -39,7 +40,7 @@ Epoch: %{perlepoch}
 License: Artistic
 Group: Development/Languages
 
-Source0: perl-5.8.3.tar.gz
+Source0: perl-5.8.4.tar.gz
 Source1: clean-manifest.pl
 Source9: MANIFEST.suidperl
 Source10: system-owned-directories
@@ -49,11 +50,11 @@ Source12: perl-5.8.0-libnet.cfg
 Patch5: perl-5.8.0-root.patch
 # Patch6: perl-5.8.0-fhs.patch
 Patch7: perl-5.6.0-buildroot.patch
-Patch8: perl-5.8.0-errno.patch
+# Patch8: perl-5.8.0-errno.patch
 Patch9: perl-5.7.3-syslog.patch
 # Patch10: perl-5.8.0-notty.patch
 Patch11: perl-5.8.3-fullinc.patch
-Patch12: perl-5.8.3-incpush.patch
+Patch12: perl-5.8.4-incpush.patch
 
 %define __perl_requires %{SOURCE11}
 
@@ -192,9 +193,9 @@ more secure running of setuid perl scripts.
 %endif
 
 %prep
-%setup -q -n perl-5.8.3
+%setup -q -n perl-5.8.4
 %patch5 -p1
-%patch8 -p1 
+# %%patch8 -p1 
 %patch11 -p1
 %patch12 -p1
 
@@ -230,7 +231,7 @@ echo "RPM Build arch: %{_arch}"
 %endif
 
 sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
-	-Dversion=5.8.3 \
+	-Dversion=5.8.4 \
 	-Dmyhostname=localhost \
 	-Dperladmin=root@localhost \
 	-Dcc='%{__cc}' \
@@ -278,7 +279,7 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Ubincompat5005 \
 	-Uversiononly \
 	-Dpager='/usr/bin/less -isr' \
-	-Dinc_version_list='5.8.2 5.8.1 5.8.0' 
+	-Dinc_version_list='5.8.3 5.8.2 5.8.1 5.8.0' 
 
 make -f Makefile
 
@@ -291,7 +292,7 @@ mkdir -p $RPM_BUILD_ROOT
 make install -f Makefile
 
 pushd $RPM_BUILD_ROOT/%{_libdir}/perl5
-for i in  5.8.0/%{_arch}-%{_os}%{thread_arch}/CORE/ 5.8.1/%{_arch}-%{_os}%{thread_arch}/CORE/ 5.8.2/%{_arch}-%{_os}%{thread_arch}/CORE/; do
+for i in  5.8.0/%{_arch}-%{_os}%{thread_arch}/CORE/ 5.8.1/%{_arch}-%{_os}%{thread_arch}/CORE/ 5.8.2/%{_arch}-%{_os}%{thread_arch}/CORE/ 5.8.3/%{_arch}-%{_os}%{thread_arch}/CORE/; do
   mkdir -p $i
   pushd $i
   ln -s ../../../%{perlver}/%{_arch}-%{_os}%{thread_arch}/CORE/libperl.so libperl.so
@@ -383,6 +384,12 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Mon Jun 28 2004 Chip Turner <cturner@redhat.com> 3:5.8.4-1
+- update to 5.8.4, remove patch 8
+
+* Tue Jun 15 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
 * Thu Apr 15 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-18
 - add patch to fix empty RPATH issue on perl module compile
 
