@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.6
-%define perlrel 2
+%define perlrel 3
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -232,7 +232,7 @@ find . -name \*.orig -exec rm -fv {} \;
 
 echo "RPM Build arch: %{_arch}"
 
-[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
+rm -rf $RPM_BUILD_ROOT
 
 # yes; don't use %_libdir so that noarch packages from other OSs
 # arches work correctly :\ the Configure lines below hardcode lib for
@@ -398,8 +398,10 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* \
   -name .packlist -o -name perllocal.pod -o -name config.h | \
     %{new_perl_flags} xargs $RPM_BUILD_ROOT/%{_bindir}/perl -I lib/ -i -p -e "s|$RPM_BUILD_ROOT||g;" MANIFEST.all
 
+chmod -R u+w $RPM_BUILD_ROOT/*
+
 %clean
-[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
+rm -rf $RPM_BUILD_ROOT
 
 %files -f MANIFEST.all
 %defattr(-,root,root,-)
@@ -410,6 +412,9 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* \
 %endif
 
 %changelog
+* Sat Jan 29 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.6-3
+- bugzilla: 127025, fix strip warnings
+
 * Tue Jan 18 2005 Chip Turner <cturner@redhat.com> - 3:5.8.6-2
 - bugzilla: 145448, fix invalid utf8 in changelog
 
