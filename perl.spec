@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.6
-%define perlrel 3
+%define perlrel 4
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -61,6 +61,7 @@ Patch11: perl-5.8.3-fullinc.patch
 Patch12: perl-5.8.6-incpush.patch
 Patch13: perl-5.8.3-perlbug-tag.patch
 Patch14: perl-5.8.5-dashI.patch
+Patch15: perl-5.8.5-incorder.patch
 
 %define __perl_requires %{SOURCE11}
 
@@ -210,6 +211,7 @@ more secure running of setuid perl scripts.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
 
 %patch17 -p1
 
@@ -412,6 +414,10 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Tue Mar  8 2005 Chip Turner <cturner@redhat.com> - 3:5.8.6-4
+- add patch to put site_perl and vendor_perl before core perl dirs, to
+  allow for overriding modules
+
 * Sat Jan 29 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.6-3
 - bugzilla: 127025, fix strip warnings
 
