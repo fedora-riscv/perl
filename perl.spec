@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.5
-%define perlrel 1
+%define perlrel 2
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -153,6 +153,8 @@ Provides: perl(termcap.pl)
 Provides: perl(timelocal.pl)
 Provides: perl(utf8_heavy.pl)
 Provides: perl(validate.pl)
+
+Provides: perl(Carp::Heavy)
 
 # These modules appear to be missing or break assumptions made by the
 # dependency analysis tools.  Typical problems include refering to
@@ -385,6 +387,9 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Sat Jul 24 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-1
+- add Provides: Carp::Heavy to fix new dep error (bz 128507)
+
 * Thu Jul 22 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-1
 - update to 5.8.5
 
