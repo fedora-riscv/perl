@@ -5,7 +5,7 @@
 %define largefiles 0
 %define suidperl   1
 %define ndbm       1
-%define rhrelease  .99.6
+%define rhrelease  .99.6a
 %else
 %define threading  0
 %define largefiles 0
@@ -290,7 +290,7 @@ find . -type f -name Makefile | xargs perl -p -i -e 's/<(builtin|command line)>/
 
 make -f Makefile
 
-%ifnarch ia64
+%ifnarch ia64 s390 s390x
 make -f Makefile test
 %endif
 
