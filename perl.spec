@@ -2,10 +2,10 @@ Summary: The Perl programming language.
 Name: perl
 %define perlver 5.6.0
 Version: %{perlver}
-Release: 10a
+Release: 12
 Copyright: GPL
 Group: Development/Languages
-Source0: ftp://ftp.perl.org/pub/perl/CPAN/src/perl-%{perlver}.tar.gz
+Source0: ftp://ftp.perl.org/pub/perl/CPAN/src/perl-%{perlver}.tar.bz2
 Source1: ftp://ftp.perl.org/pub/CPAN/modules/by-module/Digest/Digest-MD5-2.09.tar.gz
 Source2: find-provides
 Source3: find-requires
@@ -182,8 +182,11 @@ xargs ./perl -i -p -e "s|$RPM_BUILD_ROOT||g;" $packlist
 %{_mandir}/*/*
 
 %changelog
-* Tue Apr  3 2001 Crutcher Dunnavant <crutcher@redhat.com>
-- rebuild for DB3 breakage.
+* Fri Mar 23 2001 Preston Brown <pbrown@redhat.com>
+- bzip2 source, save some space.
+
+* Thu Dec  7 2000 Crutcher Dunnavant <crutcher@redhat.com>
+- initial rebuild for 7.1
 
 * Tue Sep 12 2000 Bill Nottingham <notting@redhat.com>
 - fix dependencies on ia64/sparc64
