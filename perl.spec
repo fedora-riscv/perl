@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.6
-%define perlrel 4
+%define perlrel 5
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -104,6 +104,8 @@ Patch100: perl-5.8.1-fpic.patch
 Patch101: perl-5.8.0-libdir64.patch
 
 Patch32002: perl-5.8.0-nptlhint.patch
+
+Patch32003: perl-5.8.6-libresolv.patch
 
 # module updatesd
 # Patch202: perl-5.8.0-Safe2.09.patch
@@ -227,6 +229,8 @@ more secure running of setuid perl scripts.
 %endif
 
 %patch32002 -p1
+
+%patch32003 -p1
 
 find . -name \*.orig -exec rm -fv {} \;
 
@@ -416,6 +420,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Thu Mar 17 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.6-5
+- bug 151127: fix to use libresolv instead of libbind (perl-5.8.6-libresolv.patch).
+
 * Tue Mar  8 2005 Chip Turner <cturner@redhat.com> - 3:5.8.6-4
 - add patch to put site_perl and vendor_perl before core perl dirs, to
   allow for overriding modules
