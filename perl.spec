@@ -369,6 +369,12 @@ find $RPM_BUILD_ROOT -type f -or -type l > MANIFEST.all
 find $RPM_BUILD_ROOT -type d -printf "%%%%dir %p\n" >> MANIFEST.all
 
 %{new_perl} -i -p -e "s|$RPM_BUILD_ROOT||g;" MANIFEST.all
+
+# add .gz to all the entries in the man directories.  necessary since
+# brp-compress takes place after the manifest is built but the %files
+# section must match what it ends up renaming files into
+%{new_perl} -i -p -e 's((^/usr/share/man/.*))($1.gz)g' MANIFEST.all
+
 cp MANIFEST.all /tmp
 
 for i in  %{SOURCE10} 
