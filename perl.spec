@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.6
-%define perlrel 1
+%define perlrel 2
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -20,7 +20,7 @@ Provides: perl(:WITHOUT_ITHREADS)
 Provides: perl(:WITHOUT_THREADS)
 %endif
 
-%define perlmodcompat 5.8.4 5.8.3 5.8.2 5.8.1 5.8.0
+%define perlmodcompat 5.8.5 5.8.4 5.8.3 5.8.2 5.8.1 5.8.0
 Provides: perl(:MODULE_COMPAT_5.8.0)
 Provides: perl(:MODULE_COMPAT_5.8.1)
 Provides: perl(:MODULE_COMPAT_5.8.2)
@@ -410,6 +410,9 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* \
 %endif
 
 %changelog
+* Tue Jan 18 2005 Chip Turner <cturner@redhat.com> - 3:5.8.6-1
+- bugzilla: 145447, add 5.8.5 to perlmodcompat list
+
 * Mon Jan 17 2005 Chip Turner <cturner@redhat.com> - 3:5.8.6-1
 - update to 5.8.6
 
