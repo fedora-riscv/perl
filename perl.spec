@@ -2,7 +2,7 @@ Summary: The Perl programming language.
 Name: perl
 %define perlver 5.6.0
 Version: %{perlver}
-Release: 16
+Release: 17
 License: GPL or Artistic
 Group: Development/Languages
 Source0: ftp://ftp.perl.org/pub/perl/CPAN/src/perl-%{perlver}.tar.bz2
@@ -21,6 +21,8 @@ Patch8: perl-5.6.0-errno.patch
 Patch9: perl-5.6.0-syslog.patch
 Buildroot: %{_tmppath}/%{name}-root
 BuildPreReq: gawk, grep, tcsh
+BuildRequires: gdbm-devel, db1-devel
+Requires: gdbm, db1
 Epoch: 1
 
 # ----- Perl module provides.
@@ -175,15 +177,14 @@ Provides: perl <= %{version}
 # Provides: perl(VMS::Filespec)
 
 %description
-Perl is a high-level programming language with roots in C, sed, awk
-and shell scripting.  Perl is good at handling processes and files,
-and is especially good at handling text.  Perl's hallmarks are
-practicality and efficiency.  While it is used to do a lot of
+Perl is a high-level programming language with roots in C, sed, awk,
+and shell scripting. Perl is good at handling processes and files,
+and is especially good at handling text. Perl's hallmarks are
+practicality and efficiency. While it is used to do a lot of
 different things, Perl's most common applications are system
-administration utilities and web programming.  A large proportion of
-the CGI scripts on the web are written in Perl.  You need the perl
-package installed on your system so that your system can handle Perl
-scripts.
+administration utilities and Web programming. A large portion of the
+CGI scripts on the Web are written in Perl. You need the perl package
+installed on your system so that your system can handle Perl scripts.
 
 Install this package if you want to program in Perl or enable your
 system to handle Perl scripts.
@@ -281,6 +282,9 @@ xargs ./perl -i -p -e "s|$RPM_BUILD_ROOT||g;" $packlist
 %{_mandir}/*/*
 
 %changelog
+* Thu Aug  9 2001 Crutcher Dunnavant <crutcher@redhat.com> 5.6.0-17
+- add deps on gdbm and db1, build deps on gdbm-devel and db1-devel; #49553
+
 * Mon Jun 19 2001 Nalin Dahyabhai <nalin@redhat.com>
 - unbundle the Digest-MD5 module (noted by Charlie Brady) -- perl
   dependency checking RPM will do most of the heavy lifting
