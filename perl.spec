@@ -2,13 +2,14 @@ Summary: The Perl programming language.
 Name: perl
 %define perlver 5.6.0
 Version: %{perlver}
-Release: 9
+Release: 10
 Copyright: GPL
 Group: Development/Languages
 Source0: ftp://ftp.perl.org/pub/perl/CPAN/src/perl-%{perlver}.tar.gz
 Source1: ftp://ftp.perl.org/pub/CPAN/modules/by-module/Digest/Digest-MD5-2.09.tar.gz
 Source2: find-provides
 Source3: find-requires
+Source4: find-requires.64
 Patch0: perl5.005_02-buildsys.patch
 Patch1: perl-5.6.0-installman.patch
 Patch2: perl5.005_03-db1.patch
@@ -28,8 +29,11 @@ Epoch: 1
 #
 # Provide perl-specific find-{provides,requires} until rpm-3.0.4 catches up.
 %define	__find_provides	%{SOURCE2}
+%ifnarch ia64 sparc64
 %define	__find_requires	%{SOURCE3}
-
+%else
+%define	__find_requires	%{SOURCE4}
+%endif
 # By definition of 'do' (see 'man perlfunc') this package provides all
 # versions of perl previous to it.
 Provides: perl <= %{version}
@@ -178,6 +182,9 @@ xargs ./perl -i -p -e "s|$RPM_BUILD_ROOT||g;" $packlist
 %{_mandir}/*/*
 
 %changelog
+* Tue Sep 12 2000 Bill Nottingham <notting@redhat.com>
+- fix dependencies on ia64/sparc64
+
 * Mon Aug  7 2000 Nalin Dahyabhai <nalin@redhat.com>
 - replace the deprecated MD5 with Digest::MD5 (has to be here for cleanfeed)
 - obsolete: perl-Digest-MD5
