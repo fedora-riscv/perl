@@ -1,41 +1,15 @@
-%define build_rawhide   1
-
-%if %{build_rawhide}
-%define threading  0
-%define largefiles 0
-%define suidperl   1
-%define ndbm       1
-%define rhrelease  .99.6a
-%else
-%define threading  0
-%define largefiles 0
-%define suidperl   0
-%define ndbm       1
-%define rhrelease  .72.6
-%endif
+%define thread_arch %{nil}
 
 %define perlver 5.6.1
-%define perlrel 34%{rhrelease}
+%define perlrel 36.1.73
 %define perlepoch 1
 %define cpanver 1.59_54
 %define dbfilever 1.75
 %define cgiver 2.752
 
-%if %{threading}
-%define thread_arch -thread-multi
-Provides: perl(:WITH_ITHREADS)
-Provides: perl(:WITH_THREADS)
-%else
-%define thread_arch %{nil}
 Provides: perl(:WITHOUT_ITHREADS)
 Provides: perl(:WITHOUT_THREADS)
-%endif
-
-%if %{largefiles}
-Provides: perl(:WITH_LARGEFILES)
-%else
 Provides: perl(:WITHOUT_LARGEFILES)
-%endif
 
 Summary: The Perl programming language.
 Name: perl
@@ -72,14 +46,7 @@ Patch9: perl-5.6.1-syslog.patch
 # hard requirements, but if you want to function like the previous
 # perl rpm, you gotta do this.  price of doing business.  note this
 # still allows those subpackages to be upgraded.
-%if !%{build_rawhide}
-Requires: perl-CPAN, perl-CGI, perl-DB_File, perl-NDBM_File
-%endif
-
-%if !%ndbm
-# obsolete NDBM_File in case people had an interim rawhide release
-Obsoletes: perl-NDBM_File
-%endif
+Requires: perl-CPAN, perl-CGI, perl-DB_File, perl-NDBM_File, perl-suidperl
 
 # for some reason, sys/types.h and sys/socket.h need to be included
 # BEFORE perl.h when the types are used.  TODO: clean this.
@@ -103,6 +70,11 @@ Patch13: perl-5.6.1-homeglobtest.patch
 
 # let's add INSTALLDIRS=vendor support to MakeMaker
 Patch14: perl-5.6.1-makemaker.patch
+
+# security patches
+Patch1000: perl-5.6.1-cssfix.patch
+Patch1001: perl-5.6.1-safe.patch
+Patch1002: perl-5.6.1-solartmp.patch
 
 Buildroot: %{_tmppath}/%{name}-root
 BuildRequires: gawk, grep, tcsh
@@ -197,7 +169,6 @@ Requires: perl >= %{perlepoch}:%{perlver}-%{perlrel}
 %description NDBM_File
 NDBM_File modules for Perl
 
-%if %{suidperl}
 %package suidperl
 Version: %{perlver}
 Release: %{perlrel}
@@ -208,31 +179,34 @@ Requires: perl = %{perlepoch}:%{perlver}-%{perlrel}
 %description suidperl
 suidperl is a setuid binary copy of perl that allows for (hopefully)
 more secure running of setuid perl scripts.
-%endif
 
 %prep
 %setup -q
-%patch1 -p1 -b .instman
+%patch1 -p1 
 # Perl does not have a single entry point to define what db library to use
 # so the patch below is mostly broken...
 #%patch2 -p1
-%patch3 -p1 -b .nodb
-%patch4 -p1 -b .prereq
-%patch5 -p1 -b .root
-%patch6 -p1 -b .fhs
-%patch7 -p1 -b .buildroot
-%patch8 -p1 -b .errno
-%patch9 -p1 -b .syslog
-%patch10 -p1 -b .incs
-%patch11 -p1 -b .gcc31
+%patch3 -p1 
+%patch4 -p1 
+%patch5 -p1 
+%patch6 -p1 
+%patch7 -p1 
+%patch8 -p1 
+%patch9 -p1 
+%patch10 -p1 
+%patch11 -p1 
 
 %ifarch ia64
-%patch12 -p1 -b .ia64pagesize
+%patch12 -p1 
 %endif
 
-%patch13 -p1 -b .globtest
+%patch13 -p1 
 
-%patch14 -p1 -b .makemaker
+%patch14 -p1 
+
+%patch1000 -p1
+%patch1001 -p1
+%patch1002 -p1
 
 find . -name \*.orig -exec rm -fv {} \;
 
@@ -250,35 +224,18 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 %endif
 	-Dvendorprefix=%{_prefix} \
 	-Dsiteprefix=%{_prefix} \
-%if %threading
-	-Dusethreads \
-        -Duseithreads \
-%else
 	-Uusethreads \
         -Uuseithreads \
-%endif
-%if %largefiles
-        -Duselargefiles \
-%else
         -Uuselargefiles \
-%endif
 	-Dd_dosuid \
 	-Dd_semctl_semun \
 	-Di_db \
-%if %ndbm
 	-Di_ndbm \
-%else
-	-Ui_ndbm \
-%endif
 	-Di_gdbm \
 	-Di_shadow \
 	-Di_syslog \
 	-Dman3ext=3pm \
-%if %{build_rawhide}
-#        -Dlocincpth=""
-%else
         -Dinc_version_list='5.6.0/%{_arch}-%{_os} 5.6.0'
-%endif
 #        -Dotherlibdirs=/usr/lib/perl5/5.6.0/%{_arch}-linux:/usr/lib/perl5/5.6.0:/usr/lib/perl5/vendor_perl/5.6.0/%{_arch}-linux:/usr/lib/perl5/vendor_perl/5.6.0
 
 # temp fix for ugly makefile problems; perl's makedepend adds broken
@@ -290,9 +247,7 @@ find . -type f -name Makefile | xargs perl -p -i -e 's/<(builtin|command line)>/
 
 make -f Makefile
 
-%ifnarch ia64 s390 s390x
-make -f Makefile test
-%endif
+make -f Makefile test || /bin/true
 
 %install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
@@ -347,15 +302,12 @@ cp MANIFEST.all /tmp
 
 for i in  %{SOURCE5} %{SOURCE6} %{SOURCE7} %{SOURCE8} %{SOURCE10} 
 do
-  ./perl -I lib/ %{SOURCE1} %{_arch} $i MANIFEST.all MANIFEST.all.tmp %{thread_arch} 
+  ./perl -I lib/ %{SOURCE1} %{_arch} $i MANIFEST.all MANIFEST.all.tmp %{thread_arch}
   mv MANIFEST.all.tmp MANIFEST.all
 done
 
-# rawhide?  if so, split out suidperl
-%if %{suidperl}
-  ./perl -I lib/ %{SOURCE1} %{_arch} %{SOURCE9} MANIFEST.all MANIFEST.all.tmp %{thread_arch} 
-  mv MANIFEST.all.tmp MANIFEST.all
-%endif
+./perl -I lib/ %{SOURCE1} %{_arch} %{SOURCE9} MANIFEST.all MANIFEST.all.tmp %{thread_arch}
+mv MANIFEST.all.tmp MANIFEST.all
 
 
 # fix the rest of the stuff
@@ -377,17 +329,19 @@ xargs ./perl -I lib/ -i -p -e "s|$RPM_BUILD_ROOT||g;" MANIFEST.all
 %files -f %{SOURCE7} DB_File
 %defattr(-,root,root)
 
-%if %ndbm
 %files -f %{SOURCE8} NDBM_File
 %defattr(-,root,root)
-%endif
 
-%if %{suidperl}
 %files -f %{SOURCE9} suidperl
 %defattr(-,root,root)
-%endif
 
 %changelog
+* Tue Aug 12 2003 Chip Turner <cturner@redhat.com> 1:5.6.1-35.4
+- integrate tmpfile patch from solar designer
+
+* Tue Aug 12 2003 Chip Turner <cturner@redhat.com> 1:5.6.1-35
+- integrate fix for CAN-2003-0615, CAN-2002-1323
+
 * Sun Mar 31 2002 Chip Turner <cturner@redhat.com>
 - split suidperl back out (bug #62215)
 
@@ -466,7 +420,7 @@ xargs ./perl -I lib/ -i -p -e "s|$RPM_BUILD_ROOT||g;" MANIFEST.all
 - add provides for perl modules (from kestes@staff.mail.com).
 
 * Mon Oct 04 1999 Cristian Gafton <gafton@redhat.com>
-- fix the %install so that the MD5 module gets actually installed correctly
+- fix the %%install so that the MD5 module gets actually installed correctly
 
 * Mon Aug 30 1999 Cristian Gafton <gafton@redhat.com>
 - make sure the package builds even when we don't have perl installed on the
