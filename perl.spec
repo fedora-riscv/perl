@@ -295,8 +295,8 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Ubincompat5005 \
 	-Uversiononly \
 	-Dpager='/usr/bin/less -isr' \
-	-Dd_gethostent_r_proto -Dd_endhostent_r_proto -Dd_endprotoent_r_proto -Dd_endservent_r_proto \
-	-Dd_sethostent_r_proto -Dd_setprotoent_r_proto -Dd_setservent_r_proto \
+	-Dd_gethostent_r_proto -Ud_endhostent_r_proto -Ud_endprotoent_r_proto -Ud_endservent_r_proto \
+	-Ud_sethostent_r_proto -Ud_setprotoent_r_proto -Ud_setservent_r_proto \
 	-Dinc_version_list='%{perlmodcompat}' 
 
 make -f Makefile
