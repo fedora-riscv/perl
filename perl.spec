@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.5
-%define perlrel 7
+%define perlrel 8
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -20,6 +20,7 @@ Provides: perl(:WITHOUT_ITHREADS)
 Provides: perl(:WITHOUT_THREADS)
 %endif
 
+%define perlmodcompat 5.8.4 5.8.3 5.8.2 5.8.1 5.8.0
 Provides: perl(:MODULE_COMPAT_5.8.0)
 Provides: perl(:MODULE_COMPAT_5.8.1)
 Provides: perl(:MODULE_COMPAT_5.8.2)
@@ -38,8 +39,9 @@ Name: perl
 Version: %{perlver}
 Release: %{perlrel}
 Epoch: %{perlepoch}
-License: Artistic
+License: Artistic or GPL
 Group: Development/Languages
+Url: http://www.perl.org/
 
 Source0: perl-5.8.5.tar.gz
 Source1: clean-manifest.pl
@@ -286,7 +288,7 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Ubincompat5005 \
 	-Uversiononly \
 	-Dpager='/usr/bin/less -isr' \
-	-Dinc_version_list='5.8.4 5.8.3 5.8.2 5.8.1 5.8.0' 
+	-Dinc_version_list='%{perlmodcompat}' 
 
 make -f Makefile
 
@@ -299,15 +301,11 @@ mkdir -p $RPM_BUILD_ROOT
 make install -f Makefile
 
 pushd $RPM_BUILD_ROOT/%{_libdir}/perl5
-for i in  5.8.0/%{_arch}-%{_os}%{thread_arch}/CORE/ \
-	5.8.1/%{_arch}-%{_os}%{thread_arch}/CORE/ \
-	5.8.2/%{_arch}-%{_os}%{thread_arch}/CORE/ \
-	5.8.3/%{_arch}-%{_os}%{thread_arch}/CORE/ \
-	5.8.4/%{_arch}-%{_os}%{thread_arch}/CORE/ \
-  do
-    mkdir -p $i
-    pushd $i
-    ln -s ../../../%{perlver}/%{_arch}-%{_os}%{thread_arch}/CORE/libperl.so libperl.so
+for i in %{perlmodcompat}; do
+    mkdir -pm 755 $i/%{_arch}-%{_os}%{thread_arch}/CORE
+    mkdir -pm 755 $i/%{_arch}-%{_os}%{thread_arch}/auto
+    pushd $i/%{_arch}-%{_os}%{thread_arch}/CORE
+      ln -s ../../../%{perlver}/%{_arch}-%{_os}%{thread_arch}/CORE/libperl.so libperl.so
     popd
   done
 popd
@@ -349,8 +347,12 @@ do
   mkdir -p $RPM_BUILD_ROOT/$dir
 done
 
-mkdir -pm 755 $RPM_BUILD_ROOT%{_libdir}/perl5/site_perl/%{perlver}/%{_arch}-%{_os}%{thread_arch}/auto
-mkdir -pm 755 $RPM_BUILD_ROOT%{_libdir}/perl5/vendor_perl/%{perlver}/%{_arch}-%{_os}%{thread_arch}/auto
+for i in %{perlver} %{perlmodcompat} ; do
+  mkdir -pm 755 $RPM_BUILD_ROOT%{_libdir}/perl5/site_perl/$i/%{_arch}-%{_os}%{thread_arch}/auto
+  mkdir -pm 755 $RPM_BUILD_ROOT%{_libdir}/perl5/vendor_perl/$i/%{_arch}-%{_os}%{thread_arch}/auto
+done
+
+
 %ifarch %{multilib_64_archs}
 mkdir -pm 755 $RPM_BUILD_ROOT/usr/lib/perl5/site_perl/%{perlver}
 mkdir -pm 755 $RPM_BUILD_ROOT/usr/lib/perl5/vendor_perl/%{perlver}
@@ -362,6 +364,8 @@ install -m 0644 %{SOURCE12} $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perlver}/Net/libn
 find $RPM_BUILD_ROOT -name '*HiRes*' | xargs rm -rfv
 find $RPM_BUILD_ROOT -name '*Filter*' | xargs rm -rfv
 find $RPM_BUILD_ROOT -name '*NDBM*' | xargs rm -rfv
+
+find $RPM_BUILD_ROOT -type f -name '*.bs' -a -empty -exec rm -f {} ';'
 
 find $RPM_BUILD_ROOT -type f -or -type l > MANIFEST.all
 find $RPM_BUILD_ROOT -type d -printf "%%%%dir %p\n" >> MANIFEST.all
@@ -381,22 +385,31 @@ done
 %endif
 
 # fix the rest of the stuff
-find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
-%{new_perl_flags} xargs $RPM_BUILD_ROOT/%{_bindir}/perl -I lib/ -i -p -e "s|$RPM_BUILD_ROOT||g;" MANIFEST.all
+find $RPM_BUILD_ROOT%{_libdir}/perl* \
+  -name .packlist -o -name perllocal.pod -o -name config.h | \
+    %{new_perl_flags} xargs $RPM_BUILD_ROOT/%{_bindir}/perl -I lib/ -i -p -e "s|$RPM_BUILD_ROOT||g;" MANIFEST.all
 
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
 %files -f MANIFEST.all
-%defattr(-,root,root)
+%defattr(-,root,root,-)
 
 %if %{suidperl}
 %files -f %{SOURCE9} suidperl
-%defattr(-,root,root)
+%defattr(-,root,root,-)
 %endif
 
 %changelog
-* Tue Oct 12 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-7
+* Tue Oct 12 2004 Jose Pedro Oliveira <jpo@di.uminho.pt>
+- Corrected the license information (missing GPL).
+- Added the URL tag.
+- Removed empty .bs files.
+- Eliminated several strip generated messages (bug 127025).
+- Corrected problems mentioned in bug 120772
+  (updated Ville Skytt* Tue Oct 12 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-7
+
+* Tue Oct 12 2004 Chip Turner <cturner@redhat.com>
 - bugzilla: 135303, add more missing 5.8.4 paths
 
 * Mon Oct 11 2004 Tim Waugh <twaugh@redhat.com>
@@ -409,7 +422,7 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 - fix conflicting file when building on x86_64 and i386
 
 * Sat Jul 24 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-1
-- add Provides: Carp::Heavy to fix new dep error (bz 128507)
+- Add Provides: Carp::Heavy to fix new dep error (bz 128507)
 
 * Thu Jul 22 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-1
 - update to 5.8.5
@@ -444,6 +457,8 @@ find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 
 * Thu Feb 19 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-7.9.rhl9
 - rebuild
+
+ patch for perl 5.8.4).
 
 * Thu Feb 19 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-7.10.fc1
 - rebuild
