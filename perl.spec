@@ -9,7 +9,7 @@
 %define threading  0
 %define largefiles 0
 %define ndbm       1
-%define rhrelease  .72.3a
+%define rhrelease  .72.4
 %endif
 
 %define perlver 5.6.1
@@ -265,7 +265,7 @@ find . -type f -name Makefile | xargs perl -p -i -e 's/<(builtin|command line)>/
 
 make -f Makefile
 
-%ifnarch ia64 s390 s390x
+%ifnarch ia64
 make -f Makefile test
 %endif
 
@@ -349,6 +349,9 @@ xargs ./perl -I lib/ -i -p -e "s|$RPM_BUILD_ROOT||g;" MANIFEST.all
 %defattr(-,root,root)
 
 %changelog
+* Mon Mar 25 2002 Nalin Dahyabhai <nalin@redhat.com>
+- rebuild
+
 * Thu Dec 20 2001 Chip Turner <cturner@redhat.com>
 - remove ndbm completely
 
