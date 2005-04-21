@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.6
-%define perlrel 5
+%define perlrel 6
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -121,12 +121,6 @@ Provides: perl <= %{epoch}:%{version}
 Provides: perl(VMS::Filespec)
 Provides: perl(VMS::Stdio)
 
-# XXX needed by perl-libnet
-Provides: perl(Mac::Files)
-
-# XXX needed by perl-CGI
-Provides: perl(FCGI)
-
 Provides: perl(abbrev.pl)
 Provides: perl(assert.pl)
 Provides: perl(bigfloat.pl)
@@ -195,7 +189,7 @@ system to handle Perl scripts.
 %if %{suidperl}
 %package suidperl
 Version: %{perlver}
-Release: %{perlrel}.1
+Release: %{perlrel}
 Summary: suidperl, for use with setuid perl scripts
 Group: Development/Languages
 Requires: perl = %{perlepoch}:%{perlver}-%{perlrel}
@@ -308,7 +302,7 @@ make -f Makefile
 make -f Makefile test < /dev/null || /bin/true
 
 %install
-[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
+rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT
 
 make install -f Makefile
@@ -420,6 +414,10 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Wed Apr 20 2005 Jose Pedro Oliveira <jpo at di.uminho.pt> - 3:5.8.6-6
+- FCGI is not provided by perl (#148847).
+- Drop the '.1' suffix from the perl-suidperl subpackage.
+
 * Thu Mar 17 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.6-5
 - bug 151127: fix to use libresolv instead of libbind (perl-5.8.6-libresolv.patch).
 
