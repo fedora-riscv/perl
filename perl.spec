@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.6
-%define perlrel 6
+%define perlrel 7
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -99,6 +99,9 @@ Patch23: perl-5.8.3-findbin-selinux.patch
 # fix empty RPATH security issue
 Patch24: perl-5.8.3-empty-rpath.patch
 
+# mod_perl 2.0.0 RC5 requires CGI.pm 3.08
+Patch25: perl-5.8.6-CGI-3.08.patch
+
 # arch-specific patches
 Patch100: perl-5.8.1-fpic.patch
 Patch101: perl-5.8.0-libdir64.patch
@@ -110,7 +113,7 @@ Patch32003: perl-5.8.6-libresolv.patch
 # module updatesd
 # Patch202: perl-5.8.0-Safe2.09.patch
 
-Buildroot: %{_tmppath}/%{name}-root
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gawk, grep, tcsh, gdbm-devel, db4-devel, dos2unix, man, groff
 
 # By definition of 'do' (see 'man perlfunc') this package provides all
@@ -215,6 +218,7 @@ more secure running of setuid perl scripts.
 %patch21 -p1
 %patch23 -p1
 %patch24 -p1
+%patch25 -p1
 
 %patch100 -p1
 
@@ -297,9 +301,9 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Ud_sethostent_r_proto -Ud_setprotoent_r_proto -Ud_setservent_r_proto \
 	-Dinc_version_list='%{perlmodcompat}' 
 
-make -f Makefile
+make
 
-make -f Makefile test < /dev/null || /bin/true
+make test < /dev/null || /bin/true
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -414,6 +418,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Sun Apr 24 2005 Jose Pedro Oliveira <jpo at di.uminho.pt> - 3:5.8.6-7
+- Updating CGI.pm from version 3.05 to 3.08 (mod_perl 2.0.0 RC5). (#155839)
+
 * Wed Apr 20 2005 Jose Pedro Oliveira <jpo at di.uminho.pt> - 3:5.8.6-6
 - FCGI is not provided by perl (#148847).
 - Drop the '.1' suffix from the perl-suidperl subpackage.
