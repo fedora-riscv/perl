@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.6
-%define perlrel 8
+%define perlrel 9
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -20,8 +20,7 @@ Provides: perl(:WITHOUT_ITHREADS)
 Provides: perl(:WITHOUT_THREADS)
 %endif
 
-%define perlmodcompat 5.8.5 5.8.4 5.8.3 5.8.2
-Provides: perl(:MODULE_COMPAT_5.8.2)
+%define perlmodcompat 5.8.5 5.8.4 5.8.3
 Provides: perl(:MODULE_COMPAT_5.8.3)
 Provides: perl(:MODULE_COMPAT_5.8.4)
 Provides: perl(:MODULE_COMPAT_5.8.5)
@@ -418,7 +417,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Apr 26 2005 Warren Togami <wtogami@redhat.com. - 3:5.8.6-8
 - -Dinstallusrbinperl=n (#141182 Aaron Sherman)
-- remove 5.8.0 and 5.8.1 ABI compat (#154295)
+- remove 5.8.0, 5.8.1 and 5.8.2 ABI compat (#154295)
 
 * Sun Apr 24 2005 Jose Pedro Oliveira <jpo at di.uminho.pt> - 3:5.8.6-7
 - Updating CGI.pm from version 3.05 to 3.08 (mod_perl 2.0.0 RC5). (#155839)
