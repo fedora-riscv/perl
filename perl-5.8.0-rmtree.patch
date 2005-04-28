@@ -1,0 +1,35 @@
+Fix for CAN-2004-0452.  Change chmod's to make files writable/executable
+by the current user only and not by the entire world.  chmod's necessary
+in the first place but at least this makes them less dangerous.  If, for
+some reason the rm process dies halfway through, at worst some files and
+dirs were revoked from others, not made available.
+
+--- perl-5.8.0/lib/File/Path.pm.chmod	2004-11-23 10:41:57.594065752 -0500
++++ perl-5.8.0/lib/File/Path.pm	2004-11-23 10:43:41.453380351 -0500
+@@ -184,7 +184,7 @@
+ 	    # it's also intended to change it to writable in case we have
+ 	    # to recurse in which case we are better than rm -rf for 
+ 	    # subtrees with strange permissions
+-	    chmod(0777, ($Is_VMS ? VMS::Filespec::fileify($root) : $root))
++	    chmod(0700, ($Is_VMS ? VMS::Filespec::fileify($root) : $root))
+ 	      or carp "Can't make directory $root read+writeable: $!"
+ 		unless $safe;
+ 
+@@ -218,7 +218,7 @@
+ 		print "skipped $root\n" if $verbose;
+ 		next;
+ 	    }
+-	    chmod 0777, $root
++	    chmod 0700, $root
+ 	      or carp "Can't make directory $root writeable: $!"
+ 		if $force_writeable;
+ 	    print "rmdir $root\n" if $verbose;
+@@ -240,7 +240,7 @@
+ 		print "skipped $root\n" if $verbose;
+ 		next;
+ 	    }
+-	    chmod 0666, $root
++	    chmod 0600, $root
+ 	      or carp "Can't make file $root writeable: $!"
+ 		if $force_writeable;
+ 	    print "unlink $root\n" if $verbose;

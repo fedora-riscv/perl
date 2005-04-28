@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.6
-%define perlrel 9
+%define perlrel 10
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -100,6 +100,12 @@ Patch24: perl-5.8.3-empty-rpath.patch
 # mod_perl 2.0.0 RC5 requires CGI.pm 3.08
 Patch25: perl-5.8.6-CGI-3.08.patch
 
+# CAN-2004-0452 fix
+Patch26: perl-5.8.0-rmtree.patch
+
+# CAN-2005-0155 and CAN-2005-0156 fix
+Patch27: perl-5.8.5-CAN-2005-0155+0156.patch
+
 # arch-specific patches
 Patch100: perl-5.8.1-fpic.patch
 Patch101: perl-5.8.0-libdir64.patch
@@ -189,8 +195,6 @@ system to handle Perl scripts.
 
 %if %{suidperl}
 %package suidperl
-Version: %{perlver}
-Release: %{perlrel}
 Summary: suidperl, for use with setuid perl scripts
 Group: Development/Languages
 Requires: perl = %{perlepoch}:%{perlver}-%{perlrel}
@@ -217,6 +221,8 @@ more secure running of setuid perl scripts.
 %patch23 -p1
 %patch24 -p1
 %patch25 -p1
+%patch26 -p1
+%patch27 -p0
 
 %patch100 -p1
 
@@ -416,6 +422,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Thu Apr 28 2005 Ville Skyttä <ville.skytta at iki.fi> - 3:5.8.6-10
+- Apply fixes for CAN-2004-0452, CAN-2005-0155 and CAN-2005-0156 (#156128).
+
 * Tue Apr 26 2005 Warren Togami <wtogami@redhat.com. - 3:5.8.6-8
 - -Dinstallusrbinperl=n (#141182 Aaron Sherman)
 - remove 5.8.0 and 5.8.1 ABI compat (#154295)
