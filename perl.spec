@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.6
-%define perlrel 10
+%define perlrel 11
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -20,8 +20,7 @@ Provides: perl(:WITHOUT_ITHREADS)
 Provides: perl(:WITHOUT_THREADS)
 %endif
 
-%define perlmodcompat 5.8.5 5.8.4 5.8.3 5.8.2
-Provides: perl(:MODULE_COMPAT_5.8.2)
+%define perlmodcompat 5.8.5 5.8.4 5.8.3
 Provides: perl(:MODULE_COMPAT_5.8.3)
 Provides: perl(:MODULE_COMPAT_5.8.4)
 Provides: perl(:MODULE_COMPAT_5.8.5)
@@ -91,9 +90,6 @@ Patch21: perl-5.8.0-rpath-make.patch
 # bugzilla 101767, make sure threads.so links directly to -lpthread
 Patch22: perl-5.8.1-lpthread-link.patch
 
-# bugzilla 118877
-Patch23: perl-5.8.3-findbin-selinux.patch
-
 # fix empty RPATH security issue
 Patch24: perl-5.8.3-empty-rpath.patch
 
@@ -105,6 +101,9 @@ Patch26: perl-5.8.0-rmtree.patch
 
 # CAN-2005-0155 and CAN-2005-0156 fix
 Patch27: perl-5.8.5-CAN-2005-0155+0156.patch
+
+# bugzilla 118877, 127023
+Patch28: perl-5.8.6-findbin-selinux.patch
 
 # arch-specific patches
 Patch100: perl-5.8.1-fpic.patch
@@ -218,11 +217,11 @@ more secure running of setuid perl scripts.
 
 %patch19 -p1
 %patch21 -p1
-%patch23 -p1
 %patch24 -p1
 %patch25 -p1
 %patch26 -p1
 %patch27 -p0
+%patch28 -p1
 
 %patch100 -p1
 
@@ -307,7 +306,7 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 
 make
 
-make test < /dev/null || /bin/true
+make test
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -422,6 +421,11 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Tue May 10 2005 Jose Pedro Oliveira <jpo at di.uminho.pt> - 3:5.8.6-11
+- Rediff the findbin-selinux patch in order to disable the FindBin.t test
+  (patch28 replaces patch23). #118877 #127023
+- Remove 5.8.2 ABI compat (#154295 comments 6 and 7).
+
 * Thu Apr 28 2005 Ville Skyttä <ville.skytta at iki.fi> - 3:5.8.6-10
 - Apply fixes for CAN-2004-0452, CAN-2005-0155 and CAN-2005-0156 (#156128).
 

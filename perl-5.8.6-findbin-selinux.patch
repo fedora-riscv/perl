@@ -1,0 +1,25 @@
+diff -ruN perl-5.8.6-orig/lib/FindBin.pm perl-5.8.6/lib/FindBin.pm
+--- perl-5.8.6-orig/lib/FindBin.pm	2003-12-27 14:52:04.000000000 +0000
++++ perl-5.8.6/lib/FindBin.pm	2005-04-27 11:52:30.000000000 +0100
+@@ -179,8 +179,8 @@
+       }
+ 
+      # Get absolute paths to directories
+-     $Bin     = abs_path($Bin)     if($Bin);
+-     $RealBin = abs_path($RealBin) if($RealBin);
++     $Bin     = abs_path($Bin)    unless (!$Bin || File::Spec->file_name_is_absolute($Bin));
++     $RealBin = abs_path($RealBin) unless (!$RealBin || File::Spec->file_name_is_absolute($RealBin));
+     }
+   }
+ }
+diff -ruN perl-5.8.6-orig/MANIFEST perl-5.8.6/MANIFEST
+--- perl-5.8.6-orig/MANIFEST	2004-11-01 15:42:06.000000000 +0000
++++ perl-5.8.6/MANIFEST	2005-04-27 11:52:46.000000000 +0100
+@@ -1392,7 +1392,6 @@
+ lib/Filter/Simple/t/filter.t	See if Filter::Simple works
+ lib/Filter/Simple/t/import.t	See if Filter::Simple works
+ lib/FindBin.pm			Find name of currently executing program
+-lib/FindBin.t			See if FindBin works
+ lib/finddepth.pl		A depth-first find emulator--used by find2perl
+ lib/find.pl			A find emulator--used by find2perl
+ lib/flush.pl			Routines to do single flush
