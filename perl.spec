@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.6
-%define perlrel 11
+%define perlrel 12
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -421,8 +421,8 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
-* Tue May 10 2005 Jose Pedro Oliveira <jpo at di.uminho.pt> - 3:5.8.6-11
-- Rediff the findbin-selinux patch in order to disable the FindBin.t test
+* Sat May 14 2005 Jose Pedro Oliveira <jpo at di.uminho.pt> - 3:5.8.6-12
+- New findbin-selinux patch: it now passes the FindBin.t tests
   (patch28 replaces patch23). #118877 #127023
 - Remove 5.8.2 ABI compat (#154295 comments 6 and 7).
 
