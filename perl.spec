@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.6
-%define perlrel 12
+%define perlrel 13
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -306,7 +306,7 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 
 make
 
-make test
+make test || /bin/true
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -421,6 +421,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Sun May 15 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.6-13
+- Better patch for FindBin.pm (#127023#c37)
+
 * Sat May 14 2005 Jose Pedro Oliveira <jpo at di.uminho.pt> - 3:5.8.6-12
 - New findbin-selinux patch: it now passes the FindBin.t tests
   (patch28 replaces patch23). #118877 #127023

@@ -1,16 +1,17 @@
-diff -urN perl-5.8.6-orig/lib/FindBin.pm perl-5.8.6/lib/FindBin.pm
+diff -ruN perl-5.8.6-orig/lib/FindBin.pm perl-5.8.6/lib/FindBin.pm
 --- perl-5.8.6-orig/lib/FindBin.pm	2003-12-27 14:52:04.000000000 +0000
-+++ perl-5.8.6/lib/FindBin.pm	2005-05-14 03:48:00.000000000 +0100
-@@ -179,8 +179,10 @@
++++ perl-5.8.6/lib/FindBin.pm	2005-05-16 04:15:54.000000000 +0100
+@@ -179,7 +179,12 @@
        }
  
       # Get absolute paths to directories
 -     $Bin     = abs_path($Bin)     if($Bin);
--     $RealBin = abs_path($RealBin) if($RealBin);
-+     $Bin     = abs_path($Bin)     unless (!$Bin || (File::Spec->file_name_is_absolute($Bin)
-+                                           && ($Bin = File::Spec->canonpath($Bin))));
-+     $RealBin = abs_path($RealBin) unless (!$RealBin || (File::Spec->file_name_is_absolute($RealBin)
-+                                           && ($RealBin = File::Spec->canonpath($RealBin))));
++     if ($Bin)
++      {
++       my $BinOld = $Bin;
++       $Bin   = abs_path($Bin);
++       defined $Bin or $Bin = File::Spec->canonpath($BinOld);
++      }
+      $RealBin = abs_path($RealBin) if($RealBin);
      }
    }
- }
