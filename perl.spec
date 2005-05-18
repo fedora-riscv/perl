@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.6
-%define perlrel 14
+%define perlrel 15
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -393,8 +393,6 @@ find $RPM_BUILD_ROOT -type d -printf "%%%%dir %p\n" >> MANIFEST.all
 # section must match what it ends up renaming files into
 %{new_perl} -i -p -e 's((^/usr/share/man/.*))($1.gz)g' MANIFEST.all
 
-cp MANIFEST.all /tmp
-
 for i in  %{SOURCE10} 
 do
   %{new_perl} %{SOURCE1} %{_arch} $i MANIFEST.all MANIFEST.all.tmp %{_libdir} %{thread_arch}
@@ -425,6 +423,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Wed May 18 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.6-15
+- remove unused /tmp/MANIFEST.all (#151801)
+
 * Tue May 17 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.6-14
 - CGI.pm 3.10 fixes mod_perl problems (#158036)
 
