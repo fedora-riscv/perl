@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.6
-%define perlrel 13
+%define perlrel 14
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -104,6 +104,9 @@ Patch27: perl-5.8.5-CAN-2005-0155+0156.patch
 
 # bugzilla 118877, 127023
 Patch28: perl-5.8.6-findbin-selinux.patch
+
+# CGI.pm 3.10 fixes mod_perl
+Patch29: perl-5.8.6-CGI-3.1.0.patch
 
 # arch-specific patches
 Patch100: perl-5.8.1-fpic.patch
@@ -222,6 +225,7 @@ more secure running of setuid perl scripts.
 %patch26 -p1
 %patch27 -p0
 %patch28 -p1
+%patch29 -p1
 
 %patch100 -p1
 
@@ -421,6 +425,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Tue May 17 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.6-14
+- CGI.pm 3.10 fixes mod_perl problems (#158036)
+
 * Sun May 15 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.6-13
 - Better patch for FindBin.pm (#127023#c37)
 
