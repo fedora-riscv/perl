@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.6
-%define perlrel 15
+%define perlrel 16
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -32,95 +32,85 @@ Provides: perl(:WITH_LARGEFILES)
 Provides: perl(:WITHOUT_LARGEFILES)
 %endif
 
-Summary: The Perl programming language.
-Name: perl
-Version: %{perlver}
-Release: %{perlrel}
-Epoch: %{perlepoch}
-License: Artistic or GPL
-Group: Development/Languages
-Url: http://www.perl.org/
 
-Source0: perl-5.8.6.tar.gz
-Source1: clean-manifest.pl
-Source9: MANIFEST.suidperl
-Source10: system-owned-directories
-Source11: filter-depends.sh
-Source12: perl-5.8.0-libnet.cfg
+Name:           perl
+Version:        %{perlver}
+Release:        %{perlrel}
+Epoch:          %{perlepoch}
+Summary:        The Perl programming language
 
-Patch5: perl-5.8.0-root.patch
-# Patch6: perl-5.8.0-fhs.patch
-Patch7: perl-5.6.0-buildroot.patch
-# Patch8: perl-5.8.0-errno.patch
-Patch9: perl-5.7.3-syslog.patch
-# Patch10: perl-5.8.0-notty.patch
-Patch11: perl-5.8.3-fullinc.patch
-Patch12: perl-5.8.6-incpush.patch
-Patch13: perl-5.8.3-perlbug-tag.patch
-Patch14: perl-5.8.5-dashI.patch
-Patch15: perl-5.8.5-incorder.patch
+Group:          Development/Languages
+License:        Artistic or GPL
+Url:            http://www.perl.org/
 
-%define __perl_requires %{SOURCE11}
+Source0:        http://www.cpan.org/authors/id/N/NW/NWCLARK/perl-5.8.6.tar.gz
+Source11:       filter-depends.sh
+Source12:       perl-5.8.0-libnet.cfg
 
-Conflicts: perl-NDBM_File <= 1:1.75-34.99.6
+Patch5:         perl-5.8.0-root.patch
+# Patch6:         perl-5.8.0-fhs.patch
+Patch7:         perl-5.6.0-buildroot.patch
+# Patch8:         perl-5.8.0-errno.patch
+Patch9:         perl-5.7.3-syslog.patch
+# Patch10:        perl-5.8.0-notty.patch
+Patch11:        perl-5.8.3-fullinc.patch
+Patch12:        perl-5.8.6-incpush.patch
+Patch13:        perl-5.8.3-perlbug-tag.patch
+Patch14:        perl-5.8.5-dashI.patch
+Patch15:        perl-5.8.5-incorder.patch
 
-Obsoletes: perl-Digest-MD5
-Obsoletes: perl-MIME-Base64
-Obsoletes: perl-libnet
-Obsoletes: perl-Storable
-Obsoletes: perl-CGI
-Obsoletes: perl-CPAN
-Obsoletes: perl-DB_File
-
-# Configure doesn't listen well when we say no ndbm.  When it links in, it then conflicts with berkeley db.  oops.
-Patch16: perl-5.8.0-nondbm.patch
+# Configure doesn't listen well when we say no ndbm.  When it links in,
+# it then conflicts with berkeley db.  oops.
+Patch16:        perl-5.8.0-nondbm.patch
 
 # make sure we get the proper ldflags on libperl.so
-Patch17: perl-5.8.0-sharedlinker.patch
+Patch17:        perl-5.8.0-sharedlinker.patch
 
 # perl 5.8.0 likes to use man3ext for BOTH directories AND files.  not kosher.
-# Patch18: perl-5.8.0-manext.patch
+# Patch18:        perl-5.8.0-manext.patch
 
 # lynx is depracated, use links instead
-Patch19: perl-5.8.0-links.patch
+Patch19:        perl-5.8.0-links.patch
 
 # work around annoying rpath issue
-Patch21: perl-5.8.0-rpath-make.patch
+Patch21:        perl-5.8.0-rpath-make.patch
 
 # bugzilla 101767, make sure threads.so links directly to -lpthread
-Patch22: perl-5.8.1-lpthread-link.patch
+Patch22:        perl-5.8.1-lpthread-link.patch
 
 # fix empty RPATH security issue
-Patch24: perl-5.8.3-empty-rpath.patch
+Patch24:        perl-5.8.3-empty-rpath.patch
 
 # mod_perl 2.0.0 RC5 requires CGI.pm 3.08
-Patch25: perl-5.8.6-CGI-3.08.patch
+Patch25:        perl-5.8.6-CGI-3.08.patch
 
 # CAN-2004-0452 fix
-Patch26: perl-5.8.0-rmtree.patch
+Patch26:        perl-5.8.0-rmtree.patch
 
 # CAN-2005-0155 and CAN-2005-0156 fix
-Patch27: perl-5.8.5-CAN-2005-0155+0156.patch
+Patch27:        perl-5.8.5-CAN-2005-0155+0156.patch
 
 # bugzilla 118877, 127023
-Patch28: perl-5.8.6-findbin-selinux.patch
+Patch28:        perl-5.8.6-findbin-selinux.patch
 
 # CGI.pm 3.10 fixes mod_perl
-Patch29: perl-5.8.6-CGI-3.1.0.patch
+Patch29:        perl-5.8.6-CGI-3.1.0.patch
 
 # arch-specific patches
-Patch100: perl-5.8.1-fpic.patch
-Patch101: perl-5.8.0-libdir64.patch
+Patch100:       perl-5.8.1-fpic.patch
+Patch101:       perl-5.8.0-libdir64.patch
 
-Patch32002: perl-5.8.0-nptlhint.patch
+Patch32002:     perl-5.8.0-nptlhint.patch
 
-Patch32003: perl-5.8.6-libresolv.patch
+Patch32003:     perl-5.8.6-libresolv.patch
 
 # module updatesd
-# Patch202: perl-5.8.0-Safe2.09.patch
+# Patch202:       perl-5.8.0-Safe2.09.patch
 
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: gawk, grep, tcsh, gdbm-devel, db4-devel, dos2unix, man, groff
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildRequires:  gawk, grep, tcsh, dos2unix, man, groff
+BuildRequires:  gdbm-devel, db4-devel
+
 
 # By definition of 'do' (see 'man perlfunc') this package provides all
 # versions of perl previous to it.
@@ -181,6 +171,19 @@ Provides: perl(Carp::Heavy)
 # Provides: perl(LWP::UserAgent)
 # Provides: perl(URI::URL)
 
+Conflicts: perl-NDBM_File <= 1:1.75-34.99.6
+
+Obsoletes: perl-Digest-MD5
+Obsoletes: perl-MIME-Base64
+Obsoletes: perl-libnet
+Obsoletes: perl-Storable
+Obsoletes: perl-CGI
+Obsoletes: perl-CPAN
+Obsoletes: perl-DB_File
+
+%define __perl_requires %{SOURCE11}
+
+
 %description
 Perl is a high-level programming language with roots in C, sed, awk
 and shell scripting.  Perl is good at handling processes and files,
@@ -195,19 +198,21 @@ scripts.
 Install this package if you want to program in Perl or enable your
 system to handle Perl scripts.
 
+
 %if %{suidperl}
 %package suidperl
-Summary: suidperl, for use with setuid perl scripts
-Group: Development/Languages
-Requires: perl = %{perlepoch}:%{perlver}-%{perlrel}
+Summary:        suidperl, for use with setuid perl scripts
+Group:          Development/Languages
+Requires:       perl = %{perlepoch}:%{perlver}-%{perlrel}
 
 %description suidperl
 suidperl is a setuid binary copy of perl that allows for (hopefully)
 more secure running of setuid perl scripts.
 %endif
 
+
 %prep
-%setup -q -n perl-5.8.6
+%setup -q
 %patch5 -p1
 # %%patch8 -p1 
 %patch11 -p1
@@ -228,40 +233,30 @@ more secure running of setuid perl scripts.
 %patch29 -p1
 
 %patch100 -p1
-
 %ifarch %{multilib_64_archs}
 %patch101 -p1
 %endif
 
 %patch32002 -p1
-
 %patch32003 -p1
 
 find . -name \*.orig -exec rm -fv {} \;
 
+
 %build
-
 echo "RPM Build arch: %{_arch}"
-
-rm -rf $RPM_BUILD_ROOT
 
 # yes; don't use %_libdir so that noarch packages from other OSs
 # arches work correctly :\ the Configure lines below hardcode lib for
 # similar reasons.
 
-%ifarch %{multilib_64_archs}
-	mkdir -p $RPM_BUILD_ROOT/usr/lib/perl5/%{perlver}
-	mkdir -p $RPM_BUILD_ROOT/usr/lib/perl5/site_perl/%{perlver}
-	mkdir -p $RPM_BUILD_ROOT/usr/lib/perl5/vendor_perl/%{perlver}
-%endif
-
 sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
-	-Dversion=5.8.6 \
+	-Dversion=%{perlver} \
 	-Dmyhostname=localhost \
 	-Dperladmin=root@localhost \
 	-Dcc='%{__cc}' \
-        -Dcf_by='Red Hat, Inc.' \
-	-Dinstallprefix=$RPM_BUILD_ROOT%{_prefix} \
+	-Dcf_by='Red Hat, Inc.' \
+	-Dinstallprefix=%{_prefix} \
 	-Dprefix=%{_prefix} \
 %ifarch %{multilib_64_archs}
 	-Dlibpth="/usr/local/lib64 /lib64 /usr/lib64" \
@@ -281,15 +276,15 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Duseshrplib \
 %if %threading
 	-Dusethreads \
-        -Duseithreads \
+	-Duseithreads \
 %else
 	-Uusethreads \
-        -Uuseithreads \
+	-Uuseithreads \
 %endif
 %if %largefiles
-        -Duselargefiles \
+	-Duselargefiles \
 %else
-        -Uuselargefiles \
+	-Uuselargefiles \
 %endif
 	-Dd_dosuid \
 	-Dd_semctl_semun \
@@ -304,20 +299,37 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Ubincompat5005 \
 	-Uversiononly \
 	-Dpager='/usr/bin/less -isr' \
-	-Dd_gethostent_r_proto -Ud_endhostent_r_proto -Ud_endprotoent_r_proto -Ud_endservent_r_proto \
-	-Ud_sethostent_r_proto -Ud_setprotoent_r_proto -Ud_setservent_r_proto \
-	-Dinc_version_list='%{perlmodcompat}' 
+	-Dd_gethostent_r_proto -Ud_endhostent_r_proto -Ud_sethostent_r_proto \
+	-Ud_endprotoent_r_proto -Ud_setprotoent_r_proto \
+	-Ud_endservent_r_proto -Ud_setservent_r_proto \
+	-Dinc_version_list='%{perlmodcompat}'
 
 make
 
+# perl 5.8.6 - some tests fail (see bug #127023 comments #{31,32,34})
 make test || /bin/true
+
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT
 
-make install -f Makefile
+make install DESTDIR=$RPM_BUILD_ROOT
 
+
+%ifarch %{multilib_64_archs}
+	mkdir -p -m 755 $RPM_BUILD_ROOT/usr/lib/perl5/%{perlver}
+	mkdir -p -m 755 $RPM_BUILD_ROOT/usr/lib/perl5/site_perl/%{perlver}
+	mkdir -p -m 755 $RPM_BUILD_ROOT/usr/lib/perl5/vendor_perl/%{perlver}
+%endif
+
+%ifarch %{multilib_64_archs}
+mkdir -p -m 755 ${RPM_BUILD_ROOT}/usr/lib64/perl5/vendor_perl/%{perlver}/%{_arch}-%{_os}
+%endif
+
+
+#
+# Compatibility directories
+#
 pushd $RPM_BUILD_ROOT/%{_libdir}/perl5
 for i in %{perlmodcompat}; do
     mkdir -pm 755 $i/%{_arch}-%{_os}%{thread_arch}/CORE
@@ -328,14 +340,11 @@ for i in %{perlmodcompat}; do
   done
 popd
 
-%ifarch %{multilib_64_archs}
-mkdir -p ${RPM_BUILD_ROOT}/usr/lib64/perl5/vendor_perl/%{perlver}/%{_arch}-%{_os}
-%endif
 
-mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
-install -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/pl2pm
+install -p -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/pl2pm
 
-# build MANIFEST.all
+
+#
 
 %define new_perl_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{perlver}:$RPM_BUILD_ROOT/usr/lib/perl5/%{perlver}
 %define comp_perl_lib $RPM_BUILD_ROOT/usr/lib/perl5/%{perlver}:$RPM_BUILD_ROOT/usr/lib/perl5/%{perlver}
@@ -351,7 +360,6 @@ do
               -d $RPM_BUILD_ROOT%{_libdir}/perl5/%{perlver}/%{_arch}-%{_os}%{thread_arch} $i || /bin/true
 done
 
-%{new_perl} -p -i -e "s|$RPM_BUILD_ROOT||g;" %{new_arch_lib}/Config.pm
 
 for dir in $(%{new_perl} -le 'print join("\n", @INC)' | grep '^/usr/lib')
 do
@@ -369,60 +377,61 @@ for i in %{perlver} %{perlmodcompat} ; do
 done
 
 
-%ifarch %{multilib_64_archs}
-mkdir -pm 755 $RPM_BUILD_ROOT/usr/lib/perl5/site_perl/%{perlver}
-mkdir -pm 755 $RPM_BUILD_ROOT/usr/lib/perl5/vendor_perl/%{perlver}
-%endif
+#
+# libnet configuration file
+#
+mkdir -p -m 755 $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perlver}/Net
+install -p -m 644 %{SOURCE12} $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perlver}/Net/libnet.cfg
 
-mkdir -p $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perlver}/Net
-install -m 0644 %{SOURCE12} $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perlver}/Net/libnet.cfg
-
+#
+# Core modules removal:
+#   *NDBM*       - removed
+#   *HiRes*      - perl-Time-HiRes
+#   *Filter*     - perl-Filter and perl-Filter-Simple
+#
 find $RPM_BUILD_ROOT -name '*HiRes*' | xargs rm -rfv
 find $RPM_BUILD_ROOT -name '*Filter*' | xargs rm -rfv
 find $RPM_BUILD_ROOT -name '*NDBM*' | xargs rm -rfv
 
+
 find $RPM_BUILD_ROOT -type f -name '*.bs' -a -empty -exec rm -f {} ';'
 
-find $RPM_BUILD_ROOT -type f -or -type l > MANIFEST.all
-find $RPM_BUILD_ROOT -type d -printf "%%%%dir %p\n" >> MANIFEST.all
-
-%{new_perl} -i -p -e "s|$RPM_BUILD_ROOT||g;" MANIFEST.all
-
-# add .gz to all the entries in the man directories.  necessary since
-# brp-compress takes place after the manifest is built but the %files
-# section must match what it ends up renaming files into
-%{new_perl} -i -p -e 's((^/usr/share/man/.*))($1.gz)g' MANIFEST.all
-
-for i in  %{SOURCE10} 
-do
-  %{new_perl} %{SOURCE1} %{_arch} $i MANIFEST.all MANIFEST.all.tmp %{_libdir} %{thread_arch}
-  mv MANIFEST.all.tmp MANIFEST.all
-done
-
-%if %{suidperl}
-  %{new_perl} %{SOURCE1} %{_arch} %{SOURCE9} MANIFEST.all MANIFEST.all.tmp %{_libdir} %{thread_arch}
-  mv MANIFEST.all.tmp MANIFEST.all
-%endif
-
-# fix the rest of the stuff
-find $RPM_BUILD_ROOT%{_libdir}/perl* \
-  -name .packlist -o -name perllocal.pod -o -name config.h | \
-    %{new_perl_flags} xargs $RPM_BUILD_ROOT/%{_bindir}/perl -I lib/ -i -p -e "s|$RPM_BUILD_ROOT||g;" MANIFEST.all
-
 chmod -R u+w $RPM_BUILD_ROOT/*
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files -f MANIFEST.all
-%defattr(-,root,root,-)
 
-%if %{suidperl}
-%files -f %{SOURCE9} suidperl
+%files
 %defattr(-,root,root,-)
+%{_mandir}/man1/*.1*
+%{_mandir}/man3/*.3*
+%{_bindir}/*
+%{_libdir}/perl5/
+%ifarch %{multilib_64_archs}
+/usr/lib/perl5/
+%endif
+%if %{suidperl}
+%exclude %{_bindir}/suidperl
+%exclude %{_bindir}/sperl%{perlver}
 %endif
 
+%if %{suidperl}
+%files suidperl
+%defattr(-,root,root,-)
+%{_bindir}/suidperl
+%{_bindir}/sperl%{perlver}
+%endif
+
+
 %changelog
+* Tue Aug  9 2005 Jose Pedro Oliveira <jpo at di.uminho.pt> - 3:5.8.6-16
+- Reformatted the specfile.
+- Added the Source0 URL.
+- Dropped the MANIFEST.all file for the perl package.
+- Dropped the MANIFEST.suidperl file for the suidperl subpackage.
+
 * Wed May 18 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.6-15
 - remove unused /tmp/MANIFEST.all (#151801)
 
