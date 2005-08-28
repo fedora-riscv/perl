@@ -1,0 +1,12 @@
+--- perl-5.8.7/Configure.orig	2005-08-28 18:48:03.000000000 -0400
++++ perl-5.8.7/Configure	2005-08-28 18:49:28.000000000 -0400
+@@ -4707,9 +4707,6 @@
+ 	case "$gccversion" in
+ 	1*) dflt='-fpcc-struct-return' ;;
+ 	esac
+-	case "$optimize" in
+-	*-g*) dflt="$dflt -DDEBUGGING";;
+-	esac
+ 	case "$gccversion" in
+ 	2*) if test -d /etc/conf/kconfig.d &&
+ 			$contains _POSIX_VERSION $usrinc/sys/unistd.h >/dev/null 2>&1
