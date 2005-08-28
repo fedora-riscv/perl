@@ -4,8 +4,8 @@
 
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
-%define perlver 5.8.6
-%define perlrel 16
+%define perlver 5.8.7
+%define perlrel 0.1.fc5
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -20,11 +20,12 @@ Provides: perl(:WITHOUT_ITHREADS)
 Provides: perl(:WITHOUT_THREADS)
 %endif
 
-%define perlmodcompat 5.8.5 5.8.4 5.8.3
+%define perlmodcompat 5.8.6 5.8.5 5.8.4 5.8.3
 Provides: perl(:MODULE_COMPAT_5.8.3)
 Provides: perl(:MODULE_COMPAT_5.8.4)
 Provides: perl(:MODULE_COMPAT_5.8.5)
 Provides: perl(:MODULE_COMPAT_5.8.6)
+Provides: perl(:MODULE_COMPAT_5.8.7)
 
 %if %{largefiles}
 Provides: perl(:WITH_LARGEFILES)
@@ -43,7 +44,7 @@ Group:          Development/Languages
 License:        Artistic or GPL
 Url:            http://www.perl.org/
 
-Source0:        http://www.cpan.org/authors/id/N/NW/NWCLARK/perl-5.8.6.tar.gz
+Source0:        http://www.cpan.org/authors/id/N/NW/NWCLARK/perl-5.8.7.tar.bz2
 Source11:       filter-depends.sh
 Source12:       perl-5.8.0-libnet.cfg
 
@@ -54,7 +55,7 @@ Patch7:         perl-5.6.0-buildroot.patch
 Patch9:         perl-5.7.3-syslog.patch
 # Patch10:        perl-5.8.0-notty.patch
 Patch11:        perl-5.8.3-fullinc.patch
-Patch12:        perl-5.8.6-incpush.patch
+Patch12:        perl-5.8.7-incpush.patch
 Patch13:        perl-5.8.3-perlbug-tag.patch
 Patch14:        perl-5.8.5-dashI.patch
 Patch15:        perl-5.8.5-incorder.patch
@@ -81,9 +82,6 @@ Patch22:        perl-5.8.1-lpthread-link.patch
 # fix empty RPATH security issue
 Patch24:        perl-5.8.3-empty-rpath.patch
 
-# mod_perl 2.0.0 RC5 requires CGI.pm 3.08
-Patch25:        perl-5.8.6-CGI-3.08.patch
-
 # CAN-2004-0452 fix
 Patch26:        perl-5.8.0-rmtree.patch
 
@@ -93,8 +91,11 @@ Patch27:        perl-5.8.5-CAN-2005-0155+0156.patch
 # bugzilla 118877, 127023
 Patch28:        perl-5.8.6-findbin-selinux.patch
 
-# CGI.pm 3.10 fixes mod_perl
-Patch29:        perl-5.8.6-CGI-3.1.0.patch
+# Update the core module version (matching the external package perl-Filter-Simple)
+Patch30:        perl-5.8.6-filter-simple-update.patch
+
+# Disable -DDEBUGGING and allow -g to do its job (#156113)
+Patch31:        perl-5.8.7-no-debugging.patch
 
 # arch-specific patches
 Patch100:       perl-5.8.1-fpic.patch
@@ -180,6 +181,9 @@ Obsoletes: perl-Storable
 Obsoletes: perl-CGI
 Obsoletes: perl-CPAN
 Obsoletes: perl-DB_File
+Obsoletes: perl-Filter
+Obsoletes: perl-Filter-Simple
+Obsoletes: perl-Time-HiRes
 
 %define __perl_requires %{SOURCE11}
 
@@ -215,7 +219,9 @@ more secure running of setuid perl scripts.
 %setup -q
 %patch5 -p1
 # %%patch8 -p1 
-%patch11 -p1
+
+# perl 5.8.7: reject
+# %patch11 -p1
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
@@ -226,11 +232,15 @@ more secure running of setuid perl scripts.
 %patch19 -p1
 %patch21 -p1
 %patch24 -p1
-%patch25 -p1
-%patch26 -p1
-%patch27 -p0
+
+# perl 5.8.7: reject
+# %patch26 -p1
+# perl 5.8.7: Already in ?
+# %patch27 -p0
 %patch28 -p1
-%patch29 -p1
+
+%patch30 -p1
+%patch31 -p1
 
 %patch100 -p1
 %ifarch %{multilib_64_archs}
@@ -384,14 +394,10 @@ mkdir -p -m 755 $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perlver}/Net
 install -p -m 644 %{SOURCE12} $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perlver}/Net/libnet.cfg
 
 #
-# Core modules removal:
-#   *NDBM*       - removed
-#   *HiRes*      - perl-Time-HiRes
-#   *Filter*     - perl-Filter and perl-Filter-Simple
+# Core modules removal
 #
-find $RPM_BUILD_ROOT -name '*HiRes*' | xargs rm -rfv
-find $RPM_BUILD_ROOT -name '*Filter*' | xargs rm -rfv
 find $RPM_BUILD_ROOT -name '*NDBM*' | xargs rm -rfv
+find $RPM_BUILD_ROOT -name '*DBM_Filter*' | xargs rm -rfv
 
 
 find $RPM_BUILD_ROOT -type f -name '*.bs' -a -empty -exec rm -f {} ';'
@@ -426,6 +432,20 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Aug 28 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.7-0.1
+- patch12 from Marius Feraru (#165907)
+  TODO: patch11, patch26 and patch27 clash and need verification
+- Build without -DDEBUGGING (#156113)
+
+* Sun Aug 14 2005 Jose Pedro Oliveira <jpo at di.uminho.pt> - 3:5.8.7-0
+- 5.8.7
+- Dropped the CGI.pm update patches (patch25 and patch29).
+
+* Fri Aug 12 2005 Jose Pedro Oliveira <jpo at di.uminho.pt> - 3:5.8.6-17
+- Don't remove the core modules:
+    Filter::Util::Call, Filter::Simple, and Time::HiRes.
+- Obsoletes perl-{Filter,Filter-Simple,Time-HiRes}.
+
 * Tue Aug  9 2005 Jose Pedro Oliveira <jpo at di.uminho.pt> - 3:5.8.6-16
 - Reformatted the specfile.
 - Added the Source0 URL.

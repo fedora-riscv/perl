@@ -1,0 +1,12 @@
+diff -ruN Filter-Simple-0.78/lib/Filter/Simple.pm Filter-Simple-0.79/lib/Filter/Simple.pm
+--- Filter-Simple-0.78/lib/Filter/Simple.pm	2002-05-17 00:38:58.000000000 +0100
++++ Filter-Simple-0.79/lib/Filter/Simple.pm	2003-09-20 21:02:17.000000000 +0100
+@@ -4,7 +4,7 @@
+ 
+ use vars qw{ $VERSION @EXPORT };
+ 
+-$VERSION = '0.78';
++$VERSION = '0.79';
+ 
+ use Filter::Util::Call;
+ use Carp;
