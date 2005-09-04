@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.7
-%define perlrel 0.1.fc5
+%define perlrel 0.2.fc5
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -312,7 +312,8 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Dd_gethostent_r_proto -Ud_endhostent_r_proto -Ud_sethostent_r_proto \
 	-Ud_endprotoent_r_proto -Ud_setprotoent_r_proto \
 	-Ud_endservent_r_proto -Ud_setservent_r_proto \
-	-Dinc_version_list='%{perlmodcompat}'
+	-Dinc_version_list='%{perlmodcompat}' \
+	-Dscriptdir='%{_bindir}'
 
 make
 
@@ -432,6 +433,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Sep 03 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.7-0.2
+- scriptdir to /usr/bin (#167205)
+
 * Sun Aug 28 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.7-0.1
 - patch12 from Marius Feraru (#165907)
   TODO: patch11, patch26 and patch27 clash and need verification
