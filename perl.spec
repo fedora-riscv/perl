@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.7
-%define perlrel 0.2.fc5
+%define perlrel 0.3.fc5
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -250,6 +250,28 @@ more secure running of setuid perl scripts.
 %patch32002 -p1
 %patch32003 -p1
 
+# Candidates for doc recoding (need case by case review):
+# find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
+recode()
+{
+	iconv -f "$2" -t utf-8 < "$1" > "${1}_"
+	mv -f "${1}_" "$1"
+}
+recode README.cn euc-cn
+recode README.jp euc-jp
+recode README.ko euc-kr
+recode README.tw big5
+recode pod/perlebcdic.pod iso-8859-1
+recode pod/perlhack.pod iso-8859-1
+recode pod/perlhist.pod iso-8859-1
+recode pod/perlothrtut.pod iso-8859-1
+recode pod/perlthrtut.pod iso-8859-1
+recode lib/Unicode/Collate.pm iso-8859-1
+# recode not needed (5.8.7):
+# ext/Encode/t/Mod_EUCJP.pm, ext/Encode/lib/Encode/CJKConstants.pm,
+# ext/Encode/lib/Encode/JP/H2Z.pm, lib/ExtUtils/MM_MacOS.pm,
+# lib/Pod/Checker.pm, lib/Net/README.libnet
+
 find . -name \*.orig -exec rm -fv {} \;
 
 
@@ -433,6 +455,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Sep 05 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.7-0.3
+- convert docs to UTF-8 (#140871)
+
 * Sat Sep 03 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.7-0.2
 - scriptdir to /usr/bin (#167205)
 
