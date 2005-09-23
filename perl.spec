@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.7
-%define perlrel 0.3.fc5
+%define perlrel 0.4.fc5
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
