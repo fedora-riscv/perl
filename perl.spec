@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.7
-%define perlrel 0.4.fc5
+%define perlrel 0.5.fc5
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -455,6 +455,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Oct 09 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.7-0.4
+- rebuild for db4 (#170235)
+
 * Mon Sep 05 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.7-0.3
 - convert docs to UTF-8 (#140871)
 
