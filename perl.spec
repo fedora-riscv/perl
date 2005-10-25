@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.7
-%define perlrel 0.5.fc5
+%define perlrel 0.6.fc5
 %define perlepoch 3
 
 Provides: perl(:WITH_PERLIO)
@@ -96,6 +96,9 @@ Patch30:        perl-5.8.6-filter-simple-update.patch
 
 # Disable -DDEBUGGING and allow -g to do its job (#156113)
 Patch31:        perl-5.8.7-no-debugging.patch
+
+# Fix for bug 171111: missing IOCPARM_LEN
+Patch32:        perl-5.8.7-IOC_SIZE.patch
 
 # arch-specific patches
 Patch100:       perl-5.8.1-fpic.patch
@@ -241,6 +244,8 @@ more secure running of setuid perl scripts.
 
 %patch30 -p1
 %patch31 -p1
+
+%patch32 -p1
 
 %patch100 -p1
 %ifarch %{multilib_64_archs}
@@ -455,6 +460,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Oct 25 2005 Jason Vas Dias <jvdias@redhat.com> - 3.5.8.7-0.6
+- fix bug 171111 : define ioctl length macro IOCPARM_LEN(x)
+  macro to be _IOC_SIZE(x), not 256 - upstream bug raised.
+ 
 * Sun Oct 09 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.7-0.4
 - rebuild for db4 (#170235)
 
