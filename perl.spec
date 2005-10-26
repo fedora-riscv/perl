@@ -8,6 +8,12 @@
 %define perlrel 0.6.fc5
 %define perlepoch 3
 
+%{?!perl_debugging:    %define perl_debugging 0}
+%if %{perl_debugging}
+%define debug_package %{nil}
+# don't build debuginfo and disable stripping
+%endif
+
 Provides: perl(:WITH_PERLIO)
 
 %if %{threading}
@@ -243,7 +249,10 @@ more secure running of setuid perl scripts.
 %patch28 -p1
 
 %patch30 -p1
+
+%if !%{perl_debugging}
 %patch31 -p1
+%endif
 
 %patch32 -p1
 
@@ -431,7 +440,10 @@ find $RPM_BUILD_ROOT -name '*DBM_Filter*' | xargs rm -rfv
 find $RPM_BUILD_ROOT -type f -name '*.bs' -a -empty -exec rm -f {} ';'
 
 chmod -R u+w $RPM_BUILD_ROOT/*
-
+%if %{perl_debugging}
+exit 0
+# disable brp-strip
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -462,8 +474,10 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Oct 25 2005 Jason Vas Dias <jvdias@redhat.com> - 3.5.8.7-0.6
 - fix bug 171111 : define ioctl length macro IOCPARM_LEN(x)
-  macro to be _IOC_SIZE(x), not 256 - upstream bug raised.
- 
+  macro to be _IOC_SIZE(x), not 256 - upstream bug #37535 raised.
+- provide 'perl_debugging' .spec file option to enable -DDEBUGGING
+  and disable stripping / debuginfo generation - default: 0
+
 * Sun Oct 09 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.7-0.4
 - rebuild for db4 (#170235)
 
