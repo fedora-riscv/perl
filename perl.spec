@@ -114,6 +114,8 @@ Patch32002:     perl-5.8.0-nptlhint.patch
 
 Patch32003:     perl-5.8.6-libresolv.patch
 
+Patch172236:    perl-5.8.7-bz172236.patch
+
 # module updatesd
 # Patch202:       perl-5.8.0-Safe2.09.patch
 
@@ -263,6 +265,8 @@ more secure running of setuid perl scripts.
 
 %patch32002 -p1
 %patch32003 -p1
+
+%patch172236 -p1
 
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -472,7 +476,11 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Tue Oct 25 2005 Jason Vas Dias <jvdias@redhat.com> - 3.5.8.7-0.6
+* Tue Nov 01 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.7
+- fix bug 172236 : missing C standard headers -
+  use gcc4's '-print-search-path' option in h2ph
+
+* Tue Oct 25 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.6
 - fix bug 171111 : define ioctl length macro IOCPARM_LEN(x)
   macro to be _IOC_SIZE(x), not 256 - upstream bug #37535 raised.
 - provide 'perl_debugging' .spec file option to enable -DDEBUGGING
