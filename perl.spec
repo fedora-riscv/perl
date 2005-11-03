@@ -120,6 +120,7 @@ Patch172236:    perl-5.8.7-bz172236.patch
 # backport of perl-5.9's patch 25084 :
 Patch25084:     perl-5.8.7-25084.patch
 
+Patch172396:	perl-5.8.7-172396.patch
 # module updatesd
 # Patch202:       perl-5.8.0-Safe2.09.patch
 
@@ -274,6 +275,8 @@ more secure running of setuid perl scripts.
 
 %patch25084 -p1
 
+%patch172396 -p1
+
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
 recode()
@@ -362,9 +365,10 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Dscriptdir='%{_bindir}'
 
 make
-
 # perl 5.8.6 - some tests fail (see bug #127023 comments #{31,32,34})
-make test || /bin/true
+# So ? then we should fix the tests / fix perl!
+# make test || /bin/true
+make test
 
 
 %install
@@ -482,6 +486,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Nov 03 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.7
+- fix bug 172396 : insert tzset() call before localtime_r() calls
+
 * Wed Nov 02 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.7
 - fix bug 172336 / upstream bug 37056: reentr ERANGE realloc recursion
 
