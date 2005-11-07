@@ -121,6 +121,9 @@ Patch172236:    perl-5.8.7-bz172236.patch
 Patch25084:     perl-5.8.7-25084.patch
 
 Patch172396:	perl-5.8.7-172396.patch
+
+Patch172587:    perl-5.8.7-bz172587.patch
+
 # module updatesd
 # Patch202:       perl-5.8.0-Safe2.09.patch
 
@@ -276,6 +279,8 @@ more secure running of setuid perl scripts.
 %patch25084 -p1
 
 %patch172396 -p1
+
+%patch172587 -p1
 
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -486,8 +491,11 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Nov 07 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.7
+- fix bug 172587: apply upstream patches 26009, 26011
+
 * Thu Nov 03 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.7
-- fix bug 172396 : insert tzset() call before localtime_r() calls
+- fix bug 172396 / upstream bug 26136: insert tzset() call before localtime_r() calls
 
 * Wed Nov 02 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.7
 - fix bug 172336 / upstream bug 37056: reentr ERANGE realloc recursion
