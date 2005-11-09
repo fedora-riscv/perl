@@ -88,10 +88,10 @@ Patch22:        perl-5.8.1-lpthread-link.patch
 # fix empty RPATH security issue
 Patch24:        perl-5.8.3-empty-rpath.patch
 
-# CAN-2004-0452 fix
+# CAN-2004-0452 fix                   (now in 5.8.7!)
 Patch26:        perl-5.8.0-rmtree.patch
 
-# CAN-2005-0155 and CAN-2005-0156 fix
+# CAN-2005-0155 and CAN-2005-0156 fix (now in 5.8.7!)
 Patch27:        perl-5.8.5-CAN-2005-0155+0156.patch
 
 # bugzilla 118877, 127023
@@ -123,6 +123,10 @@ Patch25084:     perl-5.8.7-25084.patch
 Patch172396:	perl-5.8.7-172396.patch
 
 Patch172587:    perl-5.8.7-bz172587.patch
+
+Patch040976:	perl-5.8.7-CAN-2004-0976.patch
+
+Patch172739:    perl-5.8.7-bz172739_obz36521.patch
 
 # module updatesd
 # Patch202:       perl-5.8.0-Safe2.09.patch
@@ -281,6 +285,10 @@ more secure running of setuid perl scripts.
 %patch172396 -p1
 
 %patch172587 -p1
+
+%patch040976 -p1
+
+%patch172739 -p1
 
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -491,6 +499,11 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Nov 08 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.7
+- fix bug 172739: upstream bug 36521 : deep recursion and segfault
+  in CGI::Carp::warn with 'use diagnostics' : applied patch 25160.
+- fix CAN-2004-0976: insecure use of temp files (ala Debian)
+
 * Mon Nov 07 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.7
 - fix bug 172587: apply upstream patches 26009, 26011
 
