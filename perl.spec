@@ -128,6 +128,8 @@ Patch040976:	perl-5.8.7-CAN-2004-0976.patch
 
 Patch172739:    perl-5.8.7-bz172739_obz36521.patch
 
+Patch136009:    perl-5.8.7-MM_Unix-rpath-136009.patch
+
 # module updatesd
 # Patch202:       perl-5.8.0-Safe2.09.patch
 
@@ -289,6 +291,8 @@ more secure running of setuid perl scripts.
 %patch040976 -p1
 
 %patch172739 -p1
+
+%patch136009 -p1
 
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -499,6 +503,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Nov 09 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.7
+- fix bug 136009: restore MakeMaker support for LD_RUN_PATH, 
+  while removing empty LD_RUN_PATH
+
 * Tue Nov 08 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.7
 - fix bug 172739: upstream bug 36521 : deep recursion and segfault
   in CGI::Carp::warn with 'use diagnostics' : applied patch 25160.
