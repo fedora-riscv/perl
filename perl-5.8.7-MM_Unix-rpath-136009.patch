@@ -1,0 +1,38 @@
+--- perl-5.8.7/lib/ExtUtils/MM_Unix.pm.136009	2005-11-08 20:08:30.000000000 -0500
++++ perl-5.8.7/lib/ExtUtils/MM_Unix.pm	2005-11-09 12:54:41.000000000 -0500
+@@ -413,11 +413,18 @@
+ };
+     my($tmp);
+     for $tmp (qw/
+-	 EXTRALIBS LDLOADLIBS BSLOADLIBS LD_RUN_PATH
++	 EXTRALIBS LDLOADLIBS BSLOADLIBS
+ 	 /) {
+ 	next unless defined $self->{$tmp};
+ 	push @m, "$tmp = $self->{$tmp}\n";
+     }
++    # don't set LD_RUN_PATH if empty
++    for $tmp (qw/
++	 LD_RUN_PATH
++	 /) {
++	next unless $self->{$tmp};
++	push @m, "$tmp = $self->{$tmp}\n";
++    }
+     return join "", @m;
+ }
+ 
+@@ -1134,9 +1141,13 @@
+ 	}
+     }
+ 
++    my $ld_run_path_shell = "";
++    if ($self->{LD_RUN_PATH} ne "") {
++	$ld_run_path_shell = 'LD_RUN_PATH="$(LD_RUN_PATH)" ';
++    }
+     push(@m,
+-'	$(LD) '.$ldrun.' $(LDDLFLAGS) '.$ldfrom.
+-' $(OTHERLDFLAGS) -o $@ $(MYEXTLIB) $(PERL_ARCHIVE) '.$libs.' $(PERL_ARCHIVE_AFTER) $(EXPORT_LIST) $(INST_DYNAMIC_FIX)');
++	 '	'.$ld_run_path_shell.'$(LD) '.$ldrun.' $(LDDLFLAGS) '.$ldfrom.
++	 ' $(OTHERLDFLAGS) -o $@ $(MYEXTLIB) $(PERL_ARCHIVE) '.$libs.' $(PERL_ARCHIVE_AFTER) $(EXPORT_LIST) $(INST_DYNAMIC_FIX)');
+     push @m, '
+ 	$(CHMOD) $(PERM_RWX) $@
+ ';
