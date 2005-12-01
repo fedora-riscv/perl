@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.7
-%define perlrel 0.7.fc5
+%define perlrel 0.8.fc5
 %define perlepoch 3
 
 %{?!perl_debugging:    %define perl_debugging 0}
@@ -129,6 +129,8 @@ Patch040976:	perl-5.8.7-CAN-2004-0976.patch
 Patch172739:    perl-5.8.7-bz172739_obz36521.patch
 
 Patch136009:    perl-5.8.7-MM_Unix-rpath-136009.patch
+
+Patch174684:	perl-5.8.7-CVE-2005-3962-bz174684.patch
 
 # module updatesd
 # Patch202:       perl-5.8.0-Safe2.09.patch
@@ -293,6 +295,8 @@ more secure running of setuid perl scripts.
 %patch172739 -p1
 
 %patch136009 -p1
+
+%patch174684 -p1
 
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -503,6 +507,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Dec 01 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.8
+- fix bug 174684 / CVE-2005-3962: sprintf integer overflow vulnerability
+  backport upstream patch #26240
+
 * Wed Nov 09 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.7
 - fix bug 136009: restore MakeMaker support for LD_RUN_PATH, 
   while removing empty LD_RUN_PATH
