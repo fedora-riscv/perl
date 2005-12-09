@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.7
-%define perlrel 0.8.fc5
+%define perlrel 8
 %define perlepoch 3
 
 %{?!perl_debugging:    %define perl_debugging 0}
@@ -131,6 +131,8 @@ Patch172739:    perl-5.8.7-bz172739_obz36521.patch
 Patch136009:    perl-5.8.7-MM_Unix-rpath-136009.patch
 
 Patch174684:	perl-5.8.7-CVE-2005-3962-bz174684.patch
+
+Patch1360090:  	perl-5.8.7-USE_MM_LD_RUN_PATH.patch
 
 # module updatesd
 # Patch202:       perl-5.8.0-Safe2.09.patch
@@ -297,6 +299,8 @@ more secure running of setuid perl scripts.
 %patch136009 -p1
 
 %patch174684 -p1
+
+%patch1360090 -p1
 
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -507,6 +511,17 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Dec 08 2005 Jason Vas Dias <jvdias@redhat.com> - 3.5.8.7-8
+- Apply upstream patches 26283 and 26284 : complete, revised fixes
+  for CVE-2005-3962 and CVE-2005-3912 and 
+  "Sys::Syslog security vulnerabilities" issues.
+- Fix bug 136009 / MakeMaker LD_RUN_PATH issue: 
+  restore previous default Red Hat behavior of removing the MakeMaker
+  generated LD_RUN_PATH setting from the link command .
+  Document this removal, as it contravenes upstream default behavior, and 
+  provide a USE_MM_LD_RUN_PATH MakeMaker member to enable use of the 
+  MakeMaker generated LD_RUN_PATH .
+
 * Thu Dec 01 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.8
 - fix bug 174684 / CVE-2005-3962: sprintf integer overflow vulnerability
   backport upstream patch #26240
