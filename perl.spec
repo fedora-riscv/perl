@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver 5.8.7
-%define perlrel 8
+%define perlrel 8.1
 %define perlepoch 3
 
 %{?!perl_debugging:    %define perl_debugging 0}
@@ -511,7 +511,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Thu Dec 08 2005 Jason Vas Dias <jvdias@redhat.com> - 3.5.8.7-8
+* Wed Dec 14 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.6.7-8.1
+- Updated upstream patches for CVE-2005-3962: 26322 , 26331, 26333
+
+* Thu Dec 08 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-8
 - Apply upstream patches 26283 and 26284 : complete, revised fixes
   for CVE-2005-3962 and CVE-2005-3912 and 
   "Sys::Syslog security vulnerabilities" issues.
