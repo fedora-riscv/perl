@@ -1,0 +1,22 @@
+--- perl-5.8.8-RC1/lib/CPAN/FirstTime.pm.links	2006-01-05 12:37:39.000000000 -0500
++++ perl-5.8.8-RC1/lib/CPAN/FirstTime.pm	2006-01-20 14:57:13.000000000 -0500
+@@ -326,7 +326,7 @@
+     local $^W = $old_warn;
+     my $progname;
+     for $progname (qw/bzip2 gzip tar unzip make
+-                      curl lynx wget ncftpget ncftp ftp
++                      curl links wget ncftpget ncftp ftp
+                       gpg/)
+     {
+       if ($^O eq 'MacOS') {
+--- perl-5.8.8-RC1/lib/CPAN.pm.links	2006-01-05 12:37:39.000000000 -0500
++++ perl-5.8.8-RC1/lib/CPAN.pm	2006-01-20 14:55:51.000000000 -0500
+@@ -2607,7 +2607,7 @@
+ 	  my($wstatus);
+ 	  if (($wstatus = system($system)) == 0
+ 	      &&
+-	      ($f eq "lynx" ?
++	      ($f eq "links" ?
+ 	       -s $asl_ungz # lynx returns 0 when it fails somewhere
+ 	       : 1
+ 	      )
