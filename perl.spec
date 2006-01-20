@@ -4,11 +4,16 @@
 
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
-%define perlver 5.8.7
-%define perlrel 8.1
-%define perlepoch 3
+%define perlver    5.8.8
+%define perlrel    0
+%define perlepoch  3
+%define perlsrcrel RC1
 
-%{?!perl_debugging:    %define perl_debugging 0}
+%{?!perl_debugging:    %define perl_debugging 1}
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# perl_debugging enabled until 5.8.8 final release! 
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 %if %{perl_debugging}
 %define debug_package %{nil}
 # don't build debuginfo and disable stripping
@@ -26,7 +31,7 @@ Provides: perl(:WITHOUT_ITHREADS)
 Provides: perl(:WITHOUT_THREADS)
 %endif
 
-%define perlmodcompat 5.8.6 5.8.5 5.8.4 5.8.3
+%define perlmodcompat 5.8.7 5.8.6 5.8.5 5.8.4 5.8.3
 Provides: perl(:MODULE_COMPAT_5.8.3)
 Provides: perl(:MODULE_COMPAT_5.8.4)
 Provides: perl(:MODULE_COMPAT_5.8.5)
@@ -39,10 +44,9 @@ Provides: perl(:WITH_LARGEFILES)
 Provides: perl(:WITHOUT_LARGEFILES)
 %endif
 
-
 Name:           perl
 Version:        %{perlver}
-Release:        %{perlrel}
+Release:        %{perlrel}_%{perlsrcrel}
 Epoch:          %{perlepoch}
 Summary:        The Perl programming language
 
@@ -50,25 +54,25 @@ Group:          Development/Languages
 License:        Artistic or GPL
 Url:            http://www.perl.org/
 
-Source0:        http://www.cpan.org/authors/id/N/NW/NWCLARK/perl-5.8.7.tar.bz2
+Source0:        http://www.cpan.org/authors/id/N/NW/NWCLARK/%{name}-%{version}-%{perlsrcrel}.tar.bz2
 Source11:       filter-depends.sh
 Source12:       perl-5.8.0-libnet.cfg
 
 Patch5:         perl-5.8.0-root.patch
 # Patch6:         perl-5.8.0-fhs.patch
-Patch7:         perl-5.6.0-buildroot.patch
+# Patch7:         perl-5.6.0-buildroot.patch
 # Patch8:         perl-5.8.0-errno.patch
-Patch9:         perl-5.7.3-syslog.patch
+# Patch9:         perl-5.7.3-syslog.patch
 # Patch10:        perl-5.8.0-notty.patch
-Patch11:        perl-5.8.3-fullinc.patch
+# Patch11:        perl-5.8.3-fullinc.patch
 Patch12:        perl-5.8.7-incpush.patch
-Patch13:        perl-5.8.3-perlbug-tag.patch
-Patch14:        perl-5.8.5-dashI.patch
+Patch13:        perl-5.8.8-perlbug-tag.patch
+Patch14:        perl-5.8.8-dashI.patch
 Patch15:        perl-5.8.5-incorder.patch
 
 # Configure doesn't listen well when we say no ndbm.  When it links in,
 # it then conflicts with berkeley db.  oops.
-Patch16:        perl-5.8.0-nondbm.patch
+# Patch16:        perl-5.8.0-nondbm.patch
 
 # make sure we get the proper ldflags on libperl.so
 Patch17:        perl-5.8.0-sharedlinker.patch
@@ -76,35 +80,37 @@ Patch17:        perl-5.8.0-sharedlinker.patch
 # perl 5.8.0 likes to use man3ext for BOTH directories AND files.  not kosher.
 # Patch18:        perl-5.8.0-manext.patch
 
-# lynx is depracated, use links instead
-Patch19:        perl-5.8.0-links.patch
+# lynx is deprecated, use links instead
+Patch19:        perl-5.8.8-links.patch
 
 # work around annoying rpath issue
-Patch21:        perl-5.8.0-rpath-make.patch
+Patch21:        perl-5.8.8-rpath-make.patch
 
 # bugzilla 101767, make sure threads.so links directly to -lpthread
-Patch22:        perl-5.8.1-lpthread-link.patch
+# Patch22:        perl-5.8.1-lpthread-link.patch
 
-# fix empty RPATH security issue
-Patch24:        perl-5.8.3-empty-rpath.patch
+# fix empty RPATH security issue      (now fixed with USE_MM_LD_RUN_PATH patch )
+# Patch24:        perl-5.8.3-empty-rpath.patch
 
 # CAN-2004-0452 fix                   (now in 5.8.7!)
-Patch26:        perl-5.8.0-rmtree.patch
+# Patch26:        perl-5.8.0-rmtree.patch
 
 # CAN-2005-0155 and CAN-2005-0156 fix (now in 5.8.7!)
-Patch27:        perl-5.8.5-CAN-2005-0155+0156.patch
+# Patch27:        perl-5.8.5-CAN-2005-0155+0156.patch
 
-# bugzilla 118877, 127023
-Patch28:        perl-5.8.6-findbin-selinux.patch
+# bugzilla 118877, 127023             (now in 5.8.8!)
+# Patch28:        perl-5.8.6-findbin-selinux.patch
 
 # Update the core module version (matching the external package perl-Filter-Simple)
-Patch30:        perl-5.8.6-filter-simple-update.patch
+# (now 0.82 in 5.8.8)
+# Patch30:        perl-5.8.6-filter-simple-update.patch
 
 # Disable -DDEBUGGING and allow -g to do its job (#156113)
 Patch31:        perl-5.8.7-no-debugging.patch
 
 # Fix for bug 171111: missing IOCPARM_LEN
-Patch32:        perl-5.8.7-IOC_SIZE.patch
+# (now in 5.8.8!)
+# Patch32:        perl-5.8.7-IOC_SIZE.patch
 
 # arch-specific patches
 Patch100:       perl-5.8.1-fpic.patch
@@ -114,25 +120,29 @@ Patch32002:     perl-5.8.0-nptlhint.patch
 
 Patch32003:     perl-5.8.6-libresolv.patch
 
-Patch172236:    perl-5.8.7-bz172236.patch
+# now in 5.8.8:
+# Patch172236:    perl-5.8.7-bz172236.patch
 
 # fix for bug 163958 / upstream bug 37056 :
-# backport of perl-5.9's patch 25084 :
+# backport of perl-5.9's patch 25084 (bug still in 5.8.8!):
 Patch25084:     perl-5.8.7-25084.patch
 
 Patch172396:	perl-5.8.7-172396.patch
 
-Patch172587:    perl-5.8.7-bz172587.patch
+# now in 5.8.8:
+# Patch172587:    perl-5.8.7-bz172587.patch
 
-Patch040976:	perl-5.8.7-CAN-2004-0976.patch
+Patch040976:	perl-5.8.8-CAN-2004-0976.patch
 
-Patch172739:    perl-5.8.7-bz172739_obz36521.patch
+# now in 5.8.8:
+# Patch172739:    perl-5.8.7-bz172739_obz36521.patch
 
-Patch136009:    perl-5.8.7-MM_Unix-rpath-136009.patch
+#Patch136009:     perl-5.8.7-MM_Unix-rpath-136009.patch
 
-Patch174684:	perl-5.8.7-CVE-2005-3962-bz174684.patch
+# now in 5.8.8:
+#Patch174684:	perl-5.8.7-CVE-2005-3962-bz174684.patch
 
-Patch1360090:  	perl-5.8.7-USE_MM_LD_RUN_PATH.patch
+Patch1360090:    perl-5.8.8-USE_MM_LD_RUN_PATH.patch
 
 # module updatesd
 # Patch202:       perl-5.8.0-Safe2.09.patch
@@ -245,7 +255,7 @@ more secure running of setuid perl scripts.
 
 
 %prep
-%setup -q
+%setup -q   -n %{name}-%{version}-%perlsrcrel
 %patch5 -p1
 # %%patch8 -p1 
 
@@ -259,46 +269,49 @@ more secure running of setuid perl scripts.
 %patch17 -p1
 
 %patch19 -p1
+
 %patch21 -p1
-%patch24 -p1
+# %patch24 -p1
 
 # perl 5.8.7: reject
 # %patch26 -p1
 # perl 5.8.7: Already in ?
 # %patch27 -p0
-%patch28 -p1
+# %patch28 -p1
 
-%patch30 -p1
+# %patch30 -p1
 
 %if !%{perl_debugging}
 %patch31 -p1
 %endif
 
-%patch32 -p1
+# %patch32 -p1
 
 %patch100 -p1
+
 %ifarch %{multilib_64_archs}
 %patch101 -p1
 %endif
 
 %patch32002 -p1
+
 %patch32003 -p1
 
-%patch172236 -p1
+# %patch172236 -p1
 
 %patch25084 -p1
 
 %patch172396 -p1
 
-%patch172587 -p1
+# %patch172587 -p1
 
 %patch040976 -p1
 
-%patch172739 -p1
+# %patch172739 -p1
 
-%patch136009 -p1
+# %patch136009 -p1
 
-%patch174684 -p1
+# %patch174684 -p1
 
 %patch1360090 -p1
 
@@ -511,7 +524,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Wed Dec 14 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.6.7-8.1
+* Fri Dec 20 2006 Jason Vas Dias <jvdias@redhat.com> - 3.5.8.8-0_RC1
+- Upgrade to new upstream release candidate 5.8.8-RC1
+
+* Wed Dec 14 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-8.1
 - Updated upstream patches for CVE-2005-3962: 26322 , 26331, 26333
 
 * Thu Dec 08 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-8
