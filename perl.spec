@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver    5.8.8
-%define perlrel    0
+%define perlrel    0.1
 %define perlepoch  3
 %define perlsrcrel RC1
 
@@ -37,6 +37,7 @@ Provides: perl(:MODULE_COMPAT_5.8.4)
 Provides: perl(:MODULE_COMPAT_5.8.5)
 Provides: perl(:MODULE_COMPAT_5.8.6)
 Provides: perl(:MODULE_COMPAT_5.8.7)
+Provides: perl(:MODULE_COMPAT_5.8.8)
 
 %if %{largefiles}
 Provides: perl(:WITH_LARGEFILES)
@@ -65,7 +66,7 @@ Patch5:         perl-5.8.0-root.patch
 # Patch9:         perl-5.7.3-syslog.patch
 # Patch10:        perl-5.8.0-notty.patch
 # Patch11:        perl-5.8.3-fullinc.patch
-Patch12:        perl-5.8.7-incpush.patch
+Patch12:        perl-5.8.8-incpush.patch
 Patch13:        perl-5.8.8-perlbug-tag.patch
 Patch14:        perl-5.8.8-dashI.patch
 Patch15:        perl-5.8.5-incorder.patch
@@ -146,6 +147,7 @@ Patch1360090:    perl-5.8.8-USE_MM_LD_RUN_PATH.patch
 
 # module updatesd
 # Patch202:       perl-5.8.0-Safe2.09.patch
+Patch178343:	perl-5.8.8-bz178343.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  gawk, grep, tcsh, dos2unix, man, groff
@@ -314,6 +316,8 @@ more secure running of setuid perl scripts.
 # %patch174684 -p1
 
 %patch1360090 -p1
+
+%patch178343 -p1
 
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -522,9 +526,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/sperl%{perlver}
 %endif
 
-
 %changelog
-* Fri Dec 20 2006 Jason Vas Dias <jvdias@redhat.com> - 3.5.8.8-0_RC1
+* Tue Jan 31 2006 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.8-0.1_RC1
+- fix bug 178343: h2ph must include cpp "predefined macros" in _h2ph_pre.ph
+- Add perl(:MODULE_COMPAT_5.8.8) to Provides
+- Fix perlbug patch
+
+* Fri Jan 20 2006 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.8-0_RC1
 - Upgrade to new upstream release candidate 5.8.8-RC1
 
 * Wed Dec 14 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-8.1
