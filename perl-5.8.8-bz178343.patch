@@ -1,0 +1,53 @@
+--- perl-5.8.8-RC1/Configure.bz178343	2006-01-30 19:42:47.000000000 -0500
++++ perl-5.8.8-RC1/Configure	2006-01-30 20:04:53.000000000 -0500
+@@ -20279,6 +20279,17 @@
+ chmod +x Cppsym.try
+ $eunicefix Cppsym.try
+ ./Cppsym < Cppsym.know > Cppsym.true
++: Add in any cpp "predefined macros" :
++tHdrH=`mktemp ./XXXXXX`
++rm -f $tHdrH'.h' $tHdrH
++touch $tHdrH'.h' 
++if cpp -dM $tHdrH'.h' > $tHdrH'_cppsym.h' && [ -s $tHdrH'_cppsym.h' ] ; then
++   sed 's/#define[\ \	]*//;s/[\ \	].*$//' < $tHdrH'_cppsym.h' > $tHdrH'_cppsym.real';
++   if [ -s $tHdrH'_cppsym.real' ]; then
++      cat $tHdrH'_cppsym.real' Cppsym.know  | sort | uniq | ./Cppsym | sort | uniq > Cppsym.true
++   fi
++fi
++rm -f $tHdrH'.h' $tHdrH'_cppsym.h' $tHdrH'_cppsym.real'
+ : now check the C compiler for additional symbols
+ postprocess_cc_v=''
+ case "$osname" in
+--- perl-5.8.8-RC1/utils/h2ph.PL.bz178343	2006-01-13 12:56:47.000000000 -0500
++++ perl-5.8.8-RC1/utils/h2ph.PL	2006-01-30 20:01:15.000000000 -0500
+@@ -778,8 +778,16 @@
+             if ($opt_D) {
+                 print PREAMBLE "# $_=$define{$_}\n";
+             }
+-
+-            if ($define{$_} =~ /^(\d+)U?L{0,2}$/i) {
++	    if ($define{$_} =~ /^\((.*)\)$/) {
++	      # parenthesized value:  d=(v)
++		$define{$_} = $1;
++	    };
++	    if ($define{$_} =~ /^([+-]?(\d+)?\.\d+([eE][+-]?\d+)?)[FL]?$/ ) {
++	      # float:
++		print PREAMBLE
++                    "unless (defined &$_) { sub $_() { $1 } }\n\n";
++	    } elsif ($define{$_} =~ /^([+-]?\d+)U?L{0,2}$/i) {
++	      # integer:
+                 print PREAMBLE
+                     "unless (defined &$_) { sub $_() { $1 } }\n\n";
+             } elsif ($define{$_} =~ /^\w+$/) {
+@@ -805,9 +813,8 @@
+         @Config{'ccsymbols', 'cppsymbols', 'cppccsymbols'};
+ 
+     # Split compiler pre-definitions into `key=value' pairs:
+-    foreach (split /\s+/, $allsymbols) {
+-        /(.+?)=(.+)/ and $define{$1} = $2;
+-
++    while( $allsymbols=~/([^\s]+)=((\\\s|[^\s])+)/g ) {
++        $define{$1} = $2;	
+         if ($opt_D) {
+             print STDERR "$_:  $1 -> $2\n";
+         }
