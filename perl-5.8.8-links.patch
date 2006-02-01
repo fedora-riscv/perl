@@ -1,22 +1,90 @@
---- perl-5.8.8-RC1/lib/CPAN/FirstTime.pm.links	2006-01-05 12:37:39.000000000 -0500
-+++ perl-5.8.8-RC1/lib/CPAN/FirstTime.pm	2006-01-20 14:57:13.000000000 -0500
-@@ -326,7 +326,7 @@
+--- perl-5.8.8/lib/CPAN/FirstTime.pm.links	2006-01-30 16:08:57.000000000 -0500
++++ perl-5.8.8/lib/CPAN/FirstTime.pm	2006-02-01 11:08:12.000000000 -0500
+@@ -292,7 +292,7 @@
+     my(@path) = split /$Config{'path_sep'}/, $ENV{'PATH'};
      local $^W = $old_warn;
      my $progname;
-     for $progname (qw/bzip2 gzip tar unzip make
--                      curl lynx wget ncftpget ncftp ftp
-+                      curl links wget ncftpget ncftp ftp
-                       gpg/)
-     {
+-    for $progname (qw/gzip tar unzip make lynx wget ncftpget ncftp ftp gpg/){
++    for $progname (qw/gzip tar unzip make links wget ncftpget ncftp ftp gpg/){
        if ($^O eq 'MacOS') {
---- perl-5.8.8-RC1/lib/CPAN.pm.links	2006-01-05 12:37:39.000000000 -0500
-+++ perl-5.8.8-RC1/lib/CPAN.pm	2006-01-20 14:55:51.000000000 -0500
-@@ -2607,7 +2607,7 @@
+           $CPAN::Config->{$progname} = 'not_here';
+           next;
+--- perl-5.8.8/lib/CPAN.pm.links	2006-01-31 09:11:22.000000000 -0500
++++ perl-5.8.8/lib/CPAN.pm	2006-02-01 11:06:01.000000000 -0500
+@@ -2604,7 +2604,7 @@
+ 
+ 	$self->debug("localizing funkyftpwise[$url]") if $CPAN::DEBUG;
+ 	my($f,$funkyftp);
+-	for $f ('lynx','ncftpget','ncftp','wget') {
++	for $f ('links','ncftpget','ncftp','wget') {
+ 	  next unless exists $CPAN::Config->{$f};
+ 	  $funkyftp = $CPAN::Config->{$f};
+ 	  next unless defined $funkyftp;
+@@ -2613,7 +2613,7 @@
+ 	  ($asl_ungz = $aslocal) =~ s/\.gz//;
+           $asl_gz = "$asl_ungz.gz";
+ 	  my($src_switch) = "";
+-	  if ($f eq "lynx"){
++	  if ($f eq "links"){
+ 	    $src_switch = " -source";
+ 	  } elsif ($f eq "ncftp"){
+ 	    $src_switch = " -c";
+@@ -2637,8 +2637,8 @@
  	  my($wstatus);
  	  if (($wstatus = system($system)) == 0
  	      &&
 -	      ($f eq "lynx" ?
+-	       -s $asl_ungz # lynx returns 0 when it fails somewhere
 +	      ($f eq "links" ?
- 	       -s $asl_ungz # lynx returns 0 when it fails somewhere
++	       -s $asl_ungz # links returns 0 when it fails somewhere
  	       : 1
  	      )
+ 	     ) {
+@@ -2695,7 +2695,7 @@
+ });
+ 	  }
+           return if $CPAN::Signal;
+-	} # lynx,ncftpget,ncftp
++	} # links,ncftpget,ncftp
+     } # host
+ }
+ 
+@@ -6022,7 +6022,7 @@
+ 
+ The CPAN module is designed to automate the make and install of perl
+ modules and extensions. It includes some primitive searching capabilities and
+-knows how to use Net::FTP or LWP (or lynx or an external ftp client)
++knows how to use Net::FTP or LWP (or links or an external ftp client)
+ to fetch the raw data from the net.
+ 
+ Modules are fetched from one or more of the mirrored CPAN
+@@ -6683,7 +6683,7 @@
+ associated with a URL that is not C<ftp:>.
+ 
+ If you have neither Net::FTP nor LWP, there is a fallback mechanism
+-implemented for an external ftp command or for an external lynx
++implemented for an external ftp command or for an external links
+ command.
+ 
+ =head2 Finding packages and VERSION
+@@ -6975,16 +6975,16 @@
+ 
+ =back
+ 
+-=head2 Configuring lynx or ncftp for going through a firewall
++=head2 Configuring links or ncftp for going through a firewall
+ 
+-If you can go through your firewall with e.g. lynx, presumably with a
++If you can go through your firewall with e.g. links, presumably with a
+ command such as
+ 
+-    /usr/local/bin/lynx -pscott:tiger
++    /usr/local/bin/links -pscott:tiger
+ 
+ then you would configure CPAN.pm with the command
+ 
+-    o conf lynx "/usr/local/bin/lynx -pscott:tiger"
++    o conf links "/usr/local/bin/links -pscott:tiger"
+ 
+ That's all. Similarly for ncftp or ftp, you would configure something
+ like
