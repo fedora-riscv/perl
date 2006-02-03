@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver    5.8.8
-%define perlrel    1
+%define perlrel    1.1
 %define perlepoch  4
 
 %{?!perl_debugging:    %define perl_debugging 0}
@@ -524,6 +524,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Fri Feb 03 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-1.1
+- Rebuild with new gcc and glibc
+
 * Wed Feb 01 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-1
 - Upgrade to new upstream release 5.8.8, officially released today
 
