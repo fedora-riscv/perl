@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver    5.8.8
-%define perlrel    1.2
+%define perlrel    2
 %define perlepoch  4
 
 %{?!perl_debugging:    %define perl_debugging 0}
@@ -144,6 +144,9 @@ Patch1360090:    perl-5.8.8-USE_MM_LD_RUN_PATH.patch
 # module updatesd
 # Patch202:       perl-5.8.0-Safe2.09.patch
 Patch178343:	perl-5.8.8-bz178343.patch
+#
+# Debian's fix for Net::NNTP:
+Patch32:        perl-5.8.8-debian_fix_net_nntp.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  gawk, grep, tcsh, dos2unix, man, groff
@@ -315,6 +318,8 @@ more secure running of setuid perl scripts.
 %patch1360090 -p1
 
 %patch178343 -p1
+
+%patch32 -p1
 
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -524,6 +529,12 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Fri Feb 10 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-2
+- Rebuild again
+- Debian released 5.8.8 patches today; apply only relevant difference:
+  03_fix_net_nntp : fix precedence in Net::NNTP::article 
+                    from Brendan O'Dea<bod@debian.org>
+
 * Mon Feb 06 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-1.2
 - Rebuild with new gcc, glibc, and glibc-kernheaders
 
