@@ -43,7 +43,7 @@ Provides: perl(:WITHOUT_LARGEFILES)
 
 Name:           perl
 Version:        %{perlver}
-Release:        %{perlrel}
+Release:        %{perlrel}.1
 Epoch:          %{perlepoch}
 Summary:        The Perl programming language
 
@@ -529,6 +529,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Fri Feb 10 2006 Jesse Keating <jkeating@redhat.com> - 4:5.8.8-2.1
+- bump again for double-long bug on ppc(64)
+
 * Fri Feb 10 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-2
 - Rebuild again
 - Debian released 5.8.8 patches today; apply only relevant difference:
