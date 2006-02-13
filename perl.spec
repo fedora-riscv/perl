@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver    5.8.8
-%define perlrel    2
+%define perlrel    3
 %define perlepoch  4
 
 %{?!perl_debugging:    %define perl_debugging 0}
@@ -43,7 +43,7 @@ Provides: perl(:WITHOUT_LARGEFILES)
 
 Name:           perl
 Version:        %{perlver}
-Release:        %{perlrel}.1
+Release:        %{perlrel}
 Epoch:          %{perlepoch}
 Summary:        The Perl programming language
 
@@ -147,6 +147,9 @@ Patch178343:	perl-5.8.8-bz178343.patch
 #
 # Debian's fix for Net::NNTP:
 Patch32:        perl-5.8.8-debian_fix_net_nntp.patch
+#
+# Upstream patches 27133 and 27169 (27170):
+Patch33: 	perl-5.8.8-up27133_up27169.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  gawk, grep, tcsh, dos2unix, man, groff
@@ -320,6 +323,8 @@ more secure running of setuid perl scripts.
 %patch178343 -p1
 
 %patch32 -p1
+
+%patch33 -p1
 
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -529,6 +534,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Mon Feb 13 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-3
+- Apply upstream bugfix patch 27170
+
 * Fri Feb 10 2006 Jesse Keating <jkeating@redhat.com> - 4:5.8.8-2.1
 - bump again for double-long bug on ppc(64)
 
