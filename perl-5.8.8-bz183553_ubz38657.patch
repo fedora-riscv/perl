@@ -1,0 +1,11 @@
+--- perl-5.8.8/perl.c.bz183553_ubz38657	2006-02-27 12:51:49.000000000 -0500
++++ perl-5.8.8/perl.c	2006-03-01 17:18:41.000000000 -0500
+@@ -3110,7 +3110,7 @@
+ 		sv_catpv(sv, start);
+ 	    else {
+ 		sv_catpvn(sv, start, s-start);
+-		Perl_sv_catpvf(aTHX_ sv, " split(/,/,q%c%s%c)", 0, ++s, 0);
++		Perl_sv_catpvf(aTHX_ sv, " split(/,/,q(%s))", ++s);
+ 	    }
+ 	    s += strlen(s);
+ 	    my_setenv("PERL5DB", (char *)SvPV_nolen_const(sv));

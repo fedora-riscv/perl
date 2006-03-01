@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver    5.8.8
-%define perlrel    3
+%define perlrel    4
 %define perlepoch  4
 
 %{?!perl_debugging:    %define perl_debugging 0}
@@ -150,6 +150,10 @@ Patch32:        perl-5.8.8-debian_fix_net_nntp.patch
 #
 # Upstream patches 27133 and 27169 (27170):
 Patch33: 	perl-5.8.8-up27133_up27169.patch
+# Upstream patch 27284:
+Patch34:	perl-5.8.8-up27284.patch
+# Fix for bug 183553 / upstream bug 38657:
+Patch35:	perl-5.8.8-bz183553_ubz38657.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  gawk, grep, tcsh, dos2unix, man, groff
@@ -325,6 +329,10 @@ more secure running of setuid perl scripts.
 %patch32 -p1
 
 %patch33 -p1
+
+%patch34 -p1
+
+%patch35 -p1
 
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -534,6 +542,13 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Tue Mar 01 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-4
+- Fix bug 183553 / upstream bug 38657: fix -d:Foo=bar processing
+- rebuild with new gcc-4.1.0-1, released today
+
+* Mon Feb 27 2006 Jason Vas Dias <jvdias@redhat.com>
+- Apply upstream patch #28284
+
 * Mon Feb 13 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-3
 - Apply upstream bugfix patch 27170
 
