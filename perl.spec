@@ -219,7 +219,7 @@ Provides: perl(Carp::Heavy)
 # Provides: perl(LWP::UserAgent)
 # Provides: perl(URI::URL)
 
-Conflicts: perl-NDBM_File <= 1:1.75-34.99.6
+# Conflicts: perl-NDBM_File <= 1:1.75-34.99.6
 
 Obsoletes: perl-Digest-MD5
 Obsoletes: perl-MIME-Base64
