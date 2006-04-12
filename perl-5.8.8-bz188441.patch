@@ -1,0 +1,11 @@
+--- perl-5.8.8/lib/CGI.pm.bz188441	2006-01-08 11:40:30.000000000 -0500
++++ perl-5.8.8/lib/CGI.pm	2006-04-12 18:49:26.000000000 -0400
+@@ -2650,7 +2650,7 @@
+         return $url if $base;
+ 	$url .= $uri;
+     } elsif ($relative) {
+-	($url) = $script_name =~ m!([^/]+)$!;
++	($url) = $uri =~ m!([^/]+)$!;
+     } elsif ($absolute) {
+ 	$url = $uri;
+     }
