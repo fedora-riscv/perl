@@ -1,5 +1,5 @@
 --- perl-5.8.8/config_h.SH.bz172396	2005-10-31 13:13:05.000000000 -0500
-+++ perl-5.8.8/config_h.SH	2006-03-27 16:09:01.000000000 -0500
++++ perl-5.8.8/config_h.SH	2006-05-11 16:20:36.000000000 -0400
 @@ -1912,7 +1912,18 @@
   */
  #$d_localtime_r HAS_LOCALTIME_R	   /**/
@@ -20,8 +20,8 @@
  /* HAS_LONG_DOUBLE:
   *	This symbol will be defined if the C compiler supports long
   *	doubles.
---- perl-5.8.8/reentr.inc.bz172396	2006-03-27 16:09:01.000000000 -0500
-+++ perl-5.8.8/reentr.inc	2006-03-27 16:09:01.000000000 -0500
+--- perl-5.8.8/reentr.inc.bz172396	2006-05-11 16:20:36.000000000 -0400
++++ perl-5.8.8/reentr.inc	2006-05-11 16:20:36.000000000 -0400
 @@ -1368,10 +1368,10 @@
  #ifdef HAS_LOCALTIME_R
  #   undef localtime
@@ -35,8 +35,8 @@
  #   endif
  #endif /* HAS_LOCALTIME_R */
  
---- perl-5.8.8/Configure.bz172396	2006-03-27 16:09:01.000000000 -0500
-+++ perl-5.8.8/Configure	2006-03-27 16:09:33.000000000 -0500
+--- perl-5.8.8/Configure.bz172396	2006-05-11 16:20:36.000000000 -0400
++++ perl-5.8.8/Configure	2006-05-11 16:21:47.000000000 -0400
 @@ -542,6 +542,7 @@
  d_libm_lib_version=''
  d_link=''
@@ -45,7 +45,7 @@
  localtime_r_proto=''
  d_locconv=''
  d_lockf=''
-@@ -14261,7 +14262,58 @@
+@@ -14261,7 +14262,59 @@
  *)	localtime_r_proto=0
  	;;
  esac
@@ -69,7 +69,8 @@
 +	*tz_e = (char*)malloc(16),
 +	*tz_w = (char*)malloc(16);
 +    struct tm tm_e, tm_w;
-+
++    memset(&tm_e,'\0',sizeof(struct tm));
++    memset(&tm_w,'\0',sizeof(struct tm));
 +    strcpy(tz_e,e_tz);
 +    strcpy(tz_w,w_tz);
  
@@ -104,7 +105,7 @@
  : see if localeconv exists
  set localeconv d_locconv
  eval $inlibc
-@@ -21220,6 +21272,7 @@
+@@ -21220,6 +21273,7 @@
  d_libm_lib_version='$d_libm_lib_version'
  d_link='$d_link'
  d_localtime_r='$d_localtime_r'
