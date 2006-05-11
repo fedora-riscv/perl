@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver    5.8.8
-%define perlrel    4
+%define perlrel    6
 %define perlepoch  4
 
 %{?!perl_debugging:    %define perl_debugging 0}
@@ -154,6 +154,10 @@ Patch33: 	perl-5.8.8-up27133_up27169.patch
 Patch34:	perl-5.8.8-up27284.patch
 # Fix for bug 183553 / upstream bug 38657:
 Patch35:	perl-5.8.8-bz183553_ubz38657.patch
+#
+Patch188841:	perl-5.8.8-bz188441.patch
+#
+Patch191416:	perl-5.8.8-bz191416.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  gawk, grep, tcsh, dos2unix, man, groff
@@ -334,6 +338,10 @@ more secure running of setuid perl scripts.
 
 %patch35 -p1
 
+%patch188841 -p1
+
+%patch191416 -p1
+
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
 recode()
@@ -505,8 +513,6 @@ install -p -m 644 %{SOURCE12} $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perlver}/Net/li
 # Core modules removal
 #
 find $RPM_BUILD_ROOT -name '*NDBM*' | xargs rm -rfv
-find $RPM_BUILD_ROOT -name '*DBM_Filter*' | xargs rm -rfv
-
 
 find $RPM_BUILD_ROOT -type f -name '*.bs' -a -empty -exec rm -f {} ';'
 
@@ -518,7 +524,6 @@ exit 0
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-
 
 %files
 %defattr(-,root,root,-)
@@ -536,12 +541,18 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{suidperl}
 %files suidperl
-%defattr(-,root,root,-)
 %{_bindir}/suidperl
 %{_bindir}/sperl%{perlver}
 %endif
 
 %changelog
+* Thu May 11 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-6
+- Fix bug 191416: make h2ph generate correct code for cpp statements
+  like: '#if defined A || defined B'
+
+* Wed Apr 12 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-6
+- Fix bug 188841: make CGI.pm's url(-relative) handle rewrites
+
 * Tue Mar 01 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-4
 - Fix bug 183553 / upstream bug 38657: fix -d:Foo=bar processing
 - rebuild with new gcc-4.1.0-1, released today
