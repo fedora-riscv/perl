@@ -1,0 +1,495 @@
+--- perl-5.8.8/t/op/bop.t.U27391	2006-01-06 17:44:14.000000000 -0500
++++ perl-5.8.8/t/op/bop.t	2006-06-01 18:43:20.000000000 -0400
+@@ -15,7 +15,7 @@
+ # If you find tests are failing, please try adding names to tests to track
+ # down where the failure is, and supply your new names as a patch.
+ # (Just-in-time test naming)
+-plan tests => 49;
++plan tests => 148;
+ 
+ # numerics
+ ok ((0xdead & 0xbeef) == 0x9ead);
+@@ -197,3 +197,149 @@
+     $b &= "b";
+     ok($b =~ /b+$/, 'Unicode "b" is NUL-terminated');
+ }
++
++require "./test.pl";
++curr_test(50);
++
++# double magic tests
++
++sub TIESCALAR { bless { value => $_[1], orig => $_[1] } }
++sub STORE { $_[0]{store}++; $_[0]{value} = $_[1] }
++sub FETCH { $_[0]{fetch}++; $_[0]{value} }
++sub stores { tied($_[0])->{value} = tied($_[0])->{orig};
++             delete(tied($_[0])->{store}) || 0 }
++sub fetches { delete(tied($_[0])->{fetch}) || 0 }
++
++# numeric double magic tests
++
++tie $x, "main", 1;
++tie $y, "main", 3;
++
++is(($x | $y), 3);
++is(fetches($x), 1);
++is(fetches($y), 1);
++is(stores($x), 0);
++is(stores($y), 0);
++
++is(($x & $y), 1);
++is(fetches($x), 1);
++is(fetches($y), 1);
++is(stores($x), 0);
++is(stores($y), 0);
++
++is(($x ^ $y), 2);
++is(fetches($x), 1);
++is(fetches($y), 1);
++is(stores($x), 0);
++is(stores($y), 0);
++
++is(($x |= $y), 3);
++is(fetches($x), 2);
++is(fetches($y), 1);
++is(stores($x), 1);
++is(stores($y), 0);
++
++is(($x &= $y), 1);
++is(fetches($x), 2);
++is(fetches($y), 1);
++is(stores($x), 1);
++is(stores($y), 0);
++
++is(($x ^= $y), 2);
++is(fetches($x), 2);
++is(fetches($y), 1);
++is(stores($x), 1);
++is(stores($y), 0);
++
++is(~~$y, 3);
++is(fetches($y), 1);
++is(stores($y), 0);
++
++{ use integer;
++
++is(($x | $y), 3);
++is(fetches($x), 1);
++is(fetches($y), 1);
++is(stores($x), 0);
++is(stores($y), 0);
++
++is(($x & $y), 1);
++is(fetches($x), 1);
++is(fetches($y), 1);
++is(stores($x), 0);
++is(stores($y), 0);
++
++is(($x ^ $y), 2);
++is(fetches($x), 1);
++is(fetches($y), 1);
++is(stores($x), 0);
++is(stores($y), 0);
++
++is(($x |= $y), 3);
++is(fetches($x), 2);
++is(fetches($y), 1);
++is(stores($x), 1);
++is(stores($y), 0);
++
++is(($x &= $y), 1);
++is(fetches($x), 2);
++is(fetches($y), 1);
++is(stores($x), 1);
++is(stores($y), 0);
++
++is(($x ^= $y), 2);
++is(fetches($x), 2);
++is(fetches($y), 1);
++is(stores($x), 1);
++is(stores($y), 0);
++
++is(~$y, -4);
++is(fetches($y), 1);
++is(stores($y), 0);
++
++} # end of use integer;
++
++# stringwise double magic tests
++
++tie $x, "main", "a";
++tie $y, "main", "c";
++
++is(($x | $y), ("a" | "c"));
++is(fetches($x), 1);
++is(fetches($y), 1);
++is(stores($x), 0);
++is(stores($y), 0);
++
++is(($x & $y), ("a" & "c"));
++is(fetches($x), 1);
++is(fetches($y), 1);
++is(stores($x), 0);
++is(stores($y), 0);
++
++is(($x ^ $y), ("a" ^ "c"));
++is(fetches($x), 1);
++is(fetches($y), 1);
++is(stores($x), 0);
++is(stores($y), 0);
++
++is(($x |= $y), ("a" | "c"));
++is(fetches($x), 2);
++is(fetches($y), 1);
++is(stores($x), 1);
++is(stores($y), 0);
++
++is(($x &= $y), ("a" & "c"));
++is(fetches($x), 2);
++is(fetches($y), 1);
++is(stores($x), 1);
++is(stores($y), 0);
++
++is(($x ^= $y), ("a" ^ "c"));
++is(fetches($x), 2);
++is(fetches($y), 1);
++is(stores($x), 1);
++is(stores($y), 0);
++
++is(~~$y, "c");
++is(fetches($y), 1);
++is(stores($y), 0);
+--- perl-5.8.8/pp.c.U27391	2006-06-01 18:19:16.000000000 -0400
++++ perl-5.8.8/pp.c	2006-06-01 18:43:19.000000000 -0400
+@@ -2229,13 +2229,15 @@
+     dSP; dATARGET; tryAMAGICbin(band,opASSIGN);
+     {
+       dPOPTOPssrl;
++      if (SvGMAGICAL(left)) mg_get(left);
++      if (SvGMAGICAL(right)) mg_get(right);
+       if (SvNIOKp(left) || SvNIOKp(right)) {
+ 	if (PL_op->op_private & HINT_INTEGER) {
+-	  const IV i = SvIV(left) & SvIV(right);
++	  const IV i = SvIV_nomg(left) & SvIV_nomg(right);
+ 	  SETi(i);
+ 	}
+ 	else {
+-	  const UV u = SvUV(left) & SvUV(right);
++	  const UV u = SvUV_nomg(left) & SvUV_nomg(right);
+ 	  SETu(u);
+ 	}
+       }
+@@ -2252,13 +2254,15 @@
+     dSP; dATARGET; tryAMAGICbin(bxor,opASSIGN);
+     {
+       dPOPTOPssrl;
++      if (SvGMAGICAL(left)) mg_get(left);
++      if (SvGMAGICAL(right)) mg_get(right);
+       if (SvNIOKp(left) || SvNIOKp(right)) {
+ 	if (PL_op->op_private & HINT_INTEGER) {
+-	  const IV i = (USE_LEFT(left) ? SvIV(left) : 0) ^ SvIV(right);
++	  const IV i = (USE_LEFT(left) ? SvIV_nomg(left) : 0) ^ SvIV_nomg(right);
+ 	  SETi(i);
+ 	}
+ 	else {
+-	  const UV u = (USE_LEFT(left) ? SvUV(left) : 0) ^ SvUV(right);
++	  const UV u = (USE_LEFT(left) ? SvUV_nomg(left) : 0) ^ SvUV_nomg(right);
+ 	  SETu(u);
+ 	}
+       }
+@@ -2275,13 +2279,15 @@
+     dSP; dATARGET; tryAMAGICbin(bor,opASSIGN);
+     {
+       dPOPTOPssrl;
++      if (SvGMAGICAL(left)) mg_get(left);
++      if (SvGMAGICAL(right)) mg_get(right);
+       if (SvNIOKp(left) || SvNIOKp(right)) {
+ 	if (PL_op->op_private & HINT_INTEGER) {
+-	  const IV i = (USE_LEFT(left) ? SvIV(left) : 0) | SvIV(right);
++	  const IV i = (USE_LEFT(left) ? SvIV_nomg(left) : 0) | SvIV_nomg(right);
+ 	  SETi(i);
+ 	}
+ 	else {
+-	  const UV u = (USE_LEFT(left) ? SvUV(left) : 0) | SvUV(right);
++	  const UV u = (USE_LEFT(left) ? SvUV_nomg(left) : 0) | SvUV_nomg(right);
+ 	  SETu(u);
+ 	}
+       }
+@@ -2376,13 +2382,15 @@
+     dSP; dTARGET; tryAMAGICun(compl);
+     {
+       dTOPss;
++      if (SvGMAGICAL(sv))
++	  mg_get(sv);
+       if (SvNIOKp(sv)) {
+ 	if (PL_op->op_private & HINT_INTEGER) {
+-	  const IV i = ~SvIV(sv);
++	  const IV i = ~SvIV_nomg(sv);
+ 	  SETi(i);
+ 	}
+ 	else {
+-	  const UV u = ~SvUV(sv);
++	  const UV u = ~SvUV_nomg(sv);
+ 	  SETu(u);
+ 	}
+       }
+@@ -2392,7 +2400,7 @@
+ 	STRLEN len;
+ 
+ 	(void)SvPV_nomg_const(sv,len); /* force check for uninit var */
+-	SvSetSV(TARG, sv);
++	sv_setsv_nomg(TARG, sv);
+ 	tmps = (U8*)SvPV_force(TARG, len);
+ 	anum = len;
+ 	if (SvUTF8(TARG)) {
+--- perl-5.8.8/global.sym.U27391	2006-01-31 10:50:34.000000000 -0500
++++ perl-5.8.8/global.sym	2006-06-01 18:43:19.000000000 -0400
+@@ -432,6 +432,7 @@
+ Perl_sv_2cv
+ Perl_sv_2io
+ Perl_sv_2iv
++Perl_sv_2iv_flags
+ Perl_sv_2mortal
+ Perl_sv_2nv
+ Perl_sv_2pv
+@@ -439,6 +440,7 @@
+ Perl_sv_2pvbyte
+ Perl_sv_pvn_nomg
+ Perl_sv_2uv
++Perl_sv_2uv_flags
+ Perl_sv_iv
+ Perl_sv_uv
+ Perl_sv_nv
+--- perl-5.8.8/proto.h.U27391	2006-01-31 10:50:34.000000000 -0500
++++ perl-5.8.8/proto.h	2006-06-01 18:43:19.000000000 -0400
+@@ -1139,14 +1139,16 @@
+ PERL_CALLCONV bool	Perl_sv_2bool(pTHX_ SV* sv);
+ PERL_CALLCONV CV*	Perl_sv_2cv(pTHX_ SV* sv, HV** st, GV** gvp, I32 lref);
+ PERL_CALLCONV IO*	Perl_sv_2io(pTHX_ SV* sv);
+-PERL_CALLCONV IV	Perl_sv_2iv(pTHX_ SV* sv);
++/* PERL_CALLCONV IV	sv_2iv(pTHX_ SV* sv); */
++PERL_CALLCONV IV	Perl_sv_2iv_flags(pTHX_ SV* sv, I32 flags);
+ PERL_CALLCONV SV*	Perl_sv_2mortal(pTHX_ SV* sv);
+ PERL_CALLCONV NV	Perl_sv_2nv(pTHX_ SV* sv);
+ /* PERL_CALLCONV char*	sv_2pv(pTHX_ SV* sv, STRLEN* lp); */
+ PERL_CALLCONV char*	Perl_sv_2pvutf8(pTHX_ SV* sv, STRLEN* lp);
+ PERL_CALLCONV char*	Perl_sv_2pvbyte(pTHX_ SV* sv, STRLEN* lp);
+ PERL_CALLCONV char*	Perl_sv_pvn_nomg(pTHX_ SV* sv, STRLEN* lp);
+-PERL_CALLCONV UV	Perl_sv_2uv(pTHX_ SV* sv);
++/* PERL_CALLCONV UV	sv_2uv(pTHX_ SV* sv); */
++PERL_CALLCONV UV	Perl_sv_2uv_flags(pTHX_ SV* sv, I32 flags);
+ PERL_CALLCONV IV	Perl_sv_iv(pTHX_ SV* sv);
+ PERL_CALLCONV UV	Perl_sv_uv(pTHX_ SV* sv);
+ PERL_CALLCONV NV	Perl_sv_nv(pTHX_ SV* sv);
+--- perl-5.8.8/embed.fnc.U27391	2006-01-31 09:40:27.000000000 -0500
++++ perl-5.8.8/embed.fnc	2006-06-01 18:43:19.000000000 -0400
+@@ -727,14 +727,16 @@
+ Apd	|bool	|sv_2bool	|NN SV* sv
+ Apd	|CV*	|sv_2cv		|NULLOK SV* sv|NN HV** st|NN GV** gvp|I32 lref
+ Apd	|IO*	|sv_2io		|NN SV* sv
+-Apd	|IV	|sv_2iv		|NN SV* sv
++Amb	|IV	|sv_2iv		|NN SV* sv
++Apd	|IV	|sv_2iv_flags	|NN SV* sv|I32 flags
+ Apd	|SV*	|sv_2mortal	|NULLOK SV* sv
+ Apd	|NV	|sv_2nv		|NN SV* sv
+ Amb	|char*	|sv_2pv		|NN SV* sv|NULLOK STRLEN* lp
+ Apd	|char*	|sv_2pvutf8	|NN SV* sv|NULLOK STRLEN* lp
+ Apd	|char*	|sv_2pvbyte	|NN SV* sv|NULLOK STRLEN* lp
+ Ap	|char*	|sv_pvn_nomg	|NN SV* sv|NULLOK STRLEN* lp
+-Apd	|UV	|sv_2uv		|NN SV* sv
++Amb	|UV	|sv_2uv		|NN SV* sv
++Apd	|UV	|sv_2uv_flags	|NN SV* sv|I32 flags
+ Apd	|IV	|sv_iv		|NN SV* sv
+ Apd	|UV	|sv_uv		|NN SV* sv
+ Apd	|NV	|sv_nv		|NN SV* sv
+--- perl-5.8.8/embed.h.U27391	2006-01-31 10:50:34.000000000 -0500
++++ perl-5.8.8/embed.h	2006-06-01 18:43:19.000000000 -0400
+@@ -780,13 +780,13 @@
+ #define sv_2bool		Perl_sv_2bool
+ #define sv_2cv			Perl_sv_2cv
+ #define sv_2io			Perl_sv_2io
+-#define sv_2iv			Perl_sv_2iv
++#define sv_2iv_flags		Perl_sv_2iv_flags
+ #define sv_2mortal		Perl_sv_2mortal
+ #define sv_2nv			Perl_sv_2nv
+ #define sv_2pvutf8		Perl_sv_2pvutf8
+ #define sv_2pvbyte		Perl_sv_2pvbyte
+ #define sv_pvn_nomg		Perl_sv_pvn_nomg
+-#define sv_2uv			Perl_sv_2uv
++#define sv_2uv_flags		Perl_sv_2uv_flags
+ #define sv_iv			Perl_sv_iv
+ #define sv_uv			Perl_sv_uv
+ #define sv_nv			Perl_sv_nv
+@@ -2831,13 +2831,13 @@
+ #define sv_2bool(a)		Perl_sv_2bool(aTHX_ a)
+ #define sv_2cv(a,b,c,d)		Perl_sv_2cv(aTHX_ a,b,c,d)
+ #define sv_2io(a)		Perl_sv_2io(aTHX_ a)
+-#define sv_2iv(a)		Perl_sv_2iv(aTHX_ a)
++#define sv_2iv_flags(a,b)	Perl_sv_2iv_flags(aTHX_ a,b)
+ #define sv_2mortal(a)		Perl_sv_2mortal(aTHX_ a)
+ #define sv_2nv(a)		Perl_sv_2nv(aTHX_ a)
+ #define sv_2pvutf8(a,b)		Perl_sv_2pvutf8(aTHX_ a,b)
+ #define sv_2pvbyte(a,b)		Perl_sv_2pvbyte(aTHX_ a,b)
+ #define sv_pvn_nomg(a,b)	Perl_sv_pvn_nomg(aTHX_ a,b)
+-#define sv_2uv(a)		Perl_sv_2uv(aTHX_ a)
++#define sv_2uv_flags(a,b)	Perl_sv_2uv_flags(aTHX_ a,b)
+ #define sv_iv(a)		Perl_sv_iv(aTHX_ a)
+ #define sv_uv(a)		Perl_sv_uv(aTHX_ a)
+ #define sv_nv(a)		Perl_sv_nv(aTHX_ a)
+--- perl-5.8.8/sv.h.U27391	2006-01-02 09:51:46.000000000 -0500
++++ perl-5.8.8/sv.h	2006-06-01 18:43:20.000000000 -0400
+@@ -953,6 +953,9 @@
+ =for apidoc Am|char*|SvPVx|SV* sv|STRLEN len
+ A version of C<SvPV> which guarantees to evaluate sv only once.
+ 
++=for apidoc Am|char*|SvPV_nomg|SV* sv|STRLEN len
++Like C<SvPV> but doesn't process magic.
++
+ =for apidoc Am|char*|SvPV_nolen|SV* sv
+ Returns a pointer to the string in the SV, or a stringified form of
+ the SV if the SV does not contain a string.  The SV may cache the
+@@ -962,6 +965,9 @@
+ Coerces the given SV to an integer and returns it. See  C<SvIVx> for a
+ version which guarantees to evaluate sv only once.
+ 
++=for apidoc Am|IV|SvIV_nomg|SV* sv
++Like C<SvIV> but doesn't process magic.
++
+ =for apidoc Am|IV|SvIVx|SV* sv
+ Coerces the given SV to an integer and returns it. Guarantees to evaluate
+ sv only once. Use the more efficient C<SvIV> otherwise.
+@@ -978,6 +984,9 @@
+ Coerces the given SV to an unsigned integer and returns it.  See C<SvUVx>
+ for a version which guarantees to evaluate sv only once.
+ 
++=for apidoc Am|UV|SvUV_nomg|SV* sv
++Like C<SvUV> but doesn't process magic.
++
+ =for apidoc Am|UV|SvUVx|SV* sv
+ Coerces the given SV to an unsigned integer and returns it. Guarantees to
+ evaluate sv only once. Use the more efficient C<SvUV> otherwise.
+@@ -1050,6 +1059,9 @@
+ #define SvUV(sv) (SvIOK(sv) ? SvUVX(sv) : sv_2uv(sv))
+ #define SvNV(sv) (SvNOK(sv) ? SvNVX(sv) : sv_2nv(sv))
+ 
++#define SvIV_nomg(sv) (SvIOK(sv) ? SvIVX(sv) : sv_2iv_flags(sv, 0))
++#define SvUV_nomg(sv) (SvIOK(sv) ? SvUVX(sv) : sv_2uv_flags(sv, 0))
++
+ /* ----*/
+ 
+ #define SvPV(sv, lp) SvPV_flags(sv, lp, SV_GMAGIC)
+@@ -1251,6 +1263,8 @@
+ #define sv_2pv_nomg(sv, lp) sv_2pv_flags(sv, lp, 0)
+ #define sv_pvn_force(sv, lp) sv_pvn_force_flags(sv, lp, SV_GMAGIC)
+ #define sv_utf8_upgrade(sv) sv_utf8_upgrade_flags(sv, SV_GMAGIC)
++#define sv_2iv(sv) sv_2iv_flags(sv, SV_GMAGIC)
++#define sv_2uv(sv) sv_2uv_flags(sv, SV_GMAGIC)
+ 
+ /* Should be named SvCatPVN_utf8_upgrade? */
+ #define sv_catpvn_utf8_upgrade(dsv, sstr, slen, nsv)	\
+--- perl-5.8.8/sv.c.U27391	2006-01-16 07:22:21.000000000 -0500
++++ perl-5.8.8/sv.c	2006-06-01 18:43:19.000000000 -0400
+@@ -2062,22 +2062,34 @@
+ }
+ #endif /* !NV_PRESERVES_UV*/
+ 
++/* sv_2iv() is now a macro using Perl_sv_2iv_flags();
++ * this function provided for binary compatibility only
++ */
++
++IV
++Perl_sv_2iv(pTHX_ register SV *sv)
++{
++    return sv_2iv_flags(sv, SV_GMAGIC);
++}
++
+ /*
+-=for apidoc sv_2iv
++=for apidoc sv_2iv_flags
+ 
+-Return the integer value of an SV, doing any necessary string conversion,
+-magic etc. Normally used via the C<SvIV(sv)> and C<SvIVx(sv)> macros.
++Return the integer value of an SV, doing any necessary string
++conversion.  If flags includes SV_GMAGIC, does an mg_get() first.
++Normally used via the C<SvIV(sv)> and C<SvIVx(sv)> macros.
+ 
+ =cut
+ */
+ 
+ IV
+-Perl_sv_2iv(pTHX_ register SV *sv)
++Perl_sv_2iv_flags(pTHX_ register SV *sv, I32 flags)
+ {
+     if (!sv)
+ 	return 0;
+     if (SvGMAGICAL(sv)) {
+-	mg_get(sv);
++	if (flags & SV_GMAGIC)
++	    mg_get(sv);
+ 	if (SvIOKp(sv))
+ 	    return SvIVX(sv);
+ 	if (SvNOKp(sv)) {
+@@ -2361,23 +2373,34 @@
+     return SvIsUV(sv) ? (IV)SvUVX(sv) : SvIVX(sv);
+ }
+ 
++/* sv_2uv() is now a macro using Perl_sv_2uv_flags();
++ * this function provided for binary compatibility only
++ */
++
++UV
++Perl_sv_2uv(pTHX_ register SV *sv)
++{
++    return sv_2uv_flags(sv, SV_GMAGIC);
++}
++
+ /*
+-=for apidoc sv_2uv
++=for apidoc sv_2uv_flags
+ 
+ Return the unsigned integer value of an SV, doing any necessary string
+-conversion, magic etc. Normally used via the C<SvUV(sv)> and C<SvUVx(sv)>
+-macros.
++conversion.  If flags includes SV_GMAGIC, does an mg_get() first.
++Normally used via the C<SvUV(sv)> and C<SvUVx(sv)> macros.
+ 
+ =cut
+ */
+ 
+ UV
+-Perl_sv_2uv(pTHX_ register SV *sv)
++Perl_sv_2uv_flags(pTHX_ register SV *sv, I32 flags)
+ {
+     if (!sv)
+ 	return 0;
+     if (SvGMAGICAL(sv)) {
+-	mg_get(sv);
++	if (flags & SV_GMAGIC)
++	    mg_get(sv);
+ 	if (SvIOKp(sv))
+ 	    return SvUVX(sv);
+ 	if (SvNOKp(sv))
+--- perl-5.8.8/doop.c.U27391	2006-01-08 15:58:53.000000000 -0500
++++ perl-5.8.8/doop.c	2006-06-01 18:43:19.000000000 -0400
+@@ -1171,8 +1171,8 @@
+ 
+     if (sv != left || (optype != OP_BIT_AND && !SvOK(sv) && !SvGMAGICAL(sv)))
+ 	sv_setpvn(sv, "", 0);	/* avoid undef warning on |= and ^= */
+-    lsave = lc = SvPV_const(left, leftlen);
+-    rsave = rc = SvPV_const(right, rightlen);
++    lsave = lc = SvPV_nomg_const(left, leftlen);
++    rsave = rc = SvPV_nomg_const(right, rightlen);
+     len = leftlen < rightlen ? leftlen : rightlen;
+     lensave = len;
+     if ((left_utf || right_utf) && (sv == left || sv == right)) {
+@@ -1180,9 +1180,7 @@
+ 	Newxz(dc, needlen + 1, char);
+     }
+     else if (SvOK(sv) || SvTYPE(sv) > SVt_PVMG) {
+-	/* Fix this to nong when change 22613 is integrated.
+-	   (Which in turn awaits merging sv_2iv and sv_2uv)  */
+-	dc = SvPV_force_nolen(sv);
++	dc = SvPV_force_nomg_nolen(sv);
+ 	if (SvLEN(sv) < (STRLEN)(len + 1)) {
+ 	    dc = SvGROW(sv, (STRLEN)(len + 1));
+ 	    (void)memzero(dc + SvCUR(sv), len - SvCUR(sv) + 1);
