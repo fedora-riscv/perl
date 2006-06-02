@@ -159,6 +159,17 @@ Patch188841:	perl-5.8.8-bz188441.patch
 #
 Patch191416:	perl-5.8.8-bz191416.patch
 
+Patch27116:	perl-5.8.8-U27116.patch
+Patch27391:     perl-5.8.8-U27391.patch
+Patch27426:	perl-5.8.8-U27426.patch
+Patch27509:     perl-5.8.8-U27509.patch
+Patch27512:     perl-5.8.8-U27512.patch
+Patch27604:     perl-5.8.8-U27604.patch
+Patch27605:     perl-5.8.8-U27605.patch
+Patch27914:     perl-5.8.8-U27914.patch
+Patch27329:     perl-5.8.8-U27329.patch
+Patch36:	perl-5.8.8-R-switch.patch
+
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  gawk, grep, tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel
@@ -341,6 +352,26 @@ more secure running of setuid perl scripts.
 %patch188841 -p1
 
 %patch191416 -p1
+
+%patch27116 -p1
+
+%patch27391 -p1
+
+%patch27426 -p1
+
+%patch27509 -p1
+
+%patch27512 -p1
+
+%patch27604 -p1
+
+%patch27605 -p1
+
+%patch27914 -p1
+
+%patch27329 -p1
+
+%patch36    -p1
 
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -546,6 +577,29 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Thu Jun 01 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-6
+- Fix upstream perl bug 38454:
+  'rindex corrects for $[ on bytes rather than UTF-8'
+  apply upstream patch #27116
+- Fix upstream perl bug 24816:
+  'Magic vars seem unsure if they are purely numeric' 
+  ( perl -wle 'print $? = $? ^ "3"' -> 'Argument "^C" isn't numeric' )
+  apply upstream patch #27391
+- Avoid writing over the input string in the case 'F' in moreswitches.
+  apply upstream patch #27426
+- Fix upstream perl bug 38925 - 'overload and rebless' -
+  apply upstream patches #27509, #27512
+- Fix upstream perl bug 3038 - '$qr = qr/^a$/m; $x =~ $qr; fails'
+  apply upstream patch #27604
+- apply upstream patch #27605 - 'Fix off-by-one in $0 set magic.'
+- Fix upstream perl bug 23141 - '($_) = () fails to set $_ to undef'
+  apply upstream patch #27914
+- Fix upstream perl bug 38619 - 
+  'Bug in lc and uc (interaction between UTF-8, substr, and lc/uc)'
+  apply upstream patch #27329
+- Give users the '-R' option to disable the Red Hat
+  module compatibility default search path extension (incpush.patch).
+
 * Thu May 11 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-6
 - Fix bug 191416: make h2ph generate correct code for cpp statements
   like: '#if defined A || defined B'
