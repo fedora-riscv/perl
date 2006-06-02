@@ -587,7 +587,7 @@ rm -rf $RPM_BUILD_ROOT
   apply upstream patch #27391
 - Avoid writing over the input string in the case 'F' in moreswitches.
   apply upstream patch #27426
-- Fix upstream perl bug 38925 - 'overload and rebless' -
+- Fix upstream perl bug 34925 - 'overload and rebless' -
   apply upstream patches #27509, #27512
 - Fix upstream perl bug 3038 - '$qr = qr/^a$/m; $x =~ $qr; fails'
   apply upstream patch #27604
