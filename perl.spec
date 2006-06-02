@@ -603,6 +603,7 @@ rm -rf $RPM_BUILD_ROOT
 * Thu May 11 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-6
 - Fix bug 191416: make h2ph generate correct code for cpp statements
   like: '#if defined A || defined B'
+- Fix 172396.patch for non-threaded builds
 
 * Wed Apr 12 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-6
 - Fix bug 188841: make CGI.pm's url(-relative) handle rewrites
