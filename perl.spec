@@ -169,7 +169,10 @@ Patch27605:     perl-5.8.8-U27605.patch
 Patch27914:     perl-5.8.8-U27914.patch
 Patch27329:     perl-5.8.8-U27329.patch
 Patch36:	perl-5.8.8-R-switch.patch
-
+Patch37:	perl-5.8.8-no_asm_page_h.patch
+#               ^- stop IPC/SysV.c including <asm/page.h> for getpagesize(), which
+#               is now declared by including <unistd.h> .
+#
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  gawk, grep, tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel
@@ -373,6 +376,8 @@ more secure running of setuid perl scripts.
 
 %patch36    -p1
 
+%patch37    -p1
+
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
 recode()
@@ -460,10 +465,7 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Dinc_version_list='%{perlmodcompat}' \
 	-Dscriptdir='%{_bindir}'
 
-make
-# perl 5.8.6 - some tests fail (see bug #127023 comments #{31,32,34})
-# So ? then we should fix the tests / fix perl!
-# make test || /bin/true
+make %{?_smp_mflags}
 make test
 
 
