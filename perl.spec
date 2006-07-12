@@ -43,7 +43,7 @@ Provides: perl(:WITHOUT_LARGEFILES)
 
 Name:           perl
 Version:        %{perlver}
-Release:        %{perlrel}
+Release:        %{perlrel}.1
 Epoch:          %{perlepoch}
 Summary:        The Perl programming language
 
@@ -579,6 +579,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Wed Jul 12 2006 Jesse Keating <jkeating@redhat.com> - sh: line 0: fg: no job control
+- rebuild
+
 * Thu Jun 01 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-6
 - Fix upstream perl bug 38454:
   'rindex corrects for $[ on bytes rather than UTF-8'
