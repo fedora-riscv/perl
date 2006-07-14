@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver    5.8.8
-%define perlrel    6
+%define perlrel    8
 %define perlepoch  4
 
 %{?!perl_debugging:    %define perl_debugging 0}
@@ -43,7 +43,7 @@ Provides: perl(:WITHOUT_LARGEFILES)
 
 Name:           perl
 Version:        %{perlver}
-Release:        %{perlrel}.1
+Release:        %{perlrel}
 Epoch:          %{perlepoch}
 Summary:        The Perl programming language
 
@@ -172,6 +172,8 @@ Patch36:	perl-5.8.8-R-switch.patch
 Patch37:	perl-5.8.8-no_asm_page_h.patch
 #               ^- stop IPC/SysV.c including <asm/page.h> for getpagesize(), which
 #               is now declared by including <unistd.h> .
+#
+Patch38:        perl-5.8.8-U34297_C28006.patch
 #
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  gawk, grep, tcsh, dos2unix, man, groff
@@ -377,7 +379,9 @@ more secure running of setuid perl scripts.
 %patch36    -p1
 
 %patch37    -p1
+%patch38    -p1
 
+#
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
 recode()
@@ -579,11 +583,16 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
-* Wed Jul 12 2006 Jesse Keating <jkeating@redhat.com> - sh: line 0: fg: no job control
+* Thu Jul 13 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-8
+- Fix upstream perl bug #34297:
+  'utf8 overload stringify bug (utf8 caching maybe)'
+  upstream patch #28006 applied
+
+* Wed Jul 12 2006 Jesse Keating <jkeating@redhat.com> - 4:5.8.8-6.1
 - rebuild
 
 * Thu Jun 01 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-6
-- Fix upstream perl bug 38454:
+- Fix upstream perl bug #38454:
   'rindex corrects for $[ on bytes rather than UTF-8'
   apply upstream patch #27116
 - Fix upstream perl bug 24816:
@@ -599,7 +608,7 @@ rm -rf $RPM_BUILD_ROOT
 - apply upstream patch #27605 - 'Fix off-by-one in $0 set magic.'
 - Fix upstream perl bug 23141 - '($_) = () fails to set $_ to undef'
   apply upstream patch #27914
-- Fix upstream perl bug 38619 - 
+- Fix upstream perl bug #38619 - 
   'Bug in lc and uc (interaction between UTF-8, substr, and lc/uc)'
   apply upstream patch #27329
 - Give users the '-R' option to disable the Red Hat
