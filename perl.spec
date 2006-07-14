@@ -173,7 +173,7 @@ Patch37:	perl-5.8.8-no_asm_page_h.patch
 #               ^- stop IPC/SysV.c including <asm/page.h> for getpagesize(), which
 #               is now declared by including <unistd.h> .
 #
-Patch38:        perl-5.8.8-U34297_C28006.patch
+Patch28006:        perl-5.8.8-U34297_C28006.patch
 #
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  gawk, grep, tcsh, dos2unix, man, groff
@@ -379,7 +379,7 @@ more secure running of setuid perl scripts.
 %patch36    -p1
 
 %patch37    -p1
-%patch38    -p1
+%patch28006 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -583,7 +583,7 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
-* Thu Jul 13 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-8
+* Fri Jul 14 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-8
 - Fix upstream perl bug #34297:
   'utf8 overload stringify bug (utf8 caching maybe)'
   upstream patch #28006 applied
