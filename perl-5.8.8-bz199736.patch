@@ -1,0 +1,11 @@
+--- perl-5.8.8/ext/B/B/C.pm.bz199736	2006-01-13 09:47:39.000000000 -0500
++++ perl-5.8.8/ext/B/B/C.pm	2006-07-21 20:25:39.000000000 -0400
+@@ -647,7 +647,7 @@
+     return $sym if defined $sym;
+     my $val= $sv->NVX;
+     $val .= '.00' if $val =~ /^-?\d+$/;
+-    $xpvnvsect->add(sprintf("0, 0, 0, %d, %s", $sv->IVX, $val));
++    $xpvnvsect->add(sprintf("0, 0, 0, %d, %s", $sv->NVX, $val));
+     $svsect->add(sprintf("&xpvnv_list[%d], %lu, 0x%x",
+ 			 $xpvnvsect->index, $sv->REFCNT , $sv->FLAGS));
+     return savesym($sv, sprintf("&sv_list[%d]", $svsect->index));
