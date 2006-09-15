@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver    5.8.8
-%define perlrel    8
+%define perlrel    9
 %define perlepoch  4
 
 %{?!perl_debugging:    %define perl_debugging 0}
@@ -177,6 +177,8 @@ Patch28006:     perl-5.8.8-U34297_C28006.patch
 #
 Patch38:	perl-5.8.8-useCFLAGSwithCC.patch
 Patch39:	perl-5.8.8-bz199736.patch
+#
+Patch204679:	perl-5.8.8-bz204679.patch
 #
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  gawk, grep, tcsh, dos2unix, man, groff
@@ -589,6 +591,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Fri Sep 15 2006 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-9
+- fix bug 204679: add Unicode 5.0.0 support
+	
 * Fri Jul 21 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-8
 - fix bug 199736: make perlcc handle floating point values
 
