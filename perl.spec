@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver    5.8.8
-%define perlrel    9
+%define perlrel    10
 %define perlepoch  4
 
 %{?!perl_debugging:    %define perl_debugging 0}
@@ -26,9 +26,7 @@ Provides: perl(:WITHOUT_ITHREADS)
 Provides: perl(:WITHOUT_THREADS)
 %endif
 
-%define perlmodcompat 5.8.7 5.8.6 5.8.5 5.8.4 5.8.3
-Provides: perl(:MODULE_COMPAT_5.8.3)
-Provides: perl(:MODULE_COMPAT_5.8.4)
+%define perlmodcompat 5.8.7 5.8.6 5.8.5
 Provides: perl(:MODULE_COMPAT_5.8.5)
 Provides: perl(:MODULE_COMPAT_5.8.6)
 Provides: perl(:MODULE_COMPAT_5.8.7)
@@ -591,9 +589,12 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Sat Sep 30 2006 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-10
+- bugzilla: 208731 - remove directory support for old perl versions
+
 * Fri Sep 15 2006 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-9
 - fix bug 204679: add Unicode 5.0.0 support
-	
+
 * Fri Jul 21 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-8
 - fix bug 199736: make perlcc handle floating point values
 
