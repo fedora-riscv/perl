@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver    5.8.8
-%define perlrel    10
+%define perlrel    11
 %define perlepoch  4
 
 %{?!perl_debugging:    %define perl_debugging 0}
@@ -41,7 +41,7 @@ Provides: perl(:WITHOUT_LARGEFILES)
 
 Name:           perl
 Version:        %{perlver}
-Release:        %{perlrel}
+Release:        %{perlrel}%{?dist}
 Epoch:          %{perlepoch}
 Summary:        The Perl programming language
 
@@ -589,6 +589,10 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Tue Jan 23 2007 Jindrich Novy <jnovy@redhat.com> - 4:5.8.8-11
+- rebuild against new db4
+- use dist tag
+
 * Sat Sep 30 2006 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-10
 - bugzilla: 208731 - remove directory support for old perl versions
 
