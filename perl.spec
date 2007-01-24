@@ -5,7 +5,7 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 %define perlver    5.8.8
-%define perlrel    11
+%define perlrel    12%{?dist}
 %define perlepoch  4
 
 %{?!perl_debugging:    %define perl_debugging 0}
@@ -41,7 +41,7 @@ Provides: perl(:WITHOUT_LARGEFILES)
 
 Name:           perl
 Version:        %{perlver}
-Release:        %{perlrel}%{?dist}
+Release:        %{perlrel}
 Epoch:          %{perlepoch}
 Summary:        The Perl programming language
 
@@ -589,6 +589,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Wed Jan 24 2007 Jindrich Novy <jnovy@redhat.com> - 4:5.8.8-12
+- put dist tag directly to perlrel to fix dependency to suidperl
+
 * Tue Jan 23 2007 Jindrich Novy <jnovy@redhat.com> - 4:5.8.8-11
 - rebuild against new db4
 - use dist tag
