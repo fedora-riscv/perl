@@ -1,196 +1,107 @@
-%define threading  1
-%define largefiles 1
-%define suidperl   1
-
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
+%define perl_archname %{_arch}-%{_os}-thread-multi
+%define perlmodcompat 5.8.7 5.8.6 5.8.5
+%define new_perl_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}:$RPM_BUILD_ROOT/usr/lib/perl5/%{version}
+%define comp_perl_lib $RPM_BUILD_ROOT/usr/lib/perl5/%{version}:$RPM_BUILD_ROOT/usr/lib/perl5/%{version}
+%define new_arch_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/%{perl_archname}
+%define comp_arch_lib $RPM_BUILD_ROOT/usr/lib/perl5/%{version}/%{perl_archname}
+%define new_perl_flags LD_PRELOAD=/%{new_arch_lib}/CORE/libperl.so LD_LIBRARY_PATH=%{new_arch_lib}/CORE PERL5LIB=%{new_perl_lib}:%{comp_perl_lib}
+%define new_perl %{new_perl_flags} $RPM_BUILD_ROOT/%{_bindir}/perl
 
-%define perlver    5.8.8
-%define perlrel    12%{?dist}
-%define perlepoch  4
-
+# Use this for SUPER PERL DEBUGGING MODE.
 %{?!perl_debugging:    %define perl_debugging 0}
 %if %{perl_debugging}
 %define debug_package %{nil}
 # don't build debuginfo and disable stripping
 %endif
 
-Provides: perl(:WITH_PERLIO)
-
-%if %{threading}
-%define thread_arch -thread-multi
-Provides: perl(:WITH_ITHREADS)
-Provides: perl(:WITH_THREADS)
-%else
-%define thread_arch %{nil}
-Provides: perl(:WITHOUT_ITHREADS)
-Provides: perl(:WITHOUT_THREADS)
-%endif
-
-%define perlmodcompat 5.8.7 5.8.6 5.8.5
-Provides: perl(:MODULE_COMPAT_5.8.5)
-Provides: perl(:MODULE_COMPAT_5.8.6)
-Provides: perl(:MODULE_COMPAT_5.8.7)
-Provides: perl(:MODULE_COMPAT_5.8.8)
-
-%if %{largefiles}
-Provides: perl(:WITH_LARGEFILES)
-%else
-Provides: perl(:WITHOUT_LARGEFILES)
-%endif
-
-
 Name:           perl
-Version:        %{perlver}
-Release:        %{perlrel}
-Epoch:          %{perlepoch}
+Version:        5.8.8
+Release:        13%{?dist}
+Epoch:          4
 Summary:        The Perl programming language
-
 Group:          Development/Languages
 License:        Artistic or GPL
 Url:            http://www.perl.org/
-
 Source0:        http://www.cpan.org/authors/id/N/NW/NWCLARK/%{name}-%{version}.tar.bz2
 Source11:       filter-depends.sh
 Source12:       perl-5.8.0-libnet.cfg
-
-Patch5:         perl-5.8.0-root.patch
-# Patch6:         perl-5.8.0-fhs.patch
-# Patch7:         perl-5.6.0-buildroot.patch
-# Patch8:         perl-5.8.0-errno.patch
-# Patch9:         perl-5.7.3-syslog.patch
-# Patch10:        perl-5.8.0-notty.patch
-# Patch11:        perl-5.8.3-fullinc.patch
-Patch12:        perl-5.8.8-incpush.patch
-Patch13:        perl-5.8.8-perlbug-tag.patch
-Patch14:        perl-5.8.8-dashI.patch
-Patch15:        perl-5.8.5-incorder.patch
-
-# Configure doesn't listen well when we say no ndbm.  When it links in,
-# it then conflicts with berkeley db.  oops.
-# Patch16:        perl-5.8.0-nondbm.patch
-
+Patch1:         perl-5.8.0-root.patch
+Patch2:         perl-5.8.8-incpush.patch
+Patch3:         perl-5.8.8-perlbug-tag.patch
+Patch4:         perl-5.8.8-dashI.patch
+Patch5:         perl-5.8.5-incorder.patch
 # make sure we get the proper ldflags on libperl.so
-Patch17:        perl-5.8.0-sharedlinker.patch
-
-# perl 5.8.0 likes to use man3ext for BOTH directories AND files.  not kosher.
-# Patch18:        perl-5.8.0-manext.patch
-
+Patch6:         perl-5.8.0-sharedlinker.patch
 # lynx is deprecated, use links instead
-Patch19:        perl-5.8.8-links.patch
-
+Patch7:         perl-5.8.8-links.patch
 # work around annoying rpath issue
-Patch21:        perl-5.8.8-rpath-make.patch
-
-# bugzilla 101767, make sure threads.so links directly to -lpthread
-# Patch22:        perl-5.8.1-lpthread-link.patch
-
-# fix empty RPATH security issue      (now fixed with USE_MM_LD_RUN_PATH patch )
-# Patch24:        perl-5.8.3-empty-rpath.patch
-
-# CAN-2004-0452 fix                   (now in 5.8.7!)
-# Patch26:        perl-5.8.0-rmtree.patch
-
-# CAN-2005-0155 and CAN-2005-0156 fix (now in 5.8.7!)
-# Patch27:        perl-5.8.5-CAN-2005-0155+0156.patch
-
-# bugzilla 118877, 127023             (now in 5.8.8!)
-# Patch28:        perl-5.8.6-findbin-selinux.patch
-
-# Update the core module version (matching the external package perl-Filter-Simple)
-# (now 0.82 in 5.8.8)
-# Patch30:        perl-5.8.6-filter-simple-update.patch
-
+Patch8:         perl-5.8.8-rpath-make.patch
 # Disable -DDEBUGGING and allow -g to do its job (#156113)
-Patch31:        perl-5.8.7-no-debugging.patch
-
-# Fix for bug 171111: missing IOCPARM_LEN
-# (now in 5.8.8!)
-# Patch32:        perl-5.8.7-IOC_SIZE.patch
-
-# arch-specific patches
-Patch100:       perl-5.8.1-fpic.patch
-Patch101:       perl-5.8.0-libdir64.patch
-
-Patch32002:     perl-5.8.0-nptlhint.patch
-
-Patch32003:     perl-5.8.6-libresolv.patch
-
-# now in 5.8.8:
-# Patch172236:    perl-5.8.7-bz172236.patch
-
+Patch9:         perl-5.8.7-no-debugging.patch
+Patch10:        perl-5.8.1-fpic.patch
+Patch11:        perl-5.8.0-libdir64.patch
+Patch12:        perl-5.8.0-nptlhint.patch
+Patch13:        perl-5.8.6-libresolv.patch
 # fix for bug 163958 / upstream bug 37056 :
 # backport of perl-5.9's patch 25084 (bug still in 5.8.8!):
-Patch25084:     perl-5.8.7-25084.patch
-
-Patch172396:	perl-5.8.7-172396.patch
-
-# now in 5.8.8:
-# Patch172587:    perl-5.8.7-bz172587.patch
-
-Patch040976:	perl-5.8.8-CAN-2004-0976.patch
-
-# now in 5.8.8:
-# Patch172739:    perl-5.8.7-bz172739_obz36521.patch
-
-#Patch136009:     perl-5.8.7-MM_Unix-rpath-136009.patch
-
-# now in 5.8.8:
-#Patch174684:	perl-5.8.7-CVE-2005-3962-bz174684.patch
-
-Patch1360090:    perl-5.8.8-USE_MM_LD_RUN_PATH.patch
-
-# module updatesd
-# Patch202:       perl-5.8.0-Safe2.09.patch
-Patch178343:	perl-5.8.8-bz178343.patch
-#
+Patch14:        perl-5.8.7-25084.patch
+# multi-threaded perl builds use localtime_r which does not call tzset
+# bugzilla 172396
+Patch15:        perl-5.8.7-172396.patch
+Patch16:        perl-5.8.8-CAN-2004-0976.patch
+Patch17:        perl-5.8.8-USE_MM_LD_RUN_PATH.patch
+Patch18:        perl-5.8.8-bz178343.patch
 # Debian's fix for Net::NNTP:
-Patch32:        perl-5.8.8-debian_fix_net_nntp.patch
-#
+Patch19:        perl-5.8.8-debian_fix_net_nntp.patch
 # Upstream patches 27133 and 27169 (27170):
-Patch33: 	perl-5.8.8-up27133_up27169.patch
+Patch20:        perl-5.8.8-up27133_up27169.patch
 # Upstream patch 27284:
-Patch34:	perl-5.8.8-up27284.patch
+Patch21:        perl-5.8.8-up27284.patch
 # Fix for bug 183553 / upstream bug 38657:
-Patch35:	perl-5.8.8-bz183553_ubz38657.patch
-#
-Patch188841:	perl-5.8.8-bz188441.patch
-#
-Patch191416:	perl-5.8.8-bz191416.patch
-
-Patch27116:	perl-5.8.8-U27116.patch
-Patch27391:     perl-5.8.8-U27391.patch
-Patch27426:	perl-5.8.8-U27426.patch
-Patch27509:     perl-5.8.8-U27509.patch
-Patch27512:     perl-5.8.8-U27512.patch
-Patch27604:     perl-5.8.8-U27604.patch
-Patch27605:     perl-5.8.8-U27605.patch
-Patch27914:     perl-5.8.8-U27914.patch
-Patch27329:     perl-5.8.8-U27329.patch
-Patch36:	perl-5.8.8-R-switch.patch
-Patch37:	perl-5.8.8-no_asm_page_h.patch
-#               ^- stop IPC/SysV.c including <asm/page.h> for getpagesize(), which
-#               is now declared by including <unistd.h> .
-#
-Patch28006:     perl-5.8.8-U34297_C28006.patch
-#
-Patch38:	perl-5.8.8-useCFLAGSwithCC.patch
-Patch39:	perl-5.8.8-bz199736.patch
-#
-Patch204679:	perl-5.8.8-bz204679.patch
-#
+Patch22:        perl-5.8.8-bz183553_ubz38657.patch
+Patch23:        perl-5.8.8-bz188441.patch
+Patch24:        perl-5.8.8-bz191416.patch
+Patch25:        perl-5.8.8-U27116.patch
+Patch26:        perl-5.8.8-U27391.patch
+Patch27:        perl-5.8.8-U27426.patch
+Patch28:        perl-5.8.8-U27509.patch
+Patch29:        perl-5.8.8-U27512.patch
+Patch30:        perl-5.8.8-U27604.patch
+Patch31:        perl-5.8.8-U27605.patch
+Patch32:        perl-5.8.8-U27914.patch
+Patch33:        perl-5.8.8-U27329.patch
+Patch34:        perl-5.8.8-R-switch.patch
+# stop IPC/SysV.c including <asm/page.h> for getpagesize(), which
+# is now declared by including <unistd.h> .
+Patch35:        perl-5.8.8-no_asm_page_h.patch
+Patch36:        perl-5.8.8-U34297_C28006.patch
+Patch37:        perl-5.8.8-useCFLAGSwithCC.patch
+Patch38:        perl-5.8.8-bz199736.patch
+Patch39:        perl-5.8.8-bz204679.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires:  gawk, grep, tcsh, dos2unix, man, groff
+BuildRequires:  tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel
 
-
-# By definition of 'do' (see 'man perlfunc') this package provides all
-# versions of perl previous to it.
-Provides: perl <= %{epoch}:%{version}
+# The long line of Perl provides.
 
 # These provides are needed by the perl pkg itself with auto-generated perl.req
 Provides: perl(VMS::Filespec)
 Provides: perl(VMS::Stdio)
 
+# Compat provides
+Provides: perl(:MODULE_COMPAT_5.8.5)
+Provides: perl(:MODULE_COMPAT_5.8.6)
+Provides: perl(:MODULE_COMPAT_5.8.7)
+Provides: perl(:MODULE_COMPAT_5.8.8)
+# Threading provides
+Provides: perl(:WITH_ITHREADS)
+Provides: perl(:WITH_THREADS)
+# Largefile provides
+Provides: perl(:WITH_LARGEFILES)
+# PerlIO provides
+Provides: perl(:WITH_PERLIO)
+# File provides
 Provides: perl(abbrev.pl)
 Provides: perl(assert.pl)
 Provides: perl(bigfloat.pl)
@@ -227,34 +138,14 @@ Provides: perl(termcap.pl)
 Provides: perl(timelocal.pl)
 Provides: perl(utf8_heavy.pl)
 Provides: perl(validate.pl)
-
 Provides: perl(Carp::Heavy)
+# Versioned Provides for our Obsoletes
+Provides: perl-Filter-Simple = 0.82
+Provides: perl-Time-HiRes = 1.86
 
-# These modules appear to be missing or break assumptions made by the
-# dependency analysis tools.  Typical problems include refering to
-# CGI::Apache as Apache and having no package line in CPAN::Nox.pm. I
-# hope that the perl people fix these to work with our dependency
-# engine or give us better dependency tools.
-#
-# Provides: perl(Apache)
-# Provides: perl(ExtUtils::MM_Mac)
-# Provides: perl(ExtUtils::XSSymSet)
-# Provides: perl(LWP::UserAgent)
-# Provides: perl(URI::URL)
-
-# Conflicts: perl-NDBM_File <= 1:1.75-34.99.6
-
-Obsoletes: perl-Digest-MD5
-Obsoletes: perl-MIME-Base64
-Obsoletes: perl-libnet
-Obsoletes: perl-Storable
-Obsoletes: perl-CGI
-Obsoletes: perl-CPAN
-Obsoletes: perl-DB_File
-Obsoletes: perl-Filter
+# Last seen in Fedora Core 4
 Obsoletes: perl-Filter-Simple
 Obsoletes: perl-Time-HiRes
-Obsoletes: perl-Test-Builder-Tester
 
 %define __perl_requires %{SOURCE11}
 
@@ -273,127 +164,75 @@ scripts.
 Install this package if you want to program in Perl or enable your
 system to handle Perl scripts.
 
-
-%if %{suidperl}
-%package suidperl
-Summary:        suidperl, for use with setuid perl scripts
+%package devel
+Summary:        Header files for use in perl development
 Group:          Development/Languages
-Requires:       perl = %{perlepoch}:%{perlver}-%{perlrel}
+Requires:       perl = %{epoch}:%{version}-%{release}
+
+%description devel
+This package contains header files from core perl components.
+Some packages may need these header files in order to build.
+
+%package suidperl
+Summary:        Suidperl, for use with setuid perl scripts
+Group:          Development/Languages
+Requires:       perl = %{epoch}:%{version}-%{release}
 
 %description suidperl
-suidperl is a setuid binary copy of perl that allows for (hopefully)
+Suidperl is a setuid binary copy of perl that allows for (hopefully)
 more secure running of setuid perl scripts.
-%endif
-
 
 %prep
 %setup -q
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
 %patch5 -p1
-# %%patch8 -p1 
-
-# perl 5.8.7: reject
-# %patch11 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%if !%{perl_debugging}
+%patch9 -p1
+%endif
+%patch10 -p1
+%ifarch %{multilib_64_archs}
+%patch11 -p1
+%endif
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
-
+%patch16 -p1
 %patch17 -p1
-
+%patch18 -p1
 %patch19 -p1
-
+%patch20 -p1
 %patch21 -p1
-# %patch24 -p1
-
-# perl 5.8.7: reject
-# %patch26 -p1
-# perl 5.8.7: Already in ?
-# %patch27 -p0
-# %patch28 -p1
-
-# %patch30 -p1
-
-%if !%{perl_debugging}
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
+%patch25 -p1
+%patch26 -p1
+%patch27 -p1
+%patch28 -p1
+%patch29 -p1
+%patch30 -p1
 %patch31 -p1
-%endif
-
-# %patch32 -p1
-
-%patch100 -p1
-
-%ifarch %{multilib_64_archs}
-%patch101 -p1
-%endif
-
-%patch32002 -p1
-
-%patch32003 -p1
-
-# %patch172236 -p1
-
-%patch25084 -p1
-
-%patch172396 -p1
-
-# %patch172587 -p1
-
-%patch040976 -p1
-
-# %patch172739 -p1
-
-# %patch136009 -p1
-
-# %patch174684 -p1
-
-%patch1360090 -p1
-
-%patch178343 -p1
-
 %patch32 -p1
-
 %patch33 -p1
-
 %patch34 -p1
-
 %patch35 -p1
-
-%patch188841 -p1
-
-%patch191416 -p1
-
-%patch27116 -p1
-
-%patch27391 -p1
-
-%patch27426 -p1
-
-%patch27509 -p1
-
-%patch27512 -p1
-
-%patch27604 -p1
-
-%patch27605 -p1
-
-%patch27914 -p1
-
-%patch27329 -p1
-
-%patch36    -p1
-
-%patch37    -p1
-
-%patch28006 -p1
-
-%patch38    -p1
-%patch39    -p1
+%patch36 -p1
+%patch37 -p1
+%patch38 -p1
 #
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
 recode()
 {
-	iconv -f "$2" -t utf-8 < "$1" > "${1}_"
-	mv -f "${1}_" "$1"
+        iconv -f "$2" -t utf-8 < "$1" > "${1}_"
+        mv -f "${1}_" "$1"
 }
 recode README.cn euc-cn
 recode README.jp euc-jp
@@ -405,12 +244,27 @@ recode pod/perlhist.pod iso-8859-1
 recode pod/perlothrtut.pod iso-8859-1
 recode pod/perlthrtut.pod iso-8859-1
 recode lib/Unicode/Collate.pm iso-8859-1
-# recode not needed (5.8.7):
-# ext/Encode/t/Mod_EUCJP.pm, ext/Encode/lib/Encode/CJKConstants.pm,
-# ext/Encode/lib/Encode/JP/H2Z.pm, lib/ExtUtils/MM_MacOS.pm,
-# lib/Pod/Checker.pm, lib/Net/README.libnet
 
 find . -name \*.orig -exec rm -fv {} \;
+
+# Oh, the irony. Perl generates some non-versioned provides we don't need.
+# Each of these has a versioned provide, which we keep.
+cat << \EOF > %{name}-prov
+#!/bin/sh
+%{__perl_provides} $* |\
+    sed -e '/^perl(Carp)$/d' |\
+    sed -e '/^perl(DynaLoader)$/d' |\
+    sed -e '/^perl(Locale::Maketext)$/d' |\
+    sed -e '/^perl(Math::BigInt)$/d' |\
+    sed -e '/^perl(Net::Config)$/d' |\
+    sed -e '/^perl(Tie::Hash)$/d' |\
+    sed -e '/^perl(bigint)$/d' |\
+    sed -e '/^perl(bigrat)$/d' |\
+    sed -e '/^perl(bytes)$/d' |\
+    sed -e '/^perl(utf8)$/d'
+EOF
+%define __perl_provides %{_builddir}/%{name}-%{version}/%{name}-prov
+chmod +x %{__perl_provides}
 
 
 %build
@@ -421,78 +275,66 @@ echo "RPM Build arch: %{_arch}"
 # similar reasons.
 
 sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
-	-Dversion=%{perlver} \
-	-Dmyhostname=localhost \
-	-Dperladmin=root@localhost \
-	-Dcc='%{__cc}' \
-	-Dcf_by='Red Hat, Inc.' \
-	-Dinstallprefix=%{_prefix} \
-	-Dprefix=%{_prefix} \
+        -Dversion=%{version} \
+        -Dmyhostname=localhost \
+        -Dperladmin=root@localhost \
+        -Dcc='%{__cc}' \
+        -Dcf_by='Red Hat, Inc.' \
+        -Dinstallprefix=%{_prefix} \
+        -Dprefix=%{_prefix} \
 %ifarch %{multilib_64_archs}
-	-Dlibpth="/usr/local/lib64 /lib64 /usr/lib64" \
-	-Dprivlib="/usr/lib/perl5/%{version}" \
-	-Dsitelib="/usr/lib/perl5/site_perl/%{version}" \
-	-Dvendorlib="/usr/lib/perl5/vendor_perl/%{version}" \
-	-Darchlib="%{_libdir}/perl5/%{perlver}/%{_arch}-%{_os}%{thread_arch}" \
-	-Dsitearch="%{_libdir}/perl5/site_perl/%{perlver}/%{_arch}-%{_os}%{thread_arch}" \
-	-Dvendorarch="%{_libdir}/perl5/vendor_perl/%{perlver}/%{_arch}-%{_os}%{thread_arch}" \
+        -Dlibpth="/usr/local/lib64 /lib64 /usr/lib64" \
+        -Dprivlib="/usr/lib/perl5/%{version}" \
+        -Dsitelib="/usr/lib/perl5/site_perl/%{version}" \
+        -Dvendorlib="/usr/lib/perl5/vendor_perl/%{version}" \
+        -Darchlib="%{_libdir}/perl5/%{version}/%{perl_archname}" \
+        -Dsitearch="%{_libdir}/perl5/site_perl/%{version}/%{perl_archname}" \
+        -Dvendorarch="%{_libdir}/perl5/vendor_perl/%{version}/%{perl_archname}" \
 %endif
-	-Darchname=%{_arch}-%{_os} \
+        -Darchname=%{_arch}-%{_os} \
 %ifarch sparc
-	-Ud_longdbl \
+        -Ud_longdbl \
 %endif
-	-Dvendorprefix=%{_prefix} \
-	-Dsiteprefix=%{_prefix} \
-	-Duseshrplib \
-%if %threading
-	-Dusethreads \
-	-Duseithreads \
-%else
-	-Uusethreads \
-	-Uuseithreads \
-%endif
-%if %largefiles
-	-Duselargefiles \
-%else
-	-Uuselargefiles \
-%endif
-	-Dd_dosuid \
-	-Dd_semctl_semun \
-	-Di_db \
-	-Ui_ndbm \
-	-Di_gdbm \
-	-Di_shadow \
-	-Di_syslog \
-	-Dman3ext=3pm \
-	-Duseperlio \
-	-Dinstallusrbinperl=n \
-	-Ubincompat5005 \
-	-Uversiononly \
-	-Dpager='/usr/bin/less -isr' \
-	-Dd_gethostent_r_proto -Ud_endhostent_r_proto -Ud_sethostent_r_proto \
-	-Ud_endprotoent_r_proto -Ud_setprotoent_r_proto \
-	-Ud_endservent_r_proto -Ud_setservent_r_proto \
-	-Dinc_version_list='%{perlmodcompat}' \
-	-Dscriptdir='%{_bindir}'
+        -Dvendorprefix=%{_prefix} \
+        -Dsiteprefix=%{_prefix} \
+        -Duseshrplib \
+        -Dusethreads \
+        -Duseithreads \
+        -Duselargefiles \
+        -Dd_dosuid \
+        -Dd_semctl_semun \
+        -Di_db \
+        -Ui_ndbm \
+        -Di_gdbm \
+        -Di_shadow \
+        -Di_syslog \
+        -Dman3ext=3pm \
+        -Duseperlio \
+        -Dinstallusrbinperl=n \
+        -Ubincompat5005 \
+        -Uversiononly \
+        -Dpager='/usr/bin/less -isr' \
+        -Dd_gethostent_r_proto -Ud_endhostent_r_proto -Ud_sethostent_r_proto \
+        -Ud_endprotoent_r_proto -Ud_setprotoent_r_proto \
+        -Ud_endservent_r_proto -Ud_setservent_r_proto \
+        -Dinc_version_list='%{perlmodcompat}' \
+        -Dscriptdir='%{_bindir}'
 
 make %{?_smp_mflags}
-make test
 
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
 make install DESTDIR=$RPM_BUILD_ROOT
 
-
 %ifarch %{multilib_64_archs}
-	mkdir -p -m 755 $RPM_BUILD_ROOT/usr/lib/perl5/%{perlver}
-	mkdir -p -m 755 $RPM_BUILD_ROOT/usr/lib/perl5/site_perl/%{perlver}
-	mkdir -p -m 755 $RPM_BUILD_ROOT/usr/lib/perl5/vendor_perl/%{perlver}
+mkdir -p -m 755 $RPM_BUILD_ROOT/usr/lib/perl5/%{version}
+mkdir -p -m 755 $RPM_BUILD_ROOT/usr/lib/perl5/site_perl/%{version}
+mkdir -p -m 755 $RPM_BUILD_ROOT/usr/lib/perl5/vendor_perl/%{version}
 %endif
 
 %ifarch %{multilib_64_archs}
-mkdir -p -m 755 ${RPM_BUILD_ROOT}/usr/lib64/perl5/vendor_perl/%{perlver}/%{_arch}-%{_os}
+mkdir -p -m 755 ${RPM_BUILD_ROOT}/usr/lib64/perl5/vendor_perl/%{version}/%{_arch}-%{_os}
 %endif
 
 
@@ -501,32 +343,20 @@ mkdir -p -m 755 ${RPM_BUILD_ROOT}/usr/lib64/perl5/vendor_perl/%{perlver}/%{_arch
 #
 pushd $RPM_BUILD_ROOT/%{_libdir}/perl5
 for i in %{perlmodcompat}; do
-    mkdir -pm 755 $i/%{_arch}-%{_os}%{thread_arch}/CORE
-    mkdir -pm 755 $i/%{_arch}-%{_os}%{thread_arch}/auto
-    pushd $i/%{_arch}-%{_os}%{thread_arch}/CORE
-      ln -s ../../../%{perlver}/%{_arch}-%{_os}%{thread_arch}/CORE/libperl.so libperl.so
+    mkdir -pm 755 $i/%{perl_archname}/CORE
+    mkdir -pm 755 $i/%{perl_archname}/auto
+    pushd $i/%{perl_archname}/CORE
+      ln -s ../../../%{version}/%{perl_archname}/CORE/libperl.so libperl.so
     popd
   done
 popd
 
-
 install -p -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/pl2pm
-
-
-#
-
-%define new_perl_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{perlver}:$RPM_BUILD_ROOT/usr/lib/perl5/%{perlver}
-%define comp_perl_lib $RPM_BUILD_ROOT/usr/lib/perl5/%{perlver}:$RPM_BUILD_ROOT/usr/lib/perl5/%{perlver}
-%define new_arch_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{perlver}/%{_arch}-%{_os}%{thread_arch}
-%define comp_arch_lib $RPM_BUILD_ROOT/usr/lib/perl5/%{perlver}/%{_arch}-%{_os}%{thread_arch}
-
-%define new_perl_flags LD_PRELOAD=/%{new_arch_lib}/CORE/libperl.so LD_LIBRARY_PATH=%{new_arch_lib}/CORE PERL5LIB=%{new_perl_lib}:%{comp_perl_lib}
-%define new_perl %{new_perl_flags} $RPM_BUILD_ROOT/%{_bindir}/perl
 
 for i in asm/termios.h syscall.h syslimits.h syslog.h sys/ioctl.h sys/socket.h sys/time.h wait.h
 do
   %{new_perl} $RPM_BUILD_ROOT/%{_bindir}/h2ph -a \
-              -d $RPM_BUILD_ROOT%{_libdir}/perl5/%{perlver}/%{_arch}-%{_os}%{thread_arch} $i || /bin/true
+              -d $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/%{perl_archname} $i || /bin/true
 done
 
 
@@ -540,17 +370,17 @@ do
   mkdir -p $RPM_BUILD_ROOT/$dir
 done
 
-for i in %{perlver} %{perlmodcompat} ; do
-  mkdir -pm 755 $RPM_BUILD_ROOT%{_libdir}/perl5/site_perl/$i/%{_arch}-%{_os}%{thread_arch}/auto
-  mkdir -pm 755 $RPM_BUILD_ROOT%{_libdir}/perl5/vendor_perl/$i/%{_arch}-%{_os}%{thread_arch}/auto
+for i in %{version} %{perlmodcompat} ; do
+  mkdir -pm 755 $RPM_BUILD_ROOT%{_libdir}/perl5/site_perl/$i/%{perl_archname}/auto
+  mkdir -pm 755 $RPM_BUILD_ROOT%{_libdir}/perl5/vendor_perl/$i/%{perl_archname}/auto
 done
 
 
 #
 # libnet configuration file
 #
-mkdir -p -m 755 $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perlver}/Net
-install -p -m 644 %{SOURCE12} $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perlver}/Net/libnet.cfg
+mkdir -p -m 755 $RPM_BUILD_ROOT/%{_libdir}/perl5/%{version}/Net
+install -p -m 644 %{SOURCE12} $RPM_BUILD_ROOT/%{_libdir}/perl5/%{version}/Net/libnet.cfg
 
 #
 # Core modules removal
@@ -558,6 +388,30 @@ install -p -m 644 %{SOURCE12} $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perlver}/Net/li
 find $RPM_BUILD_ROOT -name '*NDBM*' | xargs rm -rfv
 
 find $RPM_BUILD_ROOT -type f -name '*.bs' -a -empty -exec rm -f {} ';'
+
+# Cleanup binary paths and make cgi files executable
+pushd $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/CGI/eg/
+  for i in *.cgi make_links.pl RunMeFirst ; do
+    sed -i 's|/usr/local/bin/perl|/usr/bin/perl|g' $i
+    chmod +x $i
+  done
+popd
+
+# miniperl? As an interpreter? How odd.
+sed -i 's|./miniperl|/usr/bin/perl|' $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/ExtUtils/xsubpp
+chmod +x $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/ExtUtils/xsubpp
+
+# Don't need the .packlist
+rm -f $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/%{perl_archname}/.packlist
+
+# Fix some manpages to be UTF-8
+pushd $RPM_BUILD_ROOT%{_mandir}/man1/
+  for i in perl588delta.1 perldelta.1 ; do
+    iconv -f MS-ANSI -t UTF-8 $i --output new-$i
+    rm -rf $i
+    mv new-$i $i
+  done
+popd
 
 chmod -R u+w $RPM_BUILD_ROOT/*
 %if %{perl_debugging}
@@ -568,8 +422,12 @@ exit 0
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%check
+make test
+
 %files
 %defattr(-,root,root,-)
+%doc Copying README
 %{_mandir}/man1/*.1*
 %{_mandir}/man3/*.3*
 %{_bindir}/*
@@ -577,18 +435,25 @@ rm -rf $RPM_BUILD_ROOT
 %ifarch %{multilib_64_archs}
 /usr/lib/perl5/
 %endif
-%if %{suidperl}
 %exclude %{_bindir}/suidperl
-%exclude %{_bindir}/sperl%{perlver}
-%endif
+%exclude %{_bindir}/sperl%{version}
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/CORE/*.h
+%exclude %{_libdir}/perl5/%{version}/Encode/*.h
 
-%if %{suidperl}
+%files devel
+%defattr(-,root,root,-)
+%{_libdir}/perl5/%{version}/%{perl_archname}/CORE/*.h
+%{_libdir}/perl5/%{version}/Encode/*.h
+
 %files suidperl
+%defattr(-,root,root,-)
 %{_bindir}/suidperl
-%{_bindir}/sperl%{perlver}
-%endif
+%{_bindir}/sperl%{version}
 
 %changelog
+* Sat Feb  3 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-13
+- massive cleanups
+
 * Wed Jan 24 2007 Jindrich Novy <jnovy@redhat.com> - 4:5.8.8-12
 - put dist tag directly to perlrel to fix dependency to suidperl
 
@@ -854,9 +719,9 @@ rm -rf $RPM_BUILD_ROOT
   should solve the MRTG/SELinux cron spam issue
 
 * Tue Mar 23 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-14
-- make sure multilib boxes also own the entries in @INC that are in /usr/lib, not just %_libdir
+- make sure multilib boxes also own the entries in @INC that are in /usr/lib, not just %%_libdir
 
-* Tue Mar  9 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-%{perlrel}.1
+* Tue Mar  9 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-%%{perlrel}.1
 - fix i386-specifics in %%install to arch generic
 
 * Tue Mar 02 2004 Elliot Lee <sopwith@redhat.com>
@@ -940,34 +805,34 @@ rm -rf $RPM_BUILD_ROOT
 * Thu Jul 10 2003 Chip Turner <cturner@redhat.com> 3:5.8.0-90.rc1
 - upgrade to 5.8.1 RC1
 
-* Mon Jul  7 2003 Chip Turner <cturner@redhat.com> 3:5.8.0-89.pre%{PRELEVEL}.0
+* Mon Jul  7 2003 Chip Turner <cturner@redhat.com> 3:5.8.0-89.pre%%{PRELEVEL}.0
 - integrate another pre-5.8.1 release
 
 * Wed Jun 04 2003 Elliot Lee <sopwith@redhat.com>
 - rebuilt
 
-* Mon May 19 2003 Chip Turner <cturner@redhat.com> 3:5.8.0-89.pre%{PRELEVEL}.0
+* Mon May 19 2003 Chip Turner <cturner@redhat.com> 3:5.8.0-89.pre%%{PRELEVEL}.0
 - bump epoch since we went from perl 5.8.1-pre to 5.8.0-pre (ie,
   changed what version perl thought of itself as)
 
-* Mon May  5 2003 Chip Turner <cturner@redhat.com> 2:5.8.1-0.pre%{PRELEVEL}.3
+* Mon May  5 2003 Chip Turner <cturner@redhat.com> 2:5.8.1-0.pre%%{PRELEVEL}.3
 - rebuild
 
 * Thu May  1 2003 Chip Turner <cturner@redhat.com>
 - bump for rebuilg
 
-* Sun Apr 27 2003 Chip Turner <cturner@redhat.com> 2:5.8.1-0.pre%{PRELEVEL}.1
+* Sun Apr 27 2003 Chip Turner <cturner@redhat.com> 2:5.8.1-0.pre%%{PRELEVEL}.1
 - fix the fix for RPM_BUILD_ROOT substitution
 
-* Tue Apr 22 2003 Chip Turner <cturner@redhat.com> 2:5.8.1-0.pre%{PRELEVEL}.3
+* Tue Apr 22 2003 Chip Turner <cturner@redhat.com> 2:5.8.1-0.pre%%{PRELEVEL}.3
 - fix Config.pm; lost when h2ph changes made
 
-* Thu Apr 17 2003 Chip Turner <cturner@redhat.com> 2:5.8.1-0.pre%{PRELEVEL}
+* Thu Apr 17 2003 Chip Turner <cturner@redhat.com> 2:5.8.1-0.pre%%{PRELEVEL}
 - move to latest snapshot, 19261
 
 * Tue Feb 18 2003 Chip Turner <cturner@redhat.com>
 - fix MANIFEST.DB_File handling for #83410; problem was unsubstituted
-  %{_libdir} that crept in with multilib
+  %%{_libdir} that crept in with multilib
 
 * Tue Feb 18 2003 Bill Nottingham <notting@redhat.com> 5.8.0-87
 - clean up backup files from patches (#82838)
@@ -1084,7 +949,7 @@ rm -rf $RPM_BUILD_ROOT
 
 * Mon Jul 31 2000 Nalin Dahyabhai <nalin@redhat.com>
 - add Owen's fix for #14779/#14863
-- specify cc=%{__cc}; continue to let cpp sort itself out
+- specify cc=%%{__cc}; continue to let cpp sort itself out
 - switch shadow support on (#8646)
 - release 7
 
