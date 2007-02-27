@@ -390,7 +390,7 @@ find $RPM_BUILD_ROOT -name '*NDBM*' | xargs rm -rfv
 find $RPM_BUILD_ROOT -type f -name '*.bs' -a -empty -exec rm -f {} ';'
 
 # Cleanup binary paths and make cgi files executable
-pushd $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/CGI/eg/
+pushd $RPM_BUILD_ROOT/usr/lib/perl5/%{version}/CGI/eg/
   for i in *.cgi make_links.pl RunMeFirst ; do
     sed -i 's|/usr/local/bin/perl|/usr/bin/perl|g' $i
     chmod +x $i
