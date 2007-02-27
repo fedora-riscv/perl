@@ -399,7 +399,7 @@ popd
 
 # miniperl? As an interpreter? How odd.
 sed -i 's|./miniperl|/usr/bin/perl|' $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/ExtUtils/xsubpp
-chmod +x $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/ExtUtils/xsubpp
+chmod +x $RPM_BUILD_ROOT/usr/lib/perl5/%{version}/ExtUtils/xsubpp
 
 # Don't need the .packlist
 rm -f $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/%{perl_archname}/.packlist
