@@ -438,12 +438,12 @@ make test
 %exclude %{_bindir}/suidperl
 %exclude %{_bindir}/sperl%{version}
 %exclude %{_libdir}/perl5/%{version}/%{perl_archname}/CORE/*.h
-%exclude %{_libdir}/perl5/%{version}/Encode/*.h
+%exclude /usr/lib/perl5/%{version}/Encode/*.h
 
 %files devel
 %defattr(-,root,root,-)
 %{_libdir}/perl5/%{version}/%{perl_archname}/CORE/*.h
-%{_libdir}/perl5/%{version}/Encode/*.h
+/usr/lib/perl5/%{version}/Encode/*.h
 
 %files suidperl
 %defattr(-,root,root,-)
