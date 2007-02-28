@@ -17,7 +17,7 @@
 
 Name:           perl
 Version:        5.8.8
-Release:        13%{?dist}
+Release:        14%{?dist}
 Epoch:          4
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -26,33 +26,52 @@ Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/authors/id/N/NW/NWCLARK/%{name}-%{version}.tar.bz2
 Source11:       filter-depends.sh
 Source12:       perl-5.8.0-libnet.cfg
+# Specific to Fedora/RHEL
 Patch1:         perl-5.8.0-root.patch
+# Upstream bug 41586
 Patch2:         perl-5.8.8-incpush.patch
+# Removes date check, Fedora/RHEL specific
 Patch3:         perl-5.8.8-perlbug-tag.patch
+# XXX: The next two patches appear to alter the order of @INC, but
+# there isn't sufficient documentation as to why we do this.
 Patch4:         perl-5.8.8-dashI.patch
 Patch5:         perl-5.8.5-incorder.patch
 # make sure we get the proper ldflags on libperl.so
+# Upstream bug 41587
 Patch6:         perl-5.8.0-sharedlinker.patch
-# lynx is deprecated, use links instead
+# Fedora/RHEL use links instead of lynx
 Patch7:         perl-5.8.8-links.patch
 # work around annoying rpath issue
+# This is only relevant for Fedora, as it is unlikely
+# that upstream will assume the existence of a libperl.so
 Patch8:         perl-5.8.8-rpath-make.patch
 # Disable -DDEBUGGING and allow -g to do its job (#156113)
+# Upstream bug 41588
 Patch9:         perl-5.8.7-no-debugging.patch
+# Upstream bug 41589
 Patch10:        perl-5.8.1-fpic.patch
+# Fedora/RHEL only (64bit only)
 Patch11:        perl-5.8.0-libdir64.patch
+# Upstream bug 41590
 Patch12:        perl-5.8.0-nptlhint.patch
+# Fedora/RHEL specific (use libresolv instead of libbind)
 Patch13:        perl-5.8.6-libresolv.patch
 # fix for bug 163958 / upstream bug 37056 :
 # backport of perl-5.9's patch 25084 (bug still in 5.8.8!):
 Patch14:        perl-5.8.7-25084.patch
 # multi-threaded perl builds use localtime_r which does not call tzset
 # bugzilla 172396
+# Upstream bug 41591
 Patch15:        perl-5.8.7-172396.patch
+# Security fix
 Patch16:        perl-5.8.8-CAN-2004-0976.patch
+# XXX: Fixme
+# Needs all the "Red Hat" references removed before upstreaming
 Patch17:        perl-5.8.8-USE_MM_LD_RUN_PATH.patch
+# Upstream bug 38385
 Patch18:        perl-5.8.8-bz178343.patch
 # Debian's fix for Net::NNTP:
+# Upstream bug 41593
 Patch19:        perl-5.8.8-debian_fix_net_nntp.patch
 # Upstream patches 27133 and 27169 (27170):
 Patch20:        perl-5.8.8-up27133_up27169.patch
@@ -60,7 +79,9 @@ Patch20:        perl-5.8.8-up27133_up27169.patch
 Patch21:        perl-5.8.8-up27284.patch
 # Fix for bug 183553 / upstream bug 38657:
 Patch22:        perl-5.8.8-bz183553_ubz38657.patch
+# http://rt.cpan.org/Ticket/Display.html?id=18692
 Patch23:        perl-5.8.8-bz188441.patch
+# Upstream bug 39130
 Patch24:        perl-5.8.8-bz191416.patch
 Patch25:        perl-5.8.8-U27116.patch
 Patch26:        perl-5.8.8-U27391.patch
@@ -71,13 +92,20 @@ Patch30:        perl-5.8.8-U27604.patch
 Patch31:        perl-5.8.8-U27605.patch
 Patch32:        perl-5.8.8-U27914.patch
 Patch33:        perl-5.8.8-U27329.patch
+# XXX: Fixme
+# Needs to be un-RedHatized before upstreaming
 Patch34:        perl-5.8.8-R-switch.patch
 # stop IPC/SysV.c including <asm/page.h> for getpagesize(), which
 # is now declared by including <unistd.h> .
+# Upstream bug 41594
 Patch35:        perl-5.8.8-no_asm_page_h.patch
 Patch36:        perl-5.8.8-U34297_C28006.patch
+# Bugzilla 199372
+# Upstream bug 41595
 Patch37:        perl-5.8.8-useCFLAGSwithCC.patch
+# Upstream bug 39903
 Patch38:        perl-5.8.8-bz199736.patch
+# XXX: Fixme - Finish patch.
 Patch39:        perl-5.8.8-bz204679.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -451,6 +479,10 @@ make test
 %{_bindir}/sperl%{version}
 
 %changelog
+* Tue Feb 27 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-14
+- Add a description for most of the patches, to reflect Spot's work to
+  report said patches upstream.
+
 * Sat Feb  3 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-13
 - massive cleanups
 
