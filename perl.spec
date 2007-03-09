@@ -17,7 +17,7 @@
 
 Name:           perl
 Version:        5.8.8
-Release:        14%{?dist}
+Release:        15%{?dist}
 Epoch:          4
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -111,6 +111,9 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel
 
+# XXX - remove this once RH bug #231549 is fixed
+Requires:	perl-devel
+
 # The long line of Perl provides.
 
 # These provides are needed by the perl pkg itself with auto-generated perl.req
@@ -198,8 +201,9 @@ Group:          Development/Languages
 Requires:       perl = %{epoch}:%{version}-%{release}
 
 %description devel
-This package contains header files from core perl components.
-Some packages may need these header files in order to build.
+This package contains header files and development modules.
+Most perl packages will need to install perl-devel to build.
+
 
 %package suidperl
 Summary:        Suidperl, for use with setuid perl scripts
@@ -209,6 +213,7 @@ Requires:       perl = %{epoch}:%{version}-%{release}
 %description suidperl
 Suidperl is a setuid binary copy of perl that allows for (hopefully)
 more secure running of setuid perl scripts.
+
 
 %prep
 %setup -q
@@ -365,7 +370,6 @@ mkdir -p -m 755 $RPM_BUILD_ROOT/usr/lib/perl5/vendor_perl/%{version}
 mkdir -p -m 755 ${RPM_BUILD_ROOT}/usr/lib64/perl5/vendor_perl/%{version}/%{_arch}-%{_os}
 %endif
 
-
 #
 # Compatibility directories
 #
@@ -463,15 +467,125 @@ make test
 %ifarch %{multilib_64_archs}
 /usr/lib/perl5/
 %endif
+%exclude %{_bindir}/enc2xs
+%exclude %{_mandir}/man1/enc2xs*
+%exclude %{_bindir}/h2xs
+%exclude %{_mandir}/man1/h2xs*
+%exclude %{_bindir}/libnetcfg
+%exclude %{_mandir}/man1/libnetcfg*
+%exclude %{_bindir}/perlcc
+%exclude %{_mandir}/man1/perlcc*
+%exclude %{_bindir}/perlivp
+%exclude %{_mandir}/man1/perlivp*
 %exclude %{_bindir}/suidperl
 %exclude %{_bindir}/sperl%{version}
 %exclude %{_libdir}/perl5/%{version}/%{perl_archname}/CORE/*.h
-%exclude /usr/lib/perl5/%{version}/Encode/*.h
+# CPAN
+%exclude %{_bindir}/cpan
+%exclude /usr/lib/perl5/%{version}/CPAN/
+%exclude /usr/lib/perl5/%{version}/CPAN.pm
+%exclude %{_mandir}/man1/cpan.1*
+%exclude %{_mandir}/man3/CPAN*
+# ExtUtils-Embed
+%exclude /usr/lib/perl5/%{version}/ExtUtils/Embed.pm
+%exclude %{_mandir}/man3/ExtUtils::Embed*
+# ExtUtils-MakeMaker
+%exclude %{_bindir}/instmodsh
+%exclude /usr/lib/perl5/%{version}/ExtUtils/Command/
+%exclude /usr/lib/perl5/%{version}/ExtUtils/Install.pm
+%exclude /usr/lib/perl5/%{version}/ExtUtils/Installed.pm
+%exclude /usr/lib/perl5/%{version}/ExtUtils/Liblist/
+%exclude /usr/lib/perl5/%{version}/ExtUtils/Liblist.pm
+%exclude /usr/lib/perl5/%{version}/ExtUtils/MakeMaker/
+%exclude /usr/lib/perl5/%{version}/ExtUtils/MakeMaker.pm
+%exclude /usr/lib/perl5/%{version}/ExtUtils/MANIFEST.SKIP
+%exclude /usr/lib/perl5/%{version}/ExtUtils/MM*.pm
+%exclude /usr/lib/perl5/%{version}/ExtUtils/MY.pm
+%exclude /usr/lib/perl5/%{version}/ExtUtils/Manifest.pm
+%exclude /usr/lib/perl5/%{version}/ExtUtils/Mkbootstrap.pm
+%exclude /usr/lib/perl5/%{version}/ExtUtils/Mksymlists.pm
+%exclude /usr/lib/perl5/%{version}/ExtUtils/NOTES
+%exclude /usr/lib/perl5/%{version}/ExtUtils/Packlist.pm
+%exclude /usr/lib/perl5/%{version}/ExtUtils/PATCHING
+%exclude /usr/lib/perl5/%{version}/ExtUtils/testlib.pm
+%exclude %{_mandir}/man1/instmodsh.1*
+%exclude %{_mandir}/man3/ExtUtils::Command::MM*
+%exclude %{_mandir}/man3/ExtUtils::Install.3*
+%exclude %{_mandir}/man3/ExtUtils::Installed.3*
+%exclude %{_mandir}/man3/ExtUtils::Liblist.3*
+%exclude %{_mandir}/man3/ExtUtils::MM*
+%exclude %{_mandir}/man3/ExtUtils::MY.3*
+%exclude %{_mandir}/man3/ExtUtils::MakeMaker*
+%exclude %{_mandir}/man3/ExtUtils::Manifest.3*
+%exclude %{_mandir}/man3/ExtUtils::Mkbootstrap.3*
+%exclude %{_mandir}/man3/ExtUtils::Mksymlists.3*
+%exclude %{_mandir}/man3/ExtUtils::Packlist.3*
+%exclude %{_mandir}/man3/ExtUtils::testlib.3*
+# Test::Harness
+%exclude %{_bindir}/prove
+%exclude /usr/lib/perl5/%{version}/Test/Harness*
+%exclude %{_mandir}/man1/prove.1*
+%exclude %{_mandir}/man3/Test::Harness*
 
 %files devel
 %defattr(-,root,root,-)
+%{_bindir}/enc2xs
+%{_mandir}/man1/enc2xs*
+%{_bindir}/h2xs
+%{_mandir}/man1/h2xs*
+%{_bindir}/libnetcfg
+%{_mandir}/man1/libnetcfg*
+%{_bindir}/perlcc
+%{_mandir}/man1/perlcc*
+%{_bindir}/perlivp
+%{_mandir}/man1/perlivp*
 %{_libdir}/perl5/%{version}/%{perl_archname}/CORE/*.h
-/usr/lib/perl5/%{version}/Encode/*.h
+#CPAN
+%{_bindir}/cpan
+/usr/lib/perl5/%{version}/CPAN/
+/usr/lib/perl5/%{version}/CPAN.pm
+%{_mandir}/man1/cpan.1*
+%{_mandir}/man3/CPAN*
+# ExtUtils-Embed
+/usr/lib/perl5/%{version}/ExtUtils/Embed.pm
+%{_mandir}/man3/ExtUtils::Embed*
+# ExtUtils-MakeMaker
+%{_bindir}/instmodsh
+/usr/lib/perl5/%{version}/ExtUtils/Command/
+/usr/lib/perl5/%{version}/ExtUtils/Install.pm
+/usr/lib/perl5/%{version}/ExtUtils/Installed.pm
+/usr/lib/perl5/%{version}/ExtUtils/Liblist/
+/usr/lib/perl5/%{version}/ExtUtils/Liblist.pm
+/usr/lib/perl5/%{version}/ExtUtils/MakeMaker/
+/usr/lib/perl5/%{version}/ExtUtils/MakeMaker.pm
+/usr/lib/perl5/%{version}/ExtUtils/MANIFEST.SKIP
+/usr/lib/perl5/%{version}/ExtUtils/MM*.pm
+/usr/lib/perl5/%{version}/ExtUtils/MY.pm
+/usr/lib/perl5/%{version}/ExtUtils/Manifest.pm
+/usr/lib/perl5/%{version}/ExtUtils/Mkbootstrap.pm
+/usr/lib/perl5/%{version}/ExtUtils/Mksymlists.pm
+/usr/lib/perl5/%{version}/ExtUtils/NOTES
+/usr/lib/perl5/%{version}/ExtUtils/Packlist.pm
+/usr/lib/perl5/%{version}/ExtUtils/PATCHING
+/usr/lib/perl5/%{version}/ExtUtils/testlib.pm
+%{_mandir}/man1/instmodsh.1*
+%{_mandir}/man3/ExtUtils::Command::MM*
+%{_mandir}/man3/ExtUtils::Install.3*
+%{_mandir}/man3/ExtUtils::Installed.3*
+%{_mandir}/man3/ExtUtils::Liblist.3*
+%{_mandir}/man3/ExtUtils::MM*
+%{_mandir}/man3/ExtUtils::MY.3*
+%{_mandir}/man3/ExtUtils::MakeMaker*
+%{_mandir}/man3/ExtUtils::Manifest.3*
+%{_mandir}/man3/ExtUtils::Mkbootstrap.3*
+%{_mandir}/man3/ExtUtils::Mksymlists.3*
+%{_mandir}/man3/ExtUtils::Packlist.3*
+%{_mandir}/man3/ExtUtils::testlib.3*
+# Test::Harness
+%{_bindir}/prove
+/usr/lib/perl5/%{version}/Test/Harness*
+%{_mandir}/man1/prove.1*
+%{_mandir}/man3/Test::Harness*
 
 %files suidperl
 %defattr(-,root,root,-)
@@ -479,6 +593,12 @@ make test
 %{_bindir}/sperl%{version}
 
 %changelog
+* Fri Mar  9 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-15
+- Incorporate fixes from spot and others on fedora-perl-devel
+- The main perl package will temporarily Require perl-devel
+- move ExtUtils::MakeMaker, ExtUtils::Embed, CPAN, Test::Harness into devel
+- also move perlcc, perlivp, h2xs, libnetcfg to devel
+
 * Tue Feb 27 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-14
 - Add a description for most of the patches, to reflect Spot's work to
   report said patches upstream.
