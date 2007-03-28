@@ -8,6 +8,8 @@
 %define new_perl_flags LD_PRELOAD=/%{new_arch_lib}/CORE/libperl.so LD_LIBRARY_PATH=%{new_arch_lib}/CORE PERL5LIB=%{new_perl_lib}:%{comp_perl_lib}
 %define new_perl %{new_perl_flags} $RPM_BUILD_ROOT/%{_bindir}/perl
 
+%define perl_version    5.8.8
+
 # Use this for SUPER PERL DEBUGGING MODE.
 %{?!perl_debugging:    %define perl_debugging 0}
 %if %{perl_debugging}
@@ -17,13 +19,13 @@
 
 Name:           perl
 Version:        5.8.8
-Release:        15%{?dist}
+Release:        16%{?dist}
 Epoch:          4
 Summary:        The Perl programming language
 Group:          Development/Languages
 License:        Artistic or GPL
 Url:            http://www.perl.org/
-Source0:        http://www.cpan.org/authors/id/N/NW/NWCLARK/%{name}-%{version}.tar.bz2
+Source0:        http://www.cpan.org/authors/id/N/NW/NWCLARK/%{name}-%{perl_version}.tar.bz2
 Source11:       filter-depends.sh
 Source12:       perl-5.8.0-libnet.cfg
 # Specific to Fedora/RHEL
@@ -107,12 +109,9 @@ Patch37:        perl-5.8.8-useCFLAGSwithCC.patch
 Patch38:        perl-5.8.8-bz199736.patch
 # XXX: Fixme - Finish patch.
 Patch39:        perl-5.8.8-bz204679.patch
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel
-
-# XXX - remove this once RH bug #231549 is fixed
-Requires:	perl-devel
 
 # The long line of Perl provides.
 
@@ -198,7 +197,7 @@ system to handle Perl scripts.
 %package devel
 Summary:        Header files for use in perl development
 Group:          Development/Languages
-Requires:       perl = %{epoch}:%{version}-%{release}
+Requires:       perl = %{epoch}:%{perl_version}-%{release}
 
 %description devel
 This package contains header files and development modules.
@@ -208,12 +207,65 @@ Most perl packages will need to install perl-devel to build.
 %package suidperl
 Summary:        Suidperl, for use with setuid perl scripts
 Group:          Development/Languages
-Requires:       perl = %{epoch}:%{version}-%{release}
+Requires:       perl = %{epoch}:%{perl_version}-%{release}
 
 %description suidperl
 Suidperl is a setuid binary copy of perl that allows for (hopefully)
 more secure running of setuid perl scripts.
 
+%package CPAN
+Summary:        Query, download and build perl modules from CPAN sites
+Group:          Development/Languages
+Epoch:          0
+Version:        1.76_02
+Requires:       perl = %{epoch}:%{perl_version}-%{release}
+
+%description CPAN
+Query, download and build perl modules from CPAN sites.
+
+%package ExtUtils-Embed
+Summary:        Utilities for embedding Perl in C/C++ applications
+Group:          Development/Languages
+Epoch:          0
+Version:        1.26
+Requires:       perl-devel
+Requires:       perl = %{epoch}:%{perl_version}-%{release}
+
+%description ExtUtils-Embed
+Utilities for embedding Perl in C/C++ applications.
+
+%package ExtUtils-MakeMaker
+Summary:        Create a module Makefile
+Group:          Development/Languages
+Epoch:          0
+Version:        6.30
+Requires:       perl-devel
+Requires:       perl = %{epoch}:%{perl_version}-%{release}
+
+%description ExtUtils-MakeMaker
+Create a module Makefile.
+
+%package Test-Harness
+Summary:        Run Perl standard test scripts with statistics
+Group:          Development/Languages
+Epoch:          0
+Version:        2.56
+Requires:       perl-devel
+Requires:       perl = %{epoch}:%{perl_version}-%{release}
+
+%description Test-Harness
+Run Perl standard test scripts with statistics.
+
+%package Test-Simple
+Summary:        Basic utilities for writing tests
+Group:          Development/Languages
+Epoch:          0
+Version:        0.62
+Requires:       perl-devel
+Requires:       perl = %{epoch}:%{perl_version}-%{release}
+
+%description Test-Simple
+Basic utilities for writing tests.
 
 %prep
 %setup -q
@@ -296,7 +348,7 @@ cat << \EOF > %{name}-prov
     sed -e '/^perl(bytes)$/d' |\
     sed -e '/^perl(utf8)$/d'
 EOF
-%define __perl_provides %{_builddir}/%{name}-%{version}/%{name}-prov
+%define __perl_provides %{_builddir}/%{name}-%{perl_version}/%{name}-prov
 chmod +x %{__perl_provides}
 
 
@@ -308,7 +360,7 @@ echo "RPM Build arch: %{_arch}"
 # similar reasons.
 
 sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
-        -Dversion=%{version} \
+        -Dversion=%{perl_version} \
         -Dmyhostname=localhost \
         -Dperladmin=root@localhost \
         -Dcc='%{__cc}' \
@@ -317,12 +369,12 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
         -Dprefix=%{_prefix} \
 %ifarch %{multilib_64_archs}
         -Dlibpth="/usr/local/lib64 /lib64 /usr/lib64" \
-        -Dprivlib="/usr/lib/perl5/%{version}" \
-        -Dsitelib="/usr/lib/perl5/site_perl/%{version}" \
-        -Dvendorlib="/usr/lib/perl5/vendor_perl/%{version}" \
-        -Darchlib="%{_libdir}/perl5/%{version}/%{perl_archname}" \
-        -Dsitearch="%{_libdir}/perl5/site_perl/%{version}/%{perl_archname}" \
-        -Dvendorarch="%{_libdir}/perl5/vendor_perl/%{version}/%{perl_archname}" \
+        -Dprivlib="/usr/lib/perl5/%{perl_version}" \
+        -Dsitelib="/usr/lib/perl5/site_perl/%{perl_version}" \
+        -Dvendorlib="/usr/lib/perl5/vendor_perl/%{perl_version}" \
+        -Darchlib="%{_libdir}/perl5/%{perl_version}/%{perl_archname}" \
+        -Dsitearch="%{_libdir}/perl5/site_perl/%{perl_version}/%{perl_archname}" \
+        -Dvendorarch="%{_libdir}/perl5/vendor_perl/%{perl_version}/%{perl_archname}" \
 %endif
         -Darchname=%{_arch}-%{_os} \
 %ifarch sparc
@@ -361,13 +413,13 @@ rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
 %ifarch %{multilib_64_archs}
-mkdir -p -m 755 $RPM_BUILD_ROOT/usr/lib/perl5/%{version}
-mkdir -p -m 755 $RPM_BUILD_ROOT/usr/lib/perl5/site_perl/%{version}
-mkdir -p -m 755 $RPM_BUILD_ROOT/usr/lib/perl5/vendor_perl/%{version}
+mkdir -p -m 755 $RPM_BUILD_ROOT/usr/lib/perl5/%{perl_version}
+mkdir -p -m 755 $RPM_BUILD_ROOT/usr/lib/perl5/site_perl/%{perl_version}
+mkdir -p -m 755 $RPM_BUILD_ROOT/usr/lib/perl5/vendor_perl/%{perl_version}
 %endif
 
 %ifarch %{multilib_64_archs}
-mkdir -p -m 755 ${RPM_BUILD_ROOT}/usr/lib64/perl5/vendor_perl/%{version}/%{_arch}-%{_os}
+mkdir -p -m 755 ${RPM_BUILD_ROOT}/usr/lib64/perl5/vendor_perl/%{perl_version}/%{_arch}-%{_os}
 %endif
 
 #
@@ -378,7 +430,7 @@ for i in %{perlmodcompat}; do
     mkdir -pm 755 $i/%{perl_archname}/CORE
     mkdir -pm 755 $i/%{perl_archname}/auto
     pushd $i/%{perl_archname}/CORE
-      ln -s ../../../%{version}/%{perl_archname}/CORE/libperl.so libperl.so
+      ln -s ../../../%{perl_version}/%{perl_archname}/CORE/libperl.so libperl.so
     popd
   done
 popd
@@ -388,7 +440,7 @@ install -p -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/pl2pm
 for i in asm/termios.h syscall.h syslimits.h syslog.h sys/ioctl.h sys/socket.h sys/time.h wait.h
 do
   %{new_perl} $RPM_BUILD_ROOT/%{_bindir}/h2ph -a \
-              -d $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/%{perl_archname} $i || /bin/true
+              -d $RPM_BUILD_ROOT%{_libdir}/perl5/%{perl_version}/%{perl_archname} $i || /bin/true
 done
 
 
@@ -402,7 +454,7 @@ do
   mkdir -p $RPM_BUILD_ROOT/$dir
 done
 
-for i in %{version} %{perlmodcompat} ; do
+for i in %{perl_version} %{perlmodcompat} ; do
   mkdir -pm 755 $RPM_BUILD_ROOT%{_libdir}/perl5/site_perl/$i/%{perl_archname}/auto
   mkdir -pm 755 $RPM_BUILD_ROOT%{_libdir}/perl5/vendor_perl/$i/%{perl_archname}/auto
 done
@@ -411,8 +463,8 @@ done
 #
 # libnet configuration file
 #
-mkdir -p -m 755 $RPM_BUILD_ROOT/%{_libdir}/perl5/%{version}/Net
-install -p -m 644 %{SOURCE12} $RPM_BUILD_ROOT/%{_libdir}/perl5/%{version}/Net/libnet.cfg
+mkdir -p -m 755 $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perl_version}/Net
+install -p -m 644 %{SOURCE12} $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perl_version}/Net/libnet.cfg
 
 #
 # Core modules removal
@@ -422,7 +474,7 @@ find $RPM_BUILD_ROOT -name '*NDBM*' | xargs rm -rfv
 find $RPM_BUILD_ROOT -type f -name '*.bs' -a -empty -exec rm -f {} ';'
 
 # Cleanup binary paths and make cgi files executable
-pushd $RPM_BUILD_ROOT/usr/lib/perl5/%{version}/CGI/eg/
+pushd $RPM_BUILD_ROOT/usr/lib/perl5/%{perl_version}/CGI/eg/
   for i in *.cgi make_links.pl RunMeFirst ; do
     sed -i 's|/usr/local/bin/perl|/usr/bin/perl|g' $i
     chmod +x $i
@@ -430,11 +482,11 @@ pushd $RPM_BUILD_ROOT/usr/lib/perl5/%{version}/CGI/eg/
 popd
 
 # miniperl? As an interpreter? How odd.
-sed -i 's|./miniperl|/usr/bin/perl|' $RPM_BUILD_ROOT/usr/lib/perl5/%{version}/ExtUtils/xsubpp
-chmod +x $RPM_BUILD_ROOT/usr/lib/perl5/%{version}/ExtUtils/xsubpp
+sed -i 's|./miniperl|/usr/bin/perl|' $RPM_BUILD_ROOT/usr/lib/perl5/%{perl_version}/ExtUtils/xsubpp
+chmod +x $RPM_BUILD_ROOT/usr/lib/perl5/%{perl_version}/ExtUtils/xsubpp
 
 # Don't need the .packlist
-rm -f $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/%{perl_archname}/.packlist
+rm -f $RPM_BUILD_ROOT%{_libdir}/perl5/%{perl_version}/%{perl_archname}/.packlist
 
 # Fix some manpages to be UTF-8
 pushd $RPM_BUILD_ROOT%{_mandir}/man1/
@@ -467,6 +519,8 @@ make test
 %ifarch %{multilib_64_archs}
 /usr/lib/perl5/
 %endif
+
+# devel
 %exclude %{_bindir}/enc2xs
 %exclude %{_mandir}/man1/enc2xs*
 %exclude %{_bindir}/h2xs
@@ -477,37 +531,42 @@ make test
 %exclude %{_mandir}/man1/perlcc*
 %exclude %{_bindir}/perlivp
 %exclude %{_mandir}/man1/perlivp*
+%exclude %{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/*.h
+
+# suidperl
 %exclude %{_bindir}/suidperl
-%exclude %{_bindir}/sperl%{version}
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/CORE/*.h
+%exclude %{_bindir}/sperl%{perl_version}
+
 # CPAN
 %exclude %{_bindir}/cpan
-%exclude /usr/lib/perl5/%{version}/CPAN/
-%exclude /usr/lib/perl5/%{version}/CPAN.pm
+%exclude /usr/lib/perl5/%{perl_version}/CPAN/
+%exclude /usr/lib/perl5/%{perl_version}/CPAN.pm
 %exclude %{_mandir}/man1/cpan.1*
 %exclude %{_mandir}/man3/CPAN*
+
 # ExtUtils-Embed
-%exclude /usr/lib/perl5/%{version}/ExtUtils/Embed.pm
+%exclude /usr/lib/perl5/%{perl_version}/ExtUtils/Embed.pm
 %exclude %{_mandir}/man3/ExtUtils::Embed*
+
 # ExtUtils-MakeMaker
 %exclude %{_bindir}/instmodsh
-%exclude /usr/lib/perl5/%{version}/ExtUtils/Command/
-%exclude /usr/lib/perl5/%{version}/ExtUtils/Install.pm
-%exclude /usr/lib/perl5/%{version}/ExtUtils/Installed.pm
-%exclude /usr/lib/perl5/%{version}/ExtUtils/Liblist/
-%exclude /usr/lib/perl5/%{version}/ExtUtils/Liblist.pm
-%exclude /usr/lib/perl5/%{version}/ExtUtils/MakeMaker/
-%exclude /usr/lib/perl5/%{version}/ExtUtils/MakeMaker.pm
-%exclude /usr/lib/perl5/%{version}/ExtUtils/MANIFEST.SKIP
-%exclude /usr/lib/perl5/%{version}/ExtUtils/MM*.pm
-%exclude /usr/lib/perl5/%{version}/ExtUtils/MY.pm
-%exclude /usr/lib/perl5/%{version}/ExtUtils/Manifest.pm
-%exclude /usr/lib/perl5/%{version}/ExtUtils/Mkbootstrap.pm
-%exclude /usr/lib/perl5/%{version}/ExtUtils/Mksymlists.pm
-%exclude /usr/lib/perl5/%{version}/ExtUtils/NOTES
-%exclude /usr/lib/perl5/%{version}/ExtUtils/Packlist.pm
-%exclude /usr/lib/perl5/%{version}/ExtUtils/PATCHING
-%exclude /usr/lib/perl5/%{version}/ExtUtils/testlib.pm
+%exclude /usr/lib/perl5/%{perl_version}/ExtUtils/Command/
+%exclude /usr/lib/perl5/%{perl_version}/ExtUtils/Install.pm
+%exclude /usr/lib/perl5/%{perl_version}/ExtUtils/Installed.pm
+%exclude /usr/lib/perl5/%{perl_version}/ExtUtils/Liblist/
+%exclude /usr/lib/perl5/%{perl_version}/ExtUtils/Liblist.pm
+%exclude /usr/lib/perl5/%{perl_version}/ExtUtils/MakeMaker/
+%exclude /usr/lib/perl5/%{perl_version}/ExtUtils/MakeMaker.pm
+%exclude /usr/lib/perl5/%{perl_version}/ExtUtils/MANIFEST.SKIP
+%exclude /usr/lib/perl5/%{perl_version}/ExtUtils/MM*.pm
+%exclude /usr/lib/perl5/%{perl_version}/ExtUtils/MY.pm
+%exclude /usr/lib/perl5/%{perl_version}/ExtUtils/Manifest.pm
+%exclude /usr/lib/perl5/%{perl_version}/ExtUtils/Mkbootstrap.pm
+%exclude /usr/lib/perl5/%{perl_version}/ExtUtils/Mksymlists.pm
+%exclude /usr/lib/perl5/%{perl_version}/ExtUtils/NOTES
+%exclude /usr/lib/perl5/%{perl_version}/ExtUtils/Packlist.pm
+%exclude /usr/lib/perl5/%{perl_version}/ExtUtils/PATCHING
+%exclude /usr/lib/perl5/%{perl_version}/ExtUtils/testlib.pm
 %exclude %{_mandir}/man1/instmodsh.1*
 %exclude %{_mandir}/man3/ExtUtils::Command::MM*
 %exclude %{_mandir}/man3/ExtUtils::Install.3*
@@ -521,11 +580,23 @@ make test
 %exclude %{_mandir}/man3/ExtUtils::Mksymlists.3*
 %exclude %{_mandir}/man3/ExtUtils::Packlist.3*
 %exclude %{_mandir}/man3/ExtUtils::testlib.3*
+
 # Test::Harness
 %exclude %{_bindir}/prove
-%exclude /usr/lib/perl5/%{version}/Test/Harness*
+%exclude /usr/lib/perl5/%{perl_version}/Test/Harness*
 %exclude %{_mandir}/man1/prove.1*
 %exclude %{_mandir}/man3/Test::Harness*
+
+# Test::Simple
+%exclude /usr/lib/perl5/%{perl_version}/Test/More*
+%exclude /usr/lib/perl5/%{perl_version}/Test/Builder*
+%exclude /usr/lib/perl5/%{perl_version}/Test/Simple*
+%exclude /usr/lib/perl5/%{perl_version}/Test/Tutorial*
+%exclude %{_mandir}/man3/Test::More*
+%exclude %{_mandir}/man3/Test::Builder*
+%exclude %{_mandir}/man3/Test::Simple*
+%exclude %{_mandir}/man3/Test::Tutorial*
+
 
 %files devel
 %defattr(-,root,root,-)
@@ -539,35 +610,46 @@ make test
 %{_mandir}/man1/perlcc*
 %{_bindir}/perlivp
 %{_mandir}/man1/perlivp*
-%{_libdir}/perl5/%{version}/%{perl_archname}/CORE/*.h
-#CPAN
+%{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/*.h
+
+%files suidperl
+%defattr(-,root,root,-)
+%{_bindir}/suidperl
+%{_bindir}/sperl%{perl_version}
+
+%files CPAN
+%defattr(-,root,root,-)
 %{_bindir}/cpan
-/usr/lib/perl5/%{version}/CPAN/
-/usr/lib/perl5/%{version}/CPAN.pm
+/usr/lib/perl5/%{perl_version}/CPAN/
+/usr/lib/perl5/%{perl_version}/CPAN.pm
 %{_mandir}/man1/cpan.1*
 %{_mandir}/man3/CPAN*
-# ExtUtils-Embed
-/usr/lib/perl5/%{version}/ExtUtils/Embed.pm
+
+%files ExtUtils-Embed
+%defattr(-,root,root,-)
+/usr/lib/perl5/%{perl_version}/ExtUtils/Embed.pm
 %{_mandir}/man3/ExtUtils::Embed*
-# ExtUtils-MakeMaker
+
+%files ExtUtils-MakeMaker
+%defattr(-,root,root,-)
 %{_bindir}/instmodsh
-/usr/lib/perl5/%{version}/ExtUtils/Command/
-/usr/lib/perl5/%{version}/ExtUtils/Install.pm
-/usr/lib/perl5/%{version}/ExtUtils/Installed.pm
-/usr/lib/perl5/%{version}/ExtUtils/Liblist/
-/usr/lib/perl5/%{version}/ExtUtils/Liblist.pm
-/usr/lib/perl5/%{version}/ExtUtils/MakeMaker/
-/usr/lib/perl5/%{version}/ExtUtils/MakeMaker.pm
-/usr/lib/perl5/%{version}/ExtUtils/MANIFEST.SKIP
-/usr/lib/perl5/%{version}/ExtUtils/MM*.pm
-/usr/lib/perl5/%{version}/ExtUtils/MY.pm
-/usr/lib/perl5/%{version}/ExtUtils/Manifest.pm
-/usr/lib/perl5/%{version}/ExtUtils/Mkbootstrap.pm
-/usr/lib/perl5/%{version}/ExtUtils/Mksymlists.pm
-/usr/lib/perl5/%{version}/ExtUtils/NOTES
-/usr/lib/perl5/%{version}/ExtUtils/Packlist.pm
-/usr/lib/perl5/%{version}/ExtUtils/PATCHING
-/usr/lib/perl5/%{version}/ExtUtils/testlib.pm
+/usr/lib/perl5/%{perl_version}/ExtUtils/Command/
+/usr/lib/perl5/%{perl_version}/ExtUtils/Install.pm
+/usr/lib/perl5/%{perl_version}/ExtUtils/Installed.pm
+/usr/lib/perl5/%{perl_version}/ExtUtils/Liblist/
+/usr/lib/perl5/%{perl_version}/ExtUtils/Liblist.pm
+/usr/lib/perl5/%{perl_version}/ExtUtils/MakeMaker/
+/usr/lib/perl5/%{perl_version}/ExtUtils/MakeMaker.pm
+/usr/lib/perl5/%{perl_version}/ExtUtils/MANIFEST.SKIP
+/usr/lib/perl5/%{perl_version}/ExtUtils/MM*.pm
+/usr/lib/perl5/%{perl_version}/ExtUtils/MY.pm
+/usr/lib/perl5/%{perl_version}/ExtUtils/Manifest.pm
+/usr/lib/perl5/%{perl_version}/ExtUtils/Mkbootstrap.pm
+/usr/lib/perl5/%{perl_version}/ExtUtils/Mksymlists.pm
+/usr/lib/perl5/%{perl_version}/ExtUtils/NOTES
+/usr/lib/perl5/%{perl_version}/ExtUtils/Packlist.pm
+/usr/lib/perl5/%{perl_version}/ExtUtils/PATCHING
+/usr/lib/perl5/%{perl_version}/ExtUtils/testlib.pm
 %{_mandir}/man1/instmodsh.1*
 %{_mandir}/man3/ExtUtils::Command::MM*
 %{_mandir}/man3/ExtUtils::Install.3*
@@ -581,18 +663,31 @@ make test
 %{_mandir}/man3/ExtUtils::Mksymlists.3*
 %{_mandir}/man3/ExtUtils::Packlist.3*
 %{_mandir}/man3/ExtUtils::testlib.3*
-# Test::Harness
+
+%files Test-Harness
+%defattr(-,root,root,-)
 %{_bindir}/prove
-/usr/lib/perl5/%{version}/Test/Harness*
+/usr/lib/perl5/%{perl_version}/Test/Harness*
 %{_mandir}/man1/prove.1*
 %{_mandir}/man3/Test::Harness*
 
-%files suidperl
+%files Test-Simple
 %defattr(-,root,root,-)
-%{_bindir}/suidperl
-%{_bindir}/sperl%{version}
+/usr/lib/perl5/%{perl_version}/Test/More*
+/usr/lib/perl5/%{perl_version}/Test/Builder*
+/usr/lib/perl5/%{perl_version}/Test/Simple*
+/usr/lib/perl5/%{perl_version}/Test/Tutorial*
+%{_mandir}/man3/Test::More*
+%{_mandir}/man3/Test::Builder*
+%{_mandir}/man3/Test::Simple*
+%{_mandir}/man3/Test::Tutorial*
 
 %changelog
+* Wed Mar 28 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-16
+- Includes patch from Ralf Corsepius to split out some more perl modules.
+- Further split out development related perl modules.
+- Remove Requires: perl-devel from perl
+
 * Fri Mar  9 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-15
 - Incorporate fixes from spot and others on fedora-perl-devel
 - The main perl package will temporarily Require perl-devel
