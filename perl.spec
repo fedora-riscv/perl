@@ -195,6 +195,15 @@ scripts.
 Install this package if you want to program in Perl or enable your
 system to handle Perl scripts.
 
+%package libs
+Summary:        The libraries for the perl runtime
+Group:          Development/Languages
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description libs
+The libraries for the perl runtime
+
+
 %package devel
 Summary:        Header files for use in perl development
 Group:          Development/Languages
@@ -500,6 +509,14 @@ pushd $RPM_BUILD_ROOT%{_mandir}/man1/
   done
 popd
 
+echo "%{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/libperl.so" > libs_filelist
+
+for i in %{perlmodcompat} ; do
+    if -d $RPM_BUILD_ROOT%{_libdir}/perl5/$i/%{perl_archname}/CORE ; then
+       echo "%{_libdir}/perl5/$i/%{perl_archname}/CORE" >> libs_filelist
+    fi
+done
+
 chmod -R u+w $RPM_BUILD_ROOT/*
 %if %{perl_debugging}
 exit 0
@@ -512,6 +529,10 @@ rm -rf $RPM_BUILD_ROOT
 %check
 make test
 
+%post libs -p /sbin/ldconfig
+
+%postun libs -p /sbin/ldconfig
+
 %files
 %defattr(-,root,root,-)
 %doc Copying README
@@ -522,6 +543,9 @@ make test
 %ifarch %{multilib_64_archs}
 %{_prefix}/lib/perl5/
 %endif
+
+# libs
+%exclude %{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/libperl.so
 
 # devel
 %exclude %{_bindir}/enc2xs
@@ -599,6 +623,9 @@ make test
 %exclude %{_mandir}/man3/Test::Builder*
 %exclude %{_mandir}/man3/Test::Simple*
 %exclude %{_mandir}/man3/Test::Tutorial*
+
+%files libs -f libs_filelist
+%defattr(-,root,root)
 
 %files devel
 %defattr(-,root,root,-)
