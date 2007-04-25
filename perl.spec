@@ -20,7 +20,7 @@
 
 Name:           perl
 Version:        5.8.8
-Release:        16.3%{?dist}
+Release:        16.4%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -220,7 +220,7 @@ Group:          Development/Languages
 Epoch:          0
 Version:        1.76_02
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
-Provides:	cpan-%{version}
+Provides:	cpan = %{version}
 
 %description CPAN
 Query, download and build perl modules from CPAN sites.
@@ -548,28 +548,28 @@ make test
 %exclude %{_mandir}/man3/CPAN*
 
 # ExtUtils-Embed
-%exclude %{_libdir}/perl5/%{perl_version}/ExtUtils/Embed.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Embed.pm
 %exclude %{_mandir}/man3/ExtUtils::Embed*
 
 # ExtUtils-MakeMaker
 %exclude %{_bindir}/instmodsh
-%exclude %{_libdir}/perl5/%{perl_version}/ExtUtils/Command/
-%exclude %{_libdir}/perl5/%{perl_version}/ExtUtils/Install.pm
-%exclude %{_libdir}/perl5/%{perl_version}/ExtUtils/Installed.pm
-%exclude %{_libdir}/perl5/%{perl_version}/ExtUtils/Liblist/
-%exclude %{_libdir}/perl5/%{perl_version}/ExtUtils/Liblist.pm
-%exclude %{_libdir}/perl5/%{perl_version}/ExtUtils/MakeMaker/
-%exclude %{_libdir}/perl5/%{perl_version}/ExtUtils/MakeMaker.pm
-%exclude %{_libdir}/perl5/%{perl_version}/ExtUtils/MANIFEST.SKIP
-%exclude %{_libdir}/perl5/%{perl_version}/ExtUtils/MM*.pm
-%exclude %{_libdir}/perl5/%{perl_version}/ExtUtils/MY.pm
-%exclude %{_libdir}/perl5/%{perl_version}/ExtUtils/Manifest.pm
-%exclude %{_libdir}/perl5/%{perl_version}/ExtUtils/Mkbootstrap.pm
-%exclude %{_libdir}/perl5/%{perl_version}/ExtUtils/Mksymlists.pm
-%exclude %{_libdir}/perl5/%{perl_version}/ExtUtils/NOTES
-%exclude %{_libdir}/perl5/%{perl_version}/ExtUtils/Packlist.pm
-%exclude %{_libdir}/perl5/%{perl_version}/ExtUtils/PATCHING
-%exclude %{_libdir}/perl5/%{perl_version}/ExtUtils/testlib.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Command/
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Install.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Installed.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Liblist/
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Liblist.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MakeMaker/
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MakeMaker.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MANIFEST.SKIP
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MM*.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MY.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Manifest.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Mkbootstrap.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Mksymlists.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/NOTES
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Packlist.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/PATCHING
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/testlib.pm
 %exclude %{_mandir}/man1/instmodsh.1*
 %exclude %{_mandir}/man3/ExtUtils::Command::MM*
 %exclude %{_mandir}/man3/ExtUtils::Install.3*
@@ -586,20 +586,19 @@ make test
 
 # Test::Harness
 %exclude %{_bindir}/prove
-%exclude %{_libdir}/perl5/%{perl_version}/Test/Harness*
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Test/Harness*
 %exclude %{_mandir}/man1/prove.1*
 %exclude %{_mandir}/man3/Test::Harness*
 
 # Test::Simple
-%exclude %{_libdir}/perl5/%{perl_version}/Test/More*
-%exclude %{_libdir}/perl5/%{perl_version}/Test/Builder*
-%exclude %{_libdir}/perl5/%{perl_version}/Test/Simple*
-%exclude %{_libdir}/perl5/%{perl_version}/Test/Tutorial*
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Test/More*
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Test/Builder*
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Test/Simple*
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Test/Tutorial*
 %exclude %{_mandir}/man3/Test::More*
 %exclude %{_mandir}/man3/Test::Builder*
 %exclude %{_mandir}/man3/Test::Simple*
 %exclude %{_mandir}/man3/Test::Tutorial*
-
 
 %files devel
 %defattr(-,root,root,-)
@@ -630,29 +629,29 @@ make test
 
 %files ExtUtils-Embed
 %defattr(-,root,root,-)
-%{_libdir}/perl5/%{perl_version}/ExtUtils/Embed.pm
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Embed.pm
 %{_mandir}/man3/ExtUtils::Embed*
 
 %files ExtUtils-MakeMaker
 %defattr(-,root,root,-)
 %{_bindir}/instmodsh
-%{_libdir}/perl5/%{perl_version}/ExtUtils/Command/
-%{_libdir}/perl5/%{perl_version}/ExtUtils/Install.pm
-%{_libdir}/perl5/%{perl_version}/ExtUtils/Installed.pm
-%{_libdir}/perl5/%{perl_version}/ExtUtils/Liblist/
-%{_libdir}/perl5/%{perl_version}/ExtUtils/Liblist.pm
-%{_libdir}/perl5/%{perl_version}/ExtUtils/MakeMaker/
-%{_libdir}/perl5/%{perl_version}/ExtUtils/MakeMaker.pm
-%{_libdir}/perl5/%{perl_version}/ExtUtils/MANIFEST.SKIP
-%{_libdir}/perl5/%{perl_version}/ExtUtils/MM*.pm
-%{_libdir}/perl5/%{perl_version}/ExtUtils/MY.pm
-%{_libdir}/perl5/%{perl_version}/ExtUtils/Manifest.pm
-%{_libdir}/perl5/%{perl_version}/ExtUtils/Mkbootstrap.pm
-%{_libdir}/perl5/%{perl_version}/ExtUtils/Mksymlists.pm
-%{_libdir}/perl5/%{perl_version}/ExtUtils/NOTES
-%{_libdir}/perl5/%{perl_version}/ExtUtils/Packlist.pm
-%{_libdir}/perl5/%{perl_version}/ExtUtils/PATCHING
-%{_libdir}/perl5/%{perl_version}/ExtUtils/testlib.pm
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Command/
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Install.pm
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Installed.pm
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Liblist/
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Liblist.pm
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MakeMaker/
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MakeMaker.pm
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MANIFEST.SKIP
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MM*.pm
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MY.pm
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Manifest.pm
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Mkbootstrap.pm
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Mksymlists.pm
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/NOTES
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Packlist.pm
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/PATCHING
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/testlib.pm
 %{_mandir}/man1/instmodsh.1*
 %{_mandir}/man3/ExtUtils::Command::MM*
 %{_mandir}/man3/ExtUtils::Install.3*
@@ -670,16 +669,16 @@ make test
 %files Test-Harness
 %defattr(-,root,root,-)
 %{_bindir}/prove
-%{_libdir}/perl5/%{perl_version}/Test/Harness*
+%{_prefix}/lib/perl5/%{perl_version}/Test/Harness*
 %{_mandir}/man1/prove.1*
 %{_mandir}/man3/Test::Harness*
 
 %files Test-Simple
 %defattr(-,root,root,-)
-%{_libdir}/perl5/%{perl_version}/Test/More*
-%{_libdir}/perl5/%{perl_version}/Test/Builder*
-%{_libdir}/perl5/%{perl_version}/Test/Simple*
-%{_libdir}/perl5/%{perl_version}/Test/Tutorial*
+%{_prefix}/lib/perl5/%{perl_version}/Test/More*
+%{_prefix}/lib/perl5/%{perl_version}/Test/Builder*
+%{_prefix}/lib/perl5/%{perl_version}/Test/Simple*
+%{_prefix}/lib/perl5/%{perl_version}/Test/Tutorial*
 %{_mandir}/man3/Test::More*
 %{_mandir}/man3/Test::Builder*
 %{_mandir}/man3/Test::Simple*
