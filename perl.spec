@@ -19,8 +19,8 @@
 %endif
 
 Name:           perl
-Version:        5.8.8
-Release:        16.4%{?dist}
+Version:        %{perl_version}
+Release:        16.5%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -229,7 +229,7 @@ Group:          Development/Languages
 Epoch:          0
 Version:        1.76_02
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
-Provides:	cpan = %{version}
+Provides:       cpan = %{version}
 
 %description CPAN
 Query, download and build perl modules from CPAN sites.
@@ -252,7 +252,7 @@ Epoch:          0
 Version:        6.30
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
-Requires:	perl(Test::Harness)
+Requires:       perl(Test::Harness)
 
 %description ExtUtils-MakeMaker
 Create a module Makefile.
@@ -546,6 +546,10 @@ make test
 
 # libs
 %exclude %{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/libperl.so
+%exclude %{_libdir}/perl5/5.8.5/%{perl_archname}/CORE
+%exclude %{_libdir}/perl5/5.8.6/%{perl_archname}/CORE
+%exclude %{_libdir}/perl5/5.8.7/%{perl_archname}/CORE
+
 
 # devel
 %exclude %{_bindir}/enc2xs
@@ -712,10 +716,11 @@ make test
 %{_mandir}/man3/Test::Tutorial*
 
 %changelog
-* Wed Mar 28 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-16.2
+* Wed Mar 28 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-16.5
 - Includes patch from Ralf Corsepius to split out some more perl modules.
 - Further split out development related perl modules.
 - Remove Requires: perl-devel from perl
+- Move libperl.so -> perl-libs
 
 * Fri Mar  9 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-15
 - Incorporate fixes from spot and others on fedora-perl-devel
