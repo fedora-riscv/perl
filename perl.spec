@@ -20,7 +20,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        16.5%{?dist}
+Release:        17%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -716,7 +716,7 @@ make test
 %{_mandir}/man3/Test::Tutorial*
 
 %changelog
-* Wed Mar 28 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-16.5
+* Fri May  4 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-17
 - Includes patch from Ralf Corsepius to split out some more perl modules.
 - Further split out development related perl modules.
 - Remove Requires: perl-devel from perl
