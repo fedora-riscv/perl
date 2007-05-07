@@ -1,0 +1,11 @@
+--- perl-5.8.8/lib/Net/Config.pm.orig	2007-05-07 12:35:45.000000000 -0400
++++ perl-5.8.8/lib/Net/Config.pm	2007-05-07 12:40:56.000000000 -0400
+@@ -29,7 +29,7 @@
+     ftp_firewall => undef,
+     ftp_ext_passive => 0,
+     ftp_int_passive => 0,
+-    test_hosts => 1,
++    test_hosts => 0,
+     test_exist => 1,
+ );
+ 

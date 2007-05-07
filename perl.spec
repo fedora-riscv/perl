@@ -108,8 +108,10 @@ Patch36:        perl-5.8.8-U34297_C28006.patch
 Patch37:        perl-5.8.8-useCFLAGSwithCC.patch
 # Upstream bug 39903
 Patch38:        perl-5.8.8-bz199736.patch
+# Disable test_hosts because some tests fail in mock buildroots
+Patch39:        perl-5.8.8-disable_test_hosts.patch
 # XXX: Fixme - Finish patch.
-Patch39:        perl-5.8.8-bz204679.patch
+#Patch39:        perl-5.8.8-bz204679.patch
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel
@@ -323,6 +325,7 @@ Basic utilities for writing tests.
 %patch36 -p1
 %patch37 -p1
 %patch38 -p1
+%patch39 -p1
 #
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -721,6 +724,7 @@ make test
 - Further split out development related perl modules.
 - Remove Requires: perl-devel from perl
 - Move libperl.so -> perl-libs
+- Patch39 to disable test_hosts in Net::Config
 
 * Fri Mar  9 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-15
 - Incorporate fixes from spot and others on fedora-perl-devel
