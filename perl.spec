@@ -20,7 +20,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        17%{?dist}
+Release:        18%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -210,6 +210,8 @@ The libraries for the perl runtime
 Summary:        Header files for use in perl development
 Group:          Development/Languages
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl(CPAN), perl(ExtUtils::Embed), perl(ExtUtils::MakeMaker)
+Requires:	perl(Test::Harness), perl(Test::Simple)
 
 %description devel
 This package contains header files and development modules.
@@ -719,6 +721,9 @@ make test
 %{_mandir}/man3/Test::Tutorial*
 
 %changelog
+* Wed May 16 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-18
+- Have perl-devel Require the other development/build related modules for simplicity.
+
 * Fri May  4 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-17
 - Includes patch from Ralf Corsepius to split out some more perl modules.
 - Further split out development related perl modules.
