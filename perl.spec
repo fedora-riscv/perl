@@ -20,7 +20,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        18%{?dist}
+Release:        19%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -112,6 +112,7 @@ Patch38:        perl-5.8.8-bz199736.patch
 Patch39:        perl-5.8.8-disable_test_hosts.patch
 # XXX: Fixme - Finish patch.
 #Patch39:        perl-5.8.8-bz204679.patch
+Patch40:	perl-5.8.8-U28775.patch
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel
@@ -327,7 +328,8 @@ Basic utilities for writing tests.
 %patch36 -p1
 %patch37 -p1
 %patch38 -p1
-%patch39 -p1
+#%patch39 -p1
+%patch40 -p1
 #
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -721,6 +723,11 @@ make test
 %{_mandir}/man3/Test::Tutorial*
 
 %changelog
+* Fri Jun 22 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-19
+- Resolves: rhbz#196836
+- Apply upstream patch #28775, which fixes an issue where reblessing
+  overloaded objects incurs significant performance penalty
+
 * Wed May 16 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-18
 - Have perl-devel Require the other development/build related modules for simplicity.
 
