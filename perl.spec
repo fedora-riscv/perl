@@ -723,7 +723,7 @@ make test
 %changelog
 * Fri Jun 22 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-20
 - Resolves: rhbz#196836
-- Apply upstream patch #28775, which fixes an issue where weblessing
+- Apply upstream patch #28775, which fixes an issue where reblessing
   overloaded objects incurs significant performance penalty
 
 * Fri Jun  1 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-19
