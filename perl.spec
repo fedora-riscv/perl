@@ -20,7 +20,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        20%{?dist}
+Release:        21%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -281,6 +281,24 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Test-Simple
 Basic utilities for writing tests.
+
+%package core
+Summary:        Base perl metapackage
+Group:          Development/Languages
+Epoch:          0
+Version:        %{perl_version}
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl-CPAN, perl-ExtUtils-Embed, perl-ExtUtils-MakeMaker
+Requires:       perl-Test-Harness, perl-Test-Simple
+# Note: perl-suidperl has always been an independent subpackage
+# We don't want perl-core to drag it in.
+
+%description core
+A metapackage which requires all of the perl bits and modules in the
+upstream tarball from perl.org.
+
 
 %prep
 %setup -q
@@ -720,7 +738,13 @@ make test
 %{_mandir}/man3/Test::Simple*
 %{_mandir}/man3/Test::Tutorial*
 
+%files core
+# Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
+
 %changelog
+* Mon Jul  2 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-21
+- perl-core metapackage
+
 * Fri Jun 22 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-20
 - Resolves: rhbz#196836
 - Apply upstream patch #28775, which fixes an issue where reblessing
