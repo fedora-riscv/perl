@@ -108,11 +108,11 @@ Patch36:        perl-5.8.8-U34297_C28006.patch
 Patch37:        perl-5.8.8-useCFLAGSwithCC.patch
 # Upstream bug 39903
 Patch38:        perl-5.8.8-bz199736.patch
-# Disable test_hosts because hostname tests fail in mock buildroots
+# Skip hostname tests, since hostname lookup isn't available in Fedora
+# buildroots by design.
 Patch39:        perl-5.8.8-disable_test_hosts.patch
 # XXX: Fixme - Finish patch.
-#Patch39:        perl-5.8.8-bz204679.patch
-Patch40:	perl-5.8.8-U28775.patch
+#Patch39:        perl-5.8.8-bz204679.patch Patch40:	perl-5.8.8-U28775.patch
 Patch41:        perl-5.8.8-bz247386-file-spec-cwd.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
