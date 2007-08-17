@@ -20,7 +20,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        19%{?dist}
+Release:        20%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -180,6 +180,8 @@ Provides: perl-Time-HiRes = 1.86
 # Last seen in Fedora Core 4
 Obsoletes: perl-Filter-Simple
 Obsoletes: perl-Time-HiRes
+
+Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 
 %define __perl_requires %{SOURCE11}
 
@@ -723,6 +725,10 @@ make test
 %{_mandir}/man3/Test::Tutorial*
 
 %changelog
+* Fri Aug 17 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-20
+- perl rpm requires the corresponding version of perl-libs rpm
+- Resolves: rhbz#240540
+
 * Fri Jun 22 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-19
 - Resolves: rhbz#196836
 - Apply upstream patch #28775, which fixes an issue where reblessing
