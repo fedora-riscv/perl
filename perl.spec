@@ -20,7 +20,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        22%{?dist}
+Release:        23%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -182,6 +182,8 @@ Provides: perl-Time-HiRes = 1.86
 # Last seen in Fedora Core 4
 Obsoletes: perl-Filter-Simple
 Obsoletes: perl-Time-HiRes
+
+Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 
 %define __perl_requires %{SOURCE11}
 
@@ -745,6 +747,10 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Fri Aug 17 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-23
+- perl rpm requires the corresponding version of perl-libs rpm
+- Resolves: rhbz#240540
+
 * Tue Jul 24 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-22
 - Resolves: rhbz#247386
 - Use getcwd() instead of cwd() in File::Spec::Unix to avoid forking.
