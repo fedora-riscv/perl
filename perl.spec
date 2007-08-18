@@ -739,7 +739,7 @@ make test
 
 %changelog
 * Sat Aug 18 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-23
-- Remove unnnecessary parens from the License tag.
+- Remove unnnecessary parens from the License tags.
 
 * Sat Aug 18 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-22
 - Fix the License: tags.
