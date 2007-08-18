@@ -20,7 +20,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        24%{?dist}
+Release:        25%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -762,6 +762,9 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Sat Aug 18 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-25
+- Remove unnnecessary parens from the License tag.
+
 * Sat Aug 18 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-24
 - Fix the License: tags.
 
