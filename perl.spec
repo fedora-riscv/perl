@@ -20,7 +20,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        22%{?dist}
+Release:        23%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -208,7 +208,7 @@ system to handle Perl scripts.
 %package libs
 Summary:        The libraries for the perl runtime
 Group:          Development/Languages
-License:        (GPL+ or Artistic)
+License:        GPL+ or Artistic
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description libs
@@ -218,7 +218,7 @@ The libraries for the perl runtime
 %package devel
 Summary:        Header files for use in perl development
 Group:          Development/Languages
-License:        (GPL+ or Artistic)
+License:        GPL+ or Artistic
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(CPAN), perl(ExtUtils::Embed), perl(ExtUtils::MakeMaker)
 Requires:	perl(Test::Harness), perl(Test::Simple)
@@ -231,7 +231,7 @@ Most perl packages will need to install perl-devel to build.
 %package suidperl
 Summary:        Suidperl, for use with setuid perl scripts
 Group:          Development/Languages
-License:        (GPL+ or Artistic)
+License:        GPL+ or Artistic
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description suidperl
@@ -241,7 +241,7 @@ more secure running of setuid perl scripts.
 %package CPAN
 Summary:        Query, download and build perl modules from CPAN sites
 Group:          Development/Languages
-License:        (GPL+ or Artistic)
+License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.76_02
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -253,7 +253,7 @@ Query, download and build perl modules from CPAN sites.
 %package ExtUtils-Embed
 Summary:        Utilities for embedding Perl in C/C++ applications
 Group:          Development/Languages
-License:        (GPL+ or Artistic)
+License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.26
 Requires:       perl-devel
@@ -265,7 +265,7 @@ Utilities for embedding Perl in C/C++ applications.
 %package ExtUtils-MakeMaker
 Summary:        Create a module Makefile
 Group:          Development/Languages
-License:        (GPL+ or Artistic)
+License:        GPL+ or Artistic
 Epoch:          0
 Version:        6.30
 Requires:       perl-devel
@@ -278,7 +278,7 @@ Create a module Makefile.
 %package Test-Harness
 Summary:        Run Perl standard test scripts with statistics
 Group:          Development/Languages
-License:        (GPL+ or Artistic)
+License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.56
 Requires:       perl-devel
@@ -290,7 +290,7 @@ Run Perl standard test scripts with statistics.
 %package Test-Simple
 Summary:        Basic utilities for writing tests
 Group:          Development/Languages
-License:        (GPL+ or Artistic)
+License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.62
 Requires:       perl-devel
@@ -738,6 +738,9 @@ make test
 %{_mandir}/man3/Test::Tutorial*
 
 %changelog
+* Sat Aug 18 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-23
+- Remove unnnecessary parens from the License tag.
+
 * Sat Aug 18 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-22
 - Fix the License: tags.
 
