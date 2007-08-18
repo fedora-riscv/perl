@@ -20,11 +20,15 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        23%{?dist}
+Release:        24%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
-License:        Artistic or GPL
+# Modules Tie::File and Getopt::Long are licenced under "GPLv2+ or Artistic,"
+# we have to reflect that in the sub-package containing them.
+# FIXME: Digest::MD5 has a must-advertise-RSA license with an exception,
+# the tag does not reflect that (yet).
+License:        (GPL+ or Artistic) and (GPLv2+ or Artistic)
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/authors/id/N/NW/NWCLARK/%{name}-%{perl_version}.tar.bz2
 Source11:       filter-depends.sh
@@ -205,7 +209,7 @@ system to handle Perl scripts.
 
 %package libs
 Summary:        The libraries for the perl runtime
-Group:          Development/Languages
+License:        (GPL+ or Artistic)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description libs
@@ -214,7 +218,7 @@ The libraries for the perl runtime
 
 %package devel
 Summary:        Header files for use in perl development
-Group:          Development/Languages
+License:        (GPL+ or Artistic)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description devel
@@ -224,7 +228,7 @@ Most perl packages will need to install perl-devel to build.
 
 %package suidperl
 Summary:        Suidperl, for use with setuid perl scripts
-Group:          Development/Languages
+License:        (GPL+ or Artistic)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description suidperl
@@ -233,7 +237,7 @@ more secure running of setuid perl scripts.
 
 %package CPAN
 Summary:        Query, download and build perl modules from CPAN sites
-Group:          Development/Languages
+License:        (GPL+ or Artistic)
 Epoch:          0
 Version:        1.76_02
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -244,7 +248,7 @@ Query, download and build perl modules from CPAN sites.
 
 %package ExtUtils-Embed
 Summary:        Utilities for embedding Perl in C/C++ applications
-Group:          Development/Languages
+License:        (GPL+ or Artistic)
 Epoch:          0
 Version:        1.26
 Requires:       perl-devel
@@ -255,7 +259,7 @@ Utilities for embedding Perl in C/C++ applications.
 
 %package ExtUtils-MakeMaker
 Summary:        Create a module Makefile
-Group:          Development/Languages
+License:        (GPL+ or Artistic)
 Epoch:          0
 Version:        6.30
 Requires:       perl-devel
@@ -267,7 +271,7 @@ Create a module Makefile.
 
 %package Test-Harness
 Summary:        Run Perl standard test scripts with statistics
-Group:          Development/Languages
+License:        (GPL+ or Artistic)
 Epoch:          0
 Version:        2.56
 Requires:       perl-devel
@@ -278,7 +282,7 @@ Run Perl standard test scripts with statistics.
 
 %package Test-Simple
 Summary:        Basic utilities for writing tests
-Group:          Development/Languages
+License:        (GPL+ or Artistic)
 Epoch:          0
 Version:        0.62
 Requires:       perl-devel
@@ -289,7 +293,8 @@ Basic utilities for writing tests.
 
 %package core
 Summary:        Base perl metapackage
-Group:          Development/Languages
+# FIXME: Hey, I'm not sure this rpm contains any copyrightable material!
+License:        (GPL+ or Artistic)
 Epoch:          0
 Version:        %{perl_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -748,6 +753,10 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Sat Aug 18 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-24
+- Fix the License: tags.
+- Remove the redundant Group: tags from sub-packages.
+
 * Fri Aug 17 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-23
 - perl rpm requires the corresponding version of perl-libs rpm
 - Resolves: rhbz#240540
