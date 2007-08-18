@@ -772,7 +772,7 @@ make test
 * Tue Jul 24 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-22
 - Resolves: rhbz#247386
 - Use getcwd() instead of cwd() in File::Spec::Unix to avoid forking.
-- Appy patch to skip hostname tests, since hostname lookup isn't
+- Apply patch to skip hostname tests, since hostname lookup isn't
   available in Fedora buildroots by design.
 
 * Mon Jul  2 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-21
