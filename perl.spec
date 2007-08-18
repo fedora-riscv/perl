@@ -209,6 +209,7 @@ system to handle Perl scripts.
 
 %package libs
 Summary:        The libraries for the perl runtime
+Group:          Development/Languages
 License:        (GPL+ or Artistic)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -218,6 +219,7 @@ The libraries for the perl runtime
 
 %package devel
 Summary:        Header files for use in perl development
+Group:          Development/Languages
 License:        (GPL+ or Artistic)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -228,6 +230,7 @@ Most perl packages will need to install perl-devel to build.
 
 %package suidperl
 Summary:        Suidperl, for use with setuid perl scripts
+Group:          Development/Languages
 License:        (GPL+ or Artistic)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -237,6 +240,7 @@ more secure running of setuid perl scripts.
 
 %package CPAN
 Summary:        Query, download and build perl modules from CPAN sites
+Group:          Development/Languages
 License:        (GPL+ or Artistic)
 Epoch:          0
 Version:        1.76_02
@@ -248,6 +252,7 @@ Query, download and build perl modules from CPAN sites.
 
 %package ExtUtils-Embed
 Summary:        Utilities for embedding Perl in C/C++ applications
+Group:          Development/Languages
 License:        (GPL+ or Artistic)
 Epoch:          0
 Version:        1.26
@@ -259,6 +264,7 @@ Utilities for embedding Perl in C/C++ applications.
 
 %package ExtUtils-MakeMaker
 Summary:        Create a module Makefile
+Group:          Development/Languages
 License:        (GPL+ or Artistic)
 Epoch:          0
 Version:        6.30
@@ -271,6 +277,7 @@ Create a module Makefile.
 
 %package Test-Harness
 Summary:        Run Perl standard test scripts with statistics
+Group:          Development/Languages
 License:        (GPL+ or Artistic)
 Epoch:          0
 Version:        2.56
@@ -282,6 +289,7 @@ Run Perl standard test scripts with statistics.
 
 %package Test-Simple
 Summary:        Basic utilities for writing tests
+Group:          Development/Languages
 License:        (GPL+ or Artistic)
 Epoch:          0
 Version:        0.62
@@ -293,6 +301,7 @@ Basic utilities for writing tests.
 
 %package core
 Summary:        Base perl metapackage
+Group:          Development/Languages
 # FIXME: Hey, I'm not sure this rpm contains any copyrightable material!
 License:        (GPL+ or Artistic)
 Epoch:          0
@@ -755,7 +764,6 @@ make test
 %changelog
 * Sat Aug 18 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-24
 - Fix the License: tags.
-- Remove the redundant Group: tags from sub-packages.
 
 * Fri Aug 17 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-23
 - perl rpm requires the corresponding version of perl-libs rpm
