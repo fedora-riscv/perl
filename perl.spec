@@ -20,7 +20,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        25%{?dist}
+Release:        26%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -31,7 +31,6 @@ Group:          Development/Languages
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic)
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/authors/id/N/NW/NWCLARK/%{name}-%{perl_version}.tar.bz2
-Source11:       filter-depends.sh
 Source12:       perl-5.8.0-libnet.cfg
 # Specific to Fedora/RHEL
 Patch1:         perl-5.8.0-root.patch
@@ -189,8 +188,6 @@ Obsoletes: perl-Filter-Simple
 Obsoletes: perl-Time-HiRes
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
-
-%define __perl_requires %{SOURCE11}
 
 
 %description
@@ -762,6 +759,9 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Tue Aug 21 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-26
+- Remove filter-depends.sh, it's no longer used.
+
 * Sat Aug 18 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-25
 - Remove unnnecessary parens from the License tags.
 
