@@ -20,7 +20,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        26%{?dist}
+Release:        27%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -31,6 +31,7 @@ Group:          Development/Languages
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic)
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/authors/id/N/NW/NWCLARK/%{name}-%{perl_version}.tar.bz2
+Source11:       filter-requires.sh
 Source12:       perl-5.8.0-libnet.cfg
 # Specific to Fedora/RHEL
 Patch1:         perl-5.8.0-root.patch
@@ -122,6 +123,8 @@ Patch41:        perl-5.8.8-bz247386-file-spec-cwd.patch
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel
+# Temporary fix for broken buildroots:
+BuildRequires:  gawk
 
 # The long line of Perl provides.
 
@@ -188,6 +191,19 @@ Obsoletes: perl-Filter-Simple
 Obsoletes: perl-Time-HiRes
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
+
+# Filter the automatically generated dependencies.
+#
+# The original script might be /usr/lib/rpm/perl.req or
+# /usr/lib/rpm/redhat/perl.req, better use the original value of the macro:
+%{expand:%%define prev__perl_requires %{__perl_requires}}
+%define __perl_requires %{SOURCE11} %{prev__perl_requires}
+
+# When _use_internal_dependency_generator is 0, the perl.req script is
+# called from /usr/lib/rpm{,/redhat}/find-requires.sh
+# Likewise:
+%{expand:%%define prev__find_requires %{__find_requires}}
+%define __find_requires %{SOURCE11} %{prev__find_requires}
 
 
 %description
@@ -759,6 +775,9 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Fri Aug 24 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-27
+- Add back the filtering of depends, it _is_ needed; make it more robust.
+
 * Tue Aug 21 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-26
 - Remove filter-depends.sh, it's no longer used.
 
