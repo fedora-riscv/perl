@@ -1,0 +1,110 @@
+diff -up perl-5.8.8/ext/DB_File/Changes.BAD perl-5.8.8/ext/DB_File/Changes
+--- perl-5.8.8/ext/DB_File/Changes.BAD	2007-10-01 12:31:56.000000000 -0400
++++ perl-5.8.8/ext/DB_File/Changes	2007-10-01 12:32:19.000000000 -0400
+@@ -1,5 +1,12 @@
+ 
+ 
++1.815 4 February 2007
++
++   * A few casting cleanups for building with C++ from Steve Peters.
++
++   * Fixed problem with recno which happened if you changed directory after
++     opening the database. Problem reported by Andrew Pam.
++
+ 1.814 11 November 2005
+ 
+    * Fix from Dominic Dunlop to tidy up an OS-X specific warning in
+diff -up perl-5.8.8/ext/DB_File/DB_File.pm.BAD perl-5.8.8/ext/DB_File/DB_File.pm
+--- perl-5.8.8/ext/DB_File/DB_File.pm.BAD	2007-10-01 12:32:36.000000000 -0400
++++ perl-5.8.8/ext/DB_File/DB_File.pm	2007-10-01 12:33:41.000000000 -0400
+@@ -1,10 +1,10 @@
+ # DB_File.pm -- Perl 5 interface to Berkeley DB 
+ #
+ # written by Paul Marquess (pmqs@cpan.org)
+-# last modified 11th November 2005
+-# version 1.814
++# last modified 4th February 2007
++# version 1.815
+ #
+-#     Copyright (c) 1995-2005 Paul Marquess. All rights reserved.
++#     Copyright (c) 1995-2007 Paul Marquess. All rights reserved.
+ #     This program is free software; you can redistribute it and/or
+ #     modify it under the same terms as Perl itself.
+ 
+@@ -165,7 +165,7 @@ our ($db_version, $use_XSLoader, $splice
+ use Carp;
+ 
+ 
+-$VERSION = "1.814" ;
++$VERSION = "1.815" ;
+ 
+ {
+     local $SIG{__WARN__} = sub {$splice_end_array = "@_";};
+@@ -260,6 +260,10 @@ sub tie_hash_or_array
+     my (@arg) = @_ ;
+     my $tieHASH = ( (caller(1))[3] =~ /TIEHASH/ ) ;
+ 
++    use File::Spec;
++    $arg[1] = File::Spec->rel2abs($arg[1])
++	if defined $arg[1] ;
++
+     $arg[4] = tied %{ $arg[4] } 
+ 	if @arg >= 5 && ref $arg[4] && $arg[4] =~ /=HASH/ && tied %{ $arg[4] } ;
+ 
+diff -up perl-5.8.8/ext/DB_File/DB_File.xs.BAD perl-5.8.8/ext/DB_File/DB_File.xs
+--- perl-5.8.8/ext/DB_File/DB_File.xs.BAD	2007-10-01 12:33:52.000000000 -0400
++++ perl-5.8.8/ext/DB_File/DB_File.xs	2007-10-01 12:35:50.000000000 -0400
+@@ -3,8 +3,8 @@
+  DB_File.xs -- Perl 5 interface to Berkeley DB 
+ 
+  written by Paul Marquess <pmqs@cpan.org>
+- last modified 11th November 2005
+- version 1.814
++ last modified 4th February 2007
++ version 1.815
+ 
+  All comments/suggestions/problems are welcome
+ 
+@@ -114,6 +114,7 @@
+         1.812 - no change
+         1.813 - no change
+         1.814 - no change
++	1.814 - C++ casting fixes
+ 
+ */
+ 
+@@ -410,12 +411,12 @@ typedef struct {
+ typedef DB_File_type * DB_File ;
+ typedef DBT DBTKEY ;
+ 
+-#define my_sv_setpvn(sv, d, s) sv_setpvn(sv, (s ? d : (void*)""), s)
++#define my_sv_setpvn(sv, d, s) sv_setpvn(sv, (s ? d : (const char *)""), s)
+ 
+ #define OutputValue(arg, name)  					\
+ 	{ if (RETVAL == 0) {						\
+ 	      SvGETMAGIC(arg) ;          				\
+-	      my_sv_setpvn(arg, name.data, name.size) ;			\
++	      my_sv_setpvn(arg, (const char *)name.data, name.size) ;	\
+ 	      TAINT;                                       		\
+ 	      SvTAINTED_on(arg);                                       	\
+ 	      SvUTF8_off(arg);                                       	\
+@@ -428,7 +429,7 @@ typedef DBT DBTKEY ;
+ 	  { 								\
+ 		SvGETMAGIC(arg) ;          				\
+ 		if (db->type != DB_RECNO) {				\
+-		    my_sv_setpvn(arg, name.data, name.size); 		\
++		    my_sv_setpvn(arg, (const char *)name.data, name.size); 		\
+ 		}							\
+ 		else 							\
+ 		    sv_setiv(arg, (I32)*(I32*)name.data - 1); 		\
+@@ -597,8 +598,8 @@ const DBT * key2 ;
+ 
+     PUSHMARK(SP) ;
+     EXTEND(SP,2) ;
+-    PUSHs(sv_2mortal(newSVpvn(data1,key1->size)));
+-    PUSHs(sv_2mortal(newSVpvn(data2,key2->size)));
++    PUSHs(sv_2mortal(newSVpvn((const char*)data1,key1->size)));
++    PUSHs(sv_2mortal(newSVpvn((const char*)data2,key2->size)));
+     PUTBACK ;
+ 
+     count = perl_call_sv(CurrentDB->compare, G_SCALAR); 

@@ -20,7 +20,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        27%{?dist}
+Release:        28%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -119,6 +119,8 @@ Patch39:        perl-5.8.8-disable_test_hosts.patch
 #Patch39:        perl-5.8.8-bz204679.patch
 Patch40:	perl-5.8.8-U28775.patch
 Patch41:        perl-5.8.8-bz247386-file-spec-cwd.patch
+# Update DB_File to 1.815
+Patch42:        perl-5.8.8-DB_File-1.815.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -379,6 +381,7 @@ upstream tarball from perl.org.
 %patch39 -p1
 %patch40 -p1
 %patch41 -p1
+%patch42 -p1
 #
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -775,6 +778,9 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Mon Oct  1 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-28
+- update DB_File to 1.815
+
 * Fri Aug 24 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-27
 - Add back the filtering of depends, it _is_ needed; make it more robust.
 
