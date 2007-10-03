@@ -20,7 +20,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        28%{?dist}
+Release:        28%{?dist}.1
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
