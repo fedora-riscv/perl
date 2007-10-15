@@ -20,7 +20,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        28%{?dist}.1
+Release:        28%{?dist}.2
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -778,6 +778,9 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Mon Oct 15 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-28.2
+- bump again for db4 version increase
+
 * Mon Oct  1 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-28
 - update DB_File to 1.815
 
