@@ -24,7 +24,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        28%{?dist}.4
+Release:        29%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -121,7 +121,7 @@ Patch38:        perl-5.8.8-bz199736.patch
 Patch39:        perl-5.8.8-disable_test_hosts.patch
 # XXX: Fixme - Finish patch.
 #Patch39:        perl-5.8.8-bz204679.patch
-Patch40:	perl-5.8.8-U28775.patch
+Patch40:        perl-5.8.8-U28775.patch
 Patch41:        perl-5.8.8-bz247386-file-spec-cwd.patch
 # Update DB_File to 1.815
 Patch42:        perl-5.8.8-DB_File-1.815.patch
@@ -587,6 +587,9 @@ exit 0
 # disable brp-strip
 %endif
 
+# Compress Changes* to save space
+%{__gzip} Changes*
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -599,7 +602,7 @@ make test
 
 %files
 %defattr(-,root,root,-)
-%doc Copying README
+%doc Artistic AUTHORS Changes* Copying README
 %{_mandir}/man1/*.1*
 %{_mandir}/man3/*.3*
 %{_bindir}/*
@@ -783,6 +786,10 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Tue Oct 16 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-29
+- Add Artistic, AUTHORS, and Changes* to %%docs.
+- Compress Changes* to save space.
+
 * Tue Oct 15 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-28.4
 - Require db4, not db4-devel. -EIDIOT
 
