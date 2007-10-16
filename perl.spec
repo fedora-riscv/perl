@@ -24,7 +24,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        28%{?dist}.3
+Release:        28%{?dist}.4
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -197,7 +197,7 @@ Obsoletes: perl-Filter-Simple
 Obsoletes: perl-Time-HiRes
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
-Requires: db4-devel = %{db4_major}.%{db4_minor}.%{db4_patch}
+Requires: db4 = %{db4_major}.%{db4_minor}.%{db4_patch}
 
 # Filter the automatically generated dependencies.
 #
@@ -783,6 +783,9 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Tue Oct 15 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-28.4
+- Require db4, not db4-devel. -EIDIOT
+
 * Mon Oct 15 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-28.3
 - add versioned Requires for db4-devel that we built against (resolves 144672)
 
