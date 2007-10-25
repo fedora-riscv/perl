@@ -20,7 +20,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        24%{?dist}
+Release:        25%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -120,6 +120,8 @@ Patch39:        perl-5.8.8-disable_test_hosts.patch
 Patch40:	perl-5.8.8-U28775.patch
 # Update DB_File to 1.815
 Patch41:        perl-5.8.8-DB_File-1.815.patch
+# Fix from perl bug #24254
+Patch42:        perl-5.8.8-bug24254.patch
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel
@@ -348,6 +350,7 @@ Basic utilities for writing tests.
 %patch39 -p1
 %patch40 -p1
 %patch41 -p1
+%patch42 -p1
 #
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -741,6 +744,9 @@ make test
 %{_mandir}/man3/Test::Tutorial*
 
 %changelog
+* Thu Oct 25 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-25
+- patch from perl bug 24254, fix for RH bz 114271
+
 * Mon Oct  1 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-24
 - update DB_File to 1.815
 
