@@ -24,7 +24,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        30%{?dist}
+Release:        31%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -127,6 +127,9 @@ Patch41:        perl-5.8.8-bz247386-file-spec-cwd.patch
 Patch42:        perl-5.8.8-DB_File-1.815.patch
 # Fix from perl bug #24254
 Patch43:	perl-5.8.8-bug24254.patch
+# Fix Bugzilla 378121 378131 378141 378151 (all the same bug, just one for each Fedora 
+# release), CVE-2007-5116
+Patch44:	perl-5.8.8-bz323571.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -390,6 +393,7 @@ upstream tarball from perl.org.
 %patch41 -p1
 %patch42 -p1
 %patch43 -p1
+%patch44 -p1
 #
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -789,6 +793,9 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Mon Nov 12 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-31
+- fix for CVE-2007-5116
+
 * Thu Oct 18 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-30
 - patch from perl bug 24254, fix for RH bz 114271
 
