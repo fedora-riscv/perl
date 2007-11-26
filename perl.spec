@@ -24,7 +24,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        31%{?dist}
+Release:        32%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -203,6 +203,10 @@ Obsoletes: perl-Time-HiRes
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires: db4 = %{db4_major}.%{db4_minor}.%{db4_patch}
+
+# We need this to break the dependency loop, and ensure that perl-libs 
+# gets installed before perl.
+Requires(post): perl-libs
 
 # Filter the automatically generated dependencies.
 #
@@ -793,6 +797,9 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Mon Nov 26 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-32
+- break dep loop, fix bugzilla 397881
+
 * Mon Nov 12 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-31
 - fix for CVE-2007-5116
 
