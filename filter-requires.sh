@@ -4,6 +4,7 @@
 "$@" |
   awk '
 	$0 != "perl(FCGI)" &&
+	$0 != "perl(Your::Module::Here)" &&
 	$0 != "perl(Tk)" &&
 	$0 !~ /^perl\(Tk::/ &&
 	$0 !~ /^perl\(Mac::/

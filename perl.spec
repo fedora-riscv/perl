@@ -1,6 +1,5 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 %define perl_archname %{_arch}-%{_os}-thread-multi
-%define perlmodcompat 5.8.7 5.8.6 5.8.5
 %define new_perl_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}:$RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{version}
 %define comp_perl_lib $RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{version}:$RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{version}
 %define new_arch_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/%{perl_archname}
@@ -12,128 +11,52 @@
 %define db4_minor %(grep "DB_VERSION_MINOR" /usr/include/db.h | cut -f3)
 %define db4_patch %(grep "DB_VERSION_PATCH" /usr/include/db.h | cut -f3)
 
-%define perl_version    5.8.8
+%define perl_version    5.10.0
 %define perl_epoch      4
-
-# Use this for SUPER PERL DEBUGGING MODE.
-%{?!perl_debugging:    %define perl_debugging 0}
-%if %{perl_debugging}
-%define debug_package %{nil}
-# don't build debuginfo and disable stripping
-%endif
 
 Name:           perl
 Version:        %{perl_version}
-Release:        32%{?dist}
+Release:        1%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
 # Modules Tie::File and Getopt::Long are licenced under "GPLv2+ or Artistic,"
 # we have to reflect that in the sub-package containing them.
-# FIXME: Digest::MD5 has a must-advertise-RSA license with an exception,
-# the tag does not reflect that (yet).
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic)
 Url:            http://www.perl.org/
-Source0:        http://www.cpan.org/authors/id/N/NW/NWCLARK/%{name}-%{perl_version}.tar.bz2
+Source0:        http://search.cpan.org/CPAN/authors/id/R/RG/RGARCIA/perl-%{perl_version}.tar.gz
 Source11:       filter-requires.sh
 Source12:       perl-5.8.0-libnet.cfg
 # Specific to Fedora/RHEL
 Patch1:         perl-5.8.0-root.patch
-# Upstream bug 41586
-Patch2:         perl-5.8.8-incpush.patch
+
 # Removes date check, Fedora/RHEL specific
-Patch3:         perl-5.8.8-perlbug-tag.patch
-# XXX: The next two patches appear to alter the order of @INC, but
-# there isn't sufficient documentation as to why we do this.
-Patch4:         perl-5.8.8-dashI.patch
-Patch5:         perl-5.8.5-incorder.patch
-# make sure we get the proper ldflags on libperl.so
-# Upstream bug 41587
-Patch6:         perl-5.8.0-sharedlinker.patch
+Patch2:         perl-5.10.0-perlbug-tag.patch
+
 # Fedora/RHEL use links instead of lynx
-Patch7:         perl-5.8.8-links.patch
+Patch3:         perl-5.10.0-links.patch
+
 # work around annoying rpath issue
 # This is only relevant for Fedora, as it is unlikely
 # that upstream will assume the existence of a libperl.so
-Patch8:         perl-5.8.8-rpath-make.patch
-# Disable -DDEBUGGING and allow -g to do its job (#156113)
-# Upstream bug 41588
-Patch9:         perl-5.8.7-no-debugging.patch
-# Upstream bug 41589
-Patch10:        perl-5.8.1-fpic.patch
+Patch4:         perl-5.8.8-rpath-make.patch
+
 # Fedora/RHEL only (64bit only)
-Patch11:        perl-5.8.0-libdir64.patch
-# Upstream bug 41590
-Patch12:        perl-5.8.0-nptlhint.patch
+Patch5:         perl-5.8.0-libdir64.patch
+
 # Fedora/RHEL specific (use libresolv instead of libbind)
-Patch13:        perl-5.8.6-libresolv.patch
-# fix for bug 163958 / upstream bug 37056 :
-# backport of perl-5.9's patch 25084 (bug still in 5.8.8!):
-Patch14:        perl-5.8.7-25084.patch
-# multi-threaded perl builds use localtime_r which does not call tzset
-# bugzilla 172396
-# Upstream bug 41591
-Patch15:        perl-5.8.7-172396.patch
-# Security fix
-Patch16:        perl-5.8.8-CAN-2004-0976.patch
-# XXX: Fixme
-# Needs all the "Red Hat" references removed before upstreaming
-Patch17:        perl-5.8.8-USE_MM_LD_RUN_PATH.patch
-# Upstream bug 38385
-Patch18:        perl-5.8.8-bz178343.patch
-# Debian's fix for Net::NNTP:
-# Upstream bug 41593
-Patch19:        perl-5.8.8-debian_fix_net_nntp.patch
-# Upstream patches 27133 and 27169 (27170):
-Patch20:        perl-5.8.8-up27133_up27169.patch
-# Upstream patch 27284:
-Patch21:        perl-5.8.8-up27284.patch
-# Fix for bug 183553 / upstream bug 38657:
-Patch22:        perl-5.8.8-bz183553_ubz38657.patch
-# http://rt.cpan.org/Ticket/Display.html?id=18692
-Patch23:        perl-5.8.8-bz188441.patch
-# Upstream bug 39130
-Patch24:        perl-5.8.8-bz191416.patch
-Patch25:        perl-5.8.8-U27116.patch
-Patch26:        perl-5.8.8-U27391.patch
-Patch27:        perl-5.8.8-U27426.patch
-Patch28:        perl-5.8.8-U27509.patch
-Patch29:        perl-5.8.8-U27512.patch
-Patch30:        perl-5.8.8-U27604.patch
-Patch31:        perl-5.8.8-U27605.patch
-Patch32:        perl-5.8.8-U27914.patch
-Patch33:        perl-5.8.8-U27329.patch
-# XXX: Fixme
-# Needs to be un-RedHatized before upstreaming
-Patch34:        perl-5.8.8-R-switch.patch
-# stop IPC/SysV.c including <asm/page.h> for getpagesize(), which
-# is now declared by including <unistd.h> .
-# Upstream bug 41594
-Patch35:        perl-5.8.8-no_asm_page_h.patch
-Patch36:        perl-5.8.8-U34297_C28006.patch
-# Bugzilla 199372
-# Upstream bug 41595
-Patch37:        perl-5.8.8-useCFLAGSwithCC.patch
-# Upstream bug 39903
-Patch38:        perl-5.8.8-bz199736.patch
+Patch6:        perl-5.8.6-libresolv.patch
+
+# FIXME: May need the "Fedora" references removed before upstreaming
+Patch7:        perl-5.10.0-USE_MM_LD_RUN_PATH.patch
+
 # Skip hostname tests, since hostname lookup isn't available in Fedora
 # buildroots by design.
-Patch39:        perl-5.8.8-disable_test_hosts.patch
-# XXX: Fixme - Finish patch.
-#Patch39:        perl-5.8.8-bz204679.patch
-Patch40:        perl-5.8.8-U28775.patch
-Patch41:        perl-5.8.8-bz247386-file-spec-cwd.patch
-# Update DB_File to 1.815
-Patch42:        perl-5.8.8-DB_File-1.815.patch
-# Fix from perl bug #24254
-Patch43:	perl-5.8.8-bug24254.patch
-# Fix Bugzilla 378121 378131 378141 378151 (all the same bug, just one for each Fedora 
-# release), CVE-2007-5116
-Patch44:	perl-5.8.8-bz323571.patch
+Patch8:        perl-5.10.0-disable_test_hosts.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
-BuildRequires:  gdbm-devel, db4-devel
+BuildRequires:  gdbm-devel, db4-devel, zlib-devel
 # Temporary fix for broken buildroots:
 BuildRequires:  gawk
 
@@ -144,10 +67,8 @@ Provides: perl(VMS::Filespec)
 Provides: perl(VMS::Stdio)
 
 # Compat provides
-Provides: perl(:MODULE_COMPAT_5.8.5)
-Provides: perl(:MODULE_COMPAT_5.8.6)
-Provides: perl(:MODULE_COMPAT_5.8.7)
-Provides: perl(:MODULE_COMPAT_5.8.8)
+Provides: perl(:MODULE_COMPAT_5.10.0)
+
 # Threading provides
 Provides: perl(:WITH_ITHREADS)
 Provides: perl(:WITH_THREADS)
@@ -193,13 +114,6 @@ Provides: perl(timelocal.pl)
 Provides: perl(utf8_heavy.pl)
 Provides: perl(validate.pl)
 Provides: perl(Carp::Heavy)
-# Versioned Provides for our Obsoletes
-Provides: perl-Filter-Simple = 0.82
-Provides: perl-Time-HiRes = 1.86
-
-# Last seen in Fedora Core 4
-Obsoletes: perl-Filter-Simple
-Obsoletes: perl-Time-HiRes
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires: db4 = %{db4_major}.%{db4_minor}.%{db4_patch}
@@ -212,13 +126,13 @@ Requires(post): perl-libs
 #
 # The original script might be /usr/lib/rpm/perl.req or
 # /usr/lib/rpm/redhat/perl.req, better use the original value of the macro:
-%{expand:%%define prev__perl_requires %{__perl_requires}}
+%{expand:%%define prev__perl_requires %{__perl_requires}} 
 %define __perl_requires %{SOURCE11} %{prev__perl_requires}
 
 # When _use_internal_dependency_generator is 0, the perl.req script is
 # called from /usr/lib/rpm{,/redhat}/find-requires.sh
 # Likewise:
-%{expand:%%define prev__find_requires %{__find_requires}}
+%{expand:%%define prev__find_requires %{__find_requires}} 
 %define __find_requires %{SOURCE11} %{prev__find_requires}
 
 
@@ -267,36 +181,152 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Suidperl is a setuid binary copy of perl that allows for (hopefully)
 more secure running of setuid perl scripts.
 
+
+%package Archive-Extract
+Summary:        Generic archive extracting mechanism
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+Version:        0.24
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Archive-Extract
+Archive::Extract is a generic archive extraction mechanism.
+
+
+%package Archive-Tar
+Summary:        A module for Perl manipulation of .tar files
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+# It's really 1.37_01, but we drop the _01.
+Version:        1.37
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl(Compress::Zlib), perl(IO::Zlib)
+
+%description Archive-Tar
+Archive::Tar provides an object oriented mechanism for handling tar
+files.  It provides class methods for quick and easy files handling
+while also allowing for the creation of tar file objects for custom
+manipulation.  If you have the IO::Zlib module installed, Archive::Tar
+will also support compressed or gzipped tar files.
+
+
+%package Compress-Raw-Zlib
+Summary:        Low-Level Interface to the zlib compression library
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.008
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Compress-Raw-Zlib
+This module provides a Perl interface to the zlib compression library.
+It is used by IO::Compress::Zlib.
+
+
+%package Compress-Zlib
+Summary:        A module providing Perl interfaces to the zlib compression library
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.008
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Compress-Zlib
+The Compress::Zlib module provides a Perl interface to the zlib
+compression library. Most of the functionality provided by zlib is
+available in Compress::Zlib.
+
+The module can be split into two general areas of functionality,
+namely in-memory compression/decompression and read/write access to
+gzip files.
+
+
 %package CPAN
 Summary:        Query, download and build perl modules from CPAN sites
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.76_02
+Version:        1.9205
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Provides:       cpan = %{version}
 
 %description CPAN
 Query, download and build perl modules from CPAN sites.
 
+
+%package CPANPLUS
+Summary:        API & CLI access to the CPAN mirrors
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+# It's really 0.83_09, but we drop the _09.
+Version:        0.83
+Requires:       perl(IPC::Run) >= 0.79
+Requires:       perl(Module::Pluggable) >= 2.4
+Requires:       perl(Module::CoreList)
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description CPANPLUS
+The CPANPLUS library is an API to the CPAN mirrors and a collection of
+interactive shells, commandline programs, etc, that use this API.
+
+
+%package Digest-SHA
+Summary:        Perl extension for SHA-1/224/256/384/512
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+Version:        5.45
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Digest-SHA
+Digest::SHA is a complete implementation of the NIST Secure Hash
+Standard.  It gives Perl programmers a convenient way to calculate
+SHA-1, SHA-224, SHA-256, SHA-384, and SHA-512 message digests.  The
+module can handle all types of input, including partial-byte data.
+
+
+%package ExtUtils-CBuilder
+Summary:        Compile and link C code for Perl modules
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+Version:        0.21
+Requires:       perl-devel
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description ExtUtils-CBuilder
+This module can build the C portions of Perl modules by invoking the
+appropriate compilers and linkers in a cross-platform manner. It was
+motivated by the Module::Build project, but may be useful for other
+purposes as well.
+
+
 %package ExtUtils-Embed
 Summary:        Utilities for embedding Perl in C/C++ applications
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.26
+Version:        1.27
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description ExtUtils-Embed
 Utilities for embedding Perl in C/C++ applications.
 
+
 %package ExtUtils-MakeMaker
 Summary:        Create a module Makefile
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        6.30
+# It's really 6.36_01, but we drop the _01.
+Version:        6.36
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Test::Harness)
@@ -304,42 +334,412 @@ Requires:       perl(Test::Harness)
 %description ExtUtils-MakeMaker
 Create a module Makefile.
 
+
+%package ExtUtils-ParseXS
+Summary:        Module and a script for converting Perl XS code into C code
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+# It's really 2.18_02, but we drop the _02.
+Version:        2.18
+Requires:       perl-devel
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description ExtUtils-ParseXS
+ExtUtils::ParseXS will compile XS code into C code by embedding the
+constructs necessary to let C functions manipulate Perl values and
+creates the glue necessary to let Perl access those functions.
+
+
+%package File-Fetch
+Summary:        Generic file fetching mechanism
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+# Really 0.13_04, but we drop the _04.
+Version:        0.13
+Requires:       perl(IPC::Cmd) >= 0.36
+Requires:       perl(Module::Load::Conditional) >= 0.04
+Requires:       perl(Params::Check) >= 0.07
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description File-Fetch
+File::Fetch is a generic file fetching mechanism.
+
+
+%package IO-Compress-Base
+Summary:        Base Class for IO::Compress modules
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.008
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description IO-Compress-Base
+This module is the base class for all IO::Compress and IO::Uncompress
+modules. This module is not intended for direct use in application
+code. Its sole purpose is to to be sub-classed by IO::Compress
+modules.
+
+
+%package IO-Compress-Zlib
+Summary:        Perl interface to allow reading and writing of gzip and zip data
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+# Really 1.23_01, but we drop the _01.
+Version:        2.008
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description IO-Compress-Zlib
+This module provides an "IO::"-style Perl interface to "Compress::Zlib"
+
+
+%package IO-Zlib
+Summary:        Perl IO:: style interface to Compress::Zlib
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+Version:        1.07
+Requires:       perl(Compress::Zlib)
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description IO-Zlib
+This modules provides an IO:: style interface to the Compress::Zlib
+package. The main advantage is that you can use an IO::Zlib object in
+much the same way as an IO::File object so you can have common code
+that doesn't know which sort of file it is using.
+
+
+%package IPC-Cmd
+Summary:        Finding and running system commands made easy
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+# Really 0.40_1, but we drop the _1.
+Version:        0.40
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description IPC-Cmd
+IPC::Cmd allows you to run commands, interactively if desired, in a
+platform independent way, but have them still work.
+
+
+%package Locale-Maketext-Simple
+Summary:        Simple interface to Locale::Maketext::Lexicon
+Group:          Development/Libraries
+License:        MIT
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+Version:        0.18
+Requires:	perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Locale-Maketext-Simple
+This module is a simple wrapper around Locale::Maketext::Lexicon, designed
+to alleviate the need of creating Language Classes for module authors.
+
+
+%package Log-Message
+Summary:        Generic message storage mechanism
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+Version:        0.01
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+# Add a versioned provides, since we pull the unversioned one out.
+Provides:       perl(Log::Message::Handlers) = %{version}
+
+%description Log-Message
+Log::Message is a generic message storage mechanism. It allows you to 
+store messages on a stack -- either shared or private -- and assign meta-data 
+to it. Some meta-data will automatically be added for you, like a timestamp
+and a stack trace, but some can be filled in by the user, like a tag by
+which to identify it or group it, and a level at which to handle the
+message (for example, log it, or die with it).
+
+
+%package Log-Message-Simple
+Summary:        Simplified frontend to Log::Message
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.04
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Log-Message-Simple
+This module provides standardized logging facilities using the
+Log::Message module.
+
+
+%package Module-Build
+Summary:        Perl module for building and installing Perl modules
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+# Really 0.2808_01, but we drop the _01.
+Version:        0.2808
+Requires:       perl(Archive::Tar) >= 1.08
+Requires:       perl(ExtUtils::CBuilder) >= 0.15
+Requires:       perl(ExtUtils::ParseXS) >= 1.02
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Module-Build
+Module::Build is a system for building, testing, and installing Perl
+modules. It is meant to be an alternative to ExtUtils::MakeMaker.
+Developers may alter the behavior of the module through subclassing in a
+much more straightforward way than with MakeMaker. It also does not 
+require a make on your system - most of the Module::Build code is pure-perl and
+written in a very cross-platform way. In fact, you don't even need a 
+shell, so even platforms like MacOS (traditional) can use it fairly easily. Its
+only prerequisites are modules that are included with perl 5.6.0, and it
+works fine on perl 5.005 if you can install a few additional modules.
+
+
+%package Module-CoreList
+Summary:        Perl core modules indexed by perl versions
+Group:          Development/Languages
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.12
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl(version)
+
+%description Module-CoreList
+Module::CoreList contains the hash of hashes %Module::CoreList::version,
+this is keyed on perl version as indicated in $].  The second level hash
+is module => version pairs.
+
+
+%package Module-Load
+Summary:        Runtime require of both modules and files
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+Version:        0.12
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Module-Load
+Module::Load eliminates the need to know whether you are trying to
+require either a file or a module.
+
+
+%package Module-Load-Conditional
+Summary:        Looking up module information / loading at runtime
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.22
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Module-Load-Conditional
+Module::Load::Conditional provides simple ways to query and possibly 
+load
+any of the modules you have installed on your system during runtime.
+
+
+%package Module-Loaded
+Summary:        Mark modules as loaded or unloaded
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+Version:        0.01
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Module-Loaded
+When testing applications, often you find yourself needing to provide
+functionality in your test environment that would usually be provided by
+external modules. Rather than munging the %INC by hand to mark these
+external modules as loaded, so they are not attempted to be loaded by
+perl, this module offers you a very simple way to mark modules as loaded
+and/or unloaded.
+
+
+%package Module-Pluggable
+Summary:        Automatically give your module the ability to have plugins
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+Version:        3.60
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Module-Pluggable
+Provides a simple but, hopefully, extensible way of having 'plugins' for
+your module.
+
+
+%package Object-Accessor
+Summary:        Perl module that allows per object accessors
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+Version:        0.32
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Object-Accessor
+Object::Accessor provides an interface to create per object accessors 
+(as opposed to per Class accessors, as, for example, Class::Accessor 
+provides).
+
+
+%package Package-Constants
+Summary:        List all constants declared in a package
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+Version:        0.01
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Package-Constants
+Package::Constants lists all the constants defined in a certain package.
+This can be useful for, among others, setting up an autogenerated
+@EXPORT/@EXPORT_OK for a Constants.pm file.
+
+
+%package Params-Check
+Summary:        Generic input parsing/checking mechanism
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+Version:        0.26
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Params-Check
+Params::Check is a generic input parsing/checking mechanism.
+
+
+%package Pod-Escapes
+Summary:        Perl module for resolving POD escape sequences
+Group:   	Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+Version:        1.04
+Requires:	perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Pod-Escapes
+This module provides things that are useful in decoding Pod E<...>
+sequences. Presumably, it should be used only by Pod parsers and/or
+formatters.
+
+
+%package Pod-Simple
+Summary:        Framework for parsing POD documentation
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+Version:        3.05
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Pod-Simple
+Pod::Simple is a Perl library for parsing text in the Pod ("plain old
+documentation") markup language that is typically used for writing
+documentation for Perl and for Perl modules.
+
+
+%package Term-UI
+Summary:        Term::ReadLine UI made easy
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.18
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl(Log::Message::Simple)
+
+%description Term-UI
+Term::UI is a transparent way of eliminating the overhead of having to
+format a question and then validate the reply, informing the user if the
+answer was not proper and re-issuing the question.
+
+
 %package Test-Harness
 Summary:        Run Perl standard test scripts with statistics
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.56
+Version:        2.64
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Test-Harness
 Run Perl standard test scripts with statistics.
 
+
 %package Test-Simple
 Summary:        Basic utilities for writing tests
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.62
+Version:        0.72
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Test-Simple
 Basic utilities for writing tests.
 
+
+%package Time-Piece
+Summary:        Time objects from localtime and gmtime
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.12
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Time-Piece
+The Time::Piece module replaces the standard localtime and gmtime functions
+with implementations that return objects.  It does so in a backwards
+compatible manner, so that using localtime or gmtime as documented in
+perlfunc still behave as expected.
+
+
+%package version
+Summary:        Perl extension for Version Objects
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          3
+Version:        0.74
+Requires:	perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description version
+Perl extension for Version Objects
+
+
 %package core
 Summary:        Base perl metapackage
 Group:          Development/Languages
-# FIXME: Hey, I'm not sure this rpm contains any copyrightable material!
+# This rpm doesn't contain any copyrightable material.
+# Nevertheless, it needs a License tag, so we'll use the generic
+# "perl" license.
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        %{perl_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
-Requires:       perl-CPAN, perl-ExtUtils-Embed, perl-ExtUtils-MakeMaker
-Requires:       perl-Test-Harness, perl-Test-Simple
+
+Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-Compress-Raw-Zlib, perl-Compress-Zlib, perl-CPAN,
+Requires:       perl-CPANPLUS, perl-Digest-SHA, perl-ExtUtils-CBuilder,
+Requires:       perl-ExtUtils-Embed, perl-ExtUtils-MakeMaker, perl-ExtUtils-ParseXS,
+Requires:       perl-File-Fetch, perl-IO-Compress-Base, perl-IO-Compress-Zlib, perl-IO-Zlib,
+Requires:       perl-IPC-Cmd, perl-Locale-Maketext-Simple, perl-Log-Message, perl-Log-Message-Simple,
+Requires:       perl-Module-Build, perl-Module-CoreList, perl-Module-Load,
+Requires:       perl-Module-Load-Conditional, perl-Module-Loaded,
+Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Constants,
+Requires:       perl-Params-Check, perl-Pod-Escapes, perl-Pod-Simple, perl-Term-UI, 
+Requires:       perl-Test-Harness, perl-Test-Simple, perl-Time-Piece, perl-version
 # Note: perl-suidperl has always been an independent subpackage
 # We don't want perl-core to drag it in.
 
@@ -349,55 +749,18 @@ upstream tarball from perl.org.
 
 
 %prep
-%setup -q
+%setup -q 
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%ifarch %{multilib_64_archs}
 %patch5 -p1
+%endif
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
-%if !%{perl_debugging}
-%patch9 -p1
-%endif
-%patch10 -p1
-%ifarch %{multilib_64_archs}
-%patch11 -p1
-%endif
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
-%patch15 -p1
-%patch16 -p1
-%patch17 -p1
-%patch18 -p1
-%patch19 -p1
-%patch20 -p1
-%patch21 -p1
-%patch22 -p1
-%patch23 -p1
-%patch24 -p1
-%patch25 -p1
-%patch26 -p1
-%patch27 -p1
-%patch28 -p1
-%patch29 -p1
-%patch30 -p1
-%patch31 -p1
-%patch32 -p1
-%patch33 -p1
-%patch34 -p1
-%patch35 -p1
-%patch36 -p1
-%patch37 -p1
-%patch38 -p1
-%patch39 -p1
-%patch40 -p1
-%patch41 -p1
-%patch42 -p1
-%patch43 -p1
-%patch44 -p1
+
 #
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -416,28 +779,39 @@ recode pod/perlhist.pod iso-8859-1
 recode pod/perlothrtut.pod iso-8859-1
 recode pod/perlthrtut.pod iso-8859-1
 recode lib/Unicode/Collate.pm iso-8859-1
+for i in Changes*; do
+    recode $i iso-8859-1
+done
+recode AUTHORS iso-8859-1
+
 
 find . -name \*.orig -exec rm -fv {} \;
 
 # Oh, the irony. Perl generates some non-versioned provides we don't need.
 # Each of these has a versioned provide, which we keep.
-cat << \EOF > %{name}-prov
+cat << EOF > perl-prov
 #!/bin/sh
 %{__perl_provides} $* |\
     sed -e '/^perl(Carp)$/d' |\
     sed -e '/^perl(DynaLoader)$/d' |\
     sed -e '/^perl(Locale::Maketext)$/d' |\
+    sed -e '/^perl(Log::Message::Handlers)$/d' |\
     sed -e '/^perl(Math::BigInt)$/d' |\
     sed -e '/^perl(Net::Config)$/d' |\
     sed -e '/^perl(Tie::Hash)$/d' |\
     sed -e '/^perl(bigint)$/d' |\
     sed -e '/^perl(bigrat)$/d' |\
     sed -e '/^perl(bytes)$/d' |\
-    sed -e '/^perl(utf8)$/d'
+    sed -e '/^perl(utf8)$/d' |\
+    sed -e '/^perl(DB)$/d'
 EOF
-%define __perl_provides %{_builddir}/%{name}-%{perl_version}/%{name}-prov
+%define __perl_provides %{_builddir}/%{name}-%{perl_version}/perl-prov
 chmod +x %{__perl_provides}
 
+# Configure Compress::Zlib to use system zlib
+sed -i "s|BUILD_ZLIB      = True|BUILD_ZLIB      = False|" ext/Compress/Raw/Zlib/config.in
+sed -i "s|INCLUDE         = ./zlib-src|INCLUDE         = %{_includedir}|" ext/Compress/Raw/Zlib/config.in
+sed -i "s|LIB             = ./zlib-src|LIB             = %{_libdir}|" ext/Compress/Raw/Zlib/config.in
 
 %build
 echo "RPM Build arch: %{_arch}"
@@ -464,7 +838,7 @@ echo "RPM Build arch: %{_arch}"
         -Dvendorarch="%{_libdir}/perl5/vendor_perl/%{perl_version}/%{perl_archname}" \
 %endif
         -Darchname=%{_arch}-%{_os} \
-%ifarch sparc
+%ifarch sparc sparcv9
         -Ud_longdbl \
 %endif
         -Dvendorprefix=%{_prefix} \
@@ -489,7 +863,6 @@ echo "RPM Build arch: %{_arch}"
         -Dd_gethostent_r_proto -Ud_endhostent_r_proto -Ud_sethostent_r_proto \
         -Ud_endprotoent_r_proto -Ud_setprotoent_r_proto \
         -Ud_endservent_r_proto -Ud_setservent_r_proto \
-        -Dinc_version_list='%{perlmodcompat}' \
         -Dscriptdir='%{_bindir}'
 
 make %{?_smp_mflags}
@@ -508,19 +881,6 @@ mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}
 %ifarch %{multilib_64_archs}
 mkdir -p -m 755 ${RPM_BUILD_ROOT}%{_prefix}/lib64/perl5/vendor_perl/%{perl_version}/%{_arch}-%{_os}
 %endif
-
-#
-# Compatibility directories
-#
-pushd $RPM_BUILD_ROOT/%{_libdir}/perl5
-for i in %{perlmodcompat}; do
-    mkdir -pm 755 $i/%{perl_archname}/CORE
-    mkdir -pm 755 $i/%{perl_archname}/auto
-    pushd $i/%{perl_archname}/CORE
-      ln -s ../../../%{perl_version}/%{perl_archname}/CORE/libperl.so libperl.so
-    popd
-  done
-popd
 
 install -p -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/pl2pm
 
@@ -541,12 +901,6 @@ do
   mkdir -p $RPM_BUILD_ROOT/$dir
 done
 
-for i in %{perl_version} %{perlmodcompat} ; do
-  mkdir -pm 755 $RPM_BUILD_ROOT%{_libdir}/perl5/site_perl/$i/%{perl_archname}/auto
-  mkdir -pm 755 $RPM_BUILD_ROOT%{_libdir}/perl5/vendor_perl/$i/%{perl_archname}/auto
-done
-
-
 #
 # libnet configuration file
 #
@@ -559,6 +913,10 @@ install -p -m 644 %{SOURCE12} $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perl_version}/N
 find $RPM_BUILD_ROOT -name '*NDBM*' | xargs rm -rfv
 
 find $RPM_BUILD_ROOT -type f -name '*.bs' -a -empty -exec rm -f {} ';'
+
+# Install sample cgi scripts (this used to happen automatically?)
+mkdir -p $RPM_BUILD_ROOT/usr/lib/perl5/%{perl_version}/CGI/eg/
+cp -a lib/CGI/eg/* $RPM_BUILD_ROOT/usr/lib/perl5/%{perl_version}/CGI/eg/
 
 # Cleanup binary paths and make cgi files executable
 pushd $RPM_BUILD_ROOT/usr/lib/perl5/%{perl_version}/CGI/eg/
@@ -584,19 +942,7 @@ pushd $RPM_BUILD_ROOT%{_mandir}/man1/
   done
 popd
 
-echo "%{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/libperl.so" > libs_filelist
-
-for i in %{perlmodcompat} ; do
-    if -d $RPM_BUILD_ROOT%{_libdir}/perl5/$i/%{perl_archname}/CORE ; then
-       echo "%{_libdir}/perl5/$i/%{perl_archname}/CORE" >> libs_filelist
-    fi
-done
-
 chmod -R u+w $RPM_BUILD_ROOT/*
-%if %{perl_debugging}
-exit 0
-# disable brp-strip
-%endif
 
 # Compress Changes* to save space
 %{__gzip} Changes*
@@ -624,10 +970,6 @@ make test
 
 # libs
 %exclude %{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/libperl.so
-%exclude %{_libdir}/perl5/5.8.5/%{perl_archname}/CORE
-%exclude %{_libdir}/perl5/5.8.6/%{perl_archname}/CORE
-%exclude %{_libdir}/perl5/5.8.7/%{perl_archname}/CORE
-
 
 # devel
 %exclude %{_bindir}/enc2xs
@@ -636,8 +978,6 @@ make test
 %exclude %{_mandir}/man1/h2xs*
 %exclude %{_bindir}/libnetcfg
 %exclude %{_mandir}/man1/libnetcfg*
-%exclude %{_bindir}/perlcc
-%exclude %{_mandir}/man1/perlcc*
 %exclude %{_bindir}/perlivp
 %exclude %{_mandir}/man1/perlivp*
 %exclude %{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/*.h
@@ -646,18 +986,66 @@ make test
 %exclude %{_bindir}/suidperl
 %exclude %{_bindir}/sperl%{perl_version}
 
+# Archive-Extract
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Archive/Extract.pm
+%exclude %{_mandir}/man3/Archive::Extract.3*
+
+# Archive-Tar
+%exclude %{_bindir}/ptar
+%exclude %{_bindir}/ptardiff
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Archive/Tar/
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Archive/Tar.pm
+%exclude %{_mandir}/man1/ptar.1*
+%exclude %{_mandir}/man1/ptardiff.1*
+%exclude %{_mandir}/man3/Archive::Tar*
+
 # CPAN
 %exclude %{_bindir}/cpan
 %exclude %{_prefix}/lib/perl5/%{perl_version}/CPAN/
 %exclude %{_prefix}/lib/perl5/%{perl_version}/CPAN.pm
 %exclude %{_mandir}/man1/cpan.1*
-%exclude %{_mandir}/man3/CPAN*
+%exclude %{_mandir}/man3/CPAN.*
+%exclude %{_mandir}/man3/CPAN:*
 
-# ExtUtils-Embed
+# CPANPLUS
+%exclude %{_bindir}/cpan2dist
+%exclude %{_bindir}/cpanp
+%exclude %{_bindir}/cpanp-run-perl
+%exclude %{_prefix}/lib/perl5/%{perl_version}/CPANPLUS/
+%exclude %{_prefix}/lib/perl5/%{perl_version}/CPANPLUS.pm
+%exclude %{_mandir}/man1/cpan2dist.1*
+%exclude %{_mandir}/man1/cpanp.1*
+%exclude %{_mandir}/man3/CPANPLUS*
+
+# Compress::Raw::Zlib
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/Compress
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/Compress/Raw/
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/auto/Compress
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/auto/Compress/Raw/
+%exclude %{_mandir}/man3/Compress::Raw::Zlib*
+
+# Compress::Zlib
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/Compress/Zlib.pm
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/auto/Compress/Zlib/
+%exclude %{_mandir}/man3/Compress::Zlib*
+
+# Digest::SHA
+%exclude %{_bindir}/shasum
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/Digest/SHA.pm
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/auto/Digest/SHA/
+%exclude %{_mandir}/man1/shasum.1*
+%exclude %{_mandir}/man3/Digest::SHA.3*
+
+# ExtUtils::CBuilder
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/CBuilder/
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/CBuilder.pm
+%exclude %{_mandir}/man3/ExtUtils::CBuilder*
+
+# ExtUtils::Embed
 %exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Embed.pm
 %exclude %{_mandir}/man3/ExtUtils::Embed*
 
-# ExtUtils-MakeMaker
+# ExtUtils::MakeMaker
 %exclude %{_bindir}/instmodsh
 %exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Command/
 %exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Install.pm
@@ -672,9 +1060,7 @@ make test
 %exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Manifest.pm
 %exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Mkbootstrap.pm
 %exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Mksymlists.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/NOTES
 %exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Packlist.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/PATCHING
 %exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/testlib.pm
 %exclude %{_mandir}/man1/instmodsh.1*
 %exclude %{_mandir}/man3/ExtUtils::Command::MM*
@@ -689,6 +1075,136 @@ make test
 %exclude %{_mandir}/man3/ExtUtils::Mksymlists.3*
 %exclude %{_mandir}/man3/ExtUtils::Packlist.3*
 %exclude %{_mandir}/man3/ExtUtils::testlib.3*
+
+# ExtUtils::ParseXS
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/ParseXS.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/xsubpp
+%exclude %{_mandir}/man3/ExtUtils::ParseXS.3*
+
+# File::Fetch
+%exclude %{_prefix}/lib/perl5/%{perl_version}/File/Fetch.pm
+%exclude %{_mandir}/man3/File::Fetch.3*
+
+# IO::Compress::Base
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/File/GlobMapper.pm
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Base/
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Base.pm
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/AnyUncompress.pm
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Base.pm
+%exclude %{_mandir}/man3/File::GlobMapper.*
+%exclude %{_mandir}/man3/IO::Compress::Base.*
+%exclude %{_mandir}/man3/IO::Uncompress::AnyUncompress.*
+%exclude %{_mandir}/man3/IO::Uncompress::Base.*
+
+# IO::Compress::Zlib
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Adapter/
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Deflate.pm
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Gzip/
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Gzip.pm
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/RawDeflate.pm
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Zip/
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Zip.pm
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Zlib/
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Adapter/
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/AnyInflate.pm
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Gunzip.pm
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Inflate.pm
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/RawInflate.pm
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Unzip.pm
+%exclude %{_mandir}/man3/IO::Compress::Deflate*
+%exclude %{_mandir}/man3/IO::Compress::Gzip*
+%exclude %{_mandir}/man3/IO::Compress::RawDeflate*
+%exclude %{_mandir}/man3/IO::Compress::Zip*
+%exclude %{_mandir}/man3/IO::Uncompress::AnyInflate*
+%exclude %{_mandir}/man3/IO::Uncompress::Gunzip*
+%exclude %{_mandir}/man3/IO::Uncompress::Inflate*
+%exclude %{_mandir}/man3/IO::Uncompress::RawInflate*
+%exclude %{_mandir}/man3/IO::Uncompress::Unzip*
+
+# IO::Zlib
+%exclude %{_prefix}/lib/perl5/%{perl_version}/IO/Zlib.pm
+%exclude %{_mandir}/man3/IO::Zlib.*
+
+# IPC::Cmd
+%exclude %{_prefix}/lib/perl5/%{perl_version}/IPC/Cmd.pm
+%exclude %{_mandir}/man3/IPC::Cmd.3*
+
+# Locale::Maketext::Simple
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Locale/Maketext/Simple.pm
+%exclude %{_mandir}/man3/Locale::Maketext::Simple.*
+
+# Log::Message
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Log/Message.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Log/Message/Config.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Log/Message/Handlers.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Log/Message/Item.pm
+%exclude %{_mandir}/man3/Log::Message.3*
+%exclude %{_mandir}/man3/Log::Message::Config.3*
+%exclude %{_mandir}/man3/Log::Message::Handlers.3*
+%exclude %{_mandir}/man3/Log::Message::Item.3*
+
+# Log::Message::Simple
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Log/Message/Simple.pm
+%exclude %{_mandir}/man3/Log::Message::Simple.3*
+
+# Module::Build
+%exclude %{_bindir}/config_data
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Module/Build/
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Module/Build.pm
+%exclude %{_mandir}/man1/config_data.1*
+%exclude %{_mandir}/man3/Module::Build*
+
+# Module-CoreList
+%exclude %{_bindir}/corelist
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Module/CoreList.pm
+%exclude %{_mandir}/man1/corelist*
+%exclude %{_mandir}/man3/Module::CoreList*
+
+# Module-Load
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Module/Load.pm
+%exclude %{_mandir}/man3/Module::Load.*
+
+# Module-Load-Conditional
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Module/Load/
+%exclude %{_mandir}/man3/Module::Load::Conditional*
+
+# Module-Loaded
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Module/Loaded.pm
+%exclude %{_mandir}/man3/Module::Loaded*
+
+# Module-Pluggable
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Devel/InnerPackage.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Module/Pluggable/
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Module/Pluggable.pm
+%exclude %{_mandir}/man3/Devel::InnerPackage*
+%exclude %{_mandir}/man3/Module::Pluggable*
+
+# Object-Accessor
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Object/
+%exclude %{_mandir}/man3/Object::Accessor*
+
+# Package-Constants
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Package/
+%exclude %{_mandir}/man3/Package::Constants*
+
+# Params-Check
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Params/
+%exclude %{_mandir}/man3/Params::Check*
+
+# Pod-Escapes
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Pod/Escapes.pm
+%exclude %{_mandir}/man3/Pod::Escapes.*
+
+# Pod-Simple
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Pod/Simple/
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Pod/Simple.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Pod/Simple.pod
+%exclude %{_mandir}/man3/Pod::Simple*
+
+# Term-UI
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Term/UI.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Term/UI/
+%exclude %{_mandir}/man3/Term::UI*
 
 # Test::Harness
 %exclude %{_bindir}/prove
@@ -706,8 +1222,21 @@ make test
 %exclude %{_mandir}/man3/Test::Simple*
 %exclude %{_mandir}/man3/Test::Tutorial*
 
-%files libs -f libs_filelist
+# Time::Piece
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/Time/Piece.pm
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/Time/Seconds.pm
+%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/auto/Time/Piece/
+%exclude %{_mandir}/man3/Time::Piece.3*
+%exclude %{_mandir}/man3/Time::Seconds.3*
+
+# version
+%exclude %{_prefix}/lib/perl5/%{perl_version}/version.pm
+%exclude %{_prefix}/lib/perl5/%{perl_version}/version.pod
+%exclude %{_mandir}/man3/version.*
+
+%files libs
 %defattr(-,root,root)
+%{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/libperl.so
 
 %files devel
 %defattr(-,root,root,-)
@@ -717,8 +1246,6 @@ make test
 %{_mandir}/man1/h2xs*
 %{_bindir}/libnetcfg
 %{_mandir}/man1/libnetcfg*
-%{_bindir}/perlcc
-%{_mandir}/man1/perlcc*
 %{_bindir}/perlivp
 %{_mandir}/man1/perlivp*
 %{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/*.h
@@ -728,13 +1255,69 @@ make test
 %{_bindir}/suidperl
 %{_bindir}/sperl%{perl_version}
 
+%files Archive-Extract
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/Archive/
+%{_mandir}/man3/Archive::Extract.3*
+
+%files Archive-Tar
+%defattr(-,root,root,-)
+%{_bindir}/ptar
+%{_bindir}/ptardiff
+%{_prefix}/lib/perl5/%{perl_version}/Archive/Tar/ 
+%{_prefix}/lib/perl5/%{perl_version}/Archive/Tar.pm
+%{_mandir}/man1/ptar.1*
+%{_mandir}/man1/ptardiff.1*
+%{_mandir}/man3/Archive::Tar* 
+
+%files Compress-Raw-Zlib
+%defattr(-,root,root,-)
+%dir %{_libdir}/perl5/%{version}/%{perl_archname}/Compress
+%{_libdir}/perl5/%{version}/%{perl_archname}/Compress/Raw/
+%dir %{_libdir}/perl5/%{version}/%{perl_archname}/auto/Compress/
+%{_libdir}/perl5/%{version}/%{perl_archname}/auto/Compress/Raw/
+%{_mandir}/man3/Compress::Raw::Zlib*
+
+%files Compress-Zlib
+%defattr(-,root,root,-)
+%{_libdir}/perl5/%{version}/%{perl_archname}/Compress/Zlib.pm
+%{_libdir}/perl5/%{version}/%{perl_archname}/auto/Compress/Zlib/
+%{_mandir}/man3/Compress::Zlib*
+
 %files CPAN
 %defattr(-,root,root,-)
 %{_bindir}/cpan
 %{_prefix}/lib/perl5/%{perl_version}/CPAN/
 %{_prefix}/lib/perl5/%{perl_version}/CPAN.pm
 %{_mandir}/man1/cpan.1*
-%{_mandir}/man3/CPAN*
+%{_mandir}/man3/CPAN.*
+%{_mandir}/man3/CPAN:*
+
+%files CPANPLUS
+%defattr(-,root,root,-)
+%{_bindir}/cpan2dist
+%{_bindir}/cpanp
+%{_bindir}/cpanp-run-perl
+%{_prefix}/lib/perl5/%{perl_version}/CPANPLUS/
+%{_prefix}/lib/perl5/%{perl_version}/CPANPLUS.pm
+%{_mandir}/man1/cpan2dist.1*
+%{_mandir}/man1/cpanp.1*
+%{_mandir}/man3/CPANPLUS*
+
+%files Digest-SHA
+%defattr(-,root,root,-)
+%{_bindir}/shasum
+%dir %{_libdir}/perl5/%{version}/%{perl_archname}/Digest/
+%{_libdir}/perl5/%{version}/%{perl_archname}/Digest/SHA.pm
+%{_libdir}/perl5/%{version}/%{perl_archname}/auto/Digest/SHA/
+%{_mandir}/man1/shasum.1*
+%{_mandir}/man3/Digest::SHA.3*
+
+%files ExtUtils-CBuilder
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/CBuilder/
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/CBuilder.pm
+%{_mandir}/man3/ExtUtils::CBuilder*
 
 %files ExtUtils-Embed
 %defattr(-,root,root,-)
@@ -757,9 +1340,7 @@ make test
 %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Manifest.pm
 %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Mkbootstrap.pm
 %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Mksymlists.pm
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/NOTES
 %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Packlist.pm
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/PATCHING
 %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/testlib.pm
 %{_mandir}/man1/instmodsh.1*
 %{_mandir}/man3/ExtUtils::Command::MM*
@@ -774,6 +1355,158 @@ make test
 %{_mandir}/man3/ExtUtils::Mksymlists.3*
 %{_mandir}/man3/ExtUtils::Packlist.3*
 %{_mandir}/man3/ExtUtils::testlib.3*
+
+%files ExtUtils-ParseXS
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/ParseXS.pm
+%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/xsubpp
+%{_mandir}/man3/ExtUtils::ParseXS.3*
+
+%files File-Fetch
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/File/Fetch.pm
+%{_mandir}/man3/File::Fetch.3*
+
+%files IO-Compress-Base
+%defattr(-,root,root,-)
+%{_libdir}/perl5/%{version}/%{perl_archname}/File/GlobMapper.pm
+%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Base/
+%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Base.pm
+%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/AnyUncompress.pm
+%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Base.pm
+%{_mandir}/man3/File::GlobMapper.*
+%{_mandir}/man3/IO::Compress::Base.*
+%{_mandir}/man3/IO::Uncompress::AnyUncompress.*
+%{_mandir}/man3/IO::Uncompress::Base.*
+
+%files IO-Compress-Zlib
+%defattr(-,root,root,-)
+%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Adapter/
+%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Deflate.pm
+%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Gzip/
+%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Gzip.pm
+%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/RawDeflate.pm
+%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Zip/
+%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Zip.pm
+%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Zlib/
+%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Adapter/
+%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/AnyInflate.pm
+%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Gunzip.pm
+%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Inflate.pm
+%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/RawInflate.pm
+%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Unzip.pm
+%{_mandir}/man3/IO::Compress::Deflate*
+%{_mandir}/man3/IO::Compress::Gzip*
+%{_mandir}/man3/IO::Compress::RawDeflate*
+%{_mandir}/man3/IO::Compress::Zip*
+%{_mandir}/man3/IO::Uncompress::AnyInflate*
+%{_mandir}/man3/IO::Uncompress::Gunzip*
+%{_mandir}/man3/IO::Uncompress::Inflate*
+%{_mandir}/man3/IO::Uncompress::RawInflate*
+%{_mandir}/man3/IO::Uncompress::Unzip*
+
+%files IO-Zlib
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/IO/Zlib.pm
+%{_mandir}/man3/IO::Zlib.*
+
+%files IPC-Cmd
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/IPC/Cmd.pm
+%{_mandir}/man3/IPC::Cmd.3*
+
+%files Locale-Maketext-Simple
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/Locale/Maketext/Simple.pm
+%{_mandir}/man3/Locale::Maketext::Simple.*
+
+%files Log-Message
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/Log/Message.pm
+%{_prefix}/lib/perl5/%{perl_version}/Log/Message/Config.pm
+%{_prefix}/lib/perl5/%{perl_version}/Log/Message/Handlers.pm
+%{_prefix}/lib/perl5/%{perl_version}/Log/Message/Item.pm
+%{_mandir}/man3/Log::Message.3*
+%{_mandir}/man3/Log::Message::Config.3*
+%{_mandir}/man3/Log::Message::Handlers.3*
+%{_mandir}/man3/Log::Message::Item.3*
+
+%files Log-Message-Simple
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/Log/Message/Simple.pm
+%{_mandir}/man3/Log::Message::Simple.3*
+
+%files Module-Build
+%defattr(-,root,root,-)
+%{_bindir}/config_data
+%{_prefix}/lib/perl5/%{perl_version}/Module/Build/
+%{_prefix}/lib/perl5/%{perl_version}/Module/Build.pm
+%{_mandir}/man1/config_data.1*
+%{_mandir}/man3/Module::Build*
+
+%files Module-CoreList
+%defattr(-,root,root,-)
+%{_bindir}/corelist
+%{_prefix}/lib/perl5/%{perl_version}/Module/CoreList.pm
+%{_mandir}/man1/corelist*
+%{_mandir}/man3/Module::CoreList*
+
+%files Module-Load
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/Module/Load.pm
+%{_mandir}/man3/Module::Load.*
+
+%files Module-Load-Conditional
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/Module/Load/
+%{_mandir}/man3/Module::Load::Conditional* 
+
+%files Module-Loaded
+%defattr(-,root,root,-)
+%dir %{_prefix}/lib/perl5/%{perl_version}/Module/
+%{_prefix}/lib/perl5/%{perl_version}/Module/Loaded.pm
+%{_mandir}/man3/Module::Loaded*
+
+%files Module-Pluggable
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/Devel/InnerPackage.pm
+%{_prefix}/lib/perl5/%{perl_version}/Module/Pluggable/
+%{_prefix}/lib/perl5/%{perl_version}/Module/Pluggable.pm
+%{_mandir}/man3/Devel::InnerPackage*
+%{_mandir}/man3/Module::Pluggable*
+
+%files Object-Accessor
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/Object/
+%{_mandir}/man3/Object::Accessor*
+
+%files Package-Constants
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/Package/
+%{_mandir}/man3/Package::Constants*
+
+%files Params-Check
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/Params/
+%{_mandir}/man3/Params::Check*
+
+%files Pod-Escapes
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/Pod/Escapes.pm
+%{_mandir}/man3/Pod::Escapes.*
+
+%files Pod-Simple
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/Pod/Simple/ 
+%{_prefix}/lib/perl5/%{perl_version}/Pod/Simple.pm
+%{_prefix}/lib/perl5/%{perl_version}/Pod/Simple.pod
+%{_mandir}/man3/Pod::Simple*
+
+%files Term-UI
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/Term/UI/
+%{_prefix}/lib/perl5/%{perl_version}/Term/UI.pm
+%{_mandir}/man3/Term::UI*
 
 %files Test-Harness
 %defattr(-,root,root,-)
@@ -793,704 +1526,32 @@ make test
 %{_mandir}/man3/Test::Simple*
 %{_mandir}/man3/Test::Tutorial*
 
+%files Time-Piece
+%defattr(-,root,root,-)
+%{_libdir}/perl5/%{version}/%{perl_archname}/Time/Piece.pm 
+%{_libdir}/perl5/%{version}/%{perl_archname}/Time/Seconds.pm
+%{_libdir}/perl5/%{version}/%{perl_archname}/auto/Time/Piece/        
+%{_mandir}/man3/Time::Piece.3*
+%{_mandir}/man3/Time::Seconds.3*
+
+%files version
+%defattr(-,root,root,-)
+%{_prefix}/lib/perl5/%{perl_version}/version.pm
+%{_prefix}/lib/perl5/%{perl_version}/version.pod
+%{_mandir}/man3/version.*
+
 %files core
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
+# Old changelog entries are preserved in CVS.
 %changelog
-* Mon Nov 26 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-32
-- break dep loop, fix bugzilla 397881
+* Tue Jan 8 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-1
+- 5.10.0 final
+- clear out all the unnecessary patches (down to 8 patches!)
+- get rid of super perl debugging mode
+- add new subpackages
 
-* Mon Nov 12 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-31
-- fix for CVE-2007-5116
+* Thu Nov 29 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.10.0_RC2-0.1
+- first attempt at building 5.10.0
 
-* Thu Oct 18 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-30
-- patch from perl bug 24254, fix for RH bz 114271
 
-* Tue Oct 16 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-29
-- Add Artistic, AUTHORS, and Changes* to %%docs.
-- Compress Changes* to save space.
-
-* Tue Oct 15 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-28.4
-- Require db4, not db4-devel. -EIDIOT
-
-* Mon Oct 15 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-28.3
-- add versioned Requires for db4-devel that we built against (resolves 144672)
-
-* Mon Oct 15 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-28.2
-- bump again for db4 version increase
-
-* Mon Oct  1 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-28
-- update DB_File to 1.815
-
-* Fri Aug 24 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-27
-- Add back the filtering of depends, it _is_ needed; make it more robust.
-
-* Tue Aug 21 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-26
-- Remove filter-depends.sh, it's no longer used.
-
-* Sat Aug 18 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-25
-- Remove unnnecessary parens from the License tags.
-
-* Sat Aug 18 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-24
-- Fix the License: tags.
-
-* Fri Aug 17 2007 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-23
-- perl rpm requires the corresponding version of perl-libs rpm
-- Resolves: rhbz#240540
-
-* Tue Jul 24 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-22
-- Resolves: rhbz#247386
-- Use getcwd() instead of cwd() in File::Spec::Unix to avoid forking.
-- Apply patch to skip hostname tests, since hostname lookup isn't
-  available in Fedora buildroots by design.
-
-* Mon Jul  2 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-21
-- perl-core metapackage
-
-* Fri Jun 22 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-20
-- Resolves: rhbz#196836
-- Apply upstream patch #28775, which fixes an issue where reblessing
-  overloaded objects incurs significant performance penalty
-
-* Fri Jun  1 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-19
-- Remove artificial Requires from perl-devel
-
-* Wed May 16 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-18
-- Have perl-devel Require the other development/build related modules for simplicity.
-
-* Fri May  4 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-17
-- Includes patch from Ralf Corsepius to split out some more perl modules.
-- Further split out development related perl modules.
-- Remove Requires: perl-devel from perl
-- Move libperl.so -> perl-libs
-- Patch39 to disable test_hosts in Net::Config
-
-* Fri Mar  9 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-15
-- Incorporate fixes from spot and others on fedora-perl-devel
-- The main perl package will temporarily Require perl-devel
-- move ExtUtils::MakeMaker, ExtUtils::Embed, CPAN, Test::Harness into devel
-- also move perlcc, perlivp, h2xs, libnetcfg to devel
-
-* Tue Feb 27 2007 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-14
-- Add a description for most of the patches, to reflect Spot's work to
-  report said patches upstream.
-
-* Sat Feb  3 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-13
-- massive cleanups
-
-* Wed Jan 24 2007 Jindrich Novy <jnovy@redhat.com> - 4:5.8.8-12
-- put dist tag directly to perlrel to fix dependency to suidperl
-
-* Tue Jan 23 2007 Jindrich Novy <jnovy@redhat.com> - 4:5.8.8-11
-- rebuild against new db4
-- use dist tag
-
-* Sat Sep 30 2006 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-10
-- bugzilla: 208731 - remove directory support for old perl versions
-
-* Fri Sep 15 2006 Robin Norwood <rnorwood@redhat.com> - 4:5.8.8-9
-- fix bug 204679: add Unicode 5.0.0 support
-
-* Fri Jul 21 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-8
-- fix bug 199736: make perlcc handle floating point values
-
-* Wed Jul 19 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-8
-- fix bug 199372: add .so cflags for sparc64
-
-* Fri Jul 14 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-8
-- Fix upstream perl bug #34297:
-  'utf8 overload stringify bug (utf8 caching maybe)'
-  upstream patch #28006 applied
-
-* Wed Jul 12 2006 Jesse Keating <jkeating@redhat.com> - 4:5.8.8-6.1
-- rebuild
-
-* Thu Jun 01 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-6
-- Fix upstream perl bug #38454:
-  'rindex corrects for $[ on bytes rather than UTF-8'
-  apply upstream patch #27116
-- Fix upstream perl bug 24816:
-  'Magic vars seem unsure if they are purely numeric' 
-  ( perl -wle 'print $? = $? ^ "3"' -> 'Argument "^C" isn't numeric' )
-  apply upstream patch #27391
-- Avoid writing over the input string in the case 'F' in moreswitches.
-  apply upstream patch #27426
-- Fix upstream perl bug 34925 - 'overload and rebless' -
-  apply upstream patches #27509, #27512
-- Fix upstream perl bug 3038 - '$qr = qr/^a$/m; $x =~ $qr; fails'
-  apply upstream patch #27604
-- apply upstream patch #27605 - 'Fix off-by-one in $0 set magic.'
-- Fix upstream perl bug 23141 - '($_) = () fails to set $_ to undef'
-  apply upstream patch #27914
-- Fix upstream perl bug #38619 - 
-  'Bug in lc and uc (interaction between UTF-8, substr, and lc/uc)'
-  apply upstream patch #27329
-- Give users the '-R' option to disable the Red Hat
-  module compatibility default search path extension (incpush.patch).
-
-* Thu May 11 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-6
-- Fix bug 191416: make h2ph generate correct code for cpp statements
-  like: '#if defined A || defined B'
-- Fix 172396.patch for non-threaded builds
-
-* Wed Apr 12 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-6
-- Fix bug 188841: make CGI.pm's url(-relative) handle rewrites
-
-* Tue Mar 01 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-4
-- Fix bug 183553 / upstream bug 38657: fix -d:Foo=bar processing
-- rebuild with new gcc-4.1.0-1, released today
-
-* Mon Feb 27 2006 Jason Vas Dias <jvdias@redhat.com>
-- Apply upstream patch #28284
-
-* Mon Feb 13 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-3
-- Apply upstream bugfix patch 27170
-
-* Fri Feb 10 2006 Jesse Keating <jkeating@redhat.com> - 4:5.8.8-2.1
-- bump again for double-long bug on ppc(64)
-
-* Fri Feb 10 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-2
-- Rebuild again
-- Debian released 5.8.8 patches today; apply only relevant difference:
-  03_fix_net_nntp : fix precedence in Net::NNTP::article 
-                    from Brendan O'Dea<bod@debian.org>
-
-* Mon Feb 06 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-1.2
-- Rebuild with new gcc, glibc, and glibc-kernheaders
-
-* Fri Feb 03 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-1.1
-- Rebuild with new gcc and glibc
-
-* Wed Feb 01 2006 Jason Vas Dias <jvdias@redhat.com> - 4:5.8.8-1
-- Upgrade to new upstream release 5.8.8, officially released today
-
-* Tue Jan 31 2006 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.8-0.1_RC1
-- fix bug 178343: h2ph must include cpp "predefined macros" in _h2ph_pre.ph
-- Add perl(:MODULE_COMPAT_5.8.8) to Provides
-- Fix perlbug patch
-
-* Fri Jan 20 2006 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.8-0_RC1
-- Upgrade to new upstream release candidate 5.8.8-RC1
-
-* Wed Dec 14 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-8.1
-- Updated upstream patches for CVE-2005-3962: 26322 , 26331, 26333
-
-* Thu Dec 08 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-8
-- Apply upstream patches 26283 and 26284 : complete, revised fixes
-  for CVE-2005-3962 and CVE-2005-3912 and 
-  "Sys::Syslog security vulnerabilities" issues.
-- Fix bug 136009 / MakeMaker LD_RUN_PATH issue: 
-  restore previous default Red Hat behavior of removing the MakeMaker
-  generated LD_RUN_PATH setting from the link command .
-  Document this removal, as it contravenes upstream default behavior, and 
-  provide a USE_MM_LD_RUN_PATH MakeMaker member to enable use of the 
-  MakeMaker generated LD_RUN_PATH .
-
-* Thu Dec 01 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.8
-- fix bug 174684 / CVE-2005-3962: sprintf integer overflow vulnerability
-  backport upstream patch #26240
-
-* Wed Nov 09 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.7
-- fix bug 136009: restore MakeMaker support for LD_RUN_PATH, 
-  while removing empty LD_RUN_PATH
-
-* Tue Nov 08 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.7
-- fix bug 172739: upstream bug 36521 : deep recursion and segfault
-  in CGI::Carp::warn with 'use diagnostics' : applied patch 25160.
-- fix CAN-2004-0976: insecure use of temp files (ala Debian)
-
-* Mon Nov 07 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.7
-- fix bug 172587: apply upstream patches 26009, 26011
-
-* Thu Nov 03 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.7
-- fix bug 172396 / upstream bug 26136: insert tzset() call before localtime_r() calls
-
-* Wed Nov 02 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.7
-- fix bug 172336 / upstream bug 37056: reentr ERANGE realloc recursion
-
-* Tue Nov 01 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.7
-- fix bug 172236 : missing C standard headers -
-  use gcc4's '-print-search-path' option in h2ph
-
-* Tue Oct 25 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.7-0.6
-- fix bug 171111 : define ioctl length macro IOCPARM_LEN(x)
-  macro to be _IOC_SIZE(x), not 256 - upstream bug #37535 raised.
-- provide 'perl_debugging' .spec file option to enable -DDEBUGGING
-  and disable stripping / debuginfo generation - default: 0
-
-* Sun Oct 09 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.7-0.4
-- rebuild for db4 (#170235)
-
-* Mon Sep 05 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.7-0.3
-- convert docs to UTF-8 (#140871)
-
-* Sat Sep 03 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.7-0.2
-- scriptdir to /usr/bin (#167205)
-
-* Sun Aug 28 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.7-0.1
-- patch12 from Marius Feraru (#165907)
-  TODO: patch11, patch26 and patch27 clash and need verification
-- Build without -DDEBUGGING (#156113)
-
-* Sun Aug 14 2005 Jose Pedro Oliveira <jpo at di.uminho.pt> - 3:5.8.7-0
-- 5.8.7
-- Dropped the CGI.pm update patches (patch25 and patch29).
-
-* Fri Aug 12 2005 Jose Pedro Oliveira <jpo at di.uminho.pt> - 3:5.8.6-17
-- Don't remove the core modules:
-    Filter::Util::Call, Filter::Simple, and Time::HiRes.
-- Obsoletes perl-{Filter,Filter-Simple,Time-HiRes}.
-
-* Tue Aug  9 2005 Jose Pedro Oliveira <jpo at di.uminho.pt> - 3:5.8.6-16
-- Reformatted the specfile.
-- Added the Source0 URL.
-- Dropped the MANIFEST.all file for the perl package.
-- Dropped the MANIFEST.suidperl file for the suidperl subpackage.
-
-* Wed May 18 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.6-15
-- remove unused /tmp/MANIFEST.all (#151801)
-
-* Tue May 17 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.6-14
-- CGI.pm 3.10 fixes mod_perl problems (#158036)
-
-* Sun May 15 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.6-13
-- Better patch for FindBin.pm (#127023#c37)
-
-* Sat May 14 2005 Jose Pedro Oliveira <jpo at di.uminho.pt> - 3:5.8.6-12
-- New findbin-selinux patch: it now passes the FindBin.t tests
-  (patch28 replaces patch23). #118877 #127023
-- Remove 5.8.2 ABI compat (#154295 comments 6 and 7).
-
-* Thu Apr 28 2005 Ville Skyttä <ville.skytta at iki.fi> - 3:5.8.6-10
-- Apply fixes for CAN-2004-0452, CAN-2005-0155 and CAN-2005-0156 (#156128).
-
-* Tue Apr 26 2005 Warren Togami <wtogami@redhat.com. - 3:5.8.6-8
-- -Dinstallusrbinperl=n (#141182 Aaron Sherman)
-- remove 5.8.0 and 5.8.1 ABI compat (#154295)
-
-* Sun Apr 24 2005 Jose Pedro Oliveira <jpo at di.uminho.pt> - 3:5.8.6-7
-- Updating CGI.pm from version 3.05 to 3.08 (mod_perl 2.0.0 RC5). (#155839)
-
-* Wed Apr 20 2005 Jose Pedro Oliveira <jpo at di.uminho.pt> - 3:5.8.6-6
-- FCGI is not provided by perl (#148847).
-- Drop the '.1' suffix from the perl-suidperl subpackage.
-
-* Thu Mar 17 2005 Jason Vas Dias <jvdias@redhat.com> - 3:5.8.6-5
-- bug 151127: fix to use libresolv instead of libbind (perl-5.8.6-libresolv.patch).
-
-* Tue Mar  8 2005 Chip Turner <cturner@redhat.com> - 3:5.8.6-4
-- add patch to put site_perl and vendor_perl before core perl dirs, to
-  allow for overriding modules
-
-* Sat Jan 29 2005 Warren Togami <wtogami@redhat.com> - 3:5.8.6-3
-- bugzilla: 127025, fix strip warnings
-
-* Tue Jan 18 2005 Chip Turner <cturner@redhat.com> - 3:5.8.6-2
-- bugzilla: 145448, fix invalid utf8 in changelog
-
-* Tue Jan 18 2005 Chip Turner <cturner@redhat.com> - 3:5.8.6-1
-- bugzilla: 145447, add 5.8.5 to perlmodcompat list
-
-* Mon Jan 17 2005 Chip Turner <cturner@redhat.com> - 3:5.8.6-1
-- update to 5.8.6
-
-* Wed Dec  1 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-13
-- rebuild
-
-* Wed Dec  1 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-11
-- bugzilla: 140563, nptl doesn't act like linuxthreads; threads have no PIDs
-
-* Thu Nov 11 2004 Jeff Johnson <jbj@jbj.org> 3:5.8.5-10
-- rebuild against db-4.3.21.
-
-* Tue Oct 12 2004 Jose Pedro Oliveira <jpo@di.uminho.pt>
-- Corrected the license information (missing GPL).
-- Added the URL tag.
-- Removed empty .bs files.
-- Eliminated several strip generated messages (bug 127025).
-- Corrected problems mentioned in bug 120772
-  (updated Ville Skytta)
-
-* Tue Oct 12 2004 Chip Turner <cturner@redhat.com>
-- bugzilla: 135303, add more missing 5.8.4 paths
-
-* Mon Oct 11 2004 Tim Waugh <twaugh@redhat.com>
-- Build requires groff (bug #135101).
-
-* Tue Oct  5 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-7
-- update perlbug patch to strip build date as well
-
-* Mon Aug 23 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-2
-- fix conflicting file when building on x86_64 and i386
-
-* Sat Jul 24 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-1
-- Add Provides: Carp::Heavy to fix new dep error (bz 128507)
-
-* Thu Jul 22 2004 Chip Turner <cturner@redhat.com> 3:5.8.5-1
-- update to 5.8.5
-
-* Mon Jun 28 2004 Chip Turner <cturner@redhat.com> 3:5.8.4-1
-- update to 5.8.4, remove patch 8
-
-* Tue Jun 15 2004 Elliot Lee <sopwith@redhat.com>
-- rebuilt
-
-* Thu Apr 15 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-18
-- add patch to fix empty RPATH issue on perl module compile
-
-* Sat Apr 03 2004 Colin Walters <walters@redhat.com> 3:5.8.3-17
-- Apply patch to fix FindBin module when access to cwd is disallowed,
-  should solve the MRTG/SELinux cron spam issue
-
-* Tue Mar 23 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-14
-- make sure multilib boxes also own the entries in @INC that are in /usr/lib, not just %%_libdir
-
-* Tue Mar  9 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-%%{perlrel}.1
-- fix i386-specifics in %%install to arch generic
-
-* Tue Mar 02 2004 Elliot Lee <sopwith@redhat.com>
-- rebuilt
-
-* Wed Feb 25 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-10
-- add perl(:MODULE_COMPAT_*) provides; make sure all of @INC is owned by perl package
-
-* Thu Feb 19 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-8
-- rebuild
-
-* Thu Feb 19 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-7.9.rhl9
-- rebuild
-
- patch for perl 5.8.4).
-
-* Thu Feb 19 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-7.10.fc1
-- rebuild
-
-* Sun Feb 15 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-6
-- fix very broken @INC calculations with slightly less broken @INC
-  calculations (not perfectly handled but the result is correct)
-- fix broken -Dsitearch declaration
-
-* Fri Feb 13 2004 Elliot Lee <sopwith@redhat.com>
-- rebuilt
-
-* Wed Jan 28 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-5
-- update incpush patch to better handle multilib
-
-* Fri Jan 23 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-2
-- add a dependency filter on perl(Tie::RangeHash)
-
-* Thu Jan 22 2004 Chip Turner <cturner@redhat.com> 3:5.8.3-7
-- upgrade to 5.8.3
-
-* Mon Dec 15 2003 Chip Turner <cturner@redhat.com> 3:5.8.2-7
-- fix @INC so that all dirs go into it, not just those that exist at buildtime in the build system
-
-* Sat Dec 13 2003 Jeff Johnson <jbj@jbj.org> 3:5.8.2-4
-- rebuild against db-4.2.52.
-
-* Sun Dec  7 2003 Ville Skyttä <ville.skytta at iki.fi> - 3:5.8.2-3
-- Own site and vendor auto directories (#73970).
-
-* Wed Dec  3 2003 Chip Turner <cturner@redhat.com> 3:5.8.2-2
-- upgrade to 5.8.2
-
-* Fri Oct 31 2003 Chip Turner <cturner@redhat.com> 3:5.8.1-92
-- remove Vendor and Distribution macros from specfile (#108567)
-
-* Wed Oct 15 2003 Chip Turner <cturner@redhat.com> 3:5.8.1-92
-- add srand on fork patch from upstream, as well as test case
-
-* Mon Oct 13 2003 Jeff Johnson <jbj@jbj.org> 3:5.8.1-91.1
-- rebuild against db-4.2.42.
-
-* Thu Sep 25 2003 Chip Turner <cturner@redhat.com> 3:5.8.1-91
-- perl 5.8.1 final
-
-* Mon Sep 22 2003 Chip Turner <cturner@redhat.com> 3:5.8.1-90.rc5.3
-- ensure inc_version_list is always set properly
-
-* Mon Sep 22 2003 Chip Turner <cturner@redhat.com>
-- update to RC5
-
-* Wed Aug 20 2003 Chip Turner <cturner@redhat.com> 3:5.8.1-90.rc4.2
-- rebuild
-
-* Wed Aug  6 2003 Chip Turner <cturner@redhat.com>
-- bugzilla 101767, make sure threads.so links directly to -lpthread
-
-* Fri Aug  1 2003 Chip Turner <cturner@redhat.com> 3:5.8.1-90.rc2.1
-- RC4
-- remove perl-5.8.0-fhs.patch since it is integrated now
-- remove perl-5.8.0-Safe2.09.patch, unnecessary now
-
-* Fri Jul 11 2003 Chip Turner <cturner@redhat.com> 3:5.8.1-90.rc2.1
-- rc2 snapshot
-
-* Thu Jul 10 2003 Chip Turner <cturner@redhat.com> 3:5.8.0-90.rc1
-- upgrade to 5.8.1 RC1
-
-* Mon Jul  7 2003 Chip Turner <cturner@redhat.com> 3:5.8.0-89.pre%%{PRELEVEL}.0
-- integrate another pre-5.8.1 release
-
-* Wed Jun 04 2003 Elliot Lee <sopwith@redhat.com>
-- rebuilt
-
-* Mon May 19 2003 Chip Turner <cturner@redhat.com> 3:5.8.0-89.pre%%{PRELEVEL}.0
-- bump epoch since we went from perl 5.8.1-pre to 5.8.0-pre (ie,
-  changed what version perl thought of itself as)
-
-* Mon May  5 2003 Chip Turner <cturner@redhat.com> 2:5.8.1-0.pre%%{PRELEVEL}.3
-- rebuild
-
-* Thu May  1 2003 Chip Turner <cturner@redhat.com>
-- bump for rebuilg
-
-* Sun Apr 27 2003 Chip Turner <cturner@redhat.com> 2:5.8.1-0.pre%%{PRELEVEL}.1
-- fix the fix for RPM_BUILD_ROOT substitution
-
-* Tue Apr 22 2003 Chip Turner <cturner@redhat.com> 2:5.8.1-0.pre%%{PRELEVEL}.3
-- fix Config.pm; lost when h2ph changes made
-
-* Thu Apr 17 2003 Chip Turner <cturner@redhat.com> 2:5.8.1-0.pre%%{PRELEVEL}
-- move to latest snapshot, 19261
-
-* Tue Feb 18 2003 Chip Turner <cturner@redhat.com>
-- fix MANIFEST.DB_File handling for #83410; problem was unsubstituted
-  %%{_libdir} that crept in with multilib
-
-* Tue Feb 18 2003 Bill Nottingham <notting@redhat.com> 5.8.0-87
-- clean up backup files from patches (#82838)
-
-* Wed Feb 05 2003 Elliot Lee <sopwith@redhat.com> 5.8.0-86
-- Fix up multilib handling to use multilib_64_archs macro, add ppc64.
-- Patch100 probably makes sense on all archs, and ifarch'd patches are Bad(tm).
-
-* Mon Jan 27 2003 Chip Turner <cturner@redhat.com>
-- version the Obsoleted on perl-NDBM_File so users can install newer
-- change the Obsoletes on NDBM_File to a Conflicts
-  ones than what shipped with 7.3, yet still keep anaconda happy
-
-* Wed Jan 22 2003 Tim Powers <timp@redhat.com>
-- rebuilt
-
-* Thu Jan  9 2003 Chip Turner <cturner@redhat.com>
-- rebuild
-
-* Sat Jan  4 2003 Jeff Johnson <jbj@redhat.com> 5.8.0-82
-- use internal dep generator.
-
-* Thu Jan  2 2003 Chip Turner <cturner@redhat.com>
-- fix issue with -Dpager in Pod::Perldoc.pm to properly respect setting once more
-
-* Tue Dec 31 2002 Chip Turner <cturner@redhat.com>
-- add rpath fix to prevent building perl from using installed system perl
-- massive re-integration of upstream patches to come to common basis (head of perl-maint branch)
-
-* Mon Dec 16 2002 Chip Turner <cturner@redhat.com>
-- rebuild
-
-* Sun Dec 15 2002 Chip Turner <cturner@redhat.com>
-- add numerous upstream patches to fix utf8/perlio issues
-- upgrade Storable, Safe, and Encoding to latest CPAN versions
-
-* Thu Nov  7 2002 Chip Turner <cturner@redhat.com>
-- multilib support when building noarch perl modules
-- integrate upstream bugfix patches
-
-* Tue Sep 10 2002 Chip Turner <cturner@redhat.com>
-- integrate patch for /usr/lib64 instead of /usr/lib from Than Ngo
-
-* Mon Sep  9 2002 Chip Turner <cturner@redhat.com>
-- integrate s390/s390x patch from Florian La Roche
-
-* Sun Sep  1 2002 Chip Turner <cturner@redhat.com>
-- fix pager issues; default to /usr/bin/less -isr
-- more work on pager bug (72125)
-
-* Thu Aug 29 2002 Chip Turner <cturner@redhat.com>
-- add a few new directories to h2ph to produce better .ph files
-
-* Thu Aug 15 2002 Chip Turner <cturner@redhat.com>
-- change from lynx to links in CPAN.pm
-
-* Tue Aug  6 2002 Chip Turner <cturner@redhat.com>
-- automated release bump and build
-- remove Filter packages and use CPAN ones
-
-* Fri Jul 19 2002 Chip Turner <cturner@redhat.com>
-- move to final perl 5.8.0, huzzah!
-
-* Tue Jul 16 2002 Chip Turner <cturner@redhat.com>
-- update CPAN, CGI, and DB_File versions; obsolete perl-libnet
-- libnet.cfg supplied, default to passive ftp in all cases
-
-* Tue Jun 18 2002 Chip Turner <cturner@redhat.com>
-- add patch to ensire libperl.so is linked properly
-
-* Mon May 20 2002 Nalin Dahyabhai <nalin@redhat.com>
-- always build with -fPIC
-
-* Thu May  9 2002 Jeff Johnson <jbj@redhat.com>
-- rebuild in rawhide
-
-* Sun Mar 31 2002 Chip Turner <cturner@redhat.com>
-- split suidperl back out (bug #62215)
-
-* Tue Mar 26 2002 Chip Turner <cturner@redhat.com>
-- restructuring of some directories, alteration of @INC
-
-* Thu Dec 20 2001 Chip Turner <cturner@redhat.com>
-- remove ndbm completely
-
-* Sun Dec 16 2001 Chip Turner <cturner@redhat.com>
-- make rpmlint happy, split out NDBM_File, clean up other spots
-- stopped doing grep -v etc in favor of custom script
-
-* Wed Dec 12 2001 Chip Turner <cturner@redhat.com>
-- cleaning up of ia64 issues, as well as compatibility with gcc 3.1
-  and glibc 2.2.4
-
-* Mon Sep 24 2001 Chip Turner <cturner@redhat.com>
-- changing building of extra modules out of the core perl rpm
-
-* Mon Sep 17 2001 Chip Turner <cturner@redhat.com>
-- upgrade to 5.6.1, added old INC dirs to maintain compat
-
-* Fri Mar 23 2001 Preston Brown <pbrown@redhat.com>
-- bzip2 source, save some space.
-
-* Thu Dec  7 2000 Crutcher Dunnavant <crutcher@redhat.com>
-- initial rebuild for 7.1
-
-* Tue Sep 12 2000 Bill Nottingham <notting@redhat.com>
-- fix dependencies on ia64/sparc64
-
-* Mon Aug  7 2000 Nalin Dahyabhai <nalin@redhat.com>
-- replace the deprecated MD5 with Digest::MD5 (has to be here for cleanfeed)
-- obsolete: perl-Digest-MD5
-- use syslog instead of mail to report possible attempts to break into suidperl
-- force syslog on at build-time
-
-* Mon Jul 31 2000 Nalin Dahyabhai <nalin@redhat.com>
-- add Owen's fix for #14779/#14863
-- specify cc=%%{__cc}; continue to let cpp sort itself out
-- switch shadow support on (#8646)
-- release 7
-
-* Tue Jul 18 2000 Nalin Dahyabhai <nalin@redhat.com>
-- strip buildroot from perl pods (#14040)
-- release 6
-
-* Wed Jul 12 2000 Prospector <bugzilla@redhat.com>
-- automatic rebuild (release 5)
-
-* Wed Jun 21 2000 Preston Brown <pbrown@redhat.com>
-- don't require tcsh to install, only to build
-- release 4
-
-* Mon Jun 19 2000 Nalin Dahyabhai <nalin@redhat.com>
-- rebuild against new db3 package
-- release 3
-
-* Sat Jun 17 2000 Nalin Dahyabhai <nalin@redhat.com>
-- disable 64-bit file support
-- change name of package that Perl expects gcc to be in from "egcs" to "gcc"
-- move man pages to /usr/share via hints/linux.sh and MM_Unix.pm
-- fix problems prefixifying with empty prefixes
-- disable long doubles on sparc (they're the same as doubles anyway)
-- add an Epoch to make sure we can upgrade from perl-5.00503
-- release 2
-
-* Thu Mar 23 2000 Bernhard Rosenkraenzer <bero@redhat.com>
-- 2.6.0
-
-* Wed Feb 02 2000 Cristian Gafton <gafton@redhat.com>
-- fix description
-
-* Fri Jan 14 2000 Jeff Johnson <jbj@redhat.com>
-- add provides for perl modules (from kestes@staff.mail.com).
-
-* Mon Oct 04 1999 Cristian Gafton <gafton@redhat.com>
-- fix the %%install so that the MD5 module gets actually installed correctly
-
-* Mon Aug 30 1999 Cristian Gafton <gafton@redhat.com>
-- make sure the package builds even when we don't have perl installed on the
-  system
-
-* Fri Aug 06 1999 Cristian Gafton <gafton@redhat.com>
-- merged with perl-MD5
-- get rid of the annoying $RPM_BUILD_ROOT paths in the installed tree
-
-* Mon Jul 26 1999 Cristian Gafton <gafton@redhat.com>
-- do not link anymore against the system db library (and make each module
-  link against it separately, so that we can have Berkeley db1 and db2 mixed
-  up)
-
-* Wed Jun 16 1999 Cristian Gafton <gafton@redhat.com>
-- use wildcards for files in /usr/bin and /usr/man
-
-* Tue Apr 06 1999 Cristian Gafton <gafton@redhat.com>
-- version 5.00503
-- make the default man3 install dir be release independent
-- try to link against db1 to preserve compatibility with older databases;
-  abandoned idea because perl is too broken to allow such an easy change
-  (hardcoded names *everywhere* !!!)
-
-* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com> 
-- auto rebuild in the new build environment (release 3)
-
-* Thu Jan 07 1999 Cristian Gafton <gafton@redhat.com>
-- guilty of the inlined Makefile in the spec file
-- adapted for the arm build
-
-* Wed Sep 09 1998 Preston Brown <pbrown@redhat.com>
-- added newer CGI.pm to the build
-- changed the version naming scheme around to work with RPM
-
-* Sun Jul 19 1998 Jeff Johnson <jbj@redhat.com>
-- attempt to generate *.ph files reproducibly
-
-* Mon Jun 15 1998 Jeff Johnson <jbj@redhat.com>
-- update to 5.004_04-m4 (pre-5.005 maintenance release)
-
-* Tue Jun 12 1998 Christopher McCrory <chrismcc@netus.com
-- need stdarg.h from gcc shadow to fix "use Sys::Syslog" (problem #635)
-
-* Fri May 08 1998 Cristian Gafton <gafton@redhat.com>
-- added a patch to correct the .ph constructs unless defined (foo) to read
-  unless(defined(foo))
-
-* Thu May 07 1998 Prospector System <bugs@redhat.com>
-- translations modified for de, fr, tr
-
-* Tue Mar 10 1998 Cristian Gafton <gafton@redhat.com>
-- fixed strftime problem
-
-* Sun Mar 08 1998 Cristian Gafton <gafton@redhat.com>
-- added a patch to fix a security race
-- do not use setres[ug]id - those are not implemented on 2.0.3x kernels
-
-* Mon Mar 02 1998 Cristian Gafton <gafton@redhat.com>
-- upgraded to 5.004_04 - 5.004_01 had some nasty memory leaks.
-- fixed the spec file to be version-independent
-
-* Fri Dec 05 1997 Erik Troan <ewt@redhat.com>
-- Config.pm wasn't right do to the builtrooting
-
-* Mon Oct 20 1997 Erik Troan <ewt@redhat.com>
-- fixed arch-specfic part of spec file
-
-* Sun Oct 19 1997 Erik Troan <ewt@redhat.com>
-- updated to perl 5.004_01
-- users a build root
-
-* Thu Jun 12 1997 Erik Troan <ewt@redhat.com>
-- built against glibc
-
-* Tue Apr 22 1997 Erik Troan <ewt@redhat.com>
-- Incorporated security patch from Chip Salzenberg <salzench@nielsenmedia.com>
-
-* Fri Feb 07 1997 Erik Troan <ewt@redhat.com>
-- Use -Darchname=i386-linux 
-- Require csh (for glob)
-- Use RPM_ARCH during configuration and installation for arch independence
