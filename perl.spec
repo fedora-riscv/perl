@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        2%{?dist}
+Release:        3%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -53,6 +53,9 @@ Patch7:        perl-5.10.0-USE_MM_LD_RUN_PATH.patch
 # Skip hostname tests, since hostname lookup isn't available in Fedora
 # buildroots by design.
 Patch8:        perl-5.10.0-disable_test_hosts.patch
+
+# Bump Sys::Syslog to 0.24 to fix test failure case
+Patch9:        perl-5.10.0-SysSyslog-0.24.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -763,6 +766,7 @@ upstream tarball from perl.org.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1548,6 +1552,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jan 10 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-3
+- Update Sys::Syslog to 0.24, to fix test failures
+
 * Wed Jan 9 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-2
 - add some BR for tests
 
