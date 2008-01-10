@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -57,6 +57,9 @@ Patch8:        perl-5.10.0-disable_test_hosts.patch
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel, zlib-devel
+# For tests
+BuildRequires:  procps, rsyslog
+
 # Temporary fix for broken buildroots:
 BuildRequires:  gawk
 
@@ -1545,6 +1548,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jan 9 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-2
+- add some BR for tests
+
 * Tue Jan 8 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-1
 - 5.10.0 final
 - clear out all the unnecessary patches (down to 8 patches!)
