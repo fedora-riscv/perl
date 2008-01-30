@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        3%{?dist}
+Release:        4%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -883,6 +883,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{perl_version}
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/site_perl/%{perl_version}
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}
+mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/auto
 %endif
 
 %ifarch %{multilib_64_archs}
@@ -1552,6 +1553,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jan 30 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-4
+- create %{_prefix}/lib/perl5/vendor_perl/%{perl_version}/auto and own it
+  in base perl (resolves bugzilla 214580)
+
 * Thu Jan 10 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-3
 - Update Sys::Syslog to 0.24, to fix test failures
 
