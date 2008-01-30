@@ -1559,6 +1559,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jan 30 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-5
+- disable some futime tests in t/io/fs.t because they started failing on x86_64
+  in the Fedora builders, and no one can figure out why. :/
+
 * Wed Jan 30 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-4
 - create %{_prefix}/lib/perl5/vendor_perl/%{perl_version}/auto and own it
   in base perl (resolves bugzilla 214580)
