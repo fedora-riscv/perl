@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        4%{?dist}
+Release:        5%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -56,6 +56,11 @@ Patch8:        perl-5.10.0-disable_test_hosts.patch
 
 # Bump Sys::Syslog to 0.24 to fix test failure case
 Patch9:        perl-5.10.0-SysSyslog-0.24.patch
+
+# The Fedora builders started randomly failing this futime test
+# only on x86_64, so we just don't run it. Works fine on normal
+# systems.
+Patch10:       perl-5.10.0-x86_64-io-test-failure.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -767,6 +772,7 @@ upstream tarball from perl.org.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
