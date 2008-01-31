@@ -24,7 +24,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        32%{?dist}
+Release:        33%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -503,6 +503,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{perl_version}
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/site_perl/%{perl_version}
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}
+mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/auto
 %endif
 
 %ifarch %{multilib_64_archs}
@@ -797,6 +798,10 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Thu Jan 31 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-33
+- create %{_prefix}/lib/perl5/vendor_perl/%{perl_version}/auto and own it
+  in base perl (resolves bugzilla 214580)
+
 * Mon Nov 26 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-32
 - break dep loop, fix bugzilla 397881
 
