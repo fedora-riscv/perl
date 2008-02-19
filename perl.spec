@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        5%{?dist}
+Release:        6%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -1559,6 +1559,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Feb 19 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 4:5.10.0-6
+- Autorebuild for GCC 4.3
+
 * Wed Jan 30 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-5
 - disable some futime tests in t/io/fs.t because they started failing on x86_64
   in the Fedora builders, and no one can figure out why. :/
