@@ -24,7 +24,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        33%{?dist}
+Release:        34%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -196,10 +196,14 @@ Provides: perl(Carp::Heavy)
 # Versioned Provides for our Obsoletes
 Provides: perl-Filter-Simple = 0.82
 Provides: perl-Time-HiRes = 1.86
+Provides: perl-File-Temp = 0.16
 
 # Last seen in Fedora Core 4
 Obsoletes: perl-Filter-Simple
 Obsoletes: perl-Time-HiRes
+
+# Long history in 3rd-party repositories:
+Obsoletes: perl-File-Temp
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires: db4 = %{db4_major}.%{db4_minor}.%{db4_patch}
@@ -798,6 +802,10 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Mon Feb 18 2008 Bill McGonigle <bill@bfccomputing.com> - 4:5.8.8-34
+- add perl-File-Temp provides/obsolete
+- Resolves: rhbz#433836
+
 * Thu Jan 31 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-33
 - create %{_prefix}/lib/perl5/vendor_perl/%{perl_version}/auto and own it
   in base perl (resolves bugzilla 214580)
