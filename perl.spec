@@ -24,7 +24,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        34%{?dist}
+Release:        35%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -193,17 +193,17 @@ Provides: perl(timelocal.pl)
 Provides: perl(utf8_heavy.pl)
 Provides: perl(validate.pl)
 Provides: perl(Carp::Heavy)
-# Versioned Provides for our Obsoletes
-Provides: perl-Filter-Simple = 0.82
-Provides: perl-Time-HiRes = 1.86
-Provides: perl-File-Temp = 0.16
 
-# Last seen in Fedora Core 4
-Obsoletes: perl-Filter-Simple
-Obsoletes: perl-Time-HiRes
+# Versioned Provides for our Obsoletes (both last seen in Fedora Core 4)
+Provides: perl-Filter-Simple = 0.82
+Obsoletes: perl-Filter-Simple < 0.82
+Provides: perl-Time-HiRes = 1.86
+Obsoletes: perl-Time-HiRes < 1.86
 
 # Long history in 3rd-party repositories:
-Obsoletes: perl-File-Temp
+Provides: perl-File-Temp = 0.16
+Obsoletes: perl-File-Temp < 0.16
+Conflicts: perl-File-Temp
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires: db4 = %{db4_major}.%{db4_minor}.%{db4_patch}
@@ -802,12 +802,17 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Fri Feb 22 2008 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-35
+- make the obsoletes versioned
+- add conflict with any version of perl-File-Temp
+- escape the macros in Jan 31 entry
+
 * Mon Feb 18 2008 Bill McGonigle <bill@bfccomputing.com> - 4:5.8.8-34
 - add perl-File-Temp provides/obsolete
 - Resolves: rhbz#433836
 
 * Thu Jan 31 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-33
-- create %{_prefix}/lib/perl5/vendor_perl/%{perl_version}/auto and own it
+- create %%{_prefix}/lib/perl5/vendor_perl/%%{perl_version}/auto and own it
   in base perl (resolves bugzilla 214580)
 
 * Mon Nov 26 2007 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-32
