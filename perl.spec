@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        6%{?dist}
+Release:        7%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -125,6 +125,11 @@ Provides: perl(timelocal.pl)
 Provides: perl(utf8_heavy.pl)
 Provides: perl(validate.pl)
 Provides: perl(Carp::Heavy)
+
+# Long history in 3rd-party repositories:
+Provides: perl-File-Temp = 0.18
+Obsoletes: perl-File-Temp < 0.18
+Conflicts: perl-File-Temp
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires: db4 = %{db4_major}.%{db4_minor}.%{db4_patch}
@@ -1559,6 +1564,11 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Feb 22 2008 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-7
+- Add perl-File-Temp provides/obsoletes/conflicts (#433836),
+  reported by Bill McGonigle <bill@bfccomputing.com>
+- escape the macros in Jan 30 entry
+
 * Tue Feb 19 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 4:5.10.0-6
 - Autorebuild for GCC 4.3
 
@@ -1567,7 +1577,7 @@ make test
   in the Fedora builders, and no one can figure out why. :/
 
 * Wed Jan 30 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-4
-- create %{_prefix}/lib/perl5/vendor_perl/%{perl_version}/auto and own it
+- create %%{_prefix}/lib/perl5/vendor_perl/%%{perl_version}/auto and own it
   in base perl (resolves bugzilla 214580)
 
 * Thu Jan 10 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-3
