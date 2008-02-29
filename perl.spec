@@ -130,6 +130,10 @@ Patch43:	perl-5.8.8-bug24254.patch
 # Fix Bugzilla 378121 378131 378141 378151 (all the same bug, just one for each Fedora 
 # release), CVE-2007-5116
 Patch44:	perl-5.8.8-bz323571.patch
+# fix CGI failed upload rhbz#431774
+Patch45:	perl-5.8.8-rhbz#431774.patch
+# fix problem with update Scalar::Util with CPAN, "XS problem" -> 10bugs or so
+Patch46:	perl-5.8.8-Scalar-Util-19.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -402,6 +406,8 @@ upstream tarball from perl.org.
 %patch42 -p1
 %patch43 -p1
 %patch44 -p1
+%patch45 -p1
+%patch46 -p1
 #
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -802,7 +808,11 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
-* Fri Feb 22 2008 Stepan Kasal <skasal@redhat.com> - 4:5.8.8-35
+* Fri Feb 29 2008 Marcela Maslanova <mmaslano@redhat.com> - 4:5.8.8-35
+- upgrade Scalar::Util - possible fix for many bugs. Packages dependent on
+	this module could work even with use of CPAN modules.
+-
+- Fri Feb 22 2008 Stepan Kasal <skasal@redhat.com>
 - make the obsoletes versioned
 - add conflict with any version of perl-File-Temp
 - escape the macros in Jan 31 entry
