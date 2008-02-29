@@ -1,0 +1,12 @@
+diff -up perl-5.8.8/lib/CGI.pm.chybka perl-5.8.8/lib/CGI.pm
+--- perl-5.8.8/lib/CGI.pm.chybka	2008-02-22 09:02:47.000000000 +0100
++++ perl-5.8.8/lib/CGI.pm	2008-02-22 13:38:56.000000000 +0100
+@@ -3411,7 +3411,7 @@ END_OF_FUNC
+ 'upload' =><<'END_OF_FUNC',
+ sub upload {
+     my($self,$param_name) = self_or_default(@_);
+-    my @param = grep(ref && fileno($_), $self->param($param_name));
++	my @param = grep(ref && defined(fileno($_)), $self->param($param_name));
+     return unless @param;
+     return wantarray ? @param : $param[0];
+ }
