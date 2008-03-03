@@ -24,7 +24,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        35%{?dist}
+Release:        36%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -206,8 +206,7 @@ Obsoletes: perl-Time-HiRes < 1.86
 
 # Long history in 3rd-party repositories:
 Provides: perl-File-Temp = 0.16
-Obsoletes: perl-File-Temp < 0.16
-Conflicts: perl-File-Temp
+Obsoletes: perl-File-Temp <= 0.15
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires: db4 = %{db4_major}.%{db4_minor}.%{db4_patch}
@@ -808,6 +807,9 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Fri Feb 29 2008 Marcela Maslanova <mmaslano@redhat.com> - 4:5.8.8-36
+- remove conflicts perl-File-Temp. Use obsoletes.
+
 * Fri Feb 29 2008 Marcela Maslanova <mmaslano@redhat.com> - 4:5.8.8-35
 - upgrade Scalar::Util - possible fix for many bugs. Packages dependent on
 	this module could work even with use of CPAN modules.
