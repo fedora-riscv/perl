@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        7%{?dist}
+Release:        8%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -61,6 +61,9 @@ Patch9:        perl-5.10.0-SysSyslog-0.24.patch
 # only on x86_64, so we just don't run it. Works fine on normal
 # systems.
 Patch10:       perl-5.10.0-x86_64-io-test-failure.patch
+
+# http://public.activestate.com/cgi-bin/perlbrowse/p/32891
+Patch11:       32891.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -130,6 +133,7 @@ Provides: perl(Carp::Heavy)
 Provides: perl-File-Temp = 0.18
 Obsoletes: perl-File-Temp < 0.18
 Conflicts: perl-File-Temp
+
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires: db4 = %{db4_major}.%{db4_minor}.%{db4_patch}
@@ -778,6 +782,7 @@ upstream tarball from perl.org.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -849,10 +854,10 @@ echo "RPM Build arch: %{_arch}"
 %ifarch %{multilib_64_archs}
         -Dlibpth="/usr/local/lib64 /lib64 %{_prefix}/lib64" \
         -Dprivlib="%{_prefix}/lib/perl5/%{perl_version}" \
-        -Dsitelib="%{_prefix}/lib/perl5/site_perl/%{perl_version}" \
+        -Dsitelib="%{_prefix}/local/lib/perl5/site_perl/%{perl_version}" \
         -Dvendorlib="%{_prefix}/lib/perl5/vendor_perl/%{perl_version}" \
         -Darchlib="%{_libdir}/perl5/%{perl_version}/%{perl_archname}" \
-        -Dsitearch="%{_libdir}/perl5/site_perl/%{perl_version}/%{perl_archname}" \
+        -Dsitearch="%{_prefix}/local/%{_lib}/perl5/site_perl/%{perl_version}/%{perl_archname}" \
         -Dvendorarch="%{_libdir}/perl5/vendor_perl/%{perl_version}/%{perl_archname}" \
 %endif
         -Darchname=%{_arch}-%{_os} \
@@ -892,7 +897,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 %ifarch %{multilib_64_archs}
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{perl_version}
-mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/site_perl/%{perl_version}
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/auto
 %endif
@@ -1564,6 +1568,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Mar  7 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-8
+- use /usr/local for sitelib/sitearch dirs
+- patch 32891 for significant performance improvement
+
 * Fri Feb 22 2008 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-7
 - Add perl-File-Temp provides/obsoletes/conflicts (#433836),
   reported by Bill McGonigle <bill@bfccomputing.com>
