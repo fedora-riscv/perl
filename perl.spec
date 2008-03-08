@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        9%{?dist}
+Release:        10%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -894,6 +894,10 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
+# Local patches
+cd $RPM_BUILD_ROOT%{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/
+perl -x patchlevel.h '32891 fix big slowdown in 5.10 @_ parameter passing'
+
 %ifarch %{multilib_64_archs}
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{perl_version}
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}
@@ -968,6 +972,10 @@ chmod -R u+w $RPM_BUILD_ROOT/*
 
 # Compress Changes* to save space
 %{__gzip} Changes*
+
+# Local patch tracking
+cd $RPM_BUILD_ROOT%{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/
+perl -x patchlevel.h '32891 fix big slowdown in 5.10 @_ parameter passing'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1567,6 +1575,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Mar  7 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-10
+- note 32891 in patchlevel.h
+
 * Fri Mar  7 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-9
 - get rid of bad conflicts on perl-File-Temp
 
