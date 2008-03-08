@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        10%{?dist}
+Release:        11%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -894,10 +894,6 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
-# Local patches
-cd $RPM_BUILD_ROOT%{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/
-perl -x patchlevel.h '32891 fix big slowdown in 5.10 @_ parameter passing'
-
 %ifarch %{multilib_64_archs}
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{perl_version}
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}
@@ -975,6 +971,16 @@ chmod -R u+w $RPM_BUILD_ROOT/*
 
 # Local patch tracking
 cd $RPM_BUILD_ROOT%{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/
+perl -x patchlevel.h 'Fedora Patch1: Permit suidperl to install as nonroot'
+perl -x patchlevel.h 'Fedora Patch2: Removes date check, Fedora/RHEL specific'
+perl -x patchlevel.h 'Fedora Patch3: Fedora/RHEL use links instead of lynx'
+perl -x patchlevel.h 'Fedora Patch4: Work around annoying rpath issue'
+perl -x patchlevel.h 'Fedora Patch5: support for libdir64'
+perl -x patchlevel.h 'Fedora Patch6: use libresolv instead of libbind'
+perl -x patchlevel.h 'Fedora Patch7: USE_MM_LD_RUN_PATH'
+perl -x patchlevel.h 'Fedora Patch8: Skip hostname tests, due to builders not being network capable'
+perl -x patchlevel.h 'Fedora Patch9: Update Sys::Syslog to 0.24'
+perl -x patchlevel.h 'Fedora Patch10: Dont run one io test due to random builder failures'
 perl -x patchlevel.h '32891 fix big slowdown in 5.10 @_ parameter passing'
 
 %clean
@@ -1575,6 +1581,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Mar  7 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-11
+- only do it once, and do it for all our patches
+
 * Fri Mar  7 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-10
 - note 32891 in patchlevel.h
 
