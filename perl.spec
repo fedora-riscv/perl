@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        11%{?dist}
+Release:        12%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -45,25 +45,31 @@ Patch4:         perl-5.8.8-rpath-make.patch
 Patch5:         perl-5.8.0-libdir64.patch
 
 # Fedora/RHEL specific (use libresolv instead of libbind)
-Patch6:        perl-5.8.6-libresolv.patch
+Patch6:         perl-5.8.6-libresolv.patch
 
 # FIXME: May need the "Fedora" references removed before upstreaming
-Patch7:        perl-5.10.0-USE_MM_LD_RUN_PATH.patch
+Patch7:         perl-5.10.0-USE_MM_LD_RUN_PATH.patch
 
 # Skip hostname tests, since hostname lookup isn't available in Fedora
 # buildroots by design.
-Patch8:        perl-5.10.0-disable_test_hosts.patch
+Patch8:         perl-5.10.0-disable_test_hosts.patch
 
 # Bump Sys::Syslog to 0.24 to fix test failure case
-Patch9:        perl-5.10.0-SysSyslog-0.24.patch
+Patch9:         perl-5.10.0-SysSyslog-0.24.patch
 
 # The Fedora builders started randomly failing this futime test
 # only on x86_64, so we just don't run it. Works fine on normal
 # systems.
-Patch10:       perl-5.10.0-x86_64-io-test-failure.patch
+Patch10:        perl-5.10.0-x86_64-io-test-failure.patch
 
 # http://public.activestate.com/cgi-bin/perlbrowse/p/32891
-Patch11:       32891.patch
+Patch11:        32891.patch
+
+# Bump Archive::Extract to 0.26 for clean upgrade
+Patch12:        perl-5.10.0-Archive-Extract-0.26.patch
+
+# Update Module::Load::Conditional to 0.24 for clean upgrade
+Patch13:	perl-5.10.0-Module-Load-Conditional-0.24.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -281,8 +287,7 @@ Summary:        API & CLI access to the CPAN mirrors
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-# It's really 0.83_09, but we drop the _09.
-Version:        0.83
+Version:        0.84
 Requires:       perl(IPC::Run) >= 0.79
 Requires:       perl(Module::Pluggable) >= 2.4
 Requires:       perl(Module::CoreList)
@@ -376,8 +381,7 @@ Summary:        Generic file fetching mechanism
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-# Really 0.13_04, but we drop the _04.
-Version:        0.13
+Version:        0.14
 Requires:       perl(IPC::Cmd) >= 0.36
 Requires:       perl(Module::Load::Conditional) >= 0.04
 Requires:       perl(Params::Check) >= 0.07
@@ -524,7 +528,7 @@ Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.12
+Version:        2.13
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(version)
 
@@ -782,6 +786,8 @@ upstream tarball from perl.org.
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
+%patch13 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -975,13 +981,17 @@ perl -x patchlevel.h 'Fedora Patch1: Permit suidperl to install as nonroot'
 perl -x patchlevel.h 'Fedora Patch2: Removes date check, Fedora/RHEL specific'
 perl -x patchlevel.h 'Fedora Patch3: Fedora/RHEL use links instead of lynx'
 perl -x patchlevel.h 'Fedora Patch4: Work around annoying rpath issue'
+%ifarch %{multilib_64_archs}
 perl -x patchlevel.h 'Fedora Patch5: support for libdir64'
+%endif
 perl -x patchlevel.h 'Fedora Patch6: use libresolv instead of libbind'
 perl -x patchlevel.h 'Fedora Patch7: USE_MM_LD_RUN_PATH'
 perl -x patchlevel.h 'Fedora Patch8: Skip hostname tests, due to builders not being network capable'
 perl -x patchlevel.h 'Fedora Patch9: Update Sys::Syslog to 0.24'
 perl -x patchlevel.h 'Fedora Patch10: Dont run one io test due to random builder failures'
 perl -x patchlevel.h '32891 fix big slowdown in 5.10 @_ parameter passing'
+perl -x patchlevel.h 'Fedora Patch12: Update Archive::Extract to 0.26'
+perl -x patchlevel.h 'Fedora Patch13: Update Module::Load::Conditional to 0.24'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1581,6 +1591,11 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Mar  7 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-12
+- conditionalize multilib patch report in patchlevel.h
+- Update Archive::Extract to 0.26
+- Update Module::Load::Conditional to 0.24
+
 * Fri Mar  7 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-11
 - only do it once, and do it for all our patches
 
