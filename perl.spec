@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        8%{?dist}
+Release:        9%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -132,7 +132,6 @@ Provides: perl(Carp::Heavy)
 # Long history in 3rd-party repositories:
 Provides: perl-File-Temp = 0.18
 Obsoletes: perl-File-Temp < 0.18
-Conflicts: perl-File-Temp
 
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
@@ -1568,6 +1567,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Mar  7 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-9
+- get rid of bad conflicts on perl-File-Temp
+
 * Fri Mar  7 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-8
 - use /usr/local for sitelib/sitearch dirs
 - patch 32891 for significant performance improvement
