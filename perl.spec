@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        13%{?dist}
+Release:        14%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -65,11 +65,8 @@ Patch10:        perl-5.10.0-x86_64-io-test-failure.patch
 # http://public.activestate.com/cgi-bin/perlbrowse/p/32891
 Patch11:        32891.patch
 
-# Bump Archive::Extract to 0.26 for clean upgrade
-Patch12:        perl-5.10.0-Archive-Extract-0.26.patch
-
 # Update Module::Load::Conditional to 0.24 for clean upgrade
-Patch13:	perl-5.10.0-Module-Load-Conditional-0.24.patch
+Patch12:	perl-5.10.0-Module-Load-Conditional-0.24.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -557,7 +554,7 @@ Summary:        Looking up module information / loading at runtime
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.22
+Version:        0.24
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Module-Load-Conditional
@@ -787,7 +784,6 @@ upstream tarball from perl.org.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
-%patch13 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -990,8 +986,7 @@ perl -x patchlevel.h 'Fedora Patch8: Skip hostname tests, due to builders not be
 perl -x patchlevel.h 'Fedora Patch9: Update Sys::Syslog to 0.24'
 perl -x patchlevel.h 'Fedora Patch10: Dont run one io test due to random builder failures'
 perl -x patchlevel.h '32891 fix big slowdown in 5.10 @_ parameter passing'
-perl -x patchlevel.h 'Fedora Patch12: Update Archive::Extract to 0.26'
-perl -x patchlevel.h 'Fedora Patch13: Update Module::Load::Conditional to 0.24'
+perl -x patchlevel.h 'Fedora Patch12: Update Module::Load::Conditional to 0.24'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1591,6 +1586,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sat Mar  8 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-14
+- back out Archive::Extract patch, causing odd test failure
+
 * Sat Mar  8 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-13
 - add missing lzma test file
 
