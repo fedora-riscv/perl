@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        12%{?dist}
+Release:        13%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -1591,6 +1591,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sat Mar  8 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-13
+- add missing lzma test file
+
 * Fri Mar  7 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-12
 - conditionalize multilib patch report in patchlevel.h
 - Update Archive::Extract to 0.26

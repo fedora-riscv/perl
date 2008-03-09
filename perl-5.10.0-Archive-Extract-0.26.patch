@@ -296,3 +296,23 @@ diff -up perl-5.10.0/lib/Archive/Extract.pm.BAD perl-5.10.0/lib/Archive/Extract.
  which may not be feasible on your system. Consider setting the global
  variable C<$Archive::Extract::PREFER_BIN> to C<1>, which will prefer
  the use of command line programs and won't consume so much memory.
+diff -up perl-5.10.0/lib/Archive/Extract/t/src/x.lzma.packed.BAD perl-5.10.0/lib/Archive/Extract/t/src/x.lzma.packed
+--- perl-5.10.0/lib/Archive/Extract/t/src/x.lzma.packed.BAD	2008-03-08 19:20:41.000000000 -0500
++++ perl-5.10.0/lib/Archive/Extract/t/src/x.lzma.packed	2008-03-08 19:20:33.000000000 -0500
+@@ -0,0 +1,16 @@
++#########################################################################
++This is a binary file that was packed with the 'uupacktool.pl' which
++is included in the Perl distribution.
++
++To unpack this file use the following command:
++
++     uupacktool.pl -u lib/Archive/Extract/t/src/x.lzma.packed lib/Archive/Extract/t/src/x.lzma
++
++To recreate it use the following command:
++
++     uupacktool.pl -p lib/Archive/Extract/t/src/x.lzma lib/Archive/Extract/t/src/x.lzma.packed
++
++Created at Sat Mar  8 19:20:33 2008
++#########################################################################
++__UU__
++270``@```````````````````
