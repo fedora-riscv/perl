@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        14%{?dist}
+Release:        15%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -1022,6 +1022,8 @@ make test
 %exclude %{_bindir}/perlivp
 %exclude %{_mandir}/man1/perlivp*
 %exclude %{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/*.h
+%exclude %{_bindir}/xsubpp
+%exclude %{_mandir}/man1/xsubpp*
 
 # suidperl
 %exclude %{_bindir}/suidperl
@@ -1290,6 +1292,8 @@ make test
 %{_bindir}/perlivp
 %{_mandir}/man1/perlivp*
 %{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/*.h
+%{_bindir}/xsubpp
+%{_mandir}/man1/xsubpp*
 
 %files suidperl
 %defattr(-,root,root,-)
@@ -1586,6 +1590,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Mar 12 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-15
+- xsubpp now lives in perl-devel instead of perl.
+
 * Sat Mar  8 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-14
 - back out Archive::Extract patch, causing odd test failure
 
