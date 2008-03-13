@@ -24,7 +24,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        36%{?dist}
+Release:        37%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -134,6 +134,8 @@ Patch44:	perl-5.8.8-bz323571.patch
 Patch45:	perl-5.8.8-rhbz#431774.patch
 # fix problem with update Scalar::Util with CPAN, "XS problem" -> 10bugs or so
 Patch46:	perl-5.8.8-Scalar-Util-19.patch
+# 431774 CGI.pm Version 3.15 Contains Broken File Upload Method
+Patch47:	perl-5.8.8-CGI-3.29.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -407,6 +409,8 @@ upstream tarball from perl.org.
 %patch44 -p1
 %patch45 -p1
 %patch46 -p1
+%patch47 -p1
+
 #
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -807,6 +811,9 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Thu Mar 13 2008 Marcela Maslanova <mmaslano@redhat.com> - 4:5.8.8-37
+- update CGI, because of broken upload method #431774
+
 * Fri Feb 29 2008 Marcela Maslanova <mmaslano@redhat.com> - 4:5.8.8-36
 - remove conflicts perl-File-Temp. Use obsoletes.
 
