@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        16%{?dist}
+Release:        17%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -905,6 +905,18 @@ make install DESTDIR=$RPM_BUILD_ROOT
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{perl_version}
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/auto
+%ifarch x86_64
+mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/i386-linux-thread-multi
+%endif
+%ifarch s390x
+mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/s390-linux-thread-multi
+%endif
+%ifarch ppc64
+mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/ppc-linux-thread-multi
+%endif
+%ifarch sparc64
+mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/sparc-linux-thread-multi
+%endif
 %endif
 
 %ifarch %{multilib_64_archs}
@@ -992,6 +1004,7 @@ perl -x patchlevel.h 'Fedora Patch9: Update Sys::Syslog to 0.24'
 perl -x patchlevel.h 'Fedora Patch10: Dont run one io test due to random builder failures'
 perl -x patchlevel.h '32891 fix big slowdown in 5.10 @_ parameter passing'
 perl -x patchlevel.h 'Fedora Patch12: Update Module::Load::Conditional to 0.24'
+perl -x patchlevel.h 'Fedora Patch13: Upgrade Module::CoreList to 2.14'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1595,6 +1608,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Mar 18 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-17
+- own multilib vendor_perl directories
+- mark Module::CoreList patch in patchlevel.h
+
 * Tue Mar 18 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-16
 - 437817: RFE: Upgrade Module::CoreList to 2.14
 
