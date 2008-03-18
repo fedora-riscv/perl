@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        19%{?dist}
+Release:        20%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -923,6 +923,9 @@ mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/
 mkdir -p -m 755 ${RPM_BUILD_ROOT}%{_prefix}/lib64/perl5/vendor_perl/%{perl_version}/%{_arch}-%{_os}
 %endif
 
+# perl doesn't create this module, but modules put things in it, so we need to own it.
+mkdir -p -m 755 ${RPM_BUILD_ROOT}%{_libdir}/perl5/vendor_perl/%{perl_version}/%{perl_archname}/auto
+
 install -p -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/pl2pm
 
 for i in asm/termios.h syscall.h syslimits.h syslog.h sys/ioctl.h sys/socket.h sys/time.h wait.h
@@ -1608,6 +1611,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Mar 18 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-20
+- create the vendor_perl/%%{perl_version}/%%{perl_archname}/auto directory 
+  in %%{_libdir} so we own it properly
+
 * Tue Mar 18 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-19
 - fix CPANPLUS-Dist-Build Provides/Obsoletes (bz 437615)
 - bump version on Module-CoreList subpackage
