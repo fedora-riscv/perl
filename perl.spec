@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        18%{?dist}
+Release:        19%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -292,7 +292,8 @@ Requires:       perl(IPC::Run) >= 0.79
 Requires:       perl(Module::Pluggable) >= 2.4
 Requires:       perl(Module::CoreList)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
-Provides:       CPANPLUS-Dist-Build = %{version}
+Provides:       perl-CPANPLUS-Dist-Build = 0.06
+Obsoletes:	perl-CPANPLUS-Dist-Build <= 0.05
 
 %description CPANPLUS
 The CPANPLUS library is an API to the CPAN mirrors and a collection of
@@ -529,7 +530,7 @@ Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.13
+Version:        2.14
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(version)
 
@@ -1607,6 +1608,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Mar 18 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-19
+- fix CPANPLUS-Dist-Build Provides/Obsoletes (bz 437615)
+- bump version on Module-CoreList subpackage
+
 * Tue Mar 18 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-18
 - forgot to create the auto directory for multilib vendor_perl dirs
 
