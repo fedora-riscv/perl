@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        15%{?dist}
+Release:        16%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -67,6 +67,9 @@ Patch11:        32891.patch
 
 # Update Module::Load::Conditional to 0.24 for clean upgrade
 Patch12:	perl-5.10.0-Module-Load-Conditional-0.24.patch
+
+# Upgrade Module::CoreList to 2.14
+Patch13:	perl-5.10.0-Module-CoreList2.14.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -289,6 +292,7 @@ Requires:       perl(IPC::Run) >= 0.79
 Requires:       perl(Module::Pluggable) >= 2.4
 Requires:       perl(Module::CoreList)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Provides:       CPANPLUS-Dist-Build = %{version}
 
 %description CPANPLUS
 The CPANPLUS library is an API to the CPAN mirrors and a collection of
@@ -784,6 +788,7 @@ upstream tarball from perl.org.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1590,6 +1595,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Mar 18 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-16
+- 437817: RFE: Upgrade Module::CoreList to 2.14
+
 * Wed Mar 12 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-15
 - xsubpp now lives in perl-devel instead of perl.
 
