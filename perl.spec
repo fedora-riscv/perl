@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        17%{?dist}
+Release:        18%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -903,19 +903,18 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 %ifarch %{multilib_64_archs}
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{perl_version}
-mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/auto
 %ifarch x86_64
-mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/i386-linux-thread-multi
+mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/i386-linux-thread-multi/auto
 %endif
 %ifarch s390x
-mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/s390-linux-thread-multi
+mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/s390-linux-thread-multi/auto
 %endif
 %ifarch ppc64
-mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/ppc-linux-thread-multi
+mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/ppc-linux-thread-multi/auto
 %endif
 %ifarch sparc64
-mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/sparc-linux-thread-multi
+mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/sparc-linux-thread-multi/auto
 %endif
 %endif
 
@@ -1608,6 +1607,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Mar 18 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-18
+- forgot to create the auto directory for multilib vendor_perl dirs
+
 * Tue Mar 18 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-17
 - own multilib vendor_perl directories
 - mark Module::CoreList patch in patchlevel.h
