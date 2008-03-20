@@ -24,7 +24,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        37%{?dist}
+Release:        38%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -136,12 +136,16 @@ Patch45:	perl-5.8.8-rhbz#431774.patch
 Patch46:	perl-5.8.8-Scalar-Util-19.patch
 # 431774 CGI.pm Version 3.15 Contains Broken File Upload Method
 Patch47:	perl-5.8.8-CGI-3.29.patch
+# update Test::Simple
+Patch48:    perl-5.8.8-TestSimple0.78.patch
+# beter check of gethostbyname, fixed in upstream
+Patch49:    perl-5.8.8-rhbz238581.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel
 # Temporary fix for broken buildroots:
-BuildRequires:  gawk
+#BuildRequires:  gawk
 
 # The long line of Perl provides.
 
@@ -410,6 +414,8 @@ upstream tarball from perl.org.
 %patch45 -p1
 %patch46 -p1
 %patch47 -p1
+%patch48 -p1
+%patch49 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -811,6 +817,11 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Wed Mar 19 2008 Marcela Maslanova <mmaslano@redhat.com> - 4:5.8.8-38
+- 434865 upgrade Test::Simple
+- turn off test on loading Dummy in More.t, can't find module (path problem?)
+- 238581: careless use of gethostbyname() in Socket.xs
+
 * Thu Mar 13 2008 Marcela Maslanova <mmaslano@redhat.com> - 4:5.8.8-37
 - update CGI, because of broken upload method #431774
 
