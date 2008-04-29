@@ -24,7 +24,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        38%{?dist}
+Release:        39%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -140,6 +140,8 @@ Patch47:	perl-5.8.8-CGI-3.29.patch
 Patch48:    perl-5.8.8-TestSimple0.78.patch
 # beter check of gethostbyname, fixed in upstream
 Patch49:    perl-5.8.8-rhbz238581.patch
+# buffer overflow for unicode characters in regexp
+Patch50:	perl-5.8.8-CVE-2008-1927.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -416,6 +418,7 @@ upstream tarball from perl.org.
 %patch47 -p1
 %patch48 -p1
 %patch49 -p1
+%patch50 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -817,6 +820,10 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Tue Apr 29 2008 Marcela Maslanova <mmaslano@redhat.com> - 4:5.8.8-39
+- perl-5.8.8-CVE-2008-1927.patch - buffer overflow, when using unicode
+	characters in regexp
+
 * Wed Mar 19 2008 Marcela Maslanova <mmaslano@redhat.com> - 4:5.8.8-38
 - 434865 upgrade Test::Simple
 - turn off test on loading Dummy in More.t, can't find module (path problem?)
