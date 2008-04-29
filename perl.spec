@@ -20,7 +20,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        28%{?dist}
+Release:        29%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -124,6 +124,9 @@ Patch41:        perl-5.8.8-DB_File-1.815.patch
 Patch42:        perl-5.8.8-bug24254.patch
 # Fix for CVE-2007-5116
 Patch43:	perl-5.8.8-bz323571.patch
+# Fix for CVE-2008-1927
+Patch44:	perl-5.8.8-CVE-2008-1927.patch
+
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel
@@ -358,6 +361,7 @@ Basic utilities for writing tests.
 %patch41 -p1
 %patch42 -p1
 %patch43 -p1
+%patch44 -p1
 #
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -752,6 +756,9 @@ make test
 %{_mandir}/man3/Test::Tutorial*
 
 %changelog
+* Tue Apr 29 2008 Marcela Maslanova <mmaslano@redhat.com> - 4:5.8.8-29
+- CVE-2008-1927 buffer overflow, when unicode character is used.
+
 * Thu Jan 31 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-28
 - create %{_prefix}/lib/perl5/vendor_perl/%{perl_version}/auto and own it
   in base perl (resolves bugzilla 214580)
