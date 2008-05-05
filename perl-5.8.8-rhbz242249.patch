@@ -1,19 +1,7 @@
-Change 28510 by stevep@stevep-kirk on 2006/07/08 17:51:43
-
-	Subject: [PATCH] perl5db.pl: read full lines from remote socket
-	From: Brendan O'Dea <bod@debian.org>
-	Date: Sat, 8 Jul 2006 13:27:50 +1000
-	Message-ID: <20060708032750.GA20454@londo.c47.org>
-
-Affected files ...
-
-... //depot/perl/lib/perl5db.pl#119 edit
-
-Differences ...
-
-==== //depot/perl/lib/perl5db.pl#119 (text) ====
-
-@@ -6354,9 +6354,13 @@
+diff -up perl-5.8.8/lib/perl5db.pl.bleble perl-5.8.8/lib/perl5db.pl
+--- perl-5.8.8/lib/perl5db.pl.bleble	2005-10-29 02:03:21.000000000 +0200
++++ perl-5.8.8/lib/perl5db.pl	2008-05-05 16:22:08.000000000 +0200
+@@ -6354,9 +6354,13 @@ sub readline {
          $OUT->write( join( '', @_ ) );
  
          # Receive anything there is to receive.
@@ -30,4 +18,3 @@ Differences ...
  
          # What we got.
          $stuff;
-
