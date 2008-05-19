@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        21%{?dist}
+Release:        22%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -71,14 +71,14 @@ Patch12:	perl-5.10.0-Module-Load-Conditional-0.24.patch
 # Upgrade Module::CoreList to 2.14
 Patch13:	perl-5.10.0-Module-CoreList2.14.patch
 
+# Upgrade CGI to 3.37 for bugzilla package
+Patch14:	perl-5.10.0-CGI-3.37.patch
+
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel, zlib-devel
 # For tests
 BuildRequires:  procps, rsyslog
-
-# Temporary fix for broken buildroots:
-BuildRequires:  gawk
 
 # The long line of Perl provides.
 
@@ -790,6 +790,7 @@ upstream tarball from perl.org.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1008,6 +1009,7 @@ perl -x patchlevel.h 'Fedora Patch10: Dont run one io test due to random builder
 perl -x patchlevel.h '32891 fix big slowdown in 5.10 @_ parameter passing'
 perl -x patchlevel.h 'Fedora Patch12: Update Module::Load::Conditional to 0.24'
 perl -x patchlevel.h 'Fedora Patch13: Upgrade Module::CoreList to 2.14'
+perl -x patchlevel.h 'Fedora Patch14: Upgrade CGI to 3.37'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1613,6 +1615,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon May 19 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-22
+- 447142 upgrade CGI to 3.37
+
 * Sat May 17 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-21
 - sparc64 fails two tests under mysterious circumstances. we need to get the
   rest of the tree moving, so we temporarily disable the tests on that arch.
