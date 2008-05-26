@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        23%{?dist}
+Release:        24%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -73,6 +73,9 @@ Patch13:	perl-5.10.0-Module-CoreList2.14.patch
 
 # Upgrade CGI to 3.37 for bugzilla package
 Patch14:	perl-5.10.0-CGI-3.37.patch
+
+# Problem with assertion - add upstream patch
+Patch15:	perl-5.10.0-bz448392.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -795,6 +798,7 @@ upstream tarball from perl.org.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1016,6 +1020,7 @@ perl -x patchlevel.h '32891 fix big slowdown in 5.10 @_ parameter passing'
 perl -x patchlevel.h 'Fedora Patch12: Update Module::Load::Conditional to 0.24'
 perl -x patchlevel.h 'Fedora Patch13: Upgrade Module::CoreList to 2.14'
 perl -x patchlevel.h 'Fedora Patch14: Upgrade CGI to 3.37'
+perl -x patchlevel.h 'Fedora Patch15: Adopt upstream commit for assertion'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1621,6 +1626,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon May 26 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-24
+- 448392 upstream fix for assertion
+
 * Thu May 22 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-23
 - sparc64 breaks with the rpath hack patch applied
 

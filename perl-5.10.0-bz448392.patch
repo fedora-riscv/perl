@@ -1,0 +1,12 @@
+diff -up perl-5.10.0/mg.c.crr perl-5.10.0/mg.c
+--- perl-5.10.0/mg.c.crr	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/mg.c	2008-05-26 15:28:17.000000000 +0200
+@@ -1543,7 +1543,7 @@ Perl_magic_setisa(pTHX_ SV *sv, MAGIC *m
+     stash = GvSTASH(
+         SvTYPE(mg->mg_obj) == SVt_PVGV
+             ? (GV*)mg->mg_obj
+-            : (GV*)SvMAGIC(mg->mg_obj)->mg_obj
++	    : (GV*)mg_find(mg->mg_obj, PERL_MAGIC_isa)->mg_obj
+     );
+ 
+     mro_isa_changed_in(stash);
