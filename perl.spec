@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        24%{?dist}
+Release:        25%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -1626,6 +1626,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jun  6 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-25
+- 449577 rebuild for FTBFS
+
 * Mon May 26 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-24
 - 448392 upstream fix for assertion
 
