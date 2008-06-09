@@ -24,7 +24,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        39%{?dist}
+Release:        40%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -134,8 +134,8 @@ Patch44:	perl-5.8.8-bz323571.patch
 Patch45:	perl-5.8.8-rhbz#431774.patch
 # fix problem with update Scalar::Util with CPAN, "XS problem" -> 10bugs or so
 Patch46:	perl-5.8.8-Scalar-Util-19.patch
-# 431774 CGI.pm Version 3.15 Contains Broken File Upload Method
-Patch47:	perl-5.8.8-CGI-3.29.patch
+# CGI.pm Version 3.30 fix UTF-8 support
+Patch47:	perl-5.8.8-CGI-3.37.patch
 # update Test::Simple
 Patch48:    perl-5.8.8-TestSimple0.78.patch
 # beter check of gethostbyname, fixed in upstream
@@ -820,6 +820,9 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Mon Jun  9 2008 Marcela Maslanova <mmaslano@redhat.com> - 4:5.8.8-40
+- 450289 CGI updato to 3.37
+
 * Tue Apr 29 2008 Marcela Maslanova <mmaslano@redhat.com> - 4:5.8.8-39
 - perl-5.8.8-CVE-2008-1927.patch - buffer overflow, when using unicode
 	characters in regexp
