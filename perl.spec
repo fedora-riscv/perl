@@ -1,22 +1,17 @@
+%define perl_version    5.10.0
+%define perl_epoch      4
+%define perl_arch_stem -thread-multi
+%define perl_archname %{_arch}-%{_os}%{perl_arch_stem}
+
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
-%define perl_archname %{_arch}-%{_os}-thread-multi
-%define new_perl_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}:$RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{version}
-%define comp_perl_lib $RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{version}:$RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{version}
-%define new_arch_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/%{perl_archname}
-%define comp_arch_lib $RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{version}/%{perl_archname}
-%define new_perl_flags LD_PRELOAD=/%{new_arch_lib}/CORE/libperl.so LD_LIBRARY_PATH=%{new_arch_lib}/CORE PERL5LIB=%{new_perl_lib}:%{comp_perl_lib}
-%define new_perl %{new_perl_flags} $RPM_BUILD_ROOT/%{_bindir}/perl
 
 %define db4_major %(grep "DB_VERSION_MAJOR" /usr/include/db.h | cut -f3)
 %define db4_minor %(grep "DB_VERSION_MINOR" /usr/include/db.h | cut -f3)
 %define db4_patch %(grep "DB_VERSION_PATCH" /usr/include/db.h | cut -f3)
 
-%define perl_version    5.10.0
-%define perl_epoch      4
-
 Name:           perl
 Version:        %{perl_version}
-Release:        25%{?dist}
+Release:        26%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -855,9 +850,7 @@ sed -i "s|LIB             = ./zlib-src|LIB             = %{_libdir}|" ext/Compre
 %build
 echo "RPM Build arch: %{_arch}"
 
-# yes; don't use %_libdir so that noarch packages from other OSs
-# arches work correctly :\ the Configure lines below hardcode lib for
-# similar reasons.
+# use "lib", not %{_lib}, for privlib, sitelib, and vendorlib
 
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
         -Dversion=%{perl_version} \
@@ -865,23 +858,23 @@ echo "RPM Build arch: %{_arch}"
         -Dperladmin=root@localhost \
         -Dcc='%{__cc}' \
         -Dcf_by='Red Hat, Inc.' \
-        -Dinstallprefix=%{_prefix} \
         -Dprefix=%{_prefix} \
-%ifarch %{multilib_64_archs}
-        -Dlibpth="/usr/local/lib64 /lib64 %{_prefix}/lib64" \
+        -Dvendorprefix=%{_prefix} \
+        -Dsiteprefix=%{_prefix}/local \
         -Dprivlib="%{_prefix}/lib/perl5/%{perl_version}" \
         -Dsitelib="%{_prefix}/local/lib/perl5/site_perl/%{perl_version}" \
         -Dvendorlib="%{_prefix}/lib/perl5/vendor_perl/%{perl_version}" \
         -Darchlib="%{_libdir}/perl5/%{perl_version}/%{perl_archname}" \
         -Dsitearch="%{_prefix}/local/%{_lib}/perl5/site_perl/%{perl_version}/%{perl_archname}" \
         -Dvendorarch="%{_libdir}/perl5/vendor_perl/%{perl_version}/%{perl_archname}" \
+        -Dinc_version_list=none \
+        -Darchname=%{perl_archname} \
+%ifarch %{multilib_64_archs}
+        -Dlibpth="/usr/local/lib64 /lib64 %{_prefix}/lib64" \
 %endif
-        -Darchname=%{_arch}-%{_os} \
 %ifarch sparc sparcv9
         -Ud_longdbl \
 %endif
-        -Dvendorprefix=%{_prefix} \
-        -Dsiteprefix=%{_prefix} \
         -Duseshrplib \
         -Dusethreads \
         -Duseithreads \
@@ -911,80 +904,71 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
+%define new_perl_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}
+%define comp_perl_lib $RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{version}
+%define new_arch_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/%{perl_archname}
+%define new_vendor_lib $RPM_BUILD_ROOT%{_libdir}/perl5/vendor_perl/%{version}
+%define comp_vendor_lib $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{version}
+%define new_perl_flags LD_PRELOAD=%{new_arch_lib}/CORE/libperl.so LD_LIBRARY_PATH=%{new_arch_lib}/CORE PERL5LIB=%{new_perl_lib}:%{comp_perl_lib}
+%define new_perl %{new_perl_flags} $RPM_BUILD_ROOT%{_bindir}/perl
+
+# perl doesn't create this directory, but modules put things in it, so we need to own it.
+mkdir -p -m 755 %{new_vendor_lib}/%{perl_archname}/auto
+
 %ifarch %{multilib_64_archs}
-mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{perl_version}
-mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/auto
 %ifarch x86_64
-mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/i386-linux-thread-multi/auto
+%define arch32 i386
 %endif
 %ifarch s390x
-mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/s390-linux-thread-multi/auto
+%define arch32 s390
 %endif
 %ifarch ppc64
-mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/ppc-linux-thread-multi/auto
+%define arch32 ppc
 %endif
 %ifarch sparc64
-mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/sparc-linux-thread-multi/auto
+%define arch32 sparc
 %endif
+mkdir -p -m 755 %{comp_perl_lib} %{comp_vendor_lib}{,/%{arch32}-%{_os}%{perl_arch_stem}}/auto
 %endif
-
-%ifarch %{multilib_64_archs}
-mkdir -p -m 755 ${RPM_BUILD_ROOT}%{_prefix}/lib64/perl5/vendor_perl/%{perl_version}/%{_arch}-%{_os}
-%endif
-
-# perl doesn't create this module, but modules put things in it, so we need to own it.
-mkdir -p -m 755 ${RPM_BUILD_ROOT}%{_libdir}/perl5/vendor_perl/%{perl_version}/%{perl_archname}/auto
 
 install -p -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/pl2pm
 
 for i in asm/termios.h syscall.h syslimits.h syslog.h sys/ioctl.h sys/socket.h sys/time.h wait.h
 do
-  %{new_perl} $RPM_BUILD_ROOT/%{_bindir}/h2ph -a \
-              -d $RPM_BUILD_ROOT%{_libdir}/perl5/%{perl_version}/%{perl_archname} $i || /bin/true
-done
-
-
-for dir in $(%{new_perl} -le 'print join("\n", @INC)' | grep '^%{_prefix}/lib')
-do
-  mkdir -p $RPM_BUILD_ROOT/$dir
-done
-
-for dir in $(%{new_perl} -le 'print join("\n", @INC)' | grep '^%{_libdir}')
-do
-  mkdir -p $RPM_BUILD_ROOT/$dir
+  %{new_perl} $RPM_BUILD_ROOT%{_bindir}/h2ph -a -d %{new_arch_lib} $i || /bin/true
 done
 
 #
 # libnet configuration file
 #
-mkdir -p -m 755 $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perl_version}/Net
-install -p -m 644 %{SOURCE12} $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perl_version}/Net/libnet.cfg
+mkdir -p -m 755 %{new_perl_lib}/Net
+install -p -m 644 %{SOURCE12} %{new_perl_lib}/Net/libnet.cfg
 
 #
 # Core modules removal
 #
 find $RPM_BUILD_ROOT -name '*NDBM*' | xargs rm -rfv
 
-find $RPM_BUILD_ROOT -type f -name '*.bs' -a -empty -exec rm -f {} ';'
+find $RPM_BUILD_ROOT -type f -name '*.bs' -empty | xargs rm -f 
 
 # Install sample cgi scripts (this used to happen automatically?)
-mkdir -p $RPM_BUILD_ROOT/usr/lib/perl5/%{perl_version}/CGI/eg/
-cp -a lib/CGI/eg/* $RPM_BUILD_ROOT/usr/lib/perl5/%{perl_version}/CGI/eg/
+mkdir -p %{comp_perl_lib}/CGI/eg/
+cp -a lib/CGI/eg/* %{comp_perl_lib}/CGI/eg/
 
 # Cleanup binary paths and make cgi files executable
-pushd $RPM_BUILD_ROOT/usr/lib/perl5/%{perl_version}/CGI/eg/
+pushd %{comp_perl_lib}/CGI/eg/
   for i in *.cgi make_links.pl RunMeFirst ; do
-    sed -i 's|/usr/local/bin/perl|%{_bindir}/perl|g' $i
+    sed -i 's|%{_prefix}/local/bin/perl|%{_bindir}/perl|g' $i
     chmod +x $i
   done
 popd
 
 # miniperl? As an interpreter? How odd.
-sed -i 's|./miniperl|%{_bindir}/perl|' $RPM_BUILD_ROOT/usr/lib/perl5/%{perl_version}/ExtUtils/xsubpp
-chmod +x $RPM_BUILD_ROOT/usr/lib/perl5/%{perl_version}/ExtUtils/xsubpp
+sed -i 's|./miniperl|%{_bindir}/perl|' %{comp_perl_lib}/ExtUtils/xsubpp
+chmod +x %{comp_perl_lib}/ExtUtils/xsubpp
 
 # Don't need the .packlist
-rm -f $RPM_BUILD_ROOT%{_libdir}/perl5/%{perl_version}/%{perl_archname}/.packlist
+rm -f %{new_arch_lib}/.packlist
 
 # Fix some manpages to be UTF-8
 pushd $RPM_BUILD_ROOT%{_mandir}/man1/
@@ -1626,6 +1610,12 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jun 10 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-26
+- make config parameter list consistent for 32bit and 64bit platforms,
+  add config option -Dinc_version_list=none (#448735)
+- use perl_archname consistently
+- cleanup of usage of *_lib macros in %%install
+
 * Mon Jun  6 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-25
 - 449577 rebuild for FTBFS
 
