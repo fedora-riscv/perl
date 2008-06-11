@@ -11,7 +11,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        26%{?dist}
+Release:        27%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -71,6 +71,9 @@ Patch14:	perl-5.10.0-CGI-3.37.patch
 
 # Problem with assertion - add upstream patch
 Patch15:	perl-5.10.0-bz448392.patch
+
+# Wrong access test
+Patch16:	perl-5.10.0-accessXOK.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -794,6 +797,7 @@ upstream tarball from perl.org.
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1005,6 +1009,7 @@ perl -x patchlevel.h 'Fedora Patch12: Update Module::Load::Conditional to 0.24'
 perl -x patchlevel.h 'Fedora Patch13: Upgrade Module::CoreList to 2.14'
 perl -x patchlevel.h 'Fedora Patch14: Upgrade CGI to 3.37'
 perl -x patchlevel.h 'Fedora Patch15: Adopt upstream commit for assertion'
+perl -x patchlevel.h 'Fedora Patch16: Access permission - rt49003'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1610,6 +1615,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jun 11 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-27
+- 447371 wrong access permission rt49003
+
 * Tue Jun 10 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-26
 - make config parameter list consistent for 32bit and 64bit platforms,
   add config option -Dinc_version_list=none (#448735)
