@@ -1622,7 +1622,7 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Tue Jun 10 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-26
+* Thu Jun 12 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-26
 - make config parameter list consistent for 32bit and 64bit platforms,
   add config option -Dinc_version_list=none (#448735)
 - use perl_archname consistently
