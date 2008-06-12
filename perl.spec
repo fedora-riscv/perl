@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        25%{?dist}
+Release:        26%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -856,9 +856,7 @@ sed -i "s|LIB             = ./zlib-src|LIB             = %{_libdir}|" ext/Compre
 %build
 echo "RPM Build arch: %{_arch}"
 
-# yes; don't use %_libdir so that noarch packages from other OSs
-# arches work correctly :\ the Configure lines below hardcode lib for
-# similar reasons.
+# use "lib", not %{_lib}, for privlib, sitelib, and vendorlib
 
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
         -Dversion=%{perl_version} \
@@ -870,19 +868,19 @@ echo "RPM Build arch: %{_arch}"
         -Dprefix=%{_prefix} \
 %ifarch %{multilib_64_archs}
         -Dlibpth="/usr/local/lib64 /lib64 %{_prefix}/lib64" \
+%endif
         -Dprivlib="%{_prefix}/lib/perl5/%{perl_version}" \
         -Dsitelib="%{_prefix}/local/lib/perl5/site_perl/%{perl_version}" \
         -Dvendorlib="%{_prefix}/lib/perl5/vendor_perl/%{perl_version}" \
         -Darchlib="%{_libdir}/perl5/%{perl_version}/%{perl_archname}" \
         -Dsitearch="%{_prefix}/local/%{_lib}/perl5/site_perl/%{perl_version}/%{perl_archname}" \
         -Dvendorarch="%{_libdir}/perl5/vendor_perl/%{perl_version}/%{perl_archname}" \
-%endif
-        -Darchname=%{_arch}-%{_os} \
+        -Darchname=%{perl_archname} \
 %ifarch sparc sparcv9
         -Ud_longdbl \
 %endif
         -Dvendorprefix=%{_prefix} \
-        -Dsiteprefix=%{_prefix} \
+        -Dsiteprefix=%{_prefix}/local \
         -Duseshrplib \
         -Dusethreads \
         -Duseithreads \
@@ -927,10 +925,6 @@ mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/
 %ifarch sparc64
 mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/sparc-linux-thread-multi/auto
 %endif
-%endif
-
-%ifarch %{multilib_64_archs}
-mkdir -p -m 755 ${RPM_BUILD_ROOT}%{_prefix}/lib64/perl5/vendor_perl/%{perl_version}/%{_arch}-%{_os}
 %endif
 
 # perl doesn't create this module, but modules put things in it, so we need to own it.
@@ -1628,6 +1622,12 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jun 10 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-26
+- make config parameter list consistent for 32bit and 64bit platforms,
+  add config option -Dinc_version_list=none (#448735)
+- use perl_archname consistently
+- set siteprefix to prefix/local
+
 * Wed Jun 11 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-25
 - 447371 wrong access permission rt49003
 
