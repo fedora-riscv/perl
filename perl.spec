@@ -11,7 +11,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        27%{?dist}
+Release:        28%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -74,6 +74,9 @@ Patch15:	perl-5.10.0-bz448392.patch
 
 # Wrong access test
 Patch16:	perl-5.10.0-accessXOK.patch
+
+# CVE-2008-2827 perl: insecure use of chmod in rmtree
+Patch17:	perl-5.10.0-CVE-2008-2827.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -798,6 +801,7 @@ upstream tarball from perl.org.
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1010,6 +1014,7 @@ perl -x patchlevel.h 'Fedora Patch13: Upgrade Module::CoreList to 2.14'
 perl -x patchlevel.h 'Fedora Patch14: Upgrade CGI to 3.37'
 perl -x patchlevel.h 'Fedora Patch15: Adopt upstream commit for assertion'
 perl -x patchlevel.h 'Fedora Patch16: Access permission - rt49003'
+perl -x patchlevel.h 'Fedora Patch17: CVE-2008-2827 perl: insecure use of chmod in rmtree'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1615,6 +1620,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jun 24 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-28
+- CVE-2008-2827 perl: insecure use of chmod in rmtree
+
 * Wed Jun 11 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-27
 - 447371 wrong access permission rt49003
 
