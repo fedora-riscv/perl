@@ -864,7 +864,10 @@ sed -i "s|LIB             = ./zlib-src|LIB             = %{_libdir}|" ext/Compre
 echo "RPM Build arch: %{_arch}"
 
 # use "lib", not %{_lib}, for privlib, sitelib, and vendorlib
-# the "otherlibdir" is there for backward compatibility
+
+# Because of the typo in the first F-9 release, we have to support the default
+# sitedir as well for 32bit archs, via -Dotherlibdirs.  No need to mention the
+# arch-specific subdir though, perl will add it, if it exists.
 
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
         -Dversion=%{perl_version} \
@@ -884,7 +887,7 @@ echo "RPM Build arch: %{_arch}"
 %ifarch %{multilib_64_archs}
         -Dlibpth="/usr/local/lib64 /lib64 %{_prefix}/lib64" \
 %else
-	-Dotherlibdirs="%{_libdir}/perl5/site_perl/%{perl_version}/%{perl_archname}:%{_prefix}/lib/perl5/site_perl/%{perl_version}" \
+	-Dotherlibdirs="%{_prefix}/lib/perl5/site_perl/%{perl_version}" \
 %endif
 %ifarch sparc sparcv9
         -Ud_longdbl \
