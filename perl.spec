@@ -11,7 +11,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        28%{?dist}
+Release:        32%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -1620,6 +1620,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jun 27 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-32
+- bump the release number, so that it is not smaller than in F-9
+
 * Tue Jun 24 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-28
 - CVE-2008-2827 perl: insecure use of chmod in rmtree
 
