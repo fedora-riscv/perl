@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        27%{?dist}
+Release:        28%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -864,6 +864,7 @@ sed -i "s|LIB             = ./zlib-src|LIB             = %{_libdir}|" ext/Compre
 echo "RPM Build arch: %{_arch}"
 
 # use "lib", not %{_lib}, for privlib, sitelib, and vendorlib
+# the "otherlibdir" is there for backward compatibility
 
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
         -Dversion=%{perl_version} \
@@ -873,9 +874,6 @@ echo "RPM Build arch: %{_arch}"
         -Dcf_by='Red Hat, Inc.' \
         -Dinstallprefix=%{_prefix} \
         -Dprefix=%{_prefix} \
-%ifarch %{multilib_64_archs}
-        -Dlibpth="/usr/local/lib64 /lib64 %{_prefix}/lib64" \
-%endif
         -Dprivlib="%{_prefix}/lib/perl5/%{perl_version}" \
         -Dsitelib="%{_prefix}/local/lib/perl5/site_perl/%{perl_version}" \
         -Dvendorlib="%{_prefix}/lib/perl5/vendor_perl/%{perl_version}" \
@@ -883,6 +881,11 @@ echo "RPM Build arch: %{_arch}"
         -Dsitearch="%{_prefix}/local/%{_lib}/perl5/site_perl/%{perl_version}/%{perl_archname}" \
         -Dvendorarch="%{_libdir}/perl5/vendor_perl/%{perl_version}/%{perl_archname}" \
         -Darchname=%{perl_archname} \
+%ifarch %{multilib_64_archs}
+        -Dlibpth="/usr/local/lib64 /lib64 %{_prefix}/lib64" \
+%else
+	-Dotherlibdirs="%{_libdir}/perl5/site_perl/%{perl_version}/%{perl_archname}:%{_prefix}/lib/perl5/site_perl/%{perl_version}" \
+%endif
 %ifarch sparc sparcv9
         -Ud_longdbl \
 %endif
@@ -1630,6 +1633,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jun 26 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-28
+- add compatibility paths to @INC on 32bit archs
+
 * Tue Jun 24 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-27
 - CVE-2008-2827 perl: insecure use of chmod in rmtree
 
