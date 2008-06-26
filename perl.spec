@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        28%{?dist}
+Release:        29%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -1636,6 +1636,11 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jun 27 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-29.fc9
+- add compatibility paths to @INC on 32bit archs (#452898), but do
+  not explicitly mention the arch-specific subdir of it, perl adds it
+  automatically
+
 * Thu Jun 26 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-28
 - add compatibility paths to @INC on 32bit archs
 
