@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        29%{?dist}
+Release:        30%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -869,7 +869,7 @@ echo "RPM Build arch: %{_arch}"
 # sitedir as well for 32bit archs, via -Dotherlibdirs.  No need to mention the
 # arch-specific subdir though, perl will add it, if it exists.
 
-/bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
+/bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS -DPERL_USE_SAFE_PUTENV" \
         -Dversion=%{perl_version} \
         -Dmyhostname=localhost \
         -Dperladmin=root@localhost \
@@ -1636,6 +1636,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jul  2 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-30.fc9
+- 453646 use -DPERL_USE_SAFE_PUTENV. Without fail some modules f.e. readline.
+
 * Fri Jun 27 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-29.fc9
 - add compatibility paths to @INC on 32bit archs (#452898), but do
   not explicitly mention the arch-specific subdir of it, perl adds it
