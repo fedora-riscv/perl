@@ -11,7 +11,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        32%{?dist}
+Release:        33%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -78,6 +78,12 @@ Patch16:	perl-5.10.0-accessXOK.patch
 # CVE-2008-2827 perl: insecure use of chmod in rmtree
 Patch17:	perl-5.10.0-CVE-2008-2827.patch
 
+# Upgrade Test::Harness
+# first remove old files
+Patch18:	perl-5.10.0-removeTestHarness.patch
+# now include new files perl-5.10.0-TestHarness3.12.patch
+Patch19:	perl-5.10.0-TestHarness3.12.patch
+
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel, zlib-devel
@@ -143,6 +149,9 @@ Provides: perl(Carp::Heavy)
 Provides: perl-File-Temp = 0.18
 Obsoletes: perl-File-Temp < 0.18
 
+# Use new testing module perl-Test-Harness, obsolete it outside of this package
+Provides: perl-TAP-Harness = 3.10
+Obsoletes: perl-TAP-Harness < 3.10
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires: db4 = %{db4_major}.%{db4_minor}.%{db4_patch}
@@ -703,7 +712,7 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Test-Harness
 Run Perl standard test scripts with statistics.
-
+Use TAP::Parser, Test::Harness package was whole rewritten.
 
 %package Test-Simple
 Summary:        Basic utilities for writing tests
@@ -802,7 +811,8 @@ upstream tarball from perl.org.
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
-
+%patch18 -p1
+%patch19 -p1
 #
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -1015,6 +1025,8 @@ perl -x patchlevel.h 'Fedora Patch14: Upgrade CGI to 3.37'
 perl -x patchlevel.h 'Fedora Patch15: Adopt upstream commit for assertion'
 perl -x patchlevel.h 'Fedora Patch16: Access permission - rt49003'
 perl -x patchlevel.h 'Fedora Patch17: CVE-2008-2827 perl: insecure use of chmod in rmtree'
+perl -x patchlevel.h 'Fedora Patch18: Remove old Test::Harness'
+perl -x patchlevel.h 'Fedora Patch19: Update Test::Harness to 3.12'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1620,6 +1632,12 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jul  1 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-33
+- 451078 update Test::Harness to 3.12 for more testing. Removed verbose 
+test, new Test::Harness has possibly verbose output, but updated package
+has a lot of features f.e. TAP::Harness. Carefully watched all new bugs 
+related to tests!
+
 * Fri Jun 27 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-32
 - bump the release number, so that it is not smaller than in F-9
 
