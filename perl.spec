@@ -870,7 +870,7 @@ echo "RPM Build arch: %{_arch}"
 
 # use "lib", not %{_lib}, for privlib, sitelib, and vendorlib
 
-/bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
+/bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS -DPERL_USE_SAFE_PUTENV" \
         -Dversion=%{perl_version} \
         -Dmyhostname=localhost \
         -Dperladmin=root@localhost \
@@ -1632,6 +1632,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jul  3 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-34
+- 453646 use -DPERL_USE_SAFE_PUTENV. Without fail some modules f.e. readline.
+
 * Tue Jul  1 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-33
 - 451078 update Test::Harness to 3.12 for more testing. Removed verbose 
 test, new Test::Harness has possibly verbose output, but updated package
