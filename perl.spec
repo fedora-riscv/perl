@@ -164,13 +164,13 @@ Requires(post): perl-libs
 #
 # The original script might be /usr/lib/rpm/perl.req or
 # /usr/lib/rpm/redhat/perl.req, better use the original value of the macro:
-%{expand:%%define prev__perl_requires %{__perl_requires}} 
+%{expand:%%define prev__perl_requires %{__perl_requires}}
 %define __perl_requires %{SOURCE11} %{prev__perl_requires}
 
 # When _use_internal_dependency_generator is 0, the perl.req script is
 # called from /usr/lib/rpm{,/redhat}/find-requires.sh
 # Likewise:
-%{expand:%%define prev__find_requires %{__find_requires}} 
+%{expand:%%define prev__find_requires %{__find_requires}}
 %define __find_requires %{SOURCE11} %{prev__find_requires}
 
 
