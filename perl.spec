@@ -5,13 +5,9 @@
 
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
-%define db4_major %(grep "DB_VERSION_MAJOR" /usr/include/db.h | cut -f3)
-%define db4_minor %(grep "DB_VERSION_MINOR" /usr/include/db.h | cut -f3)
-%define db4_patch %(grep "DB_VERSION_PATCH" /usr/include/db.h | cut -f3)
-
 Name:           perl
 Version:        %{perl_version}
-Release:        34%{?dist}
+Release:        35%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -154,7 +150,6 @@ Provides: perl-TAP-Harness = 3.10
 Obsoletes: perl-TAP-Harness < 3.10
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
-Requires: db4 = %{db4_major}.%{db4_minor}.%{db4_patch}
 
 # We need this to break the dependency loop, and ensure that perl-libs 
 # gets installed before perl.
@@ -1632,6 +1627,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jul  9 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-35
+- remove db4 require, it is handled automatically
+
 * Thu Jul  3 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-34
 - 453646 use -DPERL_USE_SAFE_PUTENV. Without fail some modules f.e. readline.
 
