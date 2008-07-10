@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        35%{?dist}
+Release:        36%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -1627,6 +1627,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jul 10 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-36
+- rebuild for new db4 4.7
+
 * Wed Jul  9 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-35
 - remove db4 require, it is handled automatically
 
