@@ -36,7 +36,7 @@ Patch4:         perl-5.8.8-rpath-make.patch
 Patch5:         perl-5.8.0-libdir64.patch
 
 # Fedora/RHEL specific (use libresolv instead of libbind)
-Patch6:         perl-5.8.6-libresolv.patch
+Patch6:         perl-5.10.0-libresolv.patch
 
 # FIXME: May need the "Fedora" references removed before upstreaming
 Patch7:         perl-5.10.0-USE_MM_LD_RUN_PATH.patch
@@ -79,6 +79,8 @@ Patch17:	perl-5.10.0-CVE-2008-2827.patch
 Patch18:	perl-5.10.0-removeTestHarness.patch
 # now include new files perl-5.10.0-TestHarness3.12.patch
 Patch19:	perl-5.10.0-TestHarness3.12.patch
+# pos function handle unicode ok
+Patch20:	perl-5.10.0-pos.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -808,6 +810,7 @@ upstream tarball from perl.org.
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
+%patch20 -p1
 #
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -1022,6 +1025,7 @@ perl -x patchlevel.h 'Fedora Patch16: Access permission - rt49003'
 perl -x patchlevel.h 'Fedora Patch17: CVE-2008-2827 perl: insecure use of chmod in rmtree'
 perl -x patchlevel.h 'Fedora Patch18: Remove old Test::Harness'
 perl -x patchlevel.h 'Fedora Patch19: Update Test::Harness to 3.12'
+perl -x patchlevel.h 'Fedora Patch20: pos function handle unicode correct'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1629,6 +1633,8 @@ make test
 %changelog
 * Mon Jul 21 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-37
 - 455933 update to CGI-3.38
+- fix fuzz problems (patch6)
+- 217833 pos() function handle unicode characters correct
 
 * Thu Jul 10 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-36
 - rebuild for new db4 4.7
