@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        37%{?dist}
+Release:        38%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -1631,7 +1631,7 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Mon Jul 21 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-37
+* Mon Jul 21 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-38
 - 455933 update to CGI-3.38
 - fix fuzz problems (patch6)
 - 217833 pos() function handle unicode characters correct
