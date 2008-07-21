@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        36%{?dist}
+Release:        37%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -62,8 +62,8 @@ Patch12:	perl-5.10.0-Module-Load-Conditional-0.24.patch
 # Upgrade Module::CoreList to 2.14
 Patch13:	perl-5.10.0-Module-CoreList2.14.patch
 
-# Upgrade CGI to 3.37 for bugzilla package
-Patch14:	perl-5.10.0-CGI-3.37.patch
+# Upgrade CGI to 3.38
+Patch14:	perl-5.10.0-CGI-3.38.patch
 
 # Problem with assertion - add upstream patch
 Patch15:	perl-5.10.0-bz448392.patch
@@ -1016,7 +1016,7 @@ perl -x patchlevel.h 'Fedora Patch10: Dont run one io test due to random builder
 perl -x patchlevel.h '32891 fix big slowdown in 5.10 @_ parameter passing'
 perl -x patchlevel.h 'Fedora Patch12: Update Module::Load::Conditional to 0.24'
 perl -x patchlevel.h 'Fedora Patch13: Upgrade Module::CoreList to 2.14'
-perl -x patchlevel.h 'Fedora Patch14: Upgrade CGI to 3.37'
+perl -x patchlevel.h 'Fedora Patch14: Upgrade CGI to 3.38'
 perl -x patchlevel.h 'Fedora Patch15: Adopt upstream commit for assertion'
 perl -x patchlevel.h 'Fedora Patch16: Access permission - rt49003'
 perl -x patchlevel.h 'Fedora Patch17: CVE-2008-2827 perl: insecure use of chmod in rmtree'
@@ -1627,6 +1627,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jul 21 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-37
+- 455933 update to CGI-3.38
+
 * Thu Jul 10 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-36
 - rebuild for new db4 4.7
 
