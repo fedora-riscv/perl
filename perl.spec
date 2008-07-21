@@ -810,7 +810,7 @@ upstream tarball from perl.org.
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
-#%patch20 -p1
+%patch20 -p1
 #
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
