@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        30%{?dist}
+Release:        31%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -45,7 +45,7 @@ Patch4:         perl-5.8.8-rpath-make.patch
 Patch5:         perl-5.8.0-libdir64.patch
 
 # Fedora/RHEL specific (use libresolv instead of libbind)
-Patch6:         perl-5.8.6-libresolv.patch
+Patch6:         perl-5.10.0-libresolv.patch
 
 # FIXME: May need the "Fedora" references removed before upstreaming
 Patch7:         perl-5.10.0-USE_MM_LD_RUN_PATH.patch
@@ -71,8 +71,8 @@ Patch12:	perl-5.10.0-Module-Load-Conditional-0.24.patch
 # Upgrade Module::CoreList to 2.14
 Patch13:	perl-5.10.0-Module-CoreList2.14.patch
 
-# Upgrade CGI to 3.37 for bugzilla package
-Patch14:	perl-5.10.0-CGI-3.37.patch
+# Upgrade CGI to 3.38
+Patch14:	perl-5.10.0-CGI-3.38.patch
 
 # Problem with assertion - add upstream patch
 Patch15:	perl-5.10.0-bz448392.patch
@@ -82,6 +82,9 @@ Patch16:	perl-5.10.0-accessXOK.patch
 
 # CVE-2008-2827 perl: insecure use of chmod in rmtree
 Patch17:	perl-5.10.0-CVE-2008-2827.patch
+
+# pos function handle unicode ok
+Patch18:	perl-5.10.0-pos.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -807,6 +810,7 @@ upstream tarball from perl.org.
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
+%patch18 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1027,10 +1031,11 @@ perl -x patchlevel.h 'Fedora Patch10: Dont run one io test due to random builder
 perl -x patchlevel.h '32891 fix big slowdown in 5.10 @_ parameter passing'
 perl -x patchlevel.h 'Fedora Patch12: Update Module::Load::Conditional to 0.24'
 perl -x patchlevel.h 'Fedora Patch13: Upgrade Module::CoreList to 2.14'
-perl -x patchlevel.h 'Fedora Patch14: Upgrade CGI to 3.37'
+perl -x patchlevel.h 'Fedora Patch14: Upgrade CGI to 3.38'
 perl -x patchlevel.h 'Fedora Patch15: Adopt upstream commit for assertion'
 perl -x patchlevel.h 'Fedora Patch16: Access permission - rt49003'
 perl -x patchlevel.h 'Fedora Patch17: CVE-2008-2827 perl: insecure use of chmod in rmtree'
+perl -x patchlevel.h 'Fedora Patch18: pos function handle unicode correct'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1636,6 +1641,11 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jul 21 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-31.fc9
+- 455933 update to CGI-3.38
+- fix fuzz problems (patch6)
+- 217833 pos() function handle unicode characters correct
+
 * Wed Jul  2 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-30.fc9
 - 453646 use -DPERL_USE_SAFE_PUTENV. Without fail some modules f.e. readline.
 
