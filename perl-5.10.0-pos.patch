@@ -17,8 +17,8 @@ diff -up perl-5.10.0/pp_ctl.c.pos perl-5.10.0/pp_ctl.c
 -	if (DO_UTF8(sv))
 -	    sv_pos_b2u(sv, &i);
 -	mg->mg_len = i;
-     }
-+    mg->mg_len = m - orig;
++		mg->mg_len = m - orig;
+	}
      if (old != rx)
  	(void)ReREFCNT_inc(rx);
      cx->sb_rxtainted |= RX_MATCH_TAINTED(rx);
