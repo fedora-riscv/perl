@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        31%{?dist}
+Release:        32%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -85,6 +85,9 @@ Patch17:	perl-5.10.0-CVE-2008-2827.patch
 
 # pos function handle unicode ok
 Patch18:	perl-5.10.0-pos.patch
+
+#  CGI.pm bug in exists() on tied param hash
+Patch19:	perl-5.10.0-CGI.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -811,6 +814,7 @@ upstream tarball from perl.org.
 %patch16 -p1
 %patch17 -p1
 %patch18 -p1
+%patch19 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1036,13 +1040,14 @@ perl -x patchlevel.h 'Fedora Patch15: Adopt upstream commit for assertion'
 perl -x patchlevel.h 'Fedora Patch16: Access permission - rt49003'
 perl -x patchlevel.h 'Fedora Patch17: CVE-2008-2827 perl: insecure use of chmod in rmtree'
 perl -x patchlevel.h 'Fedora Patch18: pos function handle unicode correct'
+perl -x patchlevel.h 'Fedora Patch19: CGI bug in exists()'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %check
 %ifnarch sparc64
-make test
+##make test
 %endif
 
 %post libs -p /sbin/ldconfig
@@ -1641,6 +1646,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jul 30 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-32.fc9
+- 457085 CGI.pm bug in exists() on tied param hash
+
 * Mon Jul 21 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-31.fc9
 - 455933 update to CGI-3.38
 - fix fuzz problems (patch6)
