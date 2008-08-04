@@ -1,0 +1,12 @@
+diff -up perl-5.10.0/lib/CGI.pm.tied perl-5.10.0/lib/CGI.pm
+--- perl-5.10.0/lib/CGI.pm.tied	2008-07-30 08:37:48.000000000 +0200
++++ perl-5.10.0/lib/CGI.pm	2008-07-30 08:41:38.000000000 +0200
+@@ -1176,7 +1176,7 @@ END_OF_FUNC
+ 
+ 'EXISTS' => <<'END_OF_FUNC',
+ sub EXISTS {
+-    exists $_[0]->{$_[1]};
++    exists $_[0]->{param}{$_[1]};
+ }
+ END_OF_FUNC
+ 

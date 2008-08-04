@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        38%{?dist}
+Release:        39%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -81,6 +81,9 @@ Patch18:	perl-5.10.0-removeTestHarness.patch
 Patch19:	perl-5.10.0-TestHarness3.12.patch
 # pos function handle unicode ok
 Patch20:	perl-5.10.0-pos.patch
+
+# 457085  CGI.pm bug in exists() on tied param hash
+Patch21:        perl-5.10.0-CGI.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -811,6 +814,7 @@ upstream tarball from perl.org.
 %patch18 -p1
 %patch19 -p1
 %patch20 -p1
+%patch21 -p1
 #
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -1056,6 +1060,7 @@ make test
 # devel
 %exclude %{_bindir}/enc2xs
 %exclude %{_mandir}/man1/enc2xs*
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Encode/
 %exclude %{_bindir}/h2xs
 %exclude %{_mandir}/man1/h2xs*
 %exclude %{_bindir}/libnetcfg
@@ -1326,6 +1331,7 @@ make test
 %defattr(-,root,root,-)
 %{_bindir}/enc2xs
 %{_mandir}/man1/enc2xs*
+%{_prefix}/lib/perl5/%{perl_version}/Encode/
 %{_bindir}/h2xs
 %{_mandir}/man1/h2xs*
 %{_bindir}/libnetcfg
@@ -1631,6 +1637,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Aug  1 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-39.fc10
+- CGI.pm bug in exists() on tied param hash (#457085)
+- move the enc2xs templates (../Encode/*.e2x) to -devel, (#456534)
+
 * Mon Jul 21 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-38
 - 455933 update to CGI-3.38
 - fix fuzz problems (patch6)
