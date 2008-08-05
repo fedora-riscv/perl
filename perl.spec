@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        39%{?dist}
+Release:        40%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -301,7 +301,6 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.84
-Requires:       perl(IPC::Run) >= 0.79
 Requires:       perl(Module::Pluggable) >= 2.4
 Requires:       perl(Module::CoreList)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -915,7 +914,12 @@ echo "RPM Build arch: %{_arch}"
         -Dd_gethostent_r_proto -Ud_endhostent_r_proto -Ud_sethostent_r_proto \
         -Ud_endprotoent_r_proto -Ud_setprotoent_r_proto \
         -Ud_endservent_r_proto -Ud_setservent_r_proto \
-        -Dscriptdir='%{_bindir}'
+        -Dscriptdir='%{_bindir}' \
+%ifarch x86_64 ppc64 sparc64
+        -Dotherlibdirs=/usr/local/lib/perl5/site_perl:/usr/local/%{_lib}/perl5/site_perl \
+%else
+        -Dotherlibdirs=/usr/local/lib/perl5/site_perl
+%endif
 
 make %{?_smp_mflags}
 
@@ -1637,6 +1641,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Aug  5 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-40.fc10
+- 457867 remove required IPC::Run from CPANPLUS - needed only by win32
+- 457771 add path
+
 * Fri Aug  1 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-39.fc10
 - CGI.pm bug in exists() on tied param hash (#457085)
 - move the enc2xs templates (../Encode/*.e2x) to -devel, (#456534)
