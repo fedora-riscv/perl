@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        32%{?dist}
+Release:        33%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -876,6 +876,10 @@ echo "RPM Build arch: %{_arch}"
 # Because of the typo in the first F-9 release, we have to support the default
 # sitedir as well for 32bit archs, via -Dotherlibdirs.  No need to mention the
 # arch-specific subdir though, perl will add it, if it exists.
+%ifnarch %{multilib_64_archs}
+#	-Dotherlibdirs="%{_prefix}/lib/perl5/site_perl/%{perl_version}" \
+%endif
+# ... but this is superceded by our more general compatibility -Dotherlibdirs.
 
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS -DPERL_USE_SAFE_PUTENV" \
         -Dversion=%{perl_version} \
@@ -894,9 +898,8 @@ echo "RPM Build arch: %{_arch}"
         -Darchname=%{perl_archname} \
 %ifarch %{multilib_64_archs}
         -Dlibpth="/usr/local/lib64 /lib64 %{_prefix}/lib64" \
-%else
-	-Dotherlibdirs="%{_prefix}/lib/perl5/site_perl/%{perl_version}" \
 %endif
+	-Dotherlibdirs="%{_prefix}/local/lib/perl5/site_perl:%{_prefix}/lib/perl5/site_perl" \
 %ifarch sparc sparcv9
         -Ud_longdbl \
 %endif
@@ -948,7 +951,7 @@ mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/
 %endif
 %endif
 
-# perl doesn't create this module, but modules put things in it, so we need to own it.
+# perl doesn't create this directory, but modules put things in it, so we need to own it.
 mkdir -p -m 755 ${RPM_BUILD_ROOT}%{_libdir}/perl5/vendor_perl/%{perl_version}/%{perl_archname}/auto
 
 install -p -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/pl2pm
@@ -957,17 +960,6 @@ for i in asm/termios.h syscall.h syslimits.h syslog.h sys/ioctl.h sys/socket.h s
 do
   %{new_perl} $RPM_BUILD_ROOT/%{_bindir}/h2ph -a \
               -d $RPM_BUILD_ROOT%{_libdir}/perl5/%{perl_version}/%{perl_archname} $i || /bin/true
-done
-
-
-for dir in $(%{new_perl} -le 'print join("\n", @INC)' | grep '^%{_prefix}/lib')
-do
-  mkdir -p $RPM_BUILD_ROOT/$dir
-done
-
-for dir in $(%{new_perl} -le 'print join("\n", @INC)' | grep '^%{_libdir}')
-do
-  mkdir -p $RPM_BUILD_ROOT/$dir
 done
 
 #
@@ -1646,6 +1638,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Aug  6 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-33.fc9
+- Add compatibility paths to otherlibdirs (fixes 457771)
+
 * Wed Jul 30 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-32.fc9
 - 457085 CGI.pm bug in exists() on tied param hash
 
