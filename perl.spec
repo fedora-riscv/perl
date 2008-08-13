@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        40%{?dist}
+Release:        41%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -952,7 +952,7 @@ mkdir -p -m 755 %{new_vendor_lib}/%{perl_archname}/auto
 %ifarch sparc64
 %define arch32 sparc
 %endif
-mkdir -p -m 755 %{comp_perl_lib} %{comp_vendor_lib}{,/%{arch32}-%{_os}%{perl_arch_stem}}/auto
+mkdir -p -m 755 %{comp_perl_lib} %{comp_vendor_lib}{,/%{arch32}-%{_os}%{perl_arch_stem}/auto}
 %endif
 
 install -p -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/pl2pm
@@ -1641,6 +1641,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Aug 13 2008 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-41.fc10
+- do not create directory .../%%{version}/auto
+
 * Tue Aug  5 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-40.fc10
 - 457867 remove required IPC::Run from CPANPLUS - needed only by win32
 - 457771 add path
