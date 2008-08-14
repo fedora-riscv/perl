@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        33%{?dist}
+Release:        34%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -965,8 +965,8 @@ done
 #
 # libnet configuration file
 #
-mkdir -p -m 755 $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perl_version}/Net
-install -p -m 644 %{SOURCE12} $RPM_BUILD_ROOT/%{_libdir}/perl5/%{perl_version}/Net/libnet.cfg
+mkdir -p -m 755 $RPM_BUILD_ROOT/%{_prefix}/lib/perl5/%{perl_version}/Net
+install -p -m 644 %{SOURCE12} $RPM_BUILD_ROOT/%{_prefix}/lib/perl5/%{perl_version}/Net/libnet.cfg
 
 #
 # Core modules removal
@@ -1638,6 +1638,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Aug 14 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-34.fc9
+- move libnet to the right directory, along Net/Config.pm
+
 * Wed Aug  6 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-33.fc9
 - Add compatibility paths to otherlibdirs (fixes 457771)
 
