@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        41%{?dist}
+Release:        42%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -965,8 +965,8 @@ done
 #
 # libnet configuration file
 #
-mkdir -p -m 755 %{new_perl_lib}/Net
-install -p -m 644 %{SOURCE12} %{new_perl_lib}/Net/libnet.cfg
+mkdir -p -m 755 %{comp_perl_lib}/Net
+install -p -m 644 %{SOURCE12} %{comp_perl_lib}/Net/libnet.cfg
 
 #
 # Core modules removal
@@ -1641,6 +1641,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Aug 14 2008 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-42.fc10
+- move libnet to the right directory, along Net/Config.pm
+
 * Wed Aug 13 2008 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-41.fc10
 - do not create directory .../%%{version}/auto
 
