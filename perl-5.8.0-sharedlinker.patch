@@ -1,8 +1,9 @@
---- perl-5.8.0/Makefile.SH.sharedlinker	Tue Jun 18 12:36:27 2002
-+++ perl-5.8.0/Makefile.SH	Tue Jun 18 12:37:31 2002
-@@ -61,6 +61,9 @@
- 	netbsd*|freebsd[234]*|openbsd*)
+diff -up perl-5.8.8/Makefile.SH.sharedlinker perl-5.8.8/Makefile.SH
+--- perl-5.8.8/Makefile.SH.sharedlinker	2008-08-27 09:55:34.000000000 -0400
++++ perl-5.8.8/Makefile.SH	2008-08-27 09:56:02.000000000 -0400
+@@ -80,6 +80,9 @@ true)
  		linklibperl="-L. -lperl"
+ 		shrpldflags="$shrpldflags -Wl,--image-base,0x57000000"
  		;;
 +	linux*)
 +		shrpldflags="$shrpldflags $ldflags $perllibs $cryptlib"

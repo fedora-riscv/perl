@@ -280,9 +280,10 @@
  
  OP *
 
---- perl-5.8.8/op.h-26
-+++ perl-5.8.8/op.h
-@@ -103,5 +103,7 @@
+--- perl-5.8.8/op.h.U28775	2008-08-27 09:57:52.000000000 -0400
++++ perl-5.8.8/op.h	2008-08-27 09:58:21.000000000 -0400
+@@ -102,6 +102,8 @@ Deprecated.  Use C<GIMME_V> instead.
+ 				/*  On OP_DBSTATE, indicates breakpoint
  				 *    (runtime property) */
  				/*  On OP_AELEMFAST, indiciates pad var */
 +				/*  On OP_ANONHASH and OP_ANONLIST, create a
@@ -290,10 +291,9 @@
  
  /* old names; don't use in new code, but don't break them, either */
  #define OPf_LIST	OPf_WANT_LIST
-
---- perl-5.8.8/pp.c-101
-+++ perl-5.8.8/pp.c
-@@ -4036,16 +4036,17 @@
+--- perl-5.8.8/pp.c.orig	2008-08-27 09:59:48.000000000 -0400
++++ perl-5.8.8/pp.c	2008-08-27 10:02:28.000000000 -0400
+@@ -4126,16 +4126,17 @@ PP(pp_anonlist)
  {
      dSP; dMARK; dORIGMARK;
      const I32 items = SP - MARK;
@@ -314,12 +314,13 @@
  
      while (MARK < SP) {
  	SV * const key = *++MARK;
-@@ -4057,7 +4058,8 @@
+@@ -4147,7 +4148,8 @@ PP(pp_anonhash)
  	(void)hv_store_ent(hv,key,val,0);
      }
      SP = ORIGMARK;
 -    XPUSHs((SV*)hv);
 +    XPUSHs(sv_2mortal((PL_op->op_flags & OPf_SPECIAL)
-+		      ? newRV_noinc((SV*) hv) : (SV*)hv));
++		     ? newRV_noinc((SV*) hv) : (SV*)hv));
      RETURN;
  }
+ 

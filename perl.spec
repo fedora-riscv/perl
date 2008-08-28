@@ -24,7 +24,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        40%{?dist}
+Release:        41%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -142,6 +142,14 @@ Patch48:    perl-5.8.8-TestSimple0.78.patch
 Patch49:    perl-5.8.8-rhbz238581.patch
 # buffer overflow for unicode characters in regexp
 Patch50:	perl-5.8.8-CVE-2008-1927.patch
+# Another bless overload fix (U31996)
+Patch51:	perl-5.8.8-U31996.patch
+# Still another bless overload fix (U32018)
+Patch52:	perl-5.8.8-U32018.patch
+# Yet another bless overload fix (U32019)
+Patch53:	perl-5.8.8-U32019.patch
+# Yes. Another bless overload fix (U32025)
+Patch54:	perl-5.8.8-U32025.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -419,6 +427,10 @@ upstream tarball from perl.org.
 %patch48 -p1
 %patch49 -p1
 %patch50 -p1
+%patch51 -p1
+%patch52 -p1
+%patch53 -p1
+%patch54 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -820,6 +832,9 @@ make test
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %changelog
+* Wed Aug 27 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.8.8-41
+- apply bless/overload fixes from upstream (U31996, U32018, U32019, U32025)
+
 * Mon Jun  9 2008 Marcela Maslanova <mmaslano@redhat.com> - 4:5.8.8-40
 - 450289 CGI updato to 3.37
 
