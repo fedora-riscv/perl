@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        42%{?dist}
+Release:        43%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -84,6 +84,9 @@ Patch20:	perl-5.10.0-pos.patch
 
 # 457085  CGI.pm bug in exists() on tied param hash
 Patch21:        perl-5.10.0-CGI.patch
+
+# 462444	update Test::Simple to 0.80
+Patch22:		perl-5.10.0-TestSimple0.80.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -814,6 +817,8 @@ upstream tarball from perl.org.
 %patch19 -p1
 %patch20 -p1
 %patch21 -p1
+%patch22 -p1
+
 #
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
@@ -1034,6 +1039,8 @@ perl -x patchlevel.h 'Fedora Patch17: CVE-2008-2827 perl: insecure use of chmod 
 perl -x patchlevel.h 'Fedora Patch18: Remove old Test::Harness'
 perl -x patchlevel.h 'Fedora Patch19: Update Test::Harness to 3.12'
 perl -x patchlevel.h 'Fedora Patch20: pos function handle unicode correct'
+perl -x patchlevel.h 'Fedora Patch21: CGI.pm bug in exists() on tied param hash'
+perl -x patchlevel.h 'Fedora Patch22: Update Test::Simple to 0.80'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1641,6 +1648,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Sep 16 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-43.fc10
+- 462444 update Test::Simple to 0.80
+
 * Thu Aug 14 2008 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-42.fc10
 - move libnet to the right directory, along Net/Config.pm
 
