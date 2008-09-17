@@ -86,7 +86,7 @@ Patch20:	perl-5.10.0-pos.patch
 Patch21:        perl-5.10.0-CGI.patch
 
 # 462444	update Test::Simple to 0.80
-Patch22:		perl-5.10.0-TestSimple0.80.patch
+Patch22:        perl-5.10.0-TestSimple0.80.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -708,7 +708,7 @@ Summary:        Run Perl standard test scripts with statistics
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.64
+Version:        3.12
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -721,7 +721,7 @@ Summary:        Basic utilities for writing tests
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.72
+Version:        0.80
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -1648,6 +1648,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Sep 17 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-44.fc10
+- forgot to update versions in subpackages - Test::Simple and Test::Harness
+
 * Tue Sep 16 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-43.fc10
 - 462444 update Test::Simple to 0.80
 
