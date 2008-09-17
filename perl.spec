@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        43%{?dist}
+Release:        44%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -87,6 +87,9 @@ Patch21:        perl-5.10.0-CGI.patch
 
 # 462444	update Test::Simple to 0.80
 Patch22:        perl-5.10.0-TestSimple0.80.patch
+
+# Archive::Tar update to 1.38 version
+Patch23:    perl-5.10.0-ArchiveTar1.38.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -241,8 +244,7 @@ Summary:        A module for Perl manipulation of .tar files
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-# It's really 1.37_01, but we drop the _01.
-Version:        1.37
+Version:        1.38
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Compress::Zlib), perl(IO::Zlib)
 
@@ -818,6 +820,7 @@ upstream tarball from perl.org.
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
+%patch23 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1041,6 +1044,7 @@ perl -x patchlevel.h 'Fedora Patch19: Update Test::Harness to 3.12'
 perl -x patchlevel.h 'Fedora Patch20: pos function handle unicode correct'
 perl -x patchlevel.h 'Fedora Patch21: CGI.pm bug in exists() on tied param hash'
 perl -x patchlevel.h 'Fedora Patch22: Update Test::Simple to 0.80'
+perl -x patchlevel.h 'Fedora Patch23: Update Archive::Tar 1.38'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1360,7 +1364,7 @@ make test
 
 %files Archive-Extract
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/Archive/
+%{_prefix}/lib/perl5/%{perl_version}/Archive/Extract.pm
 %{_mandir}/man3/Archive::Extract.3*
 
 %files Archive-Tar
@@ -1649,7 +1653,10 @@ make test
 # Old changelog entries are preserved in CVS.
 %changelog
 * Wed Sep 17 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-44.fc10
-- forgot to update versions in subpackages - Test::Simple and Test::Harness
+- remove Tar.pm from Archive-Extract
+- fix version of Test::Simple in spec
+- update Test::Simple
+- update Archive::Tar to 1.38
 
 * Tue Sep 16 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-43.fc10
 - 462444 update Test::Simple to 0.80

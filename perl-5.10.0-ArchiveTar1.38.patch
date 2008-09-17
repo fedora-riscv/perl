@@ -1,0 +1,58 @@
+diff -urN perl-5.10.0/lib/Archive/Tar.old/t/04_resolved_issues.t perl-5.10.0/lib/Archive/Tar/t/04_resolved_issues.t
+--- perl-5.10.0/lib/Archive/Tar.old/t/04_resolved_issues.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Archive/Tar/t/04_resolved_issues.t	2007-11-15 12:47:43.000000000 +0100
+@@ -121,7 +121,6 @@
+                                 "       Renamed to '$out_file'" );
+     
+     ### first, test with strict extract permissions on
+-TODO:
+     {   local $Archive::Tar::INSECURE_EXTRACT_MODE = 0;
+ 
+         ### we quell the error on STDERR
+@@ -135,20 +134,14 @@
+         ok( ! -e $out_file,     "       File '$out_file' does not exist" );
+     
+         ok( $tar->error,        "       Error message stored" );
+-
+-        local $TODO = 'Exposed unrelated filespec handling bugs on VMS' if $^O eq 'VMS';
+-
+         like( $tar->error, qr/attempting to leave/,
+                                 "           Proper violation detected" );
+     }
+     
+     ### now disable those
+-TODO:
+     {   local $Archive::Tar::INSECURE_EXTRACT_MODE = 1;
+         ok( 1,                  "   Extracting in insecure mode" );
+     
+-        local $TODO = 'Exposed unrelated filespec handling bugs on VMS' if $^O eq 'VMS';
+-
+         ok( $tar->extract_file( $out_file ),
+                                 "       File extracted" );
+         ok( -e $out_file,       "       File '$out_file' exists" );
+diff -urN perl-5.10.0/lib/Archive/Tar.old/t/99_pod.t perl-5.10.0/lib/Archive/Tar/t/99_pod.t
+--- perl-5.10.0/lib/Archive/Tar.old/t/99_pod.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Archive/Tar/t/99_pod.t	2007-03-06 15:30:04.000000000 +0100
+@@ -0,0 +1,22 @@
++use Test::More;
++use File::Spec;
++use File::Find;
++use strict;
++
++BEGIN { chdir 't' if -d 't' };
++
++eval 'use Test::Pod';
++plan skip_all => "Test::Pod v0.95 required for testing POD"
++    if $@ || $Test::Pod::VERSION < 0.95;
++
++my @files;
++find( sub { push @files, File::Spec->catfile(
++                    File::Spec->splitdir( $File::Find::dir ), $_
++                ) if /\.p(?:l|m|od)$/ }, File::Spec->catdir(qw(.. blib lib) ));
++
++plan tests => scalar @files;
++for my $file ( @files ) {
++    pod_file_ok( $file );
++}
++
++
