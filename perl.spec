@@ -89,6 +89,12 @@ Patch18:	perl-5.10.0-pos.patch
 #  CGI.pm bug in exists() on tied param hash
 Patch19:	perl-5.10.0-CGI.patch
 
+# 462444	update Test::Simple to 0.80
+Patch20:    perl-5.10.0-TestSimple0.80.patch
+
+# Archive::Tar update to 1.38 version
+Patch21:    perl-5.10.0-ArchiveTar1.38.patch
+
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel, zlib-devel
@@ -240,8 +246,7 @@ Summary:        A module for Perl manipulation of .tar files
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-# It's really 1.37_01, but we drop the _01.
-Version:        1.37
+Version:        1.38
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Compress::Zlib), perl(IO::Zlib)
 
@@ -721,7 +726,7 @@ Summary:        Basic utilities for writing tests
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.72
+Version:        0.80
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -815,6 +820,8 @@ upstream tarball from perl.org.
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
+%patch20 -p1
+%patch21 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1033,13 +1040,15 @@ perl -x patchlevel.h 'Fedora Patch16: Access permission - rt49003'
 perl -x patchlevel.h 'Fedora Patch17: CVE-2008-2827 perl: insecure use of chmod in rmtree'
 perl -x patchlevel.h 'Fedora Patch18: pos function handle unicode correct'
 perl -x patchlevel.h 'Fedora Patch19: CGI bug in exists()'
+perl -x patchlevel.h 'Fedora Patch20: Update Test::Simple to 0.80'
+perl -x patchlevel.h 'Fedora Patch21: Archive::Tar 1.38'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %check
 %ifnarch sparc64
-##make test
+make test
 %endif
 
 %post libs -p /sbin/ldconfig
@@ -1350,7 +1359,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files Archive-Extract
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/Archive/
+%{_prefix}/lib/perl5/%{perl_version}/Archive/Extract.pm
 %{_mandir}/man3/Archive::Extract.3*
 
 %files Archive-Tar
@@ -1638,6 +1647,12 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Sep 17 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-35.fc9
+- remove Tar.pm from Archive-Extract
+- fix version of Test::Simple in spec
+- update Test::Simple
+- update Archive::Tar to 1.38
+
 * Thu Aug 14 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-34.fc9
 - move libnet to the right directory, along Net/Config.pm
 
