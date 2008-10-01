@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        44%{?dist}
+Release:        45%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -1016,6 +1016,9 @@ chmod -R u+w $RPM_BUILD_ROOT/*
 # Compress Changes* to save space
 %{__gzip} Changes*
 
+# Give them all the same time/date stamp to avoid multilib conflict
+touch -r Artistic Changes*.gz
+
 # Local patch tracking
 cd $RPM_BUILD_ROOT%{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/
 perl -x patchlevel.h 'Fedora Patch1: Permit suidperl to install as nonroot'
@@ -1652,6 +1655,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Oct  1 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-45
+- give Changes*.gz the same datetime to avoid multilib conflict
+
 * Wed Sep 17 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-44.fc10
 - remove Tar.pm from Archive-Extract
 - fix version of Test::Simple in spec
