@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        45%{?dist}
+Release:        46%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -828,6 +828,7 @@ upstream tarball from perl.org.
 recode()
 {
         iconv -f "$2" -t utf-8 < "$1" > "${1}_"
+        touch -r "$1" "${1}_"
         mv -f "${1}_" "$1"
 }
 recode README.cn euc-cn
@@ -1015,9 +1016,6 @@ chmod -R u+w $RPM_BUILD_ROOT/*
 
 # Compress Changes* to save space
 %{__gzip} Changes*
-
-# Give them all the same time/date stamp to avoid multilib conflict
-touch -r Artistic Changes*.gz
 
 # Local patch tracking
 cd $RPM_BUILD_ROOT%{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/
@@ -1655,6 +1653,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Oct  1 2008 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-46
+- also preserve the timestamp of AUTHORS; move the fix to the recode
+  function, which is where the stamps go wrong
+
 * Wed Oct  1 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-45
 - give Changes*.gz the same datetime to avoid multilib conflict
 
