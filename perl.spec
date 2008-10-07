@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        46%{?dist}
+Release:        47%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -90,6 +90,12 @@ Patch22:        perl-5.10.0-TestSimple0.80.patch
 
 # Archive::Tar update to 1.38 version
 Patch23:    perl-5.10.0-ArchiveTar1.38.patch
+
+# Storable segfaults when objects are reblessed rt#33242
+Patch24:    perl-5.10.0-Storable.patch
+
+# Pod::Simple 3.07
+Patch25:    perl-5.10.0-PodSimple.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -821,6 +827,8 @@ upstream tarball from perl.org.
 %patch21 -p1
 %patch22 -p1
 %patch23 -p1
+%patch24 -p1
+%patch25 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1046,6 +1054,8 @@ perl -x patchlevel.h 'Fedora Patch20: pos function handle unicode correct'
 perl -x patchlevel.h 'Fedora Patch21: CGI.pm bug in exists() on tied param hash'
 perl -x patchlevel.h 'Fedora Patch22: Update Test::Simple to 0.80'
 perl -x patchlevel.h 'Fedora Patch23: Update Archive::Tar 1.38'
+perl -x patchlevel.h 'Fedora Patch24: Storable fix'
+perl -x patchlevel.h 'Fedora Patch25: Update to Pod::Simple 3.07'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1653,6 +1663,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Oct 07 2008 Marcela Mašláňová <mmaslano@redhat.com> 4:5.10.0-47.fc10
+- rt#33242, rhbz#459918. Segfault after reblessing objects in Storable.
+- rhbz#465728 upgrade Simple::Pod to 3.07
+
 * Wed Oct  1 2008 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-46
 - also preserve the timestamp of AUTHORS; move the fix to the recode
   function, which is where the stamps go wrong
