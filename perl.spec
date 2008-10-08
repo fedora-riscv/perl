@@ -687,7 +687,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        3.05
+Version:        3.07
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Pod-Simple
