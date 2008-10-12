@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        47%{?dist}
+Release:        48%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -96,6 +96,9 @@ Patch24:    perl-5.10.0-Storable.patch
 
 # Pod::Simple 3.07
 Patch25:    perl-5.10.0-PodSimple.patch
+
+# Fix crash when localizing a symtab entry rt#52740
+Patch26:    perl-5.10.0-stlocal.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -829,6 +832,7 @@ upstream tarball from perl.org.
 %patch23 -p1
 %patch24 -p1
 %patch25 -p1
+%patch26 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1056,6 +1060,7 @@ perl -x patchlevel.h 'Fedora Patch22: Update Test::Simple to 0.80'
 perl -x patchlevel.h 'Fedora Patch23: Update Archive::Tar 1.38'
 perl -x patchlevel.h 'Fedora Patch24: Storable fix'
 perl -x patchlevel.h 'Fedora Patch25: Update to Pod::Simple 3.07'
+perl -x patchlevel.h 'Fedora Patch26: Fix crash when localizing a symtab entry - rt52740'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1663,6 +1668,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sun Oct 12 2008 Lubomir Rintel <lkundrak@v3.sk> - 4:5.10.0-48
+- Include fix for rt#52740 to fix a crash when using Devel::Symdump and
+  Compress::Zlib together
+
 * Tue Oct 07 2008 Marcela Mašláňová <mmaslano@redhat.com> 4:5.10.0-47.fc10
 - rt#33242, rhbz#459918. Segfault after reblessing objects in Storable.
 - rhbz#465728 upgrade Simple::Pod to 3.07
