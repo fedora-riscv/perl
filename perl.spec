@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        35%{?dist}
+Release:        37%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -97,6 +97,12 @@ Patch21:    perl-5.10.0-ArchiveTar1.38.patch
 
 # Fix crash when localizing a symtab entry rt#52740
 Patch22:    perl-5.10.0-stlocal.patch
+
+# Storable segfaults when objects are reblessed rt#33242
+Patch23:    perl-5.10.0-Storable.patch
+
+# Pod::Simple 3.07
+Patch24:    perl-5.10.0-PodSimple.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -687,7 +693,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        3.05
+Version:        3.07
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Pod-Simple
@@ -826,6 +832,8 @@ upstream tarball from perl.org.
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
+%patch23 -p1
+%patch24 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1047,7 +1055,8 @@ perl -x patchlevel.h 'Fedora Patch19: CGI bug in exists()'
 perl -x patchlevel.h 'Fedora Patch20: Update Test::Simple to 0.80'
 perl -x patchlevel.h 'Fedora Patch21: Archive::Tar 1.38'
 perl -x patchlevel.h 'Fedora Patch22: Fix crash when localizing a symtab entry - rt52740'
-
+perl -x patchlevel.h 'Fedora Patch23: Storable seg after reblessed objects rt#33242'
+perl -x patchlevel.h 'Fedora Patch24: Pod::Simple 3.07'
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -1652,6 +1661,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Oct 13 2008 Marcela Mašláňová <mmaslano@redhat.com> 4:5.10.0-37.fc9
+- update Pod::Simple
+- rt#33242, rhbz#459918. Segfault after reblessing objects in Storable.
+
 * Sun Oct 12 2008 Lubomir Rintel <lkundrak@v3.sk> 4:5.10.0-36-fc9
 - Include fix for rt#52740 to fix a crash when using Devel::Symdump and
   Compress::Zlib together
