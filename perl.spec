@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        37%{?dist}
+Release:        38%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -104,6 +104,9 @@ Patch23:    perl-5.10.0-Storable.patch
 # Pod::Simple 3.07
 Patch24:    perl-5.10.0-PodSimple.patch
 
+# File::Temp 0.20
+Patch25:    perl-5.10.0-File-Temp-0.20.patch
+
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel, zlib-devel
@@ -166,8 +169,8 @@ Provides: perl(validate.pl)
 Provides: perl(Carp::Heavy)
 
 # Long history in 3rd-party repositories:
-Provides: perl-File-Temp = 0.18
-Obsoletes: perl-File-Temp < 0.18
+Provides: perl-File-Temp = 0.20
+Obsoletes: perl-File-Temp < 0.20
 
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
@@ -834,6 +837,7 @@ upstream tarball from perl.org.
 %patch22 -p1
 %patch23 -p1
 %patch24 -p1
+%patch25 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1057,6 +1061,7 @@ perl -x patchlevel.h 'Fedora Patch21: Archive::Tar 1.38'
 perl -x patchlevel.h 'Fedora Patch22: Fix crash when localizing a symtab entry - rt52740'
 perl -x patchlevel.h 'Fedora Patch23: Storable seg after reblessed objects rt#33242'
 perl -x patchlevel.h 'Fedora Patch24: Pod::Simple 3.07'
+perl -x patchlevel.h 'Fedora Patch25: Upgrade File::Temp to 0.20'
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -1661,6 +1666,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Oct 23 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-38
+- update File::Temp to 0.20 (bz 468183)
+
 * Mon Oct 13 2008 Marcela Mašláňová <mmaslano@redhat.com> 4:5.10.0-37.fc9
 - update Pod::Simple
 - rt#33242, rhbz#459918. Segfault after reblessing objects in Storable.
