@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        48%{?dist}
+Release:        49%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        The Perl programming language
 Group:          Development/Languages
@@ -100,6 +100,9 @@ Patch25:    perl-5.10.0-PodSimple.patch
 # Fix crash when localizing a symtab entry rt#52740
 Patch26:    perl-5.10.0-stlocal.patch
 
+# File::Temp 0.20
+Patch27:    perl-5.10.0-File-Temp-0.20.patch
+
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel, zlib-devel
@@ -162,8 +165,8 @@ Provides: perl(validate.pl)
 Provides: perl(Carp::Heavy)
 
 # Long history in 3rd-party repositories:
-Provides: perl-File-Temp = 0.18
-Obsoletes: perl-File-Temp < 0.18
+Provides: perl-File-Temp = 0.20
+Obsoletes: perl-File-Temp < 0.20
 
 # Use new testing module perl-Test-Harness, obsolete it outside of this package
 Provides: perl-TAP-Harness = 3.10
@@ -833,6 +836,7 @@ upstream tarball from perl.org.
 %patch24 -p1
 %patch25 -p1
 %patch26 -p1
+%patch27 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1061,6 +1065,7 @@ perl -x patchlevel.h 'Fedora Patch23: Update Archive::Tar 1.38'
 perl -x patchlevel.h 'Fedora Patch24: Storable fix'
 perl -x patchlevel.h 'Fedora Patch25: Update to Pod::Simple 3.07'
 perl -x patchlevel.h 'Fedora Patch26: Fix crash when localizing a symtab entry - rt52740'
+perl -x patchlevel.h 'Fedora Patch27: Update to File::Temp 0.20'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1668,6 +1673,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Oct 23 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-49
+- update File::Temp to 0.20
+
 * Sun Oct 12 2008 Lubomir Rintel <lkundrak@v3.sk> - 4:5.10.0-48
 - Include fix for rt#52740 to fix a crash when using Devel::Symdump and
   Compress::Zlib together
