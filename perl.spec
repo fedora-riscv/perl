@@ -7,9 +7,9 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        49%{?dist}
+Release:        50%{?dist}
 Epoch:          %{perl_epoch}
-Summary:        The Perl programming language
+Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
 # Modules Tie::File and Getopt::Long are licenced under "GPLv2+ or Artistic,"
 # we have to reflect that in the sub-package containing them.
@@ -1673,6 +1673,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Nov 24 2008 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-50
+- change summary according to RFC fix summary discussion at fedora-devel :)
+
 * Thu Oct 23 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-49
 - update File::Temp to 0.20
 
