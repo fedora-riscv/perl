@@ -1,0 +1,340 @@
+--- perl/Porting/Maintainers.pm#2~33194~	2008-02-02 09:05:25.000000000 -0800
++++ perl/Porting/Maintainers.pm	2008-04-03 09:03:24.000000000 -0700
+@@ -14,11 +14,12 @@
+ require "Maintainers.pl";
+ use vars qw(%Modules %Maintainers);
+ 
+-use vars qw(@ISA @EXPORT_OK);
++use vars qw(@ISA @EXPORT_OK $VERSION);
+ @ISA = qw(Exporter);
+ @EXPORT_OK = qw(%Modules %Maintainers
+ 		get_module_files get_module_pat
+ 		show_results process_options);
++$VERSION = 0.02;
+ require Exporter;
+ 
+ use File::Find;
+@@ -107,9 +108,12 @@
+     my @Files;
+    
+     if ($Opened) {
+-	my @raw = `p4 opened`;
++	@Files = `p4 opened`;
+ 	die if $?;
+-	@Files =  map {s!#.*!!s; s!^//depot/.*?/perl/!!; $_} @raw;
++	foreach (@Files) {
++	    s!#.*!!s;
++	    s!^//depot/(?:perl|.*?/perl)/!!;
++	}
+     } else {
+ 	@Files = @ARGV;
+     }
+
+--- perl/ext/B/B/Concise.pm#2~33126~	2008-01-30 07:26:23.000000000 -0800
++++ perl/ext/B/B/Concise.pm	2008-04-03 09:03:24.000000000 -0700
+@@ -14,7 +14,7 @@
+ 
+ use Exporter (); # use #5
+ 
+-our $VERSION   = "0.74";
++our $VERSION   = "0.75";
+ our @ISA       = qw(Exporter);
+ our @EXPORT_OK = qw( set_style set_style_standard add_callback
+ 		     concise_subref concise_cv concise_main
+
+--- perl/ext/Devel/DProf/DProf.pm#1~32694~	2007-12-22 01:23:09.000000000 -0800
++++ perl/ext/Devel/DProf/DProf.pm	2008-04-03 09:03:24.000000000 -0700
+@@ -230,7 +230,7 @@
+ 
+ use XSLoader ();
+ 
+-$Devel::DProf::VERSION = '20050603.00';  # this version not authorized by
++$Devel::DProf::VERSION = '20080331.00';  # this version not authorized by
+ 				         # Dean Roehrich. See "Changes" file.
+ 
+ XSLoader::load 'Devel::DProf', $Devel::DProf::VERSION;
+
+--- perl/ext/Devel/Peek/Peek.pm#1~32694~	2007-12-22 01:23:09.000000000 -0800
++++ perl/ext/Devel/Peek/Peek.pm	2008-04-03 09:03:24.000000000 -0700
+@@ -3,7 +3,7 @@
+ 
+ package Devel::Peek;
+ 
+-$VERSION = '1.03';
++$VERSION = '1.04';
+ $XS_VERSION = $VERSION;
+ $VERSION = eval $VERSION;
+ 
+
+--- perl/ext/POSIX/POSIX.pm#1~32694~	2007-12-22 01:23:09.000000000 -0800
++++ perl/ext/POSIX/POSIX.pm	2008-04-03 09:03:24.000000000 -0700
+@@ -4,7 +4,7 @@
+ 
+ our(@ISA, %EXPORT_TAGS, @EXPORT_OK, @EXPORT, $AUTOLOAD, %SIGRT) = ();
+ 
+-our $VERSION = "1.13";
++our $VERSION = "1.14";
+ 
+ use AutoLoader;
+ 
+
+--- perl/ext/PerlIO/encoding/encoding.pm#1~32694~	2007-12-22 01:23:09.000000000 -0800
++++ perl/ext/PerlIO/encoding/encoding.pm	2008-04-03 09:03:24.000000000 -0700
+@@ -1,7 +1,7 @@
+ package PerlIO::encoding;
+ 
+ use strict;
+-our $VERSION = '0.10';
++our $VERSION = '0.11';
+ our $DEBUG = 0;
+ $DEBUG and warn __PACKAGE__, " called by ", join(", ", caller), "\n";
+ 
+
+--- perl/ext/PerlIO/scalar/scalar.pm#1~32694~	2007-12-22 01:23:09.000000000 -0800
++++ perl/ext/PerlIO/scalar/scalar.pm	2008-04-03 09:03:24.000000000 -0700
+@@ -1,5 +1,5 @@
+ package PerlIO::scalar;
+-our $VERSION = '0.05';
++our $VERSION = '0.06';
+ use XSLoader ();
+ XSLoader::load 'PerlIO::scalar';
+ 1;
+
+--- perl/ext/PerlIO/via/via.pm#1~32694~	2007-12-22 01:23:09.000000000 -0800
++++ perl/ext/PerlIO/via/via.pm	2008-04-03 09:03:24.000000000 -0700
+@@ -1,5 +1,5 @@
+ package PerlIO::via;
+-our $VERSION = '0.04';
++our $VERSION = '0.05';
+ use XSLoader ();
+ XSLoader::load 'PerlIO::via';
+ 1;
+
+--- perl/ext/Socket/Socket.pm#1~32694~	2007-12-22 01:23:09.000000000 -0800
++++ perl/ext/Socket/Socket.pm	2008-04-03 09:03:24.000000000 -0700
+@@ -1,7 +1,7 @@
+ package Socket;
+ 
+ our($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
+-$VERSION = "1.80";
++$VERSION = "1.81";
+ 
+ =head1 NAME
+ 
+
+--- perl/lib/ExtUtils/Embed.pm#2~33574~	2008-03-26 09:37:45.000000000 -0700
++++ perl/lib/ExtUtils/Embed.pm	2008-04-03 09:03:24.000000000 -0700
+@@ -19,7 +19,7 @@
+ use strict;
+ 
+ # This is not a dual-life module, so no need for development version numbers
+-$VERSION = '1.27';
++$VERSION = '1.28';
+ 
+ @ISA = qw(Exporter);
+ @EXPORT = qw(&xsinit &ldopts 
+
+--- perl/lib/Fatal.pm#1~32694~	2007-12-22 01:23:09.000000000 -0800
++++ perl/lib/Fatal.pm	2008-04-03 09:03:24.000000000 -0700
+@@ -5,7 +5,7 @@
+ use strict;
+ our($AUTOLOAD, $Debug, $VERSION);
+ 
+-$VERSION = 1.05;
++$VERSION = 1.06;
+ 
+ $Debug = 0 unless defined $Debug;
+ 
+@@ -106,7 +106,7 @@
+         $proto = eval { prototype "CORE::$name" };
+ 	die "$name is neither a builtin, nor a Perl subroutine" 
+ 	  if $@;
+-	die "Cannot make a non-overridable builtin fatal"
++	die "Cannot make the non-overridable builtin $name fatal"
+ 	  if not defined $proto;
+ 	$core = 1;
+ 	$call = "CORE::$name";
+
+--- perl/lib/Fatal.t#1~32694~	2007-12-22 01:23:09.000000000 -0800
++++ perl/lib/Fatal.t	2008-04-03 09:03:24.000000000 -0700
+@@ -3,7 +3,7 @@
+ BEGIN {
+    chdir 't' if -d 't';
+    @INC = '../lib';
+-   print "1..15\n";
++   print "1..16\n";
+ }
+ 
+ use strict;
+@@ -34,3 +34,9 @@
+ eval { my $a = opendir FOO, 'lkjqweriuapofukndajsdlfjnvcvn' };
+ print "not " if $@ =~ /^Can't open/;
+ print "ok $i\n"; ++$i;
++
++eval { Fatal->import(qw(print)) };
++if ($@ !~ m{Cannot make the non-overridable builtin print fatal}) {
++    print "not ";
++}
++print "ok $i\n"; ++$i;
+
+--- perl/lib/File/Basename.pm#1~32694~	2007-12-22 01:23:09.000000000 -0800
++++ perl/lib/File/Basename.pm	2008-04-03 09:03:24.000000000 -0700
+@@ -54,7 +54,7 @@
+ require Exporter;
+ @ISA = qw(Exporter);
+ @EXPORT = qw(fileparse fileparse_set_fstype basename dirname);
+-$VERSION = "2.76";
++$VERSION = "2.77";
+ 
+ fileparse_set_fstype($^O);
+ 
+
+--- perl/lib/File/Find.pm#2~33162~	2008-01-31 14:54:31.000000000 -0800
++++ perl/lib/File/Find.pm	2008-04-03 09:03:24.000000000 -0700
+@@ -3,7 +3,7 @@
+ use strict;
+ use warnings;
+ use warnings::register;
+-our $VERSION = '1.12';
++our $VERSION = '1.13';
+ require Exporter;
+ require Cwd;
+ 
+
+--- perl/lib/Module/CoreList.pm#3~33615~	2008-03-31 11:01:17.000000000 -0700
++++ perl/lib/Module/CoreList.pm	2008-04-03 09:03:24.000000000 -0700
+@@ -1,7 +1,7 @@
+ package Module::CoreList;
+ use strict;
+ use vars qw/$VERSION %released %patchlevel %version %families/;
+-$VERSION = '2.14';
++$VERSION = '2.15';
+ 
+ =head1 NAME
+ 
+@@ -2007,7 +2007,7 @@
+         'warnings'              => undef, #lib/warnings.pm
+         'warnings::register'    => undef, #lib/warnings/register.pm
+         'XSLoader'              => '0.01', #lib/XSLoader.pm
+-   },
++    },
+ 
+     5.007003   => {
+         'AnyDBM_File'           => '1.00',
+@@ -4462,6 +4462,7 @@
+         'XSLoader'              => '0.03',  #lib/XSLoader.pm
+         'XS::Typemap'           => '0.01',  #lib/XS/Typemap.pm
+     },
++
+     5.008004 => {
+         'AnyDBM_File'           => '1.00',  #lib/AnyDBM_File.pm
+         'attributes'            => '0.06',  #lib/attributes.pm
+@@ -5555,6 +5556,7 @@
+         'XSLoader'              => '0.02',  #lib/XSLoader.pm
+         'XS::Typemap'           => '0.01',  #lib/XS/Typemap.pm
+     },
++
+     5.009002 => {
+ 	'AnyDBM_File'           => '1.00',
+ 	'Attribute::Handlers'   => '0.78_01',
+@@ -5595,6 +5597,7 @@
+ 	'Carp::Heavy'           => '1.04',
+ 	'Class::ISA'            => '0.33',
+ 	'Class::Struct'         => '0.63',
++        'Config'                => undef,
+ 	'Config::Extensions'    => '0.01',
+ 	'Cwd'                   => '3.05',
+ 	'DB'                    => '1.0',
+@@ -5919,6 +5922,7 @@
+ 	'warnings'              => '1.04',
+ 	'warnings::register'    => '1.00',
+     },
++
+     5.008007 => {
+ 	'AnyDBM_File'           => '1.00',
+ 	'Attribute::Handlers'   => '0.78_01',
+@@ -5959,6 +5963,7 @@
+ 	'Carp::Heavy'           => '1.04',
+ 	'Class::ISA'            => '0.33',
+ 	'Class::Struct'         => '0.63',
++        'Config'                => undef,
+ 	'Cwd'                   => '3.05',
+ 	'DB'                    => '1.0',
+ 	'DBM_Filter'            => '0.01',
+@@ -6278,6 +6283,7 @@
+ 	'warnings'              => '1.03',
+ 	'warnings::register'    => '1.00',
+     },
++
+     5.009003 => {
+ 	'AnyDBM_File'           => '1.00',
+ 	'Archive::Tar'          => '1.26_01',
+@@ -6348,6 +6354,7 @@
+ 	'Compress::Zlib::ParseParameters'=> '2.000_07',
+ 	'Compress::Zlib::UncompressPlugin::Identity'=> '2.000_05',
+ 	'Compress::Zlib::UncompressPlugin::Inflate'=> '2.000_05',
++        'Config'                => undef,
+ 	'Config::Extensions'    => '0.01',
+ 	'Cwd'                   => '3.15',
+ 	'DB'                    => '1.01',
+@@ -6727,6 +6734,7 @@
+ 	'warnings'              => '1.05',
+ 	'warnings::register'    => '1.01',
+     },
++
+     5.008008 => {
+ 	'AnyDBM_File'           => '1.00',
+ 	'Attribute::Handlers'   => '0.78_02',
+@@ -6767,6 +6775,7 @@
+ 	'Carp::Heavy'           => '1.04',
+ 	'Class::ISA'            => '0.33',
+ 	'Class::Struct'         => '0.63',
++        'Config'                => undef,
+ 	'Cwd'                   => '3.12',
+ 	'DB'                    => '1.01',
+ 	'DBM_Filter'            => '0.01',
+@@ -7094,6 +7103,7 @@
+ 	'warnings'              => '1.05',
+ 	'warnings::register'    => '1.01',
+     },
++
+     5.009004 => {
+ 	'AnyDBM_File'           => '1.00',
+ 	'Archive::Tar'          => '1.30_01',
+@@ -7143,6 +7153,7 @@
+ 	'Class::Struct'         => '0.63',
+ 	'Compress::Raw::Zlib'   => '2.000_13',
+ 	'Compress::Zlib'        => '2.000_13',
++        'Config'                => undef,
+ 	'Config::Extensions'    => '0.01',
+ 	'Cwd'                   => '3.19',
+ 	'DB'                    => '1.01',
+@@ -7576,6 +7587,7 @@
+ 	'warnings'              => '1.05',
+ 	'warnings::register'    => '1.01',
+     },
++
+     5.009005 => {
+ 	'AnyDBM_File'           => '1.00',
+ 	'Archive::Extract'      => '0.22_01',
+@@ -8110,6 +8122,7 @@
+ 	'warnings'              => '1.06',
+ 	'warnings::register'    => '1.01',
+     },
++
+     5.010000 => {
+ 	'AnyDBM_File'           => '1.00',
+ 	'Archive::Extract'      => '0.24',
+
+--- perl/os2/OS2/REXX/REXX.pm#1~32694~	2007-12-22 01:23:09.000000000 -0800
++++ perl/os2/OS2/REXX/REXX.pm	2008-04-03 09:03:24.000000000 -0700
+@@ -11,7 +11,7 @@
+ # Other items we are prepared to export if requested
+ @EXPORT_OK = qw(drop register);
+ 
+-$VERSION = '1.03';
++$VERSION = '1.04';
+ 
+ # We cannot just put OS2::DLL in @ISA, since some scripts would use
+ # function interface, not method interface...
+

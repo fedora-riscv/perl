@@ -7,9 +7,9 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        49%{?dist}
+Release:        51%{?dist}
 Epoch:          %{perl_epoch}
-Summary:        The Perl programming language
+Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
 # Modules Tie::File and Getopt::Long are licenced under "GPLv2+ or Artistic,"
 # we have to reflect that in the sub-package containing them.
@@ -102,6 +102,24 @@ Patch26:    perl-5.10.0-stlocal.patch
 
 # File::Temp 0.20
 Patch27:    perl-5.10.0-File-Temp-0.20.patch
+
+# Change 33640: More diagnostics for Fatal.pm, version bumps for all non-dual life modules affected
+# http://www.nntp.perl.org/group/perl.perl5.changes/2008/04/msg21478.html
+Patch28:    perl-5.10.0-Change33640.patch
+
+# Change 33881: (33825) Add SEEK_CUR, SEEK_END, SEEK_SET to list of constants POSIX imports from Fcntl
+#               (33826) Remove POSIX's internal implementation of S_ISBLK, S_ISCHR, S_ISDIR, S_ISFIFO, S_ISREG, pull from Fcntl
+#               (33829) Fix typo
+# http://www.nntp.perl.org/group/perl.perl5.changes/2008/05/msg21717.html
+Patch29:    perl-5.10.0-Change33881.patch
+
+# Change 33896: Eliminate POSIX::int_macro_int, and all the complex AUTOLOAD fandango
+# http://www.nntp.perl.org/group/perl.perl5.changes/2008/05/msg21732.html
+Patch30:    perl-5.10.0-Change33896.patch
+
+# Change 33897: Replaced the WEXITSTATUS, WIFEXITED, WIFSIGNALED, WIFSTOPPED, WSTOPSIG
+# http://www.nntp.perl.org/group/perl.perl5.changes/2008/05/msg21733.html
+Patch31:    perl-5.10.0-Change33897.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -367,7 +385,7 @@ Summary:        Utilities for embedding Perl in C/C++ applications
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.27
+Version:        1.28
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -559,7 +577,7 @@ Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.14
+Version:        2.15
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(version)
 
@@ -837,6 +855,10 @@ upstream tarball from perl.org.
 %patch25 -p1
 %patch26 -p1
 %patch27 -p1
+%patch28 -p1
+%patch29 -p1
+%patch30 -p1
+%patch31 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1066,6 +1088,10 @@ perl -x patchlevel.h 'Fedora Patch24: Storable fix'
 perl -x patchlevel.h 'Fedora Patch25: Update to Pod::Simple 3.07'
 perl -x patchlevel.h 'Fedora Patch26: Fix crash when localizing a symtab entry - rt52740'
 perl -x patchlevel.h 'Fedora Patch27: Update to File::Temp 0.20'
+perl -x patchlevel.h '33640 Integrate Changes 33399, 33621, 33622, 33623, 33624'
+perl -x patchlevel.h '33881 Integrate Changes 33825, 33826, 33829'
+perl -x patchlevel.h '33896 Eliminate POSIX::int_macro_int, and all the complex AUTOLOAD fandango'
+perl -x patchlevel.h '33897 Replaced the WEXITSTATUS, WIFEXITED, WIFSIGNALED, WIFSTOPPED, WSTOPSIG'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1673,6 +1699,13 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Nov 28 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-51
+- to fix Fedora bz 473223, which is really perl bug #54186 (http://rt.perl.org/rt3//Public/Bug/Display.html?id=54186)
+  we apply Changes 33640, 33881, 33896, 33897
+
+* Mon Nov 24 2008 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-50
+- change summary according to RFC fix summary discussion at fedora-devel :)
+
 * Thu Oct 23 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-49
 - update File::Temp to 0.20
 
