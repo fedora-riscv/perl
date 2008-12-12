@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        51%{?dist}
+Release:        52%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -16,6 +16,7 @@ Group:          Development/Languages
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic)
 Url:            http://www.perl.org/
 Source0:        http://search.cpan.org/CPAN/authors/id/R/RG/RGARCIA/perl-%{perl_version}.tar.gz
+Source1:        Tar-Archive.tar.gz
 Source11:       filter-requires.sh
 Source12:       perl-5.8.0-libnet.cfg
 # Specific to Fedora/RHEL
@@ -120,6 +121,8 @@ Patch30:    perl-5.10.0-Change33896.patch
 # Change 33897: Replaced the WEXITSTATUS, WIFEXITED, WIFSIGNALED, WIFSTOPPED, WSTOPSIG
 # http://www.nntp.perl.org/group/perl.perl5.changes/2008/05/msg21733.html
 Patch31:    perl-5.10.0-Change33897.patch
+
+Patch32:	perl-5.10.0-ArchiveTar1.40.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -274,7 +277,7 @@ Summary:        A module for Perl manipulation of .tar files
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.38
+Version:        1.40
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Compress::Zlib), perl(IO::Zlib)
 
@@ -821,7 +824,7 @@ upstream tarball from perl.org.
 
 
 %prep
-%setup -q 
+%setup -q -a 1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -859,6 +862,7 @@ upstream tarball from perl.org.
 %patch29 -p1
 %patch30 -p1
 %patch31 -p1
+%patch32 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1092,6 +1096,7 @@ perl -x patchlevel.h '33640 Integrate Changes 33399, 33621, 33622, 33623, 33624'
 perl -x patchlevel.h '33881 Integrate Changes 33825, 33826, 33829'
 perl -x patchlevel.h '33896 Eliminate POSIX::int_macro_int, and all the complex AUTOLOAD fandango'
 perl -x patchlevel.h '33897 Replaced the WEXITSTATUS, WIFEXITED, WIFSIGNALED, WIFSTOPPED, WSTOPSIG'
+perl -x patchlevel.h 'Fedora Patch32: CVE-2007-4829 Update Archive::Tar to 1.40'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1699,6 +1704,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Dec 12 2008 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-52
+- 295021 CVE-2007-4829 perl-Archive-Tar directory traversal flaws
+- add another source for binary files, which test untaring links
+
 * Fri Nov 28 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-51
 - to fix Fedora bz 473223, which is really perl bug #54186 (http://rt.perl.org/rt3//Public/Bug/Display.html?id=54186)
   we apply Changes 33640, 33881, 33896, 33897
