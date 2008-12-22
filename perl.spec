@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        52%{?dist}
+Release:        53%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1704,6 +1704,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Dec 22 2008 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-53
+- add missing XHTML.pm into Pod::Simple
+
 * Thu Dec 12 2008 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-52
 - 295021 CVE-2007-4829 perl-Archive-Tar directory traversal flaws
 - add another source for binary files, which test untaring links
