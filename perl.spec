@@ -123,6 +123,7 @@ Patch30:    perl-5.10.0-Change33896.patch
 Patch31:    perl-5.10.0-Change33897.patch
 
 Patch32:	perl-5.10.0-ArchiveTar1.40.patch
+Patch33:	perl-5.10.0-PerlIO-via-change34025.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  tcsh, dos2unix, man, groff
