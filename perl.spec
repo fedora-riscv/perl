@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        55%{?dist}
+Release:        56%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -978,6 +978,11 @@ echo "RPM Build arch: %{_arch}"
         -Dotherlibdirs=/usr/local/lib/perl5/site_perl
 %endif
 
+%ifarch sparcv9 sparc64
+%define _smp_mflags        %([ -z "$RPM_BUILD_NCPUS" ] && RPM_BUILD_NCPUS="`/usr/bin/getconf _NPROCESSORS_ONLN`"; \
+        if [ "$RPM_BUILD_NCPUS" -gt 12 ]; then echo "-j12"; elif [ "$RPM_BUILD_NCPUS" -gt 1 ]; then echo "-j$RPM_BUILD_NCPUS"; fi)
+%endif
+
 make %{?_smp_mflags}
 
 
@@ -1712,6 +1717,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sat Feb 07 2009 Dennis Gilmore <dennis@ausil.us> - 4:5.10.0-56
+- limit sparc builds to -j12
+
 * Tue Feb  3 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-55
 - update IPC::Cmd to v 0.42
 
