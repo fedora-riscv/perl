@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        53%{?dist}
+Release:        54%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -974,6 +974,11 @@ echo "RPM Build arch: %{_arch}"
         -Dotherlibdirs=/usr/local/lib/perl5/site_perl
 %endif
 
+%ifarch sparcv9 sparc64
+%define _smp_mflags        %([ -z "$RPM_BUILD_NCPUS" ] && RPM_BUILD_NCPUS="`/usr/bin/getconf _NPROCESSORS_ONLN`"; \
+        if [ "$RPM_BUILD_NCPUS" -gt 12 ]; then echo "-j12"; elif [ "$RPM_BUILD_NCPUS" -gt 1 ]; then echo "-j$RPM_BUILD_NCPUS"; fi)
+%endif
+
 make %{?_smp_mflags}
 
 
@@ -1707,6 +1712,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sat Feb 09 2009 Dennis Gilmore <dennis@ausil.us> - 4:5.10.0-54
+- limit %%{?_smp_mflags} to 12 on sparc arches 
+
 * Mon Jan 19 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-53
 - 455410 http://rt.perl.org/rt3/Public/Bug/Display.html?id=54934
   Attempt to free unreferenced scalar fiddling with the symbol table
