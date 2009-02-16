@@ -16,7 +16,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        40%{?dist}
+Release:        41%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -975,8 +975,11 @@ echo "RPM Build arch: %{_arch}"
         -Ud_endservent_r_proto -Ud_setservent_r_proto \
         -Dscriptdir='%{_bindir}'
 
+%ifarch sparc64
+make
+%else
 make %{?_smp_mflags}
-
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -1697,6 +1700,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Feb 16 2009 Dennis Gilmore <dennis@ausil.us> - 4:5.10.0-41
+- build sparc64 without _smp_mflags
+
 * Mon Jan 19 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-40
 - 455410 http://rt.perl.org/rt3/Public/Bug/Display.html?id=54934
   Attempt to free unreferenced scalar fiddling with the symbol table
