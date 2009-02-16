@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        57%{?dist}
+Release:        58%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -973,9 +973,9 @@ echo "RPM Build arch: %{_arch}"
         -Ud_endservent_r_proto -Ud_setservent_r_proto \
         -Dscriptdir='%{_bindir}' \
 %ifarch x86_64 ppc64 sparc64
-        -Dotherlibdirs=/usr/local/lib/perl5/site_perl:/usr/local/%{_lib}/perl5/site_perl \
+        -Dotherlibdirs=/usr/local/lib/perl5/site_perl:/usr/local/%{_lib}/perl5/site_perl:/usr/lib/perl5/site_perl \
 %else
-        -Dotherlibdirs=/usr/local/lib/perl5/site_perl
+        -Dotherlibdirs=/usr/local/lib/perl5/site_perl:/usr/lib/perl5/site_perl
 %endif
 
 %ifarch sparc64
@@ -1715,6 +1715,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Feb 16 2009 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-58
+- add /usr/lib/perl5/site_perl to otherlibs (bz 484053)
+
 * Mon Feb 16 2009 Dennis Gilmore <dennis@ausil.us> - 4:5.10.0-57
 - build sparc64 without _smp_mflags
 
