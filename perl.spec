@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        58%{?dist}
+Release:        59%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1715,6 +1715,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sun Mar 08 2009 Robert Scheck <robert@fedoraproject.org> - 4:5.10.0-59
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
+
 * Mon Feb 16 2009 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-58
 - add /usr/lib/perl5/site_perl to otherlibs (bz 484053)
 
