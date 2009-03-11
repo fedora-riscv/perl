@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        59%{?dist}
+Release:        60%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -16,19 +16,14 @@ Group:          Development/Languages
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic)
 Url:            http://www.perl.org/
 Source0:        http://search.cpan.org/CPAN/authors/id/R/RG/RGARCIA/perl-%{perl_version}.tar.gz
-Source1:        Tar-Archive.tar.gz
-# tgz which help testing module IPC::Cmd
-Source2:		x.tgz
 Source11:       filter-requires.sh
 Source12:       perl-5.8.0-libnet.cfg
+
 # Specific to Fedora/RHEL
 Patch1:         perl-5.8.0-root.patch
 
 # Removes date check, Fedora/RHEL specific
 Patch2:         perl-5.10.0-perlbug-tag.patch
-
-# Fedora/RHEL use links instead of lynx
-Patch3:         perl-5.10.0-links.patch
 
 # work around annoying rpath issue
 # This is only relevant for Fedora, as it is unlikely
@@ -42,14 +37,13 @@ Patch5:         perl-5.8.0-libdir64.patch
 Patch6:         perl-5.10.0-libresolv.patch
 
 # FIXME: May need the "Fedora" references removed before upstreaming
+# patches ExtUtils-MakeMaker
 Patch7:         perl-5.10.0-USE_MM_LD_RUN_PATH.patch
 
 # Skip hostname tests, since hostname lookup isn't available in Fedora
 # buildroots by design.
+# patches Net::Config from libnet
 Patch8:         perl-5.10.0-disable_test_hosts.patch
-
-# Bump Sys::Syslog to 0.24 to fix test failure case
-Patch9:         perl-5.10.0-SysSyslog-0.24.patch
 
 # The Fedora builders started randomly failing this futime test
 # only on x86_64, so we just don't run it. Works fine on normal
@@ -59,52 +53,21 @@ Patch10:        perl-5.10.0-x86_64-io-test-failure.patch
 # http://public.activestate.com/cgi-bin/perlbrowse/p/32891
 Patch11:        32891.patch
 
-# Update Module::Load::Conditional to 0.24 for clean upgrade
-Patch12:	perl-5.10.0-Module-Load-Conditional-0.24.patch
-
-# Upgrade Module::CoreList to 2.14
-Patch13:	perl-5.10.0-Module-CoreList2.14.patch
-
-# Upgrade CGI to 3.38
-Patch14:	perl-5.10.0-CGI-3.38.patch
-
 # Problem with assertion - add upstream patch
 Patch15:	perl-5.10.0-bz448392.patch
 
 # Wrong access test
 Patch16:	perl-5.10.0-accessXOK.patch
 
-# CVE-2008-2827 perl: insecure use of chmod in rmtree
-Patch17:	perl-5.10.0-CVE-2008-2827.patch
-
-# Upgrade Test::Harness
-# first remove old files
-Patch18:	perl-5.10.0-removeTestHarness.patch
-# now include new files perl-5.10.0-TestHarness3.12.patch
-Patch19:	perl-5.10.0-TestHarness3.12.patch
-# pos function handle unicode ok
+# fix function pos to handle unicode correctly
 Patch20:	perl-5.10.0-pos.patch
 
-# 457085  CGI.pm bug in exists() on tied param hash
-Patch21:        perl-5.10.0-CGI.patch
-
-# 462444	update Test::Simple to 0.80
-Patch22:        perl-5.10.0-TestSimple0.80.patch
-
-# Archive::Tar update to 1.38 version
-Patch23:    perl-5.10.0-ArchiveTar1.38.patch
-
 # Storable segfaults when objects are reblessed rt#33242
+# patches module Storable
 Patch24:    perl-5.10.0-Storable.patch
-
-# Pod::Simple 3.07
-Patch25:    perl-5.10.0-PodSimple.patch
 
 # Fix crash when localizing a symtab entry rt#52740
 Patch26:    perl-5.10.0-stlocal.patch
-
-# File::Temp 0.20
-Patch27:    perl-5.10.0-File-Temp-0.20.patch
 
 # Change 33640: More diagnostics for Fatal.pm, version bumps for all non-dual life modules affected
 # http://www.nntp.perl.org/group/perl.perl5.changes/2008/04/msg21478.html
@@ -124,11 +87,52 @@ Patch30:    perl-5.10.0-Change33896.patch
 # http://www.nntp.perl.org/group/perl.perl5.changes/2008/05/msg21733.html
 Patch31:    perl-5.10.0-Change33897.patch
 
-Patch32:	perl-5.10.0-ArchiveTar1.40.patch
 Patch33:	perl-5.10.0-PerlIO-via-change34025.patch
-Patch34:	perl-5.10.0-IPC_Cmd-0.42.patch
 
-BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
+# Update some of the bundled modules
+# see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
+Patch100:	perl-update-constant.patch
+%define			    constant_version 1.17
+Patch101:	perl-update-Archive-Extract.patch
+%define			    Archive_Extract_version 0.30
+Patch102:	perl-update-Archive-Tar.patch
+%define			    Archive_Tar_version 1.46
+Patch103:	perl-update-CGI.patch
+%define			    CGI_version 3.42
+Patch104:	perl-update-ExtUtils-CBuilder.patch
+%define			    ExtUtils-CBuilder_version 0.24
+Patch105:	perl-update-File-Fetch.patch
+%define			    File_Fetch_version 0.18
+Patch106:	perl-update-File-Path.patch
+%define			    File_Path_version 2.07
+Patch107:	perl-update-File-Temp.patch
+%define			    File_Temp_version 0.21
+Patch108:	perl-update-IPC-Cmd.patch
+%define			    IPC_Cmd_version 0.42
+Patch109:	perl-update-Module-Build.patch
+%define			    Module_Build_real_version 0.32
+# For Module-Build-0.x, the second component has to have four digits.
+%define			    Module_Build_rpm_version  0.3200
+Patch110:	perl-update-Module-CoreList.patch
+%define			    Module_CoreList_version 2.17
+Patch111:	perl-update-Module-Load-Conditional.patch
+%define			    Module_Load_Conditional_version 0.30
+Patch112:	perl-update-Pod-Simple.patch
+%define			    Pod_Simple_version 3.07
+Patch113:	perl-update-Sys-Syslog.patch
+%define			    Sys_Syslog_version 0.27
+Patch114:	perl-update-Test-Harness.patch
+%define			    Test_Harness_version 3.16
+Patch115:	perl-update-Test-Simple.patch
+%define			    Test_Simple_version 0.86
+Patch116:	perl-update-Time-HiRes.patch
+%define			    Time_HiRes_version 1.9719
+
+# Fedora uses links instead of lynx
+# patches File-Fetch and CPAN
+Patch201:	perl-5.10.0-links.patch
+
+BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:  tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel, zlib-devel
 # For tests
@@ -190,11 +194,11 @@ Provides: perl(validate.pl)
 Provides: perl(Carp::Heavy)
 
 # Long history in 3rd-party repositories:
-Provides: perl-File-Temp = 0.20
+Provides: perl-File-Temp = %{File_Temp_version}
 Obsoletes: perl-File-Temp < 0.20
 
 # Use new testing module perl-Test-Harness, obsolete it outside of this package
-Provides: perl-TAP-Harness = 3.10
+Provides: perl-TAP-Harness = %{Test_Harness_version}
 Obsoletes: perl-TAP-Harness < 3.10
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
@@ -269,7 +273,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.24
+Version:        %{Archive_Extract_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Archive-Extract
@@ -281,7 +285,7 @@ Summary:        A module for Perl manipulation of .tar files
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.40
+Version:        %{Archive_Tar_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Compress::Zlib), perl(IO::Zlib)
 
@@ -376,7 +380,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.21
+Version:        %{ExtUtils_CBuilder_version}
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -437,7 +441,7 @@ Summary:        Generic file fetching mechanism
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.14
+Version:        %{File_Fetch_version}
 Requires:       perl(IPC::Cmd) >= 0.36
 Requires:       perl(Module::Load::Conditional) >= 0.04
 Requires:       perl(Params::Check) >= 0.07
@@ -499,7 +503,7 @@ License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
 # do not upgrade in the future to _something version. They are testing!
-Version:        0.42
+Version:        %{IPC_Cmd_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description IPC-Cmd
@@ -560,8 +564,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-# Really 0.2808_01, but we drop the _01.
-Version:        0.2808
+Version:        %{Module_Build_rpm_version}
 Requires:       perl(Archive::Tar) >= 1.08
 Requires:       perl(ExtUtils::CBuilder) >= 0.15
 Requires:       perl(ExtUtils::ParseXS) >= 1.02
@@ -584,7 +587,7 @@ Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.15
+Version:        %{Module_CoreList_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(version)
 
@@ -613,7 +616,7 @@ Summary:        Looking up module information / loading at runtime
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.24
+Version:        %{Module_Load_Conditional_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Module-Load-Conditional
@@ -718,7 +721,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        3.07
+Version:        %{Pod_Simple_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Pod-Simple
@@ -747,7 +750,7 @@ Summary:        Run Perl standard test scripts with statistics
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        3.12
+Version:        %{Test_Harness_version}
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -760,7 +763,7 @@ Summary:        Basic utilities for writing tests
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.80
+Version:        %{Test_Simple_version}
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -828,10 +831,9 @@ upstream tarball from perl.org.
 
 
 %prep
-%setup -q -a 1
+%setup -q
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 # This patch breaks sparc64 compilation
 # We should probably consider removing it for all arches.
 %ifnarch sparc64
@@ -843,32 +845,36 @@ upstream tarball from perl.org.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
-%patch9 -p1
 %patch10 -p1
 %patch11 -p1
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
 %patch15 -p1
 %patch16 -p1
-%patch17 -p1
-%patch18 -p1
-%patch19 -p1
 %patch20 -p1
-%patch21 -p1
-%patch22 -p1
-%patch23 -p1
 %patch24 -p1
-%patch25 -p1
 %patch26 -p1
-%patch27 -p1
 %patch28 -p1
 %patch29 -p1
 %patch30 -p1
 %patch31 -p1
-%patch32 -p1
 %patch33 -p1
-%patch34 -p1
+%patch100 -p1
+%patch101 -p1
+%patch102 -p1
+%patch103 -p1
+%patch104 -p1
+%patch105 -p1
+%patch106 -p1
+%patch107 -p1
+%patch108 -p1
+%patch109 -p1
+%patch110 -p1
+%patch111 -p1
+%patch112 -p1
+%patch113 -p1
+%patch114 -p1
+%patch115 -p1
+%patch116 -p1
+%patch201 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -972,11 +978,7 @@ echo "RPM Build arch: %{_arch}"
         -Ud_endprotoent_r_proto -Ud_setprotoent_r_proto \
         -Ud_endservent_r_proto -Ud_setservent_r_proto \
         -Dscriptdir='%{_bindir}' \
-%ifarch x86_64 ppc64 sparc64
-        -Dotherlibdirs=/usr/local/lib/perl5/site_perl:/usr/local/%{_lib}/perl5/site_perl:/usr/lib/perl5/site_perl \
-%else
-        -Dotherlibdirs=/usr/local/lib/perl5/site_perl:/usr/lib/perl5/site_perl
-%endif
+        -Dotherlibdirs=/usr/lib/perl5/site_perl
 
 %ifarch sparc64
 make
@@ -1025,7 +1027,6 @@ done
 #
 # libnet configuration file
 #
-mkdir -p -m 755 %{comp_perl_lib}/Net
 install -p -m 644 %{SOURCE12} %{comp_perl_lib}/Net/libnet.cfg
 
 #
@@ -1070,51 +1071,61 @@ chmod -R u+w $RPM_BUILD_ROOT/*
 
 # Local patch tracking
 cd $RPM_BUILD_ROOT%{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/
-perl -x patchlevel.h 'Fedora Patch1: Permit suidperl to install as nonroot'
-perl -x patchlevel.h 'Fedora Patch2: Removes date check, Fedora/RHEL specific'
-perl -x patchlevel.h 'Fedora Patch3: Fedora/RHEL use links instead of lynx'
-%ifnarch sparc64
-perl -x patchlevel.h 'Fedora Patch4: Work around annoying rpath issue'
-%endif
-%ifarch %{multilib_64_archs}
-perl -x patchlevel.h 'Fedora Patch5: support for libdir64'
-%endif
-perl -x patchlevel.h 'Fedora Patch6: use libresolv instead of libbind'
-perl -x patchlevel.h 'Fedora Patch7: USE_MM_LD_RUN_PATH'
-perl -x patchlevel.h 'Fedora Patch8: Skip hostname tests, due to builders not being network capable'
-perl -x patchlevel.h 'Fedora Patch9: Update Sys::Syslog to 0.24'
-perl -x patchlevel.h 'Fedora Patch10: Dont run one io test due to random builder failures'
-perl -x patchlevel.h '32891 fix big slowdown in 5.10 @_ parameter passing'
-perl -x patchlevel.h 'Fedora Patch12: Update Module::Load::Conditional to 0.24'
-perl -x patchlevel.h 'Fedora Patch13: Upgrade Module::CoreList to 2.14'
-perl -x patchlevel.h 'Fedora Patch14: Upgrade CGI to 3.38'
-perl -x patchlevel.h 'Fedora Patch15: Adopt upstream commit for assertion'
-perl -x patchlevel.h 'Fedora Patch16: Access permission - rt49003'
-perl -x patchlevel.h 'Fedora Patch17: CVE-2008-2827 perl: insecure use of chmod in rmtree'
-perl -x patchlevel.h 'Fedora Patch18: Remove old Test::Harness'
-perl -x patchlevel.h 'Fedora Patch19: Update Test::Harness to 3.12'
-perl -x patchlevel.h 'Fedora Patch20: pos function handle unicode correct'
-perl -x patchlevel.h 'Fedora Patch21: CGI.pm bug in exists() on tied param hash'
-perl -x patchlevel.h 'Fedora Patch22: Update Test::Simple to 0.80'
-perl -x patchlevel.h 'Fedora Patch23: Update Archive::Tar 1.38'
-perl -x patchlevel.h 'Fedora Patch24: Storable fix'
-perl -x patchlevel.h 'Fedora Patch25: Update to Pod::Simple 3.07'
-perl -x patchlevel.h 'Fedora Patch26: Fix crash when localizing a symtab entry - rt52740'
-perl -x patchlevel.h 'Fedora Patch27: Update to File::Temp 0.20'
-perl -x patchlevel.h '33640 Integrate Changes 33399, 33621, 33622, 33623, 33624'
-perl -x patchlevel.h '33881 Integrate Changes 33825, 33826, 33829'
-perl -x patchlevel.h '33896 Eliminate POSIX::int_macro_int, and all the complex AUTOLOAD fandango'
-perl -x patchlevel.h '33897 Replaced the WEXITSTATUS, WIFEXITED, WIFSIGNALED, WIFSTOPPED, WSTOPSIG'
-perl -x patchlevel.h 'Fedora Patch32: CVE-2007-4829 Update Archive::Tar to 1.40'
-perl -x patchlevel.h '54934 Change 34025 refcount of the globs generated by PerlIO::via balanced'
-perl -x patchlevel.h 'Fedora Patch34: Update to IPC::Cmd 0.42'
+perl -x patchlevel.h \
+	'Fedora Patch1: Permit suidperl to install as nonroot' \
+	'Fedora Patch2: Removes date check, Fedora/RHEL specific' \
+%ifnarch sparc64 \
+	'Fedora Patch4: Work around annoying rpath issue' \
+%endif \
+%ifarch %{multilib_64_archs} \
+	'Fedora Patch5: support for libdir64' \
+%endif \
+	'Fedora Patch6: use libresolv instead of libbind' \
+	'Fedora Patch7: USE_MM_LD_RUN_PATH' \
+	'Fedora Patch8: Skip hostname tests, due to builders not being network capable' \
+	'Fedora Patch10: Dont run one io test due to random builder failures' \
+	'32891 fix big slowdown in 5.10 @_ parameter passing' \
+	'Fedora Patch15: Adopt upstream commit for assertion' \
+	'Fedora Patch16: Access permission - rt49003' \
+	'Fedora Patch20: pos function handle unicode correct' \
+	'Fedora Patch24: Storable fix' \
+	'Fedora Patch26: Fix crash when localizing a symtab entry - rt52740' \
+	'33640 Integrate Changes 33399, 33621, 33622, 33623, 33624' \
+	'33881 Integrate Changes 33825, 33826, 33829' \
+	'33896 Eliminate POSIX::int_macro_int, and all the complex AUTOLOAD fandango' \
+	'33897 Replaced the WEXITSTATUS, WIFEXITED, WIFSIGNALED, WIFSTOPPED, WSTOPSIG' \
+	'54934 Change 34025 refcount of the globs generated by PerlIO::via balanced' \
+	'Fedora Patch100: Update constant to %{constant_version}' \
+	'Fedora Patch101: Update Archive::Extract to %{Archive_Extract_version}' \
+	'Fedora Patch102: Update Archive::Tar to %{Archive_Tar_version}' \
+	'Fedora Patch103: Update CGI to %{CGI_version}' \
+	'Fedora Patch104: Update ExtUtils::CBuilder to %{ExtUtils_CBuilder_version}' \
+	'Fedora Patch105: Update File::Fetch to %{File_Fetch_version}' \
+	'Fedora Patch106: Update File::Path to %{File_Path_version}' \
+	'Fedora Patch107: Update File::Temp to %{File_Temp_version}' \
+	'Fedora Patch108: Update IPC::Cmd to %{IPC_Cmd_version}' \
+	'Fedora Patch109: Update Module::Build to %{Module_Build_version}' \
+	'Fedora Patch110: Update Module::CoreList to %{Module_CoreList_version}' \
+	'Fedora Patch111: Update Module::Load::Conditional to %{Module_Load_Conditional_version}' \
+	'Fedora Patch112: Update Pod::Simple to %{Pod_Simple_version}' \
+	'Fedora Patch113: Update Sys::Syslog to %{Sys_Syslog_version}' \
+	'Fedora Patch114: Update Test::Harness to %{Test_Harness_version}' \
+	'Fedora Patch115: Update Test::Simple to %{Test_Simple_version}' \
+	'Fedora Patch116: Update Time::HiRes to %{Time_HiRes_version}' \
+	'Fedora Patch201: Fedora uses links instead of lynx' \
+	%{nil}
+
+rm patchlevel.bak
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %check
 %ifnarch sparc64
-make test
+# work around a bug in Module::Build tests bu setting TMPDIR to a directory
+# inside the source tree
+mkdir "$PWD/tmp"
+TMPDIR="$PWD/tmp" make test
 %endif
 
 %post libs -p /sbin/ldconfig
@@ -1375,8 +1386,12 @@ make test
 
 # Test::Harness
 %exclude %{_bindir}/prove
+%exclude %{_prefix}/lib/perl5/%{perl_version}/App*
+%exclude %{_prefix}/lib/perl5/%{perl_version}/TAP*
 %exclude %{_prefix}/lib/perl5/%{perl_version}/Test/Harness*
 %exclude %{_mandir}/man1/prove.1*
+%exclude %{_mandir}/man3/App*
+%exclude %{_mandir}/man3/TAP*
 %exclude %{_mandir}/man3/Test::Harness*
 
 # Test::Simple
@@ -1681,8 +1696,12 @@ make test
 %files Test-Harness
 %defattr(-,root,root,-)
 %{_bindir}/prove
+%{_prefix}/lib/perl5/%{perl_version}/App*
+%{_prefix}/lib/perl5/%{perl_version}/TAP*
 %{_prefix}/lib/perl5/%{perl_version}/Test/Harness*
 %{_mandir}/man1/prove.1*
+%{_mandir}/man3/App*
+%{_mandir}/man3/TAP*
 %{_mandir}/man3/Test::Harness*
 
 %files Test-Simple
@@ -1715,6 +1734,20 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Mar 11 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-60
+- remove compatibility obsolete sitelib directories
+- use a better BuildRoot
+- drop a redundant mkdir in %%install
+- call patchlevel.h only once; rm patchlevel.bak
+- update modules Sys::Syslog, Module::Load::Conditional, Module::CoreList,
+  Test::Harness, Test::Simple, CGI.pm (dropping the upstreamed patch),
+  File::Path (that includes our perl-5.10.0-CVE-2008-2827.patch),
+  constant, Pod::Simple, Archive::Tar, Archive::Extract, File::Fetch,
+  File::Temp, IPC::Cmd, Time::HiRes, Module::Build, ExtUtils::CBuilder
+- standardize the patches for updating embedded modules
+- work around a bug in Module::Build tests bu setting TMPDIR to a directory
+  inside the source tree
+
 * Sun Mar 08 2009 Robert Scheck <robert@fedoraproject.org> - 4:5.10.0-59
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
 
