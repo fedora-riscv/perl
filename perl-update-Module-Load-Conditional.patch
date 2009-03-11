@@ -1,0 +1,178 @@
+Module-Load-Conditional-0.30
+
+diff -ur perl-5.10.0.orig/lib/Module/Load/Conditional/t/01_Module_Load_Conditional.t perl-5.10.0/lib/Module/Load/Conditional/t/01_Module_Load_Conditional.t
+--- perl-5.10.0.orig/lib/Module/Load/Conditional/t/01_Module_Load_Conditional.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Module/Load/Conditional/t/01_Module_Load_Conditional.t	2009-02-10 11:41:18.000000000 +0100
+@@ -20,8 +20,8 @@
+ 
+ use constant ON_VMS     => $^O eq 'VMS';
+ 
+-use lib "$FindBin::Bin/../lib";
+-use lib "$FindBin::Bin/to_load";
++use lib File::Spec->catdir($FindBin::Bin, qw[.. lib] );
++use lib File::Spec->catdir($FindBin::Bin, q[to_load] );
+ 
+ use_ok( 'Module::Load::Conditional' );
+ 
+@@ -46,6 +46,23 @@
+     ok( $rv->{uptodate},    q[Verify self] );
+     is( $rv->{version}, $Module::Load::Conditional::VERSION,  
+                             q[  Found proper version] );
++    ok( $rv->{dir},         q[  Found directory information] );
++    
++    {   my $dir = File::Spec->canonpath( $rv->{dir} );
++
++        ### special rules apply on VMS, as always...
++        if (ON_VMS) {
++            ### Need path syntax for VMS compares.
++            $dir = VMS::Filespec::pathify($dir);
++            ### Remove the trailing VMS specific directory delimiter
++            $dir =~ s/\]//;
++        }    
++    
++        ### quote for Win32 paths, use | to avoid slash confusion
++        my $dir_re = qr|^\Q$dir\E|i;
++        like( File::Spec->canonpath( $rv->{file} ), $dir_re,
++                            q[      Dir subset of file path] );
++    }
+ 
+     ### break up the specification
+     my @rv_path = do {
+@@ -64,11 +81,17 @@
+         ### and return it    
+         @path;
+     };
+-    
+-    is( $INC{'Module/Load/Conditional.pm'},            
++    my $inc_path = $INC{'Module/Load/Conditional.pm'};
++    if ( $^O eq 'MSWin32' ) {
++        $inc_path = File::Spec->canonpath( $inc_path );
++        $inc_path =~ s{\\}{/}g; # to meet with unix path
++    }
++    is( $inc_path,
+             File::Spec::Unix->catfile(@rv_path),
+                             q[  Found proper file]
+     );
++    
++    
+ 
+ }
+ 
+diff -ur perl-5.10.0.orig/lib/Module/Load/Conditional.pm perl-5.10.0/lib/Module/Load/Conditional.pm
+--- perl-5.10.0.orig/lib/Module/Load/Conditional.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Module/Load/Conditional.pm	2009-02-10 11:40:22.000000000 +0100
+@@ -9,7 +9,7 @@
+ use Carp        ();
+ use File::Spec  ();
+ use FileHandle  ();
+-use version     qw[qv];
++use version;
+ 
+ use constant ON_VMS  => $^O eq 'VMS';
+ 
+@@ -18,7 +18,7 @@
+                         $FIND_VERSION $ERROR $CHECK_INC_HASH];
+     use Exporter;
+     @ISA            = qw[Exporter];
+-    $VERSION        = '0.22';
++    $VERSION        = '0.30';
+     $VERBOSE        = 0;
+     $FIND_VERSION   = 1;
+     $CHECK_INC_HASH = 0;
+@@ -116,6 +116,11 @@
+ 
+ Full path to the file that contains the module
+ 
++=item dir
++
++Directory, or more exact the C<@INC> entry, where the module was
++loaded from.
++
+ =item version
+ 
+ The version number of the installed module - this will be C<undef> if
+@@ -226,6 +231,9 @@
+                 }
+             }
+     
++            ### store the directory we found the file in
++            $href->{dir} = $dir;
++    
+             ### files need to be in unix format under vms,
+             ### or they might be loaded twice
+             $href->{file} = ON_VMS
+@@ -236,18 +244,20 @@
+             if( $FIND_VERSION ) {
+                 
+                 my $in_pod = 0;
+-                while (local $_ = <$fh> ) {
++                while ( my $line = <$fh> ) {
+     
+                     ### stolen from EU::MM_Unix->parse_version to address
+                     ### #24062: "Problem with CPANPLUS 0.076 misidentifying
+                     ### versions after installing Text::NSP 1.03" where a 
+                     ### VERSION mentioned in the POD was found before
+                     ### the real $VERSION declaration.
+-                    $in_pod = /^=(?!cut)/ ? 1 : /^=cut/ ? 0 : $in_pod;
++                    $in_pod = $line =~ /^=(?!cut)/  ? 1 : 
++                              $line =~ /^=cut/      ? 0 : 
++                              $in_pod;
+                     next if $in_pod;
+                     
+                     ### try to find a version declaration in this string.
+-                    my $ver = __PACKAGE__->_parse_version( $_ );
++                    my $ver = __PACKAGE__->_parse_version( $line );
+ 
+                     if( defined $ver ) {
+                         $href->{version} = $ver;
+@@ -280,8 +290,14 @@
+         ### use qv(), as it will deal with developer release number
+         ### ie ones containing _ as well. This addresses bug report
+         ### #29348: Version compare logic doesn't handle alphas?
++        ###
++        ### Update from JPeacock: apparently qv() and version->new
++        ### are different things, and we *must* use version->new
++        ### here, or things like #30056 might start happening
+         $href->{uptodate} = 
+-            qv( $args->{version} ) <= qv( $href->{version} ) ? 1 : 0;
++            version->new( $args->{version} ) <= version->new( $href->{version} )
++                ? 1 
++                : 0;
+     }
+ 
+     return $href;
+@@ -301,7 +317,8 @@
+     ### regex breaks under -T, we must modifiy it so
+     ### it captures the entire expression, and eval /that/
+     ### rather than $_, which is insecure.
+-
++    my $taint_safe_str = do { $str =~ /(^.*$)/sm; $1 };
++        
+     if( $str =~ /(?<!\\)([\$*])(([\w\:\']*)\bVERSION)\b.*\=/ ) {
+         
+         print "Evaluating: $str\n" if $verbose;
+@@ -321,7 +338,7 @@
+ 
+             local $1$2;
+             \$$2=undef; do {
+-                $str
++                $taint_safe_str
+             }; \$$2
+         };
+         
+@@ -426,9 +443,14 @@
+             ### use qv(), as it will deal with developer release number
+             ### ie ones containing _ as well. This addresses bug report
+             ### #29348: Version compare logic doesn't handle alphas?
++            ###
++            ### Update from JPeacock: apparently qv() and version->new
++            ### are different things, and we *must* use version->new
++            ### here, or things like #30056 might start happening            
+             if (    !$args->{nocache}
+                     && defined $CACHE->{$mod}->{usable}
+-                    && (qv($CACHE->{$mod}->{version}||0) >= qv($href->{$mod}))
++                    && (version->new( $CACHE->{$mod}->{version}||0 ) 
++                        >= version->new( $href->{$mod} ) )
+             ) {
+                 $error = loc( q[Already tried to use '%1', which was unsuccessful], $mod);
+                 last BLOCK;

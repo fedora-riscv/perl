@@ -1,16 +1,16 @@
 diff -up perl-5.10.0/lib/File/Fetch.pm.BAD perl-5.10.0/lib/File/Fetch.pm
---- perl-5.10.0/lib/File/Fetch.pm.BAD	2007-12-21 10:41:39.000000000 -0500
-+++ perl-5.10.0/lib/File/Fetch.pm	2007-12-21 10:43:00.000000000 -0500
-@@ -37,7 +37,7 @@ $WARN           = 1;
+--- perl-5.10.0.orig/lib/File/Fetch.pm	2009-03-11 14:21:00.000000000 +0100
++++ perl-5.10.0/lib/File/Fetch.pm	2009-03-11 14:23:26.000000000 +0100
+@@ -35,7 +35,7 @@ $WARN           = 1;
  
  ### methods available to fetch the file depending on the scheme
  $METHODS = {
--    http    => [ qw|lwp wget curl lynx| ],
-+    http    => [ qw|lwp wget curl links| ],
-     ftp     => [ qw|lwp netftp wget curl ncftp ftp| ],
-     file    => [ qw|lwp file| ],
+-    http    => [ qw|lwp wget curl lftp lynx| ],
++    http    => [ qw|lwp wget curl lftp links| ],
+     ftp     => [ qw|lwp netftp wget curl lftp ncftp ftp| ],
+     file    => [ qw|lwp lftp file| ],
      rsync   => [ qw|rsync| ]
-@@ -694,9 +694,9 @@ sub _ftp_fetch {
+@@ -772,9 +772,9 @@ sub _ftp_fetch {
      }
  }
  
@@ -23,7 +23,7 @@ diff -up perl-5.10.0/lib/File/Fetch.pm.BAD perl-5.10.0/lib/File/Fetch.pm
      my $self = shift;
      my %hash = @_;
  
-@@ -706,25 +706,25 @@ sub _lynx_fetch {
+@@ -784,21 +784,21 @@ sub _lynx_fetch {
      };
      check( $tmpl, \%hash ) or return;
  
@@ -42,6 +42,18 @@ diff -up perl-5.10.0/lib/File/Fetch.pm.BAD perl-5.10.0/lib/File/Fetch.pm
 +                'links' ));
          }            
  
+         ### check if the HTTP resource exists ###
+         if ($self->uri =~ /^https?:\/\//i) {
+             my $cmd = [
+-                $lynx,
++                $links,
+                 '-head',
+                 '-source',
+                 "-auth=anonymous:$FROM_EMAIL",
+@@ -822,14 +822,14 @@ sub _lynx_fetch {
+             }
+         }
+ 
 -        ### write to the output file ourselves, since lynx ass_u_mes to much
 +        ### write to the output file ourselves, since links ass_u_mes to much
          my $local = FileHandle->new(">$to")
@@ -55,7 +67,7 @@ diff -up perl-5.10.0/lib/File/Fetch.pm.BAD perl-5.10.0/lib/File/Fetch.pm
              '-source',
              "-auth=anonymous:$FROM_EMAIL",
          ];
-@@ -750,7 +750,7 @@ sub _lynx_fetch {
+@@ -860,7 +860,7 @@ sub _lynx_fetch {
          ### XXX on a 404 with a special error page, $captured will actually
          ### hold the contents of that page, and make it *appear* like the
          ### request was a success, when really it wasn't :(
@@ -64,7 +76,7 @@ diff -up perl-5.10.0/lib/File/Fetch.pm.BAD perl-5.10.0/lib/File/Fetch.pm
          ### code based on a 4XX status or so.
          ### the closest we can come is using --error_file and parsing that,
          ### which is very unreliable ;(
-@@ -760,7 +760,7 @@ sub _lynx_fetch {
+@@ -870,7 +870,7 @@ sub _lynx_fetch {
          return $to;
  
      } else {
@@ -73,16 +85,16 @@ diff -up perl-5.10.0/lib/File/Fetch.pm.BAD perl-5.10.0/lib/File/Fetch.pm
          return;
      }
  }
-@@ -1031,7 +1031,7 @@ Below is a mapping of what utilities wil
+@@ -1150,7 +1150,7 @@ Below is a mapping of what utilities wil
  for what schemes, if available:
  
-     file    => LWP, file
--    http    => LWP, wget, curl, lynx
-+    http    => LWP, wget, curl, links
-     ftp     => LWP, Net::FTP, wget, curl, ncftp, ftp
+     file    => LWP, lftp, file
+-    http    => LWP, wget, curl, lftp, lynx
++    http    => LWP, wget, curl, lftp, links
+     ftp     => LWP, Net::FTP, wget, curl, lftp, ncftp, ftp
      rsync   => rsync
  
-@@ -1143,7 +1143,7 @@ the $BLACKLIST, $METHOD_FAIL and other i
+@@ -1262,7 +1262,7 @@ the $BLACKLIST, $METHOD_FAIL and other i
      LWP         => lwp
      Net::FTP    => netftp
      wget        => wget
@@ -91,7 +103,7 @@ diff -up perl-5.10.0/lib/File/Fetch.pm.BAD perl-5.10.0/lib/File/Fetch.pm
      ncftp       => ncftp
      ftp         => ftp
      curl        => curl
-@@ -1161,17 +1161,17 @@ example, to use an ftp proxy:
+@@ -1281,17 +1281,17 @@ example, to use an ftp proxy:
  
  Refer to the LWP::UserAgent manpage for more details.
  
@@ -114,20 +126,20 @@ diff -up perl-5.10.0/lib/File/Fetch.pm.BAD perl-5.10.0/lib/File/Fetch.pm
  
  =head2 Files I'm trying to fetch have reserved characters or non-ASCII characters in them. What do I do?
 diff -up perl-5.10.0/lib/File/Fetch/t/01_File-Fetch.t.BAD perl-5.10.0/lib/File/Fetch/t/01_File-Fetch.t
---- perl-5.10.0/lib/File/Fetch/t/01_File-Fetch.t.BAD	2007-12-21 10:43:38.000000000 -0500
-+++ perl-5.10.0/lib/File/Fetch/t/01_File-Fetch.t	2007-12-21 10:43:45.000000000 -0500
-@@ -169,7 +169,7 @@ for my $entry (@map) {
- {   for my $uri ( 'http://www.cpan.org/index.html',
-                   'http://www.cpan.org/index.html?q=1&y=2'
+--- perl-5.10.0.orig/lib/File/Fetch/t/01_File-Fetch.t	2009-03-11 14:21:00.000000000 +0100
++++ perl-5.10.0/lib/File/Fetch/t/01_File-Fetch.t	2009-03-11 14:22:10.000000000 +0100
+@@ -177,7 +177,7 @@ for my $entry (@map) {
+                   'http://www.cpan.org/index.html?q=1',
+                   'http://www.cpan.org/index.html?q=1&y=2',
      ) {
--        for (qw[lwp wget curl lynx]) {
-+        for (qw[lwp wget curl links]) {
+-        for (qw[lwp wget curl lftp lynx]) {
++        for (qw[lwp wget curl lftp links]) {
              _fetch_uri( http => $uri, $_ );
          }
      }
 diff -up perl-5.10.0/lib/CPAN.pm.BAD perl-5.10.0/lib/CPAN.pm
---- perl-5.10.0/lib/CPAN.pm.BAD	2007-12-21 10:39:16.000000000 -0500
-+++ perl-5.10.0/lib/CPAN.pm	2007-12-21 10:41:13.000000000 -0500
+--- perl-5.10.0.orig/lib/CPAN.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/CPAN.pm	2009-03-11 14:21:21.000000000 +0100
 @@ -4318,7 +4318,7 @@ sub hostdlhard {
  
          # Try the most capable first and leave ncftp* for last as it only
@@ -250,8 +262,8 @@ diff -up perl-5.10.0/lib/CPAN.pm.BAD perl-5.10.0/lib/CPAN.pm
  That's all. Similarly for ncftp or ftp, you would configure something
  like
 diff -up perl-5.10.0/lib/CPAN/HandleConfig.pm.BAD perl-5.10.0/lib/CPAN/HandleConfig.pm
---- perl-5.10.0/lib/CPAN/HandleConfig.pm.BAD	2007-12-21 10:43:14.000000000 -0500
-+++ perl-5.10.0/lib/CPAN/HandleConfig.pm	2007-12-21 10:43:21.000000000 -0500
+--- perl-5.10.0.orig/lib/CPAN/HandleConfig.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/CPAN/HandleConfig.pm	2009-03-11 14:21:21.000000000 +0100
 @@ -49,7 +49,7 @@ $VERSION = sprintf "%.6f", substr(q$Rev:
       "inhibit_startup_message",
       "keep_source_where",
@@ -262,8 +274,8 @@ diff -up perl-5.10.0/lib/CPAN/HandleConfig.pm.BAD perl-5.10.0/lib/CPAN/HandleCon
       "make_arg",
       "make_install_arg",
 diff -up perl-5.10.0/lib/CPAN/FirstTime.pm.BAD perl-5.10.0/lib/CPAN/FirstTime.pm
---- perl-5.10.0/lib/CPAN/FirstTime.pm.BAD	2007-12-21 10:38:30.000000000 -0500
-+++ perl-5.10.0/lib/CPAN/FirstTime.pm	2007-12-21 10:38:58.000000000 -0500
+--- perl-5.10.0.orig/lib/CPAN/FirstTime.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/CPAN/FirstTime.pm	2009-03-11 14:21:21.000000000 +0100
 @@ -813,7 +813,7 @@ Shall we use it as the general CPAN buil
  
                              make
@@ -274,8 +286,8 @@ diff -up perl-5.10.0/lib/CPAN/FirstTime.pm.BAD perl-5.10.0/lib/CPAN/FirstTime.pm
                              gpg
  
 diff -up perl-5.10.0/pod/perltoc.pod.BAD perl-5.10.0/pod/perltoc.pod
---- perl-5.10.0/pod/perltoc.pod.BAD	2007-12-21 10:44:44.000000000 -0500
-+++ perl-5.10.0/pod/perltoc.pod	2007-12-21 10:44:53.000000000 -0500
+--- perl-5.10.0.orig/pod/perltoc.pod	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/pod/perltoc.pod	2009-03-11 14:21:21.000000000 +0100
 @@ -14682,7 +14682,7 @@ has_inst($module), has_usable($module), 
  
  http firewall, ftp firewall, One way visibility, SOCKS, IP Masquerade
@@ -295,8 +307,8 @@ diff -up perl-5.10.0/pod/perltoc.pod.BAD perl-5.10.0/pod/perltoc.pod
  =item Files I'm trying to fetch have reserved characters or non-ASCII
  characters in them. What do I do?
 diff -up perl-5.10.0/pod/perlfaq9.pod.BAD perl-5.10.0/pod/perlfaq9.pod
---- perl-5.10.0/pod/perlfaq9.pod.BAD	2007-12-21 10:44:08.000000000 -0500
-+++ perl-5.10.0/pod/perlfaq9.pod	2007-12-21 10:44:32.000000000 -0500
+--- perl-5.10.0.orig/pod/perlfaq9.pod	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/pod/perlfaq9.pod	2009-03-11 14:21:21.000000000 +0100
 @@ -212,14 +212,14 @@ examples.
  
  =head2 How do I fetch an HTML file?
