@@ -1,0 +1,13 @@
+diff -up perl-5.10.0/regcomp.c.34507 perl-5.10.0/regcomp.c
+--- perl-5.10.0/regcomp.c.34507	2009-03-09 08:44:12.000000000 -0400
++++ perl-5.10.0/regcomp.c	2009-03-09 08:45:36.000000000 -0400
+@@ -8239,6 +8239,9 @@ parseit:
+         *STRING(ret)= (char)value;
+         STR_LEN(ret)= 1;
+         RExC_emit += STR_SZ(1);
++        if (listsv) {
++            SvREFCNT_dec(listsv);
++        }
+         return ret;
+     }
+     /* optimize case-insensitive simple patterns (e.g. /[a-z]/i) */
