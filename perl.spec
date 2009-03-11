@@ -181,46 +181,43 @@ Patch48:	17_fix_getopt_long_callback
 # Upstream change 33821
 Patch49:	18_fix_bigint_floats
 
-# Upgrade to Pod::Man 2.18 for utf8 functionality in pod2man
-Patch50:	26_fix_pod2man_upgrade
-
 # Fix Sys::Syslog slowness when logging with non-native mechanisms.
 # Fixed upstream in Sys::Syslog 0.25
-Patch51:	27_fix_sys_syslog_timeout
+Patch50:	27_fix_sys_syslog_timeout
 
 # Fix memory corruption with in-place sorting.
 # Upstream change 33937
-Patch52:	28_fix_inplace_sort
+Patch51:	28_fix_inplace_sort
 
 # Revert an incorrect substitution optimization introduced in 5.10.0.
 # Bug introduced by upstream change 26334, reverted with change 33685 in blead and 33732 in maint-5.10.
-Patch53:	30_fix_freetmps
+Patch52:	30_fix_freetmps
 
 # Fix 'Unknown error' messages with attribute.pm.
 # Upstream change 33265
-Patch54:	31_fix_attributes_unknown_error
+Patch53:	31_fix_attributes_unknown_error
 
 # Stop t/op/fork.t relying on rand().
 # Upstream change 33749
-Patch55:	32_fix_fork_rand
+Patch54:	32_fix_fork_rand
 
 # Fix memory leak with qr//.
 # Adapted from upstream changhe 34506.
-Patch56:	34_fix_qr-memory-leak-2
+Patch55:	34_fix_qr-memory-leak-2
 
 # CVE-2005-0448 revisited: File::Path::rmtree no longer allows creating of setuid files.
-Patch57:	35_fix_file_path_rmtree_setuid
+Patch56:	35_fix_file_path_rmtree_setuid
 
 # Make File::Temp warn on cleaning up the current working directory at exit instead of bailing out.
 # Adapted from File::Temp 0.21
-Patch58:	36_fix_file_temp_cleanup
+Patch57:	36_fix_file_temp_cleanup
 
 # Fix $? when dumping core.
-Patch59:	37_fix_coredump_indicator
+Patch58:	37_fix_coredump_indicator
 
 # Fix a memory leak with Scalar::Util::weaken().
 # Upstream change 34209
-Patch60:	38_fix_weaken_memleak
+Patch59:	38_fix_weaken_memleak
 
 ### End of Debian Patches ###
 
@@ -986,7 +983,6 @@ upstream tarball from perl.org.
 %patch57 -p1
 %patch58 -p1
 %patch59 -p1
-%patch60 -p1
 
 
 #
@@ -1233,16 +1229,15 @@ perl -x patchlevel.h '33807 Fix a segmentation fault occurring in the mod_perl2 
 perl -x patchlevel.h '33370 Fix the PerlIO_teardown prototype to suppress a compiler warning.'
 perl -x patchlevel.h 'Fedora Patch48: Remove numeric overloading of Getopt::Long callback functions.'
 perl -x patchlevel.h '33821 Fix Math::BigFloat::sqrt() breaking with too many digits.'
-perl -x patchlevel.h 'Fedora Patch50: Upgrade to Pod::Man 2.18 for utf8 functionality in pod2man'
-perl -x patchlevel.h 'Fedora Patch51: Fix Sys::Syslog slowness when logging with non-native mechanisms'
+perl -x patchlevel.h 'Fedora Patch50: Fix Sys::Syslog slowness when logging with non-native mechanisms'
 perl -x patchlevel.h '33937 Fix memory corruption with in-place sorting'
 perl -x patchlevel.h '33732 Revert an incorrect substitution optimization introduced in 5.10.0'
 perl -x patchlevel.h '33265 Fix Unknown error messages with attribute.pm.'
 perl -x patchlevel.h '33749 Stop t/op/fork.t relying on rand()'
 perl -x patchlevel.h '34506 Fix memory leak with qr//'
-perl -x patchlevel.h 'Fedora Patch57: File::Path::rmtree no longer allows creating of setuid files.'
-perl -x patchlevel.h 'Fedora Patch58: Make File::Temp warn on cleaning up the current working directory at exit instead of bailing out.'
-perl -x patchlevel.h 'Fedora Patch59: Fix $? when dumping core'
+perl -x patchlevel.h 'Fedora Patch56: File::Path::rmtree no longer allows creating of setuid files.'
+perl -x patchlevel.h 'Fedora Patch57: Make File::Temp warn on cleaning up the current working directory at exit instead of bailing out.'
+perl -x patchlevel.h 'Fedora Patch58: Fix $? when dumping core'
 perl -x patchlevel.h '34209 Fix a memory leak with Scalar::Util::weaken()'
 
 
