@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        61%{?dist}
+Release:        62%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -143,39 +143,36 @@ Patch48:	17_fix_getopt_long_callback
 # Upstream change 33821
 Patch49:	18_fix_bigint_floats
 
-# Upgrade to Pod::Man 2.18 for utf8 functionality in pod2man
-Patch50:	26_fix_pod2man_upgrade
-
 # Fix memory corruption with in-place sorting.
 # Upstream change 33937
-Patch51:	28_fix_inplace_sort
+Patch50:	28_fix_inplace_sort
 
 # Revert an incorrect substitution optimization introduced in 5.10.0.
 # Bug introduced by upstream change 26334, reverted with change 33685 in blead and 33732 in maint-5.10.
-Patch52:	30_fix_freetmps
+Patch51:	30_fix_freetmps
 
 # Fix 'Unknown error' messages with attribute.pm.
 # Upstream change 33265
-Patch53:	31_fix_attributes_unknown_error
+Patch52:	31_fix_attributes_unknown_error
 
 # Stop t/op/fork.t relying on rand().
 # Upstream change 33749
-Patch54:	32_fix_fork_rand
+Patch53:	32_fix_fork_rand
 
 # Fix memory leak with qr//.
 # Adapted from upstream changhe 34506.
-Patch55:	34_fix_qr-memory-leak-2
+Patch54:	34_fix_qr-memory-leak-2
 
 # CVE-2005-0448 revisited: File::Path::rmtree no longer allows creating of setuid files.
 # We have 2.07, but it is still missing one fix (the debian patch has two fixes, but one is in 2.07)
-Patch56:	perl-5.10.0-fix_file_path_rmtree_setuid.patch
+Patch55:	perl-5.10.0-fix_file_path_rmtree_setuid.patch
 
 # Fix $? when dumping core.
-Patch57:	37_fix_coredump_indicator
+Patch56:	37_fix_coredump_indicator
 
 # Fix a memory leak with Scalar::Util::weaken().
 # Upstream change 34209
-Patch58:	38_fix_weaken_memleak
+Patch57:	38_fix_weaken_memleak
 
 ### End of Debian Patches ###
 
@@ -970,7 +967,6 @@ upstream tarball from perl.org.
 %patch55 -p1
 %patch56 -p1
 %patch57 -p1
-%patch58 -p1
 
 %patch100 -p1
 %patch101 -p1
@@ -1223,14 +1219,13 @@ perl -x patchlevel.h \
 	'33370 Fix the PerlIO_teardown prototype to suppress a compiler warning.' \
 	'Fedora Patch48: Remove numeric overloading of Getopt::Long callback functions.' \
 	'33821 Fix Math::BigFloat::sqrt() breaking with too many digits.' \
-	'Fedora Patch50: Upgrade to Pod::Man 2.18 for utf8 functionality in pod2man' \
 	'33937 Fix memory corruption with in-place sorting' \
 	'33732 Revert an incorrect substitution optimization introduced in 5.10.0' \
 	'33265 Fix Unknown error messages with attribute.pm.' \
 	'33749 Stop t/op/fork.t relying on rand()' \
 	'34506 Fix memory leak with qr//' \
-	'Fedora Patch56: File::Path::rmtree no longer allows creating of setuid files.' \
-	'Fedora Patch57: Fix $? when dumping core' \
+	'Fedora Patch55: File::Path::rmtree no longer allows creating of setuid files.' \
+	'Fedora Patch56: Fix $? when dumping core' \
 	'34209 Fix a memory leak with Scalar::Util::weaken()' \
 	'Fedora Patch100: Update constant to %{constant_version}' \
 	'Fedora Patch101: Update Archive::Extract to %{Archive_Extract_version}' \
@@ -1871,6 +1866,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Mar 11 2009 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-62
+- drop 26_fix_pod2man_upgrade (don't need it)
+
 * Wed Mar 11 2009 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-61
 - apply Change 34507: Fix memory leak in single-char character class optimization
 - Reorder @INC, based on b9ba2fadb18b54e35e5de54f945111a56cbcb249
