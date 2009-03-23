@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        62%{?dist}
+Release:        63%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -214,6 +214,8 @@ Patch115:	perl-update-Test-Simple.patch
 %define			    Test_Simple_version 0.86
 Patch116:	perl-update-Time-HiRes.patch
 %define			    Time_HiRes_version 1.9719
+Patch117:	perl-update-Digest-SHA.patch
+%define			    Digest_SHA_version 5.47
 
 # Fedora uses links instead of lynx
 # patches File-Fetch and CPAN
@@ -451,7 +453,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        5.45
+Version:        %{Digest_SHA_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Digest-SHA
@@ -985,6 +987,7 @@ upstream tarball from perl.org.
 %patch114 -p1
 %patch115 -p1
 %patch116 -p1
+%patch117 -p1
 %patch201 -p1
 
 #
@@ -1244,6 +1247,7 @@ perl -x patchlevel.h \
 	'Fedora Patch114: Update Test::Harness to %{Test_Harness_version}' \
 	'Fedora Patch115: Update Test::Simple to %{Test_Simple_version}' \
 	'Fedora Patch116: Update Time::HiRes to %{Time_HiRes_version}' \
+	'Fedora Patch117: Update Digest::SHA to %{Digest_SHA_version}' \
 	'Fedora Patch201: Fedora uses links instead of lynx' \
 	%{nil}
 
@@ -1866,6 +1870,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Mar 23 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-63
+- update Digest::SHA (fixes 489221)
+
 * Wed Mar 11 2009 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-62
 - drop 26_fix_pod2man_upgrade (don't need it)
 - fix typo in %%define ExtUtils_CBuilder_version
