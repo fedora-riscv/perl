@@ -1,0 +1,6236 @@
+Test-Simple-0.86
+
+the following made the patch smaller:
+mv Test-Simple-0.86/t/{Builder,Tester,}
+
+diff -urN perl-5.10.0.orig/MANIFEST perl-5.10.0/MANIFEST
+--- perl-5.10.0.orig/MANIFEST	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/MANIFEST	2009-02-17 17:16:40.000000000 +0100
+@@ -2626,11 +2626,16 @@
+ lib/Test/Simple/Changes		Test::Simple changes
+ lib/Test/Simple.pm		Basic utility for writing tests
+ lib/Test/Simple/README		Test::Simple README
++lib/Test/Simple/TODO		Test::Simple TODO
+ lib/Test/Simple/t/00test_harness_check.t	Test::Simple test
++lib/Test/Simple/t/BEGIN_require_ok.t
++lib/Test/Simple/t/BEGIN_use_ok.t
++lib/Test/Simple/t/Builder.t	Test::Builder tests
++lib/Test/Simple/t/More.t	Test::More test, basic stuff
+ lib/Test/Simple/t/bad_plan.t	Test::Builder plan() test
+ lib/Test/Simple/t/bail_out.t	Test::Builder BAIL_OUT test
+ lib/Test/Simple/t/buffer.t	Test::Builder buffering test
+-lib/Test/Simple/t/Builder.t	Test::Builder tests
++lib/Test/Simple/t/c_flag.t
+ lib/Test/Simple/t/carp.t	Test::Builder test
+ lib/Test/Simple/t/circular_data.t	Test::Simple test
+ lib/Test/Simple/t/cmp_ok.t	Test::More test
+@@ -2638,19 +2643,22 @@
+ lib/Test/Simple/t/curr_test.t	Test::Builder->curr_test tests
+ lib/Test/Simple/t/details.t	Test::Builder tests
+ lib/Test/Simple/t/diag.t	Test::More diag() test
++lib/Test/Simple/t/died.t
++lib/Test/Simple/t/dont_overwrite_die_handler.t
+ lib/Test/Simple/t/eq_set.t	Test::Simple test
+ lib/Test/Simple/t/exit.t	Test::Simple test, exit codes
+-lib/Test/Simple/t/extra_one.t	Test::Simple test
++lib/Test/Simple/t/explain.t
+ lib/Test/Simple/t/extra.t	Test::Simple test
++lib/Test/Simple/t/extra_one.t	Test::Simple test
+ lib/Test/Simple/t/fail-like.t	Test::More test, like() failures
+ lib/Test/Simple/t/fail-more.t	Test::More test, tests failing
+-lib/Test/Simple/t/fail_one.t	Test::Simple test
+ lib/Test/Simple/t/fail.t	Test::Simple test, test failures
++lib/Test/Simple/t/fail_one.t	Test::Simple test
+ lib/Test/Simple/t/filehandles.t	Test::Simple test, STDOUT can be played with
+ lib/Test/Simple/t/fork.t	Test::More fork tests
+ lib/Test/Simple/t/harness_active.t	Test::Simple test
+-lib/Test/Simple/t/has_plan2.t	Test::More->plan tests
+ lib/Test/Simple/t/has_plan.t	Test::Builder->plan tests
++lib/Test/Simple/t/has_plan2.t	Test::More->plan tests
+ lib/Test/Simple/t/import.t	Test::More test, importing functions
+ lib/Test/Simple/t/is_deeply_dne_bug.t	Test::More test
+ lib/Test/Simple/t/is_deeply_fail.t	Test::More test, is_deeply()
+@@ -2660,27 +2668,30 @@
+ lib/Test/Simple/t/lib/MyOverload.pm	Test::More test module 
+ lib/Test/Simple/t/maybe_regex.t	Test::Builder->maybe_regex() tests
+ lib/Test/Simple/t/missing.t	Test::Simple test, missing tests
+-lib/Test/Simple/t/More.t	Test::More test, basic stuff
++lib/Test/Simple/t/new_ok.t
+ lib/Test/Simple/t/no_diag.t	Test::Simple test
+ lib/Test/Simple/t/no_ending.t	Test::Builder test, no_ending()
+ lib/Test/Simple/t/no_header.t	Test::Builder test, no_header()
+ lib/Test/Simple/t/no_plan.t	Test::Simple test, forgot the plan
+-lib/Test/Simple/TODO		Test::Simple TODO
++lib/Test/Simple/t/no_tests.t
++lib/Test/Simple/t/note.t
+ lib/Test/Simple/t/ok_obj.t	Test::Builder object tests
+ lib/Test/Simple/t/output.t	Test::Builder test, output methods
+ lib/Test/Simple/t/overload.t		Test::Simple test
+ lib/Test/Simple/t/overload_threads.t	Test::Simple test
++lib/Test/Simple/t/plan.t	Test::More test, plan()
+ lib/Test/Simple/t/plan_bad.t		Test::Simple test
+ lib/Test/Simple/t/plan_is_noplan.t	Test::Simple test, no_plan
+ lib/Test/Simple/t/plan_no_plan.t	Test::More test, plan() w/no_plan
+ lib/Test/Simple/t/plan_shouldnt_import.t	Test::Simple test
+ lib/Test/Simple/t/plan_skip_all.t	Test::More test, plan() w/skip_all
+-lib/Test/Simple/t/plan.t	Test::More test, plan()
+ lib/Test/Simple/t/require_ok.t	Test::Simple test
+ lib/Test/Simple/t/reset.t	Test::Simple test
++lib/Test/Simple/t/reset_outputs.t
+ lib/Test/Simple/t/simple.t	Test::Simple test, basic stuff
+-lib/Test/Simple/t/skipall.t	Test::More test, skip all tests
+ lib/Test/Simple/t/skip.t	Test::More test, SKIP tests
++lib/Test/Simple/t/skipall.t	Test::More test, skip all tests
++lib/Test/Simple/t/tbm_doesnt_set_exported_to.t
+ lib/Test/Simple/t/tbt_01basic.t	Test::Builder::Tester test
+ lib/Test/Simple/t/tbt_02fhrestore.t	Test::Builder::Tester test
+ lib/Test/Simple/t/tbt_03die.t	Test::Builder::Tester test
+@@ -2688,13 +2699,14 @@
+ lib/Test/Simple/t/tbt_05faildiag.t	Test::Builder::Tester test
+ lib/Test/Simple/t/tbt_06errormess.t	Test::Builder::Tester test
+ lib/Test/Simple/t/tbt_07args.t	Test::Builder::Tester test
+-lib/Test/Simple/t/threads.t	Test::Builder thread-safe checks
+ lib/Test/Simple/t/thread_taint.t	Test::Simple test
++lib/Test/Simple/t/threads.t	Test::Builder thread-safe checks
+ lib/Test/Simple/t/todo.t	Test::More test, TODO tests
+ lib/Test/Simple/t/try.t		Test::More test
+ lib/Test/Simple/t/undef.t	Test::More test, undefs don't cause warnings
+-lib/Test/Simple/t/useing.t	Test::More test, compile test
+ lib/Test/Simple/t/use_ok.t	Test::More test, use_ok()
++lib/Test/Simple/t/useing.t	Test::More test, compile test
++lib/Test/Simple/t/utf8.t
+ lib/Test/t/05_about_verbose.t	See if Test works
+ lib/Test/t/fail.t		See if Test works
+ lib/Test/t/mix.t		See if Test works
+diff -urN perl-5.10.0.orig/lib/Test/Builder/Module.pm perl-5.10.0/lib/Test/Builder/Module.pm
+--- perl-5.10.0.orig/lib/Test/Builder/Module.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Builder/Module.pm	2009-02-17 17:16:40.000000000 +0100
+@@ -1,24 +1,24 @@
+ package Test::Builder::Module;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
++
++use strict;
+ 
+ use Test::Builder;
+ 
+ require Exporter;
+-@ISA = qw(Exporter);
++our @ISA = qw(Exporter);
+ 
+-$VERSION = '0.72';
+-
+-use strict;
++our $VERSION = '0.86';
+ 
+ # 5.004's Exporter doesn't have export_to_level.
+ my $_export_to_level = sub {
+-      my $pkg = shift;
+-      my $level = shift;
+-      (undef) = shift;                  # redundant arg
+-      my $callpkg = caller($level);
+-      $pkg->export($callpkg, @_);
++    my $pkg   = shift;
++    my $level = shift;
++    (undef) = shift;    # redundant arg
++    my $callpkg = caller($level);
++    $pkg->export( $callpkg, @_ );
+ };
+ 
+-
+ =head1 NAME
+ 
+ Test::Builder::Module - Base class for test modules
+@@ -84,33 +84,35 @@
+ sub import {
+     my($class) = shift;
+ 
++    # Don't run all this when loading ourself.
++    return 1 if $class eq 'Test::Builder::Module';
++
+     my $test = $class->builder;
+ 
+     my $caller = caller;
+ 
+     $test->exported_to($caller);
+ 
+-    $class->import_extra(\@_);
+-    my(@imports) = $class->_strip_imports(\@_);
++    $class->import_extra( \@_ );
++    my(@imports) = $class->_strip_imports( \@_ );
+ 
+     $test->plan(@_);
+ 
+-    $class->$_export_to_level(1, $class, @imports);
++    $class->$_export_to_level( 1, $class, @imports );
+ }
+ 
+-
+ sub _strip_imports {
+     my $class = shift;
+     my $list  = shift;
+ 
+     my @imports = ();
+     my @other   = ();
+-    my $idx = 0;
++    my $idx     = 0;
+     while( $idx <= $#{$list} ) {
+         my $item = $list->[$idx];
+ 
+         if( defined $item and $item eq 'import' ) {
+-            push @imports, @{$list->[$idx+1]};
++            push @imports, @{ $list->[ $idx + 1 ] };
+             $idx++;
+         }
+         else {
+@@ -125,7 +127,6 @@
+     return @imports;
+ }
+ 
+-
+ =head3 import_extra
+ 
+     Your::Module->import_extra(\@import_args);
+@@ -143,8 +144,7 @@
+ 
+ =cut
+ 
+-sub import_extra {}
+-
++sub import_extra { }
+ 
+ =head2 Builder
+ 
+@@ -178,5 +178,4 @@
+     return Test::Builder->new;
+ }
+ 
+-
+ 1;
+diff -urN perl-5.10.0.orig/lib/Test/Builder/Tester/Color.pm perl-5.10.0/lib/Test/Builder/Tester/Color.pm
+--- perl-5.10.0.orig/lib/Test/Builder/Tester/Color.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Builder/Tester/Color.pm	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ package Test::Builder::Tester::Color;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ use strict;
+ 
+@@ -25,8 +26,7 @@
+ 
+ =cut
+ 
+-sub import
+-{
++sub import {
+     Test::Builder::Tester::color(1);
+ }
+ 
+diff -urN perl-5.10.0.orig/lib/Test/Builder/Tester.pm perl-5.10.0/lib/Test/Builder/Tester.pm
+--- perl-5.10.0.orig/lib/Test/Builder/Tester.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Builder/Tester.pm	2009-02-17 17:16:40.000000000 +0100
+@@ -1,8 +1,8 @@
+ package Test::Builder::Tester;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ use strict;
+-use vars qw(@EXPORT $VERSION @ISA);
+-$VERSION = "1.09";
++our $VERSION = "1.18";
+ 
+ use Test::Builder;
+ use Symbol;
+@@ -56,21 +56,20 @@
+ ###
+ 
+ use Exporter;
+-@ISA = qw(Exporter);
++our @ISA = qw(Exporter);
+ 
+-@EXPORT = qw(test_out test_err test_fail test_diag test_test line_num);
++our @EXPORT = qw(test_out test_err test_fail test_diag test_test line_num);
+ 
+ # _export_to_level and import stolen directly from Test::More.  I am
+ # the king of cargo cult programming ;-)
+ 
+ # 5.004's Exporter doesn't have export_to_level.
+-sub _export_to_level
+-{
+-      my $pkg = shift;
+-      my $level = shift;
+-      (undef) = shift;                  # XXX redundant arg
+-      my $callpkg = caller($level);
+-      $pkg->export($callpkg, @_);
++sub _export_to_level {
++    my $pkg   = shift;
++    my $level = shift;
++    (undef) = shift;    # XXX redundant arg
++    my $callpkg = caller($level);
++    $pkg->export( $callpkg, @_ );
+ }
+ 
+ sub import {
+@@ -83,14 +82,14 @@
+     $t->plan(@plan);
+ 
+     my @imports = ();
+-    foreach my $idx (0..$#plan) {
++    foreach my $idx ( 0 .. $#plan ) {
+         if( $plan[$idx] eq 'import' ) {
+-            @imports = @{$plan[$idx+1]};
++            @imports = @{ $plan[ $idx + 1 ] };
+             last;
+         }
+     }
+ 
+-    __PACKAGE__->_export_to_level(1, __PACKAGE__, @imports);
++    __PACKAGE__->_export_to_level( 1, __PACKAGE__, @imports );
+ }
+ 
+ ###
+@@ -124,8 +123,7 @@
+ my $original_harness_env;
+ 
+ # function that starts testing and redirects the filehandles for now
+-sub _start_testing
+-{
++sub _start_testing {
+     # even if we're running under Test::Harness pretend we're not
+     # for now.  This needed so Test::Builder doesn't add extra spaces
+     $original_harness_env = $ENV{HARNESS_ACTIVE} || 0;
+@@ -146,7 +144,7 @@
+     $err->reset();
+ 
+     # remeber that we're testing
+-    $testing = 1;
++    $testing     = 1;
+     $testing_num = $t->current_test;
+     $t->current_test(0);
+ 
+@@ -188,20 +186,18 @@
+ 
+ =cut
+ 
+-sub test_out(@)
+-{
++sub test_out {
+     # do we need to do any setup?
+     _start_testing() unless $testing;
+ 
+-    $out->expect(@_)
++    $out->expect(@_);
+ }
+ 
+-sub test_err(@)
+-{
++sub test_err {
+     # do we need to do any setup?
+     _start_testing() unless $testing;
+ 
+-    $err->expect(@_)
++    $err->expect(@_);
+ }
+ 
+ =item test_fail
+@@ -230,14 +226,13 @@
+ 
+ =cut
+ 
+-sub test_fail
+-{
++sub test_fail {
+     # do we need to do any setup?
+     _start_testing() unless $testing;
+ 
+     # work out what line we should be on
+-    my ($package, $filename, $line) = caller;
+-    $line = $line + (shift() || 0); # prevent warnings
++    my( $package, $filename, $line ) = caller;
++    $line = $line + ( shift() || 0 );    # prevent warnings
+ 
+     # expect that on stderr
+     $err->expect("#     Failed test ($0 at line $line)");
+@@ -273,14 +268,13 @@
+ 
+ =cut
+ 
+-sub test_diag
+-{
++sub test_diag {
+     # do we need to do any setup?
+     _start_testing() unless $testing;
+ 
+     # expect the same thing, but prepended with "#     "
+     local $_;
+-    $err->expect(map {"# $_"} @_)
++    $err->expect( map { "# $_" } @_ );
+ }
+ 
+ =item test_test
+@@ -322,24 +316,23 @@
+ 
+ =cut
+ 
+-sub test_test
+-{
+-   # decode the arguements as described in the pod
+-   my $mess;
+-   my %args;
+-   if (@_ == 1)
+-     { $mess = shift }
+-   else
+-   {
+-     %args = @_;
+-     $mess = $args{name} if exists($args{name});
+-     $mess = $args{title} if exists($args{title});
+-     $mess = $args{label} if exists($args{label});
+-   }
++sub test_test {
++    # decode the arguements as described in the pod
++    my $mess;
++    my %args;
++    if( @_ == 1 ) {
++        $mess = shift
++    }
++    else {
++        %args = @_;
++        $mess = $args{name} if exists( $args{name} );
++        $mess = $args{title} if exists( $args{title} );
++        $mess = $args{label} if exists( $args{label} );
++    }
+ 
+     # er, are we testing?
+     croak "Not testing.  You must declare output with a test function first."
+-	unless $testing;
++      unless $testing;
+ 
+     # okay, reconnect the test suite back to the saved handles
+     $t->output($original_output_handle);
+@@ -354,20 +347,20 @@
+     $ENV{HARNESS_ACTIVE} = $original_harness_env;
+ 
+     # check the output we've stashed
+-    unless ($t->ok(    ($args{skip_out} || $out->check)
+-                    && ($args{skip_err} || $err->check),
+-                   $mess))
++    unless( $t->ok( ( $args{skip_out} || $out->check ) &&
++                    ( $args{skip_err} || $err->check ), $mess ) 
++    )
+     {
+-      # print out the diagnostic information about why this
+-      # test failed
++        # print out the diagnostic information about why this
++        # test failed
+ 
+-      local $_;
++        local $_;
+ 
+-      $t->diag(map {"$_\n"} $out->complaint)
+-	unless $args{skip_out} || $out->check;
++        $t->diag( map { "$_\n" } $out->complaint )
++          unless $args{skip_out} || $out->check;
+ 
+-      $t->diag(map {"$_\n"} $err->complaint)
+-	unless $args{skip_err} || $err->check;
++        $t->diag( map { "$_\n" } $err->complaint )
++          unless $args{skip_err} || $err->check;
+     }
+ }
+ 
+@@ -383,10 +376,9 @@
+ 
+ =cut
+ 
+-sub line_num
+-{
+-    my ($package, $filename, $line) = caller;
+-    return $line + (shift() || 0); # prevent warnings
++sub line_num {
++    my( $package, $filename, $line ) = caller;
++    return $line + ( shift() || 0 );    # prevent warnings
+ }
+ 
+ =back
+@@ -432,10 +424,10 @@
+ =cut
+ 
+ my $color;
+-sub color
+-{
+-  $color = shift if @_;
+-  $color;
++
++sub color {
++    $color = shift if @_;
++    $color;
+ }
+ 
+ =back
+@@ -490,21 +482,18 @@
+ ##
+ # add line(s) to be expected
+ 
+-sub expect
+-{
++sub expect {
+     my $self = shift;
+ 
+     my @checks = @_;
+     foreach my $check (@checks) {
+         $check = $self->_translate_Failed_check($check);
+-        push @{$self->{wanted}}, ref $check ? $check : "$check\n";
++        push @{ $self->{wanted} }, ref $check ? $check : "$check\n";
+     }
+ }
+ 
+-
+-sub _translate_Failed_check
+-{
+-    my($self, $check) = @_;
++sub _translate_Failed_check {
++    my( $self, $check ) = @_;
+ 
+     if( $check =~ /\A(.*)#     (Failed .*test) \((.*?) at line (\d+)\)\Z(?!\n)/ ) {
+         $check = "/\Q$1\E#\\s+\Q$2\E.*?\\n?.*?\Qat $3\E line \Q$4\E.*\\n?/";
+@@ -513,21 +502,19 @@
+     return $check;
+ }
+ 
+-
+ ##
+ # return true iff the expected data matches the got data
+ 
+-sub check
+-{
++sub check {
+     my $self = shift;
+ 
+     # turn off warnings as these might be undef
+     local $^W = 0;
+ 
+-    my @checks = @{$self->{wanted}};
+-    my $got = $self->{got};
++    my @checks = @{ $self->{wanted} };
++    my $got    = $self->{got};
+     foreach my $check (@checks) {
+-        $check = "\Q$check\E" unless ($check =~ s,^/(.*)/$,$1, or ref $check);
++        $check = "\Q$check\E" unless( $check =~ s,^/(.*)/$,$1, or ref $check );
+         return 0 unless $got =~ s/^$check//;
+     }
+ 
+@@ -538,82 +525,71 @@
+ # a complaint message about the inputs not matching (to be
+ # used for debugging messages)
+ 
+-sub complaint
+-{
+-    my $self = shift;
++sub complaint {
++    my $self   = shift;
+     my $type   = $self->type;
+     my $got    = $self->got;
+-    my $wanted = join "\n", @{$self->wanted};
++    my $wanted = join "\n", @{ $self->wanted };
+ 
+     # are we running in colour mode?
+-    if (Test::Builder::Tester::color)
+-    {
+-      # get color
+-      eval "require Term::ANSIColor";
+-      unless ($@)
+-      {
+-	# colours
+-
+-	my $green = Term::ANSIColor::color("black").
+-	            Term::ANSIColor::color("on_green");
+-        my $red   = Term::ANSIColor::color("black").
+-                    Term::ANSIColor::color("on_red");
+-	my $reset = Term::ANSIColor::color("reset");
+-
+-	# work out where the two strings start to differ
+-	my $char = 0;
+-	$char++ while substr($got, $char, 1) eq substr($wanted, $char, 1);
+-
+-	# get the start string and the two end strings
+-	my $start     = $green . substr($wanted, 0,   $char);
+-	my $gotend    = $red   . substr($got   , $char) . $reset;
+-	my $wantedend = $red   . substr($wanted, $char) . $reset;
+-
+-	# make the start turn green on and off
+-	$start =~ s/\n/$reset\n$green/g;
+-
+-	# make the ends turn red on and off
+-	$gotend    =~ s/\n/$reset\n$red/g;
+-	$wantedend =~ s/\n/$reset\n$red/g;
+-
+-	# rebuild the strings
+-	$got    = $start . $gotend;
+-	$wanted = $start . $wantedend;
+-      }
++    if(Test::Builder::Tester::color) {
++        # get color
++        eval { require Term::ANSIColor };
++        unless($@) {
++            # colours
++
++            my $green = Term::ANSIColor::color("black") . Term::ANSIColor::color("on_green");
++            my $red   = Term::ANSIColor::color("black") . Term::ANSIColor::color("on_red");
++            my $reset = Term::ANSIColor::color("reset");
++
++            # work out where the two strings start to differ
++            my $char = 0;
++            $char++ while substr( $got, $char, 1 ) eq substr( $wanted, $char, 1 );
++
++            # get the start string and the two end strings
++            my $start = $green . substr( $wanted, 0, $char );
++            my $gotend    = $red . substr( $got,    $char ) . $reset;
++            my $wantedend = $red . substr( $wanted, $char ) . $reset;
++
++            # make the start turn green on and off
++            $start =~ s/\n/$reset\n$green/g;
++
++            # make the ends turn red on and off
++            $gotend    =~ s/\n/$reset\n$red/g;
++            $wantedend =~ s/\n/$reset\n$red/g;
++
++            # rebuild the strings
++            $got    = $start . $gotend;
++            $wanted = $start . $wantedend;
++        }
+     }
+ 
+-    return "$type is:\n" .
+-           "$got\nnot:\n$wanted\nas expected"
++    return "$type is:\n" . "$got\nnot:\n$wanted\nas expected";
+ }
+ 
+ ##
+ # forget all expected and got data
+ 
+-sub reset
+-{
++sub reset {
+     my $self = shift;
+     %$self = (
+-              type   => $self->{type},
+-              got    => '',
+-              wanted => [],
+-             );
++        type   => $self->{type},
++        got    => '',
++        wanted => [],
++    );
+ }
+ 
+-
+-sub got
+-{
++sub got {
+     my $self = shift;
+     return $self->{got};
+ }
+ 
+-sub wanted
+-{
++sub wanted {
+     my $self = shift;
+     return $self->{wanted};
+ }
+ 
+-sub type
+-{
++sub type {
+     my $self = shift;
+     return $self->{type};
+ }
+@@ -622,26 +598,24 @@
+ # tie interface
+ ###
+ 
+-sub PRINT  {
++sub PRINT {
+     my $self = shift;
+     $self->{got} .= join '', @_;
+ }
+ 
+ sub TIEHANDLE {
+-    my($class, $type) = @_;
++    my( $class, $type ) = @_;
+ 
+-    my $self = bless {
+-                   type => $type
+-               }, $class;
++    my $self = bless { type => $type }, $class;
+ 
+     $self->reset;
+ 
+     return $self;
+ }
+ 
+-sub READ {}
+-sub READLINE {}
+-sub GETC {}
+-sub FILENO {}
++sub READ     { }
++sub READLINE { }
++sub GETC     { }
++sub FILENO   { }
+ 
+ 1;
+diff -urN perl-5.10.0.orig/lib/Test/Builder.pm perl-5.10.0/lib/Test/Builder.pm
+--- perl-5.10.0.orig/lib/Test/Builder.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Builder.pm	2009-02-17 17:16:40.000000000 +0100
+@@ -1,25 +1,22 @@
+ package Test::Builder;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+-use 5.004;
+-
+-# $^C was only introduced in 5.005-ish.  We do this to prevent
+-# use of uninitialized value warnings in older perls.
+-$^C ||= 0;
+-
++use 5.006;
+ use strict;
+-use vars qw($VERSION);
+-$VERSION = '0.72';
+-$VERSION = eval $VERSION;    # make the alpha version come out as a number
++use warnings;
++
++our $VERSION = '0.86';
++$VERSION = eval $VERSION;    ## no critic (BuiltinFunctions::ProhibitStringyEval)
+ 
+ # Make Test::Builder thread-safe for ithreads.
+ BEGIN {
+     use Config;
+     # Load threads::shared when threads are turned on.
+     # 5.8.0's threads are so busted we no longer support them.
+-    if( $] >= 5.008001 && $Config{useithreads} && $INC{'threads.pm'}) {
++    if( $] >= 5.008001 && $Config{useithreads} && $INC{'threads.pm'} ) {
+         require threads::shared;
+ 
+-        # Hack around YET ANOTHER threads::shared bug.  It would 
++        # Hack around YET ANOTHER threads::shared bug.  It would
+         # occassionally forget the contents of the variable when sharing it.
+         # So we first copy the data, then share, then put our copy back.
+         *share = sub (\[$@%]) {
+@@ -27,31 +24,31 @@
+             my $data;
+ 
+             if( $type eq 'HASH' ) {
+-                %$data = %{$_[0]};
++                %$data = %{ $_[0] };
+             }
+             elsif( $type eq 'ARRAY' ) {
+-                @$data = @{$_[0]};
++                @$data = @{ $_[0] };
+             }
+             elsif( $type eq 'SCALAR' ) {
+-                $$data = ${$_[0]};
++                $$data = ${ $_[0] };
+             }
+             else {
+-                die("Unknown type: ".$type);
++                die( "Unknown type: " . $type );
+             }
+ 
+-            $_[0] = &threads::shared::share($_[0]);
++            $_[0] = &threads::shared::share( $_[0] );
+ 
+             if( $type eq 'HASH' ) {
+-                %{$_[0]} = %$data;
++                %{ $_[0] } = %$data;
+             }
+             elsif( $type eq 'ARRAY' ) {
+-                @{$_[0]} = @$data;
++                @{ $_[0] } = @$data;
+             }
+             elsif( $type eq 'SCALAR' ) {
+-                ${$_[0]} = $$data;
++                ${ $_[0] } = $$data;
+             }
+             else {
+-                die("Unknown type: ".$type);
++                die( "Unknown type: " . $type );
+             }
+ 
+             return $_[0];
+@@ -65,7 +62,6 @@
+     }
+ }
+ 
+-
+ =head1 NAME
+ 
+ Test::Builder - Backend for building test libraries
+@@ -73,28 +69,15 @@
+ =head1 SYNOPSIS
+ 
+   package My::Test::Module;
+-  use Test::Builder;
+-  require Exporter;
+-  @ISA = qw(Exporter);
+-  @EXPORT = qw(ok);
++  use base 'Test::Builder::Module';
+ 
+-  my $Test = Test::Builder->new;
+-  $Test->output('my_logfile');
+-
+-  sub import {
+-      my($self) = shift;
+-      my $pack = caller;
+-
+-      $Test->exported_to($pack);
+-      $Test->plan(@_);
+-
+-      $self->export_to_level(1, $self, 'ok');
+-  }
++  my $CLASS = __PACKAGE__;
+ 
+   sub ok {
+       my($test, $name) = @_;
++      my $tb = $CLASS->builder;
+ 
+-      $Test->ok($test, $name);
++      $tb->ok($test, $name);
+   }
+ 
+ 
+@@ -128,13 +111,13 @@
+ =cut
+ 
+ my $Test = Test::Builder->new;
++
+ sub new {
+     my($class) = shift;
+     $Test ||= $class->create;
+     return $Test;
+ }
+ 
+-
+ =item B<create>
+ 
+   my $Test = Test::Builder->create;
+@@ -168,37 +151,40 @@
+ 
+ =cut
+ 
+-use vars qw($Level);
++our $Level;
+ 
+-sub reset {
+-    my ($self) = @_;
++sub reset {    ## no critic (Subroutines::ProhibitBuiltinHomonyms)
++    my($self) = @_;
+ 
+     # We leave this a global because it has to be localized and localizing
+     # hash keys is just asking for pain.  Also, it was documented.
+     $Level = 1;
+ 
+-    $self->{Test_Died}    = 0;
+     $self->{Have_Plan}    = 0;
+     $self->{No_Plan}      = 0;
+     $self->{Original_Pid} = $$;
+ 
+-    share($self->{Curr_Test});
+-    $self->{Curr_Test}    = 0;
+-    $self->{Test_Results} = &share([]);
++    share( $self->{Curr_Test} );
++    $self->{Curr_Test} = 0;
++    $self->{Test_Results} = &share( [] );
+ 
+     $self->{Exported_To}    = undef;
+     $self->{Expected_Tests} = 0;
+ 
+-    $self->{Skip_All}   = 0;
++    $self->{Skip_All} = 0;
++
++    $self->{Use_Nums} = 1;
+ 
+-    $self->{Use_Nums}   = 1;
++    $self->{No_Header} = 0;
++    $self->{No_Ending} = 0;
+ 
+-    $self->{No_Header}  = 0;
+-    $self->{No_Ending}  = 0;
++    $self->{Todo}       = undef;
++    $self->{Todo_Stack} = [];
++    $self->{Start_Todo} = 0;
+ 
+-    $self->_dup_stdhandles unless $^C;
++    $self->_dup_stdhandles;
+ 
+-    return undef;
++    return;
+ }
+ 
+ =back
+@@ -210,25 +196,6 @@
+ 
+ =over 4
+ 
+-=item B<exported_to>
+-
+-  my $pack = $Test->exported_to;
+-  $Test->exported_to($pack);
+-
+-Tells Test::Builder what package you exported your functions to.
+-This is important for getting TODO tests right.
+-
+-=cut
+-
+-sub exported_to {
+-    my($self, $pack) = @_;
+-
+-    if( defined $pack ) {
+-        $self->{Exported_To} = $pack;
+-    }
+-    return $self->{Exported_To};
+-}
+-
+ =item B<plan>
+ 
+   $Test->plan('no_plan');
+@@ -243,36 +210,36 @@
+ =cut
+ 
+ sub plan {
+-    my($self, $cmd, $arg) = @_;
++    my( $self, $cmd, $arg ) = @_;
+ 
+     return unless $cmd;
+ 
+     local $Level = $Level + 1;
+ 
+-    if( $self->{Have_Plan} ) {
+-        $self->croak("You tried to plan twice");
+-    }
++    $self->croak("You tried to plan twice")
++      if $self->{Have_Plan};
+ 
+     if( $cmd eq 'no_plan' ) {
++        $self->carp("no_plan takes no arguments") if $arg;
+         $self->no_plan;
+     }
+     elsif( $cmd eq 'skip_all' ) {
+         return $self->skip_all($arg);
+     }
+     elsif( $cmd eq 'tests' ) {
+-        if( $arg ) {
++        if($arg) {
+             local $Level = $Level + 1;
+             return $self->expected_tests($arg);
+         }
+         elsif( !defined $arg ) {
+             $self->croak("Got an undefined number of tests");
+         }
+-        elsif( !$arg ) {
++        else {
+             $self->croak("You said to run 0 tests");
+         }
+     }
+     else {
+-        my @args = grep { defined } ($cmd, $arg);
++        my @args = grep { defined } ( $cmd, $arg );
+         $self->croak("plan() doesn't understand @args");
+     }
+ 
+@@ -293,9 +260,9 @@
+     my $self = shift;
+     my($max) = @_;
+ 
+-    if( @_ ) {
++    if(@_) {
+         $self->croak("Number of tests must be a positive integer.  You gave it '$max'")
+-          unless $max =~ /^\+?\d+$/ and $max > 0;
++          unless $max =~ /^\+?\d+$/;
+ 
+         $self->{Expected_Tests} = $max;
+         $self->{Have_Plan}      = 1;
+@@ -305,7 +272,6 @@
+     return $self->{Expected_Tests};
+ }
+ 
+-
+ =item B<no_plan>
+ 
+   $Test->no_plan;
+@@ -319,6 +285,8 @@
+ 
+     $self->{No_Plan}   = 1;
+     $self->{Have_Plan} = 1;
++
++    return 1;
+ }
+ 
+ =item B<has_plan>
+@@ -332,11 +300,10 @@
+ sub has_plan {
+     my $self = shift;
+ 
+-    return($self->{Expected_Tests}) if $self->{Expected_Tests};
++    return( $self->{Expected_Tests} ) if $self->{Expected_Tests};
+     return('no_plan') if $self->{No_Plan};
+     return(undef);
+-};
+-
++}
+ 
+ =item B<skip_all>
+ 
+@@ -348,7 +315,7 @@
+ =cut
+ 
+ sub skip_all {
+-    my($self, $reason) = @_;
++    my( $self, $reason ) = @_;
+ 
+     my $out = "1..0";
+     $out .= " # Skip $reason" if $reason;
+@@ -360,6 +327,28 @@
+     exit(0);
+ }
+ 
++=item B<exported_to>
++
++  my $pack = $Test->exported_to;
++  $Test->exported_to($pack);
++
++Tells Test::Builder what package you exported your functions to.
++
++This method isn't terribly useful since modules which share the same
++Test::Builder object might get exported to different packages and only
++the last one will be honored.
++
++=cut
++
++sub exported_to {
++    my( $self, $pack ) = @_;
++
++    if( defined $pack ) {
++        $self->{Exported_To} = $pack;
++    }
++    return $self->{Exported_To};
++}
++
+ =back
+ 
+ =head2 Running tests
+@@ -382,7 +371,7 @@
+ =cut
+ 
+ sub ok {
+-    my($self, $test, $name) = @_;
++    my( $self, $test, $name ) = @_;
+ 
+     # $test might contain an object which we don't want to accidentally
+     # store, so we turn it into a boolean.
+@@ -394,24 +383,27 @@
+     $self->{Curr_Test}++;
+ 
+     # In case $name is a string overloaded object, force it to stringify.
+-    $self->_unoverload_str(\$name);
++    $self->_unoverload_str( \$name );
+ 
+-    $self->diag(<<ERR) if defined $name and $name =~ /^[\d\s]+$/;
++    $self->diag(<<"ERR") if defined $name and $name =~ /^[\d\s]+$/;
+     You named your test '$name'.  You shouldn't use numbers for your test names.
+     Very confusing.
+ ERR
+ 
+-    my($pack, $file, $line) = $self->caller;
++    # Capture the value of $TODO for the rest of this ok() call
++    # so it can more easily be found by other routines.
++    my $todo    = $self->todo();
++    my $in_todo = $self->in_todo;
++    local $self->{Todo} = $todo if $in_todo;
+ 
+-    my $todo = $self->todo($pack);
+-    $self->_unoverload_str(\$todo);
++    $self->_unoverload_str( \$todo );
+ 
+     my $out;
+-    my $result = &share({});
++    my $result = &share( {} );
+ 
+-    unless( $test ) {
++    unless($test) {
+         $out .= "not ";
+-        @$result{ 'ok', 'actual_ok' } = ( ( $todo ? 1 : 0 ), 0 );
++        @$result{ 'ok', 'actual_ok' } = ( ( $self->in_todo ? 1 : 0 ), 0 );
+     }
+     else {
+         @$result{ 'ok', 'actual_ok' } = ( 1, $test );
+@@ -421,16 +413,16 @@
+     $out .= " $self->{Curr_Test}" if $self->use_numbers;
+ 
+     if( defined $name ) {
+-        $name =~ s|#|\\#|g;     # # in a name can confuse Test::Harness.
+-        $out   .= " - $name";
++        $name =~ s|#|\\#|g;    # # in a name can confuse Test::Harness.
++        $out .= " - $name";
+         $result->{name} = $name;
+     }
+     else {
+         $result->{name} = '';
+     }
+ 
+-    if( $todo ) {
+-        $out   .= " # TODO $todo";
++    if( $self->in_todo ) {
++        $out .= " # TODO $todo";
+         $result->{reason} = $todo;
+         $result->{type}   = 'todo';
+     }
+@@ -439,79 +431,81 @@
+         $result->{type}   = '';
+     }
+ 
+-    $self->{Test_Results}[$self->{Curr_Test}-1] = $result;
++    $self->{Test_Results}[ $self->{Curr_Test} - 1 ] = $result;
+     $out .= "\n";
+ 
+     $self->_print($out);
+ 
+-    unless( $test ) {
+-        my $msg = $todo ? "Failed (TODO)" : "Failed";
+-        $self->_print_diag("\n") if $ENV{HARNESS_ACTIVE};
+-
+-	if( defined $name ) {
+-	    $self->diag(qq[  $msg test '$name'\n]);
+-	    $self->diag(qq[  at $file line $line.\n]);
+-	}
+-	else {
+-	    $self->diag(qq[  $msg test at $file line $line.\n]);
+-	}
+-    } 
++    unless($test) {
++        my $msg = $self->in_todo ? "Failed (TODO)" : "Failed";
++        $self->_print_to_fh( $self->_diag_fh, "\n" ) if $ENV{HARNESS_ACTIVE};
++
++        my( undef, $file, $line ) = $self->caller;
++        if( defined $name ) {
++            $self->diag(qq[  $msg test '$name'\n]);
++            $self->diag(qq[  at $file line $line.\n]);
++        }
++        else {
++            $self->diag(qq[  $msg test at $file line $line.\n]);
++        }
++    }
+ 
+     return $test ? 1 : 0;
+ }
+ 
+-
+ sub _unoverload {
+-    my $self  = shift;
+-    my $type  = shift;
++    my $self = shift;
++    my $type = shift;
+ 
+-    $self->_try(sub { require overload } ) || return;
++    $self->_try(sub { require overload; }, die_on_fail => 1);
+ 
+     foreach my $thing (@_) {
+         if( $self->_is_object($$thing) ) {
+-            if( my $string_meth = overload::Method($$thing, $type) ) {
++            if( my $string_meth = overload::Method( $$thing, $type ) ) {
+                 $$thing = $$thing->$string_meth();
+             }
+         }
+     }
+-}
+ 
++    return;
++}
+ 
+ sub _is_object {
+-    my($self, $thing) = @_;
++    my( $self, $thing ) = @_;
+ 
+-    return $self->_try(sub { ref $thing && $thing->isa('UNIVERSAL') }) ? 1 : 0;
++    return $self->_try( sub { ref $thing && $thing->isa('UNIVERSAL') } ) ? 1 : 0;
+ }
+ 
+-
+ sub _unoverload_str {
+     my $self = shift;
+ 
+-    $self->_unoverload(q[""], @_);
+-}    
++    return $self->_unoverload( q[""], @_ );
++}
+ 
+ sub _unoverload_num {
+     my $self = shift;
+ 
+-    $self->_unoverload('0+', @_);
++    $self->_unoverload( '0+', @_ );
+ 
+     for my $val (@_) {
+         next unless $self->_is_dualvar($$val);
+-        $$val = $$val+0;
++        $$val = $$val + 0;
+     }
+-}
+ 
++    return;
++}
+ 
+ # This is a hack to detect a dualvar such as $!
+ sub _is_dualvar {
+-    my($self, $val) = @_;
+-
+-    local $^W = 0;
+-    my $numval = $val+0;
+-    return 1 if $numval != 0 and $numval ne $val;
+-}
++    my( $self, $val ) = @_;
+ 
++    # Objects are not dualvars.
++    return 0 if ref $val;
+ 
++    no warnings 'numeric';
++    my $numval = $val + 0;
++    return $numval != 0 and $numval ne $val ? 1 : 0;
++}
+ 
+ =item B<is_eq>
+ 
+@@ -530,66 +524,85 @@
+ =cut
+ 
+ sub is_eq {
+-    my($self, $got, $expect, $name) = @_;
++    my( $self, $got, $expect, $name ) = @_;
+     local $Level = $Level + 1;
+ 
+-    $self->_unoverload_str(\$got, \$expect);
++    $self->_unoverload_str( \$got, \$expect );
+ 
+     if( !defined $got || !defined $expect ) {
+         # undef only matches undef and nothing else
+         my $test = !defined $got && !defined $expect;
+ 
+-        $self->ok($test, $name);
+-        $self->_is_diag($got, 'eq', $expect) unless $test;
++        $self->ok( $test, $name );
++        $self->_is_diag( $got, 'eq', $expect ) unless $test;
+         return $test;
+     }
+ 
+-    return $self->cmp_ok($got, 'eq', $expect, $name);
++    return $self->cmp_ok( $got, 'eq', $expect, $name );
+ }
+ 
+ sub is_num {
+-    my($self, $got, $expect, $name) = @_;
++    my( $self, $got, $expect, $name ) = @_;
+     local $Level = $Level + 1;
+ 
+-    $self->_unoverload_num(\$got, \$expect);
++    $self->_unoverload_num( \$got, \$expect );
+ 
+     if( !defined $got || !defined $expect ) {
+         # undef only matches undef and nothing else
+         my $test = !defined $got && !defined $expect;
+ 
+-        $self->ok($test, $name);
+-        $self->_is_diag($got, '==', $expect) unless $test;
++        $self->ok( $test, $name );
++        $self->_is_diag( $got, '==', $expect ) unless $test;
+         return $test;
+     }
+ 
+-    return $self->cmp_ok($got, '==', $expect, $name);
++    return $self->cmp_ok( $got, '==', $expect, $name );
+ }
+ 
+-sub _is_diag {
+-    my($self, $got, $type, $expect) = @_;
++sub _diag_fmt {
++    my( $self, $type, $val ) = @_;
+ 
+-    foreach my $val (\$got, \$expect) {
+-        if( defined $$val ) {
+-            if( $type eq 'eq' ) {
+-                # quote and force string context
+-                $$val = "'$$val'"
+-            }
+-            else {
+-                # force numeric context
+-                $self->_unoverload_num($val);
+-            }
++    if( defined $$val ) {
++        if( $type eq 'eq' or $type eq 'ne' ) {
++            # quote and force string context
++            $$val = "'$$val'";
+         }
+         else {
+-            $$val = 'undef';
++            # force numeric context
++            $self->_unoverload_num($val);
+         }
+     }
++    else {
++        $$val = 'undef';
++    }
++
++    return;
++}
+ 
+-    return $self->diag(sprintf <<DIAGNOSTIC, $got, $expect);
+-         got: %s
+-    expected: %s
++sub _is_diag {
++    my( $self, $got, $type, $expect ) = @_;
++
++    $self->_diag_fmt( $type, $_ ) for \$got, \$expect;
++
++    local $Level = $Level + 1;
++    return $self->diag(<<"DIAGNOSTIC");
++         got: $got
++    expected: $expect
+ DIAGNOSTIC
+ 
+-}    
++}
++
++sub _isnt_diag {
++    my( $self, $got, $type ) = @_;
++
++    $self->_diag_fmt( $type, \$got );
++
++    local $Level = $Level + 1;
++    return $self->diag(<<"DIAGNOSTIC");
++         got: $got
++    expected: anything else
++DIAGNOSTIC
++}
+ 
+ =item B<isnt_eq>
+ 
+@@ -608,38 +621,37 @@
+ =cut
+ 
+ sub isnt_eq {
+-    my($self, $got, $dont_expect, $name) = @_;
++    my( $self, $got, $dont_expect, $name ) = @_;
+     local $Level = $Level + 1;
+ 
+     if( !defined $got || !defined $dont_expect ) {
+         # undef only matches undef and nothing else
+         my $test = defined $got || defined $dont_expect;
+ 
+-        $self->ok($test, $name);
+-        $self->_cmp_diag($got, 'ne', $dont_expect) unless $test;
++        $self->ok( $test, $name );
++        $self->_isnt_diag( $got, 'ne' ) unless $test;
+         return $test;
+     }
+ 
+-    return $self->cmp_ok($got, 'ne', $dont_expect, $name);
++    return $self->cmp_ok( $got, 'ne', $dont_expect, $name );
+ }
+ 
+ sub isnt_num {
+-    my($self, $got, $dont_expect, $name) = @_;
++    my( $self, $got, $dont_expect, $name ) = @_;
+     local $Level = $Level + 1;
+ 
+     if( !defined $got || !defined $dont_expect ) {
+         # undef only matches undef and nothing else
+         my $test = defined $got || defined $dont_expect;
+ 
+-        $self->ok($test, $name);
+-        $self->_cmp_diag($got, '!=', $dont_expect) unless $test;
++        $self->ok( $test, $name );
++        $self->_isnt_diag( $got, '!=' ) unless $test;
+         return $test;
+     }
+ 
+-    return $self->cmp_ok($got, '!=', $dont_expect, $name);
++    return $self->cmp_ok( $got, '!=', $dont_expect, $name );
+ }
+ 
+-
+ =item B<like>
+ 
+   $Test->like($this, qr/$regex/, $name);
+@@ -660,20 +672,19 @@
+ =cut
+ 
+ sub like {
+-    my($self, $this, $regex, $name) = @_;
++    my( $self, $this, $regex, $name ) = @_;
+ 
+     local $Level = $Level + 1;
+-    $self->_regex_ok($this, $regex, '=~', $name);
++    return $self->_regex_ok( $this, $regex, '=~', $name );
+ }
+ 
+ sub unlike {
+-    my($self, $this, $regex, $name) = @_;
++    my( $self, $this, $regex, $name ) = @_;
+ 
+     local $Level = $Level + 1;
+-    $self->_regex_ok($this, $regex, '!~', $name);
++    return $self->_regex_ok( $this, $regex, '!~', $name );
+ }
+ 
+-
+ =item B<cmp_ok>
+ 
+   $Test->cmp_ok($this, $type, $that, $name);
+@@ -684,64 +695,77 @@
+ 
+ =cut
+ 
+-
+-my %numeric_cmps = map { ($_, 1) } 
+-                       ("<",  "<=", ">",  ">=", "==", "!=", "<=>");
++my %numeric_cmps = map { ( $_, 1 ) } ( "<", "<=", ">", ">=", "==", "!=", "<=>" );
+ 
+ sub cmp_ok {
+-    my($self, $got, $type, $expect, $name) = @_;
+-
+-    # Treat overloaded objects as numbers if we're asked to do a
+-    # numeric comparison.
+-    my $unoverload = $numeric_cmps{$type} ? '_unoverload_num'
+-                                          : '_unoverload_str';
+-
+-    $self->$unoverload(\$got, \$expect);
+-
++    my( $self, $got, $type, $expect, $name ) = @_;
+ 
+     my $test;
++    my $error;
+     {
+-        local($@,$!,$SIG{__DIE__});  # isolate eval
++        ## no critic (BuiltinFunctions::ProhibitStringyEval)
+ 
+-        my $code = $self->_caller_context;
++        local( $@, $!, $SIG{__DIE__} );    # isolate eval
+ 
+-        # Yes, it has to look like this or 5.4.5 won't see the #line directive.
+-        # Don't ask me, man, I just work here.
+-        $test = eval "
+-$code" . "\$got $type \$expect;";
++        my($pack, $file, $line) = $self->caller();
+ 
++        $test = eval qq[
++#line 1 "cmp_ok [from $file line $line]"
++\$got $type \$expect;
++];
++        $error = $@;
+     }
+     local $Level = $Level + 1;
+-    my $ok = $self->ok($test, $name);
++    my $ok = $self->ok( $test, $name );
++
++    # Treat overloaded objects as numbers if we're asked to do a
++    # numeric comparison.
++    my $unoverload
++      = $numeric_cmps{$type}
++      ? '_unoverload_num'
++      : '_unoverload_str';
++
++    $self->diag(<<"END") if $error;
++An error occurred while using $type:
++------------------------------------
++$error
++------------------------------------
++END
++
++    unless($ok) {
++        $self->$unoverload( \$got, \$expect );
+ 
+-    unless( $ok ) {
+         if( $type =~ /^(eq|==)$/ ) {
+-            $self->_is_diag($got, $type, $expect);
++            $self->_is_diag( $got, $type, $expect );
++        }
++        elsif( $type =~ /^(ne|!=)$/ ) {
++            $self->_isnt_diag( $got, $type );
+         }
+         else {
+-            $self->_cmp_diag($got, $type, $expect);
++            $self->_cmp_diag( $got, $type, $expect );
+         }
+     }
+     return $ok;
+ }
+ 
+ sub _cmp_diag {
+-    my($self, $got, $type, $expect) = @_;
+-    
++    my( $self, $got, $type, $expect ) = @_;
++
+     $got    = defined $got    ? "'$got'"    : 'undef';
+     $expect = defined $expect ? "'$expect'" : 'undef';
+-    return $self->diag(sprintf <<DIAGNOSTIC, $got, $type, $expect);
+-    %s
+-        %s
+-    %s
++
++    local $Level = $Level + 1;
++    return $self->diag(<<"DIAGNOSTIC");
++    $got
++        $type
++    $expect
+ DIAGNOSTIC
+ }
+ 
+-
+ sub _caller_context {
+     my $self = shift;
+ 
+-    my($pack, $file, $line) = $self->caller(1);
++    my( $pack, $file, $line ) = $self->caller(1);
+ 
+     my $code = '';
+     $code .= "#line $line $file\n" if defined $file and defined $line;
+@@ -771,7 +795,7 @@
+ =cut
+ 
+ sub BAIL_OUT {
+-    my($self, $reason) = @_;
++    my( $self, $reason ) = @_;
+ 
+     $self->{Bailed_Out} = 1;
+     $self->_print("Bail out!  $reason");
+@@ -785,7 +809,6 @@
+ 
+ *BAILOUT = \&BAIL_OUT;
+ 
+-
+ =item B<skip>
+ 
+     $Test->skip;
+@@ -796,35 +819,36 @@
+ =cut
+ 
+ sub skip {
+-    my($self, $why) = @_;
++    my( $self, $why ) = @_;
+     $why ||= '';
+-    $self->_unoverload_str(\$why);
++    $self->_unoverload_str( \$why );
+ 
+     $self->_plan_check;
+ 
+-    lock($self->{Curr_Test});
++    lock( $self->{Curr_Test} );
+     $self->{Curr_Test}++;
+ 
+-    $self->{Test_Results}[$self->{Curr_Test}-1] = &share({
+-        'ok'      => 1,
+-        actual_ok => 1,
+-        name      => '',
+-        type      => 'skip',
+-        reason    => $why,
+-    });
++    $self->{Test_Results}[ $self->{Curr_Test} - 1 ] = &share(
++        {
++            'ok'      => 1,
++            actual_ok => 1,
++            name      => '',
++            type      => 'skip',
++            reason    => $why,
++        }
++    );
+ 
+     my $out = "ok";
+-    $out   .= " $self->{Curr_Test}" if $self->use_numbers;
+-    $out   .= " # skip";
+-    $out   .= " $why"       if length $why;
+-    $out   .= "\n";
++    $out .= " $self->{Curr_Test}" if $self->use_numbers;
++    $out .= " # skip";
++    $out .= " $why"               if length $why;
++    $out .= "\n";
+ 
+     $self->_print($out);
+ 
+     return 1;
+ }
+ 
+-
+ =item B<todo_skip>
+ 
+   $Test->todo_skip;
+@@ -838,32 +862,33 @@
+ =cut
+ 
+ sub todo_skip {
+-    my($self, $why) = @_;
++    my( $self, $why ) = @_;
+     $why ||= '';
+ 
+     $self->_plan_check;
+ 
+-    lock($self->{Curr_Test});
++    lock( $self->{Curr_Test} );
+     $self->{Curr_Test}++;
+ 
+-    $self->{Test_Results}[$self->{Curr_Test}-1] = &share({
+-        'ok'      => 1,
+-        actual_ok => 0,
+-        name      => '',
+-        type      => 'todo_skip',
+-        reason    => $why,
+-    });
++    $self->{Test_Results}[ $self->{Curr_Test} - 1 ] = &share(
++        {
++            'ok'      => 1,
++            actual_ok => 0,
++            name      => '',
++            type      => 'todo_skip',
++            reason    => $why,
++        }
++    );
+ 
+     my $out = "not ok";
+-    $out   .= " $self->{Curr_Test}" if $self->use_numbers;
+-    $out   .= " # TODO & SKIP $why\n";
++    $out .= " $self->{Curr_Test}" if $self->use_numbers;
++    $out .= " # TODO & SKIP $why\n";
+ 
+     $self->_print($out);
+ 
+     return 1;
+ }
+ 
+-
+ =begin _unimplemented
+ 
+ =item B<skip_rest>
+@@ -900,7 +925,7 @@
+ representing a regular expression.
+ 
+ Returns a Perl value which may be used instead of the corresponding
+-regular expression, or undef if it's argument is not recognised.
++regular expression, or undef if its argument is not recognised.
+ 
+ For example, a version of like(), sans the useful diagnostic messages,
+ could be written as:
+@@ -915,48 +940,60 @@
+ 
+ =cut
+ 
+-
+ sub maybe_regex {
+-    my ($self, $regex) = @_;
++    my( $self, $regex ) = @_;
+     my $usable_regex = undef;
+ 
+     return $usable_regex unless defined $regex;
+ 
+-    my($re, $opts);
++    my( $re, $opts );
+ 
+     # Check for qr/foo/
+-    if( ref $regex eq 'Regexp' ) {
++    if( _is_qr($regex) ) {
+         $usable_regex = $regex;
+     }
+     # Check for '/foo/' or 'm,foo,'
+-    elsif( ($re, $opts)        = $regex =~ m{^ /(.*)/ (\w*) $ }sx           or
+-           (undef, $re, $opts) = $regex =~ m,^ m([^\w\s]) (.+) \1 (\w*) $,sx
+-         )
++    elsif(( $re, $opts )        = $regex =~ m{^ /(.*)/ (\w*) $ }sx              or
++          ( undef, $re, $opts ) = $regex =~ m,^ m([^\w\s]) (.+) \1 (\w*) $,sx
++    )
+     {
+         $usable_regex = length $opts ? "(?$opts)$re" : $re;
+     }
+ 
+     return $usable_regex;
+-};
++}
++
++sub _is_qr {
++    my $regex = shift;
++
++    # is_regexp() checks for regexes in a robust manner, say if they're
++    # blessed.
++    return re::is_regexp($regex) if defined &re::is_regexp;
++    return ref $regex eq 'Regexp';
++}
+ 
+ sub _regex_ok {
+-    my($self, $this, $regex, $cmp, $name) = @_;
++    my( $self, $this, $regex, $cmp, $name ) = @_;
+ 
+-    my $ok = 0;
++    my $ok           = 0;
+     my $usable_regex = $self->maybe_regex($regex);
+-    unless (defined $usable_regex) {
++    unless( defined $usable_regex ) {
++        local $Level = $Level + 1;
+         $ok = $self->ok( 0, $name );
+         $self->diag("    '$regex' doesn't look much like a regex to me.");
+         return $ok;
+     }
+ 
+     {
++        ## no critic (BuiltinFunctions::ProhibitStringyEval)
++
+         my $test;
+         my $code = $self->_caller_context;
+ 
+-        local($@, $!, $SIG{__DIE__}); # isolate eval
++        local( $@, $!, $SIG{__DIE__} );    # isolate eval
+ 
+-        # Yes, it has to look like this or 5.4.5 won't see the #line directive.
++        # Yes, it has to look like this or 5.4.5 won't see the #line
++        # directive.
+         # Don't ask me, man, I just work here.
+         $test = eval "
+ $code" . q{$test = $this =~ /$usable_regex/ ? 1 : 0};
+@@ -967,10 +1004,12 @@
+         $ok = $self->ok( $test, $name );
+     }
+ 
+-    unless( $ok ) {
++    unless($ok) {
+         $this = defined $this ? "'$this'" : 'undef';
+         my $match = $cmp eq '=~' ? "doesn't match" : "matches";
+-        $self->diag(sprintf <<DIAGNOSTIC, $this, $match, $regex);
++
++        local $Level = $Level + 1;
++        $self->diag( sprintf <<'DIAGNOSTIC', $this, $match, $regex );
+                   %s
+     %13s '%s'
+ DIAGNOSTIC
+@@ -980,7 +1019,6 @@
+     return $ok;
+ }
+ 
+-
+ # I'm not ready to publish this.  It doesn't deal with array return
+ # values from the code or context.
+ 
+@@ -991,7 +1029,10 @@
+     my $return_from_code          = $Test->try(sub { code });
+     my($return_from_code, $error) = $Test->try(sub { code });
+ 
+-Works like eval BLOCK except it ensures it has no effect on the rest of the test (ie. $@ is not set) nor is effected by outside interference (ie. $SIG{__DIE__}) and works around some quirks in older Perls.
++Works like eval BLOCK except it ensures it has no effect on the rest
++of the test (ie. $@ is not set) nor is effected by outside
++interference (ie. $SIG{__DIE__}) and works around some quirks in older
++Perls.
+ 
+ $error is what would normally be in $@.
+ 
+@@ -1000,14 +1041,21 @@
+ =cut
+ 
+ sub _try {
+-    my($self, $code) = @_;
+-    
+-    local $!;               # eval can mess up $!
+-    local $@;               # don't set $@ in the test
+-    local $SIG{__DIE__};    # don't trip an outside DIE handler.
+-    my $return = eval { $code->() };
+-    
+-    return wantarray ? ($return, $@) : $return;
++    my( $self, $code, %opts ) = @_;
++
++    my $error;
++    my $return;
++    {
++        local $!;               # eval can mess up $!
++        local $@;               # don't set $@ in the test
++        local $SIG{__DIE__};    # don't trip an outside DIE handler.
++        $return = eval { $code->() };
++        $error = $@;
++    }
++
++    die $error if $error and $opts{die_on_fail};
++
++    return wantarray ? ( $return, $error ) : $return;
+ }
+ 
+ =end private
+@@ -1022,19 +1070,18 @@
+ =cut
+ 
+ sub is_fh {
+-    my $self = shift;
++    my $self     = shift;
+     my $maybe_fh = shift;
+     return 0 unless defined $maybe_fh;
+ 
+-    return 1 if ref $maybe_fh  eq 'GLOB'; # its a glob ref
+-    return 1 if ref \$maybe_fh eq 'GLOB'; # its a glob
++    return 1 if ref $maybe_fh  eq 'GLOB';    # its a glob ref
++    return 1 if ref \$maybe_fh eq 'GLOB';    # its a glob
+ 
+     return eval { $maybe_fh->isa("IO::Handle") } ||
+            # 5.5.4's tied() and can() doesn't like getting undef
+-           eval { (tied($maybe_fh) || '')->can('TIEHANDLE') };
++           eval { ( tied($maybe_fh) || '' )->can('TIEHANDLE') };
+ }
+ 
+-
+ =back
+ 
+ 
+@@ -1067,7 +1114,7 @@
+ =cut
+ 
+ sub level {
+-    my($self, $level) = @_;
++    my( $self, $level ) = @_;
+ 
+     if( defined $level ) {
+         $Level = $level;
+@@ -1075,7 +1122,6 @@
+     return $Level;
+ }
+ 
+-
+ =item B<use_numbers>
+ 
+     $Test->use_numbers($on_or_off);
+@@ -1100,7 +1146,7 @@
+ =cut
+ 
+ sub use_numbers {
+-    my($self, $use_nums) = @_;
++    my( $self, $use_nums ) = @_;
+ 
+     if( defined $use_nums ) {
+         $self->{Use_Nums} = $use_nums;
+@@ -1108,7 +1154,6 @@
+     return $self->{Use_Nums};
+ }
+ 
+-
+ =item B<no_diag>
+ 
+     $Test->no_diag($no_diag);
+@@ -1137,7 +1182,7 @@
+     my $method = lc $attribute;
+ 
+     my $code = sub {
+-        my($self, $no) = @_;
++        my( $self, $no ) = @_;
+ 
+         if( defined $no ) {
+             $self->{$attribute} = $no;
+@@ -1145,11 +1190,10 @@
+         return $self->{$attribute};
+     };
+ 
+-    no strict 'refs';
+-    *{__PACKAGE__.'::'.$method} = $code;
++    no strict 'refs';    ## no critic
++    *{ __PACKAGE__ . '::' . $method } = $code;
+ }
+ 
+-
+ =back
+ 
+ =head2 Output
+@@ -1188,7 +1232,35 @@
+ =cut
+ 
+ sub diag {
+-    my($self, @msgs) = @_;
++    my $self = shift;
++
++    $self->_print_comment( $self->_diag_fh, @_ );
++}
++
++=item B<note>
++
++    $Test->note(@msgs);
++
++Like diag(), but it prints to the C<output()> handle so it will not
++normally be seen by the user except in verbose mode.
++
++=cut
++
++sub note {
++    my $self = shift;
++
++    $self->_print_comment( $self->output, @_ );
++}
++
++sub _diag_fh {
++    my $self = shift;
++
++    local $Level = $Level + 1;
++    return $self->in_todo ? $self->todo_output : $self->failure_output;
++}
++
++sub _print_comment {
++    my( $self, $fh, @msgs ) = @_;
+ 
+     return if $self->no_diag;
+     return unless @msgs;
+@@ -1200,18 +1272,47 @@
+     # Convert undef to 'undef' so its readable.
+     my $msg = join '', map { defined($_) ? $_ : 'undef' } @msgs;
+ 
+-    # Escape each line with a #.
+-    $msg =~ s/^/# /gm;
+-
+-    # Stick a newline on the end if it needs it.
+-    $msg .= "\n" unless $msg =~ /\n\Z/;
++    # Escape the beginning, _print will take care of the rest.
++    $msg =~ s/^/# /;
+ 
+     local $Level = $Level + 1;
+-    $self->_print_diag($msg);
++    $self->_print_to_fh( $fh, $msg );
+ 
+     return 0;
+ }
+ 
++=item B<explain>
++
++    my @dump = $Test->explain(@msgs);
++
++Will dump the contents of any references in a human readable format.
++Handy for things like...
++
++    is_deeply($have, $want) || diag explain $have;
++
++or
++
++    is_deeply($have, $want) || note explain $have;
++
++=cut
++
++sub explain {
++    my $self = shift;
++
++    return map {
++        ref $_
++          ? do {
++            $self->_try(sub { require Data::Dumper }, die_on_fail => 1);
++
++            my $dumper = Data::Dumper->new( [$_] );
++            $dumper->Indent(1)->Terse(1);
++            $dumper->Sortkeys(1) if $dumper->can("Sortkeys");
++            $dumper->Dump;
++          }
++          : $_
++    } @_;
++}
++
+ =begin _private
+ 
+ =item B<_print>
+@@ -1225,7 +1326,12 @@
+ =cut
+ 
+ sub _print {
+-    my($self, @msgs) = @_;
++    my $self = shift;
++    return $self->_print_to_fh( $self->output, @_ );
++}
++
++sub _print_to_fh {
++    my( $self, $fh, @msgs ) = @_;
+ 
+     # Prevent printing headers when only compiling.  Mostly for when
+     # tests are deparsed with B::Deparse
+@@ -1233,39 +1339,18 @@
+ 
+     my $msg = join '', @msgs;
+ 
+-    local($\, $", $,) = (undef, ' ', '');
+-    my $fh = $self->output;
++    local( $\, $", $, ) = ( undef, ' ', '' );
+ 
+     # Escape each line after the first with a # so we don't
+     # confuse Test::Harness.
+-    $msg =~ s/\n(.)/\n# $1/sg;
++    $msg =~ s{\n(?!\z)}{\n# }sg;
+ 
+     # Stick a newline on the end if it needs it.
+-    $msg .= "\n" unless $msg =~ /\n\Z/;
++    $msg .= "\n" unless $msg =~ /\n\z/;
+ 
+-    print $fh $msg;
++    return print $fh $msg;
+ }
+ 
+-=begin private
+-
+-=item B<_print_diag>
+-
+-    $Test->_print_diag(@msg);
+-
+-Like _print, but prints to the current diagnostic filehandle.
+-
+-=end private
+-
+-=cut
+-
+-sub _print_diag {
+-    my $self = shift;
+-
+-    local($\, $", $,) = (undef, ' ', '');
+-    my $fh = $self->todo ? $self->todo_output : $self->failure_output;
+-    print $fh @_;
+-}    
+-
+ =item B<output>
+ 
+     $Test->output($fh);
+@@ -1296,7 +1381,7 @@
+ =cut
+ 
+ sub output {
+-    my($self, $fh) = @_;
++    my( $self, $fh ) = @_;
+ 
+     if( defined $fh ) {
+         $self->{Out_FH} = $self->_new_fh($fh);
+@@ -1305,7 +1390,7 @@
+ }
+ 
+ sub failure_output {
+-    my($self, $fh) = @_;
++    my( $self, $fh ) = @_;
+ 
+     if( defined $fh ) {
+         $self->{Fail_FH} = $self->_new_fh($fh);
+@@ -1314,7 +1399,7 @@
+ }
+ 
+ sub todo_output {
+-    my($self, $fh) = @_;
++    my( $self, $fh ) = @_;
+ 
+     if( defined $fh ) {
+         $self->{Todo_FH} = $self->_new_fh($fh);
+@@ -1322,7 +1407,6 @@
+     return $self->{Todo_FH};
+ }
+ 
+-
+ sub _new_fh {
+     my $self = shift;
+     my($file_or_fh) = shift;
+@@ -1332,23 +1416,24 @@
+         $fh = $file_or_fh;
+     }
+     else {
+-        $fh = do { local *FH };
+-        open $fh, ">$file_or_fh" or
+-            $self->croak("Can't open test output log $file_or_fh: $!");
+-	_autoflush($fh);
++        open $fh, ">", $file_or_fh
++          or $self->croak("Can't open test output log $file_or_fh: $!");
++        _autoflush($fh);
+     }
+ 
+     return $fh;
+ }
+ 
+-
+ sub _autoflush {
+     my($fh) = shift;
+     my $old_fh = select $fh;
+     $| = 1;
+     select $old_fh;
++
++    return;
+ }
+ 
++my( $Testout, $Testerr );
+ 
+ sub _dup_stdhandles {
+     my $self = shift;
+@@ -1357,27 +1442,68 @@
+ 
+     # Set everything to unbuffered else plain prints to STDOUT will
+     # come out in the wrong order from our own prints.
+-    _autoflush(\*TESTOUT);
+-    _autoflush(\*STDOUT);
+-    _autoflush(\*TESTERR);
+-    _autoflush(\*STDERR);
+-
+-    $self->output(\*TESTOUT);
+-    $self->failure_output(\*TESTERR);
+-    $self->todo_output(\*TESTOUT);
+-}
++    _autoflush($Testout);
++    _autoflush( \*STDOUT );
++    _autoflush($Testerr);
++    _autoflush( \*STDERR );
+ 
++    $self->reset_outputs;
++
++    return;
++}
+ 
+ my $Opened_Testhandles = 0;
++
+ sub _open_testhandles {
++    my $self = shift;
++
+     return if $Opened_Testhandles;
++
+     # We dup STDOUT and STDERR so people can change them in their
+     # test suites while still getting normal test output.
+-    open(TESTOUT, ">&STDOUT") or die "Can't dup STDOUT:  $!";
+-    open(TESTERR, ">&STDERR") or die "Can't dup STDERR:  $!";
++    open( $Testout, ">&STDOUT" ) or die "Can't dup STDOUT:  $!";
++    open( $Testerr, ">&STDERR" ) or die "Can't dup STDERR:  $!";
++
++    #    $self->_copy_io_layers( \*STDOUT, $Testout );
++    #    $self->_copy_io_layers( \*STDERR, $Testerr );
++
+     $Opened_Testhandles = 1;
++
++    return;
++}
++
++sub _copy_io_layers {
++    my( $self, $src, $dst ) = @_;
++
++    $self->_try(
++        sub {
++            require PerlIO;
++            my @src_layers = PerlIO::get_layers($src);
++
++            binmode $dst, join " ", map ":$_", @src_layers if @src_layers;
++        }
++    );
++
++    return;
+ }
+ 
++=item reset_outputs
++
++  $tb->reset_outputs;
++
++Resets all the output filehandles back to their defaults.
++
++=cut
++
++sub reset_outputs {
++    my $self = shift;
++
++    $self->output        ($Testout);
++    $self->failure_output($Testerr);
++    $self->todo_output   ($Testout);
++
++    return;
++}
+ 
+ =item carp
+ 
+@@ -1399,18 +1525,18 @@
+     my $self = shift;
+ 
+     local $Level = $Level + 1;
+-    my($pack, $file, $line) = $self->caller;
+-    return join("", @_) . " at $file line $line.\n";
++    my( $pack, $file, $line ) = $self->caller;
++    return join( "", @_ ) . " at $file line $line.\n";
+ }
+ 
+ sub carp {
+     my $self = shift;
+-    warn $self->_message_at_caller(@_);
++    return warn $self->_message_at_caller(@_);
+ }
+ 
+ sub croak {
+     my $self = shift;
+-    die $self->_message_at_caller(@_);
++    return die $self->_message_at_caller(@_);
+ }
+ 
+ sub _plan_check {
+@@ -1420,6 +1546,8 @@
+         local $Level = $Level + 2;
+         $self->croak("You tried to run a test without a plan");
+     }
++
++    return;
+ }
+ 
+ =back
+@@ -1444,13 +1572,12 @@
+ =cut
+ 
+ sub current_test {
+-    my($self, $num) = @_;
++    my( $self, $num ) = @_;
+ 
+-    lock($self->{Curr_Test});
++    lock( $self->{Curr_Test} );
+     if( defined $num ) {
+-        unless( $self->{Have_Plan} ) {
+-            $self->croak("Can't change the current test number without a plan!");
+-        }
++        $self->croak("Can't change the current test number without a plan!")
++          unless $self->{Have_Plan};
+ 
+         $self->{Curr_Test} = $num;
+ 
+@@ -1458,14 +1585,16 @@
+         my $test_results = $self->{Test_Results};
+         if( $num > @$test_results ) {
+             my $start = @$test_results ? @$test_results : 0;
+-            for ($start..$num-1) {
+-                $test_results->[$_] = &share({
+-                    'ok'      => 1, 
+-                    actual_ok => undef, 
+-                    reason    => 'incrementing test number', 
+-                    type      => 'unknown', 
+-                    name      => undef 
+-                });
++            for( $start .. $num - 1 ) {
++                $test_results->[$_] = &share(
++                    {
++                        'ok'      => 1,
++                        actual_ok => undef,
++                        reason    => 'incrementing test number',
++                        type      => 'unknown',
++                        name      => undef
++                    }
++                );
+             }
+         }
+         # If backward, wipe history.  Its their funeral.
+@@ -1476,7 +1605,6 @@
+     return $self->{Curr_Test};
+ }
+ 
+-
+ =item B<summary>
+ 
+     my @tests = $Test->summary;
+@@ -1527,7 +1655,7 @@
+ Sometimes the Test::Builder test counter is incremented without it
+ printing any test output, for example, when current_test() is changed.
+ In these cases, Test::Builder doesn't know the result of the test, so
+-it's type is 'unkown'.  These details for these tests are filled in.
++its type is 'unknown'.  These details for these tests are filled in.
+ They are considered ok, but the name and actual_ok is left undef.
+ 
+ For example "not ok 23 - hole count # TODO insufficient donuts" would
+@@ -1553,14 +1681,18 @@
+     my $todo_reason = $Test->todo;
+     my $todo_reason = $Test->todo($pack);
+ 
+-todo() looks for a $TODO variable in your tests.  If set, all tests
+-will be considered 'todo' (see Test::More and Test::Harness for
+-details).  Returns the reason (ie. the value of $TODO) if running as
+-todo tests, false otherwise.
+-
+-todo() is about finding the right package to look for $TODO in.  It
+-uses the exported_to() package to find it.  If that's not set, it's
+-pretty good at guessing the right package to look at based on $Level.
++If the current tests are considered "TODO" it will return the reason,
++if any.  This reason can come from a $TODO variable or the last call
++to C<<todo_start()>>.
++
++Since a TODO test does not need a reason, this function can return an
++empty string even when inside a TODO block.  Use C<<$Test->in_todo>>
++to determine if you are currently inside a TODO block.
++
++todo() is about finding the right package to look for $TODO in.  It's
++pretty good at guessing the right package to look at.  It first looks for
++the caller based on C<$Level + 1>, since C<todo()> is usually called inside
++a test function.  As a last resort it will use C<exported_to()>.
+ 
+ Sometimes there is some confusion about where todo() should be looking
+ for the $TODO variable.  If you want to be sure, tell it explicitly
+@@ -1569,14 +1701,134 @@
+ =cut
+ 
+ sub todo {
+-    my($self, $pack) = @_;
++    my( $self, $pack ) = @_;
+ 
+-    $pack = $pack || $self->exported_to || $self->caller($Level);
+-    return 0 unless $pack;
++    return $self->{Todo} if defined $self->{Todo};
++
++    local $Level = $Level + 1;
++    my $todo = $self->find_TODO($pack);
++    return $todo if defined $todo;
+ 
+-    no strict 'refs';
+-    return defined ${$pack.'::TODO'} ? ${$pack.'::TODO'}
+-                                     : 0;
++    return '';
++}
++
++=item B<find_TODO>
++
++    my $todo_reason = $Test->find_TODO();
++    my $todo_reason = $Test->find_TODO($pack):
++
++Like C<<todo()>> but only returns the value of C<<$TODO>> ignoring
++C<<todo_start()>>.
++
++=cut
++
++sub find_TODO {
++    my( $self, $pack ) = @_;
++
++    $pack = $pack || $self->caller(1) || $self->exported_to;
++    return unless $pack;
++
++    no strict 'refs';    ## no critic
++    return ${ $pack . '::TODO' };
++}
++
++=item B<in_todo>
++
++    my $in_todo = $Test->in_todo;
++
++Returns true if the test is currently inside a TODO block.
++
++=cut
++
++sub in_todo {
++    my $self = shift;
++
++    local $Level = $Level + 1;
++    return( defined $self->{Todo} || $self->find_TODO ) ? 1 : 0;
++}
++
++=item B<todo_start>
++
++    $Test->todo_start();
++    $Test->todo_start($message);
++
++This method allows you declare all subsequent tests as TODO tests, up until
++the C<todo_end> method has been called.
++
++The C<TODO:> and C<$TODO> syntax is generally pretty good about figuring out
++whether or not we're in a TODO test.  However, often we find that this is not
++possible to determine (such as when we want to use C<$TODO> but
++the tests are being executed in other packages which can't be inferred
++beforehand).
++
++Note that you can use this to nest "todo" tests
++
++ $Test->todo_start('working on this');
++ # lots of code
++ $Test->todo_start('working on that');
++ # more code
++ $Test->todo_end;
++ $Test->todo_end;
++
++This is generally not recommended, but large testing systems often have weird
++internal needs.
++
++We've tried to make this also work with the TODO: syntax, but it's not
++guaranteed and its use is also discouraged:
++
++ TODO: {
++     local $TODO = 'We have work to do!';
++     $Test->todo_start('working on this');
++     # lots of code
++     $Test->todo_start('working on that');
++     # more code
++     $Test->todo_end;
++     $Test->todo_end;
++ }
++
++Pick one style or another of "TODO" to be on the safe side.
++
++=cut
++
++sub todo_start {
++    my $self = shift;
++    my $message = @_ ? shift : '';
++
++    $self->{Start_Todo}++;
++    if( $self->in_todo ) {
++        push @{ $self->{Todo_Stack} } => $self->todo;
++    }
++    $self->{Todo} = $message;
++
++    return;
++}
++
++=item C<todo_end>
++
++ $Test->todo_end;
++
++Stops running tests as "TODO" tests.  This method is fatal if called without a
++preceding C<todo_start> method call.
++
++=cut
++
++sub todo_end {
++    my $self = shift;
++
++    if( !$self->{Start_Todo} ) {
++        $self->croak('todo_end() called without todo_start()');
++    }
++
++    $self->{Start_Todo}--;
++
++    if( $self->{Start_Todo} && @{ $self->{Todo_Stack} } ) {
++        $self->{Todo} = pop @{ $self->{Todo_Stack} };
++    }
++    else {
++        delete $self->{Todo};
++    }
++
++    return;
+ }
+ 
+ =item B<caller>
+@@ -1587,13 +1839,22 @@
+ 
+ Like the normal caller(), except it reports according to your level().
+ 
++C<$height> will be added to the level().
++
++If caller() winds up off the top of the stack it report the highest context.
++
+ =cut
+ 
+-sub caller {
+-    my($self, $height) = @_;
++sub caller {    ## no critic (Subroutines::ProhibitBuiltinHomonyms)
++    my( $self, $height ) = @_;
+     $height ||= 0;
+ 
+-    my @caller = CORE::caller($self->level + $height + 1);
++    my $level = $self->level + $height + 1;
++    my @caller;
++    do {
++        @caller = CORE::caller( $level );
++        $level--;
++    } until @caller;
+     return wantarray ? @caller : $caller[0];
+ }
+ 
+@@ -1619,11 +1880,13 @@
+ sub _sanity_check {
+     my $self = shift;
+ 
+-    $self->_whoa($self->{Curr_Test} < 0,  'Says here you ran a negative number of tests!');
+-    $self->_whoa(!$self->{Have_Plan} and $self->{Curr_Test}, 
+-          'Somehow your tests ran without a plan!');
+-    $self->_whoa($self->{Curr_Test} != @{ $self->{Test_Results} },
+-          'Somehow you got a different number of results than tests ran!');
++    $self->_whoa( $self->{Curr_Test} < 0, 'Says here you ran a negative number of tests!' );
++    $self->_whoa( !$self->{Have_Plan} and $self->{Curr_Test},
++        'Somehow your tests ran without a plan!' );
++    $self->_whoa( $self->{Curr_Test} != @{ $self->{Test_Results} },
++        'Somehow you got a different number of results than tests ran!' );
++
++    return;
+ }
+ 
+ =item B<_whoa>
+@@ -1637,14 +1900,16 @@
+ =cut
+ 
+ sub _whoa {
+-    my($self, $check, $desc) = @_;
+-    if( $check ) {
++    my( $self, $check, $desc ) = @_;
++    if($check) {
+         local $Level = $Level + 1;
+         $self->croak(<<"WHOA");
+ WHOA!  $desc
+ This should never happen!  Please contact the author immediately!
+ WHOA
+     }
++
++    return;
+ }
+ 
+ =item B<_my_exit>
+@@ -1659,52 +1924,43 @@
+ =cut
+ 
+ sub _my_exit {
+-    $? = $_[0];
++    $? = $_[0];    ## no critic (Variables::RequireLocalizedPunctuationVars)
+ 
+     return 1;
+ }
+ 
+-
+ =back
+ 
+ =end _private
+ 
+ =cut
+ 
+-$SIG{__DIE__} = sub {
+-    # We don't want to muck with death in an eval, but $^S isn't
+-    # totally reliable.  5.005_03 and 5.6.1 both do the wrong thing
+-    # with it.  Instead, we use caller.  This also means it runs under
+-    # 5.004!
+-    my $in_eval = 0;
+-    for( my $stack = 1;  my $sub = (CORE::caller($stack))[3];  $stack++ ) {
+-        $in_eval = 1 if $sub =~ /^\(eval\)/;
+-    }
+-    $Test->{Test_Died} = 1 unless $in_eval;
+-};
+-
+ sub _ending {
+     my $self = shift;
+ 
++    my $real_exit_code = $?;
+     $self->_sanity_check();
+ 
+     # Don't bother with an ending if this is a forked copy.  Only the parent
+     # should do the ending.
+-    # Exit if plan() was never called.  This is so "require Test::Simple" 
++    if( $self->{Original_Pid} != $$ ) {
++        return;
++    }
++
++    # Exit if plan() was never called.  This is so "require Test::Simple"
+     # doesn't puke.
++    if( !$self->{Have_Plan} ) {
++        return;
++    }
++
+     # Don't do an ending if we bailed out.
+-    if( ($self->{Original_Pid} != $$) 			or
+-	(!$self->{Have_Plan} && !$self->{Test_Died}) 	or
+-	$self->{Bailed_Out}
+-      )
+-    {
+-	_my_exit($?);
+-	return;
++    if( $self->{Bailed_Out} ) {
++        return;
+     }
+ 
+     # Figure out if we passed or failed and print helpful messages.
+     my $test_results = $self->{Test_Results};
+-    if( @$test_results ) {
++    if(@$test_results) {
+         # The plan?  We have no plan.
+         if( $self->{No_Plan} ) {
+             $self->_print("1..$self->{Curr_Test}\n") unless $self->no_header;
+@@ -1714,31 +1970,24 @@
+         # Auto-extended arrays and elements which aren't explicitly
+         # filled in with a shared reference will puke under 5.8.0
+         # ithreads.  So we have to fill them in by hand. :(
+-        my $empty_result = &share({});
+-        for my $idx ( 0..$self->{Expected_Tests}-1 ) {
++        my $empty_result = &share( {} );
++        for my $idx ( 0 .. $self->{Expected_Tests} - 1 ) {
+             $test_results->[$idx] = $empty_result
+               unless defined $test_results->[$idx];
+         }
+ 
+-        my $num_failed = grep !$_->{'ok'}, 
+-                              @{$test_results}[0..$self->{Curr_Test}-1];
++        my $num_failed = grep !$_->{'ok'}, @{$test_results}[ 0 .. $self->{Curr_Test} - 1 ];
+ 
+         my $num_extra = $self->{Curr_Test} - $self->{Expected_Tests};
+ 
+-        if( $num_extra < 0 ) {
+-            my $s = $self->{Expected_Tests} == 1 ? '' : 's';
+-            $self->diag(<<"FAIL");
+-Looks like you planned $self->{Expected_Tests} test$s but only ran $self->{Curr_Test}.
+-FAIL
+-        }
+-        elsif( $num_extra > 0 ) {
++        if( $num_extra != 0 ) {
+             my $s = $self->{Expected_Tests} == 1 ? '' : 's';
+             $self->diag(<<"FAIL");
+-Looks like you planned $self->{Expected_Tests} test$s but ran $num_extra extra.
++Looks like you planned $self->{Expected_Tests} test$s but ran $self->{Curr_Test}.
+ FAIL
+         }
+ 
+-        if ( $num_failed ) {
++        if($num_failed) {
+             my $num_tests = $self->{Curr_Test};
+             my $s = $num_failed == 1 ? '' : 's';
+ 
+@@ -1749,16 +1998,16 @@
+ FAIL
+         }
+ 
+-        if( $self->{Test_Died} ) {
++        if($real_exit_code) {
+             $self->diag(<<"FAIL");
+-Looks like your test died just after $self->{Curr_Test}.
++Looks like your test exited with $real_exit_code just after $self->{Curr_Test}.
+ FAIL
+ 
+-            _my_exit( 255 ) && return;
++            _my_exit($real_exit_code) && return;
+         }
+ 
+         my $exit_code;
+-        if( $num_failed ) {
++        if($num_failed) {
+             $exit_code = $num_failed <= 254 ? $num_failed : 254;
+         }
+         elsif( $num_extra != 0 ) {
+@@ -1768,21 +2017,23 @@
+             $exit_code = 0;
+         }
+ 
+-        _my_exit( $exit_code ) && return;
++        _my_exit($exit_code) && return;
+     }
+-    elsif ( $self->{Skip_All} ) {
+-        _my_exit( 0 ) && return;
++    elsif( $self->{Skip_All} ) {
++        _my_exit(0) && return;
+     }
+-    elsif ( $self->{Test_Died} ) {
+-        $self->diag(<<'FAIL');
+-Looks like your test died before it could output anything.
++    elsif($real_exit_code) {
++        $self->diag(<<"FAIL");
++Looks like your test exited with $real_exit_code before it could output anything.
+ FAIL
+-        _my_exit( 255 ) && return;
++        _my_exit($real_exit_code) && return;
+     }
+     else {
+         $self->diag("No tests run!\n");
+-        _my_exit( 255 ) && return;
++        _my_exit(255) && return;
+     }
++
++    $self->_whoa( 1, "We fell off the end of _ending()" );
+ }
+ 
+ END {
+@@ -1836,8 +2087,8 @@
+ 
+ =head1 COPYRIGHT
+ 
+-Copyright 2002, 2004 by chromatic E<lt>chromatic@wgz.orgE<gt> and
+-                        Michael G Schwern E<lt>schwern@pobox.comE<gt>.
++Copyright 2002-2008 by chromatic E<lt>chromatic@wgz.orgE<gt> and
++                       Michael G Schwern E<lt>schwern@pobox.comE<gt>.
+ 
+ This program is free software; you can redistribute it and/or 
+ modify it under the same terms as Perl itself.
+@@ -1847,3 +2098,4 @@
+ =cut
+ 
+ 1;
++
+diff -urN perl-5.10.0.orig/lib/Test/More.pm perl-5.10.0/lib/Test/More.pm
+--- perl-5.10.0.orig/lib/Test/More.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/More.pm	2009-02-17 17:16:40.000000000 +0100
+@@ -1,39 +1,40 @@
+ package Test::More;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+-use 5.004;
+-
++use 5.006;
+ use strict;
++use warnings;
++
++#---- perlcritic exemptions. ----#
+ 
++# We use a lot of subroutine prototypes
++## no critic (Subroutines::ProhibitSubroutinePrototypes)
+ 
+ # Can't use Carp because it might cause use_ok() to accidentally succeed
+ # even though the module being used forgot to use Carp.  Yes, this
+ # actually happened.
+ sub _carp {
+-    my($file, $line) = (caller(1))[1,2];
+-    warn @_, " at $file line $line\n";
++    my( $file, $line ) = ( caller(1) )[ 1, 2 ];
++    return warn @_, " at $file line $line\n";
+ }
+ 
+-
+-
+-use vars qw($VERSION @ISA @EXPORT %EXPORT_TAGS $TODO);
+-$VERSION = '0.72';
+-$VERSION = eval $VERSION;    # make the alpha version come out as a number
++our $VERSION = '0.86';
++$VERSION = eval $VERSION;    ## no critic (BuiltinFunctions::ProhibitStringyEval)
+ 
+ use Test::Builder::Module;
+-@ISA    = qw(Test::Builder::Module);
+-@EXPORT = qw(ok use_ok require_ok
+-             is isnt like unlike is_deeply
+-             cmp_ok
+-             skip todo todo_skip
+-             pass fail
+-             eq_array eq_hash eq_set
+-             $TODO
+-             plan
+-             can_ok  isa_ok
+-             diag
+-	     BAIL_OUT
+-            );
+-
++our @ISA    = qw(Test::Builder::Module);
++our @EXPORT = qw(ok use_ok require_ok
++  is isnt like unlike is_deeply
++  cmp_ok
++  skip todo todo_skip
++  pass fail
++  eq_array eq_hash eq_set
++  $TODO
++  plan
++  can_ok isa_ok new_ok
++  diag note explain
++  BAIL_OUT
++);
+ 
+ =head1 NAME
+ 
+@@ -159,10 +160,9 @@
+ sub plan {
+     my $tb = Test::More->builder;
+ 
+-    $tb->plan(@_);
++    return $tb->plan(@_);
+ }
+ 
+-
+ # This implements "use Test::More 'no_diag'" but the behavior is
+ # deprecated.
+ sub import_extra {
+@@ -170,7 +170,7 @@
+     my $list  = shift;
+ 
+     my @other = ();
+-    my $idx = 0;
++    my $idx   = 0;
+     while( $idx <= $#{$list} ) {
+         my $item = $list->[$idx];
+ 
+@@ -185,8 +185,9 @@
+     }
+ 
+     @$list = @other;
+-}
+ 
++    return;
++}
+ 
+ =head2 Test names
+ 
+@@ -257,10 +258,10 @@
+ =cut
+ 
+ sub ok ($;$) {
+-    my($test, $name) = @_;
++    my( $test, $name ) = @_;
+     my $tb = Test::More->builder;
+ 
+-    $tb->ok($test, $name);
++    return $tb->ok( $test, $name );
+ }
+ 
+ =item B<is>
+@@ -326,18 +327,17 @@
+ sub is ($$;$) {
+     my $tb = Test::More->builder;
+ 
+-    $tb->is_eq(@_);
++    return $tb->is_eq(@_);
+ }
+ 
+ sub isnt ($$;$) {
+     my $tb = Test::More->builder;
+ 
+-    $tb->isnt_eq(@_);
++    return $tb->isnt_eq(@_);
+ }
+ 
+ *isn't = \&isnt;
+ 
+-
+ =item B<like>
+ 
+   like( $got, qr/expected/, $test_name );
+@@ -371,10 +371,9 @@
+ sub like ($$;$) {
+     my $tb = Test::More->builder;
+ 
+-    $tb->like(@_);
++    return $tb->like(@_);
+ }
+ 
+-
+ =item B<unlike>
+ 
+   unlike( $got, qr/expected/, $test_name );
+@@ -387,10 +386,9 @@
+ sub unlike ($$;$) {
+     my $tb = Test::More->builder;
+ 
+-    $tb->unlike(@_);
++    return $tb->unlike(@_);
+ }
+ 
+-
+ =item B<cmp_ok>
+ 
+   cmp_ok( $got, $op, $expected, $test_name );
+@@ -427,10 +425,9 @@
+ sub cmp_ok($$$;$) {
+     my $tb = Test::More->builder;
+ 
+-    $tb->cmp_ok(@_);
++    return $tb->cmp_ok(@_);
+ }
+ 
+-
+ =item B<can_ok>
+ 
+   can_ok($module, @methods);
+@@ -461,17 +458,17 @@
+ =cut
+ 
+ sub can_ok ($@) {
+-    my($proto, @methods) = @_;
++    my( $proto, @methods ) = @_;
+     my $class = ref $proto || $proto;
+     my $tb = Test::More->builder;
+ 
+-    unless( $class ) {
++    unless($class) {
+         my $ok = $tb->ok( 0, "->can(...)" );
+         $tb->diag('    can_ok() called with empty class or reference');
+         return $ok;
+     }
+ 
+-    unless( @methods ) {
++    unless(@methods) {
+         my $ok = $tb->ok( 0, "$class->can(...)" );
+         $tb->diag('    can_ok() called with no methods');
+         return $ok;
+@@ -479,16 +476,15 @@
+ 
+     my @nok = ();
+     foreach my $method (@methods) {
+-        $tb->_try(sub { $proto->can($method) }) or push @nok, $method;
++        $tb->_try( sub { $proto->can($method) } ) or push @nok, $method;
+     }
+ 
+-    my $name;
+-    $name = @methods == 1 ? "$class->can('$methods[0]')" 
+-                          : "$class->can(...)";
++    my $name = (@methods == 1) ? "$class->can('$methods[0]')" :
++                                 "$class->can(...)"           ;
+ 
+     my $ok = $tb->ok( !@nok, $name );
+ 
+-    $tb->diag(map "    $class->can('$_') failed\n", @nok);
++    $tb->diag( map "    $class->can('$_') failed\n", @nok );
+ 
+     return $ok;
+ }
+@@ -523,7 +519,7 @@
+ =cut
+ 
+ sub isa_ok ($$;$) {
+-    my($object, $class, $obj_name) = @_;
++    my( $object, $class, $obj_name ) = @_;
+     my $tb = Test::More->builder;
+ 
+     my $diag;
+@@ -537,15 +533,16 @@
+     }
+     else {
+         # We can't use UNIVERSAL::isa because we want to honor isa() overrides
+-        my($rslt, $error) = $tb->_try(sub { $object->isa($class) });
+-        if( $error ) {
++        my( $rslt, $error ) = $tb->_try( sub { $object->isa($class) } );
++        if($error) {
+             if( $error =~ /^Can't call method "isa" on unblessed reference/ ) {
+                 # Its an unblessed reference
+-                if( !UNIVERSAL::isa($object, $class) ) {
++                if( !UNIVERSAL::isa( $object, $class ) ) {
+                     my $ref = ref $object;
+                     $diag = "$obj_name isn't a '$class' it's a '$ref'";
+                 }
+-            } else {
++            }
++            else {
+                 die <<WHOA;
+ WHOA! I tried to call ->isa on your object and got some weird error.
+ Here's the error.
+@@ -558,11 +555,9 @@
+             $diag = "$obj_name isn't a '$class' it's a '$ref'";
+         }
+     }
+-            
+-      
+ 
+     my $ok;
+-    if( $diag ) {
++    if($diag) {
+         $ok = $tb->ok( 0, $name );
+         $tb->diag("    $diag\n");
+     }
+@@ -573,6 +568,49 @@
+     return $ok;
+ }
+ 
++=item B<new_ok>
++
++  my $obj = new_ok( $class );
++  my $obj = new_ok( $class => \@args );
++  my $obj = new_ok( $class => \@args, $object_name );
++
++A convenience function which combines creating an object and calling
++isa_ok() on that object.
++
++It is basically equivalent to:
++
++    my $obj = $class->new(@args);
++    isa_ok $obj, $class, $object_name;
++
++If @args is not given, an empty list will be used.
++
++This function only works on new() and it assumes new() will return
++just a single object which isa C<$class>.
++
++=cut
++
++sub new_ok {
++    my $tb = Test::More->builder;
++    $tb->croak("new_ok() must be given at least a class") unless @_;
++
++    my( $class, $args, $object_name ) = @_;
++
++    $args ||= [];
++    $object_name = "The object" unless defined $object_name;
++
++    my $obj;
++    my( $success, $error ) = $tb->_try( sub { $obj = $class->new(@$args); 1 } );
++    if($success) {
++        local $Test::Builder::Level = $Test::Builder::Level + 1;
++        isa_ok $obj, $class, $object_name;
++    }
++    else {
++        $tb->ok( 0, "new() died" );
++        $tb->diag("    Error was:  $error");
++    }
++
++    return $obj;
++}
+ 
+ =item B<pass>
+ 
+@@ -593,12 +631,14 @@
+ 
+ sub pass (;$) {
+     my $tb = Test::More->builder;
+-    $tb->ok(1, @_);
++
++    return $tb->ok( 1, @_ );
+ }
+ 
+ sub fail (;$) {
+     my $tb = Test::More->builder;
+-    $tb->ok(0, @_);
++
++    return $tb->ok( 0, @_ );
+ }
+ 
+ =back
+@@ -653,38 +693,40 @@
+ =cut
+ 
+ sub use_ok ($;@) {
+-    my($module, @imports) = @_;
++    my( $module, @imports ) = @_;
+     @imports = () unless @imports;
+     my $tb = Test::More->builder;
+ 
+-    my($pack,$filename,$line) = caller;
+-
+-    local($@,$!,$SIG{__DIE__});   # isolate eval
++    my( $pack, $filename, $line ) = caller;
+ 
++    my $code;
+     if( @imports == 1 and $imports[0] =~ /^\d+(?:\.\d+)?$/ ) {
+         # probably a version check.  Perl needs to see the bare number
+         # for it to work with non-Exporter based modules.
+-        eval <<USE;
++        $code = <<USE;
+ package $pack;
+ use $module $imports[0];
++1;
+ USE
+     }
+     else {
+-        eval <<USE;
++        $code = <<USE;
+ package $pack;
+-use $module \@imports;
++use $module \@{\$args[0]};
++1;
+ USE
+     }
+ 
+-    my $ok = $tb->ok( !$@, "use $module;" );
++    my( $eval_result, $eval_error ) = _eval( $code, \@imports );
++    my $ok = $tb->ok( $eval_result, "use $module;" );
+ 
+-    unless( $ok ) {
+-        chomp $@;
++    unless($ok) {
++        chomp $eval_error;
+         $@ =~ s{^BEGIN failed--compilation aborted at .*$}
+                 {BEGIN failed--compilation aborted at $filename line $line.}m;
+         $tb->diag(<<DIAGNOSTIC);
+     Tried to use '$module'.
+-    Error:  $@
++    Error:  $eval_error
+ DIAGNOSTIC
+ 
+     }
+@@ -692,6 +734,24 @@
+     return $ok;
+ }
+ 
++sub _eval {
++    my( $code, @args ) = @_;
++
++    # Work around oddities surrounding resetting of $@ by immediately
++    # storing it.
++    my( $sigdie, $eval_result, $eval_error );
++    {
++        local( $@, $!, $SIG{__DIE__} );    # isolate eval
++        $eval_result = eval $code;              ## no critic (BuiltinFunctions::ProhibitStringyEval)
++        $eval_error  = $@;
++        $sigdie      = $SIG{__DIE__} || undef;
++    }
++    # make sure that $code got a chance to set $SIG{__DIE__}
++    $SIG{__DIE__} = $sigdie if defined $sigdie;
++
++    return( $eval_result, $eval_error );
++}
++
+ =item B<require_ok>
+ 
+    require_ok($module);
+@@ -711,20 +771,20 @@
+     # Module names must be barewords, files not.
+     $module = qq['$module'] unless _is_module_name($module);
+ 
+-    local($!, $@, $SIG{__DIE__}); # isolate eval
+-    local $SIG{__DIE__};
+-    eval <<REQUIRE;
++    my $code = <<REQUIRE;
+ package $pack;
+ require $module;
++1;
+ REQUIRE
+ 
+-    my $ok = $tb->ok( !$@, "require $module;" );
++    my( $eval_result, $eval_error ) = _eval($code);
++    my $ok = $tb->ok( $eval_result, "require $module;" );
+ 
+-    unless( $ok ) {
+-        chomp $@;
++    unless($ok) {
++        chomp $eval_error;
+         $tb->diag(<<DIAGNOSTIC);
+     Tried to require '$module'.
+-    Error:  $@
++    Error:  $eval_error
+ DIAGNOSTIC
+ 
+     }
+@@ -732,7 +792,6 @@
+     return $ok;
+ }
+ 
+-
+ sub _is_module_name {
+     my $module = shift;
+ 
+@@ -740,7 +799,8 @@
+     # End with an alphanumeric.
+     # The rest is an alphanumeric or ::
+     $module =~ s/\b::\b//g;
+-    $module =~ /^[a-zA-Z]\w*$/;
++
++    return $module =~ /^[a-zA-Z]\w*$/ ? 1 : 0;
+ }
+ 
+ =back
+@@ -778,50 +838,50 @@
+ 
+ =cut
+ 
+-use vars qw(@Data_Stack %Refs_Seen);
++our( @Data_Stack, %Refs_Seen );
+ my $DNE = bless [], 'Does::Not::Exist';
+ 
+ sub _dne {
+-    ref $_[0] eq ref $DNE;
++    return ref $_[0] eq ref $DNE;
+ }
+ 
+-
++## no critic (Subroutines::RequireArgUnpacking)
+ sub is_deeply {
+     my $tb = Test::More->builder;
+ 
+     unless( @_ == 2 or @_ == 3 ) {
+-        my $msg = <<WARNING;
++        my $msg = <<'WARNING';
+ is_deeply() takes two or three args, you gave %d.
+ This usually means you passed an array or hash instead 
+ of a reference to it
+ WARNING
+-        chop $msg;   # clip off newline so carp() will put in line/file
++        chop $msg;    # clip off newline so carp() will put in line/file
+ 
+         _carp sprintf $msg, scalar @_;
+ 
+-	return $tb->ok(0);
++        return $tb->ok(0);
+     }
+ 
+-    my($got, $expected, $name) = @_;
++    my( $got, $expected, $name ) = @_;
+ 
+-    $tb->_unoverload_str(\$expected, \$got);
++    $tb->_unoverload_str( \$expected, \$got );
+ 
+     my $ok;
+-    if( !ref $got and !ref $expected ) {  		# neither is a reference
+-        $ok = $tb->is_eq($got, $expected, $name);
++    if( !ref $got and !ref $expected ) {    # neither is a reference
++        $ok = $tb->is_eq( $got, $expected, $name );
+     }
+-    elsif( !ref $got xor !ref $expected ) {  	# one's a reference, one isn't
+-        $ok = $tb->ok(0, $name);
+-	$tb->diag( _format_stack({ vals => [ $got, $expected ] }) );
++    elsif( !ref $got xor !ref $expected ) {    # one's a reference, one isn't
++        $ok = $tb->ok( 0, $name );
++        $tb->diag( _format_stack({ vals => [ $got, $expected ] }) );
+     }
+-    else {			       		# both references
++    else {                                     # both references
+         local @Data_Stack = ();
+-        if( _deep_check($got, $expected) ) {
+-            $ok = $tb->ok(1, $name);
++        if( _deep_check( $got, $expected ) ) {
++            $ok = $tb->ok( 1, $name );
+         }
+         else {
+-            $ok = $tb->ok(0, $name);
+-            $tb->diag(_format_stack(@Data_Stack));
++            $ok = $tb->ok( 0, $name );
++            $tb->diag( _format_stack(@Data_Stack) );
+         }
+     }
+ 
+@@ -831,11 +891,11 @@
+ sub _format_stack {
+     my(@Stack) = @_;
+ 
+-    my $var = '$FOO';
++    my $var       = '$FOO';
+     my $did_arrow = 0;
+     foreach my $entry (@Stack) {
+         my $type = $entry->{type} || '';
+-        my $idx  = $entry->{'idx'};
++        my $idx = $entry->{'idx'};
+         if( $type eq 'HASH' ) {
+             $var .= "->" unless $did_arrow++;
+             $var .= "{$idx}";
+@@ -849,18 +909,19 @@
+         }
+     }
+ 
+-    my @vals = @{$Stack[-1]{vals}}[0,1];
++    my @vals = @{ $Stack[-1]{vals} }[ 0, 1 ];
+     my @vars = ();
+-    ($vars[0] = $var) =~ s/\$FOO/     \$got/;
+-    ($vars[1] = $var) =~ s/\$FOO/\$expected/;
++    ( $vars[0] = $var ) =~ s/\$FOO/     \$got/;
++    ( $vars[1] = $var ) =~ s/\$FOO/\$expected/;
+ 
+     my $out = "Structures begin differing at:\n";
+-    foreach my $idx (0..$#vals) {
++    foreach my $idx ( 0 .. $#vals ) {
+         my $val = $vals[$idx];
+-        $vals[$idx] = !defined $val ? 'undef'          :
+-                      _dne($val)    ? "Does not exist" :
+-                      ref $val      ? "$val"           :
+-                                      "'$val'";
++        $vals[$idx]
++          = !defined $val ? 'undef'
++          : _dne($val)    ? "Does not exist"
++          : ref $val      ? "$val"
++          :                 "'$val'";
+     }
+ 
+     $out .= "$vars[0] = $vals[0]\n";
+@@ -870,14 +931,13 @@
+     return $out;
+ }
+ 
+-
+ sub _type {
+     my $thing = shift;
+ 
+     return '' if !ref $thing;
+ 
+     for my $type (qw(ARRAY HASH REF SCALAR GLOB CODE Regexp)) {
+-        return $type if UNIVERSAL::isa($thing, $type);
++        return $type if UNIVERSAL::isa( $thing, $type );
+     }
+ 
+     return '';
+@@ -903,6 +963,8 @@
+ test output.  Like C<print> @diagnostic_message is simply concatenated
+ together.
+ 
++Returns false, so as to preserve failure.
++
+ Handy for this sort of thing:
+ 
+     ok( grep(/foo/, @users), "There's a foo user" ) or
+@@ -922,14 +984,49 @@
+ changing, but it is guaranteed that whatever you throw at it it won't
+ interfere with the test.
+ 
++=item B<note>
++
++  note(@diagnostic_message);
++
++Like diag(), except the message will not be seen when the test is run
++in a harness.  It will only be visible in the verbose TAP stream.
++
++Handy for putting in notes which might be useful for debugging, but
++don't indicate a problem.
++
++    note("Tempfile is $tempfile");
++
+ =cut
+ 
+ sub diag {
+-    my $tb = Test::More->builder;
++    return Test::More->builder->diag(@_);
++}
+ 
+-    $tb->diag(@_);
++sub note {
++    return Test::More->builder->note(@_);
+ }
+ 
++=item B<explain>
++
++  my @dump = explain @diagnostic_message;
++
++Will dump the contents of any references in a human readable format.
++Usually you want to pass this into C<note> or C<dump>.
++
++Handy for things like...
++
++    is_deeply($have, $want) || diag explain $have;
++
++or
++
++    note explain \%args;
++    Some::Class->method(%args);
++
++=cut
++
++sub explain {
++    return Test::More->builder->explain(@_);
++}
+ 
+ =back
+ 
+@@ -993,9 +1090,9 @@
+ 
+ =cut
+ 
+-#'#
++## no critic (Subroutines::RequireFinalReturn)
+ sub skip {
+-    my($why, $how_many) = @_;
++    my( $why, $how_many ) = @_;
+     my $tb = Test::More->builder;
+ 
+     unless( defined $how_many ) {
+@@ -1006,19 +1103,19 @@
+     }
+ 
+     if( defined $how_many and $how_many =~ /\D/ ) {
+-        _carp "skip() was passed a non-numeric number of tests.  Did you get the arguments backwards?";
++        _carp
++          "skip() was passed a non-numeric number of tests.  Did you get the arguments backwards?";
+         $how_many = 1;
+     }
+ 
+-    for( 1..$how_many ) {
++    for( 1 .. $how_many ) {
+         $tb->skip($why);
+     }
+ 
+-    local $^W = 0;
++    no warnings 'exiting';
+     last SKIP;
+ }
+ 
+-
+ =item B<TODO: BLOCK>
+ 
+     TODO: {
+@@ -1081,7 +1178,7 @@
+ =cut
+ 
+ sub todo_skip {
+-    my($why, $how_many) = @_;
++    my( $why, $how_many ) = @_;
+     my $tb = Test::More->builder;
+ 
+     unless( defined $how_many ) {
+@@ -1091,11 +1188,11 @@
+         $how_many = 1;
+     }
+ 
+-    for( 1..$how_many ) {
++    for( 1 .. $how_many ) {
+         $tb->todo_skip($why);
+     }
+ 
+-    local $^W = 0;
++    no warnings 'exiting';
+     last TODO;
+ }
+ 
+@@ -1135,7 +1232,7 @@
+ 
+ sub BAIL_OUT {
+     my $reason = shift;
+-    my $tb = Test::More->builder;
++    my $tb     = Test::More->builder;
+ 
+     $tb->BAIL_OUT($reason);
+ }
+@@ -1174,14 +1271,14 @@
+ 
+ #'#
+ sub eq_array {
+-    local @Data_Stack;
++    local @Data_Stack = ();
+     _deep_check(@_);
+ }
+ 
+-sub _eq_array  {
+-    my($a1, $a2) = @_;
++sub _eq_array {
++    my( $a1, $a2 ) = @_;
+ 
+-    if( grep !_type($_) eq 'ARRAY', $a1, $a2 ) {
++    if( grep _type($_) ne 'ARRAY', $a1, $a2 ) {
+         warn "eq_array passed a non-array ref";
+         return 0;
+     }
+@@ -1190,12 +1287,12 @@
+ 
+     my $ok = 1;
+     my $max = $#$a1 > $#$a2 ? $#$a1 : $#$a2;
+-    for (0..$max) {
++    for( 0 .. $max ) {
+         my $e1 = $_ > $#$a1 ? $DNE : $a1->[$_];
+         my $e2 = $_ > $#$a2 ? $DNE : $a2->[$_];
+ 
+-        push @Data_Stack, { type => 'ARRAY', idx => $_, vals => [$e1, $e2] };
+-        $ok = _deep_check($e1,$e2);
++        push @Data_Stack, { type => 'ARRAY', idx => $_, vals => [ $e1, $e2 ] };
++        $ok = _deep_check( $e1, $e2 );
+         pop @Data_Stack if $ok;
+ 
+         last unless $ok;
+@@ -1205,7 +1302,7 @@
+ }
+ 
+ sub _deep_check {
+-    my($e1, $e2) = @_;
++    my( $e1, $e2 ) = @_;
+     my $tb = Test::More->builder;
+ 
+     my $ok = 0;
+@@ -1217,27 +1314,27 @@
+ 
+     {
+         # Quiet uninitialized value warnings when comparing undefs.
+-        local $^W = 0; 
++        no warnings 'uninitialized';
+ 
+-        $tb->_unoverload_str(\$e1, \$e2);
++        $tb->_unoverload_str( \$e1, \$e2 );
+ 
+         # Either they're both references or both not.
+-        my $same_ref = !(!ref $e1 xor !ref $e2);
+-	my $not_ref  = (!ref $e1 and !ref $e2);
++        my $same_ref = !( !ref $e1 xor !ref $e2 );
++        my $not_ref = ( !ref $e1 and !ref $e2 );
+ 
+         if( defined $e1 xor defined $e2 ) {
+             $ok = 0;
+         }
+-        elsif ( _dne($e1) xor _dne($e2) ) {
++        elsif( _dne($e1) xor _dne($e2) ) {
+             $ok = 0;
+         }
+-        elsif ( $same_ref and ($e1 eq $e2) ) {
++        elsif( $same_ref and( $e1 eq $e2 ) ) {
+             $ok = 1;
+         }
+-	elsif ( $not_ref ) {
+-	    push @Data_Stack, { type => '', vals => [$e1, $e2] };
+-	    $ok = 0;
+-	}
++        elsif($not_ref) {
++            push @Data_Stack, { type => '', vals => [ $e1, $e2 ] };
++            $ok = 0;
++        }
+         else {
+             if( $Refs_Seen{$e1} ) {
+                 return $Refs_Seen{$e1} eq $e2;
+@@ -1250,50 +1347,48 @@
+             $type = 'DIFFERENT' unless _type($e2) eq $type;
+ 
+             if( $type eq 'DIFFERENT' ) {
+-                push @Data_Stack, { type => $type, vals => [$e1, $e2] };
++                push @Data_Stack, { type => $type, vals => [ $e1, $e2 ] };
+                 $ok = 0;
+             }
+             elsif( $type eq 'ARRAY' ) {
+-                $ok = _eq_array($e1, $e2);
++                $ok = _eq_array( $e1, $e2 );
+             }
+             elsif( $type eq 'HASH' ) {
+-                $ok = _eq_hash($e1, $e2);
++                $ok = _eq_hash( $e1, $e2 );
+             }
+             elsif( $type eq 'REF' ) {
+-                push @Data_Stack, { type => $type, vals => [$e1, $e2] };
+-                $ok = _deep_check($$e1, $$e2);
++                push @Data_Stack, { type => $type, vals => [ $e1, $e2 ] };
++                $ok = _deep_check( $$e1, $$e2 );
+                 pop @Data_Stack if $ok;
+             }
+             elsif( $type eq 'SCALAR' ) {
+-                push @Data_Stack, { type => 'REF', vals => [$e1, $e2] };
+-                $ok = _deep_check($$e1, $$e2);
++                push @Data_Stack, { type => 'REF', vals => [ $e1, $e2 ] };
++                $ok = _deep_check( $$e1, $$e2 );
+                 pop @Data_Stack if $ok;
+             }
+-            elsif( $type ) {
+-                push @Data_Stack, { type => $type, vals => [$e1, $e2] };
++            elsif($type) {
++                push @Data_Stack, { type => $type, vals => [ $e1, $e2 ] };
+                 $ok = 0;
+             }
+-	    else {
+-		_whoa(1, "No type in _deep_check");
+-	    }
++            else {
++                _whoa( 1, "No type in _deep_check" );
++            }
+         }
+     }
+ 
+     return $ok;
+ }
+ 
+-
+ sub _whoa {
+-    my($check, $desc) = @_;
+-    if( $check ) {
+-        die <<WHOA;
++    my( $check, $desc ) = @_;
++    if($check) {
++        die <<"WHOA";
+ WHOA!  $desc
+ This should never happen!  Please contact the author immediately!
+ WHOA
+     }
+ }
+ 
+-
+ =item B<eq_hash>
+ 
+   my $is_eq = eq_hash(\%got, \%expected);
+@@ -1304,14 +1399,14 @@
+ =cut
+ 
+ sub eq_hash {
+-    local @Data_Stack;
++    local @Data_Stack = ();
+     return _deep_check(@_);
+ }
+ 
+ sub _eq_hash {
+-    my($a1, $a2) = @_;
++    my( $a1, $a2 ) = @_;
+ 
+-    if( grep !_type($_) eq 'HASH', $a1, $a2 ) {
++    if( grep _type($_) ne 'HASH', $a1, $a2 ) {
+         warn "eq_hash passed a non-hash ref";
+         return 0;
+     }
+@@ -1320,12 +1415,12 @@
+ 
+     my $ok = 1;
+     my $bigger = keys %$a1 > keys %$a2 ? $a1 : $a2;
+-    foreach my $k (keys %$bigger) {
++    foreach my $k ( keys %$bigger ) {
+         my $e1 = exists $a1->{$k} ? $a1->{$k} : $DNE;
+         my $e2 = exists $a2->{$k} ? $a2->{$k} : $DNE;
+ 
+-        push @Data_Stack, { type => 'HASH', idx => $k, vals => [$e1, $e2] };
+-        $ok = _deep_check($e1, $e2);
++        push @Data_Stack, { type => 'HASH', idx => $k, vals => [ $e1, $e2 ] };
++        $ok = _deep_check( $e1, $e2 );
+         pop @Data_Stack if $ok;
+ 
+         last unless $ok;
+@@ -1360,14 +1455,13 @@
+ 
+ =cut
+ 
+-sub eq_set  {
+-    my($a1, $a2) = @_;
++sub eq_set {
++    my( $a1, $a2 ) = @_;
+     return 0 unless @$a1 == @$a2;
+ 
+-    # There's faster ways to do this, but this is easiest.
+-    local $^W = 0;
++    no warnings 'uninitialized';
+ 
+-    # It really doesn't matter how we sort them, as long as both arrays are 
++    # It really doesn't matter how we sort them, as long as both arrays are
+     # sorted with the same algorithm.
+     #
+     # Ensure that references are not accidentally treated the same as a
+@@ -1379,8 +1473,8 @@
+     # I don't know how references would be sorted so we just don't sort
+     # them.  This means eq_set doesn't really work with refs.
+     return eq_array(
+-           [grep(ref, @$a1), sort( grep(!ref, @$a1) )],
+-           [grep(ref, @$a2), sort( grep(!ref, @$a2) )],
++        [ grep( ref, @$a1 ), sort( grep( !ref, @$a1 ) ) ],
++        [ grep( ref, @$a2 ), sort( grep( !ref, @$a2 ) ) ],
+     );
+ }
+ 
+@@ -1438,7 +1532,7 @@
+ 
+ =item Backwards compatibility
+ 
+-Test::More works with Perls as old as 5.004_05.
++Test::More works with Perls as old as 5.6.0.
+ 
+ 
+ =item Overloaded objects
+@@ -1506,21 +1600,21 @@
+ some tests.  You can upgrade to Test::More later (it's forward
+ compatible).
+ 
+-L<Test> is the old testing module.  Its main benefit is that it has
+-been distributed with Perl since 5.004_05.
+-
+-L<Test::Harness> for details on how your test results are interpreted
+-by Perl.
++L<Test::Harness> is the test runner and output interpreter for Perl.
++It's the thing that powers C<make test> and where the C<prove> utility
++comes from.
++
++L<Test::Legacy> tests written with Test.pm, the original testing
++module, do not play well with other testing libraries.  Test::Legacy
++emulates the Test.pm interface and does play well with others.
+ 
+ L<Test::Differences> for more ways to test complex data structures.
+ And it plays well with Test::More.
+ 
+-L<Test::Class> is like XUnit but more perlish.
++L<Test::Class> is like xUnit but more perlish.
+ 
+ L<Test::Deep> gives you more powerful complex data structure testing.
+ 
+-L<Test::Unit> is XUnit style testing.
+-
+ L<Test::Inline> shows the idea of embedded testing.
+ 
+ L<Bundle::Test> installs a whole bunch of useful test modules.
+@@ -1541,7 +1635,7 @@
+ 
+ =head1 COPYRIGHT
+ 
+-Copyright 2001-2002, 2004-2006 by Michael G Schwern E<lt>schwern@pobox.comE<gt>.
++Copyright 2001-2008 by Michael G Schwern E<lt>schwern@pobox.comE<gt>.
+ 
+ This program is free software; you can redistribute it and/or
+ modify it under the same terms as Perl itself.
+diff -urN perl-5.10.0.orig/lib/Test/Simple/Changes perl-5.10.0/lib/Test/Simple/Changes
+--- perl-5.10.0.orig/lib/Test/Simple/Changes	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/Changes	2009-02-17 17:16:40.000000000 +0100
+@@ -1,8 +1,165 @@
++0.86  Sun Nov  9 01:09:05 PST 2008
++    Same as 0.85_01
++
++
++0.85_01  Thu Oct 23 18:57:38 PDT 2008
++    New Features
++    * cmp_ok() now displays the error if the comparison throws one.
++      For example, broken overloaded objects.
++
++    Bug Fixes
++    * cmp_ok() no longer stringifies or numifies its arguments before comparing.
++      This makes cmp_ok() properly test overloaded ops.
++      [rt.cpan.org 24186] [code.google.com 16]
++    * diag() properly escapes blank lines.
++
++    Feature Changes
++    * cmp_ok() now reports warnings and errors as coming from inside cmp_ok,
++      as well as reporting the caller's file and line.  This let's the user
++      know where cmp_ok() was called from while reminding them that it is
++      being run in a different context.
++
++    Other
++    * Dependency on ExtUtils::MakeMaker 6.27 only on Windows otherwise the
++      nested tests won't run.
++
++
++0.84  Wed Oct 15 09:06:12 EDT 2008
++    Other
++    * 0.82 accidentally shipped with experimental Mouse dependency.
++
++
++0.82  Tue Oct 14 23:06:56 EDT 2008
++    Bug Fixes
++    - 0.81_01 broke $TODO such that $TODO = '' was considered todo.
++
++
++0.81_02  Tue Sep  9 04:35:40 PDT 2008
++    New Features
++    * Test::Builder->reset_outputs() to reset all the output methods back to
++      their defaults.
++
++    Bug Fixes
++    - Fixed the file and line number reported by like when it gets a bad
++      regex.
++
++    Features Changed
++    - Now preserves the tests' exit code if it exits abnormally, rather than
++      setting it to 255.
++    - Changed the "Looks like your test died" message to
++      "Looks like your test exited with $exit_code"
++    - no_plan now only warns if given an argument.  There were a lot of people
++      doing that, and it's a sensible mistake.  [test-more.googlecode.com 13]
++
++
++0.81_01  Sat Sep  6 15:13:50 PDT 2008
++    New Features
++    * Adam Kennedy bribed me to add new_ok().  The price was one DEFCON license key.
++      [rt.cpan.org 8891]
++    * TODO tests can now start and end with 'todo_start' and 'todo_end'
++      Test::Builder methods. [rt.cpan.org 38018]
++    * Added Test::Builder->in_todo() for a safe way to check if a test is inside a
++      TODO block.  This allows TODO tests with no reason.
++    * Added note() and explain() to both Test::More and Test::Builder.
++      [rt.cpan.org 14764] [test-more.googlecode.com 3]
++
++    Features Changed
++    * Changed the message for extra tests run to show the number of tests run rather than
++      the number extra to avoid the user having to do mental math.
++      [rt.cpan.org 7022]    
++
++    Bug fixes
++    - using a relative path to perl broke tests              [rt.cpan.org 34050]
++    - use_ok() broke $SIG{__DIE__} in the used module        [rt.cpan.org 34065]
++    - diagnostics for isnt() were confusing on failure       [rt.cpan.org 33642]
++    - warnings when MakeMaker's version contained _          [rt.cpan.org 33626]
++    - add explicit test that non-integer plans die correctly [rt.cpan.org 28836]
++      (Thanks to Hans Dieter Pearcey [confound] for fixing the above)
++    - die if no_plan is given an argument                    [rt.cpan.org 27429]
++
++
++0.80  Sun Apr  6 17:25:01 CEST 2008
++    Test fixes
++    - Completely disable the utf8 test.  It was causing perl to panic on some OS's.
++
++
++0.79_01  Wed Feb 27 03:04:54 PST 2008
++    Bug fixes
++    - Let's try the IO layer copying again, this time with the test
++      fixed for 5.10.
++
++
++0.78  Wed Feb 27 01:59:09 PST 2008
++    Bug fixes
++    * Whoops, the version of Test::Builder::Tester got moved backwards.
++
++
++0.77  Wed Feb 27 01:55:55 PST 2008
++    Bug fixes
++    - "use Test::Builder::Module" no longer sets exported_to() or does
++      any other importing.
++    - Fix the $TODO finding code so it can find $TODO without the benefit
++      of exported_to(), which is often wrong.
++    - Turn off the filehandle locale stuff for the moment, there's a 
++      problem on 5.10.  We'll try it again next release.
++      
++    Doc improvements
++    - Improve the Test::Builder SYNOPSIS to use Test::Builder::Module
++      rather than write it's own import().
++
++
++0.76_02  Sun Feb 24 13:12:55 PST 2008
++    Bug fixes
++    * The default test output filehandles will NOT use utf8.
++      They will now copy the IO layers from STDOUT and STDERR.
++      This means if :utf8 is on then it will honor it and not
++      warn about wide characters.
++
++
++0.76_01  Sat Feb 23 20:44:32 PST 2008
++    Bug fixes
++    * Test::Builder no longer uses a __DIE__ handler.  This resolves a number
++      of problems with exit codes being swallowed or other module's handlers
++      being interfered with.  [rt.cpan.org 25294]
++    - Allow maybe_regex() to detect blessed regexes.  [bleadperl @32880]
++    - The default test output filehandles will now use utf8.
++      [rt.cpan.org 21091]
++
++    Test fixes
++    - Remove the signature test.  Adds no security and just generates
++      failures.
++
++
++0.75  Sat Feb 23 19:03:38 PST 2008
++    Incompatibilities
++    * The minimum version is now 5.6.0.
++
++    Bug fixes
++    - Turns out require_ok() had the same bug as use_ok() in a BEGIN block.
++    - ok() was not honoring exported_to() when looking for $TODO as it
++      should be.
++    
++    Test fixes
++    * is_deeply_with_threads.t will not run unless AUTHOR_TESTING is set.
++      This is because it tickles intermittent threading bugs in many perls
++      and causes a lot of bug reports about which I can do nothing.
++    
++    Misc
++    - Ran through perlcritic and did some cleaning.
++
++0.74  Thu Nov 29 15:39:57 PST 2007
++    Misc
++    - Add abstract and author to the meta information.
++
++0.73_01  Mon Oct 15 20:35:15 EDT 2007
++    Bug fixes
++    * Put the use_ok() fix from 0.71 back.
++
+ 0.72  Wed Sep 19 20:08:07 PDT 2007
+     Bug unfixes
+     * The BEGIN { use_ok } fix for [rt.cpan.org 28345] revealed a small pile of 
+-      mistakes in CPAN module test suites.  Rolling the fix back to give the authors
+-      a bit of time to fix their tests.
++      mistakes in CPAN module test suites.  Rolling the fix back to give the
++      authors a bit of time to fix their tests.
+ 
+ 0.71  Thu Sep 13 20:42:36 PDT 2007
+     Bug fixes
+@@ -15,8 +172,8 @@
+     - Removed dependency on Text::Soundex [rt.cpan.org 25022]
+     - Fixed a 5.5.x failure in fail-more.t
+     * Got rid of the annoying sort_bug.t test that revealed problems with some
+-      threaded perls.  It was testing the deprecated eq_* functions and not worth the
+-      bother.  Now it tests is_deeply().  [rt.cpan.org 17791]
++      threaded perls.  It was testing the deprecated eq_* functions and not
++      worth the bother.  Now it tests is_deeply().  [rt.cpan.org 17791]
+ 
+     Doc fixes
+     - Minor POD mistake in Test::Builder [rt.cpan.org 28869]
+diff -urN perl-5.10.0.orig/lib/Test/Simple/README perl-5.10.0/lib/Test/Simple/README
+--- perl-5.10.0.orig/lib/Test/Simple/README	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/README	2009-02-17 17:16:40.000000000 +0100
+@@ -1,3 +1,4 @@
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ This is the README file for Test::Simple, basic utilities for 
+ writing tests, by Michael G Schwern <schwern@pobox.com>.
+ 
+diff -urN perl-5.10.0.orig/lib/Test/Simple/TODO perl-5.10.0/lib/Test/Simple/TODO
+--- perl-5.10.0.orig/lib/Test/Simple/TODO	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/TODO	2009-02-17 17:16:40.000000000 +0100
+@@ -1,3 +1,4 @@
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ See https://rt.cpan.org/NoAuth/Bugs.html?Dist=Test-Simple plus here's
+ a few more I haven't put in RT yet.
+ 
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/00test_harness_check.t perl-5.10.0/lib/Test/Simple/t/00test_harness_check.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/00test_harness_check.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/00test_harness_check.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ # A test to make sure the new Test::Harness was installed properly.
+ 
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/BEGIN_require_ok.t perl-5.10.0/lib/Test/Simple/t/BEGIN_require_ok.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/BEGIN_require_ok.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/BEGIN_require_ok.t	2009-02-17 17:16:40.000000000 +0100
+@@ -0,0 +1,25 @@
++#!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
++
++BEGIN {
++    if( $ENV{PERL_CORE} ) {
++        chdir 't';
++        @INC = ('../lib', 'lib');
++    }
++    else {
++        unshift @INC, 't/lib';
++    }
++}
++
++use Test::More;
++
++my $result;
++BEGIN {
++    eval {
++        require_ok("Wibble");
++    };
++    $result = $@;
++}
++
++plan tests => 1;
++like $result, '/^You tried to run a test without a plan/';
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/BEGIN_use_ok.t perl-5.10.0/lib/Test/Simple/t/BEGIN_use_ok.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/BEGIN_use_ok.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/BEGIN_use_ok.t	2009-02-17 17:16:40.000000000 +0100
+@@ -0,0 +1,29 @@
++#!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
++
++# [rt.cpan.org 28345]
++#
++# A use_ok() inside a BEGIN block lacking a plan would be silently ignored.
++
++BEGIN {
++    if( $ENV{PERL_CORE} ) {
++        chdir 't';
++        @INC = ('../lib', 'lib');
++    }
++    else {
++        unshift @INC, 't/lib';
++    }
++}
++
++use Test::More;
++
++my $result;
++BEGIN {
++    eval {
++        use_ok("Wibble");
++    };
++    $result = $@;
++}
++
++plan tests => 1;
++like $result, '/^You tried to run a test without a plan/';
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/Builder.t perl-5.10.0/lib/Test/Simple/t/Builder.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/Builder.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/Builder.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/More.t perl-5.10.0/lib/Test/Simple/t/More.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/More.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/More.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,9 +1,10 @@
+ #!perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+         chdir 't';
+-        @INC = qw(../lib lib);
++        @INC = qw(../lib lib ../lib/Test/Simple/t/lib);
+     }
+ }
+ 
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/bad_plan.t perl-5.10.0/lib/Test/Simple/t/bad_plan.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/bad_plan.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/bad_plan.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/bail_out.t perl-5.10.0/lib/Test/Simple/t/bail_out.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/bail_out.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/bail_out.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/buffer.t perl-5.10.0/lib/Test/Simple/t/buffer.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/buffer.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/buffer.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/c_flag.t perl-5.10.0/lib/Test/Simple/t/c_flag.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/c_flag.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/c_flag.t	2009-02-17 17:16:40.000000000 +0100
+@@ -0,0 +1,21 @@
++#!/usr/bin/perl -w
++
++# Test::More should not print anything when Perl is only doing
++# a compile as with the -c flag or B::Deparse or perlcc.
++
++# HARNESS_ACTIVE=1 was causing an error with -c
++{
++    local $ENV{HARNESS_ACTIVE} = 1;
++    local $^C = 1;
++
++    require Test::More;
++    Test::More->import(tests => 1);
++
++    fail("This should not show up");
++}
++
++Test::More->builder->no_ending(1);
++
++print "1..1\n";
++print "ok 1\n";
++
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/carp.t perl-5.10.0/lib/Test/Simple/t/carp.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/carp.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/carp.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/circular_data.t perl-5.10.0/lib/Test/Simple/t/circular_data.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/circular_data.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/circular_data.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ # Test is_deeply and friends with circular data structures [rt.cpan.org 7289]
+ 
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/cmp_ok.t perl-5.10.0/lib/Test/Simple/t/cmp_ok.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/cmp_ok.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/cmp_ok.t	2009-02-17 17:17:28.000000000 +0100
+@@ -1,9 +1,10 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+         chdir 't';
+-        @INC = ('../lib', 'lib');
++        @INC = ('../lib', 'lib', '../lib/Test/Simple/t/lib');
+     }
+     else {
+         unshift @INC, 't/lib';
+@@ -29,19 +30,19 @@
+     $expect{error} =~ s/ at .*\n?//;
+ 
+     local $Test::Builder::Level = $Test::Builder::Level + 1;
+-    my $ok = cmp_ok($left, $cmp, $right);
+-    $TB->is_num(!!$ok, !!$expect{ok});
++    my $ok = cmp_ok($left, $cmp, $right, "cmp_ok");
++    $TB->is_num(!!$ok, !!$expect{ok}, "  right return");
+     
+     my $diag = $err->read;
+     if( !$ok and $expect{error} ) {
+         $diag =~ s/^# //mg;
+-        $TB->like( $diag, "/\Q$expect{error}\E/" );
++        $TB->like( $diag, qr/\Q$expect{error}\E/, "  expected error" );
+     }
+     elsif( $ok ) {
+-        $TB->is_eq( $diag, '' );
++        $TB->is_eq( $diag, '', "  passed without diagnostic" );
+     }
+     else {
+-        $TB->ok(1);
++        $TB->ok(1, "  failed without diagnostic");
+     }
+ }
+ 
+@@ -49,6 +50,10 @@
+ use Test::More;
+ Test::More->builder->no_ending(1);
+ 
++require MyOverload;
++my $cmp = Overloaded::Compare->new("foo", 42);
++my $ify = Overloaded::Ify->new("bar", 23);
++
+ my @Tests = (
+     [1, '==', 1],
+     [1, '==', 2],
+@@ -56,23 +61,12 @@
+     ["a", "eq", "a"],
+     [1, "+", 1],
+     [1, "-", 1],
+-);
+ 
+-# These don't work yet.
+-if( 0 ) {
+-#if( eval { require overload } ) {
+-    require MyOverload;
+-    
+-    my $cmp = Overloaded::Compare->new("foo", 42);
+-    my $ify = Overloaded::Ify->new("bar", 23);
+-    
+-    push @Tests, (
+-        [$cmp, '==', 42],
+-        [$cmp, 'eq', "foo"],
+-        [$ify, 'eq', "bar"],
+-        [$ify, "==", 23],
+-    );
+-}
++    [$cmp, '==', 42],
++    [$cmp, 'eq', "foo"],
++    [$ify, 'eq', "bar"],
++    [$ify, "==", 23],
++);
+ 
+ plan tests => scalar @Tests;
+ $TB->plan(tests => @Tests * 2);
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/create.t perl-5.10.0/lib/Test/Simple/t/create.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/create.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/create.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ #!perl -w
+ 
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/curr_test.t perl-5.10.0/lib/Test/Simple/t/curr_test.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/curr_test.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/curr_test.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ # Dave Rolsky found a bug where if current_test() is used and no
+ # tests are run via Test::Builder it will blow up.
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/details.t perl-5.10.0/lib/Test/Simple/t/details.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/details.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/details.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/diag.t perl-5.10.0/lib/Test/Simple/t/diag.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/diag.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/diag.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+@@ -24,49 +25,66 @@
+ 
+ use strict;
+ 
+-use Test::More tests => 5;
++use Test::More tests => 7;
+ 
+-my $Test = Test::More->builder;
++my $test = Test::Builder->create;
+ 
+ # now make a filehandle where we can send data
+ use TieOut;
+ my $output = tie *FAKEOUT, 'TieOut';
+ 
+-# force diagnostic output to a filehandle, glad I added this to
+-# Test::Builder :)
+-my $ret;
+-{
+-    local $TODO = 1;
+-    $Test->todo_output(\*FAKEOUT);
+-
+-    diag("a single line");
+ 
+-    $ret = diag("multiple\n", "lines");
+-}
++# Test diag() goes to todo_output() in a todo test.
++{
++    $test->todo_start();
++    $test->todo_output(\*FAKEOUT);
+ 
+-is( $output->read, <<'DIAG',   'diag() with todo_output set' );
++    $test->diag("a single line");
++    is( $output->read, <<'DIAG',   'diag() with todo_output set' );
+ # a single line
++DIAG
++
++    my $ret = $test->diag("multiple\n", "lines");
++    is( $output->read, <<'DIAG',   '  multi line' );
+ # multiple
+ # lines
+ DIAG
++    ok( !$ret, 'diag returns false' );
++
++    $test->todo_end();
++}
++
++$test->reset_outputs();
+ 
+-ok( !$ret, 'diag returns false' );
+ 
++# Test diagnostic formatting
++$test->failure_output(\*FAKEOUT);
+ {
+-    $Test->failure_output(\*FAKEOUT);
+-    $ret = diag("# foo");
++    $test->diag("# foo");
++    is( $output->read, "# # foo\n", "diag() adds # even if there's one already" );
++
++    $test->diag("foo\n\nbar");
++    is( $output->read, <<'DIAG', "  blank lines get escaped" );
++# foo
++# 
++# bar
++DIAG
++
++
++    $test->diag("foo\n\nbar\n\n");
++    is( $output->read, <<'DIAG', "  even at the end" );
++# foo
++# 
++# bar
++# 
++DIAG
+ }
+-$Test->failure_output(\*STDERR);
+-is( $output->read, "# # foo\n", "diag() adds # even if there's one already" );
+-ok( !$ret,  'diag returns false' );
+ 
+ 
+ # [rt.cpan.org 8392]
+ {
+-    $Test->failure_output(\*FAKEOUT);
+-    diag(qw(one two));
++    $test->diag(qw(one two));
+ }
+-$Test->failure_output(\*STDERR);
+ is( $output->read, <<'DIAG' );
+ # onetwo
+ DIAG
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/died.t perl-5.10.0/lib/Test/Simple/t/died.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/died.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/died.t	2009-02-17 17:16:40.000000000 +0100
+@@ -0,0 +1,46 @@
++#!perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
++
++BEGIN {
++    if( $ENV{PERL_CORE} ) {
++        chdir 't';
++        @INC = '../lib';
++    }
++}
++
++# Can't use Test.pm, that's a 5.005 thing.
++package My::Test;
++
++# This has to be a require or else the END block below runs before
++# Test::Builder's own and the ending diagnostics don't come out right.
++require Test::Builder;
++my $TB = Test::Builder->create;
++$TB->plan(tests => 3);
++
++
++package main;
++
++require Test::Simple;
++
++chdir 't';
++push @INC, '../t/lib/';
++require Test::Simple::Catch;
++my($out, $err) = Test::Simple::Catch::caught();
++local $ENV{HARNESS_ACTIVE} = 0;
++
++Test::Simple->import(tests => 1);
++exit 250;
++
++END {
++    $TB->is_eq($out->read, <<OUT);
++1..1
++OUT
++
++    $TB->is_eq($err->read, <<ERR);
++# Looks like your test exited with 250 before it could output anything.
++ERR
++
++    $TB->is_eq($?, 250, "exit code");
++
++    exit grep { !$_ } $TB->summary;
++}
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/dont_overwrite_die_handler.t perl-5.10.0/lib/Test/Simple/t/dont_overwrite_die_handler.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/dont_overwrite_die_handler.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/dont_overwrite_die_handler.t	2009-02-17 17:16:40.000000000 +0100
+@@ -0,0 +1,20 @@
++#!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
++
++BEGIN {
++    if( $ENV{PERL_CORE} ) {
++        chdir 't';
++        @INC = '../lib';
++    }
++}
++
++# Make sure this is in place before Test::More is loaded.
++my $handler_called;
++BEGIN {
++    $SIG{__DIE__} = sub { $handler_called++ };
++}
++
++use Test::More tests => 2;
++
++ok !eval { die };
++is $handler_called, 1, 'existing DIE handler not overridden';
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/eq_set.t perl-5.10.0/lib/Test/Simple/t/eq_set.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/eq_set.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/eq_set.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/exit.t perl-5.10.0/lib/Test/Simple/t/exit.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/exit.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/exit.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ # Can't use Test.pm, that's a 5.005 thing.
+ package My::Test;
+@@ -25,18 +26,9 @@
+     exit 0;
+ }
+ 
+-my $test_num = 1;
+-# Utility testing functions.
+-sub ok ($;$) {
+-    my($test, $name) = @_;
+-    my $ok = '';
+-    $ok .= "not " unless $test;
+-    $ok .= "ok $test_num";
+-    $ok .= " - $name" if defined $name;
+-    $ok .= "\n";
+-    print $ok;
+-    $test_num++;
+-}
++require Test::Builder;
++my $TB = Test::Builder->create();
++$TB->level(0);
+ 
+ 
+ package main;
+@@ -59,10 +51,11 @@
+              'pre_plan_death.plx'       => ['not zero',    'not zero'],
+              'death_in_eval.plx'        => [0,      0],
+              'require.plx'              => [0,      0],
+-	     'exit.plx'                 => [1,      4],
++             'death_with_handler.plx'   => [255,    4],
++             'exit.plx'                 => [1,      4],
+             );
+ 
+-print "1..".keys(%Tests)."\n";
++$TB->plan( tests => scalar keys(%Tests) );
+ 
+ eval { require POSIX; &POSIX::WEXITSTATUS(0) };
+ if( $@ ) {
+@@ -72,13 +65,13 @@
+     *exitstatus = sub { POSIX::WEXITSTATUS($_[0]) }
+ }
+ 
++my $Perl = File::Spec->rel2abs($^X);
++
+ chdir 't';
+ my $lib = File::Spec->catdir(qw(lib Test Simple sample_tests));
+ while( my($test_name, $exit_codes) = each %Tests ) {
+     my($exit_code) = $exit_codes->[$IsVMS ? 1 : 0];
+ 
+-    my $Perl = $^X;
+-
+     if( $^O eq 'VMS' ) {
+         # VMS can't use its own $^X in a system call until almost 5.8
+         $Perl = "MCR $^X" if $] < 5.007003;
+@@ -93,12 +86,12 @@
+     my $actual_exit = exitstatus($wait_stat);
+ 
+     if( $exit_code eq 'not zero' ) {
+-        My::Test::ok( $actual_exit != 0,
++        $TB->isnt_num( $actual_exit, 0,
+                       "$test_name exited with $actual_exit ".
+                       "(expected $exit_code)");
+     }
+     else {
+-        My::Test::ok( $actual_exit == $exit_code, 
++        $TB->is_num( $actual_exit, $exit_code, 
+                       "$test_name exited with $actual_exit ".
+                       "(expected $exit_code)");
+     }
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/explain.t perl-5.10.0/lib/Test/Simple/t/explain.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/explain.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/explain.t	2009-02-17 17:16:40.000000000 +0100
+@@ -0,0 +1,28 @@
++#!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
++
++BEGIN {
++    if( $ENV{PERL_CORE} ) {
++        chdir 't';
++        @INC = ('../lib', 'lib');
++    }
++    else {
++        unshift @INC, 't/lib';
++    }
++}
++
++use strict;
++use warnings;
++
++use Test::More tests => 5;
++
++can_ok "main", "explain";
++
++is_deeply [explain("foo")],             ["foo"];
++is_deeply [explain("foo", "bar")],      ["foo", "bar"];
++
++# Avoid future dump formatting changes from breaking tests by just eval'ing
++# the dump
++is_deeply [map { eval $_ } explain([], {})],           [[], {}];
++
++is_deeply [map { eval $_ } explain(23, [42,91], 99)],  [23, [42, 91], 99];
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/extra.t perl-5.10.0/lib/Test/Simple/t/extra.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/extra.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/extra.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+@@ -51,7 +52,7 @@
+ #   at $0 line 31.
+ #   Failed test 'Sar'
+ #   at $0 line 34.
+-# Looks like you planned 3 tests but ran 2 extra.
++# Looks like you planned 3 tests but ran 5.
+ # Looks like you failed 2 tests of 5 run.
+ ERR
+ 
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/extra_one.t perl-5.10.0/lib/Test/Simple/t/extra_one.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/extra_one.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/extra_one.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+@@ -44,7 +45,7 @@
+ OUT
+ 
+     My::Test::is($$err, <<ERR);
+-# Looks like you planned 1 test but ran 2 extra.
++# Looks like you planned 1 test but ran 3.
+ ERR
+ 
+     # Prevent Test::Simple from existing with non-zero
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/fail-like.t perl-5.10.0/lib/Test/Simple/t/fail-like.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/fail-like.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/fail-like.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,11 +1,5 @@
+-# qr// was introduced in 5.004-devel.  Skip this test if we're not
+-# of high enough version.
+-BEGIN { 
+-    if( $] < 5.005 ) {
+-        print "1..0 # Skipped Test requires qr//\n";
+-        exit(0);
+-    }
+-}
++#!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+@@ -30,7 +24,7 @@
+ # Test::Builder's own and the ending diagnostics don't come out right.
+ require Test::Builder;
+ my $TB = Test::Builder->create;
+-$TB->plan(tests => 2);
++$TB->plan(tests => 4);
+ 
+ 
+ require Test::Simple::Catch;
+@@ -43,11 +37,10 @@
+ require Test::More;
+ Test::More->import(tests => 1);
+ 
+-eval q{ like( "foo", qr/that/, 'is foo like that' ); };
+-
++{
++    eval q{ like( "foo", qr/that/, 'is foo like that' ); };
+ 
+-END {
+-    $TB->is_eq($$out, <<OUT, 'failing output');
++    $TB->is_eq($out->read, <<OUT, 'failing output');
+ 1..1
+ not ok 1 - is foo like that
+ OUT
+@@ -57,11 +50,26 @@
+ #   at .* line 1\.
+ #                   'foo'
+ #     doesn't match '\\(\\?-xism:that\\)'
+-# Looks like you failed 1 test of 1\\.
+ ERR
+ 
++    $TB->like($err->read, qr/^$err_re$/, 'failing errors');
++}
+ 
+-    $TB->like($$err, qr/^$err_re$/, 'failing errors');
++{
++    # line 60
++    like("foo", "not a regex");
++    $TB->is_eq($out->read, <<OUT);
++not ok 2
++OUT
+ 
+-    exit(0);
++    $TB->is_eq($err->read, <<OUT);
++#   Failed test at $0 line 60.
++#     'not a regex' doesn't look much like a regex to me.
++OUT
++
++}
++
++END {
++    # Test::More thinks it failed.  Override that.
++    exit(scalar grep { !$_ } $TB->summary);
+ }
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/fail-more.t perl-5.10.0/lib/Test/Simple/t/fail-more.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/fail-more.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/fail-more.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+@@ -24,7 +25,7 @@
+ # Test::Builder's own and the ending diagnostics don't come out right.
+ require Test::Builder;
+ my $TB = Test::Builder->create;
+-$TB->plan(tests => 17);
++$TB->plan(tests => 23);
+ 
+ sub like ($$;$) {
+     $TB->like(@_);
+@@ -41,11 +42,18 @@
+     return $TB->is_eq( $got, $expect );
+ }
+ 
++sub main::err_like ($) {
++    my($expect) = @_;
++    my $got = $err->read;
++
++    return $TB->like( $got, qr/$expect/ );
++}
++
+ 
+ package main;
+ 
+ require Test::More;
+-my $Total = 30;
++my $Total = 36;
+ Test::More->import(tests => $Total);
+ 
+ # This should all work in the presence of a __DIE__ handler.
+@@ -96,19 +104,16 @@
+ err_ok( <<ERR );
+ #   Failed test 'foo isnt foo?'
+ #   at $0 line 45.
+-#     'foo'
+-#         ne
+-#     'foo'
++#          got: 'foo'
++#     expected: anything else
+ #   Failed test 'foo isn\'t foo?'
+ #   at $0 line 46.
+-#     'foo'
+-#         ne
+-#     'foo'
++#          got: 'foo'
++#     expected: anything else
+ #   Failed test 'undef isnt undef?'
+ #   at $0 line 47.
+-#     undef
+-#         ne
+-#     undef
++#          got: undef
++#     expected: anything else
+ ERR
+ 
+ #line 48
+@@ -183,6 +188,60 @@
+ #     The object isn't a 'HASH' it's a 'ARRAY'
+ ERR
+ 
++
++#line 188
++new_ok(undef);
++err_like( <<ERR );
++#   Failed test 'new\\(\\) died'
++#   at $Filename line 188.
++#     Error was:  Can't call method "new" on an undefined value at .*
++ERR
++
++#line 211
++new_ok( "Does::Not::Exist" );
++err_like( <<ERR );
++#   Failed test 'new\\(\\) died'
++#   at $Filename line 211.
++#     Error was:  Can't locate object method "new" via package "Does::Not::Exist" .*
++ERR
++
++{ package Foo; sub new { } }
++{ package Bar; sub new { {} } }
++{ package Baz; sub new { bless {}, "Wibble" } }
++
++#line 219
++new_ok( "Foo" );
++err_ok( <<ERR );
++#   Failed test 'The object isa Foo'
++#   at $0 line 219.
++#     The object isn't defined
++ERR
++
++# line 231
++new_ok( "Bar" );
++err_ok( <<ERR );
++#   Failed test 'The object isa Bar'
++#   at $0 line 231.
++#     The object isn't a 'Bar' it's a 'HASH'
++ERR
++
++#line 239
++new_ok( "Baz" );
++err_ok( <<ERR );
++#   Failed test 'The object isa Baz'
++#   at $0 line 239.
++#     The object isn't a 'Baz' it's a 'Wibble'
++ERR
++
++#line 247
++new_ok( "Baz", [], "no args" );
++err_ok( <<ERR );
++#   Failed test 'no args isa Baz'
++#   at $0 line 247.
++#     no args isn't a 'Baz' it's a 'Wibble'
++ERR
++
++
+ #line 68
+ cmp_ok( 'foo', 'eq', 'bar', 'cmp_ok eq' );
+ cmp_ok( 42.1,  '==', 23,  , '       ==' );
+@@ -199,9 +258,8 @@
+ #     expected: 23
+ #   Failed test '       !='
+ #   at $0 line 70.
+-#     '42'
+-#         !=
+-#     '42'
++#          got: 42
++#     expected: anything else
+ #   Failed test '       &&'
+ #   at $0 line 71.
+ #     '1'
+@@ -233,7 +291,7 @@
+ #     expected: foo
+ ERR
+     My::Test::like $warnings,
+-     qq[/^Argument "foo" isn't numeric in .* at $Filename line 211\\\.\n\$/];
++     qr/^Argument "foo" isn't numeric in .* at cmp_ok \[from $Filename line 211\] line 1\.\n$/;
+ 
+ }
+ 
+@@ -305,6 +363,12 @@
+ not ok - My Wibble isa Wibble
+ not ok - Another Wibble isa Wibble
+ not ok - The object isa HASH
++not ok - new() died
++not ok - new() died
++not ok - The object isa Foo
++not ok - The object isa Bar
++not ok - The object isa Baz
++not ok - no args isa Baz
+ not ok - cmp_ok eq
+ not ok -        ==
+ not ok -        !=
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/fail.t perl-5.10.0/lib/Test/Simple/t/fail.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/fail.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/fail.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/fail_one.t perl-5.10.0/lib/Test/Simple/t/fail_one.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/fail_one.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/fail_one.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/filehandles.t perl-5.10.0/lib/Test/Simple/t/filehandles.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/filehandles.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/filehandles.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,21 +1,19 @@
+ #!perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+         chdir 't';
+-        @INC = '../lib';
++        @INC = ('../lib', 'lib');
+     }
+ }
+ 
++use lib 't/lib';
+ use Test::More tests => 1;
++use Dev::Null;
+ 
+ tie *STDOUT, "Dev::Null" or die $!;
+ 
+ print "not ok 1\n";     # this should not print.
+ pass 'STDOUT can be mucked with';
+ 
+-
+-package Dev::Null;
+-
+-sub TIEHANDLE { bless {} }
+-sub PRINT { 1 }
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/fork.t perl-5.10.0/lib/Test/Simple/t/fork.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/fork.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/fork.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/harness_active.t perl-5.10.0/lib/Test/Simple/t/harness_active.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/harness_active.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/harness_active.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/has_plan.t perl-5.10.0/lib/Test/Simple/t/has_plan.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/has_plan.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/has_plan.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/has_plan2.t perl-5.10.0/lib/Test/Simple/t/has_plan2.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/has_plan2.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/has_plan2.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/import.t perl-5.10.0/lib/Test/Simple/t/import.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/import.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/import.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,3 +1,4 @@
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+         chdir 't';
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/is_deeply_dne_bug.t perl-5.10.0/lib/Test/Simple/t/is_deeply_dne_bug.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/is_deeply_dne_bug.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/is_deeply_dne_bug.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ # test for rt.cpan.org 20768
+ #
+@@ -16,16 +17,7 @@
+ }
+ 
+ use strict;
+-use Test::More;
+-
+-BEGIN {
+-    if( !eval "require overload" ) {
+-        plan skip_all => "needs overload.pm";
+-    }
+-    else {
+-        plan tests => 2;
+-    }
+-}
++use Test::More tests => 2;
+ 
+ {
+     package Foo;
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/is_deeply_fail.t perl-5.10.0/lib/Test/Simple/t/is_deeply_fail.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/is_deeply_fail.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/is_deeply_fail.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+@@ -317,7 +318,8 @@
+ ERR
+ 
+ 
+-    if( eval { require overload } ) {
++    # Overloaded object tests
++    {
+ 	my $foo = bless [], "Foo";
+ 	my $bar = bless {}, "Bar";
+ 
+@@ -337,9 +339,6 @@
+ ERR
+ 
+     }
+-    else {
+-	$TB->skip("Needs overload.pm") for 1..3;
+-    }
+ }
+ 
+ 
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/is_deeply_with_threads.t perl-5.10.0/lib/Test/Simple/t/is_deeply_with_threads.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/is_deeply_with_threads.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/is_deeply_with_threads.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ # Test to see if is_deeply() plays well with threads.
+ 
+@@ -19,7 +20,12 @@
+     unless ( $] >= 5.008001 && $Config{'useithreads'} && 
+              eval { require threads; 'threads'->import; 1; }) 
+     {
+-        print "1..0 # Skip: no working threads\n";
++        print "1..0 # Skip no working threads\n";
++        exit 0;
++    }
++    
++    unless ( $ENV{AUTHOR_TESTING} ) {
++        print "1..0 # Skip many perls have broken threads.  Enable with AUTHOR_TESTING.\n";
+         exit 0;
+     }
+ }
+@@ -27,7 +33,7 @@
+ 
+ my $Num_Threads = 5;
+ 
+-plan tests => $Num_Threads * 100 + 5;
++plan tests => $Num_Threads * 100 + 6;
+ 
+ 
+ sub do_one_thread {
+@@ -56,3 +62,5 @@
+     my $rc = $t->join();
+     cmp_ok( $rc, '==', 42, "threads exit status is $rc" );
+ }
++
++pass("End of test");
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/is_fh.t perl-5.10.0/lib/Test/Simple/t/is_fh.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/is_fh.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/is_fh.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/lib/Dev/Null.pm perl-5.10.0/lib/Test/Simple/t/lib/Dev/Null.pm
+--- perl-5.10.0.orig/lib/Test/Simple/t/lib/Dev/Null.pm	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/lib/Dev/Null.pm	2009-02-17 17:16:40.000000000 +0100
+@@ -0,0 +1,7 @@
++package Dev::Null;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
++
++sub TIEHANDLE { bless {} }
++sub PRINT { 1 }
++
++1;
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/lib/Dummy.pm perl-5.10.0/lib/Test/Simple/t/lib/Dummy.pm
+--- perl-5.10.0.orig/lib/Test/Simple/t/lib/Dummy.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/lib/Dummy.pm	2009-02-17 17:16:40.000000000 +0100
+@@ -1,5 +1,6 @@
+ package Dummy;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ $VERSION = '0.01';
+ 
+-1;
+\ No newline at end of file
++1;
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/lib/MyOverload.pm perl-5.10.0/lib/Test/Simple/t/lib/MyOverload.pm
+--- perl-5.10.0.orig/lib/Test/Simple/t/lib/MyOverload.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/lib/MyOverload.pm	2009-02-17 17:16:40.000000000 +0100
+@@ -1,11 +1,11 @@
+ package Overloaded;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ sub new {
+     my $class = shift;
+     bless { string => shift, num => shift }, $class;
+ }
+ 
+-
+ package Overloaded::Compare;
+ use vars qw(@ISA);
+ @ISA = qw(Overloaded);
+@@ -13,17 +13,15 @@
+ # Sometimes objects have only comparison ops overloaded and nothing else.
+ # For example, DateTime objects.
+ use overload
+-        q{eq}   => sub { $_[0]->{string} eq $_[1] },
+-        q{==}   => sub { $_[0]->{num}    == $_[1] };
+-
+-
++  q{eq} => sub { $_[0]->{string} eq $_[1] },
++  q{==} => sub { $_[0]->{num} == $_[1] };
+ 
+ package Overloaded::Ify;
+ use vars qw(@ISA);
+ @ISA = qw(Overloaded);
+ 
+ use overload
+-        q{""}    => sub { $_[0]->{string} },
+-        q{0+}    => sub { $_[0]->{num} };
++  q{""} => sub { $_[0]->{string} },
++  q{0+} => sub { $_[0]->{num} };
+ 
+-1;
+\ No newline at end of file
++1;
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/lib/SigDie.pm perl-5.10.0/lib/Test/Simple/t/lib/SigDie.pm
+--- perl-5.10.0.orig/lib/Test/Simple/t/lib/SigDie.pm	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/lib/SigDie.pm	2009-02-17 17:16:40.000000000 +0100
+@@ -0,0 +1,6 @@
++package SigDie;
++
++use vars qw($DIE);
++$SIG{__DIE__} = sub { $DIE = $@ };
++
++1;
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/maybe_regex.t perl-5.10.0/lib/Test/Simple/t/maybe_regex.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/maybe_regex.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/maybe_regex.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+@@ -11,22 +12,24 @@
+ }
+ 
+ use strict;
+-use Test::More tests => 13;
++use Test::More tests => 16;
+ 
+ use Test::Builder;
+ my $Test = Test::Builder->new;
+ 
+-SKIP: {
+-    skip "qr// added in 5.005", 3 if $] < 5.005;
++my $r = $Test->maybe_regex(qr/^FOO$/i);
++ok(defined $r, 'qr// detected');
++ok(('foo' =~ /$r/), 'qr// good match');
++ok(('bar' !~ /$r/), 'qr// bad match');
+ 
+-    # 5.004 can't even see qr// or it pukes in compile.
+-    eval q{
+-           my $r = $Test->maybe_regex(qr/^FOO$/i);
+-           ok(defined $r, 'qr// detected');
+-           ok(('foo' =~ /$r/), 'qr// good match');
+-           ok(('bar' !~ /$r/), 'qr// bad match');
+-          };
+-    die $@ if $@;
++SKIP: {
++    skip "blessed regex checker added in 5.10", 3 if $] < 5.010;
++    
++    my $obj = bless qr/foo/, 'Wibble';
++    my $re = $Test->maybe_regex($obj);
++    ok( defined $re, "blessed regex detected" );
++    ok( ('foo' =~ /$re/), 'blessed qr/foo/ good match' );
++    ok( ('bar' !~ /$re/), 'blessed qr/foo/ bad math' );
+ }
+ 
+ {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/missing.t perl-5.10.0/lib/Test/Simple/t/missing.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/missing.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/missing.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,3 +1,4 @@
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+         chdir 't';
+@@ -33,19 +34,23 @@
+ #line 30
+ ok(1, 'Foo');
+ ok(0, 'Bar');
++ok(1, '1 2 3');
+ 
+ END {
+     My::Test::is($$out, <<OUT);
+ 1..5
+ ok 1 - Foo
+ not ok 2 - Bar
++ok 3 - 1 2 3
+ OUT
+ 
+     My::Test::is($$err, <<ERR);
+ #   Failed test 'Bar'
+ #   at $0 line 31.
+-# Looks like you planned 5 tests but only ran 2.
+-# Looks like you failed 1 test of 2 run.
++#     You named your test '1 2 3'.  You shouldn't use numbers for your test names.
++#     Very confusing.
++# Looks like you planned 5 tests but ran 3.
++# Looks like you failed 1 test of 3 run.
+ ERR
+ 
+     exit 0;
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/new_ok.t perl-5.10.0/lib/Test/Simple/t/new_ok.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/new_ok.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/new_ok.t	2009-02-17 17:16:40.000000000 +0100
+@@ -0,0 +1,42 @@
++#!/usr/bin/perl -w
++
++use strict;
++
++use Test::More tests => 13;
++
++{
++    package Bar;
++
++    sub new {
++        my $class = shift;
++        return bless {@_}, $class;
++    }
++
++
++    package Foo;
++    our @ISA = qw(Bar);
++}
++
++{
++    my $obj = new_ok("Foo");
++    is_deeply $obj, {};
++    isa_ok $obj, "Foo";
++
++    $obj = new_ok("Bar");
++    is_deeply $obj, {};
++    isa_ok $obj, "Bar";
++
++    $obj = new_ok("Foo", [this => 42]);
++    is_deeply $obj, { this => 42 };
++    isa_ok $obj, "Foo";
++
++    $obj = new_ok("Foo", [], "Foo");
++    is_deeply $obj, {};
++    isa_ok $obj, "Foo";
++}
++
++# And what if we give it nothing?
++eval {
++    new_ok();
++};
++is $@, sprintf "new_ok() must be given at least a class at %s line %d.\n", $0, __LINE__ - 2;
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/no_diag.t perl-5.10.0/lib/Test/Simple/t/no_diag.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/no_diag.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/no_diag.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ use Test::More 'no_diag', tests => 2;
+ 
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/no_ending.t perl-5.10.0/lib/Test/Simple/t/no_ending.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/no_ending.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/no_ending.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,3 +1,4 @@
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ use Test::Builder;
+ 
+ BEGIN {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/no_header.t perl-5.10.0/lib/Test/Simple/t/no_header.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/no_header.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/no_header.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,3 +1,4 @@
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+         chdir 't';
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/no_plan.t perl-5.10.0/lib/Test/Simple/t/no_plan.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/no_plan.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/no_plan.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+@@ -10,19 +11,29 @@
+     }
+ }
+ 
+-use Test::More tests => 6;
++use Test::More tests => 9;
+ 
+ my $tb = Test::Builder->create;
+ $tb->level(0);
+ 
+-#line 19
++#line 20
+ ok !eval { $tb->plan(tests => undef) };
+-is($@, "Got an undefined number of tests at $0 line 19.\n");
++is($@, "Got an undefined number of tests at $0 line 20.\n");
+ 
+-#line 23
++#line 24
+ ok !eval { $tb->plan(tests => 0) };
+-is($@, "You said to run 0 tests at $0 line 23.\n");
++is($@, "You said to run 0 tests at $0 line 24.\n");
+ 
+-#line 27
++#line 28
+ ok !eval { $tb->ok(1) };
+-is( $@, "You tried to run a test without a plan at $0 line 27.\n");
++is( $@, "You tried to run a test without a plan at $0 line 28.\n");
++
++{
++    my $warning = '';
++    local $SIG{__WARN__} = sub { $warning .= join '', @_ };
++
++#line 36
++    ok $tb->plan(no_plan => 1);
++    is( $warning, "no_plan takes no arguments at $0 line 36.\n" );
++    is $tb->has_plan, 'no_plan';
++}
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/no_tests.t perl-5.10.0/lib/Test/Simple/t/no_tests.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/no_tests.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/no_tests.t	2009-02-17 17:16:40.000000000 +0100
+@@ -0,0 +1,45 @@
++#!perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
++
++BEGIN {
++    if( $ENV{PERL_CORE} ) {
++        chdir 't';
++        @INC = '../lib';
++    }
++}
++
++# Can't use Test.pm, that's a 5.005 thing.
++package My::Test;
++
++# This has to be a require or else the END block below runs before
++# Test::Builder's own and the ending diagnostics don't come out right.
++require Test::Builder;
++my $TB = Test::Builder->create;
++$TB->plan(tests => 3);
++
++
++package main;
++
++require Test::Simple;
++
++chdir 't';
++push @INC, '../t/lib/';
++require Test::Simple::Catch;
++my($out, $err) = Test::Simple::Catch::caught();
++local $ENV{HARNESS_ACTIVE} = 0;
++
++Test::Simple->import(tests => 1);
++
++END {
++    $TB->is_eq($out->read, <<OUT);
++1..1
++OUT
++
++    $TB->is_eq($err->read, <<ERR);
++# No tests run!
++ERR
++
++    $TB->is_eq($?, 255, "exit code");
++
++    exit grep { !$_ } $TB->summary;
++}
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/note.t perl-5.10.0/lib/Test/Simple/t/note.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/note.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/note.t	2009-02-17 17:16:40.000000000 +0100
+@@ -0,0 +1,36 @@
++#!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
++
++BEGIN {
++    if( $ENV{PERL_CORE} ) {
++        chdir 't';
++        @INC = ('../lib', 'lib');
++    }
++    else {
++        unshift @INC, 't/lib';
++    }
++}
++
++use strict;
++use warnings;
++
++use TieOut;
++
++use Test::More tests => 2;
++
++{
++    my $test = Test::More->builder;
++
++    my $output          = tie *FAKEOUT, "TieOut";
++    my $fail_output     = tie *FAKEERR, "TieOut";
++    $test->output        (*FAKEOUT);
++    $test->failure_output(*FAKEERR);
++
++    note("foo");
++
++    $test->reset_outputs;
++
++    is $output->read,      "# foo\n";
++    is $fail_output->read, '';
++}
++
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/ok_obj.t perl-5.10.0/lib/Test/Simple/t/ok_obj.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/ok_obj.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/ok_obj.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ # Testing to make sure Test::Builder doesn't accidentally store objects
+ # passed in as test arguments.
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/output.t perl-5.10.0/lib/Test/Simple/t/output.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/output.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/output.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/overload.t perl-5.10.0/lib/Test/Simple/t/overload.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/overload.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/overload.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+@@ -11,27 +12,26 @@
+ }
+ 
+ use strict;
+-use Test::More;
+-
+-BEGIN {
+-    if( !eval "require overload" ) {
+-        plan skip_all => "needs overload.pm";
+-    }
+-    else {
+-        plan tests => 13;
+-    }
+-}
++use Test::More tests => 15;
+ 
+ 
+ package Overloaded;
+ 
+ use overload
+-        q{""}    => sub { $_[0]->{string} },
+-        q{0+}    => sub { $_[0]->{num} };
++  q{eq}    => sub { $_[0]->{string} },
++  q{==}    => sub { $_[0]->{num} },
++  q{""}    => sub { $_[0]->{stringfy}++; $_[0]->{string} },
++  q{0+}    => sub { $_[0]->{numify}++;   $_[0]->{num}    }
++;
+ 
+ sub new {
+     my $class = shift;
+-    bless { string => shift, num => shift }, $class;
++    bless {
++        string  => shift,
++        num     => shift,
++        stringify       => 0,
++        numify          => 0,
++    }, $class;
+ }
+ 
+ 
+@@ -48,7 +48,9 @@
+ 
+ is $obj, 'foo',            'is() with string overloading';
+ cmp_ok $obj, 'eq', 'foo',  'cmp_ok() ...';
++is $obj->{stringify}, 0, 'cmp_ok() eq does not stringify';
+ cmp_ok $obj, '==', 42,     'cmp_ok() with number overloading';
++is $obj->{numify}, 0,    'cmp_ok() == does not numify';
+ 
+ is_deeply [$obj], ['foo'],                 'is_deeply with string overloading';
+ ok eq_array([$obj], ['foo']),              'eq_array ...';
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/overload_threads.t perl-5.10.0/lib/Test/Simple/t/overload_threads.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/overload_threads.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/overload_threads.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+@@ -17,16 +18,7 @@
+     eval { require threads; 'threads'->import; 1; };
+ }
+ 
+-use Test::More;
+-
+-BEGIN {
+-    if( !eval "require overload" ) {
+-        plan skip_all => "needs overload.pm";
+-    }
+-    else {
+-        plan tests => 5;
+-    }
+-}
++use Test::More tests => 5;
+ 
+ 
+ package Overloaded;
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/plan.t perl-5.10.0/lib/Test/Simple/t/plan.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/plan.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/plan.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/plan_bad.t perl-5.10.0/lib/Test/Simple/t/plan_bad.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/plan_bad.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/plan_bad.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+@@ -8,7 +9,7 @@
+ }
+ 
+ 
+-use Test::More tests => 10;
++use Test::More tests => 12;
+ use Test::Builder;
+ my $tb = Test::Builder->create;
+ $tb->level(0);
+@@ -21,6 +22,9 @@
+ ok !eval { $tb->plan( tests => @foo ) };
+ is $@, sprintf "Number of tests must be a positive integer.  You gave it '$foo' at %s line %d.\n", $0, __LINE__ - 1;
+ 
++ok !eval { $tb->plan( tests => 9.99 ) };
++is $@, sprintf "Number of tests must be a positive integer.  You gave it '9.99' at %s line %d.\n", $0, __LINE__ - 1;
++
+ #line 25
+ ok !eval { $tb->plan( tests => -1 ) };
+ is $@, "Number of tests must be a positive integer.  You gave it '-1' at $0 line 25.\n";
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/plan_is_noplan.t perl-5.10.0/lib/Test/Simple/t/plan_is_noplan.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/plan_is_noplan.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/plan_is_noplan.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,3 +1,4 @@
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+         chdir 't';
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/plan_no_plan.t perl-5.10.0/lib/Test/Simple/t/plan_no_plan.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/plan_no_plan.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/plan_no_plan.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,3 +1,4 @@
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+         chdir 't';
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/plan_shouldnt_import.t perl-5.10.0/lib/Test/Simple/t/plan_shouldnt_import.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/plan_shouldnt_import.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/plan_shouldnt_import.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ # plan() used to export functions by mistake [rt.cpan.org 8385]
+ 
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/plan_skip_all.t perl-5.10.0/lib/Test/Simple/t/plan_skip_all.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/plan_skip_all.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/plan_skip_all.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,3 +1,4 @@
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+         chdir 't';
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/require_ok.t perl-5.10.0/lib/Test/Simple/t/require_ok.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/require_ok.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/require_ok.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/reset.t perl-5.10.0/lib/Test/Simple/t/reset.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/reset.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/reset.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ # Test Test::Builder->reset;
+ 
+@@ -16,6 +17,11 @@
+ 
+ use Test::Builder;
+ my $tb = Test::Builder->new;
++
++my %Original_Output;
++$Original_Output{$_} = $tb->$_ for qw(output failure_output todo_output);
++
++
+ $tb->plan(tests => 14);
+ $tb->level(0);
+ 
+@@ -66,11 +72,11 @@
+ ok( $tb->use_numbers    == 1,           'use_numbers' );
+ ok( $tb->no_header      == 0,           'no_header' );
+ ok( $tb->no_ending      == 0,           'no_ending' );
+-ok( fileno $tb->output         == fileno *Test::Builder::TESTOUT,    
++ok( fileno $tb->output         == fileno $Original_Output{output},    
+                                         'output' );
+-ok( fileno $tb->failure_output == fileno *Test::Builder::TESTERR,    
++ok( fileno $tb->failure_output == fileno $Original_Output{failure_output},    
+                                         'failure_output' );
+-ok( fileno $tb->todo_output    == fileno *Test::Builder::TESTOUT,
++ok( fileno $tb->todo_output    == fileno $Original_Output{todo_output},
+                                         'todo_output' );
+ ok( $tb->current_test   == 0,           'current_test' );
+ ok( $tb->summary        == 0,           'summary' );
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/reset_outputs.t perl-5.10.0/lib/Test/Simple/t/reset_outputs.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/reset_outputs.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/reset_outputs.t	2009-02-17 17:16:40.000000000 +0100
+@@ -0,0 +1,36 @@
++#!perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
++
++BEGIN {
++    if( $ENV{PERL_CORE} ) {
++        chdir 't';
++        @INC = ('../lib', 'lib');
++    }
++    else {
++        unshift @INC, 't/lib';
++    }
++}
++
++use Test::Builder;
++use Test::More 'no_plan';
++
++{
++    my $tb = Test::Builder->create();
++
++    # Store the original output filehandles and change them all.
++    my %original_outputs;
++
++    open my $fh, ">", "dummy_file.tmp";
++    END { 1 while unlink "dummy_file.tmp"; }
++    for my $method (qw(output failure_output todo_output)) {
++        $original_outputs{$method} = $tb->$method();
++        $tb->$method($fh);
++        is $tb->$method(), $fh;
++    }
++
++    $tb->reset_outputs;
++
++    for my $method (qw(output failure_output todo_output)) {
++        is $tb->$method(), $original_outputs{$method}, "reset_outputs() resets $method";
++    }
++}
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/simple.t perl-5.10.0/lib/Test/Simple/t/simple.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/simple.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/simple.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,3 +1,4 @@
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+         chdir 't';
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/skip.t perl-5.10.0/lib/Test/Simple/t/skip.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/skip.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/skip.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/skipall.t perl-5.10.0/lib/Test/Simple/t/skipall.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/skipall.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/skipall.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,3 +1,4 @@
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+         chdir 't';
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/tbm_doesnt_set_exported_to.t perl-5.10.0/lib/Test/Simple/t/tbm_doesnt_set_exported_to.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/tbm_doesnt_set_exported_to.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/tbm_doesnt_set_exported_to.t	2009-02-17 17:16:40.000000000 +0100
+@@ -0,0 +1,25 @@
++#!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
++
++BEGIN {
++    if( $ENV{PERL_CORE} ) {
++        chdir 't';
++        @INC = '../lib';
++    }
++}
++
++use strict;
++use warnings;
++
++# Can't use Test::More, that would set exported_to()
++use Test::Builder;
++use Test::Builder::Module;
++
++my $TB = Test::Builder->create;
++$TB->plan( tests => 1 );
++$TB->level(0);
++
++$TB->is_eq( Test::Builder::Module->builder->exported_to,
++            undef,
++            'using Test::Builder::Module does not set exported_to()'
++);
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/tbt_01basic.t perl-5.10.0/lib/Test/Simple/t/tbt_01basic.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/tbt_01basic.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/tbt_01basic.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ use Test::Builder::Tester tests => 9;
+ use Test::More;
+@@ -22,7 +23,7 @@
+ test_test("multiple tests");
+ 
+ test_out("not ok 1 - should fail");
+-test_err("#     Failed test ($0 at line 28)");
++test_err("#     Failed test ($0 at line 29)");
+ test_err("#          got: 'foo'");
+ test_err("#     expected: 'bar'");
+ is("foo","bar","should fail");
+@@ -46,7 +47,7 @@
+ 
+ 
+ test_out("not ok 1 - name # TODO Something");
+-test_err("#     Failed (TODO) test ($0 at line 52)");
++test_err("#     Failed (TODO) test ($0 at line 53)");
+ TODO: { 
+     local $TODO = "Something";
+     fail("name");
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/tbt_02fhrestore.t perl-5.10.0/lib/Test/Simple/t/tbt_02fhrestore.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/tbt_02fhrestore.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/tbt_02fhrestore.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ use Test::Builder::Tester tests => 4;
+ use Test::More;
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/tbt_03die.t perl-5.10.0/lib/Test/Simple/t/tbt_03die.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/tbt_03die.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/tbt_03die.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ use Test::Builder::Tester tests => 1;
+ use Test::More;
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/tbt_04line_num.t perl-5.10.0/lib/Test/Simple/t/tbt_04line_num.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/tbt_04line_num.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/tbt_04line_num.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,8 +1,9 @@
+ #!/usr/bin/perl
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ use Test::More tests => 3;
+ use Test::Builder::Tester;
+ 
+-is(line_num(),6,"normal line num");
+-is(line_num(-1),6,"line number minus one");
+-is(line_num(+2),10,"line number plus two");
++is(line_num(),7,"normal line num");
++is(line_num(-1),7,"line number minus one");
++is(line_num(+2),11,"line number plus two");
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/tbt_05faildiag.t perl-5.10.0/lib/Test/Simple/t/tbt_05faildiag.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/tbt_05faildiag.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/tbt_05faildiag.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ use Test::Builder::Tester tests => 5;
+ use Test::More;
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/tbt_06errormess.t perl-5.10.0/lib/Test/Simple/t/tbt_06errormess.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/tbt_06errormess.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/tbt_06errormess.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ use Test::More tests => 8;
+ use Symbol;
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/tbt_07args.t perl-5.10.0/lib/Test/Simple/t/tbt_07args.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/tbt_07args.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/tbt_07args.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ use Test::More tests => 18;
+ use Symbol;
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/thread_taint.t perl-5.10.0/lib/Test/Simple/t/thread_taint.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/thread_taint.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/thread_taint.t	2009-02-17 17:16:40.000000000 +0100
+@@ -1,5 +1,6 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ use Test::More tests => 1;
+ 
+-ok( !$INC{'threads.pm'}, 'Loading Test::More does not load threads.pm' );
+\ No newline at end of file
++ok( !$INC{'threads.pm'}, 'Loading Test::More does not load threads.pm' );
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/threads.t perl-5.10.0/lib/Test/Simple/t/threads.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/threads.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/threads.t	2009-02-17 17:16:41.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/todo.t perl-5.10.0/lib/Test/Simple/t/todo.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/todo.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/todo.t	2009-02-17 17:16:41.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+@@ -9,7 +10,7 @@
+ 
+ use Test::More;
+ 
+-plan tests => 18;
++plan tests => 36;
+ 
+ 
+ $Why = 'Just testing the todo interface.';
+@@ -69,11 +70,89 @@
+         # perl gets the line number a little wrong on the first
+         # statement inside a block.
+         1 == 1;
+-#line 82
++#line 74
+         todo_skip "Just testing todo_skip";
+         fail("So very failed");
+     }
+     is( $warning, "todo_skip() needs to know \$how_many tests are in the ".
+-                  "block at $0 line 82\n",
++                  "block at $0 line 74\n",
+         'todo_skip without $how_many warning' );
+ }
++
++my $builder = Test::More->builder;
++my $exported_to = $builder->exported_to;
++TODO: {
++    $builder->exported_to("Wibble");
++    
++    local $TODO = "testing \$TODO with an incorrect exported_to()";
++    
++    fail("Just testing todo");
++}
++
++$builder->exported_to($exported_to);
++
++$builder->todo_start('Expected failures');
++fail('Testing todo_start()');
++ok 0, 'Testing todo_start() with more than one failure';
++$is_todo = $builder->todo;
++$builder->todo_end;
++is $is_todo, 'Expected failures',
++  'todo_start should have the correct TODO message';
++ok 1, 'todo_end() should not leak TODO behavior';
++
++my @nested_todo;
++my ( $level1, $level2 ) = ( 'failure level 1', 'failure_level 2' );
++TODO: {
++    local $TODO = 'Nesting TODO';
++    fail('fail 1');
++
++    $builder->todo_start($level1);
++    fail('fail 2');
++
++    push @nested_todo => $builder->todo;
++    $builder->todo_start($level2);
++    fail('fail 3');
++
++    push @nested_todo => $builder->todo;
++    $builder->todo_end;
++    fail('fail 4');
++
++    push @nested_todo => $builder->todo;
++    $builder->todo_end;
++    $is_todo = $builder->todo;
++    fail('fail 4');
++}
++is_deeply \@nested_todo, [ $level1, $level2, $level1 ],
++  'Nested TODO message should be correct';
++is $is_todo, 'Nesting TODO',
++  '... and original TODO message should be correct';
++
++{
++    $builder->todo_start;
++    fail("testing todo_start() with no message");
++    my $reason  = $builder->todo;
++    my $in_todo = $builder->in_todo;
++    $builder->todo_end;
++
++    is $reason, '', "  todo() reports no reason";
++    ok $in_todo,    "  but we're in_todo()";
++}
++
++eval {
++    $builder->todo_end;
++};
++is $@, sprintf "todo_end() called without todo_start() at %s line %d.\n", $0, __LINE__ - 2;
++
++
++{
++    my($reason, $in_todo);
++
++    TODO: {
++        local $TODO = '';
++        $reason  = $builder->todo;
++        $in_todo = $builder->in_todo;
++    }
++
++    is $reason, '';
++    ok !$in_todo, '$TODO = "" is not considered TODO';
++}
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/try.t perl-5.10.0/lib/Test/Simple/t/try.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/try.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/try.t	2009-02-17 17:16:41.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+@@ -17,19 +18,26 @@
+ require Test::Builder;
+ my $tb = Test::Builder->new;
+ 
+-local $SIG{__DIE__} = sub { fail("DIE handler called: @_") };
+ 
+-# These should not change;
+-local $@ = 42;
+-local $! = 23;
++# Test that _try() has no effect on $@ and $! and is not effected by
++# __DIE__
++{
++    local $SIG{__DIE__} = sub { fail("DIE handler called: @_") };
++    local $@ = 42;
++    local $! = 23;
++
++    is $tb->_try(sub { 2 }), 2;
++    is $tb->_try(sub { return '' }), '';
+ 
+-is $tb->_try(sub { 2 }), 2;
+-is $tb->_try(sub { return '' }), '';
++    is $tb->_try(sub { die; }), undef;
+ 
+-is $tb->_try(sub { die; }), undef;
++    is_deeply [$tb->_try(sub { die "Foo\n" })], [undef, "Foo\n"];
+ 
+-is_deeply [$tb->_try(sub { die "Foo\n" }, undef)],
+-          [undef, "Foo\n"];
++    is $@, 42;
++    cmp_ok $!, '==', 23;
++}
+ 
+-is $@, 42;
+-cmp_ok $!, '==', 23;
+\ No newline at end of file
++ok !eval {
++    $tb->_try(sub { die "Died\n" }, die_on_fail => 1);
++};
++is $@, "Died\n";
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/undef.t perl-5.10.0/lib/Test/Simple/t/undef.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/undef.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/undef.t	2009-02-17 17:16:41.000000000 +0100
+@@ -1,4 +1,5 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+@@ -11,7 +12,7 @@
+ }
+ 
+ use strict;
+-use Test::More tests => 18;
++use Test::More tests => 20;
+ use TieOut;
+ 
+ BEGIN { $^W = 1; }
+@@ -31,7 +32,7 @@
+ }
+ 
+ sub warnings_like {
+-    $TB->like($warnings, "/$_[0]/");
++    $TB->like($warnings, $_[0]);
+     $warnings = '';
+ }
+ 
+@@ -48,9 +49,12 @@
+ isnt( undef, '',            'undef isnt an empty string' );
+ isnt( undef, 0,             'undef isnt zero' );
+ 
++Test::More->builder->is_num(undef, undef, 'is_num()');
++Test::More->builder->isnt_num(23, undef,  'isnt_num()');
++
+ #line 45
+ like( undef, '/.*/',        'undef is like anything' );
+-warnings_like("Use of uninitialized value.* at $Filename line 45\\.\n");
++warnings_like(qr/Use of uninitialized value.* at $Filename line 45\.\n/);
+ 
+ eq_array( [undef, undef], [undef, 23] );
+ no_warnings;
+@@ -70,7 +74,7 @@
+ 
+ #line 64
+ cmp_ok( undef, '<=', 2, '  undef <= 2' );
+-warnings_like("Use of uninitialized value.* at $Filename line 64\\.\n");
++warnings_like(qr/Use of uninitialized value.* at cmp_ok \[from $Filename line 64\] line 1\.\n/);
+ 
+ 
+ 
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/use_ok.t perl-5.10.0/lib/Test/Simple/t/use_ok.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/use_ok.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/use_ok.t	2009-02-17 17:16:41.000000000 +0100
+@@ -1,16 +1,17 @@
+ #!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+         chdir 't';
+-        @INC = ('../lib', 'lib');
++        @INC = qw(../lib lib ../lib/Test/Simple/t/lib);
+     }
+     else {
+         unshift @INC, 't/lib';
+     }
+ }
+ 
+-use Test::More tests => 13;
++use Test::More tests => 15;
+ 
+ # Using Symbol because it's core and exports lots of stuff.
+ {
+@@ -58,3 +59,10 @@
+     };
+     ::use_ok("Test::More", 0.47);
+ }
++
++{
++    package Foo::eight;
++    local $SIG{__DIE__};
++    ::use_ok("SigDie");
++    ::ok(defined $SIG{__DIE__}, '  SIG{__DIE__} preserved');
++}
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/useing.t perl-5.10.0/lib/Test/Simple/t/useing.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/useing.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/useing.t	2009-02-17 17:16:41.000000000 +0100
+@@ -1,3 +1,4 @@
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ BEGIN {
+     if( $ENV{PERL_CORE} ) {
+         chdir 't';
+diff -urN perl-5.10.0.orig/lib/Test/Simple/t/utf8.t perl-5.10.0/lib/Test/Simple/t/utf8.t
+--- perl-5.10.0.orig/lib/Test/Simple/t/utf8.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple/t/utf8.t	2009-02-17 17:16:41.000000000 +0100
+@@ -0,0 +1,70 @@
++#!/usr/bin/perl -w
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
++
++BEGIN {
++    if( $ENV{PERL_CORE} ) {
++        chdir 't';
++        @INC = '../lib';
++    }
++}
++
++use strict;
++use warnings;
++
++use Test::More skip_all => 'Not yet implemented';
++
++my $have_perlio;
++BEGIN {
++    # All together so Test::More sees the open discipline
++    $have_perlio = eval q[
++        use PerlIO;
++        use open ':std', ':locale';
++        use Test::More;
++        1;
++    ];
++}
++
++use Test::More;
++
++if( !$have_perlio ) {
++    plan skip_all => "Don't have PerlIO";
++}
++else {
++    plan tests => 5;
++}
++
++SKIP: {
++    skip( "Need PerlIO for this feature", 3 )
++        unless $have_perlio;
++
++    my %handles = (
++        output          => \*STDOUT,
++        failure_output  => \*STDERR,
++        todo_output     => \*STDOUT
++    );
++
++    for my $method (keys %handles) {
++        my $src = $handles{$method};
++        
++        my $dest = Test::More->builder->$method;
++        
++        is_deeply { map { $_ => 1 } PerlIO::get_layers($dest) },
++                  { map { $_ => 1 } PerlIO::get_layers($src)  },
++                  "layers copied to $method";
++    }
++}
++
++SKIP: {
++    skip( "Can't test in general because their locale is unknown", 2 )
++        unless $ENV{AUTHOR_TESTING};
++
++    my $uni = "\x{11e}";
++    
++    my @warnings;
++    local $SIG{__WARN__} = sub {
++        push @warnings, @_;
++    };
++
++    is( $uni, $uni, "Testing $uni" );
++    is_deeply( \@warnings, [] );
++}
+diff -urN perl-5.10.0.orig/lib/Test/Simple.pm perl-5.10.0/lib/Test/Simple.pm
+--- perl-5.10.0.orig/lib/Test/Simple.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Simple.pm	2009-02-17 17:16:41.000000000 +0100
+@@ -1,19 +1,19 @@
+ package Test::Simple;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ use 5.004;
+ 
+-use strict 'vars';
+-use vars qw($VERSION @ISA @EXPORT);
+-$VERSION = '0.72';
+-$VERSION = eval $VERSION;    # make the alpha version come out as a number
++use strict;
++
++our $VERSION = '0.86';
++$VERSION = eval $VERSION;    ## no critic (BuiltinFunctions::ProhibitStringyEval)
+ 
+ use Test::Builder::Module;
+-@ISA    = qw(Test::Builder::Module);
+-@EXPORT = qw(ok);
++our @ISA    = qw(Test::Builder::Module);
++our @EXPORT = qw(ok);
+ 
+ my $CLASS = __PACKAGE__;
+ 
+-
+ =head1 NAME
+ 
+ Test::Simple - Basic utilities for writing tests.
+@@ -77,11 +77,10 @@
+ 
+ =cut
+ 
+-sub ok ($;$) {
+-    $CLASS->builder->ok(@_);
++sub ok ($;$) {    ## no critic (Subroutines::ProhibitSubroutinePrototypes)
++    return $CLASS->builder->ok(@_);
+ }
+ 
+-
+ =back
+ 
+ Test::Simple will start by printing number of tests run in the form
+@@ -191,24 +190,10 @@
+ (i.e. you can just use Test::More instead of Test::Simple in your
+ programs and things will still work).
+ 
+-=item L<Test>
+-
+-The original Perl testing module.
+-
+-=item L<Test::Unit>
+-
+-Elaborate unit testing.
+-
+-=item L<Test::Inline>, L<SelfTest>
+-
+-Embed tests in your code!
+-
+-=item L<Test::Harness>
+-
+-Interprets the output of your test program.
+-
+ =back
+ 
++Look in Test::More's SEE ALSO for more testing modules.
++
+ 
+ =head1 AUTHORS
+ 
+@@ -218,7 +203,7 @@
+ 
+ =head1 COPYRIGHT
+ 
+-Copyright 2001, 2002, 2004 by Michael G Schwern E<lt>schwern@pobox.comE<gt>.
++Copyright 2001-2008 by Michael G Schwern E<lt>schwern@pobox.comE<gt>.
+ 
+ This program is free software; you can redistribute it and/or 
+ modify it under the same terms as Perl itself.
+diff -urN perl-5.10.0.orig/lib/Test/Tutorial.pod perl-5.10.0/lib/Test/Tutorial.pod
+--- perl-5.10.0.orig/lib/Test/Tutorial.pod	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/Test/Tutorial.pod	2009-02-17 17:16:41.000000000 +0100
+@@ -1,3 +1,4 @@
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ =head1 NAME
+ 
+ Test::Tutorial - A tutorial about writing really basic tests
+diff -urN perl-5.10.0.orig/t/lib/NoExporter.pm perl-5.10.0/t/lib/NoExporter.pm
+--- perl-5.10.0.orig/t/lib/NoExporter.pm	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/NoExporter.pm	2009-02-17 17:16:41.000000000 +0100
+@@ -1,7 +1,9 @@
+ package NoExporter;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ $VERSION = 1.02;
+-sub import { 
++
++sub import {
+     shift;
+     die "NoExporter exports nothing.  You asked for: @_" if @_;
+ }
+diff -urN perl-5.10.0.orig/t/lib/Test/Simple/Catch.pm perl-5.10.0/t/lib/Test/Simple/Catch.pm
+--- perl-5.10.0.orig/t/lib/Test/Simple/Catch.pm	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/Test/Simple/Catch.pm	2009-02-17 17:16:41.000000000 +0100
+@@ -1,9 +1,10 @@
+ # For testing Test::Simple;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ package Test::Simple::Catch;
+ 
+ use Symbol;
+ use TieOut;
+-my($out_fh, $err_fh) = (gensym, gensym);
++my( $out_fh, $err_fh ) = ( gensym, gensym );
+ my $out = tie *$out_fh, 'TieOut';
+ my $err = tie *$err_fh, 'TieOut';
+ 
+@@ -13,6 +14,6 @@
+ $t->failure_output($err_fh);
+ $t->todo_output($err_fh);
+ 
+-sub caught { return($out, $err) }
++sub caught { return( $out, $err ) }
+ 
+ 1;
+diff -urN perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/death.plx perl-5.10.0/t/lib/Test/Simple/sample_tests/death.plx
+--- perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/death.plx	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/Test/Simple/sample_tests/death.plx	2009-02-17 17:16:41.000000000 +0100
+@@ -1,13 +1,16 @@
+ require Test::Simple;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ push @INC, 't/lib';
+ require Test::Simple::Catch;
+ my($out, $err) = Test::Simple::Catch::caught();
+ 
++require Dev::Null;
++
+ Test::Simple->import(tests => 5);
+-close STDERR;
++tie *STDERR, 'Dev::Null';
+ 
+ ok(1);
+ ok(1);
+ ok(1);
+-die "Knife?";
++die "This is a test";
+diff -urN perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/death_in_eval.plx perl-5.10.0/t/lib/Test/Simple/sample_tests/death_in_eval.plx
+--- perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/death_in_eval.plx	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/Test/Simple/sample_tests/death_in_eval.plx	2009-02-17 17:16:41.000000000 +0100
+@@ -1,4 +1,5 @@
+ require Test::Simple;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ use Carp;
+ 
+ push @INC, 't/lib';
+diff -urN perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/death_with_handler.plx perl-5.10.0/t/lib/Test/Simple/sample_tests/death_with_handler.plx
+--- perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/death_with_handler.plx	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/t/lib/Test/Simple/sample_tests/death_with_handler.plx	2009-02-17 17:16:41.000000000 +0100
+@@ -0,0 +1,19 @@
++require Test::Simple;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
++
++push @INC, 't/lib';
++require Test::Simple::Catch;
++my($out, $err) = Test::Simple::Catch::caught();
++
++Test::Simple->import(tests => 2);
++
++# Test we still get the right exit code despite having a die
++# handler.
++$SIG{__DIE__} = sub {};
++
++require Dev::Null;
++tie *STDERR, 'Dev::Null';
++
++ok(1);
++ok(1);
++die "This is a test";
+diff -urN perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/exit.plx perl-5.10.0/t/lib/Test/Simple/sample_tests/exit.plx
+--- perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/exit.plx	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/Test/Simple/sample_tests/exit.plx	2009-02-17 17:16:41.000000000 +0100
+@@ -1,3 +1,4 @@
+ require Test::Builder;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ exit 1;
+diff -urN perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/extras.plx perl-5.10.0/t/lib/Test/Simple/sample_tests/extras.plx
+--- perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/extras.plx	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/Test/Simple/sample_tests/extras.plx	2009-02-17 17:16:41.000000000 +0100
+@@ -1,4 +1,5 @@
+ require Test::Simple;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ push @INC, 't/lib';
+ require Test::Simple::Catch;
+diff -urN perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/five_fail.plx perl-5.10.0/t/lib/Test/Simple/sample_tests/five_fail.plx
+--- perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/five_fail.plx	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/Test/Simple/sample_tests/five_fail.plx	2009-02-17 17:16:41.000000000 +0100
+@@ -1,4 +1,5 @@
+ require Test::Simple;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ use lib 't/lib';
+ require Test::Simple::Catch;
+diff -urN perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/last_minute_death.plx perl-5.10.0/t/lib/Test/Simple/sample_tests/last_minute_death.plx
+--- perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/last_minute_death.plx	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/Test/Simple/sample_tests/last_minute_death.plx	2009-02-17 17:16:41.000000000 +0100
+@@ -1,11 +1,14 @@
+ require Test::Simple;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ push @INC, 't/lib';
+ require Test::Simple::Catch;
+ my($out, $err) = Test::Simple::Catch::caught();
+ 
+ Test::Simple->import(tests => 5);
+-close STDERR;
++
++require Dev::Null;
++tie *STDERR, 'Dev::Null';
+ 
+ ok(1);
+ ok(1);
+@@ -13,4 +16,4 @@
+ ok(1);
+ ok(1);
+ 
+-die "Almost there...";
++die "This is a test";
+diff -urN perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/one_fail.plx perl-5.10.0/t/lib/Test/Simple/sample_tests/one_fail.plx
+--- perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/one_fail.plx	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/Test/Simple/sample_tests/one_fail.plx	2009-02-17 17:16:41.000000000 +0100
+@@ -1,4 +1,5 @@
+ require Test::Simple;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ push @INC, 't/lib';
+ require Test::Simple::Catch;
+diff -urN perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/pre_plan_death.plx perl-5.10.0/t/lib/Test/Simple/sample_tests/pre_plan_death.plx
+--- perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/pre_plan_death.plx	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/Test/Simple/sample_tests/pre_plan_death.plx	2009-02-17 17:16:41.000000000 +0100
+@@ -1,4 +1,5 @@
+ # ID 20020716.013, the exit code would become 0 if the test died
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ # before a plan.
+ 
+ require Test::Simple;
+diff -urN perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/require.plx perl-5.10.0/t/lib/Test/Simple/sample_tests/require.plx
+--- perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/require.plx	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/Test/Simple/sample_tests/require.plx	2009-02-17 17:16:41.000000000 +0100
+@@ -1 +1,2 @@
+ require Test::Simple;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+diff -urN perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/success.plx perl-5.10.0/t/lib/Test/Simple/sample_tests/success.plx
+--- perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/success.plx	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/Test/Simple/sample_tests/success.plx	2009-02-17 17:16:41.000000000 +0100
+@@ -1,4 +1,5 @@
+ require Test::Simple;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ push @INC, 't/lib';
+ require Test::Simple::Catch;
+diff -urN perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/too_few.plx perl-5.10.0/t/lib/Test/Simple/sample_tests/too_few.plx
+--- perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/too_few.plx	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/Test/Simple/sample_tests/too_few.plx	2009-02-17 17:16:41.000000000 +0100
+@@ -1,4 +1,5 @@
+ require Test::Simple;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ push @INC, 't/lib';
+ require Test::Simple::Catch;
+diff -urN perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/too_few_fail.plx perl-5.10.0/t/lib/Test/Simple/sample_tests/too_few_fail.plx
+--- perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/too_few_fail.plx	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/Test/Simple/sample_tests/too_few_fail.plx	2009-02-17 17:16:41.000000000 +0100
+@@ -1,4 +1,5 @@
+ require Test::Simple;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ push @INC, 't/lib';
+ require Test::Simple::Catch;
+@@ -9,4 +10,4 @@
+ 
+ ok(0);
+ ok(1);
+-ok(0);
+\ No newline at end of file
++ok(0);
+diff -urN perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/two_fail.plx perl-5.10.0/t/lib/Test/Simple/sample_tests/two_fail.plx
+--- perl-5.10.0.orig/t/lib/Test/Simple/sample_tests/two_fail.plx	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/Test/Simple/sample_tests/two_fail.plx	2009-02-17 17:16:41.000000000 +0100
+@@ -1,4 +1,5 @@
+ require Test::Simple;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ push @INC, 't/lib';
+ require Test::Simple::Catch;
+diff -urN perl-5.10.0.orig/t/lib/TieOut.pm perl-5.10.0/t/lib/TieOut.pm
+--- perl-5.10.0.orig/t/lib/TieOut.pm	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/TieOut.pm	2009-02-17 17:16:41.000000000 +0100
+@@ -1,13 +1,14 @@
+ package TieOut;
++# $Id: perl-update-Test-Simple.patch,v 1.1 2009/03/23 10:31:06 kasal Exp $
+ 
+ sub TIEHANDLE {
+     my $scalar = '';
+-    bless( \$scalar, $_[0]);
++    bless( \$scalar, $_[0] );
+ }
+ 
+ sub PRINT {
+     my $self = shift;
+-    $$self .= join('', @_);
++    $$self .= join( '', @_ );
+ }
+ 
+ sub PRINTF {
+@@ -16,7 +17,7 @@
+     $$self .= sprintf $fmt, @_;
+ }
+ 
+-sub FILENO {}
++sub FILENO { }
+ 
+ sub read {
+     my $self = shift;

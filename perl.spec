@@ -187,7 +187,7 @@ Patch102:	perl-update-Archive-Tar.patch
 Patch103:	perl-update-CGI.patch
 %define			    CGI_version 3.42
 Patch104:	perl-update-ExtUtils-CBuilder.patch
-%define			    ExtUtils-CBuilder_version 0.24
+%define			    ExtUtils_CBuilder_version 0.24
 Patch105:	perl-update-File-Fetch.patch
 %define			    File_Fetch_version 0.18
 Patch106:	perl-update-File-Path.patch
@@ -1868,6 +1868,7 @@ TMPDIR="$PWD/tmp" make test
 %changelog
 * Wed Mar 11 2009 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-62
 - drop 26_fix_pod2man_upgrade (don't need it)
+- fix typo in %%define ExtUtils_CBuilder_version
 
 * Wed Mar 11 2009 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-61
 - apply Change 34507: Fix memory leak in single-char character class optimization

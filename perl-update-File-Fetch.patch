@@ -1,0 +1,371 @@
+File-Fetch-0.18
+
+diff -urN perl-5.10.0.orig/lib/File/Fetch/t/01_File-Fetch.t perl-5.10.0/lib/File/Fetch/t/01_File-Fetch.t
+--- perl-5.10.0.orig/lib/File/Fetch/t/01_File-Fetch.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/File/Fetch/t/01_File-Fetch.t	2009-03-10 14:28:48.000000000 +0100
+@@ -22,7 +22,7 @@
+ 
+ Some of these tests assume you are connected to the
+ internet. If you are not, or if certain protocols or hosts
+-are blocked and/or firewalled, these tests will fail due
++are blocked and/or firewalled, these tests could fail due
+ to no fault of the module itself.
+ 
+ ###########################################################
+@@ -115,6 +115,13 @@
+ ) if &File::Fetch::ON_WIN;
+ 
+ 
++### sanity tests
++{   like( $File::Fetch::USER_AGENT, qr/$File::Fetch::VERSION/,
++                                "User agent contains version" );
++    like( $File::Fetch::FROM_EMAIL, qr/@/,
++                                q[Email contains '@'] );
++}                                
++
+ ### parse uri tests ###
+ for my $entry (@map ) {
+     my $uri = $entry->{'uri'};
+@@ -148,14 +155,14 @@
+     my $prefix = &File::Fetch::ON_UNIX ? 'file://' : 'file:///';
+     my $uri = $prefix . cwd() .'/'. basename($0);
+ 
+-    for (qw[lwp file]) {
++    for (qw[lwp lftp file]) {
+         _fetch_uri( file => $uri, $_ );
+     }
+ }
+ 
+ ### ftp:// tests ###
+ {   my $uri = 'ftp://ftp.funet.fi/pub/CPAN/index.html';
+-    for (qw[lwp netftp wget curl ncftp]) {
++    for (qw[lwp netftp wget curl lftp ncftp]) {
+ 
+         ### STUPID STUPID warnings ###
+         next if $_ eq 'ncftp' and $File::Fetch::FTP_PASSIVE
+@@ -167,9 +174,10 @@
+ 
+ ### http:// tests ###
+ {   for my $uri ( 'http://www.cpan.org/index.html',
+-                  'http://www.cpan.org/index.html?q=1&y=2'
++                  'http://www.cpan.org/index.html?q=1',
++                  'http://www.cpan.org/index.html?q=1&y=2',
+     ) {
+-        for (qw[lwp wget curl lynx]) {
++        for (qw[lwp wget curl lftp lynx]) {
+             _fetch_uri( http => $uri, $_ );
+         }
+     }
+@@ -206,6 +214,11 @@
+             skip "You do not have '$method' installed/available", 3
+                 if $File::Fetch::METHOD_FAIL->{$method} &&
+                    $File::Fetch::METHOD_FAIL->{$method};
++                
++            ### if the file wasn't fetched, it may be a network/firewall issue                
++            skip "Fetch failed; no network connectivity for '$type'?", 3 
++                unless $file;
++                
+             ok( $file,          "   File ($file) fetched with $method ($uri)" );
+             ok( $file && -s $file,   
+                                 "   File has size" );
+diff -urN perl-5.10.0.orig/lib/File/Fetch.pm perl-5.10.0/lib/File/Fetch.pm
+--- perl-5.10.0.orig/lib/File/Fetch.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/lib/File/Fetch.pm	2009-03-10 14:29:10.000000000 +0100
+@@ -2,6 +2,7 @@
+ 
+ use strict;
+ use FileHandle;
++use File::Temp;
+ use File::Copy;
+ use File::Spec;
+ use File::Spec::Unix;
+@@ -9,7 +10,7 @@
+ 
+ use Cwd                         qw[cwd];
+ use Carp                        qw[carp];
+-use IPC::Cmd                    qw[can_run run];
++use IPC::Cmd                    qw[can_run run QUOTE];
+ use File::Path                  qw[mkpath];
+ use Params::Check               qw[check];
+ use Module::Load::Conditional   qw[can_load];
+@@ -20,14 +21,11 @@
+                 $FTP_PASSIVE $TIMEOUT $DEBUG $WARN
+             ];
+ 
+-use constant QUOTE  => do { $^O eq 'MSWin32' ? q["] : q['] };            
+-            
+-
+-$VERSION        = '0.14';
++$VERSION        = '0.18';
+ $VERSION        = eval $VERSION;    # avoid warnings with development releases
+ $PREFER_BIN     = 0;                # XXX TODO implement
+ $FROM_EMAIL     = 'File-Fetch@example.com';
+-$USER_AGENT     = 'File::Fetch/$VERSION';
++$USER_AGENT     = "File::Fetch/$VERSION";
+ $BLACKLIST      = [qw|ftp|];
+ $METHOD_FAIL    = { };
+ $FTP_PASSIVE    = 1;
+@@ -37,9 +35,9 @@
+ 
+ ### methods available to fetch the file depending on the scheme
+ $METHODS = {
+-    http    => [ qw|lwp wget curl lynx| ],
+-    ftp     => [ qw|lwp netftp wget curl ncftp ftp| ],
+-    file    => [ qw|lwp file| ],
++    http    => [ qw|lwp wget curl lftp lynx| ],
++    ftp     => [ qw|lwp netftp wget curl lftp ncftp ftp| ],
++    file    => [ qw|lwp lftp file| ],
+     rsync   => [ qw|rsync| ]
+ };
+ 
+@@ -50,11 +48,13 @@
+ local $Module::Load::Conditional::VERBOSE   = 0;
+ 
+ ### see what OS we are on, important for file:// uris ###
+-use constant ON_WIN         => ($^O eq 'MSWin32');
+-use constant ON_VMS         => ($^O eq 'VMS');                                
+-use constant ON_UNIX        => (!ON_WIN);
+-use constant HAS_VOL        => (ON_WIN);
+-use constant HAS_SHARE      => (ON_WIN);
++use constant ON_WIN     => ($^O eq 'MSWin32');
++use constant ON_VMS     => ($^O eq 'VMS');                                
++use constant ON_UNIX    => (!ON_WIN);
++use constant HAS_VOL    => (ON_WIN);
++use constant HAS_SHARE  => (ON_WIN);
++
++
+ =pod
+ 
+ =head1 NAME
+@@ -146,7 +146,7 @@
+ ##########################
+ 
+ {
+-    ### template for new() and autogenerated accessors ###
++    ### template for autogenerated accessors ###
+     my $Tmpl = {
+         scheme          => { default => 'http' },
+         host            => { default => 'localhost' },
+@@ -626,11 +626,14 @@
+         push @$cmd, '--passive-ftp' if $FTP_PASSIVE;
+ 
+         ### set the output document, add the uri ###
+-        push @$cmd, '--output-document', 
+-                    ### DO NOT quote things for IPC::Run, it breaks stuff.
+-                    $IPC::Cmd::USE_IPC_RUN
+-                        ? ($to, $self->uri)
+-                        : (QUOTE. $to .QUOTE, QUOTE. $self->uri .QUOTE);
++        push @$cmd, '--output-document', $to, $self->uri;
++
++        ### with IPC::Cmd > 0.41, this is fixed in teh library,
++        ### and there's no need for special casing any more.
++        ### DO NOT quote things for IPC::Run, it breaks stuff.
++        # $IPC::Cmd::USE_IPC_RUN
++        #    ? ($to, $self->uri)
++        #    : (QUOTE. $to .QUOTE, QUOTE. $self->uri .QUOTE);
+ 
+         ### shell out ###
+         my $captured;
+@@ -653,6 +656,81 @@
+     }
+ }
+ 
++### /bin/lftp fetch ###
++sub _lftp_fetch {
++    my $self = shift;
++    my %hash = @_;
++
++    my ($to);
++    my $tmpl = {
++        to  => { required => 1, store => \$to }
++    };
++    check( $tmpl, \%hash ) or return;
++
++    ### see if we have a wget binary ###
++    if( my $lftp = can_run('lftp') ) {
++
++        ### no verboseness, thanks ###
++        my $cmd = [ $lftp, '-f' ];
++
++        my $fh = File::Temp->new;
++        
++        my $str;
++        
++        ### if a timeout is set, add it ###
++        $str .= "set net:timeout $TIMEOUT;\n" if $TIMEOUT;
++
++        ### run passive if specified ###
++        $str .= "set ftp:passive-mode 1;\n" if $FTP_PASSIVE;
++
++        ### set the output document, add the uri ###
++        ### quote the URI, because lftp supports certain shell
++        ### expansions, most notably & for backgrounding.
++        ### ' quote does nto work, must be "
++        $str .= q[get ']. $self->uri .q[' -o ]. $to . $/;
++
++        if( $DEBUG ) {
++            my $pp_str = join ' ', split $/, $str;
++            print "# lftp command: $pp_str\n";
++        }              
++
++        ### write straight to the file.
++        $fh->autoflush(1);
++        print $fh $str;
++
++        ### the command needs to be 1 string to be executed
++        push @$cmd, $fh->filename;
++
++        ### with IPC::Cmd > 0.41, this is fixed in teh library,
++        ### and there's no need for special casing any more.
++        ### DO NOT quote things for IPC::Run, it breaks stuff.
++        # $IPC::Cmd::USE_IPC_RUN
++        #    ? ($to, $self->uri)
++        #    : (QUOTE. $to .QUOTE, QUOTE. $self->uri .QUOTE);
++
++
++        ### shell out ###
++        my $captured;
++        unless(run( command => $cmd,
++                    buffer  => \$captured,
++                    verbose => $DEBUG
++        )) {
++            ### wget creates the output document always, even if the fetch
++            ### fails.. so unlink it in that case
++            1 while unlink $to;
++
++            return $self->_error(loc( "Command failed: %1", $captured || '' ));
++        }
++
++        return $to;
++
++    } else {
++        $METHOD_FAIL->{'lftp'} = 1;
++        return;
++    }
++}
++
++
+ 
+ ### /bin/ftp fetch ###
+ sub _ftp_fetch {
+@@ -717,6 +795,33 @@
+                 'lynx' ));
+         }            
+ 
++        ### check if the HTTP resource exists ###
++        if ($self->uri =~ /^https?:\/\//i) {
++            my $cmd = [
++                $lynx,
++                '-head',
++                '-source',
++                "-auth=anonymous:$FROM_EMAIL",
++            ];
++
++            push @$cmd, "-connect_timeout=$TIMEOUT" if $TIMEOUT;
++
++            push @$cmd, $self->uri;
++
++            ### shell out ###
++            my $head;
++            unless(run( command => $cmd,
++                        buffer  => \$head,
++                        verbose => $DEBUG )
++            ) {
++                return $self->_error(loc("Command failed: %1", $head || ''));
++            }
++
++            unless($head =~ /^HTTP\/\d+\.\d+ 200\b/) {
++                return $self->_error(loc("Command failed: %1", $head || ''));
++            }
++        }
++
+         ### write to the output file ourselves, since lynx ass_u_mes to much
+         my $local = FileHandle->new(">$to")
+                         or return $self->_error(loc(
+@@ -732,9 +837,14 @@
+         push @$cmd, "-connect_timeout=$TIMEOUT" if $TIMEOUT;
+ 
+         ### DO NOT quote things for IPC::Run, it breaks stuff.
+-        push @$cmd, $IPC::Cmd::USE_IPC_RUN
+-                        ? $self->uri
+-                        : QUOTE. $self->uri .QUOTE;
++        push @$cmd, $self->uri;
++        
++        ### with IPC::Cmd > 0.41, this is fixed in teh library,
++        ### and there's no need for special casing any more.
++        ### DO NOT quote things for IPC::Run, it breaks stuff.
++        # $IPC::Cmd::USE_IPC_RUN
++        #    ? $self->uri
++        #    : QUOTE. $self->uri .QUOTE;
+ 
+ 
+         ### shell out ###
+@@ -829,7 +939,7 @@
+     if (my $curl = can_run('curl')) {
+ 
+         ### these long opts are self explanatory - I like that -jmb
+-	    my $cmd = [ $curl ];
++	    my $cmd = [ $curl, '-q' ];
+ 
+ 	    push(@$cmd, '--connect-timeout', $TIMEOUT) if $TIMEOUT;
+ 
+@@ -842,11 +952,15 @@
+ 
+         ### curl doesn't follow 302 (temporarily moved) etc automatically
+         ### so we add --location to enable that.
+-        push @$cmd, '--fail', '--location', '--output', 
+-                    ### DO NOT quote things for IPC::Run, it breaks stuff.
+-                    $IPC::Cmd::USE_IPC_RUN
+-                        ? ($to, $self->uri)
+-                        : (QUOTE. $to .QUOTE, QUOTE. $self->uri .QUOTE);
++        push @$cmd, '--fail', '--location', '--output', $to, $self->uri;
++
++        ### with IPC::Cmd > 0.41, this is fixed in teh library,
++        ### and there's no need for special casing any more.
++        ### DO NOT quote things for IPC::Run, it breaks stuff.
++        # $IPC::Cmd::USE_IPC_RUN
++        #    ? ($to, $self->uri)
++        #    : (QUOTE. $to .QUOTE, QUOTE. $self->uri .QUOTE);
++
+ 
+         my $captured;
+         unless(run( command => $cmd,
+@@ -960,9 +1074,14 @@
+         push(@$cmd, '--quiet') unless $DEBUG;
+ 
+         ### DO NOT quote things for IPC::Run, it breaks stuff.
+-        push @$cmd, $IPC::Cmd::USE_IPC_RUN
+-                        ? ($self->uri, $to)
+-                        : (QUOTE. $self->uri .QUOTE, QUOTE. $to .QUOTE);
++        push @$cmd, $self->uri, $to;
++
++        ### with IPC::Cmd > 0.41, this is fixed in teh library,
++        ### and there's no need for special casing any more.
++        ### DO NOT quote things for IPC::Run, it breaks stuff.
++        # $IPC::Cmd::USE_IPC_RUN
++        #    ? ($to, $self->uri)
++        #    : (QUOTE. $to .QUOTE, QUOTE. $self->uri .QUOTE);
+ 
+         my $captured;
+         unless(run( command => $cmd,
+@@ -1030,9 +1149,9 @@
+ Below is a mapping of what utilities will be used in what order
+ for what schemes, if available:
+ 
+-    file    => LWP, file
+-    http    => LWP, wget, curl, lynx
+-    ftp     => LWP, Net::FTP, wget, curl, ncftp, ftp
++    file    => LWP, lftp, file
++    http    => LWP, wget, curl, lftp, lynx
++    ftp     => LWP, Net::FTP, wget, curl, lftp, ncftp, ftp
+     rsync   => rsync
+ 
+ If you'd like to disable the use of one or more of these utilities
+@@ -1148,6 +1267,7 @@
+     ftp         => ftp
+     curl        => curl
+     rsync       => rsync
++    lftp        => lftp
+ 
+ =head1 FREQUENTLY ASKED QUESTIONS
+ 

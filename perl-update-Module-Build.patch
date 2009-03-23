@@ -1,0 +1,5715 @@
+Module-Build-0.32
+perl-5.10.0 contained some fixes in the Module::Build testsuite; all
+these have been integrated to Module-Build-0.31012
+
+--- perl-5.10.0.orig/MANIFEST	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/MANIFEST	2009-03-10 17:07:04.000000000 +0100
+@@ -2156,8 +2156,10 @@
+ lib/Module/Build/PodParser.pm	Module::Build
+ lib/Module/Build/PPMMaker.pm	Module::Build
+ lib/Module/Build/scripts/config_data	Module::Build
++lib/Module/Build/t/add_property.t	Module::Build
+ lib/Module/Build/t/basic.t	Module::Build
+ lib/Module/Build/t/bundled/Tie/CPHash.pm	Module::Build.pm
++lib/Module/Build/t/compat/exit.t	Module::Build
+ lib/Module/Build/t/compat.t	Module::Build
+ lib/Module/Build/t/destinations.t	Module::Build
+ lib/Module/Build/t/extend.t	Module::Build
+@@ -2178,9 +2180,12 @@
+ lib/Module/Build/t/pod_parser.t	Module::Build
+ lib/Module/Build/t/ppm.t	Module::Build
+ lib/Module/Build/t/runthrough.t	Module::Build
++lib/Module/Build/t/script_dist.t	Module::Build
++lib/Module/Build/t/test_file_exts.t	Module::Build
+ lib/Module/Build/t/test_types.t	Module::Build
+ lib/Module/Build/t/test_type.t	Module::Build
+ lib/Module/Build/t/tilde.t	Module::Build
++lib/Module/Build/t/use_tap_harness.t	Module::Build
+ lib/Module/Build/t/versions.t	Module::Build
+ lib/Module/Build/t/xs.t		Module::Build
+ lib/Module/Build/Version.pm	Module::Build
+diff -urN perl-5.10.0.orig/lib/Module/Build/API.pod perl-5.10.0/lib/Module/Build/API.pod
+--- perl-5.10.0.orig/lib/Module/Build/API.pod	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/API.pod	2009-03-10 16:49:12.000000000 +0100
+@@ -211,12 +211,12 @@
+ 
+ [version 0.20]
+ 
+-This should be a short description of the distribution.  This is used
+-when generating metadata for F<META.yml> and PPD files.  If it is not
+-given then C<Module::Build> looks in the POD of the module from which
+-it gets the distribution's version.  It looks for the first line
+-matching C<$package\s-\s(.+)>, and uses the captured text as the
+-abstract.
++This should be a short description of the distribution.  This is used when
++generating metadata for F<META.yml> and PPD files.  If it is not given
++then C<Module::Build> looks in the POD of the module from which it gets
++the distribution's version.  If it finds a POD section marked "=head1
++NAME", then it looks for the first line matching C<\s+-\s+(.+)>,
++and uses the captured text as the abstract.
+ 
+ =item dist_author
+ 
+@@ -268,6 +268,10 @@
+ this process, so there's no real opportunity to change to something
+ better.
+ 
++If the target file of L</dist_version_from> contains more than one package
++declaration, the version returned will be the one matching the configured
++L</module_name>.
++
+ =item dynamic_config
+ 
+ [version 0.07]
+@@ -502,16 +506,16 @@
+ sync with your written documentation if you ever change your licensing
+ terms.
+ 
++You may also use a license type of C<unknown> if you don't wish to
++specify your terms in the metadata.
++
+ It is a fatal error to use a license other than the ones mentioned
+ above.  This is not because I wish to impose licensing terms on you -
+ please let me know if you would like another license option to be
+-added to the list.  You may also use a license type of C<unknown> if
+-you don't wish to specify your terms (but this is usually not a good
+-idea for you to do!).
+-
+-I just started out with a small set of licenses to keep things simple,
+-figuring I'd let people with actual working knowledge in this area
+-tell me what to do.  So if that's you, drop me a line.
++added to the list.  I just started out with a small set of licenses to
++keep things simple, figuring I'd let people with actual working
++knowledge in this area tell me what to do.  So if that's you, drop me
++a line.
+ 
+ =item meta_add
+ 
+@@ -683,13 +687,13 @@
+ 
+ An optional parameter specifying a set of files that should be
+ installed as executable Perl scripts when the module is installed.
+-May be given as an array reference of the files, or as a hash
+-reference whose keys are the files (and whose values will currently be
+-ignored).
++May be given as an array reference of the files, as a hash reference
++whose keys are the files (and whose values will currently be ignored),
++as a string giving the name of a directory in which to find scripts,
++or as a string giving the name of a single script file.
+ 
+-The default is to install no script files - in other words, there is
+-no default location where Module::Build will look for script files to
+-install.
++The default is to install any scripts found in a F<bin> directory at
++the top level of the distribution.
+ 
+ For backward compatibility, you may use the parameter C<scripts>
+ instead of C<script_files>.  Please consider this usage deprecated,
+@@ -725,6 +729,26 @@
+ property is true, then the C<t/> directory will be scanned recursively
+ for C<*.t> files.
+ 
++=item use_tap_harness
++
++[version 0.2808_03]
++
++An optional parameter indicating whether or not to use TAP::Harness for
++testing rather than Test::Harness. Defaults to false. If set to true, you must
++therefore be sure to add TAP::Harness as a requirement for your module in
++L</build_requires>. Implicitly set to a true value if C<tap_harness_args> is
++specified.
++
++=item tap_harness_args
++
++[version 0.2808_03]
++
++An optional parameter specifying parameters to be passed to TAP::Harness when
++running tests. Must be given as a hash reference of parameters; see the
++L<TAP::Harness|TAP::Harness> documentation for details. Note that specifying
++this parameter will implicitly set C<use_tap_harness> to a true value. You
++must therefore be sure to add TAP::Harness as a requirement for your module in
++L</build_requires>.
+ 
+ =item xs_files
+ 
+@@ -771,6 +795,86 @@
+ defaults to C<MyModuleBuilder>.  The C<code> parameter specifies Perl
+ code to use as the body of the subclass.
+ 
++=item add_property
++
++[version 0.31]
++
++  package 'My::Build';
++  use base 'Module::Build';
++  __PACKAGE__->add_property( 'pedantic' );
++  __PACKAGE__->add_property( answer => 42 );
++  __PACKAGE__->add_property(
++     'epoch',
++      default => sub { time },
++      check   => sub {
++          return 1 if /^\d+$/;
++          shift->property_error( "'$_' is not an epoch time" );
++          return 0;
++      },
++  );
++
++Adds a property to a Module::Build class. Properties are those attributes of a
++Module::Build object which can be passed to the constructor and which have
++accessors to get and set them. All of the core properties, such as
++C<module_name> and C<license>, are defined using this class method.
++
++The first argument to C<add_property()> is always the name of the property.
++The second argument can be either a default value for the property, or a list
++of key/value pairs. The supported keys are:
++
++=over
++
++=item C<default>
++
++The default value. May optionally be specified as a code reference, in which
++case the return value from the execution of the code reference will be used.
++If you need the default to be a code reference, just use a code reference to
++return it, e.g.:
++
++      default => sub { sub { ... } },
++
++=item C<check>
++
++A code reference that checks that a value specified for the property is valid.
++During the execution of the code reference, the new value will be included in
++the C<$_> variable. If the value is correct, the C<check> code reference
++should return true. If the value is not correct, it sends an error message to
++C<property_error()> and returns false.
++
++=back
++
++When this method is called, a new property will be installed in the
++Module::Build class, and an accessor will be built to allow the property to be
++get or set on the build object.
++
++  print $build->pedantic, $/;
++  $build->pedantic(0);
++
++If the default value is a hash reference, this generetes a special-case
++accessor method, wherein individual key/value pairs may be set or fetched:
++
++  print "stuff{foo} is: ", $build->stuff( 'foo' ), $/;
++  $build->stuff( foo => 'bar' );
++  print $build->stuff( 'foo' ), $/; # Outputs "bar"
++
++Of course, you can still set the entire hash reference at once, as well:
++
++  $build->stuff( { foo => 'bar', baz => 'yo' } );
++
++In either case, if a C<check> has been specified for the property, it will be
++applied to the entire hash. So the check code reference should look something
++like:
++
++      check => sub {
++            return 1 if defined $_ && exists $_->{foo};
++            shift->property_error(qq{Property "stuff" needs "foo"});
++            return 0;
++      },
++
++=item property_error
++
++[version 0.31]
++
+ =back
+ 
+ 
+@@ -855,6 +959,14 @@
+ Returns a hash reference indicating the C<build_requires>
+ prerequisites that were passed to the C<new()> method.
+ 
++=item cbuilder()
++
++[version 0.2809]
++
++Returns the internal ExtUtils::CBuilder object that can be used for
++compiling & linking C code.  If no such object is available (e.g. if
++the system has no compiler installed) an exception will be thrown.
++
+ =item check_installed_status($module, $version)
+ 
+ [version 0.11]
+@@ -1166,6 +1278,19 @@
+ Module::Build's main support for configuration of installed modules.
+ See also L<Module::Build::Authoring/"SAVING CONFIGURATION INFORMATION">.
+ 
++=item fix_shebang_line(@files)
++
++[version 0.??]
++
++Modify any "shebang" line in the specified files to use the path to the
++perl executable being used for the current build.  Files are modified
++in-place.  The existing shebang line must have a command that contains
++"C<perl>"; arguments to the command do not count.  In particular, this
++means that the use of C<#!/usr/bin/env perl> will not be changed.
++
++For an explanation of shebang lines, see
++L<http://en.wikipedia.org/wiki/Shebang_%28Unix%29>.
++
+ =item have_c_compiler()
+ 
+ [version 0.21]
+@@ -1423,6 +1548,18 @@
+     }
+   }
+ 
++=item prereq_data()
++
++[version 0.32]
++
++Returns a reference to a hash describing all prerequisites.  The keys of the
++hash will the various prerequisite types ('requires', 'build_requires',
++'configure_requires', 'recommends', or 'conflicts') and the values will
++references to hashes of module names and version numbers.  Only prerequisites
++types that are defined will be included.  The C<prereq_data> action is just a
++thin wrapper around the C<prereq_data()> method and dumps the hash as a string
++that can be loaded using C<eval()>.
++
+ =item prereq_report()
+ 
+ [version 0.28]
+@@ -1606,6 +1743,8 @@
+ 
+ =item conflicts()
+ 
++=item create_license()
++
+ =item create_makefile_pl()
+ 
+ =item create_packlist()
+@@ -1660,6 +1799,8 @@
+ 
+ =item prereq_action_types()
+ 
++=item program_name()
++
+ =item quiet()
+ 
+ =item recommends()
+@@ -1672,8 +1813,16 @@
+ 
+ =item scripts()
+ 
++=item sign()
++
++=item tap_harness_args()
++
++=item test_file_exts()
++
+ =item use_rcfile()
+ 
++=item use_tap_harness()
++
+ =item verbose()
+ 
+ =item xs_files()
+diff -urN perl-5.10.0.orig/lib/Module/Build/Base.pm perl-5.10.0/lib/Module/Build/Base.pm
+--- perl-5.10.0.orig/lib/Module/Build/Base.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Base.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -1,12 +1,15 @@
++# -*- mode: cperl; tab-width: 8; indent-tabs-mode: nil; basic-offset: 2 -*-
++# vim:ts=8:sw=2:et:sta:sts=2
+ package Module::Build::Base;
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ BEGIN { require 5.00503 }
+ 
+ use Carp;
++use Cwd ();
+ use File::Copy ();
+ use File::Find ();
+ use File::Path ();
+@@ -82,6 +85,8 @@
+   }
+   
+   $self->{invoked_action} = $self->{action} ||= 'build';
++
++  $self->_set_install_paths;
+   
+   return $self;
+ }
+@@ -172,8 +177,14 @@
+ 
+ ################## End constructors #########################
+ 
+-sub log_info { print @_ unless shift()->quiet }
+-sub log_verbose { shift()->log_info(@_) if $_[0]->verbose }
++sub log_info {
++  my $self = shift;
++  print @_ unless(ref($self) and $self->quiet);
++}
++sub log_verbose {
++  my $self = shift;
++  $self->log_info(@_) if(ref($self) and $self->verbose);
++}
+ sub log_warn {
+   # Try to make our call stack invisible
+   shift;
+@@ -319,7 +330,6 @@
+ }
+ 
+ sub cwd {
+-  require Cwd;
+   return Cwd::cwd();
+ }
+ 
+@@ -328,18 +338,17 @@
+   # proper quoting so that the subprocess sees this same list of args.
+   my ($self, @args) = @_;
+ 
+-  my $return_args = '';
+   my @quoted;
+ 
+   for (@args) {
+-    if ( /^[^\s*?!$<>;\\|'"\[\]\{\}]+$/ ) {
++    if ( /^[^\s*?!\$<>;\\|'"\[\]\{\}]+$/ ) {
+       # Looks pretty safe
+       push @quoted, $_;
+     } else {
+       # XXX this will obviously have to improve - is there already a
+       # core module lying around that does proper quoting?
+-      s/"/"'"'"/g;
+-      push @quoted, qq("$_");
++      s/('+)/'"$1"'/g;
++      push @quoted, qq('$_');
+     }
+   }
+ 
+@@ -363,6 +372,8 @@
+   }
+ }
+ 
++# Tells us whether the construct open($fh, '-|', @command) is
++# supported.  It would probably be better to dynamically sense this.
+ sub have_forkpipe { 1 }
+ 
+ # Determine whether a given binary is the same as the perl
+@@ -435,7 +446,7 @@
+ 
+     # CBuilder is also in the core, so it should be available here
+     require ExtUtils::CBuilder;
+-    my $perl_src = ExtUtils::CBuilder->perl_src;
++    my $perl_src = Cwd::realpath( ExtUtils::CBuilder->perl_src );
+     if ( defined($perl_src) && length($perl_src) ) {
+       my $uninstperl =
+         File::Spec->rel2abs(File::Spec->catfile( $perl_src, $perl_basename ));
+@@ -639,123 +650,172 @@
+       );
+ }
+ 
+-{
+-    my %valid_properties = ( __PACKAGE__,  {} );
+-    my %additive_properties;
++########################################################################
++{ # enclosing these lexicals -- TODO 
++  my %valid_properties = ( __PACKAGE__,  {} );
++  my %additive_properties;
+ 
+-    sub _mb_classes {
+-      my $class = ref($_[0]) || $_[0];
+-      return ($class, $class->mb_parents);
+-    }
++  sub _mb_classes {
++    my $class = ref($_[0]) || $_[0];
++    return ($class, $class->mb_parents);
++  }
+ 
+-    sub valid_property {
+-      my ($class, $prop) = @_;
+-      return grep exists( $valid_properties{$_}{$prop} ), $class->_mb_classes;
++  sub valid_property {
++    my ($class, $prop) = @_;
++    return grep exists( $valid_properties{$_}{$prop} ), $class->_mb_classes;
++  }
++
++  sub valid_properties {
++    return keys %{ shift->valid_properties_defaults() };
++  }
++
++  sub valid_properties_defaults {
++    my %out;
++    for (reverse shift->_mb_classes) {
++      @out{ keys %{ $valid_properties{$_} } } = map {
++        $_->()
++      } values %{ $valid_properties{$_} };
+     }
++    return \%out;
++  }
+ 
+-    sub valid_properties {
+-      return keys %{ shift->valid_properties_defaults() };
++  sub array_properties {
++    for (shift->_mb_classes) {
++      return @{$additive_properties{$_}->{ARRAY}}
++        if exists $additive_properties{$_}->{ARRAY};
+     }
++  }
+ 
+-    sub valid_properties_defaults {
+-      my %out;
+-      for (reverse shift->_mb_classes) {
+-	@out{ keys %{ $valid_properties{$_} } } = values %{ $valid_properties{$_} };
+-      }
+-      return \%out;
++  sub hash_properties {
++    for (shift->_mb_classes) {
++      return @{$additive_properties{$_}->{'HASH'}}
++        if exists $additive_properties{$_}->{'HASH'};
+     }
++  }
+ 
+-    sub array_properties {
+-      for (shift->_mb_classes) {
+-        return @{$additive_properties{$_}->{ARRAY}}
+-	  if exists $additive_properties{$_}->{ARRAY};
+-      }
++  sub add_property {
++    my ($class, $property) = (shift, shift);
++    die "Property '$property' already exists"
++      if $class->valid_property($property);
++    my %p = @_ == 1 ? ( default => shift ) : @_;
++
++    my $type = ref $p{default};
++    $valid_properties{$class}{$property} = $type eq 'CODE'
++      ? $p{default}
++      : sub { $p{default} };
++
++    push @{$additive_properties{$class}->{$type}}, $property
++      if $type;
++
++    unless ($class->can($property)) {
++      # TODO probably should put these in a util package
++      my $sub = $type eq 'HASH'
++        ? _make_hash_accessor($property, \%p)
++        : _make_accessor($property, \%p);
++      no strict 'refs';
++      *{"$class\::$property"} = $sub;
+     }
+ 
+-    sub hash_properties {
+-      for (shift->_mb_classes) {
+-        return @{$additive_properties{$_}->{'HASH'}}
+-	  if exists $additive_properties{$_}->{'HASH'};
+-      }
++    return $class;
++  }
++
++    sub property_error {
++      my $self = shift;
++      die 'ERROR: ', @_;
+     }
+ 
+-    sub add_property {
+-      my ($class, $property, $default) = @_;
+-      die "Property '$property' already exists" if $class->valid_property($property);
+-
+-      $valid_properties{$class}{$property} = $default;
+-
+-      my $type = ref $default;
+-      if ($type) {
+-	push @{$additive_properties{$class}->{$type}}, $property;
+-      }
++  sub _set_defaults {
++    my $self = shift;
+ 
+-      unless ($class->can($property)) {
+-        no strict 'refs';
+-	if ( $type eq 'HASH' ) {
+-          *{"$class\::$property"} = sub {
+-	    my $self = shift;
+-	    my $x = $self->{properties};
+-	    return $x->{$property} unless @_;
+-
+-	    if ( defined($_[0]) && !ref($_[0]) ) {
+-	      if ( @_ == 1 ) {
+-		return exists( $x->{$property}{$_[0]} ) ?
+-		         $x->{$property}{$_[0]} : undef;
+-              } elsif ( @_ % 2 == 0 ) {
+-	        my %args = @_;
+-	        while ( my($k, $v) = each %args ) {
+-	          $x->{$property}{$k} = $v;
+-	        }
+-	      } else {
+-		die "Unexpected arguments for property '$property'\n";
+-	      }
+-	    } else {
+-	      $x->{$property} = $_[0];
+-	    }
+-	  };
+-
+-        } else {
+-          *{"$class\::$property"} = sub {
+-	    my $self = shift;
+-	    $self->{properties}{$property} = shift if @_;
+-	    return $self->{properties}{$property};
+-	  }
+-        }
++    # Set the build class.
++    $self->{properties}{build_class} ||= ref $self;
+ 
+-      }
+-      return $class;
++    # If there was no orig_dir, set to the same as base_dir
++    $self->{properties}{orig_dir} ||= $self->{properties}{base_dir};
++
++    my $defaults = $self->valid_properties_defaults;
++
++    foreach my $prop (keys %$defaults) {
++      $self->{properties}{$prop} = $defaults->{$prop}
++        unless exists $self->{properties}{$prop};
+     }
+ 
+-    sub _set_defaults {
+-      my $self = shift;
++    # Copy defaults for arrays any arrays.
++    for my $prop ($self->array_properties) {
++      $self->{properties}{$prop} = [@{$defaults->{$prop}}]
++        unless exists $self->{properties}{$prop};
++    }
++    # Copy defaults for arrays any hashes.
++    for my $prop ($self->hash_properties) {
++      $self->{properties}{$prop} = {%{$defaults->{$prop}}}
++        unless exists $self->{properties}{$prop};
++    }
++  }
+ 
+-      # Set the build class.
+-      $self->{properties}{build_class} ||= ref $self;
++} # end closure
++########################################################################
++sub _make_hash_accessor {
++  my ($property, $p) = @_;
++  my $check = $p->{check} || sub { 1 };
+ 
+-      # If there was no orig_dir, set to the same as base_dir
+-      $self->{properties}{orig_dir} ||= $self->{properties}{base_dir};
++  return sub {
++    my $self = shift;
+ 
+-      my $defaults = $self->valid_properties_defaults;
+-      
+-      foreach my $prop (keys %$defaults) {
+-	$self->{properties}{$prop} = $defaults->{$prop}
+-	  unless exists $self->{properties}{$prop};
+-      }
+-      
+-      # Copy defaults for arrays any arrays.
+-      for my $prop ($self->array_properties) {
+-	$self->{properties}{$prop} = [@{$defaults->{$prop}}]
+-	  unless exists $self->{properties}{$prop};
+-      }
+-      # Copy defaults for arrays any hashes.
+-      for my $prop ($self->hash_properties) {
+-	$self->{properties}{$prop} = {%{$defaults->{$prop}}}
+-	  unless exists $self->{properties}{$prop};
++    # This is only here to deprecate the historic accident of calling
++    # properties as class methods - I suspect it only happens in our
++    # test suite.
++    unless(ref($self)) {
++      carp("\n$property not a class method (@_)");
++      return;
++    }
++
++    my $x = $self->{properties};
++    return $x->{$property} unless @_;
++
++    my $prop = $x->{$property};
++    if ( defined $_[0] && !ref $_[0] ) {
++      if ( @_ == 1 ) {
++        return exists $prop->{$_[0]} ? $prop->{$_[0]} : undef;
++      } elsif ( @_ % 2 == 0 ) {
++        my %new = (%{ $prop }, @_);
++        local $_ = \%new;
++        $x->{$property} = \%new if $check->($self);
++        return $x->{$property};
++      } else {
++        die "Unexpected arguments for property '$property'\n";
+       }
++    } else {
++      die "Unexpected arguments for property '$property'\n"
++          if defined $_[0] && ref $_[0] ne 'HASH';
++      local $_ = $_[0];
++      $x->{$property} = shift if $check->($self);
+     }
++  };
++}
++########################################################################
++sub _make_accessor {
++  my ($property, $p) = @_;
++  my $check = $p->{check} || sub { 1 };
+ 
++  return sub {
++    my $self = shift;
++
++    # This is only here to deprecate the historic accident of calling
++    # properties as class methods - I suspect it only happens in our
++    # test suite.
++    unless(ref($self)) {
++      carp("\n$property not a class method (@_)");
++      return;
++    }
++
++    my $x = $self->{properties};
++    return $x->{$property} unless @_;
++    local $_ = $_[0];
++    $x->{$property} = shift if $check->($self);
++    return $x->{$property};
++  };
+ }
++########################################################################
+ 
+ # Add the default properties.
+ __PACKAGE__->add_property(blib => 'blib');
+@@ -765,13 +825,29 @@
+ __PACKAGE__->add_property(build_bat => 0);
+ __PACKAGE__->add_property(config_dir => '_build');
+ __PACKAGE__->add_property(include_dirs => []);
+-__PACKAGE__->add_property(installdirs => 'site');
+ __PACKAGE__->add_property(metafile => 'META.yml');
+ __PACKAGE__->add_property(recurse_into => []);
+ __PACKAGE__->add_property(use_rcfile => 1);
+ __PACKAGE__->add_property(create_packlist => 1);
+ __PACKAGE__->add_property(allow_mb_mismatch => 0);
+ __PACKAGE__->add_property(config => undef);
++__PACKAGE__->add_property(test_file_exts => ['.t']);
++__PACKAGE__->add_property(use_tap_harness => 0);
++__PACKAGE__->add_property(tap_harness_args => {});
++__PACKAGE__->add_property(
++  'installdirs',
++  default => 'site',
++  check   => sub {
++    return 1 if /^(core|site|vendor)$/;
++    return shift->property_error(
++      $_ eq 'perl'
++      ? 'Perhaps you meant installdirs to be "core" rather than "perl"?'
++      : 'installdirs must be one of "core", "site", or "vendor"'
++    );
++    return shift->property_error("Perhaps you meant 'core'?") if $_ eq 'perl';
++    return 0;
++  },
++);
+ 
+ {
+   my $Is_ActivePerl = eval {require ActivePerl::DocTools};
+@@ -804,6 +880,7 @@
+   base_dir
+   bindoc_dirs
+   c_source
++  create_license
+   create_makefile_pl
+   create_readme
+   debugger
+@@ -828,10 +905,12 @@
+   pod_files
+   pollute
+   prefix
++  program_name
+   quiet
+   recursive_test_files
+   script_files
+   scripts
++  sign
+   test_files
+   verbose
+   xs_files
+@@ -1072,10 +1151,19 @@
+ 
+   $self->log_info("Checking features:\n");
+ 
+-  my $max_name_len;
+-  $max_name_len = ( length($_) > $max_name_len ) ?
+-                    length($_) : $max_name_len
+-    for keys %$features;
++  # TODO refactor into ::Util
++  my $longest = sub {
++    my @str = @_ or croak("no strings given");
++
++    my @len = map({length($_)} @str);
++    my $max = 0;
++    my $longest;
++    for my $i (0..$#len) {
++      ($max, $longest) = ($len[$i], $str[$i]) if($len[$i] > $max);
++    }
++    return($longest);
++  };
++  my $max_name_len = length($longest->(keys %$features));
+ 
+   while (my ($name, $info) = each %$features) {
+     $self->log_info("  $name" . '.' x ($max_name_len - length($name) + 4));
+@@ -1100,7 +1188,7 @@
+     }
+   }
+ 
+-  $self->log_warn("\n");
++  $self->log_warn("\n") unless $self->quiet;
+ }
+ 
+ sub prereq_failures {
+@@ -1285,7 +1373,7 @@
+   my $status = $self->check_installed_status($modname, $spec);
+   
+   if ($status->{ok}) {
+-    return $status->{have} if $status->{have} and $status->{have} ne '<none>';
++    return $status->{have} if $status->{have} and "$status->{have}" ne '<none>';
+     return '0 but true';
+   }
+   
+@@ -1501,9 +1589,17 @@
+   return $self->$method();
+ }
+ 
++# cuts the user-specified options out of the command-line args
+ sub cull_options {
+     my $self = shift;
+-    my $specs = $self->get_options or return ({}, @_);
++    my (@argv) = @_;
++
++    # XXX is it even valid to call this as a class method?
++    return({}, @argv) unless(ref($self)); # no object
++
++    my $specs = $self->get_options;
++    return({}, @argv) unless($specs and %$specs); # no user options
++
+     require Getopt::Long;
+     # XXX Should we let Getopt::Long handle M::B's options? That would
+     # be easy-ish to add to @specs right here, but wouldn't handle options
+@@ -1522,7 +1618,7 @@
+         $args->{$k} = $v->{default} if exists $v->{default};
+     }
+ 
+-    local @ARGV = @_; # No other way to dupe Getopt::Long
++    local @ARGV = @argv; # No other way to dupe Getopt::Long
+ 
+     # Get the options values and return them.
+     # XXX Add option to allow users to set options?
+@@ -1553,6 +1649,8 @@
+     return $self->{args}{$key};
+ }
+ 
++# allows select parameters (with underscores) to be spoken with dashes
++# when used as command-line options
+ sub _translate_option {
+   my $self = shift;
+   my $opt  = shift;
+@@ -1560,6 +1658,7 @@
+   (my $tr_opt = $opt) =~ tr/-/_/;
+ 
+   return $tr_opt if grep $tr_opt =~ /^(?:no_?)?$_$/, qw(
++    create_license
+     create_makefile_pl
+     create_readme
+     extra_compiler_flags
+@@ -1571,6 +1670,8 @@
+     meta_merge
+     test_files
+     use_rcfile
++    use_tap_harness
++    tap_harness_args
+   ); # normalize only selected option names
+ 
+   return $opt;
+@@ -1589,6 +1690,7 @@
+   }
+ }
+ 
++# decide whether or not an option requires/has an opterand
+ sub _optional_arg {
+   my $self = shift;
+   my $opt  = shift;
+@@ -1598,12 +1700,15 @@
+ 
+   my @bool_opts = qw(
+     build_bat
++    create_license
+     create_readme
+     pollute
+     quiet
+     uninst
+     use_rcfile
+     verbose
++    sign
++    use_tap_harness
+   );
+ 
+   # inverted boolean options; eg --noverbose or --no-verbose
+@@ -1618,7 +1723,7 @@
+ 
+   # we're punting a bit here, if an option appears followed by a digit
+   # we take the digit as the argument for the option. If there is
+-  # nothing that looks like a digit, we pretent the option is a flag
++  # nothing that looks like a digit, we pretend the option is a flag
+   # that is being set and has no argument.
+   my $arg = 1;
+   $arg = shift(@$argv) if @$argv && $argv->[0] =~ /^\d+$/;
+@@ -1628,12 +1733,13 @@
+ 
+ sub read_args {
+   my $self = shift;
+-  my ($action, @argv);
++
+   (my $args, @_) = $self->cull_options(@_);
+   my %args = %$args;
+ 
+   my $opt_re = qr/[\w\-]+/;
+ 
++  my ($action, @argv);
+   while (@_) {
+     local $_ = shift;
+     if ( /^(?:--)?($opt_re)=(.*)$/ ) {
+@@ -1828,9 +1934,9 @@
+     if ($key eq 'config') {
+       $self->config($_ => $val->{$_}) foreach keys %$val;
+     } else {
+-      my $add_to = ( $additive{$key} ? $self->{properties}{$key}
+-		     : $self->valid_property($key) ? $self->{properties}
+-		     : $self->{args});
++      my $add_to = $additive{$key}             ? $self->{properties}{$key} :
++                   $self->valid_property($key) ? $self->{properties}       :
++                   $self->{args}               ;
+ 
+       if ($additive{$key}) {
+ 	$add_to->{$_} = $val->{$_} foreach keys %$val;
+@@ -1948,15 +2054,25 @@
+   $self->log_info( $self->prereq_report );
+ }
+ 
+-sub prereq_report {
++sub ACTION_prereq_data {
++  my $self = shift;
++  $self->log_info( Module::Build::Dumper->_data_dump( $self->prereq_data ) );
++}
++
++sub prereq_data {
+   my $self = shift;
+   my @types = @{ $self->prereq_action_types };
+-  my $info = { map { $_ => $self->$_() } @types };
++  my $info = { map { $_ => $self->$_() } grep { %{$self->$_()} } @types };
++  return $info;
++}
++
++sub prereq_report {
++  my $self = shift;
++  my $info = $self->prereq_data;
+ 
+   my $output = '';
+-  foreach my $type (@types) {
++  foreach my $type (keys %$info) {
+     my $prereqs = $info->{$type};
+-    next unless %$prereqs;
+     $output .= "\n$type:\n";
+     my $mod_len = 2;
+     my $ver_len = 4;
+@@ -2094,7 +2210,7 @@
+   @types or croak "need some types of tests to check";
+ 
+   my %test_types = (
+-    default => '.t',
++    default => $p->{test_file_exts},
+     (defined($p->{test_types}) ? %{$p->{test_types}} : ()),
+   );
+ 
+@@ -2104,7 +2220,7 @@
+   }
+ 
+   # we use local here because it ends up two method calls deep
+-  local $p->{test_file_exts} = [ @test_types{@types} ];
++  local $p->{test_file_exts} = [ map { ref $_ ? @$_ : $_ } @test_types{@types} ];
+   $self->depends_on('code');
+ 
+   # Protect others against our @INC changes
+@@ -2123,40 +2239,77 @@
+ 
+ sub do_tests {
+   my $self = shift;
+-  my $p = $self->{properties};
+-  require Test::Harness;
+-
+-  # Do everything in our power to work with all versions of Test::Harness
+-  my @harness_switches = $p->{debugger} ? qw(-w -d) : ();
+-  local $Test::Harness::switches    = join ' ', grep defined, $Test::Harness::switches, @harness_switches;
+-  local $Test::Harness::Switches    = join ' ', grep defined, $Test::Harness::Switches, @harness_switches;
+-  local $ENV{HARNESS_PERL_SWITCHES} = join ' ', grep defined, $ENV{HARNESS_PERL_SWITCHES}, @harness_switches;
+-  
+-  $Test::Harness::switches = undef   unless length $Test::Harness::switches;
+-  $Test::Harness::Switches = undef   unless length $Test::Harness::Switches;
+-  delete $ENV{HARNESS_PERL_SWITCHES} unless length $ENV{HARNESS_PERL_SWITCHES};
+-  
+-  local ($Test::Harness::verbose,
+-	 $Test::Harness::Verbose,
+-	 $ENV{TEST_VERBOSE},
+-         $ENV{HARNESS_VERBOSE}) = ($p->{verbose} || 0) x 4;
+ 
+   my $tests = $self->find_test_files;
+ 
+-  if (@$tests) {
++  if(@$tests) {
++    my $args = $self->tap_harness_args;
++    if($self->use_tap_harness or ($args and %$args)) {
++      $self->run_tap_harness($tests);
++    }
++    else {
++      $self->run_test_harness($tests);
++    }
++  }
++  else {
++    $self->log_info("No tests defined.\n");
++  }
++
++  $self->run_visual_script;
++}
++
++sub run_tap_harness {
++  my ($self, $tests) = @_;
++
++  require TAP::Harness;
++
++  # TODO allow the test @INC to be set via our API?
++
++  TAP::Harness->new({
++    lib => [@INC],
++    verbosity => $self->{properties}{verbose},
++    switches  => [ $self->harness_switches ],
++    %{ $self->tap_harness_args },
++  })->runtests(@$tests);
++}
++
++sub run_test_harness {
++    my ($self, $tests) = @_;
++    require Test::Harness;
++    my $p = $self->{properties};
++    my @harness_switches = $self->harness_switches;
++
+     # Work around a Test::Harness bug that loses the particular perl
+     # we're running under.  $self->perl is trustworthy, but $^X isn't.
+     local $^X = $self->perl;
++
++    # Do everything in our power to work with all versions of Test::Harness
++    local $Test::Harness::switches    = join ' ', grep defined, $Test::Harness::switches, @harness_switches;
++    local $Test::Harness::Switches    = join ' ', grep defined, $Test::Harness::Switches, @harness_switches;
++    local $ENV{HARNESS_PERL_SWITCHES} = join ' ', grep defined, $ENV{HARNESS_PERL_SWITCHES}, @harness_switches;
++
++    $Test::Harness::switches = undef   unless length $Test::Harness::switches;
++    $Test::Harness::Switches = undef   unless length $Test::Harness::Switches;
++    delete $ENV{HARNESS_PERL_SWITCHES} unless length $ENV{HARNESS_PERL_SWITCHES};
++
++    local ($Test::Harness::verbose,
++           $Test::Harness::Verbose,
++           $ENV{TEST_VERBOSE},
++           $ENV{HARNESS_VERBOSE}) = ($p->{verbose} || 0) x 4;
++
+     Test::Harness::runtests(@$tests);
+-  } else {
+-    $self->log_info("No tests defined.\n");
+-  }
++}
+ 
+-  # This will get run and the user will see the output.  It doesn't
+-  # emit Test::Harness-style output.
+-  if (-e 'visual.pl') {
+-    $self->run_perl_script('visual.pl', '-Mblib='.$self->blib);
+-  }
++sub run_visual_script {
++    my $self = shift;
++    # This will get run and the user will see the output.  It doesn't
++    # emit Test::Harness-style output.
++    $self->run_perl_script('visual.pl', '-Mblib='.$self->blib)
++        if -e 'visual.pl';
++}
++
++sub harness_switches {
++    shift->{properties}{debugger} ? qw(-w -d) : ();
+ }
+ 
+ sub test_files {
+@@ -2170,7 +2323,7 @@
+ 
+ sub expand_test_dir {
+   my ($self, $dir) = @_;
+-  my $exts = $self->{properties}{test_file_exts} || ['.t'];
++  my $exts = $self->{properties}{test_file_exts};
+ 
+   return sort map { @{$self->rscan_dir($dir, qr{^[^.].*\Q$_\E$})} } @$exts
+     if $self->recursive_test_files;
+@@ -2392,7 +2545,6 @@
+ 
+ sub localize_file_path {
+   my ($self, $path) = @_;
+-  $path =~ s/\.\z// if $self->is_vmsish;
+   return File::Spec->catfile( split m{/}, $path );
+ }
+ 
+@@ -2807,6 +2959,14 @@
+ sub ACTION_fakeinstall {
+   my ($self) = @_;
+   require ExtUtils::Install;
++  my $eui_version = ExtUtils::Install->VERSION;
++  if ( $eui_version < 1.32 ) {
++    $self->log_warn(
++      "The 'fakeinstall' action requires Extutils::Install 1.32 or later.\n"
++      . "(You only have version $eui_version)."
++    );
++    return;
++  }
+   $self->depends_on('build');
+   ExtUtils::Install::install($self->install_map, !$self->quiet, 1, $self->{args}{uninst}||0);
+ }
+@@ -2879,7 +3039,7 @@
+ 	File::Spec->abs2rel( File::Spec->rel2abs( $file ),
+ 			     File::Spec->rel2abs( $dir  ) );
+       my $to_file  =
+-	File::Spec->catdir( $ppm, 'blib',
++	File::Spec->catfile( $ppm, 'blib',
+ 			    exists( $types{$type} ) ? $types{$type} : $type,
+ 			    $rel_file );
+       $self->copy_if_modified( from => $file, to => $to_file );
+@@ -3034,12 +3194,37 @@
+ sub do_create_makefile_pl {
+   my $self = shift;
+   require Module::Build::Compat;
+-  $self->delete_filetree('Makefile.PL');
+   $self->log_info("Creating Makefile.PL\n");
+   Module::Build::Compat->create_makefile_pl($self->create_makefile_pl, $self, @_);
+   $self->_add_to_manifest('MANIFEST', 'Makefile.PL');
+ }
+ 
++sub do_create_license {
++  my $self = shift;
++  $self->log_info("Creating LICENSE file");
++
++  my $l = $self->license
++    or die "No license specified";
++
++  my $key = $self->valid_licenses->{$l}
++    or die "'$l' isn't a license key we know about";
++  my $class = "Software::License::$key";
++
++  eval "use $class; 1"
++    or die "Can't load Software::License to create LICENSE file: $@";
++
++  $self->delete_filetree('LICENSE');
++
++  my $author = join " & ", @{ $self->dist_author };
++  my $license = $class->new({holder => $author});
++  my $fh = IO::File->new('> LICENSE')
++    or die "Can't write LICENSE file: $!";
++  print $fh $license->fulltext;
++  close $fh;
++
++  $self->_add_to_manifest('MANIFEST', 'LICENSE');
++}
++
+ sub do_create_readme {
+   my $self = shift;
+   $self->delete_filetree('README');
+@@ -3179,10 +3364,18 @@
+ \bblibdirs$
+ ^MANIFEST\.SKIP$
+ 
++# Avoid VMS specific Makmaker generated files
++\bDescrip.MMS$
++\bDESCRIP.MMS$
++\bdescrip.mms$
++
+ # Avoid Module::Build generated and utility files.
+ \bBuild$
+ \bBuild.bat$
+ \b_build
++\bBuild.COM$
++\bBUILD.COM$
++\bbuild.com$
+ 
+ # Avoid Devel::Cover generated files
+ \bcover_db
+@@ -3278,13 +3471,39 @@
+ 
+ {
+   my %licenses = (
++    perl         => 'Perl_5',
++    apache       => 'Apache_2_0',
++    artistic     => 'Artistic_1_0',
++    artistic_2   => 'Artistic_2_0',
++    lgpl         => 'LGPL_2_1',
++    lgpl2        => 'LGPL_2_1',
++    lgpl3        => 'LGPL_3_0',
++    bsd          => 'BSD',
++    gpl          => 'GPL_1',
++    gpl2         => 'GPL_2',
++    gpl3         => 'GPL_3',
++    mit          => 'MIT',
++    mozilla      => 'Mozilla_1_1',
++    open_source  => undef,
++    unrestricted => undef,
++    restrictive  => undef,
++    unknown      => undef,
++  );
++
++  # TODO - would be nice to not have these here, since they're more
++  # properly stored only in Software::License
++  my %license_urls = (
+     perl         => 'http://dev.perl.org/licenses/',
+     apache       => 'http://apache.org/licenses/LICENSE-2.0',
+     artistic     => 'http://opensource.org/licenses/artistic-license.php',
+     artistic_2   => 'http://opensource.org/licenses/artistic-license-2.0.php',
+     lgpl         => 'http://opensource.org/licenses/lgpl-license.php',
++    lgpl2        => 'http://opensource.org/licenses/lgpl-2.1.php',
++    lgpl3        => 'http://opensource.org/licenses/lgpl-3.0.html',
+     bsd          => 'http://opensource.org/licenses/bsd-license.php',
+     gpl          => 'http://opensource.org/licenses/gpl-license.php',
++    gpl2         => 'http://opensource.org/licenses/gpl-2.0.php',
++    gpl3         => 'http://opensource.org/licenses/gpl-3.0.html',
+     mit          => 'http://opensource.org/licenses/mit-license.php',
+     mozilla      => 'http://opensource.org/licenses/mozilla1.1.php',
+     open_source  => undef,
+@@ -3295,6 +3514,9 @@
+   sub valid_licenses {
+     return \%licenses;
+   }
++  sub _license_url {
++    return $license_urls{$_[1]};
++  }
+ }
+ 
+ sub _hash_merge {
+@@ -3313,6 +3535,7 @@
+ 
+   $self->do_create_makefile_pl if $self->create_makefile_pl;
+   $self->do_create_readme if $self->create_readme;
++  $self->do_create_license if $self->create_license;
+   $self->do_create_metafile;
+ }
+ 
+@@ -3392,9 +3615,19 @@
+   }
+   $node->{version} = '' . $node->{version}; # Stringify version objects
+ 
+-  if (defined( $self->license ) &&
+-      defined( my $url = $self->valid_licenses->{ $self->license } )) {
+-    $node->{resources}{license} = $url;
++  if (defined( my $l = $self->license )) {
++    die "Unknown license string '$l'"
++      unless exists $self->valid_licenses->{ $self->license };
++
++    if (my $key = $self->valid_licenses->{ $self->license }) {
++      my $class = "Software::License::$key";
++      if (eval "use $class; 1") {
++        # S::L requires a 'holder' key
++        $node->{resources}{license} = $class->new({holder=>"nobody"})->url;
++      } else {
++        $node->{resources}{license} = $self->_license_url($key);
++      }
++    }
+   }
+ 
+   if (exists $p->{configure_requires}) {
+@@ -3627,11 +3860,18 @@
+     $self->do_system($self->split_like_shell($self->{args}{gzip}), "$file.tar") if $self->{args}{gzip};
+   } else {
+     require Archive::Tar;
++
+     # Archive::Tar versions >= 1.09 use the following to enable a compatibility
+     # hack so that the resulting archive is compatible with older clients.
+     $Archive::Tar::DO_NOT_USE_PREFIX = 0;
++
+     my $files = $self->rscan_dir($dir);
+-    Archive::Tar->create_archive("$file.tar.gz", 1, @$files);
++    my $tar   = Archive::Tar->new;
++    $tar->add_files(@$files);
++    for my $f ($tar->get_files) {
++      $f->mode($f->mode & ~022); # chmod go-w
++    }
++    $tar->write("$file.tar.gz", 1);
+   }
+ }
+ 
+@@ -3744,8 +3984,6 @@
+     return $self->_prefixify_default( $type, $rprefix );
+   } elsif( !File::Spec->file_name_is_absolute($path) ) {
+     $self->log_verbose("    path is relative, not prefixifying.\n");
+-  } elsif( $sprefix eq $rprefix ) {
+-    $self->log_verbose("  no new prefix.\n");
+   } elsif( $path !~ s{^\Q$sprefix\E\b}{}s ) {
+     $self->log_verbose("    cannot prefixify, falling back to default.\n");
+     return $self->_prefixify_default( $type, $rprefix );
+@@ -3902,16 +4140,20 @@
+   AutoSplit::autosplit($file, $dir);
+ }
+ 
+-sub _cbuilder {
++sub cbuilder {
+   # Returns a CBuilder object
+ 
+   my $self = shift;
+   my $p = $self->{properties};
+   return $p->{_cbuilder} if $p->{_cbuilder};
+-  return unless $self->_mb_feature('C_support');
++  die "Module::Build is not configured with C_support"
++	  unless $self->_mb_feature('C_support');
+ 
+   require ExtUtils::CBuilder;
+-  return $p->{_cbuilder} = ExtUtils::CBuilder->new(config => $self->config);
++  return $p->{_cbuilder} = ExtUtils::CBuilder->new(
++    config => $self->config,
++    ($self->quiet ? (quiet => 1 ) : ()),
++  );
+ }
+ 
+ sub have_c_compiler {
+@@ -3921,7 +4163,7 @@
+   return $p->{have_compiler} if defined $p->{have_compiler};
+   
+   $self->log_verbose("Checking if compiler tools configured... ");
+-  my $b = $self->_cbuilder;
++  my $b = eval { $self->cbuilder };
+   my $have = $b && $b->have_compiler;
+   $self->log_verbose($have ? "ok.\n" : "failed.\n");
+   return $p->{have_compiler} = $have;
+@@ -3929,8 +4171,7 @@
+ 
+ sub compile_c {
+   my ($self, $file, %args) = @_;
+-  my $b = $self->_cbuilder
+-    or die "Module::Build is not configured with C_support";
++  my $b = $self->cbuilder;
+ 
+   my $obj_file = $b->object_file($file);
+   $self->add_to_cleanup($obj_file);
+@@ -3963,9 +4204,7 @@
+   my $module_name = $self->module_name;
+   $module_name  ||= $spec->{module_name};
+ 
+-  my $b = $self->_cbuilder
+-    or die "Module::Build is not configured with C_support";
+-  $b->link(
++  $self->cbuilder->link(
+     module_name => $module_name,
+     objects     => [$spec->{obj_file}, @$objects],
+     lib_file    => $spec->{lib_file},
+@@ -3993,11 +4232,13 @@
+       or die "Can't find ExtUtils::xsubpp in INC (@INC)";
+     
+     my @typemaps;
+-    push @typemaps, Module::Build::ModuleInfo->find_module_by_name('ExtUtils::typemap', \@INC);
+-    my $lib_typemap = Module::Build::ModuleInfo->find_module_by_name('typemap', ['lib']);
+-    if (defined $lib_typemap and -e $lib_typemap) {
+-      push @typemaps, 'typemap';
+-    }
++    push @typemaps, Module::Build::ModuleInfo->find_module_by_name(
++        'ExtUtils::typemap', \@INC
++    );
++    my $lib_typemap = Module::Build::ModuleInfo->find_module_by_name(
++        'typemap', [File::Basename::dirname($file)]
++    );
++    push @typemaps, $lib_typemap if $lib_typemap;
+     @typemaps = map {+'-typemap', $_} @typemaps;
+ 
+     my $cf = $self->{config};
+@@ -4024,6 +4265,26 @@
+   return Text::ParseWords::shellwords($string);
+ }
+ 
++sub oneliner {
++  # Returns a string that the shell can evaluate as a perl command.
++  # This should be avoided whenever possible, since "the shell" really
++  # means zillions of shells on zillions of platforms and it's really
++  # hard to get it right all the time.
++
++  # Some of this code is stolen with permission from ExtUtils::MakeMaker.
++
++  my($self, $cmd, $switches, $args) = @_;
++  $switches = [] unless defined $switches;
++  $args = [] unless defined $args;
++
++  # Strip leading and trailing newlines
++  $cmd =~ s{^\n+}{};
++  $cmd =~ s{\n+$}{};
++
++  my $perl = ref($self) ? $self->perl : $self->find_perl_interpreter;
++  return $self->_quote_args($perl, @$switches, '-e', $cmd, @$args);
++}
++
+ sub run_perl_script {
+   my ($self, $script, $preargs, $postargs) = @_;
+   foreach ($preargs, $postargs) {
+@@ -4155,12 +4416,15 @@
+ 	     );
+   $args{verbose} = !$self->quiet
+     unless exists $args{verbose};
+-  
++
+   my $file = $args{from};
+   unless (defined $file and length $file) {
+     die "No 'from' parameter given to copy_if_modified";
+   }
+-  
++ 
++  # makes no sense to replicate an absolute path, so assume flatten 
++  $args{flatten} = 1 if File::Spec->file_name_is_absolute( $file );
++
+   my $to_path;
+   if (defined $args{to} and length $args{to}) {
+     $to_path = $args{to};
+@@ -4282,5 +4546,3 @@
+ perl(1), Module::Build(3)
+ 
+ =cut
+-
+-# vim:ts=8:sw=2:et:sta:sts=2
+diff -urN perl-5.10.0.orig/lib/Module/Build/Changes perl-5.10.0/lib/Module/Build/Changes
+--- perl-5.10.0.orig/lib/Module/Build/Changes	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Changes	2009-03-10 16:48:30.000000000 +0100
+@@ -1,5 +1,251 @@
+ Revision history for Perl extension Module::Build.
+ 
++0.32 - Wed Feb 25 17:40:02 PST 2009
++
++ No changes since 0.31_04.
++
++0.31_04 - Fri Feb 20 11:04:59 PST 2009
++
++ Other
++ - Bumped Test::Harness prereq to 3.16 for latest PERL5LIB fixes (solves
++   test failures when installing Module::Build using CPANPLUS::Dist::Build)
++   [David Golden]
++
++0.31_03 - Sun Feb  8 14:54:01 PST 2009
++
++ Enhancements
++ - added a "prereq_data" action that prints a Perl data structure of
++   all prerequisites; can be loaded by external tools using eval()
++   [David Golden]
++
++ Bug-fixes
++ - 'fakeinstall' action warns and skips without ExtUtils::Install 1.32+
++   [David Golden, reported by Zefram]
++ - allows Module::Build version mismatch when installing self; works around
++   limitations in CPANPLUS::Dist::Build [David Golden]
++
++0.31_02 - Tue Jan 27 09:16:43 PST 2009
++
++ Other
++ - tests now use File::Temp (added to build_requires); appears to fix
++   Win32 testing heisenbug on directory removal during high system loads
++ - use_tap_harness.t will skip unless a release version of TAP::Harness
++   is installed
++ - improved diagnostics to ensure_blib() tests in t/lib/MBTest.pm
++
++ Compat
++ - passthrough Makefile.PL will now play nice with cpantesters' on
++   exit(0) (RT#32018) [Eric Wilhelm]
++
++ Bug Fixes
++ - fix for doubling-up of --prefix (RT#19951)
++
++0.31012 - Wed Jan 14 01:36:19 PST 2009
++
++ Bug Fixes
++ - t/tilde.t maybe actually fixed on MSWin32 now.
++
++0.31011 - Mon Jan 12 21:57:04 PST 2009
++
++ Bug Fixes
++ - t/tilde.t had been failing on MSWin32 (RT#42349)
++
++0.3101 - Mon Jan 12 13:52:36 PST 2009
++
++ Other
++ - added 'mirbsd' as a Unix-type OS [BinGOs]
++ - added 'haiku' as a Unix-type OS (backported from bleadperl)
++ - skips certain tests on VMS (backported from bleadperl)
++ - sets $^X to absolute path in tests (backported from bleadperl)
++
++0.31 - Sat Dec 20 15:03:33 2008
++
++ Deprecations
++ - Use of attributes as class methods is deprecated (this was never a
++   documented feature and appears to only have worked accidentally.)
++
++0.30_02 - Mon Dec 15 12:23:55 PST 2008
++
++ Bug Fixes
++ - make Software::License dependency "softer".
++
++0.30_01 - Thu Dec 11 18:25:53 PST 2008
++
++ New Docs
++ - Added a recipe for writing a new action to the Cookbook
++ - Added a recipe for bundling Module::Build to the Cookbook.
++
++ Doc Fixes
++ - Clarified dist_abstract search procedure in API.pod (RT#41056) [Mario
++   Domgoergen]
++
++ Bug Fixes
++ - Workaround HARNESS_TIMER env issue in t/compat.t (RT#39635)
++ - Fix ~ expansion when $HOME is different from /etc/passwd as
++   when running sudo.  [rt.cpan.org 39662]
++ - Fixed a small POD error in the Cookbook. [Damyan Ivanov]
++ - Unset group/other write permission bits when using Archive::Tar to
++   build the dist tarball. (RT#39804) [David Golden]
++
++ Enhancements
++ - We now support a 'create_license' parameter to new() that will
++   create a LICENSE file during the 'dist' phase with the full text of
++   the license.  This requires Software::License on the author's
++   machine.  THIS ALSO STILL NEEDS DOCS.
++ - Added lgpl2/lgpl3 entries to the supported licenses (RT#40532).
++ - Support for validating properties with a check subref. [David
++   Wheeler]
++
++ Test Fixes
++ - Defend against more stray environment variables interfering
++   with the tests.
++
++ Other
++ - Updated our embedded version.pm to 0.76, enhanced documentation on
++   dist_version_from.  [John Peacock]
++
++0.30 - Thu Sep 25 20:57:36 2008
++
++ - First non-beta release since April 2007.  In the meantime, Sarkozy
++   became president of France, the 35W bridge fell in Minneapolis,
++   Phelps won a lot of gold, a new tribe of indigenous people was
++   discovered in the Amazon, and Bob Barker stopped doing The Price Is
++   Right.  As of this moment though, the U.S. economy still hasn't
++   collapsed completely.
++
++0.2808_05 - Thu Sep 18 23:30:39 PDT 2008
++
++ - Skip test in t/ext.t which tickles shellwords() in Text::ParseWords
++   below 3.23 [David Wheeler, Ken]
++
++ - Fixed some shell-quoting issues in do_system() on Windows [Ken,
++   Schwern, reported by Curtis Jewell]
++
++ - Fixed t/xs.t failure for missing 'const char *' typemap in 5.6
++   [Schwern]
++
++ - Added build_requires for Test::More 0.49 and Test::Harness 2.03.
++   Removed bundled Test::More (was not working for 5.005x anyway).
++   [Schwern]
++
++ - Minimum required perl version is now 5.6.1. [Schwern]
++
++0.2808_04 - Thu Sep 11 22:51:27 PDT 2008
++
++ - Backed-out incompatible Module::Build::ModuleInfo change (first in
++   0.2808_02.)
++
++0.2808_03 - Mon Sep  1 14:43:27 PDT 2008
++
++ - Made adjustments for the format changes of recent Test::Harness
++   output. [Nicholas Clark]
++
++ - Fixed the documentation for script_files to indicate that we search
++   bin/ for scripts by default.  It has been this way for several
++   years. [Spotted by Ron Savage]
++
++0.2808_02 - Wed Jul  9 16:45:08 PDT 2008
++
++ - Experimental support for TAP::Harness with --use-tap-harness option
++   and the tap_harness_args property. [David Wheeler & Eric Wilhelm]
++
++ - Added test_file_exts property for main-run tests other than '*.t'.
++   [David Wheeler]
++
++ - Fixed getcwd()/rmtree() failure case on 5.10+mac where something is
++   unhappy about all of the tests deleting their distgen directory
++   before leaving it. [Eric Wilhelm & David Wheeler]
++
++ - Improved support for parsing qv() in modules' $VERSION
++   declarations, and made $VERSION-parsing errors more verbose. [Jos
++   Boumans]
++
++ - Integrated an omnibus patch for various VMS fixes. [Craig Berry &
++   John E. Malmberg]
++
++ - Some versions of Test::Harness (or something) seem to not be
++   stripping the ".t" suffix when outputting test reports, which was
++   causing one of our tests in t/compat.t to fail.  Fixed. [Spotted by
++   a smoke tester]
++
++ - Most Unix platforms seem to allow hyphens in usernames, so we honor
++   this in our de-tilde-fying methods now. [Spotted by s-murata]
++
++ - If there are multiple assignments to the $VERSION variable in
++   someone's module and this generates warnings, tell the user what
++   line number the problem is at.
++
++ - Added 'gnu' and 'gnukfreebsd' as Unix variants. [Niko Tyni]
++
++ - Fixed a couple bugs in how we quote arguments to external processes
++   when they have to pass through the shell.  Also much more
++   thoroughly tested our quoting now.
++
++ - Edited the Module::Build::API docs prose about the 'license' field
++   in response to some comments on the module-authors mailing list.
++
++ - Fixed a typo in some example code in the Cookbook. [Jeremy Leader]
++
++ - Custom typemaps were being looked for in places that don't quite
++   exist; fixed. [Michael G Schwern]
++
++ - QNX/Neutrino is now considered to be Unix. [rt.cpan.org 32214]
++
++ - Added 'gpl2' and 'gpl3' to the list of valid licenses. [Allen
++   Engelhardt]
++
++ - Fixed our Data::Dumper wrapper's sensitivity to users who might set
++   $Data::Dumper::Terse. [Spotted by Dominique Dumont]
++
++ - Documented the fix_shebang_line() method. [Elliot Shank]
++
++ - Applied the 'const' modifier to version() and xs_version() XS
++   functions we use during testing. [Robin Barker]
++
++ - Fixed processing of INC=, POLLUTE=, INSTALLDIRS=, and LIB= for
++   passthrough/small Makefile.PLs.
++
++ - perl Build.PL --sign=1 now signs. [Michael G Schwern]
++
++ - Fixed processing of INSTALLDIRS=whatever for compatibility
++   Makefiles. [Spotted by John Peacock]
++
++ - Zillions of special-cases have been added in Compat.pm for dealing
++   with the special Makefile system on VMS. [John E. Malmberg]
++
++ - Fixed some stuff in how VMS command-args get quoted. [John E. Malmberg]
++
++ - VMS now overrides localize_file_path() and localize_dir_path() so
++   we don't need to do special stuff in the general case. [John
++   E. Malmberg]
++
++ - Added a few more VMS-specific entries to the default MANIFEST.SKIP
++   file that (sometimes) gets created during the 'manifest'
++   action. [John E. Malmberg]
++
++ - Fixed a catdir() that should have been a catfile() when creating a
++   ppmdist. [John E. Malmberg]
++
++ - Removed some assumptions about what makefiles are called (not
++   necessarily "Makefile") and how they take their arguments, to get
++   VMS tests working better. [John E. Malmberg]
++
++ - Fixed our check for Archive::Tar in the t/runthrough.t test, which
++   fixes a common failure on Win32. [Spotted by Chris Williams]
++
++ - Fixed a File::Spec mal-ism in t/destinations.t [Craig A. Berry]
++
++ - Exposed the internal ExtUtils::CBuilder object as part of our API,
++   via the cbuilder() method. [Zefram]
++
++ - Upgraded to version.pm 0.74 (fixes bug #30004.)
++
++ - Overwrite core (post-5.9.4) Module::Build installs (bug #20528.)
++
++ - Pass quiet() option to ExtUtils::CBuilder object.
++
++0.2808_01 - Wed Oct 24 11:51:25 2007
++
+  - All .pm files in the Module-Build distribution (except for
+    M::B::Version.pm, which is kind of tied to version.pm) now have the
+    same $VERSION number explicitly specified.
+@@ -1806,3 +2052,592 @@
+  - Added documentation for 'extra_linker_flags' parameter, and added a
+    corresponding 'extra_compiler_flags' parameter. [original patch by
+    Richard Clamp]
++
++ - The pass-through Makefile created by Module::Build::Compat now
++   supports MakeMaker options like POLLUTE=1 and INC.  We also just
++   warn & skip when we see any unknown MM parameters, rather than
++   dying.  [Dave Rolsky]
++
++ - Fixed an error about how @INC and $ENV{PERL5LIB} interact during
++   the testing of M::B itself. [jk <billy2000@fastmail.fm>]
++
++ - The pass-through Makefile doesn't include 'recommended' M::B
++   dependencies in the Makefile anymore, since they're not strictly
++   necessary.  In particular, this makes installing M::B itself
++   easier.
++
++ - A new 'create_makefile_pl' parameter lets you use
++   Module::Build::Compat during the 'distdir' (or 'dist') action to
++   automatically create a Makefile.PL for compatibility with
++   ExtUtils::MakeMaker.  The parameter's value should be one of the
++   styles named in the Module::Build::Compat documentation.
++
++ - When compiling C code, we now respect 'pollute' and 'inc'
++   parameters. (XXX - needs docs) [Dave Rolsky]
++   
++ - Made the creation of the "install map" more generic.  (XXX - needs
++   documentation)
++
++ - Fixed a problem in which add_to_cleanup() didn't note cleanup files
++   unless create_build_script() had been called already. [Dave Rolsky]
++
++ - During 'Build dist', we no longer have to load each .pm file (via
++   Module::Info) to determine the $VERSION numbers inside.  Instead,
++   we call our internal version_from_file() method, which is the same
++   thing MakeMaker and PAUSE and search.cpan.org do.  Also fixes a
++   failure when Module::Info is installed in a nonstandard directory.
++   [reported by Teun Burgers]
++
++ - Fixed some failing test code on Windows - open files can't be
++   deleted. [Andrew Savige]
++
++ - The Cygwin platform is now treated as a flavor of Unix rather than
++   a flavor of Windows. [chocolateboy]
++
++ - We're now more aggressive about adding temporary C compilation
++   files (*.c, *.bs) to the cleanup list. [Dave Rolsky]
++
++ - When constructing the list in META.yml of packages provided by this
++   distribution, we now use the same rules as the PAUSE scanner does
++   when a single .pm file contains multiple VERSIONs.  [Andreas Koenig]
++
++ - check_installed_status() now works as both a class method and an
++   object method (and is documented so).  [Spotted by Dave Rolsky]
++
++0.18  Tue Apr  8 13:24:23 CDT 2003
++
++ - We now rewrite the shebang lines of scripts ourselves, rather than
++   relying on MakeMaker routines to do it.  MakeMaker changed the way
++   this happened (not the result, but where the code lived) a few
++   times.  [Suggested by Richard Clamp]
++
++ - The scripts() method has changed to script_files(), and likewise
++   the 'scripts' parameter has changed to 'script_files'.  The old
++   names can still be used for backward compatibility.
++
++ - Support for the 'scripts' parameter (which is now 'script_files')
++   was broken in 0.17, now it's fixed.  [Richard Clamp]
++
++ - We now recommend ExtUtils::ParseXS 2.02, which will fail to load
++   with perl 5.005 or earlier (which is proper, because it doesn't
++   work with those versions).  When it fails to load, we still fall
++   back to using the xsubpp script for XS parsing. [spotted by Dave
++   Rolsky, fix suggested by Richard Clamp]
++
++ - Now works on VMS - the Build script's shebang-line-equivalent
++   wasn't being formed correctly there - though just about everything
++   else worked fine.  [Tested & patched by Michael Schwern]
++
++ - Eliminated a warning that occurred if 'perl Build.PL' or the
++   check_installed_status() method was run with -w.  [Spotted by
++   Michael Schwern]
++
++0.17  Sat Mar 29 18:06:01 CST 2003
++
++ - Now works under perl 5.005_03.  [Richard Clamp]
++
++ - When building blib/ , .PL files are now processed before doing
++   anything else.  This means .PL files can be used in any of the
++   other contexts.
++
++ - The locating and processing of .pm, .pod, .xs, .PL files and script
++   files are now isolated into their own methods.  This is aimed
++   toward providing a stable interface for this stuff, so they can be
++   overridden, parameterized, etc.  They're not quite stable yet,
++   though.
++
++ - The internal lib_to_blib() method has gone away, because processing
++   is now done by smaller specialized methods.  This method had some
++   duplicate assumptions about filenames that it's nice to get rid of.
++
++ - .PL files are no longer automatically processed in the c_source
++   directory, they must be specified manually in a 'PL_files'
++   parameter.
++
++ - Mention in the docs that it's useful to do "PL_FILES => {}" in a
++   Makefile.PL if you're using both a Makefile.PL and a
++   Build.PL. [Dom]
++
++ - Add several options to the 'license' field, so that we're in better
++   sync with PAUSE and CPAN options. [Andreas Koenig]
++
++ - Created a find_perl_interpreter() method that tries to locate the
++   currently executing perl interpreter.  Following a suggestion from
++   Nicholas Clark <nick@ccl4.org> for Inline, we prefer an absolute
++   path in $^X, then an existent path in $Config{perlpath}, then
++   whatever's in $^X.
++
++ - Use the aforementioned perl to run scripts in run_perl_script().
++   This fixes the spurious warning "WARNING: Configuration was
++   initially created with 'foo', but we are now using 'bar'" that
++   appeared a lot in version 0.16.
++
++
++0.16  Mon Feb 24 13:06:47 CST 2003
++
++ - All three C compilers that perl supports on Windows environments
++   (MSVC, BCC, and GCC) are now supported by Module::Build.  We now
++   reportedly pass all tests on Windows.  [Randy W. Sims]
++
++ - The test t/xs.t, which tests building of XS modules, will be
++   skipped if no C compiler is found. [suggested by Randy W. Sims]
++
++ - The "install" action accepts new "destdir" [motivated by Michael
++   Schwern and Chip Salzenberg] and "uninst" parameters [by Dave
++   Rolsky].  The former prepends an arbitrary directory to all
++   installation paths (useful for package management), and the latter
++   will tell ExtUtils::Install to remove any differing files that are
++   "shadowing" the stuff you're installing from a different location,
++   just like MakeMaker's "make install UNINST=1" command will do.
++
++ - Made changes to the generated Makefile in Module::Build::Compat
++   that much better support Windows platforms [after suggestions by
++   James Freeman]
++
++ - Added experimental support for creating distribution SIGNATURE
++   files via Module::Signature. [Dave Rolsky]
++
++ - Added experimental support for installing via the "only.pm" module,
++   which allows loading specific versions of modules.  Since this
++   module is so new, the interface may still be changing. [Brian
++   Ingerson]
++
++ - Added support for installing executable scripts, via the 'scripts'
++   parameter to new(), and the scripts() accessor method.
++
++ - Fix an infinite loop that occurred when doing 'perl Build.PL
++   config="foo=bar"'
++
++ - Fix up the formatting of the error message the user gets when
++   prereqs aren't satisfied.
++
++0.15  Fri Jan 17 15:00:24 CST 2003
++
++ - In link_c(), extra object files were mistakenly being treated as
++   output files, not input files, in the up-to-date check.  Fixed.
++
++ - In up_to_date(), don't make an unnecessary copy of the file lists
++   when they're specified as array references.
++
++ - Split off the C compilation phase into its own method,
++   compile_support_files(), for easier subclassing.
++
++ - Start a stub of a 'manifypods' action.
++
++ - Compiler optimizations weren't being included in C compilation
++   statements.  Fixed.
++
++ - The 'extra_linker_flags' parameter wasn't being honored.  Fixed.
++
++ - The 'ccflags' Config.pm entry wasn't being properly split into
++   separate arguments.  Fixed.
++
++
++0.14  Fri Dec 13 14:06:29 AEST 2002
++
++  - Added support for MacPerl (Mac OS version 9 and below), which (as
++    far as I know) was never natively supported by MakeMaker.  Still
++    lacks support for the 'test' action (because Test::Harness
++    requires forking, which MacPerl won't do) and compiling XS/C files
++    (because I don't know how to invoke a compiler on MacOS, and one
++    may not even be available).  This change is brought to you by
++    Michael Schwern and the letter '('.
++
++  - Improved processing of .xs files.  Now we use the new
++    ExtUtils::ParseXS module if it's available, otherwise we use
++    backticks and write the result to a .c file ourselves.  This
++    avoids the need to do cross-platform shell redirection.
++
++  - Make sure all parts of 'Build test' use the not-yet-installed
++    version of Module::Build.  This only affects the tests for this
++    module, not any of the module code itself.  [Spotted by Schwern]
++
++  - Oopsie - use $Config{ld} instead of $Config{cc} for linking.
++
++  - Added a 'diff' action, which is useful for comparing the details
++    of what you're about to install with what is already installed on
++    your system.  This uses File::Compare, which is in the core.
++
++  - Fixed a problem on Windows in which the _build/ directory wasn't
++    getting deleted during the 'realclean' action, because we had a
++    file open in that directory. [Spotted by Michael Schwern]
++
++  - delete_filetree() now always uses File::Path::rmtree(), regardless
++    of whether the thing being deleted is a file or a directory.  This
++    helps remove things on obscure platforms with strange locking
++    rules (or even not so obscure ones like MacOS).  It also now
++    reports the number of files or directories deleted (without
++    recursing directory contents).
++
++  - rm_previous_build_script() is gone, replaced by calls to
++    delete_filetree().
++
++  - 'Build' now chdir()s in a BEGIN block, so the 'use Module::Build'
++    statement will work correctly.  Solves a problem on MacOS, where
++    the 'Build' script may often be invoked from the wrong working
++    directory.  [Fix by Michael Schwern]
++
++  - Internally we now use the multi-argument form of system() to run
++    external commands (such as 'diff' or 'cc') whenever possible (and
++    whenever we can't avoid system() altogether).  Note that this
++    means we have to handle splitting some strings (such as
++    $Config{ccflags}) into argument lists like the shell would, which
++    is a drag.  However, the alternative would be to handle shell
++    quoting of all arguments to commands ourselves, which is an even
++    bigger drag across platforms and involves arbitrary filenames and
++    so on.
++
++  - To handle the argument splitting mentioned above, a method
++    split_like_shell() has been created.  So far it's just doing naive
++    processing.  In practice, I've yet to actually see a %Config entry
++    that uses quotes & spaces, so the splitting task is usually not
++    very error-prone.
++
++  - The 'test' action now takes a 'test_files' parameter, similar to
++    the (undocumented) ExtUtils::MakeMaker TEST_FILES argument.  Handy
++    during development when fixing bugs.
++
++  - Internally, the rscan_dir() method can now accept a predicate
++    function that decides whether a file/directory should be matched.
++
++  - We now issue a warning message when the author hasn't specified a
++    license type.
++
++0.13  Wed Nov 20 20:07:53 AEST 2002
++
++  - 'cleanup' file lists are now written immediately, rather than at
++    program termination.  This helps avoid "phantom files" that don't
++    get handled by the 'realclean' action.  The internal
++    write_cleanup() method (which was never documented) is now gone.
++
++  - The 'blib/' directory is now properly cleaned up in more (all?)
++    circumstances.  Previously it could become a phantom if
++    create_build_script() was never called.
++
++  - Now scan the 'c_source' directory for .cpp (C++) files as well as
++    .c files, and compiles them.
++
++  - Use a 'phony' target for 'make manifest' in the pass-through
++    Makefile, for the same reason as 'make install' (see version 0.12
++    notes below).
++
++  - Module::Build::Compat now accepts any known Config.pm key and
++    passes it through to the Build.PL.  Fixes a problem with CPANPLUS,
++    which was passing INSTALLMAN1DIR.
++
++  - The file 'META.yaml' has been re-named to 'META.yml' in order to
++    cooperate better with systems that can only handle 3 characters
++    after the dot.
++
++  - The t/xs.t test should give more informative error messages upon
++    failure.
++
++0.12  Thu Nov 14 18:31:47 AEST 2002
++
++  - The META.yaml file was erroneously looking for 'build_depends'
++    instead of 'build_requires'. [spotted by Iain Truskett]
++
++  - Add prompt() and y_n() methods for use in Build.PLs
++
++  - Do more to work with all versions of Test::Harness when setting
++    the TEST_VERBOSE flag and running under the debugger [patch by
++    Dave Rolsky]
++
++  - Include a test for verbosity handling
++
++  - Make sure the blib/ directory is always cleaned up with the
++    'clean' or 'realclean' action.
++
++  - In a pass-through Makefile.PL, inform 'make' that 'install' is a
++    "fake target", so that it works properly on case-insensitive
++    filesystems like HFS+ with distributions that contain an INSTALL
++    file. [patch by Brian Ingerson]
++
++  - In Module::Build::Compat, show an example Makefile.PL that can
++    install Module::Build and re-invoke itself in one fell swoop [Dave
++    Rolsky and Autrijus Tang]
++
++  - Improve the formatting of the Module::Build and
++    Module::Build::Compat documentation.
++
++0.11  Fri Aug 23 18:50:46 AEST 2002
++
++  - 'module_version' and 'module_version_from' have been replaced by
++    'dist_version' and 'dist_version_from', which is what they really
++    meant in the first place.  'dist_name' has been added.
++
++  - 'module_name' is now just a way to set 'dist_name' and
++    'dist_version_from' in a convenient way.
++
++  - The 'name' in META.yaml is now the distribution name, not the
++    (incorrect) module name. [spotted by Graham Barr]
++
++  - Added the check_installed_status() and prereq_failures() methods
++    for checking prerequisite information with the programmatic
++    interface
++
++  - check_installed_version() now uses check_installed_status()
++    internally
++
++  - Documented the create_build_script() method, which had escaped
++    documentation.
++
++  - create_build_script() now writes prerequisite information to the
++    _build/ directory, for use by Module::Build::Compat.
++
++  - Module::Build::Compat has documentation for a safer way to write a
++    dummy Makefile.PL. [patch by Autrijus Tang]
++
++0.10  Wed Aug  7 19:36 2002
++  - Recommend YAML 0.35 instead of 0.30.
++
++  - Don't die during 'Build disttest' if YAML isn't installed.  This
++    fixes tests 5-10 in runthrough.t if YAML isn't installed.
++
++  - Die if an unknown license type is used, but still default to
++    'unknown' if no license is specified.
++
++  - Use YAML::DumpFile() if we're using a recent YAML,
++    YAML::StoreFile() otherwise.
++
++  - Show specific error messages in runthrough.t.
++
++  - Add a generated_by entry to the META.yaml file.
++
++  - Skip a few tests if YAML isn't installed.
++
++0.09  Fri Jun 28 11:07:08 EST 2002
++
++  - The 'distdir' action wasn't deleting the distribution directory
++    before building it again.  This meant that, say, if you did 'Build
++    disttest' then 'Build dist', you'd end up with a blib/ directory
++    in your distribution.  I actually had this happen for version
++    0.08, and it's not nice to distribute a blib/ on CPAN.
++
++  - We now keep track of the 'base_dir', i.e. the top-level build
++    directory, so we can change back into it if we change out of it.
++    This necessitated a cwd() method, which uses the Cwd.pm module.
++    I'm aware of Cwd's limitations, particularly under taint-mode, but
++    I don't know a way around using it here.
++
++  - The 'dist_dir' action now changes back into 'base_dir' directory.
++
++  - We now do write_config() inside the create_build_script() method,
++    not inside the new() method.
++
++  - Simplified the find_version() method, and improved its error
++    messages.
++
++  - Renamed module_name_to_file() to find_module_by_name(), and added
++    a parameter specifying the directories to search in.  Previously
++    we searched in 'lib' and @INC, which wasn't correct in all
++    situations. 
++
++  - Patched the docs to change "Build test" to "./Build test"
++    [Elizabeth Mattijsen]
++
++0.08  Wed Jun 26 20:30:56 EST 2002
++
++  - Fixed the 'prereq' alias for the 'requires' parameter
++
++  - Added some tests in t/basic.t to test the dependency checking
++
++  - Added 'artistic' as a licensing option [Arthur Bergman]
++
++  - Fixed some bugs in requires/prereq/recommends/conflicts/build_depends
++
++  - Fixed a typo in the 'distclean' action that prevented its
++    execution [Arthur Bergman]
++
++  - Separated the linking phase of building XS items into its own
++    link_c() method.  Its interface is still unstable, so it's not
++    documented yet. [suggested by Arthur Bergman]
++
++0.07  Jun  9 2002 15:46
++
++  - We now generate a 'META.yaml' metadata file during 'Build dist'.
++    This can be very useful for lots of things, none of which are
++    implemented yet.
++
++  - Added a 'dynamic_config' parameter, defaulting to false.  This
++    lets distribution systems (CPAN.pm, etc.) build, test, and install
++    "easy" modules without having to execute the Build.PL at runtime.
++    It's also a guarantee that the list of dependencies is exactly
++    what is present in the metadata file, and won't be changed during
++    the build process.
++
++  - Added support for "recommended" and "build-time requirement"
++    modules, besides those that are absolutely required.  Also added a
++    "conflicts" field.
++
++  - Changed the 'prereq' field to 'requires' (the old name will
++    continue to work).
++
++  - Added support for checking the installed version of perl as an
++    explicit dependency.
++
++  - Added a 'license' parameter to specify one of a fixed number of
++    licenses for the distribution.
++
++  - Fixed a bug in Module::Build::Compat that was preventing arguments
++    from being processed properly. [patch by Ilya Martynov]
++
++  - Make sure we're in the right directory when we write the cleanup
++    file, since various ExtUtils::Install errors might leave us in an
++    unknown directory. [patch by Ilya Martynov]
++
++  - Specified the 'license', 'recommends', and 'dynamic_config'
++    values in Build.PL, and changed 'prereq' to 'requires'.
++
++0.06  Apr 2 2002 17:44
++
++  - Added the Module::Build::Compat module for assisting and
++    explaining compatibility with ExtUtils::Makemaker and cohorts.
++
++  - State is now saved using Data::Dumper instead of my ad-hoc
++    mechanism, guaranteeing data integrity.  Whitespace values broke
++    in the former scheme.
++
++  - Added the 'recommended' option, which works like 'prereq' but
++    isn't insistent.
++
++  - Separated the various parameters into three groups: parameters
++    that tell Module::Build what to do, Config.pm parameters, and
++    user-defined parameters for each build (the module author is the
++    'user' here).  This helps avoid conflicts between names, and it
++    was silly to have them all together.  The three groups of
++    parameters are subject to the same rules for overriding: values
++    specified during a Build action take precedence over values
++    specified at 'perl Build.PL' time, which in turn take precedence
++    over values specified in the call to new().
++
++  - Improved support for .PL files.  Any .PL file in the lib/
++    directory or the directory specified by 'c_source' will now get
++    properly executed.  I also added a 'PL_files' parameter that you
++    can use in case the .PL doesn't create an obviously-named output
++    file.
++
++  - If a prerequisite condition is malformed, we now report a prereq
++    failure and say why.  Previously we issued a warning and kept
++    going.
++
++
++0.05   10-Jan-2002 20:26
++  - Added the Module::Build->subclass() method, which makes it easier to
++    make quick-and-dirty subclasses of Module::Build.
++
++  - Reorganized the docs a bit.
++
++  - Added the 'testdb' action, and the 'debugger=1' argument to the
++    'test' action, both of which run tests under the perl
++    debugger. (idea: Dave Rolsky)
++
++  - Added prerequisite checking (Dave Rolsky)
++
++  - Fixed an unlikely-to-occur bug with misquoted strings in the
++    'Build' script (spot: Dave Rolsky)
++
++  - We're more careful about shush-ing warnings that
++    ExtUtils::Manifest might emit (Dave Rolsky)
++
++  - The 'help' action now auto-generates the list of actions (Dave Rolsky)
++
++  - Added the 'distcheck', 'skipcheck', 'distclean', 'distdir', and
++    'disttest' actions (Dave Rolsky)
++
++  - We're a little more aggressive about cleaning up temporary files -
++    we'll try to clean them up even when we don't have write permission
++    on them.  This isn't as dastardly as it sounds; if we /really/
++    don't have permission, we won't be able to remove them no matter
++    how hard we try.
++
++0.04   Fri Nov 16 16:55 2001
++  - Added a 'manifest' action.  It's just like MakeMaker's 'make manifest', it
++    brings your MANIFEST file up to date with your distribution directory.
++
++  - Reorganized some of the responsibilities of various methods, which
++    allows modules to be built and tested programmatically.
++
++  - The 'clean' action will now clean up files that were created more
++    recently than the on-disk cleanup registry was written.
++
++  - Undefined values from Config.pm are handled correctly now.
++
++  - The dispatch() method will now accept explicit dispatch
++    parameters, for use in a programmatic setting.
++
++  - $ENV{TEST_VERBOSE} will be set in test scripts if the 'verbose=1'
++    parameter is set.
++
++  - Moved the test.pl script to t/basic.t
++
++  - Created the t/xs.t script, which tests building a module with a
++    .xs component.
++
++  - Fixed the loading of $^O-specific modules (there were no such
++    modules before).
++
++  - Added a 'darwin' platform module, which removes -flat_namespace
++    from $Config{ccflags} while building .xs modules (it's a linker
++    flag, not a compiler flag).
++
++  - Now uses $^W instead of the 'warnings' pragma, which apparently
++    provides compatibility with perl 5.005 (I've only tested it with
++    5.6.x myself).
++
++  - If a file called C<visual.pl> exists in the top-level directory,
++    this file will be executed as a Perl script during 'Build test' and
++    its output will be shown to the user.  This is a good place to put
++    speed tests or other tests that don't use the C<Test::Harness> format
++    for output.
++
++  - The 'Build install' step will now put .xs-related things in the
++    correct architecture-dependent libraries.
++
++  - Added the 'autosplit' option, even though I think autosplitting is
++    a load of hooie.
++
++0.03  Sun Nov 11 14:58 CDT 2001
++  - The 'perl Build.PL' step will now detect whether the current
++    environment is "unixish", "windowsish", etc., and load the correct
++    module (i.e. Module::Build::Platform::Unix).  More specific
++    modules may also be written for particular values of $^O.
++
++  - Module::Build will now process any .xs files in the lib/
++    directory.  Please let me know whether this works or not with your
++    distribution & platform.  I'll be trying out various distributions
++    on my platform.
++
++  - Corrected some embarassing errors in the POD documentation.  Also
++    added a long documentation section on the various build actions
++    (test, install, build, etc.) and added some neato ASCII art.
++
++  - Added a 'cleanup' mechanism - any method may call the
++    $self->add_to_cleanup(@files) method to register files which need
++    to be cleaned up during 'Build clean'.
++
++  - Added a 'Build help' action that gives a little syntax help, and
++    lists all the actions available.
++
++  - Fixed a bug in which 'blib/' wasn't properly being added to @INC
++    when running 'Build test'.
++
++  - For the 'Build dist' action, we'll use the 'tar' and 'gzip'
++    programs (as specified by Config.pm) on Unix platforms, otherwise
++    we'll use Archive::Tar and Compress::Zlib.
++ 
++0.02  Wed Sep  5 00:53:04 CDT 2001
++  - Added POD documentation.
++
++  - Added the 'install', 'fakeinstall', and 'dist' actions.
++
++  - new() will now determine version string based on 'module_version', or
++    'module_version_from', or 'module_name', in that order.
++
++  - Module::Build::Base handles its file paths in a platform-independent
++    way, using the File:: modules
++
++
++0.01  Sun Aug  5 01:23:10 2001
++  - original version; created by h2xs 1.1.1.4 with options -XA -n Module::Build
++
+diff -urN perl-5.10.0.orig/lib/Module/Build/Compat.pm perl-5.10.0/lib/Module/Build/Compat.pm
+--- perl-5.10.0.orig/lib/Module/Build/Compat.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Compat.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ 
+ use File::Spec;
+ use IO::File;
+@@ -11,19 +11,50 @@
+ use Module::Build::ModuleInfo;
+ use Data::Dumper;
+ 
++my %convert_installdirs = (
++    PERL        => 'core',
++    SITE        => 'site',
++    VENDOR      => 'vendor',
++);
++
+ my %makefile_to_build = 
+   (
+    TEST_VERBOSE => 'verbose',
+    VERBINST     => 'verbose',
+-   INC     => sub { map {('--extra_compiler_flags', $_)} Module::Build->split_like_shell(shift) },
+-   POLLUTE => sub { ('--extra_compiler_flags', '-DPERL_POLLUTE') },
+-   INSTALLDIRS => sub {local $_ = shift; 'installdirs=' . (/^perl$/ ? 'core' : $_) },
+-   LIB => sub { ('--install_path', 'lib='.shift()) },
++   INC          => sub { map {(extra_compiler_flags => $_)} Module::Build->split_like_shell(shift) },
++   POLLUTE      => sub { (extra_compiler_flags => '-DPERL_POLLUTE') },
++   INSTALLDIRS  => sub { (installdirs => $convert_installdirs{uc shift()}) },
++   LIB          => sub {
++       my $lib = shift;
++       my %config = (
++           installprivlib  => $lib,
++           installsitelib  => $lib,
++           installarchlib  => "$lib/$Config{archname}",
++           installsitearch => "$lib/$Config{archname}"
++       );
++       return map { (config => "$_=$config{$_}") } keys %config;
++   },
++
++   # Convert INSTALLVENDORLIB and friends.
++   (
++       map {
++           my $name = "INSTALL".$_."LIB";
++           $name => sub {
++                 my @ret = (config => { lc $name => shift });
++                 print STDERR "# Converted to @ret\n";
++
++                 return @ret;
++           }
++       } keys %convert_installdirs
++   ),
+ 
+    # Some names they have in common
+    map {$_, lc($_)} qw(DESTDIR PREFIX INSTALL_BASE UNINST),
+   );
+ 
++my %macro_to_build = %makefile_to_build;
++# "LIB=foo make" is not the same as "perl Makefile.PL LIB=foo"
++delete $macro_to_build{LIB};
+ 
+ 
+ sub create_makefile_pl {
+@@ -37,6 +68,8 @@
+     $fh = $args{fh};
+   } else {
+     $args{file} ||= 'Makefile.PL';
++    local $build->{properties}{quiet} = 1;
++    $build->delete_filetree($args{file});
+     $fh = IO::File->new("> $args{file}") or die "Can't write $args{file}: $!";
+   }
+ 
+@@ -50,7 +83,7 @@
+   }
+ 
+   # If a *bundled* custom subclass is being used, make sure we add its
+-  # directory to @INC.
++  # directory to @INC.  Also, lib.pm always needs paths in Unix format.
+   my $subclass_load = '';
+   if (ref($build) ne "Module::Build") {
+     my $subclass_dir = $package->subclass_dir($build);
+@@ -60,10 +93,13 @@
+ 
+       if ($build->dir_contains($base_dir, $subclass_dir)) {
+ 	$subclass_dir = File::Spec->abs2rel($subclass_dir, $base_dir);
++	$subclass_dir = $package->unixify_dir($subclass_dir);
+         $subclass_load = "use lib '$subclass_dir';";
+       }
++      # Otherwise, leave it the empty string
+ 
+     } else {
++      $subclass_dir = $package->unixify_dir($subclass_dir);
+       $subclass_load = "use lib '$subclass_dir';";
+     }
+   }
+@@ -107,6 +143,7 @@
+     eval "use Module::Build::Compat 0.02; 1" or die $@;
+     %s
+     Module::Build::Compat->run_build_pl(args => \@ARGV);
++    exit(0) unless(-e 'Build'); # cpantesters convention
+     require %s;
+     Module::Build::Compat->write_makefile(build_class => '%s');
+ EOF
+@@ -139,7 +176,7 @@
+     
+     $MM_Args{EXE_FILES} = [ sort keys %{$build->script_files} ] if $build->script_files;
+     
+-    $MM_Args{PL_FILES} = {};
++    $MM_Args{PL_FILES} = $build->PL_files if $build->PL_files;
+     
+     local $Data::Dumper::Terse = 1;
+     my $args = Data::Dumper::Dumper(\%MM_Args);
+@@ -161,8 +198,13 @@
+ 	  || File::Spec->catdir($build->config_dir, 'lib'));
+ }
+ 
++sub unixify_dir {
++  my ($self, $path) = @_;
++  return join '/', File::Spec->splitdir($path);
++}
++
+ sub makefile_to_build_args {
+-  shift;
++  my $class = shift;
+   my @out;
+   foreach my $arg (@_) {
+     next if $arg eq '';
+@@ -171,24 +213,34 @@
+ 		       die "Malformed argument '$arg'");
+ 
+     # Do tilde-expansion if it looks like a tilde prefixed path
+-    ( $val ) = glob( $val ) if $val =~ /^~/;
++    ( $val ) = Module::Build->_detildefy( $val ) if $val =~ /^~/;
+ 
+     if (exists $makefile_to_build{$key}) {
+       my $trans = $makefile_to_build{$key};
+-      push @out, ref($trans) ? $trans->($val) : ("--$trans", $val);
++      push @out, $class->_argvify( ref($trans) ? $trans->($val) : ($trans => $val) );
+     } elsif (exists $Config{lc($key)}) {
+-      push @out, '--config', lc($key) . "=$val";
++      push @out, $class->_argvify( config => lc($key) . "=$val" );
+     } else {
+       # Assume M::B can handle it in lowercase form
+-      push @out, "--\L$key", $val;
++      push @out, $class->_argvify("\L$key" => $val);
+     }
+   }
+   return @out;
+ }
+ 
++sub _argvify {
++  my ($self, @pairs) = @_;
++  my @out;
++  while (@pairs) {
++    my ($k, $v) = splice @pairs, 0, 2;
++    push @out, ("--$k", $v);
++  }
++  return @out;
++}
++
+ sub makefile_to_build_macros {
+   my @out;
+-  while (my ($macro, $trans) = each %makefile_to_build) {
++  while (my ($macro, $trans) = each %macro_to_build) {
+     # On some platforms (e.g. Cygwin with 'make'), the mere presence
+     # of "EXPORT: FOO" in the Makefile will make $ENV{FOO} defined.
+     # Therefore we check length() too.
+@@ -216,18 +268,26 @@
+   my $class = $args{build_class};
+ 
+   my $perl = $class->find_perl_interpreter;
++
++  # VMS MMS/MMK need to use MCR to run the Perl image.
++  $perl = 'MCR ' . $perl if $self->_is_vms_mms;
++
+   my $noop = ($class->is_windowsish ? 'rem>nul'  :
+-	      $class->is_vmsish     ? 'Continue' :
++	      $self->_is_vms_mms    ? 'Continue' :
+ 	      'true');
+-  my $Build = 'Build --makefile_env_macros 1';
+ 
+-  # Start with a couple special actions
++  my $filetype = $class->is_vmsish ? '.COM' : '';
++
++  my $Build = 'Build' . $filetype . ' --makefile_env_macros 1';
++  my $unlink = $class->oneliner('1 while unlink $ARGV[0]', [], [$args{makefile}]);
++  $unlink =~ s/\$/\$\$/g;
++
+   my $maketext = <<"EOF";
+ all : force_do_it
+ 	$perl $Build
+ realclean : force_do_it
+ 	$perl $Build realclean
+-	$perl -e unlink -e shift $args{makefile}
++	$unlink
+ 
+ force_do_it :
+ 	@ $noop
+@@ -241,7 +301,17 @@
+ EOF
+   }
+   
+-  $maketext .= "\n.EXPORT : " . join(' ', keys %makefile_to_build) . "\n\n";
++  if ($self->_is_vms_mms) {
++    # Roll our own .EXPORT as MMS/MMK don't honor that directive.
++    $maketext .= "\n.FIRST\n\t\@ $noop\n"; 
++    for my $macro (keys %macro_to_build) {
++      $maketext .= ".IFDEF $macro\n\tDEFINE $macro \"\$($macro)\"\n.ENDIF\n";
++    }
++    $maketext .= "\n"; 
++  }
++  else {
++    $maketext .= "\n.EXPORT : " . join(' ', keys %macro_to_build) . "\n\n";
++  }
+   
+   return $maketext;
+ }
+@@ -267,13 +337,24 @@
+ 
+ sub write_makefile {
+   my ($pack, %in) = @_;
+-  $in{makefile} ||= 'Makefile';
++
++  unless (exists $in{build_class}) {
++    warn "Unknown 'build_class', defaulting to 'Module::Build'\n";
++    $in{build_class} = 'Module::Build';
++  }
++  my $class = $in{build_class};
++  $in{makefile} ||= $pack->_is_vms_mms ? 'Descrip.MMS' : 'Makefile';
++
+   open  MAKE, "> $in{makefile}" or die "Cannot write $in{makefile}: $!";
+   print MAKE $pack->fake_prereqs;
+   print MAKE $pack->fake_makefile(%in);
+   close MAKE;
+ }
+ 
++sub _is_vms_mms {
++  return Module::Build->is_vmsish && ($Config{make} =~ m/MM[SK]/i);
++}
++
+ 1;
+ __END__
+ 
+diff -urN perl-5.10.0.orig/lib/Module/Build/Config.pm perl-5.10.0/lib/Module/Build/Config.pm
+--- perl-5.10.0.orig/lib/Module/Build/Config.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Config.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ use Config;
+ 
+diff -urN perl-5.10.0.orig/lib/Module/Build/Cookbook.pm perl-5.10.0/lib/Module/Build/Cookbook.pm
+--- perl-5.10.0.orig/lib/Module/Build/Cookbook.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Cookbook.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -1,4 +1,7 @@
+ package Module::Build::Cookbook;
++use strict;
++use vars qw($VERSION);
++$VERSION = '0.32';
+ 
+ 
+ =head1 NAME
+@@ -245,7 +248,7 @@
+ 
+   # Process pod files first
+   my @e = @{$build->build_elements};
+-  my $i = grep {$e[$_] eq 'pod'} 0..$#e;
++  my ($i) = grep {$e[$_] eq 'pod'} 0..$#e;
+   unshift @e, splice @e, $i, 1;
+ 
+ Currently, C<build_elements> has the following default value:
+@@ -392,7 +395,7 @@
+ I'm sure I could not have handled this complexity with EU::MM, but it
+ was very easy to do with M::B.
+ 
+-=back 4
++=back
+ 
+ 
+ =head2 Modifying an action
+@@ -428,6 +431,84 @@
+   )->create_build_script;
+ 
+ 
++=head2 Adding an action
++
++You can add a new C<./Build> action simply by writing the method for
++it in your subclass.  Use C<depends_on> to declare that another action
++must have been run before your action.
++
++For example, let's say you wanted to be able to write C<./Build
++commit> to test your code and commit it to Subversion.
++
++  # Build.PL
++  use Module::Build;
++  my $class = Module::Build->subclass(
++      class => "Module::Build::Custom",
++      code => <<'SUBCLASS' );
++
++  sub ACTION_commit {
++      my $self = shift;
++
++      $self->depends_on("test");
++      $self->do_system(qw(svn commit));
++  }
++  SUBCLASS
++
++
++=head2 Bundling Module::Build
++
++Note: This section probably needs an update as the technology improves
++(see scripts/bundle.pl in the distribution).
++
++Suppose you want to use some new-ish features of Module::Build,
++e.g. newer than the version of Module::Build your users are likely to
++already have installed on their systems.  The first thing you should
++do is set C<configure_requires> to your minimum version of
++Module::Build.  See L<Module::Build::Authoring>.
++
++But not every build system honors C<configure_requires> yet.  Here's
++how you can ship a copy of Module::Build, but still use a newer
++installed version to take advantage of any bug fixes and upgrades.
++
++First, install Module::Build into F<Your-Project/inc/Module-Build>.
++CPAN will not index anything in the F<inc> directory so this copy will
++not show up in CPAN searches.
++
++    cd Module-Build
++    perl Build.PL --install_base /path/to/Your-Project/inc/Module-Build
++    ./Build test
++    ./Build install
++
++You should now have all the Module::Build .pm files in
++F<Your-Project/inc/Module-Build/lib/perl5>.
++
++Next, add this to the top of your F<Build.PL>.
++
++    my $Bundled_MB = 0.30;  # or whatever version it was.
++
++    # Find out what version of Module::Build is installed or fail quietly.
++    # This should be cross-platform.
++    my $Installed_MB = 
++        `$^X -e "eval q{require Module::Build; print Module::Build->VERSION} or exit 1";
++
++    # some operating systems put a newline at the end of every print.
++    chomp $Installed_MB;
++
++    $Installed_MB = 0 if $?;
++
++    # Use our bundled copy of Module::Build if it's newer than the installed.
++    unshift @INC, "inc/Module-Build/lib/perl5" if $Bundled_MB > $Installed_MB;
++
++    require Module::Build;
++
++And write the rest of your F<Build.PL> normally.  Module::Build will
++remember your change to C<@INC> and use it when you run F<./Build>.
++
++In the future, we hope to provide a more automated solution for this
++scenario; see C<inc/latest.pm> in the Module::Build distribution for
++one indication of the direction we're moving.
++
++
+ =head1 AUTHOR
+ 
+ Ken Williams <kwilliams@cpan.org>
+@@ -435,7 +516,7 @@
+ 
+ =head1 COPYRIGHT
+ 
+-Copyright (c) 2001-2006 Ken Williams.  All rights reserved.
++Copyright (c) 2001-2008 Ken Williams.  All rights reserved.
+ 
+ This library is free software; you can redistribute it and/or
+ modify it under the same terms as Perl itself.
+diff -urN perl-5.10.0.orig/lib/Module/Build/Dumper.pm perl-5.10.0/lib/Module/Build/Dumper.pm
+--- perl-5.10.0.orig/lib/Module/Build/Dumper.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Dumper.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -1,4 +1,7 @@
+ package Module::Build::Dumper;
++use strict;
++use vars qw($VERSION);
++$VERSION = '0.32';
+ 
+ # This is just a split-out of a wrapper function to do Data::Dumper
+ # stuff "the right way".  See:
+@@ -9,7 +12,7 @@
+ sub _data_dump {
+   my ($self, $data) = @_;
+   return ("do{ my "
+-	  . Data::Dumper->new([$data],['x'])->Purity(1)->Dump()
++	  . Data::Dumper->new([$data],['x'])->Purity(1)->Terse(0)->Dump()
+ 	  . '$x; }')
+ }
+ 
+diff -urN perl-5.10.0.orig/lib/Module/Build/ModuleInfo.pm perl-5.10.0/lib/Module/Build/ModuleInfo.pm
+--- perl-5.10.0.orig/lib/Module/Build/ModuleInfo.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/ModuleInfo.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -1,3 +1,5 @@
++# -*- mode: cperl; tab-width: 8; indent-tabs-mode: nil; basic-offset: 2 -*-
++# vim:ts=8:sw=2:et:sta:sts=2
+ package Module::Build::ModuleInfo;
+ 
+ # This module provides routines to gather information about
+@@ -6,7 +8,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ 
+ use File::Spec;
+@@ -14,16 +16,16 @@
+ use Module::Build::Version;
+ 
+ 
+-my $PKG_REGEXP  = qr/   # match a package declaration
++my $PKG_REGEXP  = qr{   # match a package declaration
+   ^[\s\{;]*             # intro chars on a line
+   package               # the word 'package'
+   \s+                   # whitespace
+   ([\w:]+)              # a package name
+   \s*                   # optional whitespace
+   ;                     # semicolon line terminator
+-/x;
++}x;
+ 
+-my $VARNAME_REGEXP = qr/ # match fully-qualified VERSION name
++my $VARNAME_REGEXP = qr{ # match fully-qualified VERSION name
+   ([\$*])         # sigil - $ or *
+   (
+     (             # optional leading package name
+@@ -32,9 +34,9 @@
+     )?
+     VERSION
+   )\b
+-/x;
++}x;
+ 
+-my $VERS_REGEXP = qr/ # match a VERSION definition
++my $VERS_REGEXP = qr{ # match a VERSION definition
+   (?:
+     \(\s*$VARNAME_REGEXP\s*\) # with parens
+   |
+@@ -42,43 +44,45 @@
+   )
+   \s*
+   =[^=~]  # = but not ==, nor =~
+-/x;
++}x;
+ 
+ 
+ sub new_from_file {
+-  my $package  = shift;
++  my $class    = shift;
+   my $filename = File::Spec->rel2abs( shift );
++
+   return undef unless defined( $filename ) && -f $filename;
+-  return $package->_init( undef, $filename, @_ );
++  return $class->_init(undef, $filename, @_);
+ }
+ 
+ sub new_from_module {
+-  my $package = shift;
++  my $class   = shift;
+   my $module  = shift;
+   my %props   = @_;
++
+   $props{inc} ||= \@INC;
+-  my $filename = $package->find_module_by_name( $module, $props{inc} );
++  my $filename = $class->find_module_by_name( $module, $props{inc} );
+   return undef unless defined( $filename ) && -f $filename;
+-  return $package->_init( $module, $filename, %props );
++  return $class->_init($module, $filename, %props);
+ }
+ 
+ sub _init {
+-  my $package  = shift;
++  my $class    = shift;
+   my $module   = shift;
+   my $filename = shift;
+-
+   my %props = @_;
++
+   my( %valid_props, @valid_props );
+   @valid_props = qw( collect_pod inc );
+   @valid_props{@valid_props} = delete( @props{@valid_props} );
+   warn "Unknown properties: @{[keys %props]}\n" if scalar( %props );
+ 
+   my %data = (
+-    module   => $module,
+-    filename => $filename,
+-    version  => undef,
+-    packages => [],
+-    versions => {},
++    module       => $module,
++    filename     => $filename,
++    version      => undef,
++    packages     => [],
++    versions     => {},
+     pod          => {},
+     pod_headings => [],
+     collect_pod  => 0,
+@@ -86,20 +90,22 @@
+     %valid_props,
+   );
+ 
+-  my $self = bless( \%data, $package );
++  my $self = bless(\%data, $class);
+ 
+   $self->_parse_file();
+ 
+-  unless ( $self->{module} && length( $self->{module} ) ) {
+-    my( $v, $d, $f ) = File::Spec->splitpath( $self->{filename} );
+-    if ( $f =~ /\.pm$/ ) {
++  unless($self->{module} and length($self->{module})) {
++    my ($v, $d, $f) = File::Spec->splitpath($self->{filename});
++    if($f =~ /\.pm$/) {
+       $f =~ s/\..+$//;
+       my @candidates = grep /$f$/, @{$self->{packages}};
+-      $self->{module} = shift( @candidates ); # punt
+-    } else {
+-      if ( grep /main/, @{$self->{packages}} ) {
+-	$self->{module} = 'main';
+-      } else {
++      $self->{module} = shift(@candidates); # punt
++    }
++    else {
++      if(grep /main/, @{$self->{packages}}) {
++        $self->{module} = 'main';
++      }
++      else {
+         $self->{module} = $self->{packages}[0] || '';
+       }
+     }
+@@ -113,7 +119,7 @@
+ 
+ # class method
+ sub _do_find_module {
+-  my $package = shift;
++  my $class   = shift;
+   my $module  = shift || die 'find_module_by_name() requires a package name';
+   my $dirs    = shift || \@INC;
+ 
+@@ -179,6 +185,7 @@
+   my $pod_data = '';
+ 
+   while (defined( my $line = <$fh> )) {
++    my $line_num = $.;
+ 
+     chomp( $line );
+     next if $line =~ /^\s*#/;
+@@ -233,7 +240,7 @@
+ 	  # that we should watch out for...)
+ 	  warn <<"EOM" unless $line =~ /=\s*eval/;
+ Package '$vers_pkg' already declared with version '$vers{$vers_pkg}',
+-ignoring subsequent declaration.
++ignoring subsequent declaration on line $line_num.
+ EOM
+ 	}
+ 
+@@ -263,7 +270,7 @@
+ 	} else {
+ 	  warn <<"EOM";
+ Package '$pkg' already declared with version '$vers{$pkg}'
+-ignoring new version '$v'.
++ignoring new version '$v' on line $line_num.
+ EOM
+ 	}
+ 
+@@ -283,6 +290,8 @@
+   $self->{pod_headings} = \@pod;
+ }
+ 
++{
++my $pn = 0;
+ sub _evaluate_version_line {
+   my $self = shift;
+   my( $sigil, $var, $line ) = @_;
+@@ -292,8 +301,10 @@
+   # We compile into $vsub because 'use version' would cause
+   # compiletime/runtime issues with local()
+   my $vsub;
++  $pn++; # everybody gets their own package
+   my $eval = qq{BEGIN { q#  Hide from _packages_inside()
+-    #; package Module::Build::ModuleInfo::_version;
++    #; package Module::Build::ModuleInfo::_version::p$pn;
++    use Module::Build::Version;
+     no strict;
+ 
+     local $sigil$var;
+@@ -311,13 +322,16 @@
+     if $@;
+   (ref($vsub) eq 'CODE') or
+     die "failed to build version sub for $self->{filename}";
+-  my $result = $vsub->();
++  my $result = eval { $vsub->() };
++
++  die "Could not get version from $self->{filename} by executing:\n$eval\n\nThe fatal error was: $@\n" if $@;
+ 
+   # Bless it into our own version class
+   $result = Module::Build::Version->new($result);
+ 
+   return $result;
+ }
++}
+ 
+ 
+ ############################################################
+diff -urN perl-5.10.0.orig/lib/Module/Build/Notes.pm perl-5.10.0/lib/Module/Build/Notes.pm
+--- perl-5.10.0.orig/lib/Module/Build/Notes.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Notes.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -4,7 +4,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ use Data::Dumper;
+ use IO::File;
+diff -urN perl-5.10.0.orig/lib/Module/Build/PPMMaker.pm perl-5.10.0/lib/Module/Build/PPMMaker.pm
+--- perl-5.10.0.orig/lib/Module/Build/PPMMaker.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/PPMMaker.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ 
+ # This code is mostly borrowed from ExtUtils::MM_Unix 6.10_03, with a
+diff -urN perl-5.10.0.orig/lib/Module/Build/Platform/Amiga.pm perl-5.10.0/lib/Module/Build/Platform/Amiga.pm
+--- perl-5.10.0.orig/lib/Module/Build/Platform/Amiga.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Platform/Amiga.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ use Module::Build::Base;
+ 
+diff -urN perl-5.10.0.orig/lib/Module/Build/Platform/Default.pm perl-5.10.0/lib/Module/Build/Platform/Default.pm
+--- perl-5.10.0.orig/lib/Module/Build/Platform/Default.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Platform/Default.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ use Module::Build::Base;
+ 
+diff -urN perl-5.10.0.orig/lib/Module/Build/Platform/EBCDIC.pm perl-5.10.0/lib/Module/Build/Platform/EBCDIC.pm
+--- perl-5.10.0.orig/lib/Module/Build/Platform/EBCDIC.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Platform/EBCDIC.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ use Module::Build::Base;
+ 
+diff -urN perl-5.10.0.orig/lib/Module/Build/Platform/MPEiX.pm perl-5.10.0/lib/Module/Build/Platform/MPEiX.pm
+--- perl-5.10.0.orig/lib/Module/Build/Platform/MPEiX.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Platform/MPEiX.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ use Module::Build::Base;
+ 
+diff -urN perl-5.10.0.orig/lib/Module/Build/Platform/MacOS.pm perl-5.10.0/lib/Module/Build/Platform/MacOS.pm
+--- perl-5.10.0.orig/lib/Module/Build/Platform/MacOS.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Platform/MacOS.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ use Module::Build::Base;
+ use vars qw(@ISA);
+diff -urN perl-5.10.0.orig/lib/Module/Build/Platform/RiscOS.pm perl-5.10.0/lib/Module/Build/Platform/RiscOS.pm
+--- perl-5.10.0.orig/lib/Module/Build/Platform/RiscOS.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Platform/RiscOS.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ use Module::Build::Base;
+ 
+diff -urN perl-5.10.0.orig/lib/Module/Build/Platform/Unix.pm perl-5.10.0/lib/Module/Build/Platform/Unix.pm
+--- perl-5.10.0.orig/lib/Module/Build/Platform/Unix.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Platform/Unix.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ use Module::Build::Base;
+ 
+@@ -44,10 +44,10 @@
+ 
+ sub _detildefy {
+   my ($self, $value) = @_;
+-  $value =~ s[^~(\w*)(?=/|$)]   # tilde with optional username
++  $value =~ s[^~(\w[-\w]*)?(?=/|$)]   # tilde with optional username
+     [$1 ?
+      ((getpwnam $1)[7] || "~$1") :
+-     (getpwuid $>)[7]
++     ($ENV{HOME} || (getpwuid $>)[7])
+     ]ex;
+   return $value;
+ }
+diff -urN perl-5.10.0.orig/lib/Module/Build/Platform/VMS.pm perl-5.10.0/lib/Module/Build/Platform/VMS.pm
+--- perl-5.10.0.orig/lib/Module/Build/Platform/VMS.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Platform/VMS.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ use Module::Build::Base;
+ 
+@@ -136,10 +136,15 @@
+                    ? 1 
+                    : 0;
+ 
+-  map { $_ = q(").$_.q(") if !/^\"/ && length($_) > 0 }
+-     ($got_arrayref ? @{$args[0]} 
+-                    : @args
+-     );
++  # Do not quote qualifiers that begin with '/'.
++  map { if (!/^\//) { 
++          $_ =~ s/\"/""/g;     # escape C<"> by doubling
++          $_ = q(").$_.q(");
++        }
++  }
++    ($got_arrayref ? @{$args[0]} 
++                   : @args
++    );
+ 
+   return $got_arrayref ? $args[0] 
+                        : join(' ', @args);
+@@ -357,6 +362,29 @@
+ 
+ sub find_perl_interpreter { return $^X; }
+ 
++=item localize_file_path
++
++Convert the file path to the local syntax
++
++=cut
++
++sub localize_file_path {
++  my ($self, $path) = @_;
++  $path =~ s/\.\z//;
++  return VMS::Filespec::vmsify($path);
++}
++
++=item localize_dir_path
++
++Convert the directory path to the local syntax
++
++=cut
++
++sub localize_dir_path {
++  my ($self, $path) = @_;
++  return VMS::Filespec::vmspath($path);
++}
++
+ =back
+ 
+ =head1 AUTHOR
+diff -urN perl-5.10.0.orig/lib/Module/Build/Platform/VOS.pm perl-5.10.0/lib/Module/Build/Platform/VOS.pm
+--- perl-5.10.0.orig/lib/Module/Build/Platform/VOS.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Platform/VOS.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ use Module::Build::Base;
+ 
+diff -urN perl-5.10.0.orig/lib/Module/Build/Platform/Windows.pm perl-5.10.0/lib/Module/Build/Platform/Windows.pm
+--- perl-5.10.0.orig/lib/Module/Build/Platform/Windows.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Platform/Windows.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ 
+ use Config;
+@@ -175,6 +175,29 @@
+ }
+ 
+ 
++sub _quote_args {
++  # Returns a string that can become [part of] a command line with
++  # proper quoting so that the subprocess sees this same list of args.
++  my ($self, @args) = @_;
++
++  my @quoted;
++
++  for (@args) {
++    if ( /^[^\s*?!\$<>;|'"\[\]\{\}]+$/ ) {
++      # Looks pretty safe
++      push @quoted, $_;
++    } else {
++      # XXX this will obviously have to improve - is there already a
++      # core module lying around that does proper quoting?
++      s/"/\\"/g;
++      push @quoted, qq("$_");
++    }
++  }
++
++  return join " ", @quoted;
++}
++
++
+ sub split_like_shell {
+   # As it turns out, Windows command-parsing is very different from
+   # Unix command-parsing.  Double-quotes mean different things,
+@@ -233,6 +256,23 @@
+   return @argv;
+ }
+ 
++
++# system(@cmd) does not like having double-quotes in it on Windows.
++# So we quote them and run it as a single command.
++sub do_system {
++  my ($self, @cmd) = @_;
++
++  my $cmd = $self->_quote_args(@cmd);
++  my $status = system($cmd);
++  if ($status and $! =~ /Argument list too long/i) {
++    my $env_entries = '';
++    foreach (sort keys %ENV) { $env_entries .= "$_=>".length($ENV{$_})."; " }
++    warn "'Argument list' was 'too long', env lengths are $env_entries";
++  }
++  return !$status;
++}
++
++
+ 1;
+ 
+ __END__
+diff -urN perl-5.10.0.orig/lib/Module/Build/Platform/aix.pm perl-5.10.0/lib/Module/Build/Platform/aix.pm
+--- perl-5.10.0.orig/lib/Module/Build/Platform/aix.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Platform/aix.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ use Module::Build::Platform::Unix;
+ 
+diff -urN perl-5.10.0.orig/lib/Module/Build/Platform/cygwin.pm perl-5.10.0/lib/Module/Build/Platform/cygwin.pm
+--- perl-5.10.0.orig/lib/Module/Build/Platform/cygwin.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Platform/cygwin.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ use Module::Build::Platform::Unix;
+ 
+diff -urN perl-5.10.0.orig/lib/Module/Build/Platform/darwin.pm perl-5.10.0/lib/Module/Build/Platform/darwin.pm
+--- perl-5.10.0.orig/lib/Module/Build/Platform/darwin.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Platform/darwin.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ use Module::Build::Platform::Unix;
+ 
+diff -urN perl-5.10.0.orig/lib/Module/Build/Platform/os2.pm perl-5.10.0/lib/Module/Build/Platform/os2.pm
+--- perl-5.10.0.orig/lib/Module/Build/Platform/os2.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Platform/os2.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ use Module::Build::Platform::Unix;
+ 
+diff -urN perl-5.10.0.orig/lib/Module/Build/PodParser.pm perl-5.10.0/lib/Module/Build/PodParser.pm
+--- perl-5.10.0.orig/lib/Module/Build/PodParser.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/PodParser.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ use vars qw($VERSION);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ use vars qw(@ISA);
+ 
+diff -urN perl-5.10.0.orig/lib/Module/Build/Version.pm perl-5.10.0/lib/Module/Build/Version.pm
+--- perl-5.10.0.orig/lib/Module/Build/Version.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/Version.pm	2009-03-10 16:45:37.000000000 +0100
+@@ -2,7 +2,7 @@
+ use strict;
+ 
+ use vars qw($VERSION);
+-$VERSION = 0.7203;
++$VERSION = 0.74;
+ 
+ eval "use version $VERSION";
+ if ($@) { # can't locate version files, use our own
+@@ -69,13 +69,12 @@
+ 
+ 1;
+ # replace everything from here to the end with the current version/vpp.pm
+-
+ package version::vpp;
+ use strict;
+ 
+ use locale;
+ use vars qw ($VERSION @ISA @REGEXS);
+-$VERSION = 0.7203;
++$VERSION = 0.76;
+ 
+ push @REGEXS, qr/
+ 	^v?	# optional leading 'v'
+@@ -93,6 +92,17 @@
+     'nomethod' => \&vnoop,
+ );
+ 
++my $VERSION_MAX = 0x7FFFFFFF;
++
++eval "use warnings";
++if ($@) {
++    eval '
++	package warnings;
++	sub enabled {return $^W;}
++	1;
++    ';
++}
++
+ sub new
+ {
+ 	my ($class, $value) = @_;
+@@ -145,6 +155,7 @@
+ 	my $alpha = 0;
+ 	my $width = 3;
+ 	my $saw_period = 0;
++	my $vinf = 0;
+ 	my ($start, $last, $pos, $s);
+ 	$s = 0;
+ 
+@@ -163,9 +174,8 @@
+ 	while ( substr($value,$pos,1) =~ /[._\d]/ ) {
+ 	    if ( substr($value,$pos,1) eq '.' ) {
+ 		if ($alpha) {
+-		    require Carp;
+ 		    Carp::croak("Invalid version format ".
+-		    	"(underscores before decimal)");
++		      "(underscores before decimal)");
+ 		}
+ 		$saw_period++;
+ 		$last = $pos;
+@@ -174,7 +184,7 @@
+ 		if ($alpha) {
+ 		    require Carp;
+ 		    Carp::croak("Invalid version format ".
+-		    	"(multiple underscores)");
++			"(multiple underscores)");
+ 		}
+ 		$alpha = 1;
+ 		$width = $pos - $last - 1; # natural width of sub-version
+@@ -184,18 +194,21 @@
+ 
+ 	if ( $alpha && !$saw_period ) {
+ 	    require Carp;
+-	    Carp::croak("Invalid version format (alpha without decimal)");
++	    Carp::croak("Invalid version format ".
++		"(alpha without decimal)");
+ 	}
+ 
+ 	if ( $alpha && $saw_period && $width == 0 ) {
+ 	    require Carp;
+-	    Carp::croak("Invalid version format (misplaced _ in number)");
++	    Carp::croak("Invalid version format ".
++		"(misplaced _ in number)");
+ 	}
+ 
+ 	if ( $saw_period > 1 ) {
+ 	    $qv = 1; # force quoted version processing
+ 	}
+ 
++	$last = $pos;
+ 	$pos = $s;
+ 
+ 	if ( $qv ) {
+@@ -235,9 +248,14 @@
+ 			    $orev = $rev;
+ 			    $rev += substr($value,$s,1) * $mult;
+ 			    $mult /= 10;
+-			    if ( abs($orev) > abs($rev) ) {
+-				require Carp;
+-				Carp::croak("Integer overflow in version");
++			    if (   abs($orev) > abs($rev) 
++				|| abs($rev) > abs($VERSION_MAX) ) {
++				if ( warnings::enabled("overflow") ) {
++				    require Carp;
++				    Carp::carp("Integer overflow in version");
++				}
++				$s = $end - 1;
++				$rev = $VERSION_MAX;
+ 			    }
+ 			    $s++;
+ 			    if ( substr($value,$s,1) eq '_' ) {
+@@ -250,9 +268,14 @@
+ 			    $orev = $rev;
+ 			    $rev += substr($value,$end,1) * $mult;
+ 			    $mult *= 10;
+-			    if ( abs($orev) > abs($rev) ) {
+-				require Carp;
+-				Carp::croak("Integer overflow in version");
++			    if (   abs($orev) > abs($rev) 
++				|| abs($rev) > abs($VERSION_MAX) ) {
++				if ( warnings::enabled("overflow") ) {
++				    require Carp;
++				    Carp::carp("Integer overflow in version");
++				}
++				$end = $s - 1;
++				$rev = $VERSION_MAX;
+ 			    }
+ 			}
+ 		    }
+@@ -300,12 +323,21 @@
+ 	}
+ 
+ 	if ( substr($value,$pos) ) { # any remaining text
+-	    warn "Version string '$value' contains invalid data; ".
+-	         "ignoring: '".substr($value,$pos)."'";
++	    if ( warnings::enabled("misc") ) {
++		require Carp;
++		Carp::carp("Version string '$value' contains invalid data; ".
++		     "ignoring: '".substr($value,$pos)."'");
++	    }
+ 	}
+ 
+ 	# cache the original value for use when stringification
+-	$self->{original} = substr($value,0,$pos);
++	if ( $vinf ) {
++	    $self->{vinf} = 1;
++	    $self->{original} = 'v.Inf';
++	}
++	else {
++	    $self->{original} = substr($value,0,$pos);
++	}
+ 
+ 	return ($self);
+ }
+@@ -394,7 +426,11 @@
+ 	require Carp;
+ 	Carp::croak("Invalid version object");
+     }
+-    return $self->{original};
++    return exists $self->{original} 
++    	? $self->{original} 
++	: exists $self->{qv} 
++	    ? $self->normal
++	    : $self->numify;
+ }
+ 
+ sub vcmp
+@@ -525,7 +561,8 @@
+ # Thanks to Yitzchak Scott-Thoennes for this mode of operation
+ {
+     local $^W;
+-    *UNIVERSAL::VERSION = sub {
++    *UNIVERSAL::VERSION # Module::Build::ModuleInfo doesn't see this now
++      = sub {
+ 	my ($obj, $req) = @_;
+ 	my $class = ref($obj) || $obj;
+ 
+diff -urN perl-5.10.0.orig/lib/Module/Build/scripts/bundle.pl perl-5.10.0/lib/Module/Build/scripts/bundle.pl
+--- perl-5.10.0.orig/lib/Module/Build/scripts/bundle.pl	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/scripts/bundle.pl	2009-03-10 16:45:37.000000000 +0100
+@@ -0,0 +1,53 @@
++#!/usr/bin/perl
++
++# this is just a first crack and it uses File::Fu because I'm lazy.
++
++=head1 using
++
++This installs from a fresh Module::Build to your inc/inc_Module-Build
++directory.  Use it from within your dist:
++
++  perl /path/to/Module-Build/scripts/bundle.pl
++
++You still need to manually add the following to your Build.PL
++
++  use lib 'inc';
++  use latest 'Module::Build';
++
++You also need to regen your manifest.
++
++  perl Build.PL
++  ./Build distmeta; >MANIFEST; ./Build manifest; svn diff MANIFEST
++
++=cut
++
++use warnings;
++use strict;
++
++use File::Fu;
++use File::Copy ();
++
++my $inc_dir = shift(@ARGV);
++$inc_dir = File::Fu->dir($inc_dir || 'inc/inc_Module-Build');
++$inc_dir->create unless($inc_dir->e);
++$inc_dir = $inc_dir->absolutely;
++
++
++my $mb_dir = File::Fu->program_dir->dirname;
++
++$mb_dir->chdir_for(sub {
++  my $temp = File::Fu->temp_dir('mb_bundle');
++  local @INC = @INC;
++  unshift(@INC, 'lib', 'inc');
++  require Module::Build;
++  my $builder = Module::Build->new_from_context;
++  $builder->dispatch(install =>
++    install_base => $temp,
++    install_path => {lib => $inc_dir},
++  );
++});
++
++my $latest = $mb_dir/'inc'+'latest.pm';
++File::Copy::copy($latest, 'inc');
++
++# vim:ts=2:sw=2:et:sta
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/add_property.t perl-5.10.0/lib/Module/Build/t/add_property.t
+--- perl-5.10.0.orig/lib/Module/Build/t/add_property.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/add_property.t	2009-03-10 16:45:37.000000000 +0100
+@@ -0,0 +1,93 @@
++#!/usr/bin/perl -w
++
++use strict;
++use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
++use MBTest tests => 29;
++#use MBTest 'no_plan';
++use DistGen;
++
++BEGIN { use_ok 'Module::Build' or die; }
++ensure_blib 'Module::Build';
++
++my $tmp = MBTest->tmpdir;
++my $dist = DistGen->new( dir => $tmp );
++$dist->regen;
++$dist->chdir_in;
++
++ADDPROP: {
++  package My::Build::Prop;
++  use base 'Module::Build';
++  __PACKAGE__->add_property( 'foo' );
++  __PACKAGE__->add_property( 'bar', 'howdy' );
++  __PACKAGE__->add_property( 'baz', default => 'howdy' );
++  __PACKAGE__->add_property( 'code', default => sub { 'yay' } );
++  __PACKAGE__->add_property(
++    'check',
++    default => sub { 'howdy' },
++    check   => sub {
++      return 1 if $_ eq 'howdy';
++      shift->property_error(qq{"$_" is invalid});
++      return 0;
++    },
++  );
++  __PACKAGE__->add_property(
++    'hash',
++    default => { foo => 1 },
++    check   => sub {
++      return 1 if !defined $_ or exists $_->{foo};
++      shift->property_error(qq{hash is invalid});
++      return 0;
++    },
++  );
++}
++
++ok my $build = My::Build::Prop->new(
++  'module_name' => 'Simple',
++  quiet => 1,
++), 'Create new build object';
++
++is $build->foo, undef, 'Property "foo" should be undef';
++ok $build->foo(42), 'Set "foo"';
++is $build->foo, 42, 'Now "foo" should have new value';
++
++is $build->bar, 'howdy', 'Property "bar" should be its default';
++ok $build->bar('yo'), 'Set "bar"';
++is $build->bar, 'yo', 'Now "bar" should have new value';
++
++is $build->check, 'howdy', 'Property "check" should be its default';
++
++eval { $build->check('yo') };
++ok my $err = $@, 'Should get an error for an invalid value';
++like $err, qr/^ERROR: "yo" is invalid/, 'It should be the correct error';
++
++is $build->code, 'yay', 'Property "code" should have its code value';
++
++is_deeply $build->hash, { foo => 1 }, 'Property "hash" should be default';
++is $build->hash('foo'), 1, 'Should be able to get key in hash';
++ok $build->hash( bar => 3 ), 'Add a key to the hash prop';
++is_deeply $build->hash, { foo => 1, bar => 3 }, 'New key should be in hash';
++
++eval { $build->hash({ bar => 3 }) };
++ok $err = $@, 'Should get exception for assigning invalid hash';
++like $err, qr/^ERROR: hash is invalid/, 'It should be the correct error';
++
++eval { $build->hash( []) };
++ok $err = $@, 'Should get exception for assigning an array for a hash';
++like $err, qr/^Unexpected arguments for property 'hash'/,
++  'It should be the proper error';
++is $build->hash(undef), undef, 'Should be able to set hash to undef';
++
++# Check core properties.
++is $build->installdirs, 'site', 'Property "installdirs" should be default';
++ok $build->installdirs('core'), 'Set "installdirst" to "core"';
++is $build->installdirs, 'core', 'Now "installdirs" should be "core"';
++
++eval { $build->installdirs('perl') };
++ok $err = $@, 'Should have caught exception setting "installdirs" to "perl"';
++like $err, qr/^ERROR: Perhaps you meant installdirs to be "core" rather than "perl"\?/,
++  'And it should suggest "core" in the error message';
++
++eval { $build->installdirs('foo') };
++ok $err = $@, 'Should catch exception for invalid "installdirs" value';
++like $err, qr/ERROR: installdirs must be one of "core", "site", or "vendor"/,
++  'And it should suggest the proper values in the error message';
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/basic.t perl-5.10.0/lib/Module/Build/t/basic.t
+--- perl-5.10.0.orig/lib/Module/Build/t/basic.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/basic.t	2009-03-10 16:45:37.000000000 +0100
+@@ -4,27 +4,20 @@
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+ use MBTest tests => 52;
+ 
+-use Cwd ();
+-my $cwd = Cwd::cwd;
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
++
+ my $tmp = MBTest->tmpdir;
+ 
+ use DistGen;
+ my $dist = DistGen->new( dir => $tmp );
+ $dist->regen;
+ 
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+ #########################
+ 
+ 
+-use_ok 'Module::Build';
+-
+-SKIP: {
+-  skip "no blib in core", 1 if $ENV{PERL_CORE};
+-  like $INC{'Module/Build.pm'}, qr/\bblib\b/, "Make sure Module::Build was loaded from blib/";
+-}
+-
+-
+ # Test object creation
+ {
+   my $mb = Module::Build->new( module_name => $dist->name );
+@@ -112,7 +105,7 @@
+   $mb->add_to_cleanup('save_out');
+   # Use uc() so we don't confuse the current test output
+   like uc(stdout_of( sub {$mb->dispatch('test', verbose => 1)} )), qr/^OK \d/m;
+-  like uc(stdout_of( sub {$mb->dispatch('test', verbose => 0)} )), qr/\.\.OK/;
++  like uc(stdout_of( sub {$mb->dispatch('test', verbose => 0)} )), qr/\.\. ?OK/;
+ 
+   $mb->dispatch('realclean');
+   $dist->clean;
+@@ -170,11 +163,10 @@
+   is $args{foo}, 1;
+ 
+   # revert test distribution to pristine state because we modified a file
+-  chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+   $dist->remove;
+   $dist = DistGen->new( dir => $tmp );
+   $dist->regen;
+-  chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++  $dist->chdir_in;
+ }
+ 
+ # Test author stuff
+@@ -213,8 +205,4 @@
+ 
+ 
+ # cleanup
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+ $dist->remove;
+-
+-use File::Path;
+-rmtree( $tmp );
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/bundled/Tie/CPHash.pm perl-5.10.0/lib/Module/Build/t/bundled/Tie/CPHash.pm
+--- perl-5.10.0.orig/lib/Module/Build/t/bundled/Tie/CPHash.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/bundled/Tie/CPHash.pm	2009-03-10 16:45:37.000000000 +0100
+@@ -5,7 +5,7 @@
+ #
+ # Author: Christopher J. Madsen <cjm@pobox.com>
+ # Created: 08 Nov 1997
+-# $Revision: 5841 $  $Date: 2006-03-21 07:27:29 -0600 (Tue, 21 Mar 2006) $
++# $Revision: 5841 $  $Date: 2006-03-21 05:27:29 -0800 (Tue, 21 Mar 2006) $
+ #
+ # This program is free software; you can redistribute it and/or modify
+ # it under the same terms as Perl itself.
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/compat/exit.t perl-5.10.0/lib/Module/Build/t/compat/exit.t
+--- perl-5.10.0.orig/lib/Module/Build/t/compat/exit.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/compat/exit.t	2009-03-10 16:50:35.000000000 +0100
+@@ -0,0 +1,52 @@
++#!/usr/bin/perl -w
++
++use strict;
++
++use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
++use MBTest tests => 5;
++
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
++
++#########################
++
++my $tmp = MBTest->tmpdir;
++
++# Create test distribution; set requires and build_requires
++use DistGen;
++my $dist = DistGen->new( dir => $tmp );
++
++$dist->regen;
++
++$dist->chdir_in;
++
++#########################
++
++my $mb; stdout_of(sub{ $mb = Module::Build->new_from_context});
++
++use Module::Build::Compat;
++
++$dist->regen;
++
++Module::Build::Compat->create_makefile_pl('passthrough', $mb);
++
++# as silly as all of this exit(0) business is, that is what the cpan
++# testers have instructed everybody to do so...
++$dist->change_file('Build.PL' =>
++  "warn qq(you have no libthbbt\n); exit;\n" . $dist->get_file('Build.PL')
++);
++
++$dist->regen;
++
++stdout_of(sub{ $mb->ACTION_realclean });
++
++my $result;
++my ($stdout, $stderr ) = stdout_stderr_of (sub {
++  $result = $mb->run_perl_script('Makefile.PL');
++});
++ok $result, "Makefile.PL exit";
++like $stdout, qr/running Build\.PL/;
++like $stderr, qr/you have no libthbbt$/;
++#warn "out: $stdout"; warn "err: $stderr";
++
++# vim:ts=2:sw=2:et:sta
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/compat.t perl-5.10.0/lib/Module/Build/t/compat.t
+--- perl-5.10.0.orig/lib/Module/Build/t/compat.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/compat.t	2009-03-10 16:50:35.000000000 +0100
+@@ -13,19 +13,24 @@
+ delete @ENV{@makefile_keys};
+ 
+ my @makefile_types = qw(small passthrough traditional);
+-my $tests_per_type = 14;
+-if ( $Config{make} && find_in_path($Config{make}) ) {
+-    plan tests => 38 + @makefile_types*$tests_per_type*2;
++my $tests_per_type = 15;
++
++#find_in_path does not understand VMS.
++
++if ( $Config{make} && $^O ne 'VMS' ? find_in_path($Config{make}) : 1 ) {
++    plan 'no_plan';
+ } else {
+     plan skip_all => "Don't know how to invoke 'make'";
+ }
+-ok 1, "Loaded";
++
++my $is_vms_mms = ($^O eq 'VMS') && ($Config{make} =~ /MM[SK]/i);
++
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
+ 
+ 
+ #########################
+ 
+-use Cwd ();
+-my $cwd = Cwd::cwd;
+ my $tmp = MBTest->tmpdir;
+ 
+ # Create test distribution; set requires and build_requires
+@@ -33,7 +38,7 @@
+ my $dist = DistGen->new( dir => $tmp );
+ $dist->regen;
+ 
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+ 
+ #########################
+@@ -45,13 +50,21 @@
+ 
+ my @make = $Config{make} eq 'nmake' ? ('nmake', '-nologo') : ($Config{make});
+ 
++my $makefile = 'Makefile';
++
++# VMS MMK/MMS by convention use Descrip.MMS
++if ($is_vms_mms) {
++    $makefile = 'Descrip.MMS';
++}
++
++
+ #########################
+ 
+ # Test without requires
+ 
+ test_makefile_types();
+ 
+-# Test with requires
++# Test with requires and PL_files
+ 
+ my $distname = $dist->name;
+ $dist->change_build_pl({ 
+@@ -64,15 +77,26 @@
+   build_requires      => {
+     'Test::More'  => 0,
+   },
++  PL_files            => { 'foo.PL' => 'foo' },
+ });
+ 
++$dist->add_file("foo.PL", <<'END');
++open my $fh, ">$ARGV[0]" or die $!;
++print $fh "foo\n";
++END
++
+ $dist->regen;
+ 
+-test_makefile_types( requires => {
+-    'perl' => $],
+-    'File::Spec' => 0,
+-    'Test::More' => 0,
+-});
++test_makefile_types(
++    requires => {
++        'perl' => $],
++        'File::Spec' => 0,
++        'Test::More' => 0,
++    },
++    PL_files => {
++        'foo.PL' => 'foo',
++    },
++);
+ 
+ ######################
+ 
+@@ -95,7 +119,8 @@
+   # in older-generated Makefile.PLs
+   my $warning = '';
+   local $SIG{__WARN__} = sub { $warning = shift; };
+-  my $maketext = eval { Module::Build::Compat->fake_makefile(makefile => 'Makefile') };
++
++  my $maketext = eval { Module::Build::Compat->fake_makefile(makefile => $makefile) };
+   is $@, '', "fake_makefile lived";
+   like $maketext, qr/^realclean/m, "found 'realclean' in fake_makefile output";
+   like $warning, qr/build_class/, "saw warning about 'build_class'";
+@@ -142,7 +167,7 @@
+   # Make sure various Makefile.PL arguments are supported
+   Module::Build::Compat->create_makefile_pl('passthrough', $mb);
+ 
+-  my $libdir = File::Spec->catdir( $cwd, 't', 'libdir' );
++  my $libdir = File::Spec->catdir( $tmp, 'libdir' );
+   my $result;
+   stdout_of( sub {
+     $result = $mb->run_perl_script('Makefile.PL', [],
+@@ -171,20 +196,58 @@
+   like $output, qr/(?:# ok \d+\s+)+/, 'Should be verbose';
+ 
+   # Make sure various Makefile arguments are supported
+-  $output = stdout_of( sub { $ran_ok = $mb->do_system(@make, 'test', 'TEST_VERBOSE=0') } );
++  my $make_macro = 'TEST_VERBOSE=0';
++
++  # VMS MMK/MMS macros use different syntax.
++  if ($is_vms_mms) {
++    $make_macro = '/macro=("' . $make_macro . '")';
++  }
++
++  $output = stdout_of( sub {
++    local $ENV{HARNESS_TIMER}; # RT#39635 - timer messes with output
++    $ran_ok = $mb->do_system(@make, 'test', $make_macro)
++  } );
++
+   ok $ran_ok, "make test without verbose ran ok";
+   $output =~ s/^/# /gm;  # Don't confuse our own test output
+-  like $output, qr/(?:# .+basic\.+ok\s+(?:[\d.]+\s*m?s\s*)?)# All tests/,
+-      'Should be non-verbose';
++  like $output,
++       qr/# .+basic(\.t)?[.\s#]+ok[.\s#]+All tests successful/,
++       'Should be non-verbose';
++
++  (my $libdir2 = $libdir) =~ s/libdir/lbiidr/;
++
++  SKIP: {
++    require ExtUtils::Install;
++    skip "Needs ExtUtils::Install 1.32 or later", 2
++      if ExtUtils::Install->VERSION < 1.32;
++
++    my @make_args = ('INSTALLDIRS=vendor', "INSTALLVENDORLIB=$libdir2");
++
++    if ($is_vms_mms) { # VMS MMK/MMS macros use different syntax.
++      $make_args[0] = '/macro=("' . join('","',@make_args) . '")';
++      pop @make_args while scalar(@make_args) > 1;
++    }
++
++    ($output) = stdout_stderr_of(
++      sub {
++        $ran_ok = $mb->do_system(@make, 'fakeinstall', @make_args);
++      }
++    );
+ 
+-  $mb->delete_filetree($libdir);
+-  ok ! -e $libdir, "Sample installation directory should be cleaned up";
++    ok $ran_ok, "make fakeinstall with INSTALLDIRS=vendor ran ok";
++    $output =~ s/^/# /gm;  # Don't confuse our own test output
++    like $output,
++        qr/\Q$libdir2\E .* Simple\.pm/x,
++        'Should have installdirs=vendor';
++  }
+ 
+   stdout_of( sub { $mb->do_system(@make, 'realclean'); } );
+-  ok ! -e 'Makefile', "Makefile shouldn't exist";
++  ok ! -e $makefile, "$makefile shouldn't exist";
+ 
+   1 while unlink 'Makefile.PL';
+   ok ! -e 'Makefile.PL', "Makefile.PL cleaned up";
++
++  1 while unlink $libdir, $libdir2;
+ }
+ 
+ { # Make sure tilde-expansion works
+@@ -202,17 +265,21 @@
+   unlike $b2->install_base, qr/^~/, "Tildes should be expanded";
+   
+   stdout_of( sub { $mb->do_system(@make, 'realclean'); } );
+-  ok ! -e 'Makefile', "Makefile shouldn't exist";
++  ok ! -e $makefile, "$makefile shouldn't exist";
+ 
+   1 while unlink 'Makefile.PL';
+   ok ! -e 'Makefile.PL', "Makefile.PL cleaned up";
+ }
+ 
++# cleanup
++$dist->remove;
++
+ #########################################################
+ 
+ sub test_makefile_types {
+   my %opts = @_;
+   $opts{requires} ||= {};
++  $opts{PL_files} ||= {};
+ 
+   foreach my $type (@makefile_types) {
+     # Create M::B instance 
+@@ -228,6 +295,7 @@
+     test_makefile_pl_requires_perl( $opts{requires}{perl} );
+     test_makefile_creation($mb);
+     test_makefile_prereq_pm( $opts{requires} );
++    test_makefile_pl_files( $opts{PL_files} ) if $type eq 'traditional';
+       
+     my ($output,$success);
+     # Capture output to keep our STDOUT clean
+@@ -236,6 +304,10 @@
+     });
+     ok $success, "make ran without error";
+ 
++    for my $file (values %{ $opts{PL_files} }) {
++        ok -e $file, "PL_files generated - $file";
++    }
++
+     # Can't let 'test' STDOUT go to our STDOUT, or it'll confuse Test::Harness.
+     $output = stdout_of( sub {
+       $success = $mb->do_system(@make, 'test');
+@@ -269,13 +341,13 @@
+     $label .= " (postargs: $postargs)";
+   }
+   ok $result, $label;
+-  ok -e 'Makefile', "Makefile exists";
++  ok -e $makefile, "$makefile exists";
+   
+   if ($cleanup) {
+     $output = stdout_of( sub {
+       $build->do_system(@make, 'realclean');
+     });
+-    ok ! -e 'Makefile', "Makefile cleaned up";
++    ok ! -e '$makefile', "$makefile cleaned up";
+   }
+   else {
+     pass '(skipping cleanup)'; # keep test count constant
+@@ -286,10 +358,21 @@
+   my %requires = %{ $_[0] };
+   delete $requires{perl}; # until EU::MM supports this
+   SKIP: {
+-    skip 'Makefile not found', 1 unless -e 'Makefile';
+-    my $prereq_pm = find_makefile_prereq_pm();
++    skip "$makefile not found", 1 unless -e $makefile;
++    my $prereq_pm = find_params_in_makefile()->{PREREQ_PM} || {};
+     is_deeply $prereq_pm, \%requires,
+-      "Makefile has correct PREREQ_PM line";
++      "$makefile has correct PREREQ_PM line";
++  }
++}
++
++sub test_makefile_pl_files {
++  my $expected = shift;
++
++  SKIP: {
++    skip "$makefile not found", 1 unless -e $makefile;
++    my $pl_files = find_params_in_makefile()->{PL_FILES} || {};
++    is_deeply $pl_files, $expected,
++      "$makefile has correct PL_FILES line";
+   }
+ }
+ 
+@@ -309,37 +392,28 @@
+   }
+ }
+ 
+-# Following subroutine adapted from code in CPAN.pm 
+-# by Andreas Koenig and A. Speer.
+-sub find_makefile_prereq_pm {
+-  my $fh = IO::File->new( 'Makefile', 'r' ) 
+-    or die "Can't read Makefile: $!";
+-  my $req = {};
++sub find_params_in_makefile {
++  my $fh = IO::File->new( $makefile, 'r' ) 
++    or die "Can't read $makefile: $!";
+   local($/) = "\n";
++
++  my %params;
+   while (<$fh>) {
+-    # locate PREREQ_PM
+-    last if /MakeMaker post_initialize section/;
+-    my($p) = m{^[\#]
+-      \s+PREREQ_PM\s+=>\s+(.+)
+-    }x;
+-    next unless $p;
++    # Blank line after params.
++    last if keys %params and !/\S+/;
++
++    next unless m{^\# \s+ ( [A-Z_]+ ) \s+ => \s+ ( .* )$}x;
+ 
+-    # extract modules
+-    while ( $p =~ m/(?:\s)([\w\:]+)=>(q\[.*?\]|undef),?/g ){
++    my($key, $val) = ($1, $2);
++    # extract keys and values
++    while ( $val =~ m/(?:\s)(\S+)=>(q\[.*?\]|undef),?/g ) {
+       my($m,$n) = ($1,$2);
+       if ($n =~ /^q\[(.*?)\]$/) {
+         $n = $1;
+       }
+-      $req->{$m} = $n;
++      $params{$key}{$m} = $n;
+     }
+-    last;
+   }
+-  return $req;
+-}
+ 
+-# cleanup
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+-$dist->remove;
+-
+-use File::Path;
+-rmtree( $tmp );
++  return \%params;
++}
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/destinations.t perl-5.10.0/lib/Module/Build/t/destinations.t
+--- perl-5.10.0.orig/lib/Module/Build/t/destinations.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/destinations.t	2009-03-10 16:45:37.000000000 +0100
+@@ -2,17 +2,18 @@
+ 
+ use strict;
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+-use MBTest tests => 113;
++use MBTest tests => 115;
++
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
+ 
+-use Cwd ();
+-my $cwd = Cwd::cwd;
+ my $tmp = MBTest->tmpdir;
+ 
+ use DistGen;
+ my $dist = DistGen->new( dir => $tmp );
+ $dist->regen;
+ 
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+ 
+ use Config;
+@@ -23,7 +24,6 @@
+ # We need to create a well defined environment to test install paths.
+ # We do this by setting up appropriate Config entries.
+ 
+-use Module::Build;
+ my @installstyle = qw(lib perl5);
+ my $mb = Module::Build->new_from_context(
+   installdirs => 'site',
+@@ -321,8 +321,4 @@
+ }
+ 
+ 
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+ $dist->remove;
+-
+-use File::Path;
+-rmtree( $tmp );
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/ext.t perl-5.10.0/lib/Module/Build/t/ext.t
+--- perl-5.10.0.orig/lib/Module/Build/t/ext.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/ext.t	2009-03-10 16:50:35.000000000 +0100
+@@ -4,10 +4,15 @@
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+ use MBTest;
+ 
++use Module::Build;
++
+ my @unix_splits = 
+   (
+    { q{one t'wo th'ree f"o\"ur " "five" } => [ 'one', 'two three', 'fo"ur ', 'five' ] },
+    { q{ foo bar }                         => [ 'foo', 'bar'                         ] },
++   { q{ D\'oh f\{g\'h\"i\]\* }            => [ "D'oh", "f{g'h\"i]*"                 ] },
++   { q{ D\$foo }                          => [ 'D$foo'                              ] },
++   { qq{one\\\ntwo}                       => [ "one\ntwo"                           ] },  # TODO
+   );
+ 
+ my @win_splits = 
+@@ -53,12 +58,11 @@
+    { 'a " b " c'            => [ 'a', ' b ', 'c' ] },
+ );
+ 
+-plan tests => 10 + 2*@unix_splits + 2*@win_splits;
++plan tests => 10 + 4*@unix_splits + 4*@win_splits;
+ 
+-#########################
++ensure_blib('Module::Build');
+ 
+-use Module::Build;
+-ok(1);
++#########################
+ 
+ # Should always return an array unscathed
+ foreach my $platform ('', '::Platform::Unix', '::Platform::Windows') {
+@@ -68,8 +72,13 @@
+   is "@result", "foo bar baz", "Split using $pkg";
+ }
+ 
++# I think 3.24 isn't actually the majik version, my 3.23 seems to pass...
++my $low_TPW_version = Text::ParseWords->VERSION < 3.24;
+ use Module::Build::Platform::Unix;
+ foreach my $test (@unix_splits) {
++  # Text::ParseWords bug:
++  local $TODO = $low_TPW_version && ((keys %$test)[0] =~ m{\\\n});
++
+   do_split_tests('Module::Build::Platform::Unix', $test);
+ }
+ 
+@@ -94,13 +103,43 @@
+ }
+ 
+ {
++  # Make sure data can make a round-trip through an external perl
++  # process, which can involve the shell command line
++
++  # silence the printing for easier matching
++  local *Module::Build::log_info = sub {};
++
++  my @data = map values(%$_), @unix_splits, @win_splits;
++  for my $d (@data) {
++    my $out = stdout_of
++      ( sub {
++	  Module::Build->run_perl_script('-le', [], ['print join " ", map "{$_}", @ARGV', @$d]);
++	} );
++    chomp $out;
++    is($out, join(' ', map "{$_}", @$d), "perl round trip for ".join('',map "{$_}", @$d));
++  }
++}
++
++{
++  # Make sure data can make a round-trip through an external backtick
++  # process, which can involve the shell command line
++
++  # silence the printing for easier matching
++  local *Module::Build::log_info = sub {};
++
++  my @data = map values(%$_), @unix_splits, @win_splits;
++  for my $d (@data) {
++    chomp(my $out = Module::Build->_backticks('perl', '-le', 'print join " ", map "{$_}", @ARGV', @$d));
++    is($out, join(' ', map "{$_}", @$d), "backticks round trip for ".join('',map "{$_}", @$d));
++  }
++}
++
++{
+   # Make sure run_perl_script() propagates @INC
+-  my $dir = 'whosiewhatzit';
+-  mkdir $dir, 0777;
++  my $dir = MBTest->tmpdir;
+   local @INC = ($dir, @INC);
+-  my $output = stdout_of( sub { Module::Build->run_perl_script('', ['-le', 'print for @INC']) } );
+-  like $output, qr{^$dir}m;
+-  rmdir $dir;
++  my $output = stdout_of( sub { Module::Build->run_perl_script('-le', [], ['print for @INC']) } );
++  like $output, qr{^\Q$dir\E}m;
+ }
+ 
+ ##################################################################
+@@ -112,5 +151,7 @@
+   is( 0 + grep( !defined(), @result ), # all defined
+       0,
+       "'$string' result all defined" );
+-  is_deeply(\@result, $expected);
++  is_deeply(\@result, $expected) or
++    diag("$package split_like_shell error \n" .
++      ">$string< is not splitting as >" . join("|", @$expected) . '<');
+ }
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/extend.t perl-5.10.0/lib/Module/Build/t/extend.t
+--- perl-5.10.0.orig/lib/Module/Build/t/extend.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/extend.t	2009-03-10 16:45:37.000000000 +0100
+@@ -2,23 +2,21 @@
+ 
+ use strict;
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+-use MBTest tests => 65;
++use MBTest tests => 66;
++
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
+ 
+-use Cwd ();
+-my $cwd = Cwd::cwd;
+ my $tmp = MBTest->tmpdir;
+ 
+ use DistGen;
+ my $dist = DistGen->new( dir => $tmp );
+ $dist->regen;
+ 
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+ #########################
+ 
+-use Module::Build;
+-ok 1;
+-
+ # Here we make sure actions are only called once per dispatch()
+ $::x = 0;
+ my $mb = Module::Build->subclass
+@@ -276,8 +274,4 @@
+ }
+ 
+ # cleanup
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+ $dist->remove;
+-
+-use File::Path;
+-rmtree( $tmp );
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/files.t perl-5.10.0/lib/Module/Build/t/files.t
+--- perl-5.10.0.orig/lib/Module/Build/t/files.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/files.t	2009-03-10 16:50:35.000000000 +0100
+@@ -4,49 +4,36 @@
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+ use MBTest tests => 6;
+ 
+-use Cwd ();
+-my $cwd = Cwd::cwd;
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
++
++use IO::File;
+ my $tmp = MBTest->tmpdir;
+ 
+ use DistGen;
+ my $dist = DistGen->new( dir => $tmp );
+ $dist->regen;
+ 
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+-
+-use IO::File;
+-
+-
+-use Module::Build;
+ my $mb = Module::Build->new_from_context;
+-my @files;
+ 
+ {
+   # Make sure copy_if_modified() can handle spaces in filenames
+   
+   my @tmp;
+-  foreach (1..2) {
+-    my $tmp = File::Spec->catdir('t', "tmp$_");
+-    $mb->add_to_cleanup($tmp);
+-    push @files, $tmp;
+-    unless (-d $tmp) {
+-      mkdir($tmp, 0777) or die "Can't create $tmp: $!";
+-    }
+-    ok -d $tmp;
+-    $tmp[$_] = $tmp;
+-  }
++  push @tmp, MBTest->tmpdir for (0 .. 1);
+   
+   my $filename = 'file with spaces.txt';
+   
+-  my $file = File::Spec->catfile($tmp[1], $filename);
++  my $file = File::Spec->catfile($tmp[0], $filename);
+   my $fh = IO::File->new($file, '>') or die "Can't create $file: $!";
+   print $fh "Foo\n";
+   $fh->close;
+   ok -e $file;
+   
+   
+-  my $file2 = $mb->copy_if_modified(from => $file, to_dir => $tmp[2]);
++  my $file2 = $mb->copy_if_modified(from => $file, to_dir => $tmp[1]);
+   ok $file2;
+   ok -e $file2;
+ }
+@@ -60,8 +47,4 @@
+ }
+ 
+ # cleanup
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+ $dist->remove;
+-
+-use File::Path;
+-rmtree( $tmp );
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/help.t perl-5.10.0/lib/Module/Build/t/help.t
+--- perl-5.10.0.orig/lib/Module/Build/t/help.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/help.t	2009-03-10 16:45:37.000000000 +0100
+@@ -2,7 +2,10 @@
+ 
+ use strict;
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+-use MBTest 'no_plan';#tests => 0;
++use MBTest tests => 25;
++
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
+ 
+ use Cwd ();
+ use File::Path ();
+@@ -31,8 +34,6 @@
+ 
+ chdir($dist->dirname) or die "Can't chdir to '@{[$dist->dirname]}': $!";
+ 
+-use_ok 'Module::Build';
+-
+ ########################################################################
+ { # check the =item style
+ my $mb = Module::Build->subclass(
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/install.t perl-5.10.0/lib/Module/Build/t/install.t
+--- perl-5.10.0.orig/lib/Module/Build/t/install.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/install.t	2009-03-10 16:45:37.000000000 +0100
+@@ -2,8 +2,12 @@
+ 
+ use strict;
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+-use MBTest tests => 34;
++use MBTest tests => 36;
+ 
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
++
++use Config;
+ use Cwd ();
+ my $cwd = Cwd::cwd;
+ my $tmp = MBTest->tmpdir;
+@@ -11,14 +15,10 @@
+ use DistGen;
+ my $dist = DistGen->new( dir => $tmp );
+ $dist->regen;
+-
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+ #########################
+ 
+-use Module::Build;
+-use Config;
+-
+ 
+ $dist->add_file( 'script', <<'---' );
+ #!perl -w
+@@ -225,11 +225,10 @@
+   is keys %$pms, 0;
+ 
+   # revert to pristine state
+-  chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+   $dist->remove;
+   $dist = DistGen->new( dir => $tmp );
+   $dist->regen;
+-  chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++  $dist->chdir_in;
+ }
+ 
+ sub strip_volume {
+@@ -246,8 +245,4 @@
+ 
+ 
+ # cleanup
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+ $dist->remove;
+-
+-use File::Path;
+-rmtree( $tmp );
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/lib/DistGen.pm perl-5.10.0/lib/Module/Build/t/lib/DistGen.pm
+--- perl-5.10.0.orig/lib/Module/Build/t/lib/DistGen.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/lib/DistGen.pm	2009-03-10 16:50:35.000000000 +0100
+@@ -8,6 +8,8 @@
+ $VERBOSE = 0;
+ 
+ 
++use Carp;
++
+ use Cwd ();
+ use File::Basename ();
+ use File::Find ();
+@@ -18,11 +20,11 @@
+ use Data::Dumper;
+ 
+ BEGIN {
+-    if( $^O eq 'VMS' ) {
+-        # For things like vmsify()
+-        require VMS::Filespec;
+-        VMS::Filespec->import;
+-    }
++  if( $^O eq 'VMS' ) {
++    # For things like vmsify()
++    require VMS::Filespec;
++    VMS::Filespec->import;
++  }
+ }
+ BEGIN {
+   require Exporter;
+@@ -32,6 +34,16 @@
+   );
+ }
+ 
++sub undent {
++  my ($string) = @_;
++
++  my ($space) = $string =~ m/^(\s+)/;
++  $string =~ s/^$space//gm;
++
++  return($string);
++}
++########################################################################
++
+ sub new {
+   my $package = shift;
+   my %options = @_;
+@@ -46,6 +58,9 @@
+   );
+   my $self = bless( \%data, $package );
+ 
++  # So we can clean up later even if the caller chdir()s
++  $self->{dir} = File::Spec->rel2abs($self->{dir});
++
+   tie %{$self->{filedata}}, 'Tie::CPHash';
+ 
+   tie %{$self->{pending}{change}}, 'Tie::CPHash';
+@@ -60,16 +75,6 @@
+   return $self;
+ }
+ 
+-# not a method
+-sub undent {
+-  my ($string) = @_;
+-
+-  my ($space) = $string =~ m/^(\s+)/;
+-  $string =~ s/^$space//gm;
+-
+-  return($string);
+-}
+-
+ sub _gen_default_filedata {
+   my $self = shift;
+ 
+@@ -180,14 +185,14 @@
+           OUTPUT:
+               RETVAL
+ 
+-      char *
++      const char *
+       xs_version()
+           CODE:
+         RETVAL = XS_VERSION;
+           OUTPUT:
+         RETVAL
+ 
+-      char *
++      const char *
+       version()
+           CODE:
+         RETVAL = VERSION;
+@@ -195,6 +200,11 @@
+         RETVAL
+       ---
+ 
++  # 5.6 is missing const char * in its typemap
++  $self->$add_unless('typemap', undent(<<"      ---"));
++      const char *              T_PV
++      ---
++
+   $self->$add_unless('t/basic.t', undent(<<"    ---"));
+     use Test::More tests => 2;
+     use strict;
+@@ -358,7 +368,11 @@
+ 
+ sub remove {
+   my $self = shift;
+-  File::Path::rmtree( File::Spec->canonpath($self->dirname) );
++  croak("invalid usage -- remove()") if(@_);
++  $self->chdir_original if($self->did_chdir);
++  File::Path::rmtree( $self->dirname );
++  # might as well check
++  croak("\nthis test should have used chdir_in()") unless(Cwd::getcwd);
+ }
+ 
+ sub revert {
+@@ -391,6 +405,12 @@
+     use strict;
+     use Module::Build;
+     my \$b = Module::Build->new(
++    # Some CPANPLUS::Dist::Build versions need to allow mismatches 
++    # On logic: thanks to Module::Install, CPAN.pm must set both keys, but
++    # CPANPLUS sets only the one
++    allow_mb_mismatch => ( 
++      \$ENV{PERL5_CPANPLUS_IS_RUNNING} && ! \$ENV{PERL5_CPAN_IS_RUNNING} ? 1 : 0
++    ),
+     $args
+     );
+     \$b->create_build_script();
+@@ -405,6 +425,38 @@
+   $self->{pending}{change}{$file} = 1;
+ }
+ 
++sub get_file {
++  my $self = shift;
++  my $file = shift;
++  exists($self->{filedata}{$file}) or croak("no such entry: '$file'");
++  return $self->{filedata}{$file};
++}
++
++sub chdir_in {
++  my $self = shift;
++
++  $self->{original_dir} ||= Cwd::cwd; # only once
++  my $dir = $self->dirname;
++  chdir($dir) or die "Can't chdir to '$dir': $!";
++}
++########################################################################
++
++sub did_chdir {
++  my $self = shift;
++
++  return exists($self->{original_dir});
++}
++########################################################################
++
++sub chdir_original {
++  my $self = shift;
++
++  croak("never called chdir_in()") unless($self->{original_dir});
++  my $dir = $self->{original_dir};
++  chdir($dir) or die "Can't chdir to '$dir': $!";
++}
++########################################################################
++
+ 1;
+ 
+ __END__
+@@ -482,6 +534,19 @@
+ If the optional C<clean> argument is given, it also removes any
+ extraneous files that do not belong to the distribution.
+ 
++=head2 chdir_in
++
++Change directory into the dist root.
++
++  $dist->chdir_in;
++
++=head2 chdir_original
++
++Returns to whatever directory you were in before chdir_in() (regardless
++of the cwd.)
++
++  $dist->chdir_original;
++
+ =head3 clean()
+ 
+ Removes any files that are not part of the distribution.
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/lib/MBTest.pm perl-5.10.0/lib/Module/Build/t/lib/MBTest.pm
+--- perl-5.10.0.orig/lib/Module/Build/t/lib/MBTest.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/lib/MBTest.pm	2009-03-10 16:50:35.000000000 +0100
+@@ -3,23 +3,61 @@
+ use strict;
+ 
+ use File::Spec;
++use File::Temp ();
+ use File::Path ();
+ 
++
++# Setup the code to clean out %ENV
++BEGIN {
++    # Environment variables which might effect our testing
++    my @delete_env_keys = qw(
++        DEVEL_COVER_OPTIONS
++        MODULEBUILDRC
++        HARNESS_TIMER
++        HARNESS_OPTIONS
++        HARNESS_VERBOSE
++        PREFIX
++        INSTALL_BASE
++        INSTALLDIRS
++    );
++
++    # Remember the ENV values because on VMS %ENV is global
++    # to the user, not the process.
++    my %restore_env_keys;
++
++    sub clean_env {
++        for my $key (@delete_env_keys) {
++            if( exists $ENV{$key} ) {
++                $restore_env_keys{$key} = delete $ENV{$key};
++            }
++            else {
++                delete $ENV{$key};
++            }
++        }
++    }
++
++    END {
++        while( my($key, $val) = each %restore_env_keys ) {
++            $ENV{$key} = $val;
++        }
++    }
++}
++
++
+ BEGIN {
+-  # Make sure none of our tests load the users ~/.modulebuildrc file
+-  $ENV{MODULEBUILDRC} = 'NONE';
++  clean_env();
+ 
+-  # In case the test wants to use Test::More or our other bundled
+-  # modules, make sure they can be loaded.  They'll still do "use
+-  # Test::More" in the test script.
++  # In case the test wants to use our other bundled
++  # modules, make sure they can be loaded.
+   my $t_lib = File::Spec->catdir('t', 'bundled');
+ 
+   unless ($ENV{PERL_CORE}) {
+     push @INC, $t_lib; # Let user's installed version override
+   } else {
+-    # We change directories, so expand @INC to absolute paths
++    # We change directories, so expand @INC and $^X to absolute paths
+     # Also add .
+     @INC = (map(File::Spec->rel2abs($_), @INC), ".");
++    $^X = File::Spec->rel2abs($^X);
+ 
+     # we are in 't', go up a level so we don't create t/t/_tmp
+     chdir '..' or die "Couldn't chdir to ..";
+@@ -54,22 +92,22 @@
+   find_in_path
+   check_compiler
+   have_module
++  ensure_blib
+ );
+ push @EXPORT, @extra_exports;
+ __PACKAGE__->export(scalar caller, @extra_exports);
+ # XXX ^-- that should really happen in import()
++
++
+ ########################################################################
+ 
+-{ # Setup a temp directory if it doesn't exist
++# always return to the current directory
++{ 
+   my $cwd = Cwd::cwd;
+-  my $tmp = File::Spec->catdir( $cwd, 't', '_tmp' . $$);
+-  mkdir $tmp, 0777 unless -d $tmp;
+ 
+-  sub tmpdir { $tmp }
+   END {
+-    if(-d $tmp) {
+-      File::Path::rmtree($tmp) or warn "cannot clean dir '$tmp'";
+-    }
++    # Go back to where you came from!
++    chdir $cwd or die "Couldn't chdir to $cwd";
+   }
+ }
+ ########################################################################
+@@ -83,6 +121,13 @@
+ }
+ ########################################################################
+ 
++# Setup a temp directory 
++sub tmpdir { 
++  return File::Temp::tempdir( 'MB-XXXXXXXX', 
++    CLEANUP => 1, DIR => File::Spec->tmpdir 
++  );
++}
++
+ sub save_handle {
+   my ($handle, $subr) = @_;
+   my $outfile = temp_file_name();
+@@ -163,5 +208,20 @@
+   return eval "use $module; 1";
+ }
+ 
++sub ensure_blib {
++  # Make sure the given module was loaded from blib/, not the larger system
++  my $mod = shift;
++  (my $path = $mod) =~ s{::}{/}g;
++ 
++  local $Test::Builder::Level = $Test::Builder::Level + 1; 
++ SKIP: {
++    skip "no blib in core", 1 if $ENV{PERL_CORE};
++    like $INC{"$path.pm"}, qr/\bblib\b/, "Make sure $mod was loaded from blib/"
++      or diag "PERL5LIB: " . ($ENV{PERL5LIB} || '') . "\n" .
++              "PERL5OPT: " . ($ENV{PERL5OPT} || '') . "\n" .
++              "\@INC contains:\n  " . join("\n  ", @INC) . "\n"; 
++  }
++}
++
+ 1;
+ # vim:ts=2:sw=2:et:sta
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/manifypods.t perl-5.10.0/lib/Module/Build/t/manifypods.t
+--- perl-5.10.0.orig/lib/Module/Build/t/manifypods.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/manifypods.t	2009-03-10 16:45:37.000000000 +0100
+@@ -7,10 +7,12 @@
+ use Module::Build::ConfigData;
+ 
+ if ( Module::Build::ConfigData->feature('manpage_support') ) {
+-  plan tests => 21;
++  plan tests => 22;
+ } else {
+   plan skip_all => 'manpage_support feature is not enabled';
+ }
++ensure_blib('Module::Build');
++
+ 
+ #########################
+ 
+@@ -55,7 +57,7 @@
+ $dist->regen;
+ 
+ 
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+ use File::Spec::Functions qw( catdir );
+ my $destdir = catdir($cwd, 't', 'install_test' . $$);
+@@ -137,11 +139,10 @@
+ 
+ 
+ # revert to a pristine state
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+ $dist->remove;
+ $dist = DistGen->new( dir => $tmp );
+ $dist->regen;
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+ 
+ my $mb2 = Module::Build->new(
+@@ -164,8 +165,4 @@
+ 
+ 
+ # cleanup
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+ $dist->remove;
+-
+-use File::Path;
+-rmtree( $tmp );
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/mbyaml.t perl-5.10.0/lib/Module/Build/t/mbyaml.t
+--- perl-5.10.0.orig/lib/Module/Build/t/mbyaml.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/mbyaml.t	2009-03-10 16:45:37.000000000 +0100
+@@ -4,12 +4,14 @@
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+ use MBTest 'no_plan';
+ 
++use_ok 'Module::Build::YAML';
++ensure_blib('Module::Build::YAML');
++
+ my ($dir);
+ $dir = ".";
+ $dir = "t" if (-d "t");
+ 
+ {
+-    use_ok("Module::Build::YAML");
+     my ($expected, $got, $var);
+     ##########################################################
+     # Test a typical-looking Module::Build structure (alphabetized)
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/metadata.t perl-5.10.0/lib/Module/Build/t/metadata.t
+--- perl-5.10.0.orig/lib/Module/Build/t/metadata.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/metadata.t	2009-03-10 16:45:37.000000000 +0100
+@@ -2,14 +2,13 @@
+ 
+ use strict;
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+-use MBTest tests => 49;
++use MBTest tests => 51;
+ 
+-use Cwd ();
+-my $cwd = Cwd::cwd;
+-my $tmp = MBTest->tmpdir;
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
+ 
++my $tmp = MBTest->tmpdir;
+ 
+-use Module::Build;
+ use Module::Build::ConfigData;
+ 
+ my %metadata = 
+@@ -45,7 +44,7 @@
+    }
+ 
+ 
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+ use Module::Build;
+ my $mb = Module::Build->new_from_context;
+@@ -582,8 +581,4 @@
+ 
+ ############################################################
+ # cleanup
+-chdir( $cwd ) or die "Can't chdir to '$cwd': $!";
+ $dist->remove;
+-
+-use File::Path;
+-rmtree( $tmp );
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/metadata2.t perl-5.10.0/lib/Module/Build/t/metadata2.t
+--- perl-5.10.0.orig/lib/Module/Build/t/metadata2.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/metadata2.t	2009-03-10 16:45:37.000000000 +0100
+@@ -2,13 +2,13 @@
+ 
+ use strict;
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+-use MBTest tests => 18;
++use MBTest tests => 20;
++
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
+ 
+-use Cwd ();
+-my $cwd = Cwd::cwd;
+ my $tmp = MBTest->tmpdir;
+ 
+-use Module::Build;
+ use Module::Build::ConfigData;
+ use DistGen;
+ 
+@@ -22,7 +22,7 @@
+   my $dist = DistGen->new( dir => $tmp, skip_manifest => 1 );
+   $dist->regen;
+ 
+-  chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++  $dist->chdir_in;
+ 
+   ok ! -e 'MANIFEST';
+ 
+@@ -36,7 +36,6 @@
+ 
+   ok -e 'META.yml';
+ 
+-  chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+   $dist->remove;
+ }
+ 
+@@ -74,7 +73,7 @@
+ });
+ $dist->regen;
+ 
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+ 
+ # .pm File with pod
+@@ -143,8 +142,4 @@
+ 
+ ############################################################
+ # cleanup
+-chdir( $cwd ) or die "Can't chdir to '$cwd': $!";
+ $dist->remove;
+-
+-use File::Path;
+-rmtree( $tmp );
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/moduleinfo.t perl-5.10.0/lib/Module/Build/t/moduleinfo.t
+--- perl-5.10.0.orig/lib/Module/Build/t/moduleinfo.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/moduleinfo.t	2009-03-10 16:45:37.000000000 +0100
+@@ -1,24 +1,24 @@
+ #!/usr/bin/perl -w
++# -*- mode: cperl; tab-width: 8; indent-tabs-mode: nil; basic-offset: 2 -*-
++# vim:ts=8:sw=2:et:sta:sts=2
+ 
+ use strict;
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+-use MBTest tests => 81;
++use MBTest tests => 82;
++
++use_ok 'Module::Build::ModuleInfo';
++ensure_blib('Module::Build::ModuleInfo');
+ 
+-use Cwd ();
+-my $cwd = Cwd::cwd;
+ my $tmp = MBTest->tmpdir;
+ 
+ use DistGen;
+ my $dist = DistGen->new( dir => $tmp );
+ $dist->regen;
+ 
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+ #########################
+ 
+-
+-use_ok( 'Module::Build::ModuleInfo' );
+-
+ # class method C<find_module_by_name>
+ my $module = Module::Build::ModuleInfo->find_module_by_name(
+                'Module::Build::ModuleInfo' );
+@@ -199,11 +199,10 @@
+ }
+ 
+ # revert to pristine state
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+ $dist->remove;
+ $dist = DistGen->new( dir => $tmp );
+ $dist->regen;
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+ 
+ # Find each package only once
+@@ -258,11 +257,10 @@
+ ok( $pm_info->version > 1.23, 'alpha version greater than non');
+ 
+ # revert to pristine state
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+ $dist->remove;
+ $dist = DistGen->new( dir => $tmp );
+ $dist->regen;
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+ 
+ # parse $VERSION lines scripts for package main
+@@ -427,8 +425,4 @@
+ 
+ 
+ # cleanup
+-chdir( $cwd ) or die "Can't chdir to '$cwd': $!";
+ $dist->remove;
+-
+-use File::Path;
+-rmtree( $tmp );
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/new_from_context.t perl-5.10.0/lib/Module/Build/t/new_from_context.t
+--- perl-5.10.0.orig/lib/Module/Build/t/new_from_context.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/new_from_context.t	2009-03-10 16:45:37.000000000 +0100
+@@ -2,10 +2,12 @@
+ 
+ use strict;
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+-use MBTest tests => 2;
++use MBTest tests => 4;
+ 
+-use Cwd ();
+-my $cwd = Cwd::cwd;
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
++
++use IO::File;
+ my $tmp = MBTest->tmpdir;
+ 
+ use DistGen;
+@@ -15,10 +17,8 @@
+ $dist->add_file("$libdir/Build.PL", 'die');
+ $dist->regen;
+ 
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+-use IO::File;
+-use Module::Build;
+ 
+ unshift(@INC, $libdir);
+ my $mb = eval { Module::Build->new_from_context};
+@@ -26,10 +26,6 @@
+ ok($mb);
+ 
+ # cleanup
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+ $dist->remove;
+ 
+-use File::Path;
+-rmtree( $tmp );
+-
+ # vim:ts=2:sw=2:et:sta
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/notes.t perl-5.10.0/lib/Module/Build/t/notes.t
+--- perl-5.10.0.orig/lib/Module/Build/t/notes.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/notes.t	2009-03-10 16:45:37.000000000 +0100
+@@ -2,20 +2,19 @@
+ 
+ use strict;
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+-use MBTest tests => 11;
++use MBTest tests => 13;
++
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
+ 
+-use Cwd ();
+-my $cwd = Cwd::cwd;
+ my $tmp = MBTest->tmpdir;
+ 
+ use DistGen;
+ my $dist = DistGen->new( dir => $tmp );
+ $dist->regen;
+ 
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
+-
++$dist->chdir_in;
+ 
+-use Module::Build;
+ 
+ ###################################
+ $dist->change_file( 'Build.PL', <<"---" );
+@@ -68,8 +67,4 @@
+ 
+ 
+ # cleanup
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+ $dist->remove;
+-
+-use File::Path;
+-rmtree( $tmp );
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/parents.t perl-5.10.0/lib/Module/Build/t/parents.t
+--- perl-5.10.0.orig/lib/Module/Build/t/parents.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/parents.t	2009-03-10 16:45:37.000000000 +0100
+@@ -2,12 +2,12 @@
+ 
+ use strict;
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+-use MBTest tests => 27;
++use MBTest tests => 28;
+ 
+-#########################
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
+ 
+-use Module::Build;
+-ok(1);
++#########################
+ 
+ package Foo;
+ sub foo;
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/pod_parser.t perl-5.10.0/lib/Module/Build/t/pod_parser.t
+--- perl-5.10.0.orig/lib/Module/Build/t/pod_parser.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/pod_parser.t	2009-03-10 16:45:37.000000000 +0100
+@@ -2,15 +2,13 @@
+ 
+ use strict;
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+-use MBTest tests => 7;
++use MBTest tests => 8;
+ 
+-use Cwd ();
+-my $cwd = Cwd::cwd;
++use_ok 'Module::Build::PodParser';
++ensure_blib('Module::Build::PodParser');
+ 
+ #########################
+ 
+-use_ok 'Module::Build::PodParser';
+-
+ {
+   package IO::StringBased;
+   
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/ppm.t perl-5.10.0/lib/Module/Build/t/ppm.t
+--- perl-5.10.0.orig/lib/Module/Build/t/ppm.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/ppm.t	2009-03-10 16:45:37.000000000 +0100
+@@ -3,13 +3,13 @@
+ use strict;
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+ use MBTest;
++
+ use Module::Build;
+ use Module::Build::ConfigData;
+ 
+ my $manpage_support = Module::Build::ConfigData->feature('manpage_support');
+ my $HTML_support = Module::Build::ConfigData->feature('HTML_support');
+ 
+-
+ {
+   my ($have_c_compiler, $C_support_feature) = check_compiler();
+   if (! $C_support_feature) {
+@@ -23,13 +23,12 @@
+   } elsif ( $^O eq 'VMS' ) {
+     plan skip_all => "Needs porting work on VMS";
+   } else {
+-    plan tests => 12;
++    plan tests => 13;
+   }
+ }
++ensure_blib('Module::Build');
+ 
+ 
+-use Cwd ();
+-my $cwd = Cwd::cwd;
+ my $tmp = MBTest->tmpdir;
+ 
+ 
+@@ -60,7 +59,7 @@
+ });
+ $dist->regen;
+ 
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+ use File::Spec::Functions qw(catdir);
+ 
+@@ -183,12 +182,8 @@
+ }
+ 
+ 
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+ $dist->remove;
+ 
+-use File::Path;
+-rmtree( $tmp );
+-
+ 
+ ########################################
+ 
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/runthrough.t perl-5.10.0/lib/Module/Build/t/runthrough.t
+--- perl-5.10.0.orig/lib/Module/Build/t/runthrough.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/runthrough.t	2009-03-10 16:45:37.000000000 +0100
+@@ -3,15 +3,15 @@
+ use strict;
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+ use MBTest tests => 32;
+-use Module::Build;
+-use Module::Build::ConfigData;
+ 
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
++
++use Module::Build::ConfigData;
+ my $have_yaml = Module::Build::ConfigData->feature('YAML_support');
+ 
+ #########################
+ 
+-use Cwd ();
+-my $cwd = Cwd::cwd;
+ my $tmp = MBTest->tmpdir;
+ 
+ use DistGen;
+@@ -55,17 +55,8 @@
+ ---
+ $dist->regen;
+ 
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
+-
+-#########################
++$dist->chdir_in;
+ 
+-use Module::Build;
+-ok(1);
+-
+-SKIP: {
+-  skip "no blib in core", 1 if $ENV{PERL_CORE};
+-  like $INC{'Module/Build.pm'}, qr/\bblib\b/, "Make sure version from blib/ is loaded";
+-}
+ 
+ #########################
+ 
+@@ -149,7 +140,7 @@
+ 
+   SKIP: {
+     skip( "not sure if we can create a tarball on this platform", 1 )
+-      unless $mb->check_installed_status('Archive::Tar', 0) ||
++      unless $mb->check_installed_version('Archive::Tar', 0) ||
+ 	     $mb->isa('Module::Build::Platform::Unix');
+ 
+     $mb->add_to_cleanup($mb->dist_dir . ".tar.gz");
+@@ -206,7 +197,6 @@
+ ok ! -e $mb->config_dir;
+ ok ! -e $mb->dist_dir;
+ 
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+ $dist->remove;
+ 
+ SKIP: {
+@@ -227,7 +217,7 @@
+   $dist->add_file( 'bin/script.bat', $script_data );
+ 
+   $dist->regen;
+-  chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++  $dist->chdir_in;
+ 
+   $mb = Module::Build->new_from_context;
+   ok $mb;
+@@ -241,13 +231,8 @@
+   my $out = slurp( $script_file );
+   is $out, $script_data, '  unmodified by pl2bat';
+ 
+-  chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+   $dist->remove;
+ }
+ 
+ # cleanup
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+ $dist->remove;
+-
+-use File::Path;
+-rmtree( $tmp );
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/script_dist.t perl-5.10.0/lib/Module/Build/t/script_dist.t
+--- perl-5.10.0.orig/lib/Module/Build/t/script_dist.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/script_dist.t	2009-03-10 16:45:37.000000000 +0100
+@@ -0,0 +1,79 @@
++#!/usr/bin/perl -w
++# -*- mode: cperl; tab-width: 8; indent-tabs-mode: nil; basic-offset: 2 -*-
++# vim:ts=8:sw=2:et:sta:sts=2
++
++use strict;
++use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
++use MBTest 'no_plan';
++
++use DistGen qw(undent);
++
++use Module::Build;
++
++# XXX DistGen shouldn't be assuming module-ness?
++my $dist = DistGen->new(dir => MBTest->tmpdir);
++$dist->add_file('bin/foo', undent(<<'  ---'));
++  #!/usr/bin/perl
++  
++  package bin::foo;
++  $VERSION = 0.01;
++
++  =head1 NAME
++
++  foo - does stuff
++
++  =head1 AUTHOR
++
++  A. U. Thor, a.u.thor@a.galaxy.far.far.away
++
++  =cut
++
++  print "hello world\n";
++  ---
++
++my %details = (
++  dist_name => 'bin-foo',
++  dist_version_from => 'bin/foo',
++  dist_author => ['A. U. Thor, a.u.thor@a.galaxy.far.far.away'],
++  dist_version => '0.01',
++);
++my %meta_provides = (
++  'bin-foo' => {
++    file => 'bin/foo',
++    version => '0.01',
++  }
++);
++$dist->change_build_pl({
++  # TODO need to get all of this data out of the program itself
++  ! $ENV{EXTRA_TEST} ? (
++    %details, meta_merge => { provides => \%meta_provides, },
++  ) : (),
++  program_name        => 'bin/foo',
++  license             => 'perl',
++});
++
++# hmm... the old assumption of what a dist looks like is wrong here
++$dist->remove_file('lib/Simple.pm'); $dist->regen;
++
++$dist->chdir_in;
++rmdir('lib');
++
++#system('konsole');
++my $mb = Module::Build->new_from_context;
++ok($mb);
++is($mb->program_name, 'bin/foo');
++is($mb->license, 'perl');
++is($mb->dist_name, 'bin-foo');
++is($mb->dist_version, '0.01');
++is_deeply($mb->dist_author,
++  ['A. U. Thor, a.u.thor@a.galaxy.far.far.away']);
++ok $mb->dispatch('distmeta');
++
++use Module::Build::ConfigData;
++SKIP: {
++  skip( 'YAML_support feature is not enabled', 1 )
++      unless Module::Build::ConfigData->feature('YAML_support');
++  require YAML;
++  my $yml = YAML::LoadFile('META.yml');
++  is_deeply($yml->{provides}, \%meta_provides);
++}
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/test_file_exts.t perl-5.10.0/lib/Module/Build/t/test_file_exts.t
+--- perl-5.10.0.orig/lib/Module/Build/t/test_file_exts.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/test_file_exts.t	2009-03-10 16:45:37.000000000 +0100
+@@ -0,0 +1,45 @@
++#!/usr/bin/perl -w
++
++use strict;
++use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
++use MBTest tests => 5;
++use DistGen;
++
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
++
++my $tmp = MBTest->tmpdir;
++my $dist = DistGen->new( dir => $tmp );
++
++$dist->add_file('t/mytest.s', <<'---' );
++#!perl
++use Test::More tests => 2;
++ok(1, 'first mytest.s');
++ok(1, 'second mytest.s');
++---
++
++$dist->regen;
++$dist->chdir_in;
++
++#########################
++
++# So make sure that the test gets run with the alternate extension.
++ok my $mb = Module::Build->new(
++    module_name    => $dist->name,
++    test_file_exts => ['.s'],
++    quiet          => 1,
++), 'Construct build object with test_file_exts parameter';
++
++$mb->add_to_cleanup('save_out');
++# Use uc() so we don't confuse the current test output
++my $out = uc(stdout_of(
++    sub {$mb->dispatch('test', verbose => 1)}
++));
++
++like $out, qr/^OK 1 - FIRST MYTEST[.]S/m, 'Should see first test output';
++like $out, qr/^OK 2 - SECOND MYTEST[.]S/m, 'Should see second test output';
++
++# Cleanup.
++$dist->remove;
++
++# vim:ts=4:sw=4:et:sta
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/test_type.t perl-5.10.0/lib/Module/Build/t/test_type.t
+--- perl-5.10.0.orig/lib/Module/Build/t/test_type.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/test_type.t	2009-03-10 16:45:37.000000000 +0100
+@@ -9,10 +9,11 @@
+ 
+ use strict;
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+-use MBTest tests => 8;
++use MBTest tests => 9;
++
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
+ 
+-use Cwd ();
+-my $cwd = Cwd::cwd;
+ my $tmp = MBTest->tmpdir;
+ 
+ use DistGen;
+@@ -29,12 +30,10 @@
+ 
+ $dist->regen;
+ 
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+ #########################
+ 
+-use_ok 'Module::Build';
+-
+ # Here we make sure we can define an action that will test a particular type
+ $::x = 0;
+ my $mb = Module::Build->subclass(
+@@ -69,11 +68,10 @@
+ my $output = uc(stdout_of(
+     sub {$mb->dispatch('testspecial', verbose => 0)}
+ ));
+-like($output, qr/\.\.OK/);
++like($output, qr/\.\. ?OK/);
+ 
+ is($::x, 3, "called a third time");
+ 
+-chdir( $cwd ) or die "Can't chdir to '$cwd': $!";
+ $dist->remove;
+ 
+ # vim:ts=4:sw=4:et:sta
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/test_types.t perl-5.10.0/lib/Module/Build/t/test_types.t
+--- perl-5.10.0.orig/lib/Module/Build/t/test_types.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/test_types.t	2009-03-10 16:45:37.000000000 +0100
+@@ -2,10 +2,11 @@
+ 
+ use strict;
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+-use MBTest tests => 14 + 12;
++use MBTest tests => 15 + 12;
++
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
+ 
+-use Cwd ();
+-my $cwd = Cwd::cwd();
+ my $tmp = MBTest->tmpdir;
+ 
+ use DistGen;
+@@ -33,13 +34,9 @@
+ ---
+ 
+ $dist->regen;
+-
+-chdir($dist->dirname) or die "Can't chdir to '@{[$dist->dirname]}': $!";
+-
++$dist->chdir_in;
+ #########################
+ 
+-use_ok 'Module::Build';
+-
+ my $mb = Module::Build->subclass(
+    code => q#
+         sub ACTION_testspecial { 
+@@ -101,7 +98,6 @@
+ is(scalar(@{[$all_output =~ m/OK/mg]}),   8 );
+ is(scalar(@{[$all_output =~ m/ALL TESTS SUCCESSFUL\./mg]}),   1);
+ 
+-chdir($cwd) or die "Can't chdir to '$cwd': $!";
+ $dist->remove;
+ 
+ { # once-again
+@@ -118,8 +114,7 @@
+ ok 1;
+ ---
+ $dist->regen;
+-
+-chdir($dist->dirname) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+ my $mb = Module::Build->subclass(
+    code => q#
+@@ -179,7 +174,6 @@
+ is(scalar(@{[$all_output =~ m/(OK 1)/mg]}), 5 );
+ is(scalar(@{[$all_output =~ m/(OK)/mg]}),   13 );
+ 
+-chdir($cwd) or die "Can't chdir to '$cwd': $!";
+ $dist->remove;
+ } # end once-again
+ 
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/tilde.t perl-5.10.0/lib/Module/Build/t/tilde.t
+--- perl-5.10.0.orig/lib/Module/Build/t/tilde.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/tilde.t	2009-03-10 16:45:37.000000000 +0100
+@@ -4,20 +4,19 @@
+ 
+ use strict;
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+-use MBTest tests => 15;
++use MBTest tests => 18;
++
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
+ 
+-use Cwd ();
+-my $cwd = Cwd::cwd;
+ my $tmp = MBTest->tmpdir;
+ 
+ use DistGen;
+ my $dist = DistGen->new( dir => $tmp );
+ $dist->regen;
+ 
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
+-
++$dist->chdir_in;
+ 
+-use Module::Build;
+ 
+ sub run_sample {
+     my @args = @_;
+@@ -39,10 +38,16 @@
+ 
+ SKIP: {
+     my $home = $ENV{HOME} ? $ENV{HOME} : undef;
+-    skip "Needs case and syntax tweaks for VMS", 14 if $^O eq 'VMS';
++
++    if ($^O eq 'VMS') {
++        # Convert the path to UNIX format, trim off the trailing slash
++        $home = VMS::Filespec::unixify($home);
++        $home =~ s#/$##;
++    }
++
+     unless (defined $home) {
+       my @info = eval { getpwuid $> };
+-      skip "No home directory for tilde-expansion tests", 14 if $@;
++      skip "No home directory for tilde-expansion tests", 15 if $@;
+       $home = $info[7];
+     }
+ 
+@@ -63,6 +68,13 @@
+     is( run_sample( prefix => '~' )->prefix,
+ 	$home );
+ 
++    # Test when HOME is different from getpwuid(), as in sudo.
++    {
++        local $ENV{HOME} = '/wibble/whomp';
++
++        is( run_sample( $p => '~' )->$p(),    "/wibble/whomp" );
++    }
++
+     my $mb = run_sample( install_path => { html => '~/html',
+ 					   lib  => '~/lib'   }
+ 		       );
+@@ -83,18 +95,22 @@
+ 
+ # Again, with named users
+ SKIP: {
+-    skip "Needs case and syntax tweaks for VMS", 1 if $^O eq 'VMS';
+     my @info = eval { getpwuid $> };
+     skip "No home directory for tilde-expansion tests", 1 if $@;
+     my ($me, $home) = @info[0,7];
+     
+-    is( run_sample( $p => "~$me/foo")->$p(),  "$home/foo" );
++    my $expected = "$home/foo";
++
++    if ($^O eq 'VMS') {
++        # Convert the path to UNIX format and trim off the trailing slash
++        $home = VMS::Filespec::unixify($home);
++        $home =~ s#/$##;
++        $expected = $home . '/../[^/]+' . '/foo';
++    }
++
++    like( run_sample( $p => "~$me/foo")->$p(),  qr($expected)i );
+ }
+ 
+ 
+ # cleanup
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+ $dist->remove;
+-
+-use File::Path;
+-rmtree( $tmp );
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/use_tap_harness.t perl-5.10.0/lib/Module/Build/t/use_tap_harness.t
+--- perl-5.10.0.orig/lib/Module/Build/t/use_tap_harness.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/use_tap_harness.t	2009-03-10 16:50:35.000000000 +0100
+@@ -0,0 +1,61 @@
++#!/usr/bin/perl -w
++
++use strict;
++use Test::More;
++use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
++if (eval { require TAP::Harness } && TAP::Harness->VERSION >= 3) {
++    plan tests => 8;
++} else {
++    plan skip_all => 'TAP::Harness 3+ not installed'
++}
++
++use MBTest;
++use DistGen;
++
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
++my $tmp = MBTest->tmpdir;
++my $dist = DistGen->new( dir => $tmp );
++$dist->regen;
++
++$dist->chdir_in;
++#########################
++
++# Make sure that TAP::Harness properly does its thing.
++ok my $mb = Module::Build->new(
++    module_name     => $dist->name,
++    use_tap_harness => 1,
++    quiet           => 1,
++), 'Construct build object with test_file_exts parameter';
++
++$mb->add_to_cleanup('save_out');
++# Use uc() so we don't confuse the current test output
++my $out = uc(stdout_of(
++    sub {$mb->dispatch('test', verbose => 1)}
++));
++
++like $out, qr/^OK 1/m, 'Should see first test output';
++like $out, qr/^ALL TESTS SUCCESSFUL/m, 'Should see test success message';
++
++#########################
++
++# Make sure that arguments are passed through to TAP::Harness.
++ok $mb = Module::Build->new(
++    module_name     => $dist->name,
++    use_tap_harness => 1,
++    tap_harness_args => { verbosity => 0 },
++    quiet           => 1,
++), 'Construct build object with test_file_exts parameter';
++
++$mb->add_to_cleanup('save_out');
++# Use uc() so we don't confuse the current test output
++$out = uc(stdout_of(
++    sub {$mb->dispatch('test', verbose => 1)}
++));
++
++unlike $out, qr/^OK 1/m, 'Should not see first test output';
++like $out, qr/^ALL TESTS SUCCESSFUL/m, 'Should see test success message';
++
++$dist->remove;
++
++# vim:ts=4:sw=4:et:sta
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/versions.t perl-5.10.0/lib/Module/Build/t/versions.t
+--- perl-5.10.0.orig/lib/Module/Build/t/versions.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/versions.t	2009-03-10 16:45:37.000000000 +0100
+@@ -2,10 +2,11 @@
+ 
+ use strict;
+ use lib $ENV{PERL_CORE} ? '../lib/Module/Build/t/lib' : 't/lib';
+-use MBTest tests => 2;
++use MBTest tests => 4;
++
++use_ok 'Module::Build';
++ensure_blib('Module::Build');
+ 
+-use Cwd ();
+-my $cwd = Cwd::cwd;
+ my $tmp = MBTest->tmpdir;
+ 
+ use DistGen;
+@@ -14,8 +15,6 @@
+ 
+ #########################
+ 
+-use Module::Build;
+-
+ my @mod = split( /::/, $dist->name );
+ my $file = File::Spec->catfile( $dist->dirname, 'lib', @mod ) . '.pm';
+ is( Module::Build->version_from_file( $file ), '0.01', 'version_from_file' );
+@@ -25,6 +24,3 @@
+ 
+ # cleanup
+ $dist->remove;
+-
+-use File::Path;
+-rmtree( $tmp );
+diff -urN perl-5.10.0.orig/lib/Module/Build/t/xs.t perl-5.10.0/lib/Module/Build/t/xs.t
+--- perl-5.10.0.orig/lib/Module/Build/t/xs.t	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build/t/xs.t	2009-03-10 16:45:37.000000000 +0100
+@@ -15,22 +15,23 @@
+   } elsif ( $^O eq 'VMS' ) {
+     plan skip_all => 'Child test output confuses harness';
+   } else {
+-    plan tests => 22;
++    plan tests => 23;
+   }
+ }
+ 
++ensure_blib('Module::Build');
++
++
+ #########################
+ 
+ 
+-use Cwd ();
+-my $cwd = Cwd::cwd;
+ my $tmp = MBTest->tmpdir;
+ 
+ use DistGen;
+ my $dist = DistGen->new( dir => $tmp, xs => 1 );
+ $dist->regen;
+ 
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ my $mb = Module::Build->new_from_context;
+ 
+ 
+@@ -103,7 +104,6 @@
+ 
+ 
+ # cleanup
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+ $dist->remove;
+ 
+ 
+@@ -114,7 +114,7 @@
+ $dist = DistGen->new( name => 'Simple::With::Deep::Name',
+ 		      dir => $tmp, xs => 1 );
+ $dist->regen;
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+ $mb = Module::Build->new_from_context;
+ is $@, '';
+@@ -129,7 +129,6 @@
+ is $@, '';
+ 
+ # cleanup
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+ $dist->remove;
+ 
+ 
+@@ -208,7 +207,7 @@
+ ---
+ 
+ $dist->regen;
+-chdir( $dist->dirname ) or die "Can't chdir to '@{[$dist->dirname]}': $!";
++$dist->chdir_in;
+ 
+ 
+ $mb = Module::Build->new_from_context;
+@@ -224,8 +223,4 @@
+ is $@, '';
+ 
+ # cleanup
+-chdir( $cwd ) or die "Can''t chdir to '$cwd': $!";
+ $dist->remove;
+-
+-use File::Path;
+-rmtree( $tmp );
+diff -urN perl-5.10.0.orig/lib/Module/Build.pm perl-5.10.0/lib/Module/Build.pm
+--- perl-5.10.0.orig/lib/Module/Build.pm	2009-02-20 18:22:32.000000000 +0100
++++ perl-5.10.0/lib/Module/Build.pm	2009-03-10 16:49:12.000000000 +0100
+@@ -15,7 +15,7 @@
+ 
+ use vars qw($VERSION @ISA);
+ @ISA = qw(Module::Build::Base);
+-$VERSION = '0.2808_01';
++$VERSION = '0.32';
+ $VERSION = eval $VERSION;
+ 
+ # Okay, this is the brute-force method of finding out what kind of
+@@ -30,15 +30,18 @@
+ 		 dynixptx  Unix
+ 		 freebsd   Unix
+ 		 linux     Unix
++		 haiku     Unix
+ 		 hpux      Unix
+ 		 irix      Unix
+ 		 darwin    Unix
+ 		 machten   Unix
+ 		 midnightbsd Unix
++		 mirbsd    Unix
+ 		 next      Unix
+ 		 openbsd   Unix
+ 		 netbsd    Unix
+ 		 dec_osf   Unix
++		 nto       Unix
+ 		 svr4      Unix
+ 		 svr5      Unix
+ 		 sco_sv    Unix
+@@ -49,7 +52,9 @@
+ 		 cygwin    Unix
+ 		 os2       Unix
+ 		 interix   Unix
+-		 
++		 gnu       Unix
++		 gnukfreebsd Unix
++
+ 		 dos       Windows
+ 		 MSWin32   Windows
+ 
+@@ -156,11 +161,11 @@
+ 'actions'.  In this case the actions run are 'build' (the default
+ action), 'test', and 'install'.  Other actions defined so far include:
+ 
+-  build                          manifest    
+-  clean                          manpages    
+-  code                           pardist     
+-  config_data                    ppd         
+-  diff                           ppmdist     
++  build                          manpages    
++  clean                          pardist     
++  code                           ppd         
++  config_data                    ppmdist     
++  diff                           prereq_data 
+   dist                           prereq_report
+   distcheck                      pure_install
+   distclean                      realclean   
+@@ -173,6 +178,7 @@
+   help                           testpod     
+   html                           testpodcoverage
+   install                        versioninstall
++  manifest                                   
+ 
+ 
+ You can run the 'help' action for a complete list of actions.
+@@ -508,6 +514,14 @@
+ output, so you can supply C<tar> and/or C<gzip> parameters to affect
+ the result.
+ 
++=item prereq_data
++
++[version 0.32]
++
++This action prints out a Perl data structure of all prerequsites and the versions
++required.  The output can be loaded again using C<eval()>.  This can be useful for
++external tools that wish to query a Build script for prerequisites.
++
+ =item prereq_report
+ 
+ [version 0.28]
+@@ -557,10 +571,10 @@
+ 
+ [version 0.01]
+ 
+-This will use C<Test::Harness> to run any regression tests and report
+-their results.  Tests can be defined in the standard places: a file
+-called C<test.pl> in the top-level directory, or several files ending
+-with C<.t> in a C<t/> directory.
++This will use C<Test::Harness> or C<TAP::Harness> to run any regression
++tests and report their results. Tests can be defined in the standard
++places: a file called C<test.pl> in the top-level directory, or several
++files ending with C<.t> in a C<t/> directory.
+ 
+ If you want tests to be 'verbose', i.e. show details of test execution
+ rather than just summary information, pass the argument C<verbose=1>.
+@@ -568,6 +582,14 @@
+ If you want to run tests under the perl debugger, pass the argument
+ C<debugger=1>.
+ 
++If you want to have Module::Build find test files with different file
++name extensions, pass the C<test_file_exts> argument with an array
++of extensions, such as C<[qw( .t .s .z )]>.
++
++If you want test to be run by C<TAP::Harness>, rather than C<Test::Harness>,
++pass the argument C<tap_harness_args> as an array reference of arguments to
++pass to the TAP::Harness constructor.
++
+ In addition, if a file called C<visual.pl> exists in the top-level
+ directory, this file will be executed as a Perl script and its output
+ will be shown to the user.  This is a good place to put speed tests or
+@@ -611,7 +633,7 @@
+     ...
+     test_types  => {
+       special => '.st',
+-      author  => '.at',
++      author  => ['.at', '.pt' ],
+     },
+     ...
+ 
