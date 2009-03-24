@@ -1,22 +1,13 @@
-%define multilib_64_archs x86_64 s390x ppc64 sparc64
-%define perl_archname %{_arch}-%{_os}-thread-multi
-%define new_perl_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}:$RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{version}
-%define comp_perl_lib $RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{version}:$RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{version}
-%define new_arch_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/%{perl_archname}
-%define comp_arch_lib $RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{version}/%{perl_archname}
-%define new_perl_flags LD_PRELOAD=/%{new_arch_lib}/CORE/libperl.so LD_LIBRARY_PATH=%{new_arch_lib}/CORE PERL5LIB=%{new_perl_lib}:%{comp_perl_lib}
-%define new_perl %{new_perl_flags} $RPM_BUILD_ROOT/%{_bindir}/perl
-
-%define db4_major %(grep "DB_VERSION_MAJOR" /usr/include/db.h | cut -f3)
-%define db4_minor %(grep "DB_VERSION_MINOR" /usr/include/db.h | cut -f3)
-%define db4_patch %(grep "DB_VERSION_PATCH" /usr/include/db.h | cut -f3)
-
 %define perl_version    5.10.0
 %define perl_epoch      4
+%define perl_arch_stem -thread-multi
+%define perl_archname %{_arch}-%{_os}%{perl_arch_stem}
+
+%define multilib_64_archs x86_64 s390x ppc64 sparc64
 
 Name:           perl
 Version:        %{perl_version}
-Release:        42%{?dist}
+Release:        64%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -27,14 +18,12 @@ Url:            http://www.perl.org/
 Source0:        http://search.cpan.org/CPAN/authors/id/R/RG/RGARCIA/perl-%{perl_version}.tar.gz
 Source11:       filter-requires.sh
 Source12:       perl-5.8.0-libnet.cfg
+
 # Specific to Fedora/RHEL
 Patch1:         perl-5.8.0-root.patch
 
 # Removes date check, Fedora/RHEL specific
 Patch2:         perl-5.10.0-perlbug-tag.patch
-
-# Fedora/RHEL use links instead of lynx
-Patch3:         perl-5.10.0-links.patch
 
 # work around annoying rpath issue
 # This is only relevant for Fedora, as it is unlikely
@@ -48,14 +37,13 @@ Patch5:         perl-5.8.0-libdir64.patch
 Patch6:         perl-5.10.0-libresolv.patch
 
 # FIXME: May need the "Fedora" references removed before upstreaming
+# patches ExtUtils-MakeMaker
 Patch7:         perl-5.10.0-USE_MM_LD_RUN_PATH.patch
 
 # Skip hostname tests, since hostname lookup isn't available in Fedora
 # buildroots by design.
+# patches Net::Config from libnet
 Patch8:         perl-5.10.0-disable_test_hosts.patch
-
-# Bump Sys::Syslog to 0.24 to fix test failure case
-Patch9:         perl-5.10.0-SysSyslog-0.24.patch
 
 # The Fedora builders started randomly failing this futime test
 # only on x86_64, so we just don't run it. Works fine on normal
@@ -65,77 +53,51 @@ Patch10:        perl-5.10.0-x86_64-io-test-failure.patch
 # http://public.activestate.com/cgi-bin/perlbrowse/p/32891
 Patch11:        32891.patch
 
-# Update Module::Load::Conditional to 0.24 for clean upgrade
-Patch12:	perl-5.10.0-Module-Load-Conditional-0.24.patch
-
-# Upgrade Module::CoreList to 2.14
-Patch13:	perl-5.10.0-Module-CoreList2.14.patch
-
-# Upgrade CGI to 3.38
-Patch14:	perl-5.10.0-CGI-3.38.patch
-
 # Problem with assertion - add upstream patch
 Patch15:	perl-5.10.0-bz448392.patch
 
 # Wrong access test
 Patch16:	perl-5.10.0-accessXOK.patch
 
-# CVE-2008-2827 perl: insecure use of chmod in rmtree
-Patch17:	perl-5.10.0-CVE-2008-2827.patch
-
-# pos function handle unicode ok
-Patch18:	perl-5.10.0-pos.patch
-
-#  CGI.pm bug in exists() on tied param hash
-Patch19:	perl-5.10.0-CGI.patch
-
-# 462444	update Test::Simple to 0.80
-Patch20:    perl-5.10.0-TestSimple0.80.patch
-
-# Archive::Tar update to 1.38 version
-Patch21:    perl-5.10.0-ArchiveTar1.38.patch
-
-# Fix crash when localizing a symtab entry rt#52740
-Patch22:    perl-5.10.0-stlocal.patch
+# fix function pos to handle unicode correctly
+Patch20:	perl-5.10.0-pos.patch
 
 # Storable segfaults when objects are reblessed rt#33242
-Patch23:    perl-5.10.0-Storable.patch
+# patches module Storable
+Patch24:    perl-5.10.0-Storable.patch
 
-# Pod::Simple 3.07
-Patch24:    perl-5.10.0-PodSimple.patch
-
-# File::Temp 0.20
-Patch25:    perl-5.10.0-File-Temp-0.20.patch
+# Fix crash when localizing a symtab entry rt#52740
+Patch26:    perl-5.10.0-stlocal.patch
 
 # Change 33640: More diagnostics for Fatal.pm, version bumps for all non-dual life modules affected
 # http://www.nntp.perl.org/group/perl.perl5.changes/2008/04/msg21478.html
-Patch26:    perl-5.10.0-Change33640.patch
+Patch28:    perl-5.10.0-Change33640.patch
 
 # Change 33881: (33825) Add SEEK_CUR, SEEK_END, SEEK_SET to list of constants POSIX imports from Fcntl
 #               (33826) Remove POSIX's internal implementation of S_ISBLK, S_ISCHR, S_ISDIR, S_ISFIFO, S_ISREG, pull from Fcntl
 #               (33829) Fix typo
 # http://www.nntp.perl.org/group/perl.perl5.changes/2008/05/msg21717.html
-Patch27:    perl-5.10.0-Change33881.patch
+Patch29:    perl-5.10.0-Change33881.patch
 
 # Change 33896: Eliminate POSIX::int_macro_int, and all the complex AUTOLOAD fandango
 # http://www.nntp.perl.org/group/perl.perl5.changes/2008/05/msg21732.html
-Patch28:    perl-5.10.0-Change33896.patch
+Patch30:    perl-5.10.0-Change33896.patch
 
 # Change 33897: Replaced the WEXITSTATUS, WIFEXITED, WIFSIGNALED, WIFSTOPPED, WSTOPSIG
 # http://www.nntp.perl.org/group/perl.perl5.changes/2008/05/msg21733.html
-Patch29:    perl-5.10.0-Change33897.patch
+Patch31:    perl-5.10.0-Change33897.patch
 
-Patch30:	perl-5.10.0-PerlIO-via-change34025.patch
+Patch33:	perl-5.10.0-PerlIO-via-change34025.patch
 
 # Change 34507: Fix memory leak in single-char character class optimization
-Patch31:        perl-5.10.0-Change34507.patch
+Patch34:	perl-5.10.0-Change34507.patch
 
 # Reorder @INC: Based on: http://github.com/rafl/perl/commit/b9ba2fadb18b54e35e5de54f945111a56cbcb249
-Patch32:	perl-5.10.0-reorderINC.patch
+Patch35:	perl-5.10.0-reorderINC.patch
 
 # Fix from Archive::Extract maintainer to only look at stdout
 # We need this because we're using tar >= 1.21
-Patch33:	perl-5.10.0-Archive-Extract-onlystdout.patch
+Patch36:	perl-5.10.0-Archive-Extract-onlystdout.patch
 
 ### Debian Patches ###
 
@@ -168,7 +130,7 @@ Patch45:	11_disable_vstring_warning
 # Fix a segmentation fault occurring in the mod_perl2 test suite.
 # Upstream change 33807
 Patch46:	15_fix_local_symtab
-
+ 
 # Fix the PerlIO_teardown prototype to suppress a compiler warning.
 # Upstream change 33370
 Patch47:	16_fix_perlio_teardown_prototype
@@ -181,48 +143,88 @@ Patch48:	17_fix_getopt_long_callback
 # Upstream change 33821
 Patch49:	18_fix_bigint_floats
 
-# Fix Sys::Syslog slowness when logging with non-native mechanisms.
-# Fixed upstream in Sys::Syslog 0.25
-Patch50:	27_fix_sys_syslog_timeout
-
 # Fix memory corruption with in-place sorting.
 # Upstream change 33937
-Patch51:	28_fix_inplace_sort
+Patch50:	28_fix_inplace_sort
 
 # Revert an incorrect substitution optimization introduced in 5.10.0.
 # Bug introduced by upstream change 26334, reverted with change 33685 in blead and 33732 in maint-5.10.
-Patch52:	30_fix_freetmps
+Patch51:	30_fix_freetmps
 
 # Fix 'Unknown error' messages with attribute.pm.
 # Upstream change 33265
-Patch53:	31_fix_attributes_unknown_error
+Patch52:	31_fix_attributes_unknown_error
 
 # Stop t/op/fork.t relying on rand().
 # Upstream change 33749
-Patch54:	32_fix_fork_rand
+Patch53:	32_fix_fork_rand
 
 # Fix memory leak with qr//.
 # Adapted from upstream changhe 34506.
-Patch55:	34_fix_qr-memory-leak-2
+Patch54:	34_fix_qr-memory-leak-2
 
 # CVE-2005-0448 revisited: File::Path::rmtree no longer allows creating of setuid files.
-Patch56:	35_fix_file_path_rmtree_setuid
-
-# Make File::Temp warn on cleaning up the current working directory at exit instead of bailing out.
-# Adapted from File::Temp 0.21
-Patch57:	36_fix_file_temp_cleanup
+# We have 2.07, but it is still missing one fix (the debian patch has two fixes, but one is in 2.07)
+Patch55:	perl-5.10.0-fix_file_path_rmtree_setuid.patch
 
 # Fix $? when dumping core.
-Patch58:	37_fix_coredump_indicator
+Patch56:	37_fix_coredump_indicator
 
 # Fix a memory leak with Scalar::Util::weaken().
 # Upstream change 34209
-Patch59:	38_fix_weaken_memleak
+Patch57:	38_fix_weaken_memleak
 
 ### End of Debian Patches ###
 
+# Update some of the bundled modules
+# see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
+Patch100:	perl-update-constant.patch
+%define			    constant_version 1.17
+Patch101:	perl-update-Archive-Extract.patch
+%define			    Archive_Extract_version 0.30
+Patch102:	perl-update-Archive-Tar.patch
+%define			    Archive_Tar_version 1.46
+Patch103:	perl-update-CGI.patch
+%define			    CGI_version 3.42
+Patch104:	perl-update-ExtUtils-CBuilder.patch
+%define			    ExtUtils_CBuilder_version 0.24
+Patch105:	perl-update-File-Fetch.patch
+%define			    File_Fetch_version 0.18
+Patch106:	perl-update-File-Path.patch
+%define			    File_Path_version 2.07
+Patch107:	perl-update-File-Temp.patch
+%define			    File_Temp_version 0.21
+Patch108:	perl-update-IPC-Cmd.patch
+%define			    IPC_Cmd_version 0.42
+Patch109:	perl-update-Module-Build.patch
+%define			    Module_Build_real_version 0.32
+# For Module-Build-0.x, the second component has to have four digits.
+%define			    Module_Build_rpm_version  0.3200
+Patch110:	perl-update-Module-CoreList.patch
+%define			    Module_CoreList_version 2.17
+Patch111:	perl-update-Module-Load-Conditional.patch
+%define			    Module_Load_Conditional_version 0.30
+Patch112:	perl-update-Pod-Simple.patch
+%define			    Pod_Simple_version 3.07
+Patch113:	perl-update-Sys-Syslog.patch
+%define			    Sys_Syslog_version 0.27
+Patch114:	perl-update-Test-Harness.patch
+%define			    Test_Harness_version 3.16
+Patch115:	perl-update-Test-Simple.patch
+%define			    Test_Simple_version 0.86
+Patch116:	perl-update-Time-HiRes.patch
+%define			    Time_HiRes_version 1.9719
+Patch117:	perl-update-Digest-SHA.patch
+%define			    Digest_SHA_version 5.47
+# includes Fatal.pm
+Patch118:	perl-update-autodie.patch
+%define			    autodie_version 1.999
 
-BuildRoot:      %{_tmppath}/%{name}-%{perl_version}-%{release}-root-%(%{__id_u} -n)
+# Fedora uses links instead of lynx
+# patches File-Fetch and CPAN
+Patch201:	perl-5.10.0-links.patch
+
+BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:  tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel, zlib-devel
 # For tests
@@ -284,12 +286,14 @@ Provides: perl(validate.pl)
 Provides: perl(Carp::Heavy)
 
 # Long history in 3rd-party repositories:
-Provides: perl-File-Temp = 0.20
+Provides: perl-File-Temp = %{File_Temp_version}
 Obsoletes: perl-File-Temp < 0.20
 
+# Use new testing module perl-Test-Harness, obsolete it outside of this package
+Provides: perl-TAP-Harness = %{Test_Harness_version}
+Obsoletes: perl-TAP-Harness < 3.10
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
-Requires: db4 = %{db4_major}.%{db4_minor}.%{db4_patch}
 
 # We need this to break the dependency loop, and ensure that perl-libs 
 # gets installed before perl.
@@ -299,13 +303,13 @@ Requires(post): perl-libs
 #
 # The original script might be /usr/lib/rpm/perl.req or
 # /usr/lib/rpm/redhat/perl.req, better use the original value of the macro:
-%{expand:%%define prev__perl_requires %{__perl_requires}} 
+%{expand:%%define prev__perl_requires %{__perl_requires}}
 %define __perl_requires %{SOURCE11} %{prev__perl_requires}
 
 # When _use_internal_dependency_generator is 0, the perl.req script is
 # called from /usr/lib/rpm{,/redhat}/find-requires.sh
 # Likewise:
-%{expand:%%define prev__find_requires %{__find_requires}} 
+%{expand:%%define prev__find_requires %{__find_requires}}
 %define __find_requires %{SOURCE11} %{prev__find_requires}
 
 
@@ -361,7 +365,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.24
+Version:        %{Archive_Extract_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Archive-Extract
@@ -373,7 +377,7 @@ Summary:        A module for Perl manipulation of .tar files
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.38
+Version:        %{Archive_Tar_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Compress::Zlib), perl(IO::Zlib)
 
@@ -435,7 +439,6 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.84
-Requires:       perl(IPC::Run) >= 0.79
 Requires:       perl(Module::Pluggable) >= 2.4
 Requires:       perl(Module::CoreList)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -453,7 +456,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        5.45
+Version:        %{Digest_SHA_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Digest-SHA
@@ -469,7 +472,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.21
+Version:        %{ExtUtils_CBuilder_version}
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -485,7 +488,7 @@ Summary:        Utilities for embedding Perl in C/C++ applications
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.27
+Version:        1.28
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -530,7 +533,7 @@ Summary:        Generic file fetching mechanism
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.14
+Version:        %{File_Fetch_version}
 Requires:       perl(IPC::Cmd) >= 0.36
 Requires:       perl(Module::Load::Conditional) >= 0.04
 Requires:       perl(Params::Check) >= 0.07
@@ -591,8 +594,8 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-# Really 0.40_1, but we drop the _1.
-Version:        0.40
+# do not upgrade in the future to _something version. They are testing!
+Version:        %{IPC_Cmd_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description IPC-Cmd
@@ -653,8 +656,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-# Really 0.2808_01, but we drop the _01.
-Version:        0.2808
+Version:        %{Module_Build_rpm_version}
 Requires:       perl(Archive::Tar) >= 1.08
 Requires:       perl(ExtUtils::CBuilder) >= 0.15
 Requires:       perl(ExtUtils::ParseXS) >= 1.02
@@ -677,7 +679,7 @@ Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.15
+Version:        %{Module_CoreList_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(version)
 
@@ -706,7 +708,7 @@ Summary:        Looking up module information / loading at runtime
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.24
+Version:        %{Module_Load_Conditional_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Module-Load-Conditional
@@ -811,7 +813,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        3.07
+Version:        %{Pod_Simple_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Pod-Simple
@@ -840,20 +842,20 @@ Summary:        Run Perl standard test scripts with statistics
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.64
+Version:        %{Test_Harness_version}
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Test-Harness
 Run Perl standard test scripts with statistics.
-
+Use TAP::Parser, Test::Harness package was whole rewritten.
 
 %package Test-Simple
 Summary:        Basic utilities for writing tests
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.80
+Version:        %{Test_Simple_version}
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -921,10 +923,9 @@ upstream tarball from perl.org.
 
 
 %prep
-%setup -q 
+%setup -q
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 # This patch breaks sparc64 compilation
 # We should probably consider removing it for all arches.
 %ifnarch sparc64
@@ -936,31 +937,21 @@ upstream tarball from perl.org.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
-%patch9 -p1
 %patch10 -p1
 %patch11 -p1
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
 %patch15 -p1
 %patch16 -p1
-%patch17 -p1
-%patch18 -p1
-%patch19 -p1
 %patch20 -p1
-%patch21 -p1
-%patch22 -p1
-%patch23 -p1
 %patch24 -p1
-%patch25 -p1
 %patch26 -p1
-%patch27 -p1
 %patch28 -p1
 %patch29 -p1
 %patch30 -p1
 %patch31 -p1
-%patch32 -p1
 %patch33 -p1
+%patch34 -p1
+%patch35 -p1
+%patch36 -p1
 
 ### Debian patches ###
 %patch40 -p1
@@ -981,9 +972,27 @@ upstream tarball from perl.org.
 %patch55 -p1
 %patch56 -p1
 %patch57 -p1
-%patch58 -p1
-%patch59 -p1
 
+%patch100 -p1
+%patch101 -p1
+%patch102 -p1
+%patch103 -p1
+%patch104 -p1
+%patch105 -p1
+%patch106 -p1
+%patch107 -p1
+%patch108 -p1
+%patch109 -p1
+%patch110 -p1
+%patch111 -p1
+%patch112 -p1
+%patch113 -p1
+%patch114 -p1
+%patch115 -p1
+%patch116 -p1
+%patch117 -p1
+%patch118 -p1
+%patch201 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -991,6 +1000,7 @@ upstream tarball from perl.org.
 recode()
 {
         iconv -f "$2" -t utf-8 < "$1" > "${1}_"
+        touch -r "$1" "${1}_"
         mv -f "${1}_" "$1"
 }
 recode README.cn euc-cn
@@ -1042,38 +1052,29 @@ echo "RPM Build arch: %{_arch}"
 
 # use "lib", not %{_lib}, for privlib, sitelib, and vendorlib
 
-# Because of the typo in the first F-9 release, we have to support the default
-# sitedir as well for 32bit archs, via -Dotherlibdirs.  No need to mention the
-# arch-specific subdir though, perl will add it, if it exists.
-%ifnarch %{multilib_64_archs}
-#	-Dotherlibdirs="%{_prefix}/lib/perl5/site_perl/%{perl_version}" \
-%endif
-# ... but this is superceded by our more general compatibility -Dotherlibdirs.
-
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS -DPERL_USE_SAFE_PUTENV" \
         -Dversion=%{perl_version} \
         -Dmyhostname=localhost \
         -Dperladmin=root@localhost \
         -Dcc='%{__cc}' \
         -Dcf_by='Red Hat, Inc.' \
-        -Dinstallprefix=%{_prefix} \
         -Dprefix=%{_prefix} \
+        -Dvendorprefix=%{_prefix} \
+        -Dsiteprefix=%{_prefix}/local \
         -Dprivlib="%{_prefix}/lib/perl5/%{perl_version}" \
         -Dsitelib="%{_prefix}/local/lib/perl5/site_perl/%{perl_version}" \
         -Dvendorlib="%{_prefix}/lib/perl5/vendor_perl/%{perl_version}" \
         -Darchlib="%{_libdir}/perl5/%{perl_version}/%{perl_archname}" \
         -Dsitearch="%{_prefix}/local/%{_lib}/perl5/site_perl/%{perl_version}/%{perl_archname}" \
         -Dvendorarch="%{_libdir}/perl5/vendor_perl/%{perl_version}/%{perl_archname}" \
+        -Dinc_version_list=none \
         -Darchname=%{perl_archname} \
 %ifarch %{multilib_64_archs}
         -Dlibpth="/usr/local/lib64 /lib64 %{_prefix}/lib64" \
 %endif
-	-Dotherlibdirs="%{_prefix}/local/lib/perl5/site_perl:%{_prefix}/lib/perl5/site_perl" \
 %ifarch sparc sparcv9
         -Ud_longdbl \
 %endif
-        -Dvendorprefix=%{_prefix} \
-        -Dsiteprefix=%{_prefix}/local \
         -Duseshrplib \
         -Dusethreads \
         -Duseithreads \
@@ -1094,7 +1095,8 @@ echo "RPM Build arch: %{_arch}"
         -Dd_gethostent_r_proto -Ud_endhostent_r_proto -Ud_sethostent_r_proto \
         -Ud_endprotoent_r_proto -Ud_setprotoent_r_proto \
         -Ud_endservent_r_proto -Ud_setservent_r_proto \
-        -Dscriptdir='%{_bindir}'
+        -Dscriptdir='%{_bindir}' \
+        -Dotherlibdirs=/usr/lib/perl5/site_perl
 
 %ifarch sparc64
 make
@@ -1106,65 +1108,70 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
-%ifarch %{multilib_64_archs}
-mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{perl_version}
-mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/auto
-%ifarch x86_64
-mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/i386-linux-thread-multi/auto
-%endif
-%ifarch s390x
-mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/s390-linux-thread-multi/auto
-%endif
-%ifarch ppc64
-mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/ppc-linux-thread-multi/auto
-%endif
-%ifarch sparc64
-mkdir -p -m 755 $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{perl_version}/sparc-linux-thread-multi/auto
-%endif
-%endif
+%define new_perl_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}
+%define comp_perl_lib $RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{version}
+%define new_arch_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/%{perl_archname}
+%define new_vendor_lib $RPM_BUILD_ROOT%{_libdir}/perl5/vendor_perl/%{version}
+%define comp_vendor_lib $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{version}
+%define new_perl_flags LD_PRELOAD=%{new_arch_lib}/CORE/libperl.so LD_LIBRARY_PATH=%{new_arch_lib}/CORE PERL5LIB=%{new_perl_lib}:%{comp_perl_lib}
+%define new_perl %{new_perl_flags} $RPM_BUILD_ROOT%{_bindir}/perl
 
 # perl doesn't create this directory, but modules put things in it, so we need to own it.
-mkdir -p -m 755 ${RPM_BUILD_ROOT}%{_libdir}/perl5/vendor_perl/%{perl_version}/%{perl_archname}/auto
+mkdir -p -m 755 %{new_vendor_lib}/%{perl_archname}/auto
+
+%ifarch %{multilib_64_archs}
+%ifarch x86_64
+%define arch32 i386
+%endif
+%ifarch s390x
+%define arch32 s390
+%endif
+%ifarch ppc64
+%define arch32 ppc
+%endif
+%ifarch sparc64
+%define arch32 sparc
+%endif
+mkdir -p -m 755 %{comp_perl_lib} %{comp_vendor_lib}{,/%{arch32}-%{_os}%{perl_arch_stem}/auto}
+%endif
 
 install -p -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/pl2pm
 
 for i in asm/termios.h syscall.h syslimits.h syslog.h sys/ioctl.h sys/socket.h sys/time.h wait.h
 do
-  %{new_perl} $RPM_BUILD_ROOT/%{_bindir}/h2ph -a \
-              -d $RPM_BUILD_ROOT%{_libdir}/perl5/%{perl_version}/%{perl_archname} $i || /bin/true
+  %{new_perl} $RPM_BUILD_ROOT%{_bindir}/h2ph -a -d %{new_arch_lib} $i || /bin/true
 done
 
 #
 # libnet configuration file
 #
-mkdir -p -m 755 $RPM_BUILD_ROOT/%{_prefix}/lib/perl5/%{perl_version}/Net
-install -p -m 644 %{SOURCE12} $RPM_BUILD_ROOT/%{_prefix}/lib/perl5/%{perl_version}/Net/libnet.cfg
+install -p -m 644 %{SOURCE12} %{comp_perl_lib}/Net/libnet.cfg
 
 #
 # Core modules removal
 #
 find $RPM_BUILD_ROOT -name '*NDBM*' | xargs rm -rfv
 
-find $RPM_BUILD_ROOT -type f -name '*.bs' -a -empty -exec rm -f {} ';'
+find $RPM_BUILD_ROOT -type f -name '*.bs' -empty | xargs rm -f 
 
 # Install sample cgi scripts (this used to happen automatically?)
-mkdir -p $RPM_BUILD_ROOT/usr/lib/perl5/%{perl_version}/CGI/eg/
-cp -a lib/CGI/eg/* $RPM_BUILD_ROOT/usr/lib/perl5/%{perl_version}/CGI/eg/
+mkdir -p %{comp_perl_lib}/CGI/eg/
+cp -a lib/CGI/eg/* %{comp_perl_lib}/CGI/eg/
 
 # Cleanup binary paths and make cgi files executable
-pushd $RPM_BUILD_ROOT/usr/lib/perl5/%{perl_version}/CGI/eg/
+pushd %{comp_perl_lib}/CGI/eg/
   for i in *.cgi make_links.pl RunMeFirst ; do
-    sed -i 's|/usr/local/bin/perl|%{_bindir}/perl|g' $i
+    sed -i 's|%{_prefix}/local/bin/perl|%{_bindir}/perl|g' $i
     chmod +x $i
   done
 popd
 
 # miniperl? As an interpreter? How odd.
-sed -i 's|./miniperl|%{_bindir}/perl|' $RPM_BUILD_ROOT/usr/lib/perl5/%{perl_version}/ExtUtils/xsubpp
-chmod +x $RPM_BUILD_ROOT/usr/lib/perl5/%{perl_version}/ExtUtils/xsubpp
+sed -i 's|./miniperl|%{_bindir}/perl|' %{comp_perl_lib}/ExtUtils/xsubpp
+chmod +x %{comp_perl_lib}/ExtUtils/xsubpp
 
 # Don't need the .packlist
-rm -f $RPM_BUILD_ROOT%{_libdir}/perl5/%{perl_version}/%{perl_archname}/.packlist
+rm -f %{new_arch_lib}/.packlist
 
 # Fix some manpages to be UTF-8
 pushd $RPM_BUILD_ROOT%{_mandir}/man1/
@@ -1182,71 +1189,84 @@ chmod -R u+w $RPM_BUILD_ROOT/*
 
 # Local patch tracking
 cd $RPM_BUILD_ROOT%{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/
-perl -x patchlevel.h 'Fedora Patch1: Permit suidperl to install as nonroot'
-perl -x patchlevel.h 'Fedora Patch2: Removes date check, Fedora/RHEL specific'
-perl -x patchlevel.h 'Fedora Patch3: Fedora/RHEL use links instead of lynx'
-%ifnarch sparc64
-perl -x patchlevel.h 'Fedora Patch4: Work around annoying rpath issue'
-%endif
-%ifarch %{multilib_64_archs}
-perl -x patchlevel.h 'Fedora Patch5: support for libdir64'
-%endif
-perl -x patchlevel.h 'Fedora Patch6: use libresolv instead of libbind'
-perl -x patchlevel.h 'Fedora Patch7: USE_MM_LD_RUN_PATH'
-perl -x patchlevel.h 'Fedora Patch8: Skip hostname tests, due to builders not being network capable'
-perl -x patchlevel.h 'Fedora Patch9: Update Sys::Syslog to 0.24'
-perl -x patchlevel.h 'Fedora Patch10: Dont run one io test due to random builder failures'
-perl -x patchlevel.h '32891 fix big slowdown in 5.10 @_ parameter passing'
-perl -x patchlevel.h 'Fedora Patch12: Update Module::Load::Conditional to 0.24'
-perl -x patchlevel.h 'Fedora Patch13: Upgrade Module::CoreList to 2.14'
-perl -x patchlevel.h 'Fedora Patch14: Upgrade CGI to 3.38'
-perl -x patchlevel.h 'Fedora Patch15: Adopt upstream commit for assertion'
-perl -x patchlevel.h 'Fedora Patch16: Access permission - rt49003'
-perl -x patchlevel.h 'Fedora Patch17: CVE-2008-2827 perl: insecure use of chmod in rmtree'
-perl -x patchlevel.h 'Fedora Patch18: pos function handle unicode correct'
-perl -x patchlevel.h 'Fedora Patch19: CGI bug in exists()'
-perl -x patchlevel.h 'Fedora Patch20: Update Test::Simple to 0.80'
-perl -x patchlevel.h 'Fedora Patch21: Archive::Tar 1.38'
-perl -x patchlevel.h 'Fedora Patch22: Fix crash when localizing a symtab entry - rt52740'
-perl -x patchlevel.h 'Fedora Patch23: Storable seg after reblessed objects rt#33242'
-perl -x patchlevel.h 'Fedora Patch24: Pod::Simple 3.07'
-perl -x patchlevel.h 'Fedora Patch25: Upgrade File::Temp to 0.20'
-perl -x patchlevel.h '33640 Integrate Changes 33399, 33621, 33622, 33623, 33624'
-perl -x patchlevel.h '33881 Integrate Changes 33825, 33826, 33829'
-perl -x patchlevel.h '33896 Eliminate POSIX::int_macro_int, and all the complex AUTOLOAD fandango'
-perl -x patchlevel.h '33897 Replaced the WEXITSTATUS, WIFEXITED, WIFSIGNALED, WIFSTOPPED, WSTOPSIG'
-perl -x patchlevel.h '54934 Change 34025 refcount of the globs generated by PerlIO::via balanced'
-perl -x patchlevel.h '34507 Fix memory leak in single-char character class optimization'
-perl -x patchlevel.h 'Fedora Patch32: Reorder @INC, based on b9ba2fadb18b54e35e5de54f945111a56cbcb249'
-perl -x patchlevel.h 'Fedora Patch33: Fix from Archive::Extract maintainer to only look at stdout from tar'
-perl -x patchlevel.h '32727 Fix issue with (nested) definition lists in lib/Pod/Html.pm'
-perl -x patchlevel.h '33287 Fix NULLOK items'
-perl -x patchlevel.h '33554 Fix a typo in the predefined common protocols to make "udp" resolve without netbase'
-perl -x patchlevel.h '33388 Fix a segmentation fault with debugperl -Dm'
-perl -x patchlevel.h '33835 Allow the quote mark delimiter also for those #include directives chased with h2ph -a.'
-perl -x patchlevel.h '32910 Disable the v-string in use/require is non-portable warning.'
-perl -x patchlevel.h '33807 Fix a segmentation fault occurring in the mod_perl2 test suite.'
-perl -x patchlevel.h '33370 Fix the PerlIO_teardown prototype to suppress a compiler warning.'
-perl -x patchlevel.h 'Fedora Patch48: Remove numeric overloading of Getopt::Long callback functions.'
-perl -x patchlevel.h '33821 Fix Math::BigFloat::sqrt() breaking with too many digits.'
-perl -x patchlevel.h 'Fedora Patch50: Fix Sys::Syslog slowness when logging with non-native mechanisms'
-perl -x patchlevel.h '33937 Fix memory corruption with in-place sorting'
-perl -x patchlevel.h '33732 Revert an incorrect substitution optimization introduced in 5.10.0'
-perl -x patchlevel.h '33265 Fix Unknown error messages with attribute.pm.'
-perl -x patchlevel.h '33749 Stop t/op/fork.t relying on rand()'
-perl -x patchlevel.h '34506 Fix memory leak with qr//'
-perl -x patchlevel.h 'Fedora Patch56: File::Path::rmtree no longer allows creating of setuid files.'
-perl -x patchlevel.h 'Fedora Patch57: Make File::Temp warn on cleaning up the current working directory at exit instead of bailing out.'
-perl -x patchlevel.h 'Fedora Patch58: Fix $? when dumping core'
-perl -x patchlevel.h '34209 Fix a memory leak with Scalar::Util::weaken()'
+perl -x patchlevel.h \
+	'Fedora Patch1: Permit suidperl to install as nonroot' \
+	'Fedora Patch2: Removes date check, Fedora/RHEL specific' \
+%ifnarch sparc64 \
+	'Fedora Patch4: Work around annoying rpath issue' \
+%endif \
+%ifarch %{multilib_64_archs} \
+	'Fedora Patch5: support for libdir64' \
+%endif \
+	'Fedora Patch6: use libresolv instead of libbind' \
+	'Fedora Patch7: USE_MM_LD_RUN_PATH' \
+	'Fedora Patch8: Skip hostname tests, due to builders not being network capable' \
+	'Fedora Patch10: Dont run one io test due to random builder failures' \
+	'32891 fix big slowdown in 5.10 @_ parameter passing' \
+	'Fedora Patch15: Adopt upstream commit for assertion' \
+	'Fedora Patch16: Access permission - rt49003' \
+	'Fedora Patch20: pos function handle unicode correct' \
+	'Fedora Patch24: Storable fix' \
+	'Fedora Patch26: Fix crash when localizing a symtab entry - rt52740' \
+	'33640 Integrate Changes 33399, 33621, 33622, 33623, 33624' \
+	'33881 Integrate Changes 33825, 33826, 33829' \
+	'33896 Eliminate POSIX::int_macro_int, and all the complex AUTOLOAD fandango' \
+	'33897 Replaced the WEXITSTATUS, WIFEXITED, WIFSIGNALED, WIFSTOPPED, WSTOPSIG' \
+	'54934 Change 34025 refcount of the globs generated by PerlIO::via balanced' \
+	'34507 Fix memory leak in single-char character class optimization' \
+	'Fedora Patch35: Reorder @INC, based on b9ba2fadb18b54e35e5de54f945111a56cbcb249' \
+	'Fedora Patch36: Fix from Archive::Extract maintainer to only look at stdout from tar' \
+	'32727 Fix issue with (nested) definition lists in lib/Pod/Html.pm' \
+	'33287 Fix NULLOK items' \
+	'33554 Fix a typo in the predefined common protocols to make "udp" resolve without netbase' \
+	'33388 Fix a segmentation fault with debugperl -Dm' \
+	'33835 Allow the quote mark delimiter also for those #include directives chased with h2ph -a.' \
+	'32910 Disable the v-string in use/require is non-portable warning.' \
+	'33807 Fix a segmentation fault occurring in the mod_perl2 test suite.' \
+	'33370 Fix the PerlIO_teardown prototype to suppress a compiler warning.' \
+	'Fedora Patch48: Remove numeric overloading of Getopt::Long callback functions.' \
+	'33821 Fix Math::BigFloat::sqrt() breaking with too many digits.' \
+	'33937 Fix memory corruption with in-place sorting' \
+	'33732 Revert an incorrect substitution optimization introduced in 5.10.0' \
+	'33265 Fix Unknown error messages with attribute.pm.' \
+	'33749 Stop t/op/fork.t relying on rand()' \
+	'34506 Fix memory leak with qr//' \
+	'Fedora Patch55: File::Path::rmtree no longer allows creating of setuid files.' \
+	'Fedora Patch56: Fix $? when dumping core' \
+	'34209 Fix a memory leak with Scalar::Util::weaken()' \
+	'Fedora Patch100: Update module constant to %{constant_version}' \
+	'Fedora Patch101: Update Archive::Extract to %{Archive_Extract_version}' \
+	'Fedora Patch102: Update Archive::Tar to %{Archive_Tar_version}' \
+	'Fedora Patch103: Update CGI to %{CGI_version}' \
+	'Fedora Patch104: Update ExtUtils::CBuilder to %{ExtUtils_CBuilder_version}' \
+	'Fedora Patch105: Update File::Fetch to %{File_Fetch_version}' \
+	'Fedora Patch106: Update File::Path to %{File_Path_version}' \
+	'Fedora Patch107: Update File::Temp to %{File_Temp_version}' \
+	'Fedora Patch108: Update IPC::Cmd to %{IPC_Cmd_version}' \
+	'Fedora Patch109: Update Module::Build to %{Module_Build_version}' \
+	'Fedora Patch110: Update Module::CoreList to %{Module_CoreList_version}' \
+	'Fedora Patch111: Update Module::Load::Conditional to %{Module_Load_Conditional_version}' \
+	'Fedora Patch112: Update Pod::Simple to %{Pod_Simple_version}' \
+	'Fedora Patch113: Update Sys::Syslog to %{Sys_Syslog_version}' \
+	'Fedora Patch114: Update Test::Harness to %{Test_Harness_version}' \
+	'Fedora Patch115: Update Test::Simple to %{Test_Simple_version}' \
+	'Fedora Patch116: Update Time::HiRes to %{Time_HiRes_version}' \
+	'Fedora Patch117: Update Digest::SHA to %{Digest_SHA_version}' \
+	'Fedora Patch117: Update module autodie to %{autodie_version}' \
+	'Fedora Patch201: Fedora uses links instead of lynx' \
+	%{nil}
 
+rm patchlevel.bak
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %check
 %ifnarch sparc64
-make test
+# work around a bug in Module::Build tests bu setting TMPDIR to a directory
+# inside the source tree
+mkdir "$PWD/tmp"
+TMPDIR="$PWD/tmp" make test
 %endif
 
 %post libs -p /sbin/ldconfig
@@ -1270,6 +1290,7 @@ make test
 # devel
 %exclude %{_bindir}/enc2xs
 %exclude %{_mandir}/man1/enc2xs*
+%exclude %{_prefix}/lib/perl5/%{perl_version}/Encode/
 %exclude %{_bindir}/h2xs
 %exclude %{_mandir}/man1/h2xs*
 %exclude %{_bindir}/libnetcfg
@@ -1506,8 +1527,12 @@ make test
 
 # Test::Harness
 %exclude %{_bindir}/prove
+%exclude %{_prefix}/lib/perl5/%{perl_version}/App*
+%exclude %{_prefix}/lib/perl5/%{perl_version}/TAP*
 %exclude %{_prefix}/lib/perl5/%{perl_version}/Test/Harness*
 %exclude %{_mandir}/man1/prove.1*
+%exclude %{_mandir}/man3/App*
+%exclude %{_mandir}/man3/TAP*
 %exclude %{_mandir}/man3/Test::Harness*
 
 # Test::Simple
@@ -1540,6 +1565,7 @@ make test
 %defattr(-,root,root,-)
 %{_bindir}/enc2xs
 %{_mandir}/man1/enc2xs*
+%{_prefix}/lib/perl5/%{perl_version}/Encode/
 %{_bindir}/h2xs
 %{_mandir}/man1/h2xs*
 %{_bindir}/libnetcfg
@@ -1797,7 +1823,7 @@ make test
 
 %files Pod-Simple
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/Pod/Simple/
+%{_prefix}/lib/perl5/%{perl_version}/Pod/Simple/ 
 %{_prefix}/lib/perl5/%{perl_version}/Pod/Simple.pm
 %{_prefix}/lib/perl5/%{perl_version}/Pod/Simple.pod
 %{_mandir}/man3/Pod::Simple*
@@ -1811,8 +1837,12 @@ make test
 %files Test-Harness
 %defattr(-,root,root,-)
 %{_bindir}/prove
+%{_prefix}/lib/perl5/%{perl_version}/App*
+%{_prefix}/lib/perl5/%{perl_version}/TAP*
 %{_prefix}/lib/perl5/%{perl_version}/Test/Harness*
 %{_mandir}/man1/prove.1*
+%{_mandir}/man3/App*
+%{_mandir}/man3/TAP*
 %{_mandir}/man3/Test::Harness*
 
 %files Test-Simple
@@ -1845,80 +1875,148 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Wed Mar 11 2009 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-42
+* Tue Mar 24 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-64
+- update module autodie
+
+* Mon Mar 23 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-63
+- update Digest::SHA (fixes 489221)
+
+* Wed Mar 11 2009 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-62
+- drop 26_fix_pod2man_upgrade (don't need it)
+- fix typo in %%define ExtUtils_CBuilder_version
+
+* Wed Mar 11 2009 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-61
 - apply Change 34507: Fix memory leak in single-char character class optimization
 - Reorder @INC, based on b9ba2fadb18b54e35e5de54f945111a56cbcb249
 - fix Archive::Extract to fix test failure caused by tar >= 1.21
 - Merge useful Debian patches
 
-* Mon Feb 16 2009 Dennis Gilmore <dennis@ausil.us> - 4:5.10.0-41
+* Tue Mar 10 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-60
+- remove compatibility obsolete sitelib directories
+- use a better BuildRoot
+- drop a redundant mkdir in %%install
+- call patchlevel.h only once; rm patchlevel.bak
+- update modules Sys::Syslog, Module::Load::Conditional, Module::CoreList,
+  Test::Harness, Test::Simple, CGI.pm (dropping the upstreamed patch),
+  File::Path (that includes our perl-5.10.0-CVE-2008-2827.patch),
+  constant, Pod::Simple, Archive::Tar, Archive::Extract, File::Fetch,
+  File::Temp, IPC::Cmd, Time::HiRes, Module::Build, ExtUtils::CBuilder
+- standardize the patches for updating embedded modules
+- work around a bug in Module::Build tests bu setting TMPDIR to a directory
+  inside the source tree
+
+* Sun Mar 08 2009 Robert Scheck <robert@fedoraproject.org> - 4:5.10.0-59
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
+
+* Mon Feb 16 2009 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-58
+- add /usr/lib/perl5/site_perl to otherlibs (bz 484053)
+
+* Mon Feb 16 2009 Dennis Gilmore <dennis@ausil.us> - 4:5.10.0-57
 - build sparc64 without _smp_mflags
 
-* Mon Jan 19 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-40
+* Sat Feb 07 2009 Dennis Gilmore <dennis@ausil.us> - 4:5.10.0-56
+- limit sparc builds to -j12
+
+* Tue Feb  3 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-55
+- update IPC::Cmd to v 0.42
+
+* Mon Jan 19 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-54
 - 455410 http://rt.perl.org/rt3/Public/Bug/Display.html?id=54934
   Attempt to free unreferenced scalar fiddling with the symbol table
   Keep the refcount of the globs generated by PerlIO::via balanced.
 
-* Fri Nov 28 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-39
+* Mon Dec 22 2008 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-53
+- add missing XHTML.pm into Pod::Simple
+
+* Thu Dec 12 2008 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-52
+- 295021 CVE-2007-4829 perl-Archive-Tar directory traversal flaws
+- add another source for binary files, which test untaring links
+
+* Fri Nov 28 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-51
 - to fix Fedora bz 473223, which is really perl bug #54186 (http://rt.perl.org/rt3//Public/Bug/Display.html?id=54186)
   we apply Changes 33640, 33881, 33896, 33897
 
-* Mon Nov 24 2008 Marcela Mašláňová <mmaslano@redhat.com>
+* Mon Nov 24 2008 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-50
 - change summary according to RFC fix summary discussion at fedora-devel :)
 
-* Thu Oct 23 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-38
-- update File::Temp to 0.20 (bz 468183)
+* Thu Oct 23 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 4:5.10.0-49
+- update File::Temp to 0.20
 
-* Mon Oct 13 2008 Marcela Mašláňová <mmaslano@redhat.com> 4:5.10.0-37.fc9
-- update Pod::Simple
-- rt#33242, rhbz#459918. Segfault after reblessing objects in Storable.
-
-* Sun Oct 12 2008 Lubomir Rintel <lkundrak@v3.sk> 4:5.10.0-36-fc9
+* Sun Oct 12 2008 Lubomir Rintel <lkundrak@v3.sk> - 4:5.10.0-48
 - Include fix for rt#52740 to fix a crash when using Devel::Symdump and
   Compress::Zlib together
 
-* Wed Sep 17 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-35.fc9
+* Tue Oct 07 2008 Marcela Mašláňová <mmaslano@redhat.com> 4:5.10.0-47.fc10
+- rt#33242, rhbz#459918. Segfault after reblessing objects in Storable.
+- rhbz#465728 upgrade Simple::Pod to 3.07
+
+* Wed Oct  1 2008 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-46
+- also preserve the timestamp of AUTHORS; move the fix to the recode
+  function, which is where the stamps go wrong
+
+* Wed Oct  1 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-45
+- give Changes*.gz the same datetime to avoid multilib conflict
+
+* Wed Sep 17 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-44.fc10
 - remove Tar.pm from Archive-Extract
 - fix version of Test::Simple in spec
 - update Test::Simple
 - update Archive::Tar to 1.38
 
-* Thu Aug 14 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-34.fc9
+* Tue Sep 16 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-43.fc10
+- 462444 update Test::Simple to 0.80
+
+* Thu Aug 14 2008 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-42.fc10
 - move libnet to the right directory, along Net/Config.pm
 
-* Wed Aug  6 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-33.fc9
-- Add compatibility paths to otherlibdirs (fixes 457771)
+* Wed Aug 13 2008 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-41.fc10
+- do not create directory .../%%{version}/auto
 
-* Wed Jul 30 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-32.fc9
-- 457085 CGI.pm bug in exists() on tied param hash
+* Tue Aug  5 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-40.fc10
+- 457867 remove required IPC::Run from CPANPLUS - needed only by win32
+- 457771 add path
 
-* Mon Jul 21 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-31.fc9
+* Fri Aug  1 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-39.fc10
+- CGI.pm bug in exists() on tied param hash (#457085)
+- move the enc2xs templates (../Encode/*.e2x) to -devel, (#456534)
+
+* Mon Jul 21 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-38
 - 455933 update to CGI-3.38
 - fix fuzz problems (patch6)
 - 217833 pos() function handle unicode characters correct
 
-* Wed Jul  2 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-30.fc9
+* Thu Jul 10 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-36
+- rebuild for new db4 4.7
+
+* Wed Jul  9 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-35
+- remove db4 require, it is handled automatically
+
+* Thu Jul  3 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-34
 - 453646 use -DPERL_USE_SAFE_PUTENV. Without fail some modules f.e. readline.
 
-* Fri Jun 27 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-29.fc9
-- add compatibility paths to @INC on 32bit archs (#452898), but do
-  not explicitly mention the arch-specific subdir of it, perl adds it
-  automatically
+* Tue Jul  1 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-33
+- 451078 update Test::Harness to 3.12 for more testing. Removed verbose 
+test, new Test::Harness has possibly verbose output, but updated package
+has a lot of features f.e. TAP::Harness. Carefully watched all new bugs 
+related to tests!
 
-* Thu Jun 26 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-28
-- add compatibility paths to @INC on 32bit archs
+* Fri Jun 27 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-32
+- bump the release number, so that it is not smaller than in F-9
 
-* Tue Jun 24 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-27
+* Tue Jun 24 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-28
 - CVE-2008-2827 perl: insecure use of chmod in rmtree
 
-* Thu Jun 12 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-26
+* Wed Jun 11 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-27
+- 447371 wrong access permission rt49003
+
+* Tue Jun 10 2008 Stepan Kasal <skasal@redhat.com> 4:5.10.0-26
 - make config parameter list consistent for 32bit and 64bit platforms,
   add config option -Dinc_version_list=none (#448735)
 - use perl_archname consistently
-- set siteprefix to prefix/local
+- cleanup of usage of *_lib macros in %%install
 
-* Wed Jun 11 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-25
-- 447371 wrong access permission rt49003
+* Mon Jun  6 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-25
+- 449577 rebuild for FTBFS
 
 * Mon May 26 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-24
 - 448392 upstream fix for assertion
@@ -1926,8 +2024,8 @@ make test
 * Thu May 22 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-23
 - sparc64 breaks with the rpath hack patch applied
 
-* Mon May 19 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-22
-- 447142 upgrade CGI to 3.37
+* Mon May 19 2008 Marcela Maslanova <mmaslano@redhat.com>
+- 447142 upgrade CGI to 3.37 (this actually happened in -21 in rawhide.)
 
 * Sat May 17 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4:5.10.0-21
 - sparc64 fails two tests under mysterious circumstances. we need to get the
