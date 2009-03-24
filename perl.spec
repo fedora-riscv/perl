@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        63%{?dist}
+Release:        64%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -216,6 +216,9 @@ Patch116:	perl-update-Time-HiRes.patch
 %define			    Time_HiRes_version 1.9719
 Patch117:	perl-update-Digest-SHA.patch
 %define			    Digest_SHA_version 5.47
+# includes Fatal.pm
+Patch118:	perl-update-autodie.patch
+%define			    autodie_version 1.999
 
 # Fedora uses links instead of lynx
 # patches File-Fetch and CPAN
@@ -988,6 +991,7 @@ upstream tarball from perl.org.
 %patch115 -p1
 %patch116 -p1
 %patch117 -p1
+%patch118 -p1
 %patch201 -p1
 
 #
@@ -1230,7 +1234,7 @@ perl -x patchlevel.h \
 	'Fedora Patch55: File::Path::rmtree no longer allows creating of setuid files.' \
 	'Fedora Patch56: Fix $? when dumping core' \
 	'34209 Fix a memory leak with Scalar::Util::weaken()' \
-	'Fedora Patch100: Update constant to %{constant_version}' \
+	'Fedora Patch100: Update module constant to %{constant_version}' \
 	'Fedora Patch101: Update Archive::Extract to %{Archive_Extract_version}' \
 	'Fedora Patch102: Update Archive::Tar to %{Archive_Tar_version}' \
 	'Fedora Patch103: Update CGI to %{CGI_version}' \
@@ -1248,6 +1252,7 @@ perl -x patchlevel.h \
 	'Fedora Patch115: Update Test::Simple to %{Test_Simple_version}' \
 	'Fedora Patch116: Update Time::HiRes to %{Time_HiRes_version}' \
 	'Fedora Patch117: Update Digest::SHA to %{Digest_SHA_version}' \
+	'Fedora Patch117: Update module autodie to %{autodie_version}' \
 	'Fedora Patch201: Fedora uses links instead of lynx' \
 	%{nil}
 
@@ -1870,6 +1875,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Mar 24 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-64
+- update module autodie
+
 * Mon Mar 23 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-63
 - update Digest::SHA (fixes 489221)
 
