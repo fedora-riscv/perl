@@ -1566,7 +1566,8 @@ TMPDIR="$PWD/tmp" make test
 
 %files devel
 %defattr(-,root,root,-)
-%doc Changes.*
+# the following includes the file "Changes" -- it's compressed
+%doc Changes*.*
 %{_bindir}/enc2xs
 %{_mandir}/man1/enc2xs*
 %{_prefix}/lib/perl5/%{perl_version}/Encode/
