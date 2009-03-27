@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        64%{?dist}
+Release:        65%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1185,7 +1185,9 @@ popd
 chmod -R u+w $RPM_BUILD_ROOT/*
 
 # Compress Changes* to save space
-%{__gzip} Changes*
+bzip2 -9 Changes*
+echo "The Changes* files were moved to %{_docdir}/%{name}-devel*" \
+	> Changes-moved-to-perl-devel
 
 # Local patch tracking
 cd $RPM_BUILD_ROOT%{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/
@@ -1275,7 +1277,8 @@ TMPDIR="$PWD/tmp" make test
 
 %files
 %defattr(-,root,root,-)
-%doc Artistic AUTHORS Changes* Copying README
+%doc Artistic AUTHORS Copying README
+%doc Changes-moved-to-perl-devel
 %{_mandir}/man1/*.1*
 %{_mandir}/man3/*.3*
 %{_bindir}/*
@@ -1563,6 +1566,7 @@ TMPDIR="$PWD/tmp" make test
 
 %files devel
 %defattr(-,root,root,-)
+%doc Changes.*
 %{_bindir}/enc2xs
 %{_mandir}/man1/enc2xs*
 %{_prefix}/lib/perl5/%{perl_version}/Encode/
@@ -1875,6 +1879,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Mar 27 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-65
+- Move the gargantuan Changes* collection to -devel (#492605)
+
 * Tue Mar 24 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-64
 - update module autodie
 
