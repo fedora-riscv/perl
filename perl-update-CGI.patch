@@ -1,8 +1,8 @@
-CGI.pm-3.42
+CGI.pm-3.43
 
 diff -urN perl-5.10.0.orig/lib/CGI/Carp.pm perl-5.10.0/lib/CGI/Carp.pm
---- perl-5.10.0.orig/lib/CGI/Carp.pm	2007-12-18 11:47:07.000000000 +0100
-+++ perl-5.10.0/lib/CGI/Carp.pm	2009-02-13 18:08:50.000000000 +0100
+--- perl-5.10.0.orig/lib/CGI/Carp.pm	2009-04-06 18:28:23.000000000 +0200
++++ perl-5.10.0/lib/CGI/Carp.pm	2009-04-07 14:36:05.000000000 +0200
 @@ -323,7 +323,7 @@
  
  $main::SIG{__WARN__}=\&CGI::Carp::warn;
@@ -21,9 +21,13 @@ diff -urN perl-5.10.0.orig/lib/CGI/Carp.pm perl-5.10.0/lib/CGI/Carp.pm
          print STDOUT $mess;
      }
 diff -urN perl-5.10.0.orig/lib/CGI/Changes perl-5.10.0/lib/CGI/Changes
---- perl-5.10.0.orig/lib/CGI/Changes	2007-12-18 11:47:07.000000000 +0100
-+++ perl-5.10.0/lib/CGI/Changes	2009-02-13 18:09:15.000000000 +0100
-@@ -1,3 +1,70 @@
+--- perl-5.10.0.orig/lib/CGI/Changes	2009-04-06 18:28:23.000000000 +0200
++++ perl-5.10.0/lib/CGI/Changes	2009-04-07 14:36:12.000000000 +0200
+@@ -1,3 +1,74 @@
++  Version 3.43
++  1. Documentation patch from MARKSTOS@cpan.org to replace all occurrences of
++  "new CGI" with CGI->new()" to reflect best perl practices.
++  2. Patch from Stepan Kasal to fix utf-8 related problems in perl 5.10
 +
 +  Version 3.42
 +  1. Added patch from Renee Baecker that makes it possible to subclass
@@ -95,8 +99,8 @@ diff -urN perl-5.10.0.orig/lib/CGI/Changes perl-5.10.0/lib/CGI/Changes
    1. The position of file handles is now reset to zero when CGI->new is called.
      (Mark Stosberg)
 diff -urN perl-5.10.0.orig/lib/CGI/Cookie.pm perl-5.10.0/lib/CGI/Cookie.pm
---- perl-5.10.0.orig/lib/CGI/Cookie.pm	2007-12-18 11:47:07.000000000 +0100
-+++ perl-5.10.0/lib/CGI/Cookie.pm	2009-02-13 18:08:50.000000000 +0100
+--- perl-5.10.0.orig/lib/CGI/Cookie.pm	2009-04-06 18:28:23.000000000 +0200
++++ perl-5.10.0/lib/CGI/Cookie.pm	2009-04-07 14:36:05.000000000 +0200
 @@ -13,7 +13,7 @@
  # wish, but if you redistribute a modified version, please attach a note
  # listing the modifications you have made.
@@ -125,8 +129,8 @@ diff -urN perl-5.10.0.orig/lib/CGI/Cookie.pm perl-5.10.0/lib/CGI/Cookie.pm
      s/\s*(.*?)\s*/$1/;
      my($key,$value) = split("=",$_,2);
 diff -urN perl-5.10.0.orig/lib/CGI/Fast.pm perl-5.10.0/lib/CGI/Fast.pm
---- perl-5.10.0.orig/lib/CGI/Fast.pm	2007-12-18 11:47:07.000000000 +0100
-+++ perl-5.10.0/lib/CGI/Fast.pm	2009-02-13 18:08:50.000000000 +0100
+--- perl-5.10.0.orig/lib/CGI/Fast.pm	2009-04-06 18:28:23.000000000 +0200
++++ perl-5.10.0/lib/CGI/Fast.pm	2009-04-07 14:36:05.000000000 +0200
 @@ -55,6 +55,7 @@
       }
       }
@@ -172,8 +176,8 @@ diff -urN perl-5.10.0.orig/lib/CGI/Fast.pm perl-5.10.0/lib/CGI/Fast.pm
      &do_some_initialization();
      while ($q = new CGI::Fast) {
 diff -urN perl-5.10.0.orig/lib/CGI/Pretty.pm perl-5.10.0/lib/CGI/Pretty.pm
---- perl-5.10.0.orig/lib/CGI/Pretty.pm	2007-12-18 11:47:07.000000000 +0100
-+++ perl-5.10.0/lib/CGI/Pretty.pm	2009-02-13 18:08:50.000000000 +0100
+--- perl-5.10.0.orig/lib/CGI/Pretty.pm	2009-04-06 18:28:23.000000000 +0200
++++ perl-5.10.0/lib/CGI/Pretty.pm	2009-04-07 14:36:05.000000000 +0200
 @@ -176,6 +176,35 @@
  }
  sub _reset_globals { initialize_globals(); }
@@ -210,45 +214,9 @@ diff -urN perl-5.10.0.orig/lib/CGI/Pretty.pm perl-5.10.0/lib/CGI/Pretty.pm
  1;
  
  =head1 NAME
-diff -urN perl-5.10.0.orig/lib/CGI/t/request.t perl-5.10.0/lib/CGI/t/request.t
---- perl-5.10.0.orig/lib/CGI/t/request.t	2007-12-18 11:47:07.000000000 +0100
-+++ perl-5.10.0/lib/CGI/t/request.t	2009-02-13 18:09:57.000000000 +0100
-@@ -4,7 +4,7 @@
- ######################### We start with some black magic to print on failure.
- use lib '.','../blib/lib','../blib/arch';
- 
--BEGIN {$| = 1; print "1..33\n"; }
-+BEGIN {$| = 1; print "1..34\n"; }
- END {print "not ok 1\n" unless $loaded;}
- use CGI ();
- use Config;
-@@ -74,6 +74,7 @@
- test(29,$p->{bar} eq 'froz',"tied interface fetch");
- $p->{bar} = join("\0",qw(foo bar baz));
- test(30,join(' ',$q->param('bar')) eq 'foo bar baz','tied interface store');
-+test(31,exists $p->{bar});
- 
- # test posting
- $q->_reset_globals;
-@@ -88,11 +89,11 @@
-     exit 0;
-   }
-   # at this point, we're in a new (child) process
--  test(31,$q=new CGI,"CGI::new() from POST");
--  test(32,$q->param('weather') eq 'nice',"CGI::param() from POST");
--  test(33,$q->url_param('big_balls') eq 'basketball',"CGI::url_param()");
-+  test(32,$q=new CGI,"CGI::new() from POST");
-+  test(33,$q->param('weather') eq 'nice',"CGI::param() from POST");
-+  test(34,$q->url_param('big_balls') eq 'basketball',"CGI::url_param()");
- } else {
--  print "ok 31 # Skip\n";
-   print "ok 32 # Skip\n";
-   print "ok 33 # Skip\n";
-+  print "ok 34 # Skip\n";
- }
 diff -urN perl-5.10.0.orig/lib/CGI/Util.pm perl-5.10.0/lib/CGI/Util.pm
---- perl-5.10.0.orig/lib/CGI/Util.pm	2007-12-18 11:47:07.000000000 +0100
-+++ perl-5.10.0/lib/CGI/Util.pm	2009-02-13 18:08:50.000000000 +0100
+--- perl-5.10.0.orig/lib/CGI/Util.pm	2009-04-06 18:28:23.000000000 +0200
++++ perl-5.10.0/lib/CGI/Util.pm	2009-04-07 14:36:12.000000000 +0200
 @@ -4,7 +4,7 @@
  use vars qw($VERSION @EXPORT_OK @ISA $EBCDIC @A2E @E2A);
  require Exporter;
@@ -340,7 +308,11 @@ diff -urN perl-5.10.0.orig/lib/CGI/Util.pm perl-5.10.0/lib/CGI/Util.pm
          if ($c < 0x80) {
                  return sprintf("%c", $c);
          } elsif ($c < 0x800) {
-@@ -189,6 +214,17 @@
+@@ -185,10 +210,20 @@
+   my $todecode = shift;
+   return undef unless defined($todecode);
+   $todecode =~ tr/+/ /;       # pluses become spaces
+-    $EBCDIC = "\t" ne "\011";
      if ($EBCDIC) {
        $todecode =~ s/%([0-9a-fA-F]{2})/chr $A2E[hex($1)]/ge;
      } else {
@@ -358,31 +330,126 @@ diff -urN perl-5.10.0.orig/lib/CGI/Util.pm perl-5.10.0/lib/CGI/Util.pm
        $todecode =~ s/%(?:([0-9a-fA-F]{2})|u([0-9a-fA-F]{4}))/
  	defined($1)? chr hex($1) : utf8_chr(hex($2))/ge;
      }
-@@ -200,8 +236,12 @@
+@@ -196,12 +231,24 @@
+ }
+ 
+ # URL-encode data
++#
++# We cannot use the %u escapes, they were rejected by W3C, so the official
++# way is %XX-escaped utf-8 encoding.
++# Naturally, Unicode strings have to be converted to their utf-8 byte
++# representation.  (No action is required on 5.6.)
++# Byte strings were traditionally used directly as a sequence of octets.
++# This worked if they actually represented binary data (i.e. in CGI::Compress).
++# This also worked if these byte strings were actually utf-8 encoded; e.g.,
++# when the source file used utf-8 without the apropriate "use utf8;".
++# This fails if the byte string is actually a Latin 1 encoded string, but it
++# was always so and cannot be fixed without breaking the binary data case.
++# -- Stepan Kasal <skasal@redhat.com>
++#
+ sub escape {
    shift() if @_ > 1 and ( ref($_[0]) || (defined $_[1] && $_[0] eq $CGI::DefaultClass));
    my $toencode = shift;
    return undef unless defined($toencode);
-+  $toencode = eval { pack("C*", unpack("U0C*", $toencode))} || pack("C*", unpack("C*", $toencode));
-+
-   # force bytes while preserving backward compatibility -- dankogai
+-  # force bytes while preserving backward compatibility -- dankogai
 -  $toencode = pack("C*", unpack("U0C*", $toencode));
-+  # but commented out because it was breaking CGI::Compress -- lstein
-+  # $toencode = eval { pack("U*", unpack("U0C*", $toencode))} || pack("C*", unpack("C*", $toencode));
-+
++  utf8::encode($toencode) if ($] > 5.007 && utf8::is_utf8($toencode));
      if ($EBCDIC) {
        $toencode=~s/([^a-zA-Z0-9_.~-])/uc sprintf("%%%02x",$E2A[ord($1)])/eg;
      } else {
+diff -urN perl-5.10.0.orig/lib/CGI/t/request.t perl-5.10.0/lib/CGI/t/request.t
+--- perl-5.10.0.orig/lib/CGI/t/request.t	2009-04-06 18:28:23.000000000 +0200
++++ perl-5.10.0/lib/CGI/t/request.t	2009-04-07 14:36:05.000000000 +0200
+@@ -4,7 +4,7 @@
+ ######################### We start with some black magic to print on failure.
+ use lib '.','../blib/lib','../blib/arch';
+ 
+-BEGIN {$| = 1; print "1..33\n"; }
++BEGIN {$| = 1; print "1..34\n"; }
+ END {print "not ok 1\n" unless $loaded;}
+ use CGI ();
+ use Config;
+@@ -74,6 +74,7 @@
+ test(29,$p->{bar} eq 'froz',"tied interface fetch");
+ $p->{bar} = join("\0",qw(foo bar baz));
+ test(30,join(' ',$q->param('bar')) eq 'foo bar baz','tied interface store');
++test(31,exists $p->{bar});
+ 
+ # test posting
+ $q->_reset_globals;
+@@ -88,11 +89,11 @@
+     exit 0;
+   }
+   # at this point, we're in a new (child) process
+-  test(31,$q=new CGI,"CGI::new() from POST");
+-  test(32,$q->param('weather') eq 'nice',"CGI::param() from POST");
+-  test(33,$q->url_param('big_balls') eq 'basketball',"CGI::url_param()");
++  test(32,$q=new CGI,"CGI::new() from POST");
++  test(33,$q->param('weather') eq 'nice',"CGI::param() from POST");
++  test(34,$q->url_param('big_balls') eq 'basketball',"CGI::url_param()");
+ } else {
+-  print "ok 31 # Skip\n";
+   print "ok 32 # Skip\n";
+   print "ok 33 # Skip\n";
++  print "ok 34 # Skip\n";
+ }
+diff -urN perl-5.10.0.orig/lib/CGI/t/util-58.t perl-5.10.0/lib/CGI/t/util-58.t
+--- perl-5.10.0.orig/lib/CGI/t/util-58.t	2009-04-06 18:28:07.000000000 +0200
++++ perl-5.10.0/lib/CGI/t/util-58.t	2009-04-07 14:36:12.000000000 +0200
+@@ -1,16 +1,29 @@
++# test CGI::Util::escape
++use Test::More tests => 4;
++use_ok("CGI::Util");
++
++# Byte strings should be escaped byte by byte:
++# 1) not a valid utf-8 sequence:
++my $uri = "pe\x{f8}\x{ed}\x{e8}ko.ogg";
++is(CGI::Util::escape($uri), "pe%F8%ED%E8ko.ogg", "Escape a Latin-2 string");
++
++# 2) is a valid utf-8 sequence, but not an UTF-8-flagged string
++#    This happens often: people write utf-8 strings to source, but forget
++#    to tell perl about it by "use utf8;"--this is obviously wrong, but we
++#    have to handle it gracefully, for compatibility with GCI.pm under
++#    perl-5.8.x
+ #
+-# This tests CGI::Util::escape() when fed with UTF-8-flagged string
+-# -- dankogai
+-BEGIN {
+-    if ($] < 5.008) {
+-       print "1..0 # \$] == $] < 5.008\n";
+-       exit(0);
+-    }
+-}
++$uri = "pe\x{c5}\x{99}\x{c3}\x{ad}\x{c4}\x{8d}ko.ogg";
++is(CGI::Util::escape($uri), "pe%C5%99%C3%AD%C4%8Dko.ogg",
++	"Escape an utf-8 byte string");
+ 
+-use Test::More tests => 2;
+-use_ok("CGI::Util");
+-my $uri = "\x{5c0f}\x{98fc} \x{5f3e}.txt"; # KOGAI, Dan, in Kanji
+-is(CGI::Util::escape($uri), "%E5%B0%8F%E9%A3%BC%20%E5%BC%BE.txt",
+-   "# Escape string with UTF-8 flag");
++SKIP:
++{
++	# This tests CGI::Util::escape() when fed with UTF-8-flagged string
++	# -- dankogai
++	skip("Unicode strings not available in $]", 1) if ($] < 5.008);
++	$uri = "\x{5c0f}\x{98fc} \x{5f3e}.txt"; # KOGAI, Dan, in Kanji
++	is(CGI::Util::escape($uri), "%E5%B0%8F%E9%A3%BC%20%E5%BC%BE.txt",
++   		"Escape string with UTF-8 flag");
++}
+ __END__
 diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
---- perl-5.10.0.orig/lib/CGI.pm	2007-12-18 11:47:07.000000000 +0100
-+++ perl-5.10.0/lib/CGI.pm	2009-02-13 18:08:55.000000000 +0100
+--- perl-5.10.0.orig/lib/CGI.pm	2009-04-06 18:28:23.000000000 +0200
++++ perl-5.10.0/lib/CGI.pm	2009-04-07 14:36:12.000000000 +0200
 @@ -18,13 +18,13 @@
  # The most recent version and complete docs are available at:
  #   http://stein.cshl.org/WWW/software/CGI/
  
 -$CGI::revision = '$Id: CGI.pm,v 1.234 2007/04/16 16:58:46 lstein Exp $';
 -$CGI::VERSION='3.29';
-+$CGI::revision = '$Id: CGI.pm,v 1.260 2008/09/08 14:13:23 lstein Exp $';
-+$CGI::VERSION='3.42';
++$CGI::revision = '$Id: CGI.pm,v 1.263 2009/02/11 16:56:37 lstein Exp $';
++$CGI::VERSION='3.43';
  
  # HARD-CODED LOCATION FOR FILE UPLOAD TEMPORARY FILES.
  # UNCOMMENT THIS ONLY IF YOU KNOW WHAT YOU'RE DOING.
@@ -439,6 +506,28 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  			   embed basefont style span layer ilayer font frameset frame script small big Area Map/],
                  ':html4'=>[qw/abbr acronym bdo col colgroup del fieldset iframe
                              ins label legend noframes noscript object optgroup Q 
+@@ -293,10 +294,10 @@
+     # To allow overriding, search through the packages
+     # Till we find one in which the correct subroutine is defined.
+     my @packages = ($self,@{"$self\:\:ISA"});
+-    foreach $sym (keys %EXPORT) {
++    for $sym (keys %EXPORT) {
+ 	my $pck;
+ 	my $def = ${"$self\:\:AutoloadClass"} || $DefaultClass;
+-	foreach $pck (@packages) {
++	for $pck (@packages) {
+ 	    if (defined(&{"$pck\:\:$sym"})) {
+ 		$def = $pck;
+ 		last;
+@@ -316,7 +317,7 @@
+     return ("start_$1","end_$1") if $tag=~/^(?:\*|start_|end_)(.+)/;
+     my(@r);
+     return ($tag) unless $EXPORT_TAGS{$tag};
+-    foreach (@{$EXPORT_TAGS{$tag}}) {
++    for (@{$EXPORT_TAGS{$tag}}) {
+ 	push(@r,&expand_tags($_));
+     }
+     return @r;
 @@ -352,6 +353,7 @@
        $self->r(Apache->request) unless $self->r;
        my $r = $self->r;
@@ -455,7 +544,24 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
      }
      undef $NPH;
    }
-@@ -437,23 +440,22 @@
+@@ -378,7 +381,7 @@
+ sub DESTROY {
+   my $self = shift;
+   if ($OS eq 'WINDOWS') {
+-    foreach my $href (values %{$self->{'.tmpfiles'}}) {
++    for my $href (values %{$self->{'.tmpfiles'}}) {
+       $href->{hndl}->DESTROY if defined $href->{hndl};
+       $href->{name}->DESTROY if defined $href->{name};
+     }
+@@ -430,30 +433,29 @@
+ 	if (substr($p[0],0,1) eq '-') {
+ 	    @values = defined($value) ? (ref($value) && ref($value) eq 'ARRAY' ? @{$value} : $value) : ();
+ 	} else {
+-	    foreach ($value,@other) {
++	    for ($value,@other) {
+ 		push(@values,$_) if defined($_);
+ 	    }
+ 	}
  	# If values is provided, then we set it.
  	if (@values or defined $value) {
  	    $self->add_parameter($name);
@@ -488,6 +594,15 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  }
  
  sub self_or_default {
+@@ -486,7 +488,7 @@
+ 
+ # Initialize the query object from the environment.
+ # If a parameter list is found, this object will be set
+-# to an associative array in which parameter names are keys
++# to a hash in which parameter names are keys
+ # and the values are stored as lists
+ # If a keyword list is found, this method creates a bogus
+ # parameter list with the single parameter 'keywords'.
 @@ -574,14 +576,14 @@
                        $self->add_parameter($param);
                        $self->read_from_client(\$value,$content_length,0)
@@ -505,6 +620,15 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
                        if ($MOD_PERL) {
                                $query_string = $self->r->args;
                        } else {
+@@ -601,7 +603,7 @@
+ 	      last METHOD;
+ 	  }
+ 	  if (ref($initializer) && ref($initializer) eq 'HASH') {
+-	      foreach (keys %$initializer) {
++	      for (keys %$initializer) {
+ 		  $self->param('-name'=>$_,'-value'=>$initializer->{$_});
+ 	      }
+ 	      last METHOD;
 @@ -641,7 +643,7 @@
  	  last METHOD;
        }
@@ -540,15 +664,39 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  	}
      }
  
-@@ -752,7 +754,7 @@
+@@ -695,9 +697,9 @@
+       $self->delete_all();
+     }
+ 
+-    # Associative array containing our defined fieldnames
++    # hash containing our defined fieldnames
+     $self->{'.fieldnames'} = {};
+-    foreach ($self->param('.cgifields')) {
++    for ($self->param('.cgifields')) {
+ 	$self->{'.fieldnames'}->{$_}++;
+     }
+     
+@@ -750,9 +752,9 @@
+     # again, we initialize ourselves in exactly the same way.  This allows
+     # us to have several of these objects.
      @QUERY_PARAM = $self->param; # save list of parameters
-     foreach (@QUERY_PARAM) {
+-    foreach (@QUERY_PARAM) {
++    for (@QUERY_PARAM) {
        next unless defined $_;
 -      $QUERY_PARAM{$_}=$self->{$_};
 +      $QUERY_PARAM{$_}=$self->{param}{$_};
      }
      $QUERY_CHARSET = $self->charset;
      %QUERY_FIELDNAMES = %{$self->{'.fieldnames'}};
+@@ -763,7 +765,7 @@
+     my($self,$tosplit) = @_;
+     my(@pairs) = split(/[&;]/,$tosplit);
+     my($param,$value);
+-    foreach (@pairs) {
++    for (@pairs) {
+ 	($param,$value) = split('=',$_,2);
+ 	next unless defined $param;
+ 	next if $NO_UNDEF_PARAMS and not defined $value;
 @@ -771,7 +773,7 @@
  	$param = unescape($param);
  	$value = unescape($value);
@@ -567,7 +715,15 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  }
  
  sub all_parameters {
-@@ -904,6 +906,7 @@
+@@ -897,13 +899,14 @@
+     # to avoid reexporting unwanted variables
+     undef %EXPORT;
+ 
+-    foreach (@_) {
++    for (@_) {
+ 	$HEADERS_ONCE++,         next if /^[:-]unique_headers$/;
+ 	$NPH++,                  next if /^[:-]nph$/;
+ 	$NOSTICKY++,             next if /^[:-]nosticky$/;
  	$DEBUG=0,                next if /^[:-]no_?[Dd]ebug$/;
  	$DEBUG=2,                next if /^[:-][Dd]ebug$/;
  	$USE_PARAM_SEMICOLONS++, next if /^[:-]newstyle_urls$/;
@@ -575,15 +731,45 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  	$XHTML++,                next if /^[:-]xhtml$/;
  	$XHTML=0,                next if /^[:-]no_?xhtml$/;
  	$USE_PARAM_SEMICOLONS=0, next if /^[:-]oldstyle_urls$/;
-@@ -1005,7 +1008,7 @@
+@@ -925,7 +928,7 @@
+ 	    next;
+ 	}
+ 
+-	foreach (&expand_tags($_)) {
++	for (&expand_tags($_)) {
+ 	    tr/a-zA-Z0-9_//cd;  # don't allow weird function names
+ 	    $EXPORT{$_}++;
+ 	}
+@@ -1003,9 +1006,9 @@
+     my(@names) = rearrange([NAME],@p);
+     my @to_delete = ref($names[0]) eq 'ARRAY' ? @$names[0] : @names;
      my %to_delete;
-     foreach my $name (@to_delete)
+-    foreach my $name (@to_delete)
++    for my $name (@to_delete)
      {
 -        CORE::delete $self->{$name};
 +        CORE::delete $self->{param}{$name};
          CORE::delete $self->{'.fieldnames'}->{$name};
          $to_delete{$name}++;
      }
+@@ -1025,7 +1028,7 @@
+     die "Can't import names into \"main\"\n" if \%{"${namespace}::"} == \%::;
+     if ($delete || $MOD_PERL || exists $ENV{'FCGI_ROLE'}) {
+ 	# can anyone find an easier way to do this?
+-	foreach (keys %{"${namespace}::"}) {
++	for (keys %{"${namespace}::"}) {
+ 	    local *symbol = "${namespace}::${_}";
+ 	    undef $symbol;
+ 	    undef @symbol;
+@@ -1033,7 +1036,7 @@
+ 	}
+     }
+     my($param,@value,$var);
+-    foreach $param ($self->param) {
++    for $param ($self->param) {
+ 	# protect against silly names
+ 	($var = $param)=~tr/a-zA-Z0-9_/_/c;
+ 	$var =~ s/^(?=\d)/_/;
 @@ -1054,8 +1057,8 @@
  sub keywords {
      my($self,@values) = self_or_default(@_);
@@ -613,6 +799,47 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
      }
      return $self->param($name);
  }
+@@ -1267,7 +1270,7 @@
+ 	if ($ENV{QUERY_STRING} =~ /=/) {
+ 	    my(@pairs) = split(/[&;]/,$ENV{QUERY_STRING});
+ 	    my($param,$value);
+-	    foreach (@pairs) {
++	    for (@pairs) {
+ 		($param,$value) = split('=',$_,2);
+ 		$param = unescape($param);
+ 		$value = unescape($value);
+@@ -1295,11 +1298,11 @@
+     my($param,$value,@result);
+     return '<ul></ul>' unless $self->param;
+     push(@result,"<ul>");
+-    foreach $param ($self->param) {
++    for $param ($self->param) {
+ 	my($name)=$self->escapeHTML($param);
+ 	push(@result,"<li><strong>$param</strong></li>");
+ 	push(@result,"<ul>");
+-	foreach $value ($self->param($param)) {
++	for $value ($self->param($param)) {
+ 	    $value = $self->escapeHTML($value);
+             $value =~ s/\n/<br \/>\n/g;
+ 	    push(@result,"<li>$value</li>");
+@@ -1332,14 +1335,14 @@
+     my($param);
+     local($,) = '';  # set print field separator back to a sane value
+     local($\) = '';  # set output line separator to a sane value
+-    foreach $param ($self->param) {
++    for $param ($self->param) {
+ 	my($escaped_param) = escape($param);
+ 	my($value);
+-	foreach $value ($self->param($param)) {
++	for $value ($self->param($param)) {
+ 	    print $filehandle "$escaped_param=",escape("$value"),"\n";
+ 	}
+     }
+-    foreach (keys %{$self->{'.fieldnames'}}) {
++    for (keys %{$self->{'.fieldnames'}}) {
+           print $filehandle ".cgifields=",escape("$_"),"\n";
+     }
+     print $filehandle "=\n";    # end of record
 @@ -1378,7 +1381,7 @@
  'multipart_init' => <<'END_OF_FUNC',
  sub multipart_init {
@@ -622,6 +849,33 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
      $boundary = $boundary || '------- =_aaaaaaaaaa0';
      $self->{'separator'} = "$CRLF--$boundary$CRLF";
      $self->{'final_separator'} = "$CRLF--$boundary--$CRLF";
+@@ -1408,7 +1411,7 @@
+ 
+     # rearrange() was designed for the HTML portion, so we
+     # need to fix it up a little.
+-    foreach (@other) {
++    for (@other) {
+         # Don't use \s because of perl bug 21951
+         next unless my($header,$value) = /([^ \r\n\t=]+)=\"?(.+?)\"?$/;
+ 	($_ = $header) =~ s/^(\w)(.*)/$1 . lc ($2) . ': '.$self->unescapeHTML($value)/e;
+@@ -1477,7 +1480,7 @@
+ 
+     # rearrange() was designed for the HTML portion, so we
+     # need to fix it up a little.
+-    foreach (@other) {
++    for (@other) {
+         # Don't use \s because of perl bug 21951
+         next unless my($header,$value) = /([^ \r\n\t=]+)=\"?(.+?)\"?$/;
+         ($_ = $header) =~ s/^(\w)(.*)/"\u$1\L$2" . ': '.$self->unescapeHTML($value)/e;
+@@ -1503,7 +1506,7 @@
+     # push all the cookies -- there may be several
+     if ($cookie) {
+ 	my(@cookie) = ref($cookie) && ref($cookie) eq 'ARRAY' ? @{$cookie} : $cookie;
+-	foreach (@cookie) {
++	for (@cookie) {
+             my $cs = UNIVERSAL::isa($_,'CGI::Cookie') ? $_->as_string : $_;
+ 	    push(@header,"Set-Cookie: $cs") if $cs ne '';
+ 	}
 @@ -1519,7 +1522,7 @@
      push(@header,map {ucfirst $_} @other);
      push(@header,"Content-Type: $type") if $type ne '';
@@ -631,7 +885,21 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
          $self->r->send_cgi_header($header);
          return '';
      }
-@@ -1663,12 +1666,22 @@
+@@ -1556,7 +1559,7 @@
+     $status = '302 Found' unless defined $status;
+     $url ||= $self->self_url;
+     my(@o);
+-    foreach (@other) { tr/\"//d; push(@o,split("=",$_,2)); }
++    for (@other) { tr/\"//d; push(@o,split("=",$_,2)); }
+     unshift(@o,
+ 	 '-Status'  => $status,
+ 	 '-Location'=> $url,
+@@ -1659,16 +1662,26 @@
+     }
+ 
+     if ($meta && ref($meta) && (ref($meta) eq 'HASH')) {
+-	foreach (keys %$meta) { push(@result,$XHTML ? qq(<meta name="$_" content="$meta->{$_}" />) 
++	for (keys %$meta) { push(@result,$XHTML ? qq(<meta name="$_" content="$meta->{$_}" />) 
  			: qq(<meta name="$_" content="$meta->{$_}">)); }
      }
  
@@ -664,7 +932,7 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  
      for my $s (@s) {
        if (ref($s)) {
-@@ -1708,7 +1722,7 @@
+@@ -1708,11 +1722,11 @@
                         ref($s) eq 'ARRAY' ? @$s : %$s));
         my $type = defined $stype ? $stype : 'text/css';
         my $rel  = $alternate ? 'alternate stylesheet' : 'stylesheet';
@@ -673,6 +941,33 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  
         if (ref($src) eq "ARRAY") # Check to see if the $src variable is an array reference
         { # If it is, push a LINK tag for each one
+-           foreach $src (@$src)
++           for $src (@$src)
+          {
+            push(@result,$XHTML ? qq(<link rel="$rel" type="$type" href="$src" $other/>)
+                              : qq(<link rel="$rel" type="$type" href="$src"$other>)) if $src;
+@@ -1726,10 +1740,10 @@
+         }
+      if ($verbatim) {
+            my @v = ref($verbatim) eq 'ARRAY' ? @$verbatim : $verbatim;
+-           push(@result, "<style type=\"text/css\">\n$_\n</style>") foreach @v;
++           push(@result, "<style type=\"text/css\">\n$_\n</style>") for @v;
+       }
+       my @c = ref($code) eq 'ARRAY' ? @$code : $code if $code;
+-      push(@result,style({'type'=>$type},"$cdata_start\n$_\n$cdata_end")) foreach @c;
++      push(@result,style({'type'=>$type},"$cdata_start\n$_\n$cdata_end")) for @c;
+ 
+       } else {
+            my $src = $s;
+@@ -1747,7 +1761,7 @@
+     my (@result);
+ 
+     my (@scripts) = ref($script) eq 'ARRAY' ? @$script : ($script);
+-    foreach $script (@scripts) {
++    for $script (@scripts) {
+ 	my($src,$code,$language);
+ 	if (ref($script)) { # script is a hash
+ 	    ($src,$code,$type) =
 @@ -1831,7 +1845,7 @@
      my($method,$action,$enctype,@other) = 
  	rearrange([METHOD,ACTION,ENCTYPE],@p);
@@ -719,6 +1014,33 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
                  $toencode =~ s{'}{&#39;}gso;
                  $toencode =~ s{\x8b}{&#8249;}gso;
                  $toencode =~ s{\x9b}{&#8250;}gso;
+@@ -2251,7 +2269,7 @@
+     my($row,$column);
+     unshift(@colheaders,'') if @colheaders && @rowheaders;
+     $result .= "<tr>" if @colheaders;
+-    foreach (@colheaders) {
++    for (@colheaders) {
+ 	$result .= "<th>$_</th>";
+     }
+     for ($row=0;$row<$rows;$row++) {
+@@ -2280,7 +2298,7 @@
+ #   $linebreak -> (optional) Set to true to place linebreaks
+ #             between the buttons.
+ #   $labels -> (optional)
+-#             A pointer to an associative array of labels to print next to each checkbox
++#             A pointer to a hash of labels to print next to each checkbox
+ #             in the form $label{'value'}="Long explanatory label".
+ #             Otherwise the provided values are used as the labels.
+ # Returns:
+@@ -2308,7 +2326,7 @@
+ #   $linebreak -> (optional) Set to true to place linebreaks
+ #             between the buttons.
+ #   $labels -> (optional)
+-#             A pointer to an associative array of labels to print next to each checkbox
++#             A pointer to a hash of labels to print next to each checkbox
+ #             in the form $label{'value'}="Long explanatory label".
+ #             Otherwise the provided values are used as the labels.
+ # Returns:
 @@ -2327,13 +2345,14 @@
      my $self     = shift;
      my $box_type = shift;
@@ -740,6 +1062,20 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  
      my($result,$checked,@elements,@values);
  
+@@ -2361,11 +2380,11 @@
+ 
+     # for disabling groups of radio/checkbox buttons
+     my %disabled;
+-    foreach (@{$disabled}) {
++    for (@{$disabled}) {
+    	$disabled{$_}=1;
+     }
+ 
+-    foreach (@values) {
++    for (@values) {
+     	 my $disable="";
+ 	 if ($disabled{$_}) {
+ 		$disable="disabled='1'";
 @@ -2393,7 +2412,7 @@
  
          if ($XHTML) {
@@ -749,6 +1085,15 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
                     qq(<input type="$box_type" name="$name" value="$_" $checkit$other$tab$attribs$disable/>$label)).${break};
          } else {
              push(@elements,qq/<input type="$box_type" name="$name" value="$_"$checkit$other$tab$attribs$disable>${label}${break}/);
+@@ -2415,7 +2434,7 @@
+ #             text of each menu item.
+ #   $default -> (optional) Default item to display
+ #   $labels -> (optional)
+-#             A pointer to an associative array of labels to print next to each checkbox
++#             A pointer to a hash of labels to print next to each checkbox
+ #             in the form $label{'value'}="Long explanatory label".
+ #             Otherwise the provided values are used as the labels.
+ # Returns:
 @@ -2428,12 +2447,14 @@
      my($name,$values,$default,$labels,$attributes,$override,$tabindex,@other) =
         rearrange([NAME,[VALUES,VALUE],[DEFAULT,DEFAULTS],LABELS,
@@ -768,9 +1113,12 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
      }
      $name=$self->escapeHTML($name);
      my($other) = @other ? " @other" : '';
-@@ -2444,20 +2465,22 @@
+@@ -2442,22 +2463,24 @@
+     @values = $self->_set_values_and_labels($values,\$labels,$name);
+     $tabindex = $self->element_tab($tabindex);
      $result = qq/<select name="$name" $tabindex$other>\n/;
-     foreach (@values) {
+-    foreach (@values) {
++    for (@values) {
          if (/<optgroup/) {
 -            foreach (split(/\n/)) {
 +            for my $v (split(/\n/)) {
@@ -801,6 +1149,36 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
          }
      }
  
+@@ -2474,7 +2497,7 @@
+ #   $values -> A pointer to a regular array containing the
+ #              values for each option line in the group.
+ #   $labels -> (optional)
+-#              A pointer to an associative array of labels to print next to each item
++#              A pointer to a hash of labels to print next to each item
+ #              in the form $label{'value'}="Long explanatory label".
+ #              Otherwise the provided values are used as the labels.
+ #   $labeled -> (optional)
+@@ -2501,9 +2524,9 @@
+ 
+     $name=$self->escapeHTML($name);
+     $result = qq/<optgroup label="$name"$other>\n/;
+-    foreach (@values) {
++    for (@values) {
+         if (/<optgroup/) {
+-            foreach (split(/\n/)) {
++            for (split(/\n/)) {
+                 my $selectit = $XHTML ? 'selected="selected"' : 'selected';
+                 s/(value="$selected")/$selectit $1/ if defined $selected;
+                 $result .= "$_\n";
+@@ -2541,7 +2564,7 @@
+ #   $size -> (optional) Size of the list.
+ #   $multiple -> (optional) If set, allow multiple selections.
+ #   $labels -> (optional)
+-#             A pointer to an associative array of labels to print next to each checkbox
++#             A pointer to a hash of labels to print next to each checkbox
+ #             in the form $label{'value'}="Long explanatory label".
+ #             Otherwise the provided values are used as the labels.
+ # Returns:
 @@ -2560,6 +2583,7 @@
      $size = $size || scalar(@values);
  
@@ -809,6 +1187,33 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
      my($is_multiple) = $multiple ? qq/ multiple="multiple"/ : '';
      my($has_size) = $size ? qq/ size="$size"/: '';
      my($other) = @other ? " @other" : '';
+@@ -2567,7 +2591,7 @@
+     $name=$self->escapeHTML($name);
+     $tabindex = $self->element_tab($tabindex);
+     $result = qq/<select name="$name" $tabindex$has_size$is_multiple$other>\n/;
+-    foreach (@values) {
++    for (@values) {
+ 	my($selectit) = $self->_selected($selected{$_});
+ 	my($label) = $_;
+ 	$label = $labels->{$_} if defined($labels) && defined($labels->{$_});
+@@ -2607,7 +2631,7 @@
+ 	@value = ref($default) ? @{$default} : $default;
+ 	$do_override = $override;
+     } else {
+-	foreach ($default,$override,@other) {
++	for ($default,$override,@other) {
+ 	    push(@value,$_) if defined($_);
+ 	}
+     }
+@@ -2617,7 +2641,7 @@
+     @value = @prev if !$do_override && @prev;
+ 
+     $name=$self->escapeHTML($name);
+-    foreach (@value) {
++    for (@value) {
+ 	$_ = defined($_) ? $self->escapeHTML($_,1) : '';
+ 	push @result,$XHTML ? qq(<input type="hidden" name="$name" value="$_" @other />)
+                             : qq(<input type="hidden" name="$name" value="$_" @other>);
 @@ -2692,12 +2716,13 @@
      my $request_uri =  unescape($self->request_uri) || '';
      my $query_str   =  $self->query_string;
@@ -931,7 +1336,26 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  }
  END_OF_FUNC
  
-@@ -2931,7 +2985,9 @@
+@@ -2899,15 +2953,15 @@
+ sub query_string {
+     my($self) = self_or_default(@_);
+     my($param,$value,@pairs);
+-    foreach $param ($self->param) {
++    for $param ($self->param) {
+ 	my($eparam) = escape($param);
+-	foreach $value ($self->param($param)) {
++	for $value ($self->param($param)) {
+ 	    $value = escape($value);
+             next unless defined $value;
+ 	    push(@pairs,"$eparam=$value");
+ 	}
+     }
+-    foreach (keys %{$self->{'.fieldnames'}}) {
++    for (keys %{$self->{'.fieldnames'}}) {
+       push(@pairs,".cgifields=".escape("$_"));
+     }
+     return join($USE_PARAM_SEMICOLONS ? ';' : '&',@pairs);
+@@ -2931,9 +2985,11 @@
      my($self,$search) = self_or_CGI(@_);
      my(%prefs,$type,$pref,$pat);
      
@@ -940,8 +1364,38 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
 +                ? split(',',$self->http('accept'))
 +                : ();
  
-     foreach (@accept) {
+-    foreach (@accept) {
++    for (@accept) {
  	($pref) = /q=(\d\.\d+|\d+)/;
+ 	($type) = m#(\S+/[^;]+)#;
+ 	next unless $type;
+@@ -2952,7 +3008,7 @@
+     return $prefs{$search} if $prefs{$search};
+ 
+     # Didn't get it, so try pattern matching.
+-    foreach (keys %prefs) {
++    for (keys %prefs) {
+ 	next unless /\*/;       # not a pattern match
+ 	($pat = $_) =~ s/([^\w*])/\\$1/g; # escape meta characters
+ 	$pat =~ s/\*/.*/g; # turn it into a pattern
+@@ -3133,7 +3189,7 @@
+     $parameter =~ tr/-/_/;
+     return $ENV{"HTTP_\U$parameter\E"} if $parameter;
+     my(@p);
+-    foreach (keys %ENV) {
++    for (keys %ENV) {
+ 	push(@p,$_) if /^HTTP/;
+     }
+     return @p;
+@@ -3152,7 +3208,7 @@
+     $parameter =~ tr/-/_/;
+     return $ENV{"HTTPS_\U$parameter\E"} if $parameter;
+     my(@p);
+-    foreach (keys %ENV) {
++    for (keys %ENV) {
+ 	push(@p,$_) if /^HTTPS/;
+     }
+     return @p;
 @@ -3284,10 +3340,10 @@
  
      if (!$override && ($self->{'.fieldnames'}->{$name} || 
@@ -954,6 +1408,15 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
 +	$selected{$_}++ for @{$defaults};
      } else {
  	$selected{$defaults}++ if defined($defaults);
+     }
+@@ -3326,7 +3382,7 @@
+ 	$input = join(" ",@lines);
+ 	@words = &shellwords($input);    
+     }
+-    foreach (@words) {
++    for (@words) {
+ 	s/\\=/%3D/g;
+ 	s/\\&/%26/g;	    
      }
 @@ -3368,11 +3424,20 @@
  	    return;
@@ -987,6 +1450,15 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  	    next;
  	}
  
+@@ -3423,7 +3488,7 @@
+ 	  # together with the body for later parsing with an external
+ 	  # MIME parser module
+ 	  if ( $multipart ) {
+-	      foreach ( keys %header ) {
++	      for ( keys %header ) {
+ 		  print $filehandle "$_: $header{$_}${CRLF}";
+ 	      }
+ 	      print $filehandle "${CRLF}";
 @@ -3431,7 +3496,7 @@
  
  	  my ($data);
@@ -1014,6 +1486,24 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
        }
      }
      return $returnvalue;
+@@ -3616,7 +3681,7 @@
+     my($element, $attributes) = @_;
+     return '' unless defined($attributes->{$element});
+     $attribs = ' ';
+-    foreach my $attrib (keys %{$attributes->{$element}}) {
++    for my $attrib (keys %{$attributes->{$element}}) {
+         (my $clean_attrib = $attrib) =~ s/^-//;
+         $attribs .= "@{[lc($clean_attrib)]}=\"$attributes->{$element}{$attrib}\" ";
+     }
+@@ -3627,7 +3692,7 @@
+ 
+ '_compile_all' => <<'END_OF_FUNC',
+ sub _compile_all {
+-    foreach (@_) {
++    for (@_) {
+ 	next if defined(&$_);
+ 	$AUTOLOAD = "CGI::$_";
+ 	_compile();
 @@ -3645,6 +3710,7 @@
  
  ################### Fh -- lightweight filehandle ###############
@@ -1070,6 +1560,15 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
      unshift(@TEMP,$ENV{'TMPDIR'}) if defined $ENV{'TMPDIR'};
  
      # this feature was supposed to provide per-user tmpfiles, but
+@@ -3997,7 +4079,7 @@
+     #    : Refer to getpwuid() only at run-time if we're fortunate and have  UNIX.
+     # unshift(@TEMP,(eval {(getpwuid($>))[7]}).'/tmp') if $CGI::OS eq 'UNIX' and $> != 0;
+ 
+-    foreach (@TEMP) {
++    for (@TEMP) {
+       do {$TMPDIRECTORY = $_; last} if -d $_ && -w _;
+     }
+   }
 @@ -4014,7 +4096,7 @@
  
  sub DESTROY {
@@ -1092,16 +1591,116 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
      # this used to untaint, now it doesn't
      # $filename = $1;
      return bless \$filename;
-@@ -4109,6 +4191,8 @@
- 	     hr;
-    }
+@@ -4075,64 +4157,52 @@
  
-+   print end_html;
+ =head1 NAME
+ 
+-CGI - Simple Common Gateway Interface Class
++CGI - Handle Common Gateway Interface requests and responses
+ 
+ =head1 SYNOPSIS
+ 
+-  # CGI script that creates a fill-out form
+-  # and echoes back its values.
+-
+-  use CGI qw/:standard/;
+-  print header,
+-        start_html('A Simple Example'),
+-        h1('A Simple Example'),
+-        start_form,
+-        "What's your name? ",textfield('name'),p,
+-        "What's the combination?", p,
+-        checkbox_group(-name=>'words',
+-		       -values=>['eenie','meenie','minie','moe'],
+-		       -defaults=>['eenie','minie']), p,
+-        "What's your favorite color? ",
+-        popup_menu(-name=>'color',
+-	           -values=>['red','green','blue','chartreuse']),p,
+-        submit,
+-        end_form,
+-        hr;
+-
+-   if (param()) {
+-       my $name      = param('name');
+-       my $keywords  = join ', ',param('words');
+-       my $color     = param('color');
+-       print "Your name is",em(escapeHTML($name)),p,
+-	     "The keywords are: ",em(escapeHTML($keywords)),p,
+-	     "Your favorite color is ",em(escapeHTML($color)),
+-	     hr;
+-   }
++    use CGI;
+ 
+-=head1 ABSTRACT
++    my $q = CGI->new;
+ 
+-This perl library uses perl5 objects to make it easy to create Web
+-fill-out forms and parse their contents.  This package defines CGI
+-objects, entities that contain the values of the current query string
+-and other state variables.  Using a CGI object's methods, you can
+-examine keywords and parameters passed to your script, and create
+-forms whose initial values are taken from the current query (thereby
+-preserving state information).  The module provides shortcut functions
+-that produce boilerplate HTML, reducing typing and coding errors. It
+-also provides functionality for some of the more advanced features of
+-CGI scripting, including support for file uploads, cookies, cascading
+-style sheets, server push, and frames.
++    # Process an HTTP request
++     @values  = $q->param('form_field');
+ 
+-CGI.pm also provides a simple function-oriented programming style for
+-those who don't need its object-oriented features.
++     $fh      = $q->upload('file_field');
+ 
+-The current version of CGI.pm is available at
++     $riddle  = $query->cookie('riddle_name');
++     %answers = $query->cookie('answers');
 +
- =head1 ABSTRACT
++    # Prepare various HTTP responses
++    print $q->header();
++    print $q->header('application/json');
++
++	$cookie1 = $q->cookie(-name=>'riddle_name', -value=>"The Sphynx's Question");
++	$cookie2 = $q->cookie(-name=>'answers', -value=>\%answers);
++    print $q->header(
++        -type    => 'image/gif',
++        -expires => '+3d',
++        -cookie  => [$cookie1,$cookie2]
++        );
  
- This perl library uses perl5 objects to make it easy to create Web
-@@ -4392,8 +4476,7 @@
+-  http://www.genome.wi.mit.edu/ftp/pub/software/WWW/cgi_docs.html
+-  ftp://ftp-genome.wi.mit.edu/pub/software/WWW/
++   print  $q->redirect('http://somewhere.else/in/movie/land');
+ 
+ =head1 DESCRIPTION
+ 
++CGI.pm is a stable, complete and mature solution for processing and preparing
++HTTP requests and responses.  Major features including processing form
++submissions, file uploads, reading and writing cookies, query string generation
++and manipulation, and processing and preparing HTTP headers. Some HTML
++generation utilities are included as well.
++
++CGI.pm performs very well in in a vanilla CGI.pm environment and also comes
++with built-in support for mod_perl and mod_perl2 as well as FastCGI.
++
++It has the benefit of having developed and refined over 10 years with input
++from dozens of contributors and being deployed on thousands of websites.
++CGI.pm has been included in the Perl distribution since Perl 5.4, and has
++become a de-facto standard.
++
+ =head2 PROGRAMMING STYLE
+ 
+ There are two styles of programming with CGI.pm, an object-oriented
+@@ -4327,7 +4397,7 @@
+     restore_parameters(IN);
+     close IN;
+ 
+-You can also initialize the query object from an associative array
++You can also initialize the query object from a hash
+ reference:
+ 
+     $query = new CGI( {'dinosaur'=>'barney',
+@@ -4392,8 +4462,7 @@
  the method will return a single value.
  
  If a value is not given in the query string, as in the queries
@@ -1111,7 +1710,7 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  
  
  If the parameter does not exist at all, then param() will return undef
-@@ -4477,6 +4560,10 @@
+@@ -4477,6 +4546,10 @@
  
     my $data = $query->param('POSTDATA');
  
@@ -1122,7 +1721,16 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  (If you don't know what the preceding means, don't worry about it.  It
  only affects people trying to use CGI for XML processing and other
  specialized tasks.)
-@@ -4812,6 +4899,16 @@
+@@ -4554,7 +4627,7 @@
+ 
+    open (OUT,">>test.out") || die;
+    $records = 5;
+-   foreach (0..$records) {
++   for (0..$records) {
+        my $q = new CGI;
+        $q->param(-name=>'counter',-value=>$_);
+        $q->save(\*OUT);
+@@ -4812,6 +4885,16 @@
  XHTML will automatically be disabled without needing to use this 
  pragma.
  
@@ -1139,7 +1747,16 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  =item -nph
  
  This makes CGI.pm produce a header appropriate for an NPH (no
-@@ -5388,7 +5485,7 @@
+@@ -5129,7 +5212,7 @@
+ 
+ All relative links will be interpreted relative to this tag.
+ You add arbitrary meta information to the header with the B<-meta>
+-argument.  This argument expects a reference to an associative array
++argument.  This argument expects a reference to a hash
+ containing name/value pairs of meta information.  These will be turned
+ into a series of header <meta> tags that look something like this:
+ 
+@@ -5388,7 +5471,7 @@
  If Apache's mod_rewrite is turned on, then the script name and path
  info probably won't match the request that the user sent. Set
  -rewrite=>1 (default) to return URLs that match what the user sent
@@ -1148,7 +1765,18 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  the URL after mod_rewrite's rules have run. Because the additional
  path information only makes sense in the context of the rewritten URL,
  -rewrite is set to false when you request path info in the URL.
-@@ -5987,24 +6084,27 @@
+@@ -5468,8 +5551,8 @@
+ 
+    print h1("Chapter","1"); # <h1>Chapter 1</h1>"
+ 
+-If the first argument is an associative array reference, then the keys
+-and values of the associative array become the HTML tag's attributes:
++If the first argument is a hash reference, then the keys
++and values of the hash become the HTML tag's attributes:
+ 
+    print a({-href=>'fred.html',-target=>'_new'},
+       "Open a new frame");
+@@ -5987,31 +6070,34 @@
  
  To be safe, use the I<upload()> function (new in version 2.47).  When
  called with the name of an upload field, I<upload()> returns a
@@ -1182,7 +1810,15 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  
  When a file is uploaded the browser usually sends along some
  information along with it in the format of headers.  The information
-@@ -6102,7 +6202,7 @@
+ usually includes the MIME content type.  Future browsers may send
+ other information as well (such as modification date and size). To
+ retrieve this information, call uploadInfo().  It returns a reference to
+-an associative array containing all the document headers.
++a hash containing all the document headers.
+ 
+        $filename = param('uploaded_file');
+        $type = uploadInfo($filename)->{'Content-Type'};
+@@ -6102,7 +6188,7 @@
  
     print popup_menu(-name=>'menu_name',
  			    -values=>['eenie','meenie','minie'],
@@ -1191,7 +1827,7 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
            -labels=>\%labels,
            -attributes=>\%attributes);
  
-@@ -6125,7 +6225,8 @@
+@@ -6125,14 +6211,15 @@
  
  The optional third parameter (-default) is the name of the default
  menu choice.  If not specified, the first item will be the default.
@@ -1201,7 +1837,84 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  
  =item 4.
  
-@@ -6389,6 +6490,9 @@
+ The optional fourth parameter (-labels) is provided for people who
+ want to use different values for the user-visible label inside the
+ popup menu and the value returned to your script.  It's a pointer to an
+-associative array relating menu values to user-visible labels.  If you
++hash relating menu values to user-visible labels.  If you
+ leave this parameter blank, the menu values will be displayed by
+ default.  (You can also leave a label undefined if you want to).
+ 
+@@ -6140,8 +6227,8 @@
+ 
+ The optional fifth parameter (-attributes) is provided to assign
+ any of the common HTML attributes to an individual menu item. It's
+-a pointer to an associative array relating menu values to another
+-associative array with the attribute's name as the key and the
++a pointer to a hash relating menu values to another
++hash with the attribute's name as the key and the
+ attribute's value as the value.
+ 
+ =back
+@@ -6193,7 +6280,7 @@
+ =item 3.
+ 
+ The optional third parameter (B<-labels>) allows you to pass a reference
+-to an associative array containing user-visible labels for one or more
++to a hash containing user-visible labels for one or more
+ of the menu items.  You can use this when you want the user to see one
+ menu string, but have the browser return your program a different one.
+ If you don't specify this, the value string will be used instead
+@@ -6220,8 +6307,8 @@
+ 
+ An optional sixth parameter (-attributes) is provided to assign
+ any of the common HTML attributes to an individual menu item. It's
+-a pointer to an associative array relating menu values to another
+-associative array with the attribute's name as the key and the
++a pointer to a hash relating menu values to another
++hash with the attribute's name as the key and the
+ attribute's value as the value.
+ 
+ =back
+@@ -6281,7 +6368,7 @@
+ 
+ =item 5.
+ 
+-The optional sixth argument is a pointer to an associative array
++The optional sixth argument is a pointer to a hash
+ containing long user-visible labels for the list items (-labels).
+ If not provided, the values will be displayed.
+ 
+@@ -6289,8 +6376,8 @@
+ 
+ The optional sixth parameter (-attributes) is provided to assign
+ any of the common HTML attributes to an individual menu item. It's
+-a pointer to an associative array relating menu values to another
+-associative array with the attribute's name as the key and the
++a pointer to a hash relating menu values to another
++hash with the attribute's name as the key and the
+ attribute's value as the value.
+ 
+ When this form is processed, all selected list items will be returned as
+@@ -6354,7 +6441,7 @@
+ =back
+ 
+ 
+-The optional b<-labels> argument is a pointer to an associative array
++The optional b<-labels> argument is a pointer to a hash
+ relating the checkbox values to the user-visible labels that will be
+ printed next to them.  If not provided, the values will be used as the
+ default.
+@@ -6371,7 +6458,7 @@
+ 
+ The optional B<-attributes> argument is provided to assign any of the
+ common HTML attributes to an individual menu item. It's a pointer to
+-an associative array relating menu values to another associative array
++a hash relating menu values to another hash
+ with the attribute's name as the key and the attribute's value as the
+ value.
+ 
+@@ -6389,6 +6476,9 @@
    -tabindex => ['moe','minie','eenie','meenie']  # tab in this order
    -tabindex => {meenie=>100,moe=>101,minie=>102,eenie=>200} # tab in this order
  
@@ -1211,7 +1924,12 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  When the form is processed, all checked boxes will be returned as
  a list under the parameter name 'group_name'.  The values of the
  "on" checkboxes can be retrieved with:
-@@ -6546,6 +6650,9 @@
+@@ -6542,10 +6632,13 @@
+ 
+ The optional B<-attributes> argument is provided to assign any of the
+ common HTML attributes to an individual menu item. It's a pointer to
+-an associative array relating menu values to another associative array
++a hash relating menu values to another hash
  with the attribute's name as the key and the attribute's value as the
  value.
  
@@ -1221,7 +1939,102 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  When the form is processed, the selected radio button can
  be retrieved using:
  
-@@ -7658,10 +7765,8 @@
+@@ -6709,16 +6802,13 @@
+ 
+ button() produces a button that is compatible with Netscape 2.0's
+ JavaScript.  When it's pressed the fragment of JavaScript code
+-pointed to by the B<-onClick> parameter will be executed.  On
+-non-Netscape browsers this form element will probably not even
+-display.
++pointed to by the B<-onClick> parameter will be executed.
+ 
+ =head1 HTTP COOKIES
+ 
+-Netscape browsers versions 1.1 and higher, and all versions of
+-Internet Explorer, support a so-called "cookie" designed to help
+-maintain state within a browser session.  CGI.pm has several methods
+-that support cookies.
++Browsers support a so-called "cookie" designed to help maintain state
++within a browser session.  CGI.pm has several methods that support
++cookies.
+ 
+ A cookie is a name=value pair much like the named parameters in a CGI
+ query string.  CGI scripts create one or more cookies and send
+@@ -6793,8 +6883,8 @@
+ =item B<-value>
+ 
+ The value of the cookie.  This can be any scalar value,
+-array reference, or even associative array reference.  For example,
+-you can store an entire associative array into a cookie this way:
++array reference, or even hash reference.  For example,
++you can store an entire hash into a cookie this way:
+ 
+ 	$cookie=cookie(-name=>'family information',
+ 			       -value=>\%childrens_ages);
+@@ -6921,19 +7011,6 @@
+ 
+ =head1 SUPPORT FOR JAVASCRIPT
+ 
+-Netscape versions 2.0 and higher incorporate an interpreted language
+-called JavaScript. Internet Explorer, 3.0 and higher, supports a
+-closely-related dialect called JScript. JavaScript isn't the same as
+-Java, and certainly isn't at all the same as Perl, which is a great
+-pity. JavaScript allows you to programmatically change the contents of
+-fill-out forms, create new windows, and pop up dialog box from within
+-Netscape itself. From the point of view of CGI scripting, JavaScript
+-is quite useful for validating fill-out forms prior to submitting
+-them.
+-
+-You'll need to know JavaScript in order to use it. There are many good
+-sources in bookstores and on the web.
+-
+ The usual way to use JavaScript is to define a set of functions in a
+ <SCRIPT> block inside the HTML header and then to register event
+ handlers in the various elements of the page. Events include such
+@@ -7275,11 +7352,9 @@
+ 
+ =item B<raw_cookie()>
+ 
+-Returns the HTTP_COOKIE variable, an HTTP extension implemented by
+-Netscape browsers version 1.1 and higher, and all versions of Internet
+-Explorer.  Cookies have a special format, and this method call just
+-returns the raw form (?cookie dough).  See cookie() for ways of
+-setting and retrieving cooked cookies.
++Returns the HTTP_COOKIE variable.  Cookies have a special format, and
++this method call just returns the raw form (?cookie dough).  See
++cookie() for ways of setting and retrieving cooked cookies.
+ 
+ Called with no parameters, raw_cookie() returns the packed cookie
+ structure.  You can separate it into individual cookies by splitting
+@@ -7293,7 +7368,7 @@
+ Returns the HTTP_USER_AGENT variable.  If you give
+ this method a single argument, it will attempt to
+ pattern match on it, allowing you to do something
+-like user_agent(netscape);
++like user_agent(Mozilla);
+ 
+ =item B<path_info()>
+ 
+@@ -7476,7 +7551,7 @@
+   use CGI qw/:push -nph/;
+   $| = 1;
+   print multipart_init(-boundary=>'----here we go!');
+-  foreach (0 .. 4) {
++  for (0 .. 4) {
+       print multipart_start(-type=>'text/plain'),
+             "The current time is ",scalar(localtime),"\n";
+       if ($_ < 4) {
+@@ -7532,9 +7607,6 @@
+ Users interested in server push applications should also have a look
+ at the CGI::Push module.
+ 
+-Only Netscape Navigator supports server push.  Internet Explorer
+-browsers do not.
+-
+ =head1 Avoiding Denial of Service Attacks
+ 
+ A potential problem with CGI.pm is that, by default, it attempts to
+@@ -7658,10 +7730,8 @@
  
  =head1 AUTHOR INFORMATION
  
@@ -1234,3 +2047,12 @@ diff -urN perl-5.10.0.orig/lib/CGI.pm perl-5.10.0/lib/CGI.pm
  
  Address bug reports and comments to: lstein@cshl.org.  When sending
  bug reports, please provide the version of CGI.pm, the version of
+@@ -7788,7 +7858,7 @@
+ 
+ 	   print "<h2>Here are the current settings in this form</h2>";
+ 
+-	   foreach $key (param) {
++	   for $key (param) {
+ 	      print "<strong>$key</strong> -> ";
+ 	      @values = param($key);
+ 	      print join(", ",@values),"<br>\n";
