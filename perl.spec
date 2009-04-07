@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        64%{?dist}
+Release:        66%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -97,7 +97,12 @@ Patch35:	perl-5.10.0-reorderINC.patch
 
 # Fix from Archive::Extract maintainer to only look at stdout
 # We need this because we're using tar >= 1.21
+# included upstream in 0.31_03
 Patch36:	perl-5.10.0-Archive-Extract-onlystdout.patch
+
+# Do not distort lib/CGI/t/util-58.t
+# http://rt.perl.org/rt3/Ticket/Display.html?id=64502
+Patch37:	perl-CGI-t-util-58.patch
 
 ### Debian Patches ###
 
@@ -160,7 +165,7 @@ Patch52:	31_fix_attributes_unknown_error
 Patch53:	32_fix_fork_rand
 
 # Fix memory leak with qr//.
-# Adapted from upstream changhe 34506.
+# Adapted from upstream change 34506.
 Patch54:	34_fix_qr-memory-leak-2
 
 # CVE-2005-0448 revisited: File::Path::rmtree no longer allows creating of setuid files.
@@ -223,6 +228,11 @@ Patch118:	perl-update-autodie.patch
 # Fedora uses links instead of lynx
 # patches File-Fetch and CPAN
 Patch201:	perl-5.10.0-links.patch
+
+# Fix CGI::escape to work with all strings, started as #472571,
+# brought upstream as http://rt.cpan.org/Public/Bug/Display.html?id=34528,
+# accepted there for CGI.pm-3.43
+Patch202:	perl-CGI-escape.patch
 
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -952,6 +962,7 @@ upstream tarball from perl.org.
 %patch34 -p1
 %patch35 -p1
 %patch36 -p1
+%patch37 -p1
 
 ### Debian patches ###
 %patch40 -p1
@@ -993,6 +1004,7 @@ upstream tarball from perl.org.
 %patch117 -p1
 %patch118 -p1
 %patch201 -p1
+%patch202 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1185,7 +1197,9 @@ popd
 chmod -R u+w $RPM_BUILD_ROOT/*
 
 # Compress Changes* to save space
-%{__gzip} Changes*
+bzip2 -9 Changes*
+echo "The Changes* files were moved to %{_docdir}/%{name}-devel*" \
+	> Changes-moved-to-perl-devel
 
 # Local patch tracking
 cd $RPM_BUILD_ROOT%{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/
@@ -1216,6 +1230,7 @@ perl -x patchlevel.h \
 	'34507 Fix memory leak in single-char character class optimization' \
 	'Fedora Patch35: Reorder @INC, based on b9ba2fadb18b54e35e5de54f945111a56cbcb249' \
 	'Fedora Patch36: Fix from Archive::Extract maintainer to only look at stdout from tar' \
+	'Fedora Patch37: Do not distort lib/CGI/t/util-58.t' \
 	'32727 Fix issue with (nested) definition lists in lib/Pod/Html.pm' \
 	'33287 Fix NULLOK items' \
 	'33554 Fix a typo in the predefined common protocols to make "udp" resolve without netbase' \
@@ -1254,6 +1269,7 @@ perl -x patchlevel.h \
 	'Fedora Patch117: Update Digest::SHA to %{Digest_SHA_version}' \
 	'Fedora Patch117: Update module autodie to %{autodie_version}' \
 	'Fedora Patch201: Fedora uses links instead of lynx' \
+	'Fedora Patch202: Fix CGI::escape to work with all strings' \
 	%{nil}
 
 rm patchlevel.bak
@@ -1275,7 +1291,8 @@ TMPDIR="$PWD/tmp" make test
 
 %files
 %defattr(-,root,root,-)
-%doc Artistic AUTHORS Changes* Copying README
+%doc Artistic AUTHORS Copying README
+%doc Changes-moved-to-perl-devel
 %{_mandir}/man1/*.1*
 %{_mandir}/man3/*.3*
 %{_bindir}/*
@@ -1563,6 +1580,8 @@ TMPDIR="$PWD/tmp" make test
 
 %files devel
 %defattr(-,root,root,-)
+# the following includes the file "Changes" -- it's compressed
+%doc Changes*.*
 %{_bindir}/enc2xs
 %{_mandir}/man1/enc2xs*
 %{_prefix}/lib/perl5/%{perl_version}/Encode/
@@ -1875,6 +1894,14 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Apr  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-66
+- fix CGI::escape for all strings (#472571)
+- perl-CGI-t-util-58.patch: Do not distort lib/CGI/t/util-58.t
+  http://rt.perl.org/rt3/Ticket/Display.html?id=64502
+
+* Fri Mar 27 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-65
+- Move the gargantuan Changes* collection to -devel (#492605)
+
 * Tue Mar 24 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-64
 - update module autodie
 
