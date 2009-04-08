@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        66%{?dist}
+Release:        67%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -190,7 +190,7 @@ Patch101:	perl-update-Archive-Extract.patch
 Patch102:	perl-update-Archive-Tar.patch
 %define			    Archive_Tar_version 1.46
 Patch103:	perl-update-CGI.patch
-%define			    CGI_version 3.42
+%define			    CGI_version 3.43
 Patch104:	perl-update-ExtUtils-CBuilder.patch
 %define			    ExtUtils_CBuilder_version 0.24
 Patch105:	perl-update-File-Fetch.patch
@@ -228,11 +228,6 @@ Patch118:	perl-update-autodie.patch
 # Fedora uses links instead of lynx
 # patches File-Fetch and CPAN
 Patch201:	perl-5.10.0-links.patch
-
-# Fix CGI::escape to work with all strings, started as #472571,
-# brought upstream as http://rt.cpan.org/Public/Bug/Display.html?id=34528,
-# accepted there for CGI.pm-3.43
-Patch202:	perl-CGI-escape.patch
 
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -1004,7 +999,6 @@ upstream tarball from perl.org.
 %patch117 -p1
 %patch118 -p1
 %patch201 -p1
-%patch202 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1269,7 +1263,6 @@ perl -x patchlevel.h \
 	'Fedora Patch117: Update Digest::SHA to %{Digest_SHA_version}' \
 	'Fedora Patch117: Update module autodie to %{autodie_version}' \
 	'Fedora Patch201: Fedora uses links instead of lynx' \
-	'Fedora Patch202: Fix CGI::escape to work with all strings' \
 	%{nil}
 
 rm patchlevel.bak
@@ -1894,6 +1887,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Apr  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-67
+- update CGI to 3.43, dropping upstreamed perl-CGI-escape.patch
+
 * Tue Apr  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-66
 - fix CGI::escape for all strings (#472571)
 - perl-CGI-t-util-58.patch: Do not distort lib/CGI/t/util-58.t
