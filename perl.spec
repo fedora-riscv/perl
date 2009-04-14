@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        67%{?dist}
+Release:        68%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1227,7 +1227,7 @@ perl -x patchlevel.h \
 	'Fedora Patch37: Do not distort lib/CGI/t/util-58.t' \
 	'32727 Fix issue with (nested) definition lists in lib/Pod/Html.pm' \
 	'33287 Fix NULLOK items' \
-	'33554 Fix a typo in the predefined common protocols to make "udp" resolve without netbase' \
+	'33554 Fix a typo in the predefined common protocols to make _udp_ resolve without netbase' \
 	'33388 Fix a segmentation fault with debugperl -Dm' \
 	'33835 Allow the quote mark delimiter also for those #include directives chased with h2ph -a.' \
 	'32910 Disable the v-string in use/require is non-portable warning.' \
@@ -1887,6 +1887,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Apr 10 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-68
+- do not use quotes in patchlevel.h; it breaks installation from cpan (#495183)
+
 * Tue Apr  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-67
 - update CGI to 3.43, dropping upstreamed perl-CGI-escape.patch
 
