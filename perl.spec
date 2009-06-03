@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        68%{?dist}
+Release:        69%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -178,6 +178,9 @@ Patch56:	37_fix_coredump_indicator
 # Fix a memory leak with Scalar::Util::weaken().
 # Upstream change 34209
 Patch57:	38_fix_weaken_memleak
+
+# http://rt.perl.org/rt3/Ticket/Display.html?id=39060 (#221113)
+Patch58:	perl-perlio-incorrect-errno.patch
 
 ### End of Debian Patches ###
 
@@ -978,6 +981,7 @@ upstream tarball from perl.org.
 %patch55 -p1
 %patch56 -p1
 %patch57 -p1
+%patch58 -p1
 
 %patch100 -p1
 %patch101 -p1
@@ -1243,6 +1247,7 @@ perl -x patchlevel.h \
 	'Fedora Patch55: File::Path::rmtree no longer allows creating of setuid files.' \
 	'Fedora Patch56: Fix $? when dumping core' \
 	'34209 Fix a memory leak with Scalar::Util::weaken()' \
+	'fix RT 39060, errno incorrectly set in perlio' \
 	'Fedora Patch100: Update module constant to %{constant_version}' \
 	'Fedora Patch101: Update Archive::Extract to %{Archive_Extract_version}' \
 	'Fedora Patch102: Update Archive::Tar to %{Archive_Tar_version}' \
@@ -1272,7 +1277,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %check
 %ifnarch sparc64
-# work around a bug in Module::Build tests bu setting TMPDIR to a directory
+# work around a bug in Module::Build tests by setting TMPDIR to a directory
 # inside the source tree
 mkdir "$PWD/tmp"
 TMPDIR="$PWD/tmp" make test
@@ -1887,9 +1892,11 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jun  3 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-69
+- fix #221113, $! wrongly set when EOF is reached
+
 * Fri Apr 10 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-68
-- 495183 don't use special characters in spec according to patchlevel.h.
- It breaks installation from cpan.
+- do not use quotes in patchlevel.h; it breaks installation from cpan (#495183)
 
 * Tue Apr  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-67
 - update CGI to 3.43, dropping upstreamed perl-CGI-escape.patch
