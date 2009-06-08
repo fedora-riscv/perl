@@ -230,6 +230,8 @@ Patch118:	perl-update-autodie.patch
 # cpan has it under PathTools-3.30
 Patch119:	perl-update-FileSpec.patch
 %define				File_Spec_version 3.30
+Patch120:	perl-update-Compress_Raw_Zlib.patch
+%define				Compress_Raw_Zlib 2.020
 
 # Fedora uses links instead of lynx
 # patches File-Fetch and CPAN
@@ -1006,6 +1008,7 @@ upstream tarball from perl.org.
 %patch117 -p1
 %patch118 -p1
 %patch119 -p1
+%patch120 -p1
 %patch201 -p1
 
 #
@@ -1272,6 +1275,7 @@ perl -x patchlevel.h \
 	'Fedora Patch117: Update Digest::SHA to %{Digest_SHA_version}' \
 	'Fedora Patch117: Update module autodie to %{autodie_version}' \
 	'Fedora Patch119: Update File::Spec to %{File_Spec_version}' \
+	'Fedora Patch120: Update Compress::Raw::Zlib to %{Compress_Raw_Zlib}' \
 	'Fedora Patch201: Fedora uses links instead of lynx' \
 	%{nil}
 
@@ -1897,6 +1901,9 @@ mkdir "$PWD/tmp"
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jun  8 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-71
+- #504386 update of Compress::Raw::Zlib 2.020
+
 * Thu Jun  4 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-70
 - update File::Spec (PathTools) to 3.30
 
