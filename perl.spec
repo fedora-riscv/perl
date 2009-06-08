@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        68%{?dist}
+Release:        69%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -180,6 +180,8 @@ Patch56:	37_fix_coredump_indicator
 Patch57:	38_fix_weaken_memleak
 
 ### End of Debian Patches ###
+# http://rt.perl.org/rt3/Ticket/Display.html?id=39060 (#221113)
+Patch58:	perl-perlio-incorrect-errno.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -224,6 +226,11 @@ Patch117:	perl-update-Digest-SHA.patch
 # includes Fatal.pm
 Patch118:	perl-update-autodie.patch
 %define			    autodie_version 1.999
+# cpan has it under PathTools-3.30
+Patch119:	perl-update-FileSpec.patch
+%define				File_Spec_version 3.30
+Patch120:	perl-update-Compress_Raw_Zlib.patch
+%define				Compress_Raw_Zlib 2.020
 
 # Fedora uses links instead of lynx
 # patches File-Fetch and CPAN
@@ -978,6 +985,7 @@ upstream tarball from perl.org.
 %patch55 -p1
 %patch56 -p1
 %patch57 -p1
+%patch58 -p1
 
 %patch100 -p1
 %patch101 -p1
@@ -998,6 +1006,8 @@ upstream tarball from perl.org.
 %patch116 -p1
 %patch117 -p1
 %patch118 -p1
+%patch119 -p1
+%patch120 -p1
 %patch201 -p1
 
 #
@@ -1243,6 +1253,7 @@ perl -x patchlevel.h \
 	'Fedora Patch55: File::Path::rmtree no longer allows creating of setuid files.' \
 	'Fedora Patch56: Fix $? when dumping core' \
 	'34209 Fix a memory leak with Scalar::Util::weaken()' \
+	'fix RT 39060, errno incorrectly set in perlio' \
 	'Fedora Patch100: Update module constant to %{constant_version}' \
 	'Fedora Patch101: Update Archive::Extract to %{Archive_Extract_version}' \
 	'Fedora Patch102: Update Archive::Tar to %{Archive_Tar_version}' \
@@ -1262,6 +1273,8 @@ perl -x patchlevel.h \
 	'Fedora Patch116: Update Time::HiRes to %{Time_HiRes_version}' \
 	'Fedora Patch117: Update Digest::SHA to %{Digest_SHA_version}' \
 	'Fedora Patch117: Update module autodie to %{autodie_version}' \
+	'Fedora Patch119: Update File::Spec to %{File_Spec_version}' \
+	'Fedora Patch120: Update Compress::Raw::Zlib to %{Compress_Raw_Zlib}' \
 	'Fedora Patch201: Fedora uses links instead of lynx' \
 	%{nil}
 
@@ -1887,6 +1900,11 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jun  8 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-69
+- #504386 update of Compress::Raw::Zlib 2.020
+- update File::Spec (PathTools) to 3.30
+- fix #221113, $! wrongly set when EOF is reached
+
 * Fri Apr 10 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-68
 - 495183 don't use special characters in spec according to patchlevel.h.
  It breaks installation from cpan.
