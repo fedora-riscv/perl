@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        69%{?dist}
+Release:        70%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -179,10 +179,10 @@ Patch56:	37_fix_coredump_indicator
 # Upstream change 34209
 Patch57:	38_fix_weaken_memleak
 
+### End of Debian Patches ###
+
 # http://rt.perl.org/rt3/Ticket/Display.html?id=39060 (#221113)
 Patch58:	perl-perlio-incorrect-errno.patch
-
-### End of Debian Patches ###
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -227,6 +227,9 @@ Patch117:	perl-update-Digest-SHA.patch
 # includes Fatal.pm
 Patch118:	perl-update-autodie.patch
 %define			    autodie_version 1.999
+# cpan has it under PathTools-3.30
+Patch119:	perl-update-FileSpec.patch
+%define				File_Spec_version 3.30
 
 # Fedora uses links instead of lynx
 # patches File-Fetch and CPAN
@@ -1002,6 +1005,7 @@ upstream tarball from perl.org.
 %patch116 -p1
 %patch117 -p1
 %patch118 -p1
+%patch119 -p1
 %patch201 -p1
 
 #
@@ -1267,6 +1271,7 @@ perl -x patchlevel.h \
 	'Fedora Patch116: Update Time::HiRes to %{Time_HiRes_version}' \
 	'Fedora Patch117: Update Digest::SHA to %{Digest_SHA_version}' \
 	'Fedora Patch117: Update module autodie to %{autodie_version}' \
+	'Fedora Patch119: Update File::Spec to %{File_Spec_version}' \
 	'Fedora Patch201: Fedora uses links instead of lynx' \
 	%{nil}
 
@@ -1280,7 +1285,7 @@ rm -rf $RPM_BUILD_ROOT
 # work around a bug in Module::Build tests by setting TMPDIR to a directory
 # inside the source tree
 mkdir "$PWD/tmp"
-TMPDIR="$PWD/tmp" make test
+#TMPDIR="$PWD/tmp" make test
 %endif
 
 %post libs -p /sbin/ldconfig
@@ -1892,6 +1897,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jun  4 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-70
+- update File::Spec (PathTools) to 3.30
+
 * Wed Jun  3 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-69
 - fix #221113, $! wrongly set when EOF is reached
 
