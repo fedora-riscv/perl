@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        72%{?dist}
+Release:        73%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1290,7 +1290,7 @@ rm -rf $RPM_BUILD_ROOT
 # work around a bug in Module::Build tests by setting TMPDIR to a directory
 # inside the source tree
 mkdir "$PWD/tmp"
-#TMPDIR="$PWD/tmp" make test
+TMPDIR="$PWD/tmp" make test
 %endif
 
 %post libs -p /sbin/ldconfig
@@ -1902,6 +1902,9 @@ mkdir "$PWD/tmp"
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jul  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-73
+- re-enable tests
+
 * Tue Jul  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-72
 - move -DPERL_USE_SAFE_PUTENV to ccflags (#508496)
 
