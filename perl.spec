@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        69%{?dist}
+Release:        73%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -180,6 +180,7 @@ Patch56:	37_fix_coredump_indicator
 Patch57:	38_fix_weaken_memleak
 
 ### End of Debian Patches ###
+
 # http://rt.perl.org/rt3/Ticket/Display.html?id=39060 (#221113)
 Patch58:	perl-perlio-incorrect-errno.patch
 
@@ -1068,7 +1069,8 @@ echo "RPM Build arch: %{_arch}"
 
 # use "lib", not %{_lib}, for privlib, sitelib, and vendorlib
 
-/bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS -DPERL_USE_SAFE_PUTENV" \
+/bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
+	-Accflags="-DPERL_USE_SAFE_PUTENV" \
         -Dversion=%{perl_version} \
         -Dmyhostname=localhost \
         -Dperladmin=root@localhost \
@@ -1285,7 +1287,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %check
 %ifnarch sparc64
-# work around a bug in Module::Build tests bu setting TMPDIR to a directory
+# work around a bug in Module::Build tests by setting TMPDIR to a directory
 # inside the source tree
 mkdir "$PWD/tmp"
 TMPDIR="$PWD/tmp" make test
@@ -1900,14 +1902,23 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Mon Jun  8 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-69
+* Tue Jul  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-73
+- re-enable tests
+
+* Tue Jul  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-72
+- move -DPERL_USE_SAFE_PUTENV to ccflags (#508496)
+
+* Mon Jun  8 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-71
 - #504386 update of Compress::Raw::Zlib 2.020
+
+* Thu Jun  4 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-70
 - update File::Spec (PathTools) to 3.30
+
+* Wed Jun  3 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-69
 - fix #221113, $! wrongly set when EOF is reached
 
 * Fri Apr 10 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-68
-- 495183 don't use special characters in spec according to patchlevel.h.
- It breaks installation from cpan.
+- do not use quotes in patchlevel.h; it breaks installation from cpan (#495183)
 
 * Tue Apr  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-67
 - update CGI to 3.43, dropping upstreamed perl-CGI-escape.patch
