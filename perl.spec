@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        71%{?dist}
+Release:        72%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1069,7 +1069,8 @@ echo "RPM Build arch: %{_arch}"
 
 # use "lib", not %{_lib}, for privlib, sitelib, and vendorlib
 
-/bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS -DPERL_USE_SAFE_PUTENV" \
+/bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
+	-Accflags="-DPERL_USE_SAFE_PUTENV" \
         -Dversion=%{perl_version} \
         -Dmyhostname=localhost \
         -Dperladmin=root@localhost \
@@ -1901,6 +1902,9 @@ mkdir "$PWD/tmp"
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jul  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-72
+- move -DPERL_USE_SAFE_PUTENV to ccflags (#508496)
+
 * Mon Jun  8 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-71
 - #504386 update of Compress::Raw::Zlib 2.020
 
