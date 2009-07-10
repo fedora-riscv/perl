@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        73%{?dist}
+Release:        74%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -184,6 +184,13 @@ Patch57:	38_fix_weaken_memleak
 # http://rt.perl.org/rt3/Ticket/Display.html?id=39060 (#221113)
 Patch58:	perl-perlio-incorrect-errno.patch
 
+# h2ph: generated *.ph files no longer produce warnings when processed
+Patch59:	perl-bz509676.patch
+
+# With the Scalar-List-Utils update, more prereq declarations have to
+# be skipped in Makefile.PL files.
+Patch60:	perl-skip-prereq.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 Patch100:	perl-update-constant.patch
@@ -229,9 +236,11 @@ Patch118:	perl-update-autodie.patch
 %define			    autodie_version 1.999
 # cpan has it under PathTools-3.30
 Patch119:	perl-update-FileSpec.patch
-%define				File_Spec_version 3.30
+%define			    File_Spec_version 3.30
 Patch120:	perl-update-Compress_Raw_Zlib.patch
-%define				Compress_Raw_Zlib 2.020
+%define			    Compress_Raw_Zlib 2.020
+Patch121:	perl-update-Scalar-List-Utils.patch
+%define			    Scalar_List_Utils 1.21
 
 # Fedora uses links instead of lynx
 # patches File-Fetch and CPAN
@@ -987,6 +996,8 @@ upstream tarball from perl.org.
 %patch56 -p1
 %patch57 -p1
 %patch58 -p1
+%patch59 -p1
+%patch60 -p1
 
 %patch100 -p1
 %patch101 -p1
@@ -1009,6 +1020,7 @@ upstream tarball from perl.org.
 %patch118 -p1
 %patch119 -p1
 %patch120 -p1
+%patch121 -p1
 %patch201 -p1
 
 #
@@ -1256,6 +1268,8 @@ perl -x patchlevel.h \
 	'Fedora Patch56: Fix $? when dumping core' \
 	'34209 Fix a memory leak with Scalar::Util::weaken()' \
 	'fix RT 39060, errno incorrectly set in perlio' \
+	'Fedora Patch59: h2ph: generated *.ph files no longer produce warnings when processed' \
+	'Fedora Patch60: remove PREREQ_FATAL from Makefile.PLs processed by miniperl' \
 	'Fedora Patch100: Update module constant to %{constant_version}' \
 	'Fedora Patch101: Update Archive::Extract to %{Archive_Extract_version}' \
 	'Fedora Patch102: Update Archive::Tar to %{Archive_Tar_version}' \
@@ -1277,6 +1291,7 @@ perl -x patchlevel.h \
 	'Fedora Patch117: Update module autodie to %{autodie_version}' \
 	'Fedora Patch119: Update File::Spec to %{File_Spec_version}' \
 	'Fedora Patch120: Update Compress::Raw::Zlib to %{Compress_Raw_Zlib}' \
+	'Fedora Patch121: Update Scalar-List-Utils to %{Scalar_List_Utils}' \
 	'Fedora Patch201: Fedora uses links instead of lynx' \
 	%{nil}
 
@@ -1902,6 +1917,12 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jul 10 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-74
+- fix generated .ph files so that they no longer cause warnings (#509676)
+- remove PREREQ_FATAL from Makefile.PL's processed by miniperl
+- update to latest Scalar-List-Utils (#507378)
+- perl-skip-prereq.patch: skip more prereq declarations in Makefile.PL files
+
 * Tue Jul  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-73
 - re-enable tests
 
