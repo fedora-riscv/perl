@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        74%{?dist}
+Release:        75%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1917,6 +1917,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sat Jul 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:5.10.0-75
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
+
 * Fri Jul 10 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-74
 - fix generated .ph files so that they no longer cause warnings (#509676)
 - remove PREREQ_FATAL from Makefile.PL's processed by miniperl
