@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        75%{?dist}
+Release:        76%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -190,6 +190,11 @@ Patch59:	perl-bz509676.patch
 # With the Scalar-List-Utils update, more prereq declarations have to
 # be skipped in Makefile.PL files.
 Patch60:	perl-skip-prereq.patch
+
+# much better swap logic to support reentrancy and fix assert failure
+# http://perl5.git.perl.org/perl.git/commitdiff/e9105d30edfbaa7f444bc7984c9bafc8e991ad12
+# RT #60508
+Patch61:	perl-5.10.0-much-better-swap-logic.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -998,6 +1003,7 @@ upstream tarball from perl.org.
 %patch58 -p1
 %patch59 -p1
 %patch60 -p1
+%patch61 -p1
 
 %patch100 -p1
 %patch101 -p1
@@ -1270,6 +1276,7 @@ perl -x patchlevel.h \
 	'fix RT 39060, errno incorrectly set in perlio' \
 	'Fedora Patch59: h2ph: generated *.ph files no longer produce warnings when processed' \
 	'Fedora Patch60: remove PREREQ_FATAL from Makefile.PLs processed by miniperl' \
+	'Fedora Patch61: much better swap logic to support reentrancy and fix assert failure' \
 	'Fedora Patch100: Update module constant to %{constant_version}' \
 	'Fedora Patch101: Update Archive::Extract to %{Archive_Extract_version}' \
 	'Fedora Patch102: Update Archive::Tar to %{Archive_Tar_version}' \
@@ -1917,6 +1924,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jul 27 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-76
+- 494773 much better swap logic to support reentrancy and fix assert failure (rt #60508)
+
 * Sat Jul 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:5.10.0-75
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 
