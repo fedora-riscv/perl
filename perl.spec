@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        77%{?dist}
+Release:        78%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1092,6 +1092,7 @@ echo "RPM Build arch: %{_arch}"
 # use "lib", not %{_lib}, for privlib, sitelib, and vendorlib
 
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
+	-DDEBUGGING=-g \
 	-Accflags="-DPERL_USE_SAFE_PUTENV" \
         -Dversion=%{perl_version} \
         -Dmyhostname=localhost \
@@ -1929,6 +1930,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jul 31 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-78
+- Add configure option -DDEBUGGING=-g (#156113)
+
 * Tue Jul 28 2009 arcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-77
 - 510127 spam assassin suffer from tainted bug
 
