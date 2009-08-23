@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        78%{?dist}
+Release:        79%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -18,6 +18,7 @@ Url:            http://www.perl.org/
 Source0:        http://search.cpan.org/CPAN/authors/id/R/RG/RGARCIA/perl-%{perl_version}.tar.gz
 Source11:       filter-requires.sh
 Source12:       perl-5.8.0-libnet.cfg
+Source13:       macros.perl
 
 # Specific to Fedora/RHEL
 Patch1:         perl-5.8.0-root.patch
@@ -1189,6 +1190,13 @@ done
 install -p -m 644 %{SOURCE12} %{comp_perl_lib}/Net/libnet.cfg
 
 #
+# perl RPM macros
+#
+
+mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/rpm
+install -p -m 644 %{SOURCE13} ${RPM_BUILD_ROOT}%{_sysconfdir}/rpm/
+
+#
 # Core modules removal
 #
 find $RPM_BUILD_ROOT -name '*NDBM*' | xargs rm -rfv
@@ -1630,6 +1638,7 @@ TMPDIR="$PWD/tmp" make test
 %{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/*.h
 %{_bindir}/xsubpp
 %{_mandir}/man1/xsubpp*
+%{_sysconfdir}/rpm/macros.perl
 
 %files suidperl
 %defattr(-,root,root,-)
@@ -1930,6 +1939,10 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Aug 21 2009 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.0-79
+- add helper filtering macros to -devel, for perl-* package invocation
+  (#502402)
+
 * Fri Jul 31 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-78
 - Add configure option -DDEBUGGING=-g (#156113)
 
