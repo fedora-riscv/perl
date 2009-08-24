@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        79%{?dist}
+Release:        80%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1091,9 +1091,9 @@ sed -i "s|LIB             = ./zlib-src|LIB             = %{_libdir}|" ext/Compre
 echo "RPM Build arch: %{_arch}"
 
 # use "lib", not %{_lib}, for privlib, sitelib, and vendorlib
+# To build production version, we would need -DDEBUGGING=-g
 
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
-	-DDEBUGGING=-g \
 	-Accflags="-DPERL_USE_SAFE_PUTENV" \
         -Dversion=%{perl_version} \
         -Dmyhostname=localhost \
@@ -1939,6 +1939,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Aug 24 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-80
+- Remove -DDEBUGGING=-g, we are not ready yet.
+
 * Fri Aug 21 2009 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.0-79
 - add helper filtering macros to -devel, for perl-* package invocation
   (#502402)
