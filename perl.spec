@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        80%{?dist}
+Release:        81%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1939,6 +1939,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Aug 27 2009 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.0-81
+- fix macros.perl *sigh*
+
 * Mon Aug 24 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-80
 - Remove -DDEBUGGING=-g, we are not ready yet.
 
