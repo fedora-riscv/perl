@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        81%{?dist}
+Release:        82%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -235,7 +235,7 @@ Patch113:	perl-update-Sys-Syslog.patch
 Patch114:	perl-update-Test-Harness.patch
 %define			    Test_Harness_version 3.16
 Patch115:	perl-update-Test-Simple.patch
-%define			    Test_Simple_version 0.86
+%define			    Test_Simple_version 0.92
 Patch116:	perl-update-Time-HiRes.patch
 %define			    Time_HiRes_version 1.9719
 Patch117:	perl-update-Digest-SHA.patch
@@ -250,6 +250,8 @@ Patch120:	perl-update-Compress_Raw_Zlib.patch
 %define			    Compress_Raw_Zlib 2.020
 Patch121:	perl-update-Scalar-List-Utils.patch
 %define			    Scalar_List_Utils 1.21
+Patch122:   perl-update-Module-Pluggable.patch
+%define             Module_Pluggable_version 3.90
 
 # Fedora uses links instead of lynx
 # patches File-Fetch and CPAN
@@ -772,7 +774,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        3.60
+Version:        %{Module_Pluggable_version} 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Module-Pluggable
@@ -1032,6 +1034,12 @@ upstream tarball from perl.org.
 %patch119 -p1
 %patch120 -p1
 %patch121 -p1
+%patch122 -p1
+# 0-byte files and patch don't seem to agree
+mkdir t/Module_Pluggable/lib/Zot/
+touch t/Module_Pluggable/lib/Zot/.Zork.pm
+
+
 %patch201 -p1
 
 #
@@ -1313,6 +1321,7 @@ perl -x patchlevel.h \
 	'Fedora Patch119: Update File::Spec to %{File_Spec_version}' \
 	'Fedora Patch120: Update Compress::Raw::Zlib to %{Compress_Raw_Zlib}' \
 	'Fedora Patch121: Update Scalar-List-Utils to %{Scalar_List_Utils}' \
+	'Fedora Patch122: Update Module-Pluggable to %{Module_Pluggable_version}' \
 	'Fedora Patch201: Fedora uses links instead of lynx' \
 	%{nil}
 
@@ -1939,6 +1948,10 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Aug 31 2009 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.0-82
+- update our Test-Simple update to 0.92 (patch by Iain Arnell), #519417
+- update Module-Pluggable to 3.9
+
 * Thu Aug 27 2009 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.0-81
 - fix macros.perl *sigh*
 
