@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        73%{?dist}
+Release:        82%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -18,6 +18,7 @@ Url:            http://www.perl.org/
 Source0:        http://search.cpan.org/CPAN/authors/id/R/RG/RGARCIA/perl-%{perl_version}.tar.gz
 Source11:       filter-requires.sh
 Source12:       perl-5.8.0-libnet.cfg
+Source13:       macros.perl
 
 # Specific to Fedora/RHEL
 Patch1:         perl-5.8.0-root.patch
@@ -184,6 +185,21 @@ Patch57:	38_fix_weaken_memleak
 # http://rt.perl.org/rt3/Ticket/Display.html?id=39060 (#221113)
 Patch58:	perl-perlio-incorrect-errno.patch
 
+# h2ph: generated *.ph files no longer produce warnings when processed
+Patch59:	perl-bz509676.patch
+
+# With the Scalar-List-Utils update, more prereq declarations have to
+# be skipped in Makefile.PL files.
+Patch60:	perl-skip-prereq.patch
+
+# much better swap logic to support reentrancy and fix assert failure
+# http://perl5.git.perl.org/perl.git/commitdiff/e9105d30edfbaa7f444bc7984c9bafc8e991ad12
+# RT #60508
+Patch61:	perl-5.10.0-much-better-swap-logic.patch
+
+# https://issues.apache.org/SpamAssassin/show_bug.cgi?id=6148
+Patch62:	perl-5.10.0-spamassassin.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 Patch100:	perl-update-constant.patch
@@ -219,7 +235,7 @@ Patch113:	perl-update-Sys-Syslog.patch
 Patch114:	perl-update-Test-Harness.patch
 %define			    Test_Harness_version 3.16
 Patch115:	perl-update-Test-Simple.patch
-%define			    Test_Simple_version 0.86
+%define			    Test_Simple_version 0.92
 Patch116:	perl-update-Time-HiRes.patch
 %define			    Time_HiRes_version 1.9719
 Patch117:	perl-update-Digest-SHA.patch
@@ -229,9 +245,13 @@ Patch118:	perl-update-autodie.patch
 %define			    autodie_version 1.999
 # cpan has it under PathTools-3.30
 Patch119:	perl-update-FileSpec.patch
-%define				File_Spec_version 3.30
+%define			    File_Spec_version 3.30
 Patch120:	perl-update-Compress_Raw_Zlib.patch
-%define				Compress_Raw_Zlib 2.020
+%define			    Compress_Raw_Zlib 2.020
+Patch121:	perl-update-Scalar-List-Utils.patch
+%define			    Scalar_List_Utils 1.21
+Patch122:   perl-update-Module-Pluggable.patch
+%define             Module_Pluggable_version 3.90
 
 # Fedora uses links instead of lynx
 # patches File-Fetch and CPAN
@@ -754,7 +774,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        3.60
+Version:        %{Module_Pluggable_version} 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Module-Pluggable
@@ -987,6 +1007,10 @@ upstream tarball from perl.org.
 %patch56 -p1
 %patch57 -p1
 %patch58 -p1
+%patch59 -p1
+%patch60 -p1
+%patch61 -p1
+%patch62 -p1
 
 %patch100 -p1
 %patch101 -p1
@@ -1009,6 +1033,13 @@ upstream tarball from perl.org.
 %patch118 -p1
 %patch119 -p1
 %patch120 -p1
+%patch121 -p1
+%patch122 -p1
+# 0-byte files and patch don't seem to agree
+mkdir t/Module_Pluggable/lib/Zot/
+touch t/Module_Pluggable/lib/Zot/.Zork.pm
+
+
 %patch201 -p1
 
 #
@@ -1068,6 +1099,7 @@ sed -i "s|LIB             = ./zlib-src|LIB             = %{_libdir}|" ext/Compre
 echo "RPM Build arch: %{_arch}"
 
 # use "lib", not %{_lib}, for privlib, sitelib, and vendorlib
+# To build production version, we would need -DDEBUGGING=-g
 
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Accflags="-DPERL_USE_SAFE_PUTENV" \
@@ -1166,6 +1198,13 @@ done
 install -p -m 644 %{SOURCE12} %{comp_perl_lib}/Net/libnet.cfg
 
 #
+# perl RPM macros
+#
+
+mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/rpm
+install -p -m 644 %{SOURCE13} ${RPM_BUILD_ROOT}%{_sysconfdir}/rpm/
+
+#
 # Core modules removal
 #
 find $RPM_BUILD_ROOT -name '*NDBM*' | xargs rm -rfv
@@ -1256,6 +1295,10 @@ perl -x patchlevel.h \
 	'Fedora Patch56: Fix $? when dumping core' \
 	'34209 Fix a memory leak with Scalar::Util::weaken()' \
 	'fix RT 39060, errno incorrectly set in perlio' \
+	'Fedora Patch59: h2ph: generated *.ph files no longer produce warnings when processed' \
+	'Fedora Patch60: remove PREREQ_FATAL from Makefile.PLs processed by miniperl' \
+	'Fedora Patch61: much better swap logic to support reentrancy and fix assert failure' \
+	'Fedora Patch62: spam assassin needs workaround for removing tainted mode' \
 	'Fedora Patch100: Update module constant to %{constant_version}' \
 	'Fedora Patch101: Update Archive::Extract to %{Archive_Extract_version}' \
 	'Fedora Patch102: Update Archive::Tar to %{Archive_Tar_version}' \
@@ -1277,6 +1320,8 @@ perl -x patchlevel.h \
 	'Fedora Patch117: Update module autodie to %{autodie_version}' \
 	'Fedora Patch119: Update File::Spec to %{File_Spec_version}' \
 	'Fedora Patch120: Update Compress::Raw::Zlib to %{Compress_Raw_Zlib}' \
+	'Fedora Patch121: Update Scalar-List-Utils to %{Scalar_List_Utils}' \
+	'Fedora Patch122: Update Module-Pluggable to %{Module_Pluggable_version}' \
 	'Fedora Patch201: Fedora uses links instead of lynx' \
 	%{nil}
 
@@ -1602,6 +1647,7 @@ TMPDIR="$PWD/tmp" make test
 %{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/*.h
 %{_bindir}/xsubpp
 %{_mandir}/man1/xsubpp*
+%{_sysconfdir}/rpm/macros.perl
 
 %files suidperl
 %defattr(-,root,root,-)
@@ -1902,6 +1948,38 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Aug 31 2009 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.0-82
+- update our Test-Simple update to 0.92 (patch by Iain Arnell), #519417
+- update Module-Pluggable to 3.9
+
+* Thu Aug 27 2009 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.0-81
+- fix macros.perl *sigh*
+
+* Mon Aug 24 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-80
+- Remove -DDEBUGGING=-g, we are not ready yet.
+
+* Fri Aug 21 2009 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.0-79
+- add helper filtering macros to -devel, for perl-* package invocation
+  (#502402)
+
+* Fri Jul 31 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-78
+- Add configure option -DDEBUGGING=-g (#156113)
+
+* Tue Jul 28 2009 arcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-77
+- 510127 spam assassin suffer from tainted bug
+
+* Mon Jul 27 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-76
+- 494773 much better swap logic to support reentrancy and fix assert failure (rt #60508)
+
+* Sat Jul 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:5.10.0-75
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
+
+* Fri Jul 10 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-74
+- fix generated .ph files so that they no longer cause warnings (#509676)
+- remove PREREQ_FATAL from Makefile.PL's processed by miniperl
+- update to latest Scalar-List-Utils (#507378)
+- perl-skip-prereq.patch: skip more prereq declarations in Makefile.PL files
+
 * Tue Jul  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-73
 - re-enable tests
 

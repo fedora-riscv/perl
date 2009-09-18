@@ -1,0 +1,11 @@
+diff -up perl-5.10.0/lib/File/Basename.pm.spam perl-5.10.0/lib/File/Basename.pm
+--- perl-5.10.0/lib/File/Basename.pm.spam	2009-07-27 08:45:18.000000000 +0200
++++ perl-5.10.0/lib/File/Basename.pm	2009-07-28 09:01:54.757410886 +0200
+@@ -331,6 +331,7 @@ sub dirname {
+ sub _strip_trailing_sep  {
+     my $type = $Fileparse_fstype;
+ 
++	local $1;
+     if ($type eq 'MacOS') {
+         $_[0] =~ s/([^:]):\z/$1/s;
+     }

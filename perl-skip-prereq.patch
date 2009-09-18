@@ -1,0 +1,24 @@
+--- perl-5.10.0/ext/Math/BigInt/FastCalc/Makefile.PL	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/Math/BigInt/FastCalc/Makefile.PL	2009-07-10 15:37:39.000000000 +0200
+@@ -2,12 +2,18 @@
+ 
+ use strict;
+ 
++unless($ENV{PERL_CORE}) {
++    $ENV{PERL_CORE} = 1 if grep { $_ eq 'PERL_CORE=1' } @ARGV;
++}
++
+ WriteMakefile(
+     'NAME'		=> 'Math::BigInt::FastCalc',
+     'VERSION_FROM'	=> 'FastCalc.pm',
+-    'PREREQ_PM'		=> {
+-	'Math::BigInt' => 1.88,
+-    },
++    (
++      $ENV{PERL_CORE}
++	? ( )
++	: ('PREREQ_PM'	=> { 'Math::BigInt' => 1.88, } )
++    ),
+     INSTALLDIRS		=> 'perl',
+     PREREQ_FATAL	=> 1,
+     MAN3PODS		=> {},
