@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        83%{?dist}
+Release:        84%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1947,6 +1947,10 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Oct 01 2009 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.0-84
+- add /perl(UNIVERSAL)/d; /perl(DB)/d to perl_default_filter auto-provides
+  filtering
+
 * Thu Oct  1 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-83
 - update Storable to 2.21
 
