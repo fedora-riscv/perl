@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        73%{?dist}
+Release:        74%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -183,6 +183,17 @@ Patch57:	38_fix_weaken_memleak
 
 # http://rt.perl.org/rt3/Ticket/Display.html?id=39060 (#221113)
 Patch58:	perl-perlio-incorrect-errno.patch
+
+# h2ph: generated *.ph files no longer produce warnings when processed
+Patch59:	perl-bz509676.patch
+
+# much better swap logic to support reentrancy and fix assert failure
+# http://perl5.git.perl.org/perl.git/commitdiff/e9105d30edfbaa7f444bc7984c9bafc8e991ad12
+# RT #60508
+Patch61:	perl-5.10.0-much-better-swap-logic.patch
+
+# https://issues.apache.org/SpamAssassin/show_bug.cgi?id=6148
+Patch62:	perl-5.10.0-spamassassin.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -987,6 +998,9 @@ upstream tarball from perl.org.
 %patch56 -p1
 %patch57 -p1
 %patch58 -p1
+%patch59 -p1
+%patch61 -p1
+%patch62 -p1
 
 %patch100 -p1
 %patch101 -p1
@@ -1256,6 +1270,9 @@ perl -x patchlevel.h \
 	'Fedora Patch56: Fix $? when dumping core' \
 	'34209 Fix a memory leak with Scalar::Util::weaken()' \
 	'fix RT 39060, errno incorrectly set in perlio' \
+	'Fedora Patch59: h2ph: generated *.ph files no longer produce warnings when processed' \
+	'Fedora Patch61: much better swap logic to support reentrancy and fix assert failure' \
+	'Fedora Patch62: spam assassin needs workaround for removing tainted mode' \
 	'Fedora Patch100: Update module constant to %{constant_version}' \
 	'Fedora Patch101: Update Archive::Extract to %{Archive_Extract_version}' \
 	'Fedora Patch102: Update Archive::Tar to %{Archive_Tar_version}' \
@@ -1902,6 +1919,11 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Oct  9 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-74
+- 510127 spam assassin suffer from tainted bug
+- 494773 much better swap logic to support reentrancy and fix assert failure (rt #60508)
+- fix generated .ph files so that they no longer cause warnings (#509676)
+
 * Tue Jul  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-73
 - re-enable tests
 
