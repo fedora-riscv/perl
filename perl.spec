@@ -193,9 +193,6 @@ Patch60:	perl-skip-prereq.patch
 # RT #60508
 Patch61:	perl-5.10.0-much-better-swap-logic.patch
 
-# https://issues.apache.org/SpamAssassin/show_bug.cgi?id=6148
-Patch62:	perl-5.10.0-spamassassin.patch
-
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 Patch100:	perl-update-constant.patch
@@ -1008,7 +1005,6 @@ upstream tarball from perl.org.
 %patch59 -p1
 %patch60 -p1
 %patch61 -p1
-%patch62 -p1
 
 %patch100 -p1
 %patch101 -p1
@@ -1296,7 +1292,6 @@ perl -x patchlevel.h \
 	'Fedora Patch59: h2ph: generated *.ph files no longer produce warnings when processed' \
 	'Fedora Patch60: remove PREREQ_FATAL from Makefile.PLs processed by miniperl' \
 	'Fedora Patch61: much better swap logic to support reentrancy and fix assert failure' \
-	'Fedora Patch62: spam assassin needs workaround for removing tainted mode' \
 	'Fedora Patch100: Update module constant to %{constant_version}' \
 	'Fedora Patch101: Update Archive::Extract to %{Archive_Extract_version}' \
 	'Fedora Patch102: Update Archive::Tar to %{Archive_Tar_version}' \
@@ -1947,6 +1942,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Nov 24 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-85
+- back out perl-5.10.0-spamassassin.patch (#528572)
+
 * Thu Oct 01 2009 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.0-84
 - add /perl(UNIVERSAL)/d; /perl(DB)/d to perl_default_filter auto-provides
   filtering
