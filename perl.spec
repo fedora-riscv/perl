@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        82%{?dist}
+Release:        85%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -62,10 +62,6 @@ Patch16:	perl-5.10.0-accessXOK.patch
 
 # fix function pos to handle unicode correctly
 Patch20:	perl-5.10.0-pos.patch
-
-# Storable segfaults when objects are reblessed rt#33242
-# patches module Storable
-Patch24:    perl-5.10.0-Storable.patch
 
 # Fix crash when localizing a symtab entry rt#52740
 Patch26:    perl-5.10.0-stlocal.patch
@@ -197,9 +193,6 @@ Patch60:	perl-skip-prereq.patch
 # RT #60508
 Patch61:	perl-5.10.0-much-better-swap-logic.patch
 
-# https://issues.apache.org/SpamAssassin/show_bug.cgi?id=6148
-Patch62:	perl-5.10.0-spamassassin.patch
-
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 Patch100:	perl-update-constant.patch
@@ -250,8 +243,11 @@ Patch120:	perl-update-Compress_Raw_Zlib.patch
 %define			    Compress_Raw_Zlib 2.020
 Patch121:	perl-update-Scalar-List-Utils.patch
 %define			    Scalar_List_Utils 1.21
-Patch122:   perl-update-Module-Pluggable.patch
+Patch122:	perl-update-Module-Pluggable.patch
 %define             Module_Pluggable_version 3.90
+# Also fixes segfault when objects are reblessed (rt#33242, rhbz#459918)
+Patch123:	perl-update-Storable.patch
+%define             Storable_version 2.21
 
 # Fedora uses links instead of lynx
 # patches File-Fetch and CPAN
@@ -975,7 +971,6 @@ upstream tarball from perl.org.
 %patch15 -p1
 %patch16 -p1
 %patch20 -p1
-%patch24 -p1
 %patch26 -p1
 %patch28 -p1
 %patch29 -p1
@@ -1010,7 +1005,6 @@ upstream tarball from perl.org.
 %patch59 -p1
 %patch60 -p1
 %patch61 -p1
-%patch62 -p1
 
 %patch100 -p1
 %patch101 -p1
@@ -1035,6 +1029,7 @@ upstream tarball from perl.org.
 %patch120 -p1
 %patch121 -p1
 %patch122 -p1
+%patch123 -p1
 # 0-byte files and patch don't seem to agree
 mkdir t/Module_Pluggable/lib/Zot/
 touch t/Module_Pluggable/lib/Zot/.Zork.pm
@@ -1265,7 +1260,6 @@ perl -x patchlevel.h \
 	'Fedora Patch15: Adopt upstream commit for assertion' \
 	'Fedora Patch16: Access permission - rt49003' \
 	'Fedora Patch20: pos function handle unicode correct' \
-	'Fedora Patch24: Storable fix' \
 	'Fedora Patch26: Fix crash when localizing a symtab entry - rt52740' \
 	'33640 Integrate Changes 33399, 33621, 33622, 33623, 33624' \
 	'33881 Integrate Changes 33825, 33826, 33829' \
@@ -1298,7 +1292,6 @@ perl -x patchlevel.h \
 	'Fedora Patch59: h2ph: generated *.ph files no longer produce warnings when processed' \
 	'Fedora Patch60: remove PREREQ_FATAL from Makefile.PLs processed by miniperl' \
 	'Fedora Patch61: much better swap logic to support reentrancy and fix assert failure' \
-	'Fedora Patch62: spam assassin needs workaround for removing tainted mode' \
 	'Fedora Patch100: Update module constant to %{constant_version}' \
 	'Fedora Patch101: Update Archive::Extract to %{Archive_Extract_version}' \
 	'Fedora Patch102: Update Archive::Tar to %{Archive_Tar_version}' \
@@ -1322,6 +1315,7 @@ perl -x patchlevel.h \
 	'Fedora Patch120: Update Compress::Raw::Zlib to %{Compress_Raw_Zlib}' \
 	'Fedora Patch121: Update Scalar-List-Utils to %{Scalar_List_Utils}' \
 	'Fedora Patch122: Update Module-Pluggable to %{Module_Pluggable_version}' \
+	'Fedora Patch123: Update Storable to %{Storable_version}' \
 	'Fedora Patch201: Fedora uses links instead of lynx' \
 	%{nil}
 
@@ -1948,6 +1942,16 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Nov 24 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-85
+- back out perl-5.10.0-spamassassin.patch (#528572)
+
+* Thu Oct 01 2009 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.0-84
+- add /perl(UNIVERSAL)/d; /perl(DB)/d to perl_default_filter auto-provides
+  filtering
+
+* Thu Oct  1 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-83
+- update Storable to 2.21
+
 * Mon Aug 31 2009 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.0-82
 - update our Test-Simple update to 0.92 (patch by Iain Arnell), #519417
 - update Module-Pluggable to 3.9
