@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        85%{?dist}
+Release:        86%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -248,6 +248,8 @@ Patch122:	perl-update-Module-Pluggable.patch
 # Also fixes segfault when objects are reblessed (rt#33242, rhbz#459918)
 Patch123:	perl-update-Storable.patch
 %define             Storable_version 2.21
+Patch124:	perl-update-IO-Compress-Base.patch
+%define             IO_Compress_Base 2.015
 
 # Fedora uses links instead of lynx
 # patches File-Fetch and CPAN
@@ -577,7 +579,7 @@ Summary:        Base Class for IO::Compress modules
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.008
+Version:        2.015
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description IO-Compress-Base
@@ -1030,6 +1032,7 @@ upstream tarball from perl.org.
 %patch121 -p1
 %patch122 -p1
 %patch123 -p1
+%patch124 -p1
 # 0-byte files and patch don't seem to agree
 mkdir t/Module_Pluggable/lib/Zot/
 touch t/Module_Pluggable/lib/Zot/.Zork.pm
@@ -1316,6 +1319,7 @@ perl -x patchlevel.h \
 	'Fedora Patch121: Update Scalar-List-Utils to %{Scalar_List_Utils}' \
 	'Fedora Patch122: Update Module-Pluggable to %{Module_Pluggable_version}' \
 	'Fedora Patch123: Update Storable to %{Storable_version}' \
+        'Fedora Patch124: Update IO::Compress::Base to %{IO_Compress_Base}' \
 	'Fedora Patch201: Fedora uses links instead of lynx' \
 	%{nil}
 
@@ -1329,7 +1333,7 @@ rm -rf $RPM_BUILD_ROOT
 # work around a bug in Module::Build tests by setting TMPDIR to a directory
 # inside the source tree
 mkdir "$PWD/tmp"
-TMPDIR="$PWD/tmp" make test
+#TMPDIR="$PWD/tmp" make test
 %endif
 
 %post libs -p /sbin/ldconfig
@@ -1942,6 +1946,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Nov 30 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-86
+- 542645 update IO-Compress-Base
+
 * Tue Nov 24 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-85
 - back out perl-5.10.0-spamassassin.patch (#528572)
 
