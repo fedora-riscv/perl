@@ -1032,7 +1032,7 @@ upstream tarball from perl.org.
 %patch121 -p1
 %patch122 -p1
 %patch123 -p1
-%patch124 -p1
+#%patch124 -p1
 # 0-byte files and patch don't seem to agree
 mkdir t/Module_Pluggable/lib/Zot/
 touch t/Module_Pluggable/lib/Zot/.Zork.pm
