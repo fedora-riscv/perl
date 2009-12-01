@@ -1,0 +1,1475 @@
+IO-Compress-Base-2.015
+(omitting changes to private/MakeUtil.pm)
+
+diff -urN perl-5.10.0.orig/ext/IO_Compress_Base/Changes perl-5.10.0/ext/IO_Compress_Base/Changes
+--- perl-5.10.0.orig/ext/IO_Compress_Base/Changes	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/IO_Compress_Base/Changes	2009-12-01 11:17:37.000000000 +0100
+@@ -1,6 +1,74 @@
+ CHANGES
+ -------
+ 
++  2.015 3 September 2008
++
++      * Makefile.PL
++        Backout changes made in 2.014
++
++  2.014 2 September 2008
++
++      * Makefile.PL
++        Updated to check for indirect dependencies.
++
++  2.013 18 July 2008
++
++      * IO::Compress::Base 
++        - Allow IO::Compress::Base::Parameters::parse to accept an IO::Compress::Base::Parameters object.
++
++  2.012 15 July 2008
++
++      * IO::Compress::Base 
++        - Silenced an uninitialised value warning when reading a line
++          at a time from a zip file where the content uses ZIP_CM_STORE. 
++          [Problem spotted & fixed by Jeff Holt]
++
++      * IO::Compress::Base & IO::Uncompress::Base
++        - local-ise $!, $? et al in the DESTROY methods.
++          
++  2.011 17 May 2008
++
++      * IO::Compress::Base
++        - Fixed problem that prevented the creation of a zip file that
++          contained more than one compression method.
++
++      * IO::Compress::Base::Common
++        - The private Validator class in this module clashes with another
++          CPAN module. Moved Validator into the IO::Compress::Base::Common
++          namespace.
++          [RT #35954]
++
++  2.010 5 May 2008
++
++      * Fixed problem that meant Perl 5.10 could not upgrade this module.
++        [RT #35342]
++
++  2.009 20 April 2008
++
++      * Removed the alpha status from File::GlobMapper
++      
++      * IO::Compress::Base 
++        When writing output never output a zero length buffer.
++        Done to improve interoperability with other tied filenandle
++        modules.
++
++      * Changed IO::Uncompress::Base to not use the offset parameter of
++        the read method when reading from a filehandle. 
++
++        The object returned from Net::FTP::retr implements a non-standard
++        read method. The third parameter is used for a timeout value
++        rather than an offset.  
++        [rt.cpan#33231]
++        
++      * Changed IO::Uncompress::Base to not use the eof method when
++        reading from a filehandle. 
++
++        The object returned from Net::FTP::retr implements both the read
++        method and the eof method. Unfortunately the implementation of
++        the read method uses non-buffered IO (by using sysread) while
++        the eof method uses buffered IO. Mixing buffered and non-buffered
++        IO results in data corruption.
++
+   2.008 2 November 2007
+ 
+       * Minor documentation changes in README
+diff -urN perl-5.10.0.orig/ext/IO_Compress_Base/Makefile.PL perl-5.10.0/ext/IO_Compress_Base/Makefile.PL
+--- perl-5.10.0.orig/ext/IO_Compress_Base/Makefile.PL	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/IO_Compress_Base/Makefile.PL	2009-12-01 11:17:37.000000000 +0100
+@@ -37,6 +37,12 @@
+ 
+     INSTALLDIRS => ($] >= 5.009 ? 'perl' : 'site'),
+ 
++    (
++    $] >= 5.009 && ! $ENV{PERL_CORE}
++        ? (INST_LIB    => 'blib/arch')
++        : ()
++    ),
++
+     ((ExtUtils::MakeMaker->VERSION() gt '6.30') ?
+         ('LICENSE'  => 'perl')         : ()),
+     
+diff -urN perl-5.10.0.orig/ext/IO_Compress_Base/README perl-5.10.0/ext/IO_Compress_Base/README
+--- perl-5.10.0.orig/ext/IO_Compress_Base/README	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/IO_Compress_Base/README	2009-12-01 11:17:37.000000000 +0100
+@@ -1,42 +1,28 @@
+ 
+                              IO-Compress-Base
+ 
+-                             Version 2.008
++                             Version 2.015
+ 
+-                             2nd November 2007
++                            2nd September 2008
+ 
+-
+-       Copyright (c) 2005-2007 Paul Marquess. All rights reserved.
++       Copyright (c) 2005-2008 Paul Marquess. All rights reserved.
+           This program is free software; you can redistribute it
+            and/or modify it under the same terms as Perl itself.
+ 
+-
+-
+-
+ DESCRIPTION
+ -----------
+ 
+-
+ This module is the base class for all IO::Compress and IO::Uncompress
+ modules.
+ 
+-
+-
+-
+-
+ PREREQUISITES
+ -------------
+ 
+ Before you can build IO-Compress-Base you need to have the following
+ installed on your system:
+ 
+-
+     * Perl 5.004 or better. 
+ 
+-
+-
+-
+-
+ BUILDING THE MODULE
+ -------------------
+ 
+@@ -47,8 +33,6 @@
+     make
+     make test
+ 
+-
+-
+ INSTALLATION
+ ------------
+ 
+@@ -56,24 +40,9 @@
+ 
+     make install
+ 
+-
+-
+-
+-
+ TROUBLESHOOTING
+ ---------------
+ 
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+ FEEDBACK
+ --------
+ 
+@@ -107,9 +76,7 @@
+         If you haven't installed IO-Compress-Base then search IO::Compress::Base.pm
+         for a line like this:
+ 
+-          $VERSION = "2.008" ;
+-
+-
++          $VERSION = "2.015" ;
+ 
+  2. If you are having problems building IO-Compress-Base, send me a
+     complete log of what happened. Start by unpacking the IO-Compress-Base
+@@ -120,5 +87,4 @@
+         make
+         make test TEST_VERBOSE=1          
+ 
+-
+ Paul Marquess <pmqs@cpan.org>
+diff -urN perl-5.10.0.orig/ext/IO_Compress_Base/lib/File/GlobMapper.pm perl-5.10.0/ext/IO_Compress_Base/lib/File/GlobMapper.pm
+--- perl-5.10.0.orig/ext/IO_Compress_Base/lib/File/GlobMapper.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/IO_Compress_Base/lib/File/GlobMapper.pm	2009-12-01 11:17:37.000000000 +0100
+@@ -26,7 +26,7 @@
+ our ($Error);
+ 
+ our ($VERSION, @EXPORT_OK);
+-$VERSION = '0.000_02';
++$VERSION = '1.000';
+ @EXPORT_OK = qw( globmap );
+ 
+ 
+@@ -389,24 +389,6 @@
+ 
+ =head1 DESCRIPTION
+ 
+-B<WARNING Alpha Release Alert!> 
+-
+-=over 5
+-
+-=item * This code is a work in progress. 
+-
+-=item * There are known bugs. 
+-
+-=item * The interface defined here is tentative. 
+-
+-=item * There are portability issues. 
+-
+-=item * Do not use in production code.
+-
+-=item * Consider yourself warned!
+-
+-=back
+-
+ This module needs Perl5.005 or better.
+ 
+ This module takes the existing C<File::Glob> module as a starting point and
+diff -urN perl-5.10.0.orig/ext/IO_Compress_Base/lib/IO/Compress/Base/Common.pm perl-5.10.0/ext/IO_Compress_Base/lib/IO/Compress/Base/Common.pm
+--- perl-5.10.0.orig/ext/IO_Compress_Base/lib/IO/Compress/Base/Common.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/IO_Compress_Base/lib/IO/Compress/Base/Common.pm	2009-12-01 11:17:37.000000000 +0100
+@@ -11,7 +11,7 @@
+ require Exporter;
+ our ($VERSION, @ISA, @EXPORT, %EXPORT_TAGS, $HAS_ENCODE);
+ @ISA = qw(Exporter);
+-$VERSION = '2.008';
++$VERSION = '2.015';
+ 
+ @EXPORT = qw( isaFilehandle isaFilename whatIsInput whatIsOutput 
+               isaFileGlobString cleanFileGlobString oneTarget
+@@ -192,7 +192,7 @@
+     return $_[0] =~ /^(code|handle|buffer|filename)$/;
+ }
+ 
+-sub Validator::new
++sub IO::Compress::Base::Validator::new
+ {
+     my $class = shift ;
+ 
+@@ -320,7 +320,7 @@
+     return $obj ;
+ }
+ 
+-sub Validator::saveErrorString
++sub IO::Compress::Base::Validator::saveErrorString
+ {
+     my $self   = shift ;
+     ${ $self->{Error} } = shift ;
+@@ -328,7 +328,7 @@
+     
+ }
+ 
+-sub Validator::croakError
++sub IO::Compress::Base::Validator::croakError
+ {
+     my $self   = shift ;
+     $self->saveErrorString($_[0]);
+@@ -337,7 +337,7 @@
+ 
+ 
+ 
+-sub Validator::validateInputFilenames
++sub IO::Compress::Base::Validator::validateInputFilenames
+ {
+     my $self = shift ;
+ 
+@@ -367,7 +367,7 @@
+     return 1 ;
+ }
+ 
+-sub Validator::validateInputArray
++sub IO::Compress::Base::Validator::validateInputArray
+ {
+     my $self = shift ;
+ 
+@@ -398,7 +398,7 @@
+     return 1 ;
+ }
+ 
+-#sub Validator::validateHash
++#sub IO::Compress::Base::Validator::validateHash
+ #{
+ #    my $self = shift ;
+ #    my $href = shift ;
+@@ -485,7 +485,11 @@
+ 
+     my $sub = (caller($level + 1))[3] ;
+     local $Carp::CarpLevel = 1 ;
+-    my $p = new IO::Compress::Base::Parameters() ;
++    
++    return $_[1]
++        if @_ == 2 && defined $_[1] && UNIVERSAL::isa($_[1], "IO::Compress::Base::Parameters");
++    
++    my $p = new IO::Compress::Base::Parameters() ;            
+     $p->parse(@_)
+         or croak "$sub: $p->{Error}" ;
+ 
+@@ -534,6 +538,7 @@
+ 
+     my $got = $self->{Got} ;
+     my $firstTime = keys %{ $got } == 0 ;
++    my $other;
+ 
+     my (@Bad) ;
+     my @entered = () ;
+@@ -544,7 +549,8 @@
+         @entered = () ;
+     }
+     elsif (@_ == 1) {
+-        my $href = $_[0] ;    
++        my $href = $_[0] ;
++    
+         return $self->setError("Expected even number of parameters, got 1")
+             if ! defined $href or ! ref $href or ref $href ne "HASH" ;
+  
+@@ -559,8 +565,13 @@
+             if $count % 2 != 0 ;
+         
+         for my $i (0.. $count / 2 - 1) {
+-            push @entered, $_[2* $i] ;
+-            push @entered, \$_[2* $i+1] ;
++            if ($_[2 * $i] eq '__xxx__') {
++                $other = $_[2 * $i + 1] ;
++            }
++            else {
++                push @entered, $_[2 * $i] ;
++                push @entered, \$_[2 * $i + 1] ;
++            }
+         }
+     }
+ 
+@@ -588,6 +599,24 @@
+     }
+ 
+     my %parsed = ();
++    
++    if ($other) 
++    {
++        for my $key (keys %$default)  
++        {
++            my $canonkey = lc $key;
++            if ($other->parsed($canonkey))
++            {
++                my $value = $other->value($canonkey);
++#print "SET '$canonkey' to $value [$$value]\n";
++                ++ $parsed{$canonkey};
++                $got->{$canonkey}[OFF_PARSED]  = 1;
++                $got->{$canonkey}[OFF_DEFAULT] = $value;
++                $got->{$canonkey}[OFF_FIXED]   = $value;
++            }
++        }
++    }
++    
+     for my $i (0.. @entered / 2 - 1) {
+         my $key = $entered[2* $i] ;
+         my $value = $entered[2* $i+1] ;
+diff -urN perl-5.10.0.orig/ext/IO_Compress_Base/lib/IO/Compress/Base.pm perl-5.10.0/ext/IO_Compress_Base/lib/IO/Compress/Base.pm
+--- perl-5.10.0.orig/ext/IO_Compress_Base/lib/IO/Compress/Base.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/IO_Compress_Base/lib/IO/Compress/Base.pm	2009-12-01 11:17:37.000000000 +0100
+@@ -6,7 +6,7 @@
+ use strict ;
+ use warnings;
+ 
+-use IO::Compress::Base::Common 2.008 ;
++use IO::Compress::Base::Common 2.015 ;
+ 
+ use IO::File ;
+ use Scalar::Util qw(blessed readonly);
+@@ -20,7 +20,7 @@
+ our (@ISA, $VERSION);
+ @ISA    = qw(Exporter IO::File);
+ 
+-$VERSION = '2.008';
++$VERSION = '2.015';
+ 
+ #Can't locate object method "SWASHNEW" via package "utf8" (perhaps you forgot to load "utf8"?) at .../ext/Compress-Zlib/Gzip/blib/lib/Compress/Zlib/Common.pm line 16.
+ 
+@@ -120,12 +120,14 @@
+         &{ *$self->{FilterEnvelope} }();
+     }
+ 
+-    if ( defined *$self->{FH} ) {
+-        defined *$self->{FH}->write( $data, length $data )
+-          or return $self->saveErrorString(0, $!, $!); 
+-    }
+-    else {
+-        ${ *$self->{Buffer} } .= $data ;
++    if (length $data) {
++        if ( defined *$self->{FH} ) {
++                defined *$self->{FH}->write( $data, length $data )
++                or return $self->saveErrorString(0, $!, $!); 
++        }
++        else {
++                ${ *$self->{Buffer} } .= $data ;
++        }
+     }
+ 
+     return 1;
+@@ -234,7 +236,7 @@
+     my $status ;
+     if (! $merge)
+     {
+-        *$obj->{Compress} = $obj->mkComp($class, $got)
++        *$obj->{Compress} = $obj->mkComp($got)
+             or return undef;
+         
+         *$obj->{UnCompSize} = new U64 ;
+@@ -321,7 +323,7 @@
+     my $haveOut = @_ ;
+     my $output = shift ;
+ 
+-    my $x = new Validator($class, *$obj->{Error}, $name, $input, $output)
++    my $x = new IO::Compress::Base::Validator($class, *$obj->{Error}, $name, $input, $output)
+         or return undef ;
+ 
+     push @_, $output if $haveOut && $x->{Hash};
+@@ -545,6 +547,8 @@
+ sub DESTROY
+ {
+     my $self = shift ;
++    local ($., $@, $!, $^E, $?);
++    
+     $self->close() ;
+ 
+     # TODO - memory leak with 5.8.0 - this isn't called until 
+@@ -697,15 +701,13 @@
+     $self->ckParams($got)
+         or $self->croakError("newStream: $self->{Error}");
+ 
++    *$self->{Compress} = $self->mkComp($got)
++        or return 0;
++
+     *$self->{Header} = $self->mkHeader($got) ;
+     $self->output(*$self->{Header} )
+         or return 0;
+     
+-    my $status = $self->reset() ;
+-    return $self->saveErrorString(0, *$self->{Compress}{Error}, 
+-                                  *$self->{Compress}{ErrorNo})
+-        if $status == STATUS_ERROR;
+-
+     *$self->{UnCompSize}->reset();
+     *$self->{CompSize}->reset();
+ 
+@@ -939,23 +941,17 @@
+ 
+ =head1 NAME
+ 
+-
+ IO::Compress::Base - Base Class for IO::Compress modules 
+ 
+-
+ =head1 SYNOPSIS
+ 
+     use IO::Compress::Base ;
+ 
+ =head1 DESCRIPTION
+ 
+-
+ This module is not intended for direct use in application code. Its sole
+ purpose if to to be sub-classed by IO::Compress modules.
+ 
+-
+-
+-
+ =head1 SEE ALSO
+ 
+ L<Compress::Zlib>, L<IO::Compress::Gzip>, L<IO::Uncompress::Gunzip>, L<IO::Compress::Deflate>, L<IO::Uncompress::Inflate>, L<IO::Compress::RawDeflate>, L<IO::Uncompress::RawInflate>, L<IO::Compress::Bzip2>, L<IO::Uncompress::Bunzip2>, L<IO::Compress::Lzop>, L<IO::Uncompress::UnLzop>, L<IO::Compress::Lzf>, L<IO::Uncompress::UnLzf>, L<IO::Uncompress::AnyInflate>, L<IO::Uncompress::AnyUncompress>
+@@ -966,25 +962,18 @@
+ L<Archive::Tar|Archive::Tar>,
+ L<IO::Zlib|IO::Zlib>
+ 
+-
+-
+-
+-
+ =head1 AUTHOR
+ 
+ This module was written by Paul Marquess, F<pmqs@cpan.org>. 
+ 
+-
+-
+ =head1 MODIFICATION HISTORY
+ 
+ See the Changes file.
+ 
+ =head1 COPYRIGHT AND LICENSE
+ 
+-Copyright (c) 2005-2007 Paul Marquess. All rights reserved.
++Copyright (c) 2005-2008 Paul Marquess. All rights reserved.
+ 
+ This program is free software; you can redistribute it and/or
+ modify it under the same terms as Perl itself.
+ 
+-
+diff -urN perl-5.10.0.orig/ext/IO_Compress_Base/lib/IO/Uncompress/AnyUncompress.pm perl-5.10.0/ext/IO_Compress_Base/lib/IO/Uncompress/AnyUncompress.pm
+--- perl-5.10.0.orig/ext/IO_Compress_Base/lib/IO/Uncompress/AnyUncompress.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/IO_Compress_Base/lib/IO/Uncompress/AnyUncompress.pm	2009-12-01 11:17:37.000000000 +0100
+@@ -4,16 +4,16 @@
+ use warnings;
+ use bytes;
+ 
+-use IO::Compress::Base::Common 2.008 qw(createSelfTiedObject);
++use IO::Compress::Base::Common 2.015 qw(createSelfTiedObject);
+ 
+-use IO::Uncompress::Base 2.008 ;
++use IO::Uncompress::Base 2.015 ;
+ 
+ 
+ require Exporter ;
+ 
+ our ($VERSION, @ISA, @EXPORT_OK, %EXPORT_TAGS, $AnyUncompressError);
+ 
+-$VERSION = '2.008';
++$VERSION = '2.015';
+ $AnyUncompressError = '';
+ 
+ @ISA = qw( Exporter IO::Uncompress::Base );
+@@ -27,18 +27,18 @@
+ 
+ BEGIN
+ {
+-   eval ' use IO::Uncompress::Adapter::Inflate 2.008 ;';
+-   eval ' use IO::Uncompress::Adapter::Bunzip2 2.008 ;';
+-   eval ' use IO::Uncompress::Adapter::LZO 2.008 ;';
+-   eval ' use IO::Uncompress::Adapter::Lzf 2.008 ;';
+-
+-   eval ' use IO::Uncompress::Bunzip2 2.008 ;';
+-   eval ' use IO::Uncompress::UnLzop 2.008 ;';
+-   eval ' use IO::Uncompress::Gunzip 2.008 ;';
+-   eval ' use IO::Uncompress::Inflate 2.008 ;';
+-   eval ' use IO::Uncompress::RawInflate 2.008 ;';
+-   eval ' use IO::Uncompress::Unzip 2.008 ;';
+-   eval ' use IO::Uncompress::UnLzf 2.008 ;';
++   eval ' use IO::Uncompress::Adapter::Inflate 2.015 ;';
++   eval ' use IO::Uncompress::Adapter::Bunzip2 2.015 ;';
++   eval ' use IO::Uncompress::Adapter::LZO 2.015 ;';
++   eval ' use IO::Uncompress::Adapter::Lzf 2.015 ;';
++
++   eval ' use IO::Uncompress::Bunzip2 2.015 ;';
++   eval ' use IO::Uncompress::UnLzop 2.015 ;';
++   eval ' use IO::Uncompress::Gunzip 2.015 ;';
++   eval ' use IO::Uncompress::Inflate 2.015 ;';
++   eval ' use IO::Uncompress::RawInflate 2.015 ;';
++   eval ' use IO::Uncompress::Unzip 2.015 ;';
++   eval ' use IO::Uncompress::UnLzf 2.015 ;';
+ }
+ 
+ sub new
+@@ -56,7 +56,7 @@
+ 
+ sub getExtraParams
+ {
+-    use IO::Compress::Base::Common 2.008 qw(:Parse);
++    use IO::Compress::Base::Common 2.015 qw(:Parse);
+     return ( 'RawInflate' => [1, 1, Parse_boolean,  0] ) ;
+ }
+ 
+@@ -75,7 +75,6 @@
+ sub mkUncomp
+ {
+     my $self = shift ;
+-    my $class = shift ;
+     my $got = shift ;
+ 
+     my $magic ;
+@@ -188,10 +187,8 @@
+ 
+ =head1 NAME
+ 
+-
+ IO::Uncompress::AnyUncompress - Uncompress gzip, zip, bzip2 or lzop file/buffer
+ 
+-
+ =head1 SYNOPSIS
+ 
+     use IO::Uncompress::AnyUncompress qw(anyuncompress $AnyUncompressError) ;
+@@ -235,10 +232,8 @@
+     eof($z)
+     close($z)
+ 
+-
+ =head1 DESCRIPTION
+ 
+-
+ This module provides a Perl interface that allows the reading of
+ files/buffers that have been compressed with a variety of compression
+ libraries.
+@@ -266,9 +261,6 @@
+ The module will auto-detect which, if any, of the supported
+ compression formats is being used.
+ 
+-
+-
+-
+ =head1 Functional Interface
+ 
+ A top-level function, C<anyuncompress>, is provided to carry out
+@@ -281,14 +273,10 @@
+     anyuncompress $input => $output [,OPTS] 
+         or die "anyuncompress failed: $AnyUncompressError\n";
+ 
+-
+-
+ The functional interface needs Perl5.005 or better.
+ 
+-
+ =head2 anyuncompress $input => $output [, OPTS]
+ 
+-
+ C<anyuncompress> expects at least two parameters, C<$input> and C<$output>.
+ 
+ =head3 The C<$input> parameter
+@@ -327,8 +315,6 @@
+ The complete array will be walked to ensure that it only
+ contains valid filenames before any data is uncompressed.
+ 
+-
+-
+ =item An Input FileGlob string
+ 
+ If C<$input> is a string that is delimited by the characters "<" and ">"
+@@ -339,13 +325,10 @@
+ 
+ See L<File::GlobMapper|File::GlobMapper> for more details.
+ 
+-
+ =back
+ 
+ If the C<$input> parameter is any other type, C<undef> will be returned.
+ 
+-
+-
+ =head3 The C<$output> parameter
+ 
+ The parameter C<$output> is used to control the destination of the
+@@ -365,14 +348,11 @@
+ will be written to it.
+ The string '-' can be used as an alias for standard output.
+ 
+-
+ =item A scalar reference 
+ 
+ If C<$output> is a scalar reference, the uncompressed data will be
+ stored in C<$$output>.
+ 
+-
+-
+ =item An Array Reference
+ 
+ If C<$output> is an array reference, the uncompressed data will be
+@@ -391,20 +371,13 @@
+ 
+ If the C<$output> parameter is any other type, C<undef> will be returned.
+ 
+-
+-
+ =head2 Notes
+ 
+-
+ When C<$input> maps to multiple compressed files/buffers and C<$output> is
+ a single file/buffer, after uncompression C<$output> will contain a
+ concatenation of all the uncompressed data from each of the input
+ files/buffers.
+ 
+-
+-
+-
+-
+ =head2 Optional Parameters
+ 
+ Unless specified below, the optional parameters for C<anyuncompress>,
+@@ -424,7 +397,6 @@
+ 
+ This parameter defaults to 0.
+ 
+-
+ =item C<< BinModeOut => 0|1 >>
+ 
+ When writing to a file or filehandle, set C<binmode> before writing to the
+@@ -432,26 +404,17 @@
+ 
+ Defaults to 0.
+ 
+-
+-
+-
+-
+ =item C<< Append => 0|1 >>
+ 
+ TODO
+ 
+ =item C<< MultiStream => 0|1 >>
+ 
+-
+ If the input file/buffer contains multiple compressed data streams, this
+ option will uncompress the whole lot as a single data stream.
+ 
+ Defaults to 0.
+ 
+-
+-
+-
+-
+ =item C<< TrailingData => $scalar >>
+ 
+ Returns the data, if any, that is present immediately after the compressed
+@@ -471,19 +434,12 @@
+ 
+ Don't bother using C<trailingData> if the input is a filename.
+ 
+-
+-
+ If you know the length of the compressed data stream before you start
+ uncompressing, you can avoid having to use C<trailingData> by setting the
+ C<InputLength> option.
+ 
+-
+-
+ =back
+ 
+-
+-
+-
+ =head2 Examples
+ 
+ To read the contents of the file C<file1.txt.Compressed> and write the
+@@ -498,7 +454,6 @@
+     anyuncompress $input => $output
+         or die "anyuncompress failed: $AnyUncompressError\n";
+ 
+-
+ To read from an existing Perl filehandle, C<$input>, and write the
+ uncompressed data to a buffer, C<$buffer>.
+ 
+@@ -542,7 +497,6 @@
+ 
+ The format of the constructor for IO::Uncompress::AnyUncompress is shown below
+ 
+-
+     my $z = new IO::Uncompress::AnyUncompress $input [OPTS]
+         or die "IO::Uncompress::AnyUncompress failed: $AnyUncompressError\n";
+ 
+@@ -574,7 +528,6 @@
+ read from it.
+ The string '-' can be used as an alias for standard input.
+ 
+-
+ =item A scalar reference 
+ 
+ If C<$input> is a scalar reference, the compressed data will be read from
+@@ -584,7 +537,6 @@
+ 
+ =head2 Constructor Options
+ 
+-
+ The option names defined below are case insensitive and can be optionally
+ prefixed by a '-'.  So all of the following are valid
+ 
+@@ -608,8 +560,6 @@
+ 
+ =item C<< MultiStream => 0|1 >>
+ 
+-
+-
+ Allows multiple concatenated compressed streams to be treated as a single
+ compressed stream. Decompression will stop once either the end of the
+ file/buffer is reached, an error is encountered (premature eof, corrupt
+@@ -618,7 +568,6 @@
+ 
+ This parameter defaults to 0.
+ 
+-
+ =item C<< Prime => $string >>
+ 
+ This option will uncompress the contents of C<$string> before processing the
+@@ -660,8 +609,6 @@
+ the file pointer will be left pointing to the first byte directly after the
+ compressed data stream.
+ 
+-
+-
+ This option defaults to off.
+ 
+ =item C<< Append => 0|1 >>
+@@ -678,24 +625,12 @@
+ 
+ =item C<< Strict => 0|1 >>
+ 
+-
+-
+ This option controls whether the extra checks defined below are used when
+ carrying out the decompression. When Strict is on, the extra tests are
+ carried out, when Strict is off they are not.
+ 
+ The default for this option is off.
+ 
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+ =item C<< RawInflate => 0|1 >>
+ 
+ When auto-detecting the compressed format, try to test for raw-deflate (RFC
+@@ -707,11 +642,6 @@
+ 
+ Defaults to 0.
+ 
+-
+-
+-
+-
+-
+ =back
+ 
+ =head2 Examples
+@@ -755,7 +685,6 @@
+ Returns the number of uncompressed bytes written to C<$buffer>, zero if eof
+ or a negative number on error.
+ 
+-
+ =head2 getline
+ 
+ Usage is
+@@ -770,7 +699,6 @@
+ determine what constitutes an end of line. Paragraph mode, record mode and
+ file slurp mode are all supported. 
+ 
+-
+ =head2 getc
+ 
+ Usage is 
+@@ -785,9 +713,6 @@
+ 
+     $char = $z->ungetc($string)
+ 
+-
+-
+-
+ =head2 getHeaderInfo
+ 
+ Usage is
+@@ -799,9 +724,6 @@
+ or hash references (in array context) that contains information about each
+ of the header fields in the compressed data stream(s).
+ 
+-
+-
+-
+ =head2 tell
+ 
+ Usage is
+@@ -818,26 +740,17 @@
+     $z->eof();
+     eof($z);
+ 
+-
+-
+ Returns true if the end of the compressed input stream has been reached.
+ 
+-
+-
+ =head2 seek
+ 
+     $z->seek($position, $whence);
+     seek($z, $position, $whence);
+ 
+-
+-
+-
+ Provides a sub-set of the C<seek> functionality, with the restriction
+ that it is only legal to seek forward in the input file/buffer.
+ It is a fatal error to attempt to seek backward.
+ 
+-
+-
+ The C<$whence> parameter takes one the usual values, namely SEEK_SET,
+ SEEK_CUR or SEEK_END.
+ 
+@@ -879,8 +792,6 @@
+     $z->input_line_number()
+     $z->input_line_number(EXPR)
+ 
+-
+-
+ Returns the current uncompressed line number. If C<EXPR> is present it has
+ the effect of setting the line number. Note that setting the line number
+ does not change the current position within the file/buffer being read.
+@@ -888,30 +799,25 @@
+ The contents of C<$/> are used to to determine what constitutes a line
+ terminator.
+ 
+-
+-
+ =head2 fileno
+ 
+     $z->fileno()
+     fileno($z)
+ 
+-If the C<$z> object is associated with a file or a filehandle, this method
+-will return the underlying file descriptor.
++If the C<$z> object is associated with a file or a filehandle, C<fileno>
++will return the underlying file descriptor. Once the C<close> method is
++called C<fileno> will return C<undef>.
+ 
+-If the C<$z> object is is associated with a buffer, this method will
+-return undef.
++If the C<$z> object is is associated with a buffer, this method will return
++C<undef>.
+ 
+ =head2 close
+ 
+     $z->close() ;
+     close $z ;
+ 
+-
+-
+ Closes the output file/buffer. 
+ 
+-
+-
+ For most versions of Perl this method will be automatically invoked if
+ the IO::Uncompress::AnyUncompress object is destroyed (either explicitly or by the
+ variable with the reference to the object going out of scope). The
+@@ -930,9 +836,6 @@
+ object was created, and the object is associated with a file, the
+ underlying file will also be closed.
+ 
+-
+-
+-
+ =head2 nextStream
+ 
+ Usage is
+@@ -971,8 +874,6 @@
+ 
+ Don't bother using C<trailingData> if the input is a filename.
+ 
+-
+-
+ If you know the length of the compressed data stream before you start
+ uncompressing, you can avoid having to use C<trailingData> by setting the
+ C<InputLength> option in the constructor.
+@@ -994,9 +895,6 @@
+ 
+ =head1 EXAMPLES
+ 
+-
+-
+-
+ =head1 SEE ALSO
+ 
+ L<Compress::Zlib>, L<IO::Compress::Gzip>, L<IO::Uncompress::Gunzip>, L<IO::Compress::Deflate>, L<IO::Uncompress::Inflate>, L<IO::Compress::RawDeflate>, L<IO::Uncompress::RawInflate>, L<IO::Compress::Bzip2>, L<IO::Uncompress::Bunzip2>, L<IO::Compress::Lzop>, L<IO::Uncompress::UnLzop>, L<IO::Compress::Lzf>, L<IO::Uncompress::UnLzf>, L<IO::Uncompress::AnyInflate>
+@@ -1007,23 +905,17 @@
+ L<Archive::Tar|Archive::Tar>,
+ L<IO::Zlib|IO::Zlib>
+ 
+-
+-
+-
+-
+ =head1 AUTHOR
+ 
+ This module was written by Paul Marquess, F<pmqs@cpan.org>. 
+ 
+-
+-
+ =head1 MODIFICATION HISTORY
+ 
+ See the Changes file.
+ 
+ =head1 COPYRIGHT AND LICENSE
+ 
+-Copyright (c) 2005-2007 Paul Marquess. All rights reserved.
++Copyright (c) 2005-2008 Paul Marquess. All rights reserved.
+ 
+ This program is free software; you can redistribute it and/or
+ modify it under the same terms as Perl itself.
+diff -urN perl-5.10.0.orig/ext/IO_Compress_Base/lib/IO/Uncompress/Base.pm perl-5.10.0/ext/IO_Compress_Base/lib/IO/Uncompress/Base.pm
+--- perl-5.10.0.orig/ext/IO_Compress_Base/lib/IO/Uncompress/Base.pm	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/IO_Compress_Base/lib/IO/Uncompress/Base.pm	2009-12-01 11:17:37.000000000 +0100
+@@ -9,12 +9,12 @@
+ @ISA    = qw(Exporter IO::File);
+ 
+ 
+-$VERSION = '2.008';
++$VERSION = '2.015';
+ 
+ use constant G_EOF => 0 ;
+ use constant G_ERR => -1 ;
+ 
+-use IO::Compress::Base::Common 2.008 ;
++use IO::Compress::Base::Common 2.015 ;
+ #use Parse::Parameters ;
+ 
+ use IO::File ;
+@@ -28,6 +28,7 @@
+ #Exporter::export_ok_tags('all') ;
+ 
+ 
++
+ sub smartRead
+ {
+     my $self = $_[0];
+@@ -59,12 +60,21 @@
+ 
+     my $get_size = $size - $offset ;
+ 
+-    #if ( defined *$self->{InputLength} ) {
+-    #    $get_size = min($get_size, *$self->{InputLengthRemaining});
+-    #}
+-
+-    if (defined *$self->{FH})
+-      { *$self->{FH}->read($$out, $get_size, $offset) }
++    if (defined *$self->{FH}) {
++        if ($offset) {
++            # Not using this 
++            #
++            #  *$self->{FH}->read($$out, $get_size, $offset);
++            #
++            # because the filehandle may not support the offset parameter
++            # An example is Net::FTP
++            my $tmp = '';
++            *$self->{FH}->read($tmp, $get_size) > 0 &&
++                (substr($$out, $offset) = $tmp);
++        }
++        else
++          { *$self->{FH}->read($$out, $get_size) }
++    }
+     elsif (defined *$self->{InputEvent}) {
+         my $got = 1 ;
+         while (length $$out < $size) {
+@@ -174,7 +184,24 @@
+     return 0 if length *$self->{Prime} || *$self->{PushMode};
+ 
+     if (defined *$self->{FH})
+-     { *$self->{FH}->eof() }
++    {
++        # Could use
++        #
++        #  *$self->{FH}->eof() 
++        #
++        # here, but this can cause trouble if
++        # the filehandle is itself a tied handle, but it uses sysread.
++        # Then we get into mixing buffered & non-buffered IO, which will cause trouble
++
++        my $info = $self->getErrInfo();
++        
++        my $buffer = '';
++        my $status = $self->smartRead(\$buffer, 1);
++        $self->pushBack($buffer) if length $buffer;
++        $self->setErrInfo($info);
++        
++        return $status == 0 ;
++    }
+     elsif (defined *$self->{InputEvent})
+      { *$self->{EventEof} }
+     else 
+@@ -189,6 +216,22 @@
+     ${ *$self->{Error} } = '' ;
+ }
+ 
++sub getErrInfo
++{
++    my $self   = shift ;
++
++    return [ *$self->{ErrorNo}, ${ *$self->{Error} } ] ;
++}
++
++sub setErrInfo
++{
++    my $self   = shift ;
++    my $ref    = shift;
++
++    *$self->{ErrorNo}  =  $ref->[0] ;
++    ${ *$self->{Error} } = $ref->[1] ;
++}
++
+ sub saveStatus
+ {
+     my $self   = shift ;
+@@ -425,7 +468,7 @@
+         return $obj
+     }
+ 
+-    my $status = $obj->mkUncomp($class, $got);
++    my $status = $obj->mkUncomp($got);
+ 
+     return undef
+         unless defined $status;
+@@ -490,7 +533,7 @@
+     my $output = shift ;
+ 
+ 
+-    my $x = new Validator($class, *$obj->{Error}, $name, $input, $output)
++    my $x = new IO::Compress::Base::Validator($class, *$obj->{Error}, $name, $input, $output)
+         or return undef ;
+     
+     push @_, $output if $haveOut && $x->{Hash};
+@@ -813,7 +856,7 @@
+         $self->postBlockChk($buffer, $before_len) == STATUS_OK
+             or return G_ERR;
+ 
+-        $buf_len = length($$buffer) - $before_len;
++        $buf_len = defined $$buffer ? length($$buffer) - $before_len : 0;
+     
+         *$self->{CompSize}->add($beforeC_len - length $temp_buf) ;
+ 
+@@ -929,7 +972,7 @@
+     my $magic = $self->ckMagic();
+     #*$self->{EndStream} = 0 ;
+ 
+-    if ( ! $magic) {
++    if ( ! defined $magic) {
+         if (! *$self->{Transparent} )
+         {
+             *$self->{EndStream} = 1 ;
+@@ -1247,6 +1290,8 @@
+ sub DESTROY
+ {
+     my $self = shift ;
++    local ($., $@, $!, $^E, $?);
++
+     $self->close() ;
+ }
+ 
+@@ -1372,23 +1417,17 @@
+ 
+ =head1 NAME
+ 
+-
+ IO::Uncompress::Base - Base Class for IO::Uncompress modules 
+ 
+-
+ =head1 SYNOPSIS
+ 
+     use IO::Uncompress::Base ;
+ 
+ =head1 DESCRIPTION
+ 
+-
+ This module is not intended for direct use in application code. Its sole
+ purpose if to to be sub-classed by IO::Unompress modules.
+ 
+-
+-
+-
+ =head1 SEE ALSO
+ 
+ L<Compress::Zlib>, L<IO::Compress::Gzip>, L<IO::Uncompress::Gunzip>, L<IO::Compress::Deflate>, L<IO::Uncompress::Inflate>, L<IO::Compress::RawDeflate>, L<IO::Uncompress::RawInflate>, L<IO::Compress::Bzip2>, L<IO::Uncompress::Bunzip2>, L<IO::Compress::Lzop>, L<IO::Uncompress::UnLzop>, L<IO::Compress::Lzf>, L<IO::Uncompress::UnLzf>, L<IO::Uncompress::AnyInflate>, L<IO::Uncompress::AnyUncompress>
+@@ -1399,23 +1438,17 @@
+ L<Archive::Tar|Archive::Tar>,
+ L<IO::Zlib|IO::Zlib>
+ 
+-
+-
+-
+-
+ =head1 AUTHOR
+ 
+ This module was written by Paul Marquess, F<pmqs@cpan.org>. 
+ 
+-
+-
+ =head1 MODIFICATION HISTORY
+ 
+ See the Changes file.
+ 
+ =head1 COPYRIGHT AND LICENSE
+ 
+-Copyright (c) 2005-2007 Paul Marquess. All rights reserved.
++Copyright (c) 2005-2008 Paul Marquess. All rights reserved.
+ 
+ This program is free software; you can redistribute it and/or
+ modify it under the same terms as Perl itself.
+diff -urN perl-5.10.0.orig/ext/IO_Compress_Base/t/01misc.t perl-5.10.0/ext/IO_Compress_Base/t/01misc.t
+--- perl-5.10.0.orig/ext/IO_Compress_Base/t/01misc.t	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/IO_Compress_Base/t/01misc.t	2009-12-01 11:17:37.000000000 +0100
+@@ -19,7 +19,7 @@
+     $extra = 1
+         if eval { require Test::NoWarnings ;  import Test::NoWarnings; 1 };
+ 
+-    plan tests => 78 + $extra ;
++    plan tests => 88 + $extra ;
+ 
+     use_ok('Scalar::Util');
+     use_ok('IO::Compress::Base::Common');
+@@ -95,13 +95,11 @@
+     my $got = ParseParameters(1, {'Fred' => [1, 1, 0x1000000, 0]}, Fred => 'abc') ;
+     is $got->value('Fred'), "abc", "other" ;
+ 
+-    $got = ParseParameters(1, {'Fred' => [0, 1, Parse_any, undef]}, Fred =>
+-undef) ;
++    $got = ParseParameters(1, {'Fred' => [0, 1, Parse_any, undef]}, Fred => undef) ;
+     ok $got->parsed('Fred'), "undef" ;
+     ok ! defined $got->value('Fred'), "undef" ;
+ 
+-    $got = ParseParameters(1, {'Fred' => [0, 1, Parse_string, undef]}, Fred =>
+-undef) ;
++    $got = ParseParameters(1, {'Fred' => [0, 1, Parse_string, undef]}, Fred => undef) ;
+     ok $got->parsed('Fred'), "undef" ;
+     is $got->value('Fred'), "", "empty string" ;
+ 
+@@ -117,11 +115,41 @@
+ 
+     ok $got->parsed('Fred'), "parsed" ;
+     $xx_ref = $got->value('Fred');
++
+     $$xx_ref = 666 ;
+     is $xx, 666;
+ 
++    {
++        my $got1 = ParseParameters(1, {'Fred' => [1, 1, Parse_writable_scalar, undef]}, $got) ;
++        is $got1, $got, "Same object";
++    
++        ok $got1->parsed('Fred'), "parsed" ;
++        $xx_ref = $got1->value('Fred');
++        
++        $$xx_ref = 777 ;
++        is $xx, 777;
++    }
++    
++    my $got2 = ParseParameters(1, {'Fred' => [1, 1, Parse_writable_scalar, undef]}, '__xxx__' => $got) ;
++    isnt $got2, $got, "not the Same object";
++
++    ok $got2->parsed('Fred'), "parsed" ;
++    $xx_ref = $got2->value('Fred');
++    $$xx_ref = 888 ;
++    is $xx, 888;  
++      
++    my $other;
++    my $got3 = ParseParameters(1, {'Fred' => [1, 1, Parse_writable_scalar, undef]}, '__xxx__' => $got, Fred => \$other) ;
++    isnt $got3, $got, "not the Same object";
++
++    ok $got3->parsed('Fred'), "parsed" ;
++    $xx_ref = $got3->value('Fred');
++    $$xx_ref = 999 ;
++    is $other, 999;  
++    is $xx, 888;  
+ }
+ 
++
+ My::testParseParameters();
+ 
+ 
+diff -urN perl-5.10.0.orig/t/lib/compress/CompTestUtils.pm perl-5.10.0/t/lib/compress/CompTestUtils.pm
+--- perl-5.10.0.orig/t/lib/compress/CompTestUtils.pm	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/compress/CompTestUtils.pm	2009-12-01 11:18:49.000000000 +0100
+@@ -203,6 +203,14 @@
+     return readFile($filename) eq unpack("u", $uue) ;
+ }
+ 
++sub isRawFormat
++{
++    my $class = shift;
++    my %raw = map { $_ => 1 } qw( RawDeflate );
++
++    return defined $raw{$class};
++}
++
+ sub uncompressBuffer
+ {
+     my $compWith = shift ;
+@@ -222,6 +230,8 @@
+                     'IO::Compress::Lzop::lzop'               => 'IO::Uncompress::UnLzop',
+                     'IO::Compress::Lzf'                      => 'IO::Uncompress::UnLzf' ,
+                     'IO::Compress::Lzf::lzf'                 => 'IO::Uncompress::UnLzf',
++                    'IO::Compress::PPMd'                     => 'IO::Uncompress::UnPPMd' ,
++                    'IO::Compress::PPMd::ppmd'               => 'IO::Uncompress::UnPPMd',
+                     'IO::Compress::DummyComp'                => 'IO::Uncompress::DummyUncomp',
+                     'IO::Compress::DummyComp::dummycomp'     => 'IO::Uncompress::DummyUncomp',
+                 );
+@@ -265,6 +275,10 @@
+                     'IO::Compress::Lzf::lzf'            => \$IO::Compress::Lzf::LzfError,
+                     'IO::Uncompress::UnLzf'             => \$IO::Uncompress::UnLzf::UnLzfError,
+                     'IO::Uncompress::UnLzf::unlzf'      => \$IO::Uncompress::UnLzf::UnLzfError,
++                    'IO::Compress::PPMd'                 => \$IO::Compress::PPMd::PPMdError,
++                    'IO::Compress::PPMd::ppmd'            => \$IO::Compress::PPMd::PPMdError,
++                    'IO::Uncompress::UnPPMd'             => \$IO::Uncompress::UnPPMd::UnPPMdError,
++                    'IO::Uncompress::UnPPMd::unppmd'      => \$IO::Uncompress::UnPPMd::UnPPMdError,
+ 
+                     'IO::Compress::DummyComp'           => \$IO::Compress::DummyComp::DummyCompError,
+                     'IO::Compress::DummyComp::dummycomp'=> \$IO::Compress::DummyComp::DummyCompError,
+@@ -293,6 +307,8 @@
+                     'IO::Uncompress::UnLzop'      => 'IO::Uncompress::UnLzop::unlzop',
+                     'IO::Compress::Lzf'           => 'IO::Compress::Lzf::lzf',
+                     'IO::Uncompress::UnLzf'       => 'IO::Uncompress::UnLzf::unlzf',
++                    'IO::Compress::PPMd'           => 'IO::Compress::PPMd::ppmd',
++                    'IO::Uncompress::UnPPMd'       => 'IO::Uncompress::UnPPMd::unppmd',
+                     'IO::Compress::DummyComp'     => 'IO::Compress::DummyComp::dummyuncomp',
+                     'IO::Uncompress::DummyUncomp' => 'IO::Uncompress::DummyUncomp::dummyuncomp',
+                  );
+@@ -319,6 +335,8 @@
+                  'IO::Compress::Lzop'                    => 'IO::Uncompress::UnLzop',
+                  'IO::Compress::Lzf::lzf'                => 'IO::Uncompress::UnLzf::unlzf',
+                  'IO::Compress::Lzf'                     => 'IO::Uncompress::UnLzf',
++                 'IO::Compress::PPMd::ppmd'              => 'IO::Uncompress::UnPPMd::unppmd',
++                 'IO::Compress::PPMd'                    => 'IO::Uncompress::UnPPMd',
+                  'IO::Compress::DummyComp::dummycomp'    => 'IO::Uncompress::DummyUncomp::dummyuncomp',
+                  'IO::Compress::DummyComp'               => 'IO::Uncompress::DummyUncomp',
+              );
+@@ -372,6 +390,8 @@
+                     'IO::Uncompress::UnLzop::unlzop'          => 'IO::Compress::Lzop',
+                     'IO::Uncompress::UnLzp'                   => 'IO::Compress::Lzf',
+                     'IO::Uncompress::UnLzf::unlzf'            => 'IO::Compress::Lzf',
++                    'IO::Uncompress::UnPPMd'                  => 'IO::Compress::PPMd',
++                    'IO::Uncompress::UnPPMd::unppmd'          => 'IO::Compress::PPMd',
+                     'IO::Uncompress::AnyInflate'              => 'IO::Compress::Gzip',
+                     'IO::Uncompress::AnyInflate::anyinflate'  => 'IO::Compress::Gzip',
+                     'IO::Uncompress::AnyUncompress'           => 'IO::Compress::Gzip',
+diff -urN perl-5.10.0.orig/t/lib/compress/destroy.pl perl-5.10.0/t/lib/compress/destroy.pl
+--- perl-5.10.0.orig/t/lib/compress/destroy.pl	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/compress/destroy.pl	2009-12-01 11:18:49.000000000 +0100
+@@ -17,7 +17,7 @@
+     $extra = 1
+         if eval { require Test::NoWarnings ;  import Test::NoWarnings; 1 };
+ 
+-    plan tests => 7 + $extra ;
++    plan tests => 15 + $extra ;
+ 
+     use_ok('IO::File') ;
+ }
+@@ -73,6 +73,43 @@
+ 
+         ok anyUncompress($name) eq $hello ;
+     }
++    
++    {
++        title "Testing DESTROY doesn't clobber \$! etc ";
++
++        my $lex = new LexFile my $name ;
++
++        my $out;
++        my $result;
++        
++        {
++            ok my $z = new $CompressClass($name); 
++            $z->write("abc") ;
++            $! = 22 ;
++
++            cmp_ok $!, '==', 22, '  $! is 22';
++        }
++        
++        cmp_ok $!, '==', 22, "  \$! has not been changed by $CompressClass destructor";
++
++                
++        {
++                my $uncomp;
++                ok my $x = new $UncompressClass($name, -Append => 1)  ;
++                
++                my $len ;
++                1 while ($len = $x->read($result)) > 0 ;
++                
++                $! = 22 ;
++
++                cmp_ok $!, '==', 22, '  $! is 22';
++        }    
++           
++        cmp_ok $!, '==', 22, "  \$! has not been changed by $UncompressClass destructor";
++                
++        is $result, "abc", "  Got uncompressed content ok";
++ 
++    }
+ }
+ 
+ 1;
+diff -urN perl-5.10.0.orig/t/lib/compress/generic.pl perl-5.10.0/t/lib/compress/generic.pl
+--- perl-5.10.0.orig/t/lib/compress/generic.pl	2007-12-18 11:47:08.000000000 +0100
++++ perl-5.10.0/t/lib/compress/generic.pl	2009-12-01 11:18:49.000000000 +0100
+@@ -47,6 +47,7 @@
+     my $Error           = getErrorRef($CompressClass);
+     my $UnError         = getErrorRef($UncompressClass);
+ 
++    if(1)
+     {
+ 
+         title "Testing $CompressClass Errors";
+@@ -81,7 +82,7 @@
+         like $@, mkEvalErr("^${CompressClass}::write: offset outside string");
+ 
+         eval ' $gz->syswrite("abc", 1, -4)' ;
+-        like $@, mkEvalErr("^${CompressClass}::write: offset outside string");
++        like $@, mkEvalErr("^${CompressClass}::write: offset outside string"), "write outside string";
+     }
+ 
+ 
+@@ -118,6 +119,7 @@
+ 
+     }
+ 
++
+     {
+         title "Testing $CompressClass and $UncompressClass";
+ 
+@@ -161,7 +163,6 @@
+ 
+ 
+             my $lex = new LexFile my $name ;
+-            #my $name = "/tmp/try.lzf";
+ 
+             my $hello = <<EOM ;
+ hello world
+@@ -322,7 +323,6 @@
+ 
+               ok $x->close, "  close" ;
+             }
+-            #exit;
+ 
+             is $uncomp, $hello, "  expected output" ;
+         }
+@@ -419,11 +419,11 @@
+               ok ! defined $x->fileno() ;
+               1 while $x->read($uncomp) > 0  ;
+ 
+-              ok $x->close ;
++              ok $x->close, "closed" ;
+             }
+ 
+-            is $uncomp, $hello ;
+-            ok $buffer eq $keep ;
++            is $uncomp, $hello, "got expected uncompressed data" ;
++            ok $buffer eq $keep, "compressed input not changed" ;
+         }
+ 
+         if ($CompressClass ne 'RawDeflate')
+@@ -434,8 +434,9 @@
+             my $buffer = '';
+             {
+               my $x ;
+-              ok $x = new $CompressClass(\$buffer) ;
+-              ok $x->close ;
++              $x = new $CompressClass(\$buffer);
++              ok $x, "new $CompressClass" ;
++              ok $x->close, "close ok" ;
+           
+             }
+ 
+@@ -541,7 +542,6 @@
+             read($fh1, $rest, 5000);
+             is $x->trailingData() . $rest, $trailer ;
+             #print "# [".$x->trailingData() . "][$rest]\n" ;
+-            #exit;
+ 
+         }
+ 
+@@ -1416,7 +1416,6 @@
+             }
+         }
+ 
+-
+         {
+             title "write tests - invalid data" ;
+ 
