@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        86%{?dist}
+Release:        87%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -239,17 +239,19 @@ Patch118:	perl-update-autodie.patch
 # cpan has it under PathTools-3.30
 Patch119:	perl-update-FileSpec.patch
 %define			    File_Spec_version 3.30
-Patch120:	perl-update-Compress_Raw_Zlib.patch
-%define			    Compress_Raw_Zlib 2.020
+Patch120:	perl-update-Compress-Raw-Zlib.patch
+%define			    Compress_Raw_Zlib_version 2.023
 Patch121:	perl-update-Scalar-List-Utils.patch
 %define			    Scalar_List_Utils 1.21
 Patch122:	perl-update-Module-Pluggable.patch
-%define             Module_Pluggable_version 3.90
+%define			    Module_Pluggable_version 3.90
 # Also fixes segfault when objects are reblessed (rt#33242, rhbz#459918)
 Patch123:	perl-update-Storable.patch
-%define             Storable_version 2.21
+%define			    Storable_version 2.21
 Patch124:	perl-update-IO-Compress-Base.patch
-%define             IO_Compress_Base 2.015
+%define			    IO_Compress_Base_version 2.015
+Patch125:	perl-update-IO-Compress-Zlib.patch
+%define			    IO_Compress_Zlib_version 2.015
 
 # Fedora uses links instead of lynx
 # patches File-Fetch and CPAN
@@ -425,7 +427,7 @@ Summary:        Low-Level Interface to the zlib compression library
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.008
+Version:        %{Compress_Raw_Zlib_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Compress-Raw-Zlib
@@ -579,7 +581,7 @@ Summary:        Base Class for IO::Compress modules
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.015
+Version:        %{IO_Compress_Base_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description IO-Compress-Base
@@ -594,8 +596,7 @@ Summary:        Perl interface to allow reading and writing of gzip and zip data
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-# Really 1.23_01, but we drop the _01.
-Version:        2.008
+Version:        %{IO_Compress_Zlib_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description IO-Compress-Zlib
@@ -1031,11 +1032,12 @@ upstream tarball from perl.org.
 %patch120 -p1
 %patch121 -p1
 %patch122 -p1
-%patch123 -p1
-#%patch124 -p1
 # 0-byte files and patch don't seem to agree
 mkdir t/Module_Pluggable/lib/Zot/
 touch t/Module_Pluggable/lib/Zot/.Zork.pm
+%patch123 -p1
+%patch124 -p1
+%patch125 -p1
 
 
 %patch201 -p1
@@ -1315,11 +1317,12 @@ perl -x patchlevel.h \
 	'Fedora Patch117: Update Digest::SHA to %{Digest_SHA_version}' \
 	'Fedora Patch117: Update module autodie to %{autodie_version}' \
 	'Fedora Patch119: Update File::Spec to %{File_Spec_version}' \
-	'Fedora Patch120: Update Compress::Raw::Zlib to %{Compress_Raw_Zlib}' \
+	'Fedora Patch120: Update Compress::Raw::Zlib to %{Compress_Raw_Zlib_version}' \
 	'Fedora Patch121: Update Scalar-List-Utils to %{Scalar_List_Utils}' \
 	'Fedora Patch122: Update Module-Pluggable to %{Module_Pluggable_version}' \
 	'Fedora Patch123: Update Storable to %{Storable_version}' \
-        'Fedora Patch124: Update IO::Compress::Base to %{IO_Compress_Base}' \
+	'Fedora Patch124: Update IO::Compress::Base to %{IO_Compress_Base_version}' \
+	'Fedora Patch125: Update IO::Compress::Zlib to %{IO_Compress_Zlib_version}' \
 	'Fedora Patch201: Fedora uses links instead of lynx' \
 	%{nil}
 
@@ -1333,7 +1336,7 @@ rm -rf $RPM_BUILD_ROOT
 # work around a bug in Module::Build tests by setting TMPDIR to a directory
 # inside the source tree
 mkdir "$PWD/tmp"
-#TMPDIR="$PWD/tmp" make test
+TMPDIR="$PWD/tmp" make test
 %endif
 
 %post libs -p /sbin/ldconfig
@@ -1946,6 +1949,11 @@ mkdir "$PWD/tmp"
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Dec  1 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-87
+- fix patch-update-Compress-Raw-Zlib.patch (did not patch Zlib.pm)
+- update Compress::Raw::Zlib to 2.023
+- update IO::Compress::Base, and IO::Compress::Zlib to 2.015 (#542645)
+
 * Mon Nov 30 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-86
 - 542645 update IO-Compress-Base
 
