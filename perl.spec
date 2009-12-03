@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        100%{?dist}
+Release:        101%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1168,8 +1168,8 @@ rm patchlevel.bak
 popd
 
 #FIXME: temporary compatibility hack: for perl(:MODULE_COMPAT_5.10.0)
-mkdir -p $RPM_BUILD_ROOT%{_libdir}/perl5/5.10.0/%{perl_archname}
-ln -s ../../CORE $RPM_BUILD_ROOT%{_libdir}/perl5/5.10.0/%{perl_archname}/CORE
+mkdir -p $RPM_BUILD_ROOT%{_libdir}/perl5/5.10.0/%{perl_archname}/CORE
+ln -s ../../../CORE/libperl.so $RPM_BUILD_ROOT%{_libdir}/perl5/5.10.0/%{perl_archname}/CORE/libperl.so
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1197,6 +1197,7 @@ TMPDIR="$PWD/tmp" make test
 
 # libs
 %exclude %{archlib}/CORE/libperl.so
+%exclude %{_libdir}/perl5/5.10.0/%{perl_archname}/CORE/libperl.so
 
 # devel
 %exclude %{_bindir}/enc2xs
@@ -1471,6 +1472,7 @@ TMPDIR="$PWD/tmp" make test
 %files libs
 %defattr(-,root,root)
 %{archlib}/CORE/libperl.so
+%{_libdir}/perl5/5.10.0/%{perl_archname}/CORE/libperl.so
 
 %files devel
 %defattr(-,root,root,-)
@@ -1787,6 +1789,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Dec  3 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.1-101
+- be more careful with the libperl.so compatibility symlink (#543936)
+
 * Wed Dec  2 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.1-100
 - new upstream version
 - release number must be high, because of stale version numbers of some
