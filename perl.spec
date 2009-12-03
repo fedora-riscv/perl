@@ -82,13 +82,11 @@ Patch62:	perl-add-symbols.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
-# FIXME: predelej na update 0.2602 -> 0.27
+
 Patch104:	perl-update-ExtUtils-CBuilder.patch
 %define			    ExtUtils_CBuilder_version 0.27
-# FIXME: predelej na update 2.07_03 -> 2.08
 Patch106:	perl-update-File-Path.patch
 %define			    File_Path_version 2.08
-# FIXME: update 340201 -> 0.35
 Patch109:	perl-update-Module-Build.patch
 %define			    Module_Build_real_version 0.35
 # For Module-Build-0.x, the second component has to have four digits.
