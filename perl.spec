@@ -152,6 +152,11 @@ Patch125:	perl-update-IO-Compress-Zlib.patch
 %define			    IO_Compress_Zlib_version 2.020
 #... also update version number of Compress::Zlib
 
+# FIXME: Compress-Raw-Zlib also contains Compress-Raw-Bzip2
+# and IO-Compress-Zlib contains IO-Compress-Bzip2
+# and some of these packages have been merged to IO-Compress on cpan,
+# we should merge as well
+
 # and also ExtUtils-ParseXS 2.2002 -> 2.21
 
 
@@ -1165,7 +1170,7 @@ rm patchlevel.bak
 popd
 
 #FIXME: temporary compatibility hack: for perl(:MODULE_COMPAT_5.10.0)
-mkdir -p %{_libdir}/perl5/5.10.0/%{perl_archname}
+mkdir -p $RPM_BUILD_ROOT%{_libdir}/perl5/5.10.0/%{perl_archname}
 ln -s ../../CORE $RPM_BUILD_ROOT%{_libdir}/perl5/5.10.0/%{perl_archname}/CORE
 
 %clean
