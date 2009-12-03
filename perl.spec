@@ -1166,7 +1166,7 @@ popd
 
 #FIXME: temporary compatibility hack: for perl(:MODULE_COMPAT_5.10.0)
 mkdir -p %{_libdir}/perl5/5.10.0/%{perl_archname}
-ln -s ../../CORE %{_libdir}/perl5/5.10.0/%{perl_archname}/CORE
+ln -s ../../CORE $RPM_BUILD_ROOT%{_libdir}/perl5/5.10.0/%{perl_archname}/CORE
 
 %clean
 rm -rf $RPM_BUILD_ROOT
