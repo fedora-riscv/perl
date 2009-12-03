@@ -1,4 +1,4 @@
-%define perl_version    5.10.0
+%define perl_version    5.10.1
 %define perl_epoch      4
 %define perl_arch_stem -thread-multi
 %define perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        87%{?dist}
+Release:        100%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -15,16 +15,16 @@ Group:          Development/Languages
 # we have to reflect that in the sub-package containing them.
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic)
 Url:            http://www.perl.org/
-Source0:        http://search.cpan.org/CPAN/authors/id/R/RG/RGARCIA/perl-%{perl_version}.tar.gz
+Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
 Source11:       filter-requires.sh
 Source12:       perl-5.8.0-libnet.cfg
 Source13:       macros.perl
 
 # Specific to Fedora/RHEL
-Patch1:         perl-5.8.0-root.patch
+Patch1:         perl-suid-noroot.patch
 
 # Removes date check, Fedora/RHEL specific
-Patch2:         perl-5.10.0-perlbug-tag.patch
+Patch2:         perl-perlbug-tag.patch
 
 # work around annoying rpath issue
 # This is only relevant for Fedora, as it is unlikely
@@ -39,7 +39,7 @@ Patch6:         perl-5.10.0-libresolv.patch
 
 # FIXME: May need the "Fedora" references removed before upstreaming
 # patches ExtUtils-MakeMaker
-Patch7:         perl-5.10.0-USE_MM_LD_RUN_PATH.patch
+Patch7:         perl-USE_MM_LD_RUN_PATH.patch
 
 # Skip hostname tests, since hostname lookup isn't available in Fedora
 # buildroots by design.
@@ -51,211 +51,110 @@ Patch8:         perl-5.10.0-disable_test_hosts.patch
 # systems.
 Patch10:        perl-5.10.0-x86_64-io-test-failure.patch
 
-# http://public.activestate.com/cgi-bin/perlbrowse/p/32891
-Patch11:        32891.patch
-
-# Problem with assertion - add upstream patch
-Patch15:	perl-5.10.0-bz448392.patch
-
-# Wrong access test
-Patch16:	perl-5.10.0-accessXOK.patch
-
-# fix function pos to handle unicode correctly
-Patch20:	perl-5.10.0-pos.patch
-
-# Fix crash when localizing a symtab entry rt#52740
-Patch26:    perl-5.10.0-stlocal.patch
-
-# Change 33640: More diagnostics for Fatal.pm, version bumps for all non-dual life modules affected
-# http://www.nntp.perl.org/group/perl.perl5.changes/2008/04/msg21478.html
-Patch28:    perl-5.10.0-Change33640.patch
-
-# Change 33881: (33825) Add SEEK_CUR, SEEK_END, SEEK_SET to list of constants POSIX imports from Fcntl
-#               (33826) Remove POSIX's internal implementation of S_ISBLK, S_ISCHR, S_ISDIR, S_ISFIFO, S_ISREG, pull from Fcntl
-#               (33829) Fix typo
-# http://www.nntp.perl.org/group/perl.perl5.changes/2008/05/msg21717.html
-Patch29:    perl-5.10.0-Change33881.patch
-
-# Change 33896: Eliminate POSIX::int_macro_int, and all the complex AUTOLOAD fandango
-# http://www.nntp.perl.org/group/perl.perl5.changes/2008/05/msg21732.html
-Patch30:    perl-5.10.0-Change33896.patch
-
-# Change 33897: Replaced the WEXITSTATUS, WIFEXITED, WIFSIGNALED, WIFSTOPPED, WSTOPSIG
-# http://www.nntp.perl.org/group/perl.perl5.changes/2008/05/msg21733.html
-Patch31:    perl-5.10.0-Change33897.patch
-
-Patch33:	perl-5.10.0-PerlIO-via-change34025.patch
-
-# Change 34507: Fix memory leak in single-char character class optimization
-Patch34:	perl-5.10.0-Change34507.patch
-
 # Reorder @INC: Based on: http://github.com/rafl/perl/commit/b9ba2fadb18b54e35e5de54f945111a56cbcb249
 Patch35:	perl-5.10.0-reorderINC.patch
-
-# Fix from Archive::Extract maintainer to only look at stdout
-# We need this because we're using tar >= 1.21
-# included upstream in 0.31_03
-Patch36:	perl-5.10.0-Archive-Extract-onlystdout.patch
-
-# Do not distort lib/CGI/t/util-58.t
-# http://rt.perl.org/rt3/Ticket/Display.html?id=64502
-Patch37:	perl-CGI-t-util-58.patch
-
-### Debian Patches ###
-
-# Fix issue with (nested) definition lists in lib/Pod/Html.pm
-# Upstream change 32727
-Patch40:	02_fix_pod2html_dl
-
-# Fix NULLOK items
-# Upstream change 33287
-Patch41:	07_fix_nullok
-
-# Fix a typo in the predefined common protocols to make "udp" resolve without netbase
-# Upstream change 33554
-Patch42:	08_fix_udp_typo
-
-# Fix a segmentation fault with 'debugperl -Dm'.
-# Upstream change 33388
-Patch43:	09_fix_memory_debugging
-
-# Allow the quote mark delimiter also for those #include directives chased with "h2ph -a".
-# Also add the directory prefix of the current file when the quote syntax is used;
-# 'require' will only look in @INC, not the current directory.
-# Upstream change 33835
-Patch44:	10_fix_h2ph_include_quote
-
-# Disable the "v-string in use/require is non-portable" warning.
-# Upstream change 32910
-Patch45:	11_disable_vstring_warning
-
-# Fix a segmentation fault occurring in the mod_perl2 test suite.
-# Upstream change 33807
-Patch46:	15_fix_local_symtab
- 
-# Fix the PerlIO_teardown prototype to suppress a compiler warning.
-# Upstream change 33370
-Patch47:	16_fix_perlio_teardown_prototype
-
-# Remove numeric overloading of Getopt::Long callback functions.
-# Dual-lived module, fixed on the CPAN side in 2.37_01.
-Patch48:	17_fix_getopt_long_callback
-
-# Fix Math::BigFloat::sqrt() breaking with too many digits.
-# Upstream change 33821
-Patch49:	18_fix_bigint_floats
-
-# Fix memory corruption with in-place sorting.
-# Upstream change 33937
-Patch50:	28_fix_inplace_sort
-
-# Revert an incorrect substitution optimization introduced in 5.10.0.
-# Bug introduced by upstream change 26334, reverted with change 33685 in blead and 33732 in maint-5.10.
-Patch51:	30_fix_freetmps
-
-# Fix 'Unknown error' messages with attribute.pm.
-# Upstream change 33265
-Patch52:	31_fix_attributes_unknown_error
-
-# Stop t/op/fork.t relying on rand().
-# Upstream change 33749
-Patch53:	32_fix_fork_rand
-
-# Fix memory leak with qr//.
-# Adapted from upstream change 34506.
-Patch54:	34_fix_qr-memory-leak-2
-
-# CVE-2005-0448 revisited: File::Path::rmtree no longer allows creating of setuid files.
-# We have 2.07, but it is still missing one fix (the debian patch has two fixes, but one is in 2.07)
-Patch55:	perl-5.10.0-fix_file_path_rmtree_setuid.patch
-
-# Fix $? when dumping core.
-Patch56:	37_fix_coredump_indicator
-
-# Fix a memory leak with Scalar::Util::weaken().
-# Upstream change 34209
-Patch57:	38_fix_weaken_memleak
-
-### End of Debian Patches ###
 
 # http://rt.perl.org/rt3/Ticket/Display.html?id=39060 (#221113)
 Patch58:	perl-perlio-incorrect-errno.patch
 
-# h2ph: generated *.ph files no longer produce warnings when processed
-Patch59:	perl-bz509676.patch
-
-# With the Scalar-List-Utils update, more prereq declarations have to
-# be skipped in Makefile.PL files.
-Patch60:	perl-skip-prereq.patch
-
 # much better swap logic to support reentrancy and fix assert failure
 # http://perl5.git.perl.org/perl.git/commitdiff/e9105d30edfbaa7f444bc7984c9bafc8e991ad12
 # RT #60508
-Patch61:	perl-5.10.0-much-better-swap-logic.patch
+Patch61:	perl-much-better-swap-logic.patch
+
+# temporarily export debug symbols even though DEBUGGING is not set:
+Patch62:	perl-add-symbols.patch
+
+# version macros for some of the modules:
+%define			    Archive_Extract_version 0.34
+%define			    Archive_Tar_version 1.52
+%define			    File_Fetch_version 0.20
+%define			    File_Temp_version 0.22
+%define			    IPC_Cmd_version 0.46
+%define			    Module_CoreList_version 2.18
+%define			    Module_Load_Conditional_version 0.30
+%define			    Pod_Simple_version 3.07
+%define			    Test_Harness_version 3.17
+%define			    Test_Simple_version 0.92
+%define			    Digest_SHA_version 5.47
+# has to be 3.x0, not 3.x
+%define			    Module_Pluggable_version 3.90
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
+# FIXME: predelej na update 0.2602 -> 0.27
+Patch104:	perl-update-ExtUtils-CBuilder.patch
+%define			    ExtUtils_CBuilder_version 0.27
+# FIXME: predelej na update 2.07_03 -> 2.08
+Patch106:	perl-update-File-Path.patch
+%define			    File_Path_version 2.08
+# FIXME: update 340201 -> 0.35
+Patch109:	perl-update-Module-Build.patch
+%define			    Module_Build_real_version 0.35
+# For Module-Build-0.x, the second component has to have four digits.
+%define			    Module_Build_rpm_version  0.3500
+
+#---
+# FIXME; is 2.18->2.21, should be 2.20->2.21
+# - was 2.21 previously; but it is not a subpackage, can wait
+Patch123:	perl-update-Storable.patch
+%define             Storable_version 2.20
+
+#---
+#could be 1.19
 Patch100:	perl-update-constant.patch
 %define			    constant_version 1.17
+# could be 0.36
 Patch101:	perl-update-Archive-Extract.patch
-%define			    Archive_Extract_version 0.30
+# could be 1.54
 Patch102:	perl-update-Archive-Tar.patch
-%define			    Archive_Tar_version 1.46
+# could be 3.43->3.48
 Patch103:	perl-update-CGI.patch
-%define			    CGI_version 3.43
-Patch104:	perl-update-ExtUtils-CBuilder.patch
-%define			    ExtUtils_CBuilder_version 0.24
+# could be 0.22
 Patch105:	perl-update-File-Fetch.patch
-%define			    File_Fetch_version 0.18
-Patch106:	perl-update-File-Path.patch
-%define			    File_Path_version 2.07
 Patch107:	perl-update-File-Temp.patch
-%define			    File_Temp_version 0.21
+# could be 0.54
 Patch108:	perl-update-IPC-Cmd.patch
-%define			    IPC_Cmd_version 0.42
-Patch109:	perl-update-Module-Build.patch
-%define			    Module_Build_real_version 0.32
-# For Module-Build-0.x, the second component has to have four digits.
-%define			    Module_Build_rpm_version  0.3200
+# could be 2.23
 Patch110:	perl-update-Module-CoreList.patch
-%define			    Module_CoreList_version 2.17
+# could be 0.34
 Patch111:	perl-update-Module-Load-Conditional.patch
-%define			    Module_Load_Conditional_version 0.30
+# could be 3.10
 Patch112:	perl-update-Pod-Simple.patch
-%define			    Pod_Simple_version 3.07
 Patch113:	perl-update-Sys-Syslog.patch
 %define			    Sys_Syslog_version 0.27
 Patch114:	perl-update-Test-Harness.patch
-%define			    Test_Harness_version 3.16
+# could be 0.94
 Patch115:	perl-update-Test-Simple.patch
-%define			    Test_Simple_version 0.92
 Patch116:	perl-update-Time-HiRes.patch
 %define			    Time_HiRes_version 1.9719
 Patch117:	perl-update-Digest-SHA.patch
-%define			    Digest_SHA_version 5.47
 # includes Fatal.pm
 Patch118:	perl-update-autodie.patch
 %define			    autodie_version 1.999
 # cpan has it under PathTools-3.30
+# could be 3.31
 Patch119:	perl-update-FileSpec.patch
 %define			    File_Spec_version 3.30
+# FIXME should be 2.023, to preserve upgrade path
 Patch120:	perl-update-Compress-Raw-Zlib.patch
-%define			    Compress_Raw_Zlib_version 2.023
+%define			    Compress_Raw_Zlib_version 2.020
+# could be 1.22
 Patch121:	perl-update-Scalar-List-Utils.patch
 %define			    Scalar_List_Utils 1.21
 Patch122:	perl-update-Module-Pluggable.patch
-%define			    Module_Pluggable_version 3.90
-# Also fixes segfault when objects are reblessed (rt#33242, rhbz#459918)
-Patch123:	perl-update-Storable.patch
-%define			    Storable_version 2.21
-Patch124:	perl-update-IO-Compress-Base.patch
-%define			    IO_Compress_Base_version 2.015
-Patch125:	perl-update-IO-Compress-Zlib.patch
-%define			    IO_Compress_Zlib_version 2.015
 
-# Fedora uses links instead of lynx
-# patches File-Fetch and CPAN
-Patch201:	perl-5.10.0-links.patch
+# could be 2.023
+Patch124:	perl-update-IO-Compress-Base.patch
+%define			    IO_Compress_Base_version 2.020
+# could be 2.023
+Patch125:	perl-update-IO-Compress-Zlib.patch
+%define			    IO_Compress_Zlib_version 2.020
+#... also update version number of Compress::Zlib
+
+# and also ExtUtils-ParseXS 2.2002 -> 2.21
+
+
 
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -270,6 +169,8 @@ Provides: perl(VMS::Filespec)
 Provides: perl(VMS::Stdio)
 
 # Compat provides
+Provides: perl(:MODULE_COMPAT_5.10.1)
+# during the transition period, provide also this:
 Provides: perl(:MODULE_COMPAT_5.10.0)
 
 # Threading provides
@@ -440,7 +341,7 @@ Summary:        A module providing Perl interfaces to the zlib compression libra
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.008
+Version:        2.020
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Compress-Zlib
@@ -458,7 +359,7 @@ Summary:        Query, download and build perl modules from CPAN sites
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.9205
+Version:        1.9402
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Provides:       cpan = %{version}
 
@@ -471,7 +372,7 @@ Summary:        API & CLI access to the CPAN mirrors
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.84
+Version:        0.88
 Requires:       perl(Module::Pluggable) >= 2.4
 Requires:       perl(Module::CoreList)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -534,8 +435,8 @@ Summary:        Create a module Makefile
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-# It's really 6.36_01, but we drop the _01.
-Version:        6.36
+# It's really 6.55_02, but we drop the _02.
+Version:        6.55
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Test::Harness)
@@ -550,8 +451,8 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-# It's really 2.18_02, but we drop the _02.
-Version:        2.18
+# It's really 2.2002, but we drop the 02.
+Version:        2.20
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -609,7 +510,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        1.07
+Version:        1.09
 Requires:       perl(Compress::Zlib)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -655,7 +556,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.01
+Version:        0.02
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 # Add a versioned provides, since we pull the unversioned one out.
 Provides:       perl(Log::Message::Handlers) = %{version}
@@ -727,7 +628,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.12
+Version:        0.16
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Module-Load
@@ -755,7 +656,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.01
+Version:        0.02
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Module-Loaded
@@ -787,7 +688,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.32
+Version:        0.34
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Object-Accessor
@@ -802,7 +703,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.01
+Version:        0.02
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Package-Constants
@@ -859,7 +760,7 @@ Summary:        Term::ReadLine UI made easy
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.18
+Version:        0.20
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Log::Message::Simple)
 
@@ -900,7 +801,7 @@ Summary:        Time objects from localtime and gmtime
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.12
+Version:        1.15
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Time-Piece
@@ -916,7 +817,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          3
-Version:        0.74
+Version:        0.77
 Requires:	perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description version
@@ -970,84 +871,45 @@ upstream tarball from perl.org.
 %patch7 -p1
 %patch8 -p1
 %patch10 -p1
-%patch11 -p1
-%patch15 -p1
-%patch16 -p1
-%patch20 -p1
-%patch26 -p1
-%patch28 -p1
-%patch29 -p1
-%patch30 -p1
-%patch31 -p1
-%patch33 -p1
-%patch34 -p1
 %patch35 -p1
-%patch36 -p1
-%patch37 -p1
 
-### Debian patches ###
-%patch40 -p1
-%patch41 -p1
-%patch42 -p1
-%patch43 -p1
-%patch44 -p1
-%patch45 -p1
-%patch46 -p1
-%patch47 -p1
-%patch48 -p1
-%patch49 -p1
-%patch50 -p1
-%patch51 -p1
-%patch52 -p1
-%patch53 -p1
-%patch54 -p1
-%patch55 -p1
-%patch56 -p1
-%patch57 -p1
 %patch58 -p1
-%patch59 -p1
-%patch60 -p1
 %patch61 -p1
+%patch62 -p1
 
-%patch100 -p1
-%patch101 -p1
-%patch102 -p1
-%patch103 -p1
+#patch100 -p1
+#patch101 -p1
+#patch102 -p1
+#patch103 -p1
 %patch104 -p1
-%patch105 -p1
+#patch105 -p1
 %patch106 -p1
-%patch107 -p1
-%patch108 -p1
+#patch107 -p1
+#patch108 -p1
 %patch109 -p1
-%patch110 -p1
-%patch111 -p1
-%patch112 -p1
-%patch113 -p1
-%patch114 -p1
-%patch115 -p1
-%patch116 -p1
-%patch117 -p1
-%patch118 -p1
-%patch119 -p1
-%patch120 -p1
-%patch121 -p1
-%patch122 -p1
-# 0-byte files and patch don't seem to agree
-mkdir t/Module_Pluggable/lib/Zot/
-touch t/Module_Pluggable/lib/Zot/.Zork.pm
-%patch123 -p1
-%patch124 -p1
-%patch125 -p1
-
-
-%patch201 -p1
+#patch110 -p1
+#patch111 -p1
+#patch112 -p1
+#patch113 -p1
+#patch114 -p1
+#patch115 -p1
+#patch116 -p1
+#patch117 -p1
+#patch118 -p1
+#patch119 -p1
+#patch120 -p1
+#patch121 -p1
+#patch122 -p1
+#patch123 -p1
+#patch124 -p1
+#patch125 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
 # find . -name "*.pod" -o -name "README*" -o -name "*.pm" | xargs file -i | grep charset= | grep -v '\(us-ascii\|utf-8\)'
 recode()
 {
-        iconv -f "$2" -t utf-8 < "$1" > "${1}_"
+        iconv -f "${2:-iso-8859-1}" -t utf-8 < "$1" > "${1}_"
         touch -r "$1" "${1}_"
         mv -f "${1}_" "$1"
 }
@@ -1055,17 +917,13 @@ recode README.cn euc-cn
 recode README.jp euc-jp
 recode README.ko euc-kr
 recode README.tw big5
-recode pod/perlebcdic.pod iso-8859-1
-recode pod/perlhack.pod iso-8859-1
-recode pod/perlhist.pod iso-8859-1
-recode pod/perlothrtut.pod iso-8859-1
-recode pod/perlthrtut.pod iso-8859-1
-recode lib/Unicode/Collate.pm iso-8859-1
-for i in Changes*; do
-    recode $i iso-8859-1
-done
-recode AUTHORS iso-8859-1
-
+recode pod/perlebcdic.pod
+recode pod/perlhack.pod
+recode pod/perlhist.pod
+recode pod/perlothrtut.pod
+recode pod/perlthrtut.pod
+recode lib/Unicode/Collate.pm
+recode AUTHORS
 
 find . -name \*.orig -exec rm -fv {} \;
 
@@ -1091,9 +949,10 @@ EOF
 chmod +x %{__perl_provides}
 
 # Configure Compress::Zlib to use system zlib
-sed -i "s|BUILD_ZLIB      = True|BUILD_ZLIB      = False|" ext/Compress/Raw/Zlib/config.in
-sed -i "s|INCLUDE         = ./zlib-src|INCLUDE         = %{_includedir}|" ext/Compress/Raw/Zlib/config.in
-sed -i "s|LIB             = ./zlib-src|LIB             = %{_libdir}|" ext/Compress/Raw/Zlib/config.in
+sed -i 's|BUILD_ZLIB      = True|BUILD_ZLIB      = False|
+	s|INCLUDE         = ./zlib-src|INCLUDE         = %{_includedir}|
+	s|LIB             = ./zlib-src|LIB             = %{_libdir}|' \
+	ext/Compress-Raw-Zlib/config.in
 
 %build
 echo "RPM Build arch: %{_arch}"
@@ -1101,7 +960,19 @@ echo "RPM Build arch: %{_arch}"
 # use "lib", not %{_lib}, for privlib, sitelib, and vendorlib
 # To build production version, we would need -DDEBUGGING=-g
 
+# transition period:
+%define old_sitearch	%{_prefix}/local/%{_lib}/perl5/site_perl/5.10.0/%{perl_archname}
+%define old_sitelib	%{_prefix}/local/lib/perl5/site_perl/5.10.0
+%define old_vendorarch	%{_libdir}/perl5/vendor_perl/5.10.0/%{perl_archname}
+# for a reason that is not clear, the version component got stripped here:
+%define old_vendorlib	%{_prefix}/lib/perl5/vendor_perl
+# No need to add old privdir and archdir to otherlibdirs.
+
+%define privlib		%{_prefix}/share/perl5
+%define archlib		%{_libdir}/perl5
+
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
+	-DDEBUGGING=-g \
 	-Accflags="-DPERL_USE_SAFE_PUTENV" \
         -Dversion=%{perl_version} \
         -Dmyhostname=localhost \
@@ -1111,13 +982,23 @@ echo "RPM Build arch: %{_arch}"
         -Dprefix=%{_prefix} \
         -Dvendorprefix=%{_prefix} \
         -Dsiteprefix=%{_prefix}/local \
+        -Dsitelib="%{_prefix}/local/share/perl5" \
+        -Dsitearch="%{_prefix}/local/%{_lib}/perl5" \
+        -Dprivlib="%{privlib}" \
+        -Dvendorlib="%{privlib}" \
+        -Darchlib="%{archlib}" \
+        -Dvendorarch="%{archlib}" \
+%if 0
         -Dprivlib="%{_prefix}/lib/perl5/%{perl_version}" \
         -Dsitelib="%{_prefix}/local/lib/perl5/site_perl/%{perl_version}" \
         -Dvendorlib="%{_prefix}/lib/perl5/vendor_perl/%{perl_version}" \
         -Darchlib="%{_libdir}/perl5/%{perl_version}/%{perl_archname}" \
         -Dsitearch="%{_prefix}/local/%{_lib}/perl5/site_perl/%{perl_version}/%{perl_archname}" \
         -Dvendorarch="%{_libdir}/perl5/vendor_perl/%{perl_version}/%{perl_archname}" \
-        -Dinc_version_list=none \
+%endif
+%if 1
+        -Dinc_version_list="5.10.0" \
+%endif
         -Darchname=%{perl_archname} \
 %ifarch %{multilib_64_archs}
         -Dlibpth="/usr/local/lib64 /lib64 %{_prefix}/lib64" \
@@ -1146,7 +1027,11 @@ echo "RPM Build arch: %{_arch}"
         -Ud_endprotoent_r_proto -Ud_setprotoent_r_proto \
         -Ud_endservent_r_proto -Ud_setservent_r_proto \
         -Dscriptdir='%{_bindir}' \
-        -Dotherlibdirs=/usr/lib/perl5/site_perl
+        -Dotherlibdirs="%{old_sitearch}:%{old_sitelib}:%{old_vendorarch}:%{old_vendorlib}:/usr/lib/perl5/site_perl"
+
+# this is promised to stay forever:
+#        -Dotherlibdirs=%{prefix}/lib/perl5/site_perl
+
 
 %ifarch sparc64
 make
@@ -1158,49 +1043,34 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
-%define new_perl_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}
-%define comp_perl_lib $RPM_BUILD_ROOT%{_prefix}/lib/perl5/%{version}
-%define new_arch_lib  $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/%{perl_archname}
-%define new_vendor_lib $RPM_BUILD_ROOT%{_libdir}/perl5/vendor_perl/%{version}
-%define comp_vendor_lib $RPM_BUILD_ROOT%{_prefix}/lib/perl5/vendor_perl/%{version}
-%define new_perl_flags LD_PRELOAD=%{new_arch_lib}/CORE/libperl.so LD_LIBRARY_PATH=%{new_arch_lib}/CORE PERL5LIB=%{new_perl_lib}:%{comp_perl_lib}
-%define new_perl %{new_perl_flags} $RPM_BUILD_ROOT%{_bindir}/perl
+%define build_archlib $RPM_BUILD_ROOT%{archlib}
+%define build_privlib $RPM_BUILD_ROOT%{privlib}
+%define build_bindir  $RPM_BUILD_ROOT%{_bindir}
+%define new_perl LD_PRELOAD="%{build_archlib}/CORE/libperl.so" \\\
+	LD_LIBRARY_PATH="%{build_archlib}/CORE" \\\
+	PERL5LIB="%{build_archlib}:%{build_privlib}" \\\
+	%{build_bindir}/perl
 
-# perl doesn't create this directory, but modules put things in it, so we need to own it.
-mkdir -p -m 755 %{new_vendor_lib}/%{perl_archname}/auto
+# perl doesn't create the auto subdirectory, but modules put things in it,
+# so we need to own it.
+mkdir -p -m 755 %{build_archlib}/auto
 
-%ifarch %{multilib_64_archs}
-%ifarch x86_64
-%define arch32 i386
-%endif
-%ifarch s390x
-%define arch32 s390
-%endif
-%ifarch ppc64
-%define arch32 ppc
-%endif
-%ifarch sparc64
-%define arch32 sparc
-%endif
-mkdir -p -m 755 %{comp_perl_lib} %{comp_vendor_lib}{,/%{arch32}-%{_os}%{perl_arch_stem}/auto}
-%endif
+install -p -m 755 utils/pl2pm %{build_bindir}/pl2pm
 
-install -p -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/pl2pm
-
-for i in asm/termios.h syscall.h syslimits.h syslog.h sys/ioctl.h sys/socket.h sys/time.h wait.h
+for i in asm/termios.h syscall.h syslimits.h syslog.h \
+	sys/ioctl.h sys/socket.h sys/time.h wait.h
 do
-  %{new_perl} $RPM_BUILD_ROOT%{_bindir}/h2ph -a -d %{new_arch_lib} $i || /bin/true
+  %{new_perl} %{build_bindir}/h2ph -a -d %{build_archlib} $i || true
 done
 
 #
 # libnet configuration file
 #
-install -p -m 644 %{SOURCE12} %{comp_perl_lib}/Net/libnet.cfg
+install -p -m 644 %{SOURCE12} %{build_privlib}/Net/libnet.cfg
 
 #
 # perl RPM macros
 #
-
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/rpm
 install -p -m 644 %{SOURCE13} ${RPM_BUILD_ROOT}%{_sysconfdir}/rpm/
 
@@ -1208,47 +1078,40 @@ install -p -m 644 %{SOURCE13} ${RPM_BUILD_ROOT}%{_sysconfdir}/rpm/
 # Core modules removal
 #
 find $RPM_BUILD_ROOT -name '*NDBM*' | xargs rm -rfv
-
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty | xargs rm -f 
 
-# Install sample cgi scripts (this used to happen automatically?)
-mkdir -p %{comp_perl_lib}/CGI/eg/
-cp -a lib/CGI/eg/* %{comp_perl_lib}/CGI/eg/
-
-# Cleanup binary paths and make cgi files executable
-pushd %{comp_perl_lib}/CGI/eg/
-  for i in *.cgi make_links.pl RunMeFirst ; do
-    sed -i 's|%{_prefix}/local/bin/perl|%{_bindir}/perl|g' $i
-    chmod +x $i
-  done
+# Install sample cgi scripts (this used to happen automatically?),
+# cleanup binary paths and make cgi files executable
+cgidir=%{build_privlib}/CGI/eg/
+mkdir -p $cgidir
+cp -a lib/CGI/eg/* $cgidir
+pushd $cgidir
+  cgifiles='*.cgi make_links.pl RunMeFirst'
+  sed -i 's|/usr/local/bin/perl|%{_bindir}/perl|g' $cgifiles
+  chmod +x $cgifiles
 popd
 
-# miniperl? As an interpreter? How odd.
-sed -i 's|./miniperl|%{_bindir}/perl|' %{comp_perl_lib}/ExtUtils/xsubpp
-chmod +x %{comp_perl_lib}/ExtUtils/xsubpp
+chmod -R u+w $RPM_BUILD_ROOT/*
+
+# miniperl? As an interpreter? How odd. Anyway, a symlink does it:
+rm %{build_privlib}/ExtUtils/xsubpp
+ln -s ../../../bin/xsubpp %{build_privlib}/ExtUtils/
 
 # Don't need the .packlist
-rm -f %{new_arch_lib}/.packlist
+rm %{build_archlib}/.packlist
 
 # Fix some manpages to be UTF-8
 pushd $RPM_BUILD_ROOT%{_mandir}/man1/
   for i in perl588delta.1 perldelta.1 ; do
     iconv -f MS-ANSI -t UTF-8 $i --output new-$i
-    rm -rf $i
+    rm $i
     mv new-$i $i
   done
 popd
 
-chmod -R u+w $RPM_BUILD_ROOT/*
-
-# Compress Changes* to save space
-bzip2 -9 Changes*
-echo "The Changes* files were moved to %{_docdir}/%{name}-devel*" \
-	> Changes-moved-to-perl-devel
-
 # Local patch tracking
-cd $RPM_BUILD_ROOT%{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/
-perl -x patchlevel.h \
+pushd %{build_archlib}/CORE/
+%{new_perl} -x patchlevel.h \
 	'Fedora Patch1: Permit suidperl to install as nonroot' \
 	'Fedora Patch2: Removes date check, Fedora/RHEL specific' \
 %ifnarch sparc64 \
@@ -1261,42 +1124,15 @@ perl -x patchlevel.h \
 	'Fedora Patch7: USE_MM_LD_RUN_PATH' \
 	'Fedora Patch8: Skip hostname tests, due to builders not being network capable' \
 	'Fedora Patch10: Dont run one io test due to random builder failures' \
-	'32891 fix big slowdown in 5.10 @_ parameter passing' \
-	'Fedora Patch15: Adopt upstream commit for assertion' \
-	'Fedora Patch16: Access permission - rt49003' \
-	'Fedora Patch20: pos function handle unicode correct' \
-	'Fedora Patch26: Fix crash when localizing a symtab entry - rt52740' \
-	'33640 Integrate Changes 33399, 33621, 33622, 33623, 33624' \
-	'33881 Integrate Changes 33825, 33826, 33829' \
-	'33896 Eliminate POSIX::int_macro_int, and all the complex AUTOLOAD fandango' \
-	'33897 Replaced the WEXITSTATUS, WIFEXITED, WIFSIGNALED, WIFSTOPPED, WSTOPSIG' \
-	'54934 Change 34025 refcount of the globs generated by PerlIO::via balanced' \
-	'34507 Fix memory leak in single-char character class optimization' \
 	'Fedora Patch35: Reorder @INC, based on b9ba2fadb18b54e35e5de54f945111a56cbcb249' \
-	'Fedora Patch36: Fix from Archive::Extract maintainer to only look at stdout from tar' \
-	'Fedora Patch37: Do not distort lib/CGI/t/util-58.t' \
-	'32727 Fix issue with (nested) definition lists in lib/Pod/Html.pm' \
-	'33287 Fix NULLOK items' \
-	'33554 Fix a typo in the predefined common protocols to make _udp_ resolve without netbase' \
-	'33388 Fix a segmentation fault with debugperl -Dm' \
-	'33835 Allow the quote mark delimiter also for those #include directives chased with h2ph -a.' \
-	'32910 Disable the v-string in use/require is non-portable warning.' \
-	'33807 Fix a segmentation fault occurring in the mod_perl2 test suite.' \
-	'33370 Fix the PerlIO_teardown prototype to suppress a compiler warning.' \
-	'Fedora Patch48: Remove numeric overloading of Getopt::Long callback functions.' \
-	'33821 Fix Math::BigFloat::sqrt() breaking with too many digits.' \
-	'33937 Fix memory corruption with in-place sorting' \
-	'33732 Revert an incorrect substitution optimization introduced in 5.10.0' \
-	'33265 Fix Unknown error messages with attribute.pm.' \
-	'33749 Stop t/op/fork.t relying on rand()' \
-	'34506 Fix memory leak with qr//' \
-	'Fedora Patch55: File::Path::rmtree no longer allows creating of setuid files.' \
-	'Fedora Patch56: Fix $? when dumping core' \
-	'34209 Fix a memory leak with Scalar::Util::weaken()' \
-	'fix RT 39060, errno incorrectly set in perlio' \
-	'Fedora Patch59: h2ph: generated *.ph files no longer produce warnings when processed' \
-	'Fedora Patch60: remove PREREQ_FATAL from Makefile.PLs processed by miniperl' \
+	'Fedora Patch58: fix RT 39060, errno incorrectly set in perlio' \
 	'Fedora Patch61: much better swap logic to support reentrancy and fix assert failure' \
+	'Fedora Patch62: backward compatibility for the trasition' \
+	'Fedora Patch104: Update ExtUtils::CBuilder to %{ExtUtils_CBuilder_version}' \
+	'Fedora Patch106: Update File::Path to %{File_Path_version}' \
+	'Fedora Patch109: Update Module::Build to %{Module_Build_version}' \
+
+: \
 	'Fedora Patch100: Update module constant to %{constant_version}' \
 	'Fedora Patch101: Update Archive::Extract to %{Archive_Extract_version}' \
 	'Fedora Patch102: Update Archive::Tar to %{Archive_Tar_version}' \
@@ -1323,10 +1159,14 @@ perl -x patchlevel.h \
 	'Fedora Patch123: Update Storable to %{Storable_version}' \
 	'Fedora Patch124: Update IO::Compress::Base to %{IO_Compress_Base_version}' \
 	'Fedora Patch125: Update IO::Compress::Zlib to %{IO_Compress_Zlib_version}' \
-	'Fedora Patch201: Fedora uses links instead of lynx' \
 	%{nil}
 
 rm patchlevel.bak
+popd
+
+#FIXME: temporary compatibility hack: for perl(:MODULE_COMPAT_5.10.0)
+mkdir -p %{_libdir}/perl5/5.10.0/%{perl_archname}
+ln -s ../../CORE %{_libdir}/perl5/5.10.0/%{perl_archname}/CORE
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1345,30 +1185,27 @@ TMPDIR="$PWD/tmp" make test
 
 %files
 %defattr(-,root,root,-)
-%doc Artistic AUTHORS Copying README
-%doc Changes-moved-to-perl-devel
+%doc Artistic AUTHORS Copying README Changes
 %{_mandir}/man1/*.1*
 %{_mandir}/man3/*.3*
 %{_bindir}/*
-%{_libdir}/perl5/
-%ifarch %{multilib_64_archs}
-%{_prefix}/lib/perl5/
-%endif
+%{privlib}
+%{archlib}
 
 # libs
-%exclude %{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/libperl.so
+%exclude %{archlib}/CORE/libperl.so
 
 # devel
 %exclude %{_bindir}/enc2xs
 %exclude %{_mandir}/man1/enc2xs*
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Encode/
+%exclude %{privlib}/Encode/
 %exclude %{_bindir}/h2xs
 %exclude %{_mandir}/man1/h2xs*
 %exclude %{_bindir}/libnetcfg
 %exclude %{_mandir}/man1/libnetcfg*
 %exclude %{_bindir}/perlivp
 %exclude %{_mandir}/man1/perlivp*
-%exclude %{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/*.h
+%exclude %{archlib}/CORE/*.h
 %exclude %{_bindir}/xsubpp
 %exclude %{_mandir}/man1/xsubpp*
 
@@ -1377,22 +1214,22 @@ TMPDIR="$PWD/tmp" make test
 %exclude %{_bindir}/sperl%{perl_version}
 
 # Archive-Extract
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Archive/Extract.pm
+%exclude %{privlib}/Archive/Extract.pm
 %exclude %{_mandir}/man3/Archive::Extract.3*
 
 # Archive-Tar
 %exclude %{_bindir}/ptar
 %exclude %{_bindir}/ptardiff
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Archive/Tar/
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Archive/Tar.pm
+%exclude %{privlib}/Archive/Tar/
+%exclude %{privlib}/Archive/Tar.pm
 %exclude %{_mandir}/man1/ptar.1*
 %exclude %{_mandir}/man1/ptardiff.1*
 %exclude %{_mandir}/man3/Archive::Tar*
 
 # CPAN
 %exclude %{_bindir}/cpan
-%exclude %{_prefix}/lib/perl5/%{perl_version}/CPAN/
-%exclude %{_prefix}/lib/perl5/%{perl_version}/CPAN.pm
+%exclude %{privlib}/CPAN/
+%exclude %{privlib}/CPAN.pm
 %exclude %{_mandir}/man1/cpan.1*
 %exclude %{_mandir}/man3/CPAN.*
 %exclude %{_mandir}/man3/CPAN:*
@@ -1401,57 +1238,57 @@ TMPDIR="$PWD/tmp" make test
 %exclude %{_bindir}/cpan2dist
 %exclude %{_bindir}/cpanp
 %exclude %{_bindir}/cpanp-run-perl
-%exclude %{_prefix}/lib/perl5/%{perl_version}/CPANPLUS/
-%exclude %{_prefix}/lib/perl5/%{perl_version}/CPANPLUS.pm
+%exclude %{privlib}/CPANPLUS/
+%exclude %{privlib}/CPANPLUS.pm
 %exclude %{_mandir}/man1/cpan2dist.1*
 %exclude %{_mandir}/man1/cpanp.1*
 %exclude %{_mandir}/man3/CPANPLUS*
 
 # Compress::Raw::Zlib
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/Compress
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/Compress/Raw/
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/auto/Compress
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/auto/Compress/Raw/
+%exclude %{archlib}/Compress
+%exclude %{archlib}/Compress/Raw/
+%exclude %{archlib}/auto/Compress
+%exclude %{archlib}/auto/Compress/Raw/
 %exclude %{_mandir}/man3/Compress::Raw::Zlib*
 
 # Compress::Zlib
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/Compress/Zlib.pm
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/auto/Compress/Zlib/
+%exclude %{archlib}/Compress/Zlib.pm
+%exclude %{archlib}/auto/Compress/Zlib/
 %exclude %{_mandir}/man3/Compress::Zlib*
 
 # Digest::SHA
 %exclude %{_bindir}/shasum
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/Digest/SHA.pm
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/auto/Digest/SHA/
+%exclude %{archlib}/Digest/SHA.pm
+%exclude %{archlib}/auto/Digest/SHA/
 %exclude %{_mandir}/man1/shasum.1*
 %exclude %{_mandir}/man3/Digest::SHA.3*
 
 # ExtUtils::CBuilder
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/CBuilder/
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/CBuilder.pm
+%exclude %{privlib}/ExtUtils/CBuilder/
+%exclude %{privlib}/ExtUtils/CBuilder.pm
 %exclude %{_mandir}/man3/ExtUtils::CBuilder*
 
 # ExtUtils::Embed
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Embed.pm
+%exclude %{privlib}/ExtUtils/Embed.pm
 %exclude %{_mandir}/man3/ExtUtils::Embed*
 
 # ExtUtils::MakeMaker
 %exclude %{_bindir}/instmodsh
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Command/
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Install.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Installed.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Liblist/
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Liblist.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MakeMaker/
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MakeMaker.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MANIFEST.SKIP
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MM*.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MY.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Manifest.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Mkbootstrap.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Mksymlists.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Packlist.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/testlib.pm
+%exclude %{privlib}/ExtUtils/Command/
+%exclude %{privlib}/ExtUtils/Install.pm
+%exclude %{privlib}/ExtUtils/Installed.pm
+%exclude %{privlib}/ExtUtils/Liblist/
+%exclude %{privlib}/ExtUtils/Liblist.pm
+%exclude %{privlib}/ExtUtils/MakeMaker/
+%exclude %{privlib}/ExtUtils/MakeMaker.pm
+%exclude %{privlib}/ExtUtils/MANIFEST.SKIP
+%exclude %{privlib}/ExtUtils/MM*.pm
+%exclude %{privlib}/ExtUtils/MY.pm
+%exclude %{privlib}/ExtUtils/Manifest.pm
+%exclude %{privlib}/ExtUtils/Mkbootstrap.pm
+%exclude %{privlib}/ExtUtils/Mksymlists.pm
+%exclude %{privlib}/ExtUtils/Packlist.pm
+%exclude %{privlib}/ExtUtils/testlib.pm
 %exclude %{_mandir}/man1/instmodsh.1*
 %exclude %{_mandir}/man3/ExtUtils::Command::MM*
 %exclude %{_mandir}/man3/ExtUtils::Install.3*
@@ -1467,40 +1304,40 @@ TMPDIR="$PWD/tmp" make test
 %exclude %{_mandir}/man3/ExtUtils::testlib.3*
 
 # ExtUtils::ParseXS
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/ParseXS.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/ExtUtils/xsubpp
+%exclude %{privlib}/ExtUtils/ParseXS.pm
+%exclude %{privlib}/ExtUtils/xsubpp
 %exclude %{_mandir}/man3/ExtUtils::ParseXS.3*
 
 # File::Fetch
-%exclude %{_prefix}/lib/perl5/%{perl_version}/File/Fetch.pm
+%exclude %{privlib}/File/Fetch.pm
 %exclude %{_mandir}/man3/File::Fetch.3*
 
 # IO::Compress::Base
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/File/GlobMapper.pm
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Base/
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Base.pm
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/AnyUncompress.pm
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Base.pm
+%exclude %{archlib}/File/GlobMapper.pm
+%exclude %{archlib}/IO/Compress/Base/
+%exclude %{archlib}/IO/Compress/Base.pm
+%exclude %{archlib}/IO/Uncompress/AnyUncompress.pm
+%exclude %{archlib}/IO/Uncompress/Base.pm
 %exclude %{_mandir}/man3/File::GlobMapper.*
 %exclude %{_mandir}/man3/IO::Compress::Base.*
 %exclude %{_mandir}/man3/IO::Uncompress::AnyUncompress.*
 %exclude %{_mandir}/man3/IO::Uncompress::Base.*
 
 # IO::Compress::Zlib
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Adapter/
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Deflate.pm
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Gzip/
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Gzip.pm
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/RawDeflate.pm
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Zip/
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Zip.pm
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Zlib/
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Adapter/
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/AnyInflate.pm
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Gunzip.pm
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Inflate.pm
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/RawInflate.pm
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Unzip.pm
+%exclude %{archlib}/IO/Compress/Adapter/
+%exclude %{archlib}/IO/Compress/Deflate.pm
+%exclude %{archlib}/IO/Compress/Gzip/
+%exclude %{archlib}/IO/Compress/Gzip.pm
+%exclude %{archlib}/IO/Compress/RawDeflate.pm
+%exclude %{archlib}/IO/Compress/Zip/
+%exclude %{archlib}/IO/Compress/Zip.pm
+%exclude %{archlib}/IO/Compress/Zlib/
+%exclude %{archlib}/IO/Uncompress/Adapter/
+%exclude %{archlib}/IO/Uncompress/AnyInflate.pm
+%exclude %{archlib}/IO/Uncompress/Gunzip.pm
+%exclude %{archlib}/IO/Uncompress/Inflate.pm
+%exclude %{archlib}/IO/Uncompress/RawInflate.pm
+%exclude %{archlib}/IO/Uncompress/Unzip.pm
 %exclude %{_mandir}/man3/IO::Compress::Deflate*
 %exclude %{_mandir}/man3/IO::Compress::Gzip*
 %exclude %{_mandir}/man3/IO::Compress::RawDeflate*
@@ -1512,140 +1349,138 @@ TMPDIR="$PWD/tmp" make test
 %exclude %{_mandir}/man3/IO::Uncompress::Unzip*
 
 # IO::Zlib
-%exclude %{_prefix}/lib/perl5/%{perl_version}/IO/Zlib.pm
+%exclude %{privlib}/IO/Zlib.pm
 %exclude %{_mandir}/man3/IO::Zlib.*
 
 # IPC::Cmd
-%exclude %{_prefix}/lib/perl5/%{perl_version}/IPC/Cmd.pm
+%exclude %{privlib}/IPC/Cmd.pm
 %exclude %{_mandir}/man3/IPC::Cmd.3*
 
 # Locale::Maketext::Simple
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Locale/Maketext/Simple.pm
+%exclude %{privlib}/Locale/Maketext/Simple.pm
 %exclude %{_mandir}/man3/Locale::Maketext::Simple.*
 
 # Log::Message
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Log/Message.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Log/Message/Config.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Log/Message/Handlers.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Log/Message/Item.pm
+%exclude %{privlib}/Log/Message.pm
+%exclude %{privlib}/Log/Message/Config.pm
+%exclude %{privlib}/Log/Message/Handlers.pm
+%exclude %{privlib}/Log/Message/Item.pm
 %exclude %{_mandir}/man3/Log::Message.3*
 %exclude %{_mandir}/man3/Log::Message::Config.3*
 %exclude %{_mandir}/man3/Log::Message::Handlers.3*
 %exclude %{_mandir}/man3/Log::Message::Item.3*
 
 # Log::Message::Simple
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Log/Message/Simple.pm
+%exclude %{privlib}/Log/Message/Simple.pm
 %exclude %{_mandir}/man3/Log::Message::Simple.3*
 
 # Module::Build
 %exclude %{_bindir}/config_data
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Module/Build/
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Module/Build.pm
+%exclude %{privlib}/Module/Build/
+%exclude %{privlib}/Module/Build.pm
 %exclude %{_mandir}/man1/config_data.1*
 %exclude %{_mandir}/man3/Module::Build*
 
 # Module-CoreList
 %exclude %{_bindir}/corelist
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Module/CoreList.pm
+%exclude %{privlib}/Module/CoreList.pm
 %exclude %{_mandir}/man1/corelist*
 %exclude %{_mandir}/man3/Module::CoreList*
 
 # Module-Load
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Module/Load.pm
+%exclude %{privlib}/Module/Load.pm
 %exclude %{_mandir}/man3/Module::Load.*
 
 # Module-Load-Conditional
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Module/Load/
+%exclude %{privlib}/Module/Load/
 %exclude %{_mandir}/man3/Module::Load::Conditional*
 
 # Module-Loaded
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Module/Loaded.pm
+%exclude %{privlib}/Module/Loaded.pm
 %exclude %{_mandir}/man3/Module::Loaded*
 
 # Module-Pluggable
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Devel/InnerPackage.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Module/Pluggable/
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Module/Pluggable.pm
+%exclude %{privlib}/Devel/InnerPackage.pm
+%exclude %{privlib}/Module/Pluggable/
+%exclude %{privlib}/Module/Pluggable.pm
 %exclude %{_mandir}/man3/Devel::InnerPackage*
 %exclude %{_mandir}/man3/Module::Pluggable*
 
 # Object-Accessor
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Object/
+%exclude %{privlib}/Object/
 %exclude %{_mandir}/man3/Object::Accessor*
 
 # Package-Constants
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Package/
+%exclude %{privlib}/Package/
 %exclude %{_mandir}/man3/Package::Constants*
 
 # Params-Check
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Params/
+%exclude %{privlib}/Params/
 %exclude %{_mandir}/man3/Params::Check*
 
 # Pod-Escapes
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Pod/Escapes.pm
+%exclude %{privlib}/Pod/Escapes.pm
 %exclude %{_mandir}/man3/Pod::Escapes.*
 
 # Pod-Simple
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Pod/Simple/
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Pod/Simple.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Pod/Simple.pod
+%exclude %{privlib}/Pod/Simple/
+%exclude %{privlib}/Pod/Simple.pm
+%exclude %{privlib}/Pod/Simple.pod
 %exclude %{_mandir}/man3/Pod::Simple*
 
 # Term-UI
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Term/UI.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Term/UI/
+%exclude %{privlib}/Term/UI.pm
+%exclude %{privlib}/Term/UI/
 %exclude %{_mandir}/man3/Term::UI*
 
 # Test::Harness
 %exclude %{_bindir}/prove
-%exclude %{_prefix}/lib/perl5/%{perl_version}/App*
-%exclude %{_prefix}/lib/perl5/%{perl_version}/TAP*
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Test/Harness*
+%exclude %{privlib}/App*
+%exclude %{privlib}/TAP*
+%exclude %{privlib}/Test/Harness*
 %exclude %{_mandir}/man1/prove.1*
 %exclude %{_mandir}/man3/App*
 %exclude %{_mandir}/man3/TAP*
 %exclude %{_mandir}/man3/Test::Harness*
 
 # Test::Simple
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Test/More*
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Test/Builder*
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Test/Simple*
-%exclude %{_prefix}/lib/perl5/%{perl_version}/Test/Tutorial*
+%exclude %{privlib}/Test/More*
+%exclude %{privlib}/Test/Builder*
+%exclude %{privlib}/Test/Simple*
+%exclude %{privlib}/Test/Tutorial*
 %exclude %{_mandir}/man3/Test::More*
 %exclude %{_mandir}/man3/Test::Builder*
 %exclude %{_mandir}/man3/Test::Simple*
 %exclude %{_mandir}/man3/Test::Tutorial*
 
 # Time::Piece
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/Time/Piece.pm
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/Time/Seconds.pm
-%exclude %{_libdir}/perl5/%{version}/%{perl_archname}/auto/Time/Piece/
+%exclude %{archlib}/Time/Piece.pm
+%exclude %{archlib}/Time/Seconds.pm
+%exclude %{archlib}/auto/Time/Piece/
 %exclude %{_mandir}/man3/Time::Piece.3*
 %exclude %{_mandir}/man3/Time::Seconds.3*
 
 # version
-%exclude %{_prefix}/lib/perl5/%{perl_version}/version.pm
-%exclude %{_prefix}/lib/perl5/%{perl_version}/version.pod
+%exclude %{privlib}/version.pm
+%exclude %{privlib}/version.pod
 %exclude %{_mandir}/man3/version.*
 
 %files libs
 %defattr(-,root,root)
-%{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/libperl.so
+%{archlib}/CORE/libperl.so
 
 %files devel
 %defattr(-,root,root,-)
-# the following includes the file "Changes" -- it's compressed
-%doc Changes*.*
 %{_bindir}/enc2xs
 %{_mandir}/man1/enc2xs*
-%{_prefix}/lib/perl5/%{perl_version}/Encode/
+%{privlib}/Encode/
 %{_bindir}/h2xs
 %{_mandir}/man1/h2xs*
 %{_bindir}/libnetcfg
 %{_mandir}/man1/libnetcfg*
 %{_bindir}/perlivp
 %{_mandir}/man1/perlivp*
-%{_libdir}/perl5/%{perl_version}/%{perl_archname}/CORE/*.h
+%{archlib}/CORE/*.h
 %{_bindir}/xsubpp
 %{_mandir}/man1/xsubpp*
 %{_sysconfdir}/rpm/macros.perl
@@ -1657,38 +1492,38 @@ TMPDIR="$PWD/tmp" make test
 
 %files Archive-Extract
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/Archive/Extract.pm
+%{privlib}/Archive/Extract.pm
 %{_mandir}/man3/Archive::Extract.3*
 
 %files Archive-Tar
 %defattr(-,root,root,-)
 %{_bindir}/ptar
 %{_bindir}/ptardiff
-%{_prefix}/lib/perl5/%{perl_version}/Archive/Tar/ 
-%{_prefix}/lib/perl5/%{perl_version}/Archive/Tar.pm
+%{privlib}/Archive/Tar/ 
+%{privlib}/Archive/Tar.pm
 %{_mandir}/man1/ptar.1*
 %{_mandir}/man1/ptardiff.1*
 %{_mandir}/man3/Archive::Tar* 
 
 %files Compress-Raw-Zlib
 %defattr(-,root,root,-)
-%dir %{_libdir}/perl5/%{version}/%{perl_archname}/Compress
-%{_libdir}/perl5/%{version}/%{perl_archname}/Compress/Raw/
-%dir %{_libdir}/perl5/%{version}/%{perl_archname}/auto/Compress/
-%{_libdir}/perl5/%{version}/%{perl_archname}/auto/Compress/Raw/
+%dir %{archlib}/Compress
+%{archlib}/Compress/Raw/
+%dir %{archlib}/auto/Compress/
+%{archlib}/auto/Compress/Raw/
 %{_mandir}/man3/Compress::Raw::Zlib*
 
 %files Compress-Zlib
 %defattr(-,root,root,-)
-%{_libdir}/perl5/%{version}/%{perl_archname}/Compress/Zlib.pm
-%{_libdir}/perl5/%{version}/%{perl_archname}/auto/Compress/Zlib/
+%{archlib}/Compress/Zlib.pm
+%{archlib}/auto/Compress/Zlib/
 %{_mandir}/man3/Compress::Zlib*
 
 %files CPAN
 %defattr(-,root,root,-)
 %{_bindir}/cpan
-%{_prefix}/lib/perl5/%{perl_version}/CPAN/
-%{_prefix}/lib/perl5/%{perl_version}/CPAN.pm
+%{privlib}/CPAN/
+%{privlib}/CPAN.pm
 %{_mandir}/man1/cpan.1*
 %{_mandir}/man3/CPAN.*
 %{_mandir}/man3/CPAN:*
@@ -1698,8 +1533,8 @@ TMPDIR="$PWD/tmp" make test
 %{_bindir}/cpan2dist
 %{_bindir}/cpanp
 %{_bindir}/cpanp-run-perl
-%{_prefix}/lib/perl5/%{perl_version}/CPANPLUS/
-%{_prefix}/lib/perl5/%{perl_version}/CPANPLUS.pm
+%{privlib}/CPANPLUS/
+%{privlib}/CPANPLUS.pm
 %{_mandir}/man1/cpan2dist.1*
 %{_mandir}/man1/cpanp.1*
 %{_mandir}/man3/CPANPLUS*
@@ -1707,41 +1542,41 @@ TMPDIR="$PWD/tmp" make test
 %files Digest-SHA
 %defattr(-,root,root,-)
 %{_bindir}/shasum
-%dir %{_libdir}/perl5/%{version}/%{perl_archname}/Digest/
-%{_libdir}/perl5/%{version}/%{perl_archname}/Digest/SHA.pm
-%{_libdir}/perl5/%{version}/%{perl_archname}/auto/Digest/SHA/
+%dir %{archlib}/Digest/
+%{archlib}/Digest/SHA.pm
+%{archlib}/auto/Digest/SHA/
 %{_mandir}/man1/shasum.1*
 %{_mandir}/man3/Digest::SHA.3*
 
 %files ExtUtils-CBuilder
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/CBuilder/
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/CBuilder.pm
+%{privlib}/ExtUtils/CBuilder/
+%{privlib}/ExtUtils/CBuilder.pm
 %{_mandir}/man3/ExtUtils::CBuilder*
 
 %files ExtUtils-Embed
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Embed.pm
+%{privlib}/ExtUtils/Embed.pm
 %{_mandir}/man3/ExtUtils::Embed*
 
 %files ExtUtils-MakeMaker
 %defattr(-,root,root,-)
 %{_bindir}/instmodsh
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Command/
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Install.pm
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Installed.pm
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Liblist/
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Liblist.pm
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MakeMaker/
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MakeMaker.pm
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MANIFEST.SKIP
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MM*.pm
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/MY.pm
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Manifest.pm
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Mkbootstrap.pm
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Mksymlists.pm
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/Packlist.pm
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/testlib.pm
+%{privlib}/ExtUtils/Command/
+%{privlib}/ExtUtils/Install.pm
+%{privlib}/ExtUtils/Installed.pm
+%{privlib}/ExtUtils/Liblist/
+%{privlib}/ExtUtils/Liblist.pm
+%{privlib}/ExtUtils/MakeMaker/
+%{privlib}/ExtUtils/MakeMaker.pm
+%{privlib}/ExtUtils/MANIFEST.SKIP
+%{privlib}/ExtUtils/MM*.pm
+%{privlib}/ExtUtils/MY.pm
+%{privlib}/ExtUtils/Manifest.pm
+%{privlib}/ExtUtils/Mkbootstrap.pm
+%{privlib}/ExtUtils/Mksymlists.pm
+%{privlib}/ExtUtils/Packlist.pm
+%{privlib}/ExtUtils/testlib.pm
 %{_mandir}/man1/instmodsh.1*
 %{_mandir}/man3/ExtUtils::Command::MM*
 %{_mandir}/man3/ExtUtils::Install.3*
@@ -1758,22 +1593,22 @@ TMPDIR="$PWD/tmp" make test
 
 %files ExtUtils-ParseXS
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/ParseXS.pm
-%{_prefix}/lib/perl5/%{perl_version}/ExtUtils/xsubpp
+%{privlib}/ExtUtils/ParseXS.pm
+%{privlib}/ExtUtils/xsubpp
 %{_mandir}/man3/ExtUtils::ParseXS.3*
 
 %files File-Fetch
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/File/Fetch.pm
+%{privlib}/File/Fetch.pm
 %{_mandir}/man3/File::Fetch.3*
 
 %files IO-Compress-Base
 %defattr(-,root,root,-)
-%{_libdir}/perl5/%{version}/%{perl_archname}/File/GlobMapper.pm
-%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Base/
-%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Base.pm
-%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/AnyUncompress.pm
-%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Base.pm
+%{archlib}/File/GlobMapper.pm
+%{archlib}/IO/Compress/Base/
+%{archlib}/IO/Compress/Base.pm
+%{archlib}/IO/Uncompress/AnyUncompress.pm
+%{archlib}/IO/Uncompress/Base.pm
 %{_mandir}/man3/File::GlobMapper.*
 %{_mandir}/man3/IO::Compress::Base.*
 %{_mandir}/man3/IO::Uncompress::AnyUncompress.*
@@ -1781,20 +1616,20 @@ TMPDIR="$PWD/tmp" make test
 
 %files IO-Compress-Zlib
 %defattr(-,root,root,-)
-%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Adapter/
-%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Deflate.pm
-%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Gzip/
-%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Gzip.pm
-%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/RawDeflate.pm
-%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Zip/
-%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Zip.pm
-%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Compress/Zlib/
-%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Adapter/
-%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/AnyInflate.pm
-%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Gunzip.pm
-%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Inflate.pm
-%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/RawInflate.pm
-%{_libdir}/perl5/%{version}/%{perl_archname}/IO/Uncompress/Unzip.pm
+%{archlib}/IO/Compress/Adapter/
+%{archlib}/IO/Compress/Deflate.pm
+%{archlib}/IO/Compress/Gzip/
+%{archlib}/IO/Compress/Gzip.pm
+%{archlib}/IO/Compress/RawDeflate.pm
+%{archlib}/IO/Compress/Zip/
+%{archlib}/IO/Compress/Zip.pm
+%{archlib}/IO/Compress/Zlib/
+%{archlib}/IO/Uncompress/Adapter/
+%{archlib}/IO/Uncompress/AnyInflate.pm
+%{archlib}/IO/Uncompress/Gunzip.pm
+%{archlib}/IO/Uncompress/Inflate.pm
+%{archlib}/IO/Uncompress/RawInflate.pm
+%{archlib}/IO/Uncompress/Unzip.pm
 %{_mandir}/man3/IO::Compress::Deflate*
 %{_mandir}/man3/IO::Compress::Gzip*
 %{_mandir}/man3/IO::Compress::RawDeflate*
@@ -1807,25 +1642,25 @@ TMPDIR="$PWD/tmp" make test
 
 %files IO-Zlib
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/IO/Zlib.pm
+%{privlib}/IO/Zlib.pm
 %{_mandir}/man3/IO::Zlib.*
 
 %files IPC-Cmd
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/IPC/Cmd.pm
+%{privlib}/IPC/Cmd.pm
 %{_mandir}/man3/IPC::Cmd.3*
 
 %files Locale-Maketext-Simple
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/Locale/Maketext/Simple.pm
+%{privlib}/Locale/Maketext/Simple.pm
 %{_mandir}/man3/Locale::Maketext::Simple.*
 
 %files Log-Message
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/Log/Message.pm
-%{_prefix}/lib/perl5/%{perl_version}/Log/Message/Config.pm
-%{_prefix}/lib/perl5/%{perl_version}/Log/Message/Handlers.pm
-%{_prefix}/lib/perl5/%{perl_version}/Log/Message/Item.pm
+%{privlib}/Log/Message.pm
+%{privlib}/Log/Message/Config.pm
+%{privlib}/Log/Message/Handlers.pm
+%{privlib}/Log/Message/Item.pm
 %{_mandir}/man3/Log::Message.3*
 %{_mandir}/man3/Log::Message::Config.3*
 %{_mandir}/man3/Log::Message::Handlers.3*
@@ -1833,87 +1668,87 @@ TMPDIR="$PWD/tmp" make test
 
 %files Log-Message-Simple
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/Log/Message/Simple.pm
+%{privlib}/Log/Message/Simple.pm
 %{_mandir}/man3/Log::Message::Simple.3*
 
 %files Module-Build
 %defattr(-,root,root,-)
 %{_bindir}/config_data
-%{_prefix}/lib/perl5/%{perl_version}/Module/Build/
-%{_prefix}/lib/perl5/%{perl_version}/Module/Build.pm
+%{privlib}/Module/Build/
+%{privlib}/Module/Build.pm
 %{_mandir}/man1/config_data.1*
 %{_mandir}/man3/Module::Build*
 
 %files Module-CoreList
 %defattr(-,root,root,-)
 %{_bindir}/corelist
-%{_prefix}/lib/perl5/%{perl_version}/Module/CoreList.pm
+%{privlib}/Module/CoreList.pm
 %{_mandir}/man1/corelist*
 %{_mandir}/man3/Module::CoreList*
 
 %files Module-Load
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/Module/Load.pm
+%{privlib}/Module/Load.pm
 %{_mandir}/man3/Module::Load.*
 
 %files Module-Load-Conditional
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/Module/Load/
+%{privlib}/Module/Load/
 %{_mandir}/man3/Module::Load::Conditional* 
 
 %files Module-Loaded
 %defattr(-,root,root,-)
-%dir %{_prefix}/lib/perl5/%{perl_version}/Module/
-%{_prefix}/lib/perl5/%{perl_version}/Module/Loaded.pm
+%dir %{privlib}/Module/
+%{privlib}/Module/Loaded.pm
 %{_mandir}/man3/Module::Loaded*
 
 %files Module-Pluggable
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/Devel/InnerPackage.pm
-%{_prefix}/lib/perl5/%{perl_version}/Module/Pluggable/
-%{_prefix}/lib/perl5/%{perl_version}/Module/Pluggable.pm
+%{privlib}/Devel/InnerPackage.pm
+%{privlib}/Module/Pluggable/
+%{privlib}/Module/Pluggable.pm
 %{_mandir}/man3/Devel::InnerPackage*
 %{_mandir}/man3/Module::Pluggable*
 
 %files Object-Accessor
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/Object/
+%{privlib}/Object/
 %{_mandir}/man3/Object::Accessor*
 
 %files Package-Constants
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/Package/
+%{privlib}/Package/
 %{_mandir}/man3/Package::Constants*
 
 %files Params-Check
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/Params/
+%{privlib}/Params/
 %{_mandir}/man3/Params::Check*
 
 %files Pod-Escapes
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/Pod/Escapes.pm
+%{privlib}/Pod/Escapes.pm
 %{_mandir}/man3/Pod::Escapes.*
 
 %files Pod-Simple
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/Pod/Simple/ 
-%{_prefix}/lib/perl5/%{perl_version}/Pod/Simple.pm
-%{_prefix}/lib/perl5/%{perl_version}/Pod/Simple.pod
+%{privlib}/Pod/Simple/ 
+%{privlib}/Pod/Simple.pm
+%{privlib}/Pod/Simple.pod
 %{_mandir}/man3/Pod::Simple*
 
 %files Term-UI
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/Term/UI/
-%{_prefix}/lib/perl5/%{perl_version}/Term/UI.pm
+%{privlib}/Term/UI/
+%{privlib}/Term/UI.pm
 %{_mandir}/man3/Term::UI*
 
 %files Test-Harness
 %defattr(-,root,root,-)
 %{_bindir}/prove
-%{_prefix}/lib/perl5/%{perl_version}/App*
-%{_prefix}/lib/perl5/%{perl_version}/TAP*
-%{_prefix}/lib/perl5/%{perl_version}/Test/Harness*
+%{privlib}/App*
+%{privlib}/TAP*
+%{privlib}/Test/Harness*
 %{_mandir}/man1/prove.1*
 %{_mandir}/man3/App*
 %{_mandir}/man3/TAP*
@@ -1921,10 +1756,10 @@ TMPDIR="$PWD/tmp" make test
 
 %files Test-Simple
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/Test/More*
-%{_prefix}/lib/perl5/%{perl_version}/Test/Builder*
-%{_prefix}/lib/perl5/%{perl_version}/Test/Simple*
-%{_prefix}/lib/perl5/%{perl_version}/Test/Tutorial*
+%{privlib}/Test/More*
+%{privlib}/Test/Builder*
+%{privlib}/Test/Simple*
+%{privlib}/Test/Tutorial*
 %{_mandir}/man3/Test::More*
 %{_mandir}/man3/Test::Builder*
 %{_mandir}/man3/Test::Simple*
@@ -1932,16 +1767,16 @@ TMPDIR="$PWD/tmp" make test
 
 %files Time-Piece
 %defattr(-,root,root,-)
-%{_libdir}/perl5/%{version}/%{perl_archname}/Time/Piece.pm 
-%{_libdir}/perl5/%{version}/%{perl_archname}/Time/Seconds.pm
-%{_libdir}/perl5/%{version}/%{perl_archname}/auto/Time/Piece/        
+%{archlib}/Time/Piece.pm 
+%{archlib}/Time/Seconds.pm
+%{archlib}/auto/Time/Piece/        
 %{_mandir}/man3/Time::Piece.3*
 %{_mandir}/man3/Time::Seconds.3*
 
 %files version
 %defattr(-,root,root,-)
-%{_prefix}/lib/perl5/%{perl_version}/version.pm
-%{_prefix}/lib/perl5/%{perl_version}/version.pod
+%{privlib}/version.pm
+%{privlib}/version.pod
 %{_mandir}/man3/version.*
 
 %files core
@@ -1949,6 +1784,18 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Dec  2 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.1-100
+- new upstream version
+- release number must be high, because of stale version numbers of some
+  of the subpackages
+- drop upstreamed patches
+- update the versions of bundled modules
+- shorten the paths in @INC
+- build without DEBUGGING
+- implement compatibility measures for the above two changes, for a short
+  transition period
+- provide perl(:MODULE_COMPAT_5.10.0), for that transition period only
+
 * Tue Dec  1 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-87
 - fix patch-update-Compress-Raw-Zlib.patch (did not patch Zlib.pm)
 - update Compress::Raw::Zlib to 2.023

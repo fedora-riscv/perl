@@ -1,6 +1,5 @@
-diff -up perl-5.10.0/utils/perlbug.PL.BAD perl-5.10.0/utils/perlbug.PL
---- perl-5.10.0/utils/perlbug.PL.BAD	2007-12-21 10:31:26.000000000 -0500
-+++ perl-5.10.0/utils/perlbug.PL	2007-12-21 10:36:03.000000000 -0500
+--- perl-5.10.1/utils/perlbug.PL.fedora	2009-08-12 20:49:24.000000000 +0200
++++ perl-5.10.1/utils/perlbug.PL	2009-11-18 15:56:15.000000000 +0100
 @@ -27,8 +27,6 @@ open OUT, ">$file" or die "Can't create 
  open PATCH_LEVEL, "<" . catfile(updir, "patchlevel.h")
      or die "Can't open patchlevel.h: $!";
@@ -10,7 +9,7 @@ diff -up perl-5.10.0/utils/perlbug.PL.BAD perl-5.10.0/utils/perlbug.PL
  while (<PATCH_LEVEL>) {
      last if $_ =~ /^\s*static\s+(?:const\s+)?char.*?local_patches\[\]\s*=\s*{\s*$/;
  }
-@@ -68,9 +66,8 @@ $Config{startperl}
+@@ -71,9 +69,8 @@ $Config{startperl}
      eval 'exec $Config{perlpath} -S \$0 \${1+"\$@"}'
  	if \$running_under_some_shell;
  
@@ -21,8 +20,8 @@ diff -up perl-5.10.0/utils/perlbug.PL.BAD perl-5.10.0/utils/perlbug.PL
  my \$patch_tags = '$patch_tags';
  my \@patches = (
      $patch_desc
-@@ -288,17 +285,6 @@ sub Init {
-     $ok = 0;
+@@ -333,17 +330,6 @@ sub Init {
+     $ok = '';
      if ($::opt_o) {
  	if ($::opt_o eq 'k' or $::opt_o eq 'kay') {
 -	    my $age = time - $patchlevel_date;
@@ -39,7 +38,7 @@ diff -up perl-5.10.0/utils/perlbug.PL.BAD perl-5.10.0/utils/perlbug.PL
  	    # force these options
  	    unless ($::opt_n) {
  		$::opt_S = 1; # don't prompt for send
-@@ -628,8 +614,8 @@ EFF
+@@ -730,8 +716,8 @@ EFF
      print OUT <<EFF;
  ---
  EFF
