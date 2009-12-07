@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        103%{?dist}
+Release:        104%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1173,7 +1173,8 @@ mkdir -p $RPM_BUILD_ROOT%{_libdir}/perl5/5.10.0/%{perl_archname}/CORE
 ln -s ../../../CORE/libperl.so $RPM_BUILD_ROOT%{_libdir}/perl5/5.10.0/%{perl_archname}/CORE/libperl.so
 
 # for now, remove Bzip2:
-find $RPM_BUILD_ROOT -name 'B*zip2*'|grep -E '/B(un)?zip2(\.pm)?$'| xargs rm -r
+find $RPM_BUILD_ROOT -name Bzip2 | xargs rm -r
+find $RPM_BUILD_ROOT -name '*B*zip2*'| xargs rm
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1793,6 +1794,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Dec  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.1-104
+- do not pack Bzip2 manpages either (#544582)
+
 * Mon Dec  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.1-103
 - do not pack Bzip2 modules (#544582)
 - hack: cheat about Compress::Raw::Zlib version (#544582)
