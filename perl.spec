@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        102%{?dist}
+Release:        103%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -135,8 +135,9 @@ Patch118:	perl-update-autodie.patch
 Patch119:	perl-update-FileSpec.patch
 %define			    File_Spec_version 3.30
 # FIXME should be 2.023, to preserve upgrade path
+# -- for now, we just cheat with the version number
 Patch120:	perl-update-Compress-Raw-Zlib.patch
-%define			    Compress_Raw_Zlib_version 2.020
+%define			    Compress_Raw_Zlib_version 2.023
 # could be 1.22
 Patch121:	perl-update-Scalar-List-Utils.patch
 %define			    Scalar_List_Utils 1.21
@@ -1171,6 +1172,9 @@ popd
 mkdir -p $RPM_BUILD_ROOT%{_libdir}/perl5/5.10.0/%{perl_archname}/CORE
 ln -s ../../../CORE/libperl.so $RPM_BUILD_ROOT%{_libdir}/perl5/5.10.0/%{perl_archname}/CORE/libperl.so
 
+# for now, remove Bzip2:
+find $RPM_BUILD_ROOT -name 'B*zip2*'|grep -E '/B(un)?zip2(\.pm)?$'| xargs rm -r
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -1789,6 +1793,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Dec  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.1-103
+- do not pack Bzip2 modules (#544582)
+- hack: cheat about Compress::Raw::Zlib version (#544582)
+
 * Thu Dec  3 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.1-102
 - switch off check for ppc64 and s390x
 - remove the hack for "make test," it is no longer needed
