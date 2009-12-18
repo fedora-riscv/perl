@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        104%{?dist}
+Release:        105%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1243,6 +1243,12 @@ make test
 %exclude %{_mandir}/man3/CPAN.*
 %exclude %{_mandir}/man3/CPAN:*
 
+# Parse-CPAN-Meta
+%exclude %dir %{privlib}/Parse/
+%exclude %dir %{privlib}/Parse/CPAN/
+%exclude %{privlib}/Parse/CPAN/Meta.pm
+%exclude %{_mandir}/man3/Parse::CPAN::Meta.3*
+
 # CPANPLUS
 %exclude %{_bindir}/cpan2dist
 %exclude %{_bindir}/cpanp
@@ -1794,6 +1800,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Dec 19 2009 Ralf Corsépius <corsepiu@fedoraproject.org> - 4:5.10.1-105
+- exclude Parse-CPAN-Meta.
+
 * Mon Dec  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.1-104
 - do not pack Bzip2 manpages either (#544582)
 
