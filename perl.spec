@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        105%{?dist}
+Release:        106%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1433,6 +1433,10 @@ make test
 %exclude %{privlib}/Params/
 %exclude %{_mandir}/man3/Params::Check*
 
+# parent
+%exclude %{privlib}/parent.pm
+%exclude %{_mandir}/man3/parent.3*
+
 # Pod-Escapes
 %exclude %{privlib}/Pod/Escapes.pm
 %exclude %{_mandir}/man3/Pod::Escapes.*
@@ -1800,6 +1804,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Dec 19 2009 Ralf Corsépius <corsepiu@fedoraproject.org> - 4:5.10.1-106
+- exclude "parent".
+
 * Fri Dec 19 2009 Ralf Corsépius <corsepiu@fedoraproject.org> - 4:5.10.1-105
 - exclude Parse-CPAN-Meta.
 
