@@ -1233,7 +1233,7 @@ rm -rf $RPM_BUILD_ROOT
 # ext/threads-shared/t/stress......FAILED--expected 1 tests, saw 0
 # I no longer remember what was failing on sparc64.
 %ifnarch ppc64 s390x sparc64
-#make test
+make test
 %endif
 
 %post libs -p /sbin/ldconfig
