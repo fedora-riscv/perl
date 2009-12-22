@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        107%{?dist}
+Release:        108%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -64,6 +64,9 @@ Patch61:	perl-much-better-swap-logic.patch
 
 # temporarily export debug symbols even though DEBUGGING is not set:
 Patch62:	perl-add-symbols.patch
+
+# CVE_2009_3626 rhbz#547656 
+Patch63:	perl-5.10.1-CVE_2009_3626.patch
 
 # version macros for some of the modules:
 %define			    Archive_Extract_version 0.34
@@ -918,6 +921,7 @@ upstream tarball from perl.org.
 %patch58 -p1
 %patch61 -p1
 %patch62 -p1
+%patch63 -p1
 
 #patch100 -p1
 #patch101 -p1
@@ -1854,6 +1858,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Dec 22 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-108
+- 547656 CVE-2009-3626 perl: regexp matcher crash on invalid UTF-8 characters  
+- 549306 version::Internals should be packaged in perl-version subpackage
+
 * Mon Dec 21 2009 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.1-107
 - subpackage parent and Parse-CPAN-Meta; add them to core's dep list
 
