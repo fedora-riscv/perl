@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        106%{?dist}
+Release:        107%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -729,6 +729,20 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Params::Check is a generic input parsing/checking mechanism.
 
 
+%package Parse-CPAN-Meta
+Summary:        Parse META.yml and other similar CPAN metadata files
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+Version:        1.39
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Parse-CPAN-Meta 
+Parse::CPAN::Meta is a parser for META.yml files, based on the parser half
+of YAML::Tiny.
+
+
 %package Pod-Escapes
 Summary:        Perl module for resolving POD escape sequences
 Group:   	Development/Libraries
@@ -815,6 +829,29 @@ compatible manner, so that using localtime or gmtime as documented in
 perlfunc still behave as expected.
 
 
+%package parent
+Summary:        Establish an ISA relationship with base classes at compile time
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+Version:        0.221
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description parent
+parent allows you to both load one or more modules, while setting up 
+inheritance from those modules at the same time. Mostly similar in 
+effect to:
+
+    package Baz;
+
+    BEGIN {
+        require Foo;
+        require Bar; 
+        
+        push @ISA, qw(Foo Bar); 
+    }
+
 %package version
 Summary:        Perl extension for Version Objects
 Group:          Development/Libraries
@@ -851,6 +888,7 @@ Requires:       perl-Module-Load-Conditional, perl-Module-Loaded,
 Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Constants,
 Requires:       perl-Params-Check, perl-Pod-Escapes, perl-Pod-Simple, perl-Term-UI, 
 Requires:       perl-Test-Harness, perl-Test-Simple, perl-Time-Piece, perl-version
+Requires:       perl-parent, perl-Parse-CPAN-Meta
 # Note: perl-suidperl has always been an independent subpackage
 # We don't want perl-core to drag it in.
 
@@ -1745,6 +1783,13 @@ make test
 %{privlib}/Params/
 %{_mandir}/man3/Params::Check*
 
+%files Parse-CPAN-Meta
+%defattr(-,root,root,-)
+%dir %{privlib}/Parse/
+%dir %{privlib}/Parse/CPAN/
+%{privlib}/Parse/CPAN/Meta.pm
+%{_mandir}/man3/Parse::CPAN::Meta.3*
+
 %files Pod-Escapes
 %defattr(-,root,root,-)
 %{privlib}/Pod/Escapes.pm
@@ -1793,6 +1838,11 @@ make test
 %{_mandir}/man3/Time::Piece.3*
 %{_mandir}/man3/Time::Seconds.3*
 
+%files parent 
+%defattr(-,root,root,-)
+%{privlib}/parent.pm
+%{_mandir}/man3/parent.3*
+
 %files version
 %defattr(-,root,root,-)
 %{privlib}/version.pm
@@ -1804,6 +1854,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Dec 21 2009 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.1-107
+- subpackage parent and Parse-CPAN-Meta; add them to core's dep list
+
 * Fri Dec 19 2009 Ralf Corsépius <corsepiu@fedoraproject.org> - 4:5.10.1-106
 - exclude "parent".
 
