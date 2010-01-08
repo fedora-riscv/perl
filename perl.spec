@@ -1531,7 +1531,9 @@ make test
 # version
 %exclude %{privlib}/version.pm
 %exclude %{privlib}/version.pod
-%exclude %{_mandir}/man3/version.*
+%exclude %{privlib}/version/
+%exclude %{_mandir}/man3/version.3*
+%exclude %{_mandir}/man3/version::Internals.3*
 
 %files libs
 %defattr(-,root,root)
@@ -1858,7 +1860,9 @@ make test
 %defattr(-,root,root,-)
 %{privlib}/version.pm
 %{privlib}/version.pod
-%{_mandir}/man3/version.*
+%{privlib}/version/
+%{_mandir}/man3/version.3*
+%{_mandir}/man3/version::Internals.3*
 
 %files core
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
