@@ -1,0 +1,22 @@
+2008-07-21  Stepan Kasal  <skasal@redhat.com>
+
+	* ext/Encode/Encode.pm backport fix for #435505 from Encode-2.26
+
+--- perl-5.8.8/ext/Encode/Encode.pm.orig	2005-09-28 17:17:24.000000000 +0200
++++ perl-5.8.8/ext/Encode/Encode.pm	2008-07-21 14:20:59.987668000 +0200
+@@ -49,7 +49,14 @@
+ our %Encoding;
+ our %ExtModule;
+ require Encode::Config;
+-eval { require Encode::ConfigLocal };
++# See
++# https://bugzilla.redhat.com/show_bug.cgi?id=435505#c2
++# to find why sig handers inside eval{} are disabled.
++eval {
++    local $SIG{__DIE__};
++    local $SIG{__WARN__};
++    require Encode::ConfigLocal;
++};
+ 
+ sub encodings
+ {

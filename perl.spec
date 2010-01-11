@@ -193,6 +193,10 @@ Patch60:	perl-skip-prereq.patch
 # RT #60508
 Patch61:	perl-5.10.0-much-better-swap-logic.patch
 
+# fix paths to Encode
+# http://rt.cpan.org/Public/Bug/Display.html?id=11511#txn-481431
+Patch62:        perl-5.10.0-Encode-err.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 Patch100:	perl-update-constant.patch
@@ -1008,6 +1012,7 @@ upstream tarball from perl.org.
 %patch59 -p1
 %patch60 -p1
 %patch61 -p1
+%patch62 -p1
 
 %patch100 -p1
 %patch101 -p1
