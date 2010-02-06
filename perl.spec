@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        109%{?dist}
+Release:        110%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1869,6 +1869,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Feb 05 2010 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.1-110
+- add initial EXPERIMENTAL tests subpackage rpm macros to macros.perl
+
 * Tue Dec 22 2009 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-109
 - 547656 CVE-2009-3626 perl: regexp matcher crash on invalid UTF-8 characters  
 - 549306 version::Internals should be packaged in perl-version subpackage
