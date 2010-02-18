@@ -388,6 +388,7 @@ Epoch:          0
 Version:        0.88
 Requires:       perl(Module::Pluggable) >= 2.4
 Requires:       perl(Module::CoreList)
+Requires:       perl(DBIx::Simple)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Provides:       perl-CPANPLUS-Dist-Build = 0.06
 Obsoletes:	perl-CPANPLUS-Dist-Build <= 0.05
