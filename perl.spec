@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        110%{?dist}
+Release:        111%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1870,6 +1870,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Feb 24 2010 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.1-111
+- update subpackage tests macros to handle packages with an epoch properly
+
 * Fri Feb 05 2010 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.1-110
 - add initial EXPERIMENTAL tests subpackage rpm macros to macros.perl
 

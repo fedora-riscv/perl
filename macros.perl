@@ -114,7 +114,7 @@ popd \
 %package tests\
 Summary: Test suite for package %{name}\
 Group: Development/Debug\
-Requires: %{name} = %{version}-%{release}\
+Requires: %{name} = %{?epoch:%{epoch}:}%{version}-%{release}\
 Requires: /usr/bin/prove \
 %{?__tests_spkg_req:Requires: %__tests_spkg_req}\
 %{?__tests_spkg_prov:Provides: %__tests_spkg_prov}\
