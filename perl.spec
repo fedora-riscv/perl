@@ -7,13 +7,17 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        111%{?dist}
+Release:        112%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
 # Modules Tie::File and Getopt::Long are licenced under "GPLv2+ or Artistic,"
 # we have to reflect that in the sub-package containing them.
-License:        (GPL+ or Artistic) and (GPLv2+ or Artistic)
+# under UCD are unicode tables
+# Public domain: ext/SDBM_File/sdbm/*, ext/Compress-Raw-Bzip2/bzip2-src/dlltest.c 
+# MIT: ext/MIME-Base64/Base64.xs 
+# Copyright Only: for example ext/Text-Soundex/Soundex.xs 
+License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and MIT and Public Domain and UCD
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
 Source11:       filter-requires.sh
@@ -29,44 +33,44 @@ Patch2:         perl-perlbug-tag.patch
 # work around annoying rpath issue
 # This is only relevant for Fedora, as it is unlikely
 # that upstream will assume the existence of a libperl.so
-Patch4:         perl-5.8.8-rpath-make.patch
+Patch3:         perl-5.8.8-rpath-make.patch
 
 # Fedora/RHEL only (64bit only)
-Patch5:         perl-5.8.0-libdir64.patch
+Patch4:         perl-5.8.0-libdir64.patch
 
 # Fedora/RHEL specific (use libresolv instead of libbind)
-Patch6:         perl-5.10.0-libresolv.patch
+Patch5:         perl-5.10.0-libresolv.patch
 
 # FIXME: May need the "Fedora" references removed before upstreaming
 # patches ExtUtils-MakeMaker
-Patch7:         perl-USE_MM_LD_RUN_PATH.patch
+Patch6:         perl-USE_MM_LD_RUN_PATH.patch
 
 # Skip hostname tests, since hostname lookup isn't available in Fedora
 # buildroots by design.
 # patches Net::Config from libnet
-Patch8:         perl-5.10.0-disable_test_hosts.patch
+Patch7:         perl-5.10.0-disable_test_hosts.patch
 
 # The Fedora builders started randomly failing this futime test
 # only on x86_64, so we just don't run it. Works fine on normal
 # systems.
-Patch10:        perl-5.10.0-x86_64-io-test-failure.patch
+Patch8:        perl-5.10.0-x86_64-io-test-failure.patch
 
 # Reorder @INC: Based on: http://github.com/rafl/perl/commit/b9ba2fadb18b54e35e5de54f945111a56cbcb249
-Patch35:	perl-5.10.0-reorderINC.patch
+Patch9:	perl-5.10.0-reorderINC.patch
 
 # http://rt.perl.org/rt3/Ticket/Display.html?id=39060 (#221113)
-Patch58:	perl-perlio-incorrect-errno.patch
+Patch10:	perl-perlio-incorrect-errno.patch
 
 # much better swap logic to support reentrancy and fix assert failure
 # http://perl5.git.perl.org/perl.git/commitdiff/e9105d30edfbaa7f444bc7984c9bafc8e991ad12
 # RT #60508
-Patch61:	perl-much-better-swap-logic.patch
+Patch11:	perl-much-better-swap-logic.patch
 
 # temporarily export debug symbols even though DEBUGGING is not set:
-Patch62:	perl-add-symbols.patch
+Patch12:	perl-add-symbols.patch
 
 # CVE_2009_3626 rhbz#547656 
-Patch63:	perl-5.10.1-CVE_2009_3626.patch
+Patch13:	perl-5.10.1-CVE_2009_3626.patch
 
 # version macros for some of the modules:
 %define			    Archive_Extract_version 0.34
@@ -86,22 +90,24 @@ Patch63:	perl-5.10.1-CVE_2009_3626.patch
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
-Patch104:	perl-update-ExtUtils-CBuilder.patch
+Patch201:	perl-update-ExtUtils-CBuilder.patch
 %define			    ExtUtils_CBuilder_version 0.27
-Patch106:	perl-update-File-Path.patch
+Patch202:	perl-update-File-Path.patch
 %define			    File_Path_version 2.08
-Patch109:	perl-update-Module-Build.patch
+Patch203:	perl-update-Module-Build.patch
 %define			    Module_Build_real_version 0.35
 # For Module-Build-0.x, the second component has to have four digits.
 %define			    Module_Build_rpm_version  0.3500
+Patch204:       perl-update-Parse-CPAN-Meta.patch
+%define                     Parse_CPAN_Meta_version 1.40
 
 #---
 # FIXME; is 2.18->2.21, should be 2.20->2.21
 # - was 2.21 previously; but it is not a subpackage, can wait
-Patch123:	perl-update-Storable.patch
+Patch99:	perl-update-Storable.patch
 %define             Storable_version 2.20
 
-#---
+# This patches are now unused:
 #could be 1.19
 Patch100:	perl-update-constant.patch
 %define			    constant_version 1.17
@@ -153,8 +159,6 @@ Patch124:	perl-update-IO-Compress-Base.patch
 Patch125:	perl-update-IO-Compress-Zlib.patch
 %define			    IO_Compress_Zlib_version 2.020
 #... also update version number of Compress::Zlib
-Patch126:       perl-update-Parse-CPAN-Meta.patch
-%define                     Parse_CPAN_Meta_version 1.40
 
 # FIXME: Compress-Raw-Zlib also contains Compress-Raw-Bzip2
 # and IO-Compress-Zlib contains IO-Compress-Bzip2
@@ -868,7 +872,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          3
-Version:        0.77
+Version:        0.80
 Requires:	perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description version
@@ -914,48 +918,26 @@ upstream tarball from perl.org.
 # This patch breaks sparc64 compilation
 # We should probably consider removing it for all arches.
 %ifnarch sparc64
-%patch4 -p1
+%patch3 -p1
 %endif
 %ifarch %{multilib_64_archs}
-%patch5 -p1
+%patch4 -p1
 %endif
+%patch5 -p1
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
+
 %patch10 -p1
-%patch35 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
 
-%patch58 -p1
-%patch61 -p1
-%patch62 -p1
-%patch63 -p1
-
-#patch100 -p1
-#patch101 -p1
-#patch102 -p1
-#patch103 -p1
-%patch104 -p1
-#patch105 -p1
-%patch106 -p1
-#patch107 -p1
-#patch108 -p1
-%patch109 -p1
-#patch110 -p1
-#patch111 -p1
-#patch112 -p1
-#patch113 -p1
-#patch114 -p1
-#patch115 -p1
-#patch116 -p1
-#patch117 -p1
-#patch118 -p1
-#patch119 -p1
-#patch120 -p1
-#patch121 -p1
-#patch122 -p1
-#patch123 -p1
-#patch124 -p1
-%patch126 -p1
+%patch201 -p1
+%patch202 -p1
+%patch203 -p1
+%patch204 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1168,51 +1150,24 @@ pushd %{build_archlib}/CORE/
 	'Fedora Patch1: Permit suidperl to install as nonroot' \
 	'Fedora Patch2: Removes date check, Fedora/RHEL specific' \
 %ifnarch sparc64 \
-	'Fedora Patch4: Work around annoying rpath issue' \
+	'Fedora Patch3: Work around annoying rpath issue' \
 %endif \
 %ifarch %{multilib_64_archs} \
-	'Fedora Patch5: support for libdir64' \
+	'Fedora Patch4: support for libdir64' \
 %endif \
-	'Fedora Patch6: use libresolv instead of libbind' \
-	'Fedora Patch7: USE_MM_LD_RUN_PATH' \
-	'Fedora Patch8: Skip hostname tests, due to builders not being network capable' \
-	'Fedora Patch10: Dont run one io test due to random builder failures' \
-	'Fedora Patch35: Reorder @INC, based on b9ba2fadb18b54e35e5de54f945111a56cbcb249' \
-	'Fedora Patch58: fix RT 39060, errno incorrectly set in perlio' \
-	'Fedora Patch61: much better swap logic to support reentrancy and fix assert failure' \
-	'Fedora Patch62: backward compatibility for the trasition' \
-	'Fedora Patch104: Update ExtUtils::CBuilder to %{ExtUtils_CBuilder_version}' \
-	'Fedora Patch106: Update File::Path to %{File_Path_version}' \
-	'Fedora Patch109: Update Module::Build to %{Module_Build_version}' \
-
-: \
-	'Fedora Patch100: Update module constant to %{constant_version}' \
-	'Fedora Patch101: Update Archive::Extract to %{Archive_Extract_version}' \
-	'Fedora Patch102: Update Archive::Tar to %{Archive_Tar_version}' \
-	'Fedora Patch103: Update CGI to %{CGI_version}' \
-	'Fedora Patch104: Update ExtUtils::CBuilder to %{ExtUtils_CBuilder_version}' \
-	'Fedora Patch105: Update File::Fetch to %{File_Fetch_version}' \
-	'Fedora Patch106: Update File::Path to %{File_Path_version}' \
-	'Fedora Patch107: Update File::Temp to %{File_Temp_version}' \
-	'Fedora Patch108: Update IPC::Cmd to %{IPC_Cmd_version}' \
-	'Fedora Patch109: Update Module::Build to %{Module_Build_version}' \
-	'Fedora Patch110: Update Module::CoreList to %{Module_CoreList_version}' \
-	'Fedora Patch111: Update Module::Load::Conditional to %{Module_Load_Conditional_version}' \
-	'Fedora Patch112: Update Pod::Simple to %{Pod_Simple_version}' \
-	'Fedora Patch113: Update Sys::Syslog to %{Sys_Syslog_version}' \
-	'Fedora Patch114: Update Test::Harness to %{Test_Harness_version}' \
-	'Fedora Patch115: Update Test::Simple to %{Test_Simple_version}' \
-	'Fedora Patch116: Update Time::HiRes to %{Time_HiRes_version}' \
-	'Fedora Patch117: Update Digest::SHA to %{Digest_SHA_version}' \
-	'Fedora Patch117: Update module autodie to %{autodie_version}' \
-	'Fedora Patch119: Update File::Spec to %{File_Spec_version}' \
-	'Fedora Patch120: Update Compress::Raw::Zlib to %{Compress_Raw_Zlib_version}' \
-	'Fedora Patch121: Update Scalar-List-Utils to %{Scalar_List_Utils}' \
-	'Fedora Patch122: Update Module-Pluggable to %{Module_Pluggable_version}' \
-	'Fedora Patch123: Update Storable to %{Storable_version}' \
-	'Fedora Patch124: Update IO::Compress::Base to %{IO_Compress_Base_version}' \
-	'Fedora Patch125: Update IO::Compress::Zlib to %{IO_Compress_Zlib_version}' \
-	'Fedora Patch126: Update Parse::CPAN::Meta::version to %{Parse_CPAN_Meta_version}'
+	'Fedora Patch5: use libresolv instead of libbind' \
+	'Fedora Patch6: USE_MM_LD_RUN_PATH' \
+	'Fedora Patch7: Skip hostname tests, due to builders not being network capable' \
+	'Fedora Patch8: Dont run one io test due to random builder failures' \
+	'Fedora Patch9: Reorder @INC, based on b9ba2fadb18b54e35e5de54f945111a56cbcb249' \
+	'Fedora Patch10: fix RT 39060, errno incorrectly set in perlio' \
+	'Fedora Patch11: much better swap logic to support reentrancy and fix assert failure' \
+	'Fedora Patch12: backward compatibility for the trasition' \
+        'Fedora Patch13: CVE_2009_3626' \
+	'Fedora Patch201: Update ExtUtils::CBuilder to %{ExtUtils_CBuilder_version}' \
+	'Fedora Patch202: Update File::Path to %{File_Path_version}' \
+	'Fedora Patch203: Update Module::Build to %{Module_Build_version}' \
+	'Fedora Patch204: Update Parse::CPAN::Meta::version to %{Parse_CPAN_Meta_version}'
 	%{nil}
 
 rm patchlevel.bak
@@ -1870,6 +1825,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Mar  5 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-112
+- fix license according to advice from legal
+- clean unused patches
+
 * Wed Feb 24 2010 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.1-111
 - update subpackage tests macros to handle packages with an epoch properly
 
