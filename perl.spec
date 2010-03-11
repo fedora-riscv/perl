@@ -1772,7 +1772,6 @@ make test
 # Old changelog entries are preserved in CVS.
 %changelog
 * Thu Mar 11 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-113
-- rebuild with new gdbm
 - clean spec a little more
 
 * Fri Mar  5 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-112
