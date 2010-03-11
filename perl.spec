@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        112%{?dist}
+Release:        113%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -20,9 +20,9 @@ Group:          Development/Languages
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and MIT and Public Domain and UCD
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
-Source11:       filter-requires.sh
-Source12:       perl-5.8.0-libnet.cfg
-Source13:       macros.perl
+Source1:        filter-requires.sh
+Source2:        perl-5.8.0-libnet.cfg
+Source3:        macros.perl
 
 # Specific to Fedora/RHEL
 Patch1:         perl-suid-noroot.patch
@@ -101,64 +101,11 @@ Patch203:	perl-update-Module-Build.patch
 Patch204:       perl-update-Parse-CPAN-Meta.patch
 %define                     Parse_CPAN_Meta_version 1.40
 
-#---
-# FIXME; is 2.18->2.21, should be 2.20->2.21
+#--- MODULES ---
+# Storable_version FIXME; is 2.18->2.21, should be 2.20->2.21
 # - was 2.21 previously; but it is not a subpackage, can wait
-Patch99:	perl-update-Storable.patch
-%define             Storable_version 2.20
-
-# This patches are now unused:
-#could be 1.19
-Patch100:	perl-update-constant.patch
-%define			    constant_version 1.17
-# could be 0.36
-Patch101:	perl-update-Archive-Extract.patch
-# could be 1.54
-Patch102:	perl-update-Archive-Tar.patch
-# could be 3.43->3.48
-Patch103:	perl-update-CGI.patch
-# could be 0.22
-Patch105:	perl-update-File-Fetch.patch
-Patch107:	perl-update-File-Temp.patch
-# could be 0.54
-Patch108:	perl-update-IPC-Cmd.patch
-# could be 2.23
-Patch110:	perl-update-Module-CoreList.patch
-# could be 0.34
-Patch111:	perl-update-Module-Load-Conditional.patch
-# could be 3.10
-Patch112:	perl-update-Pod-Simple.patch
-Patch113:	perl-update-Sys-Syslog.patch
-%define			    Sys_Syslog_version 0.27
-Patch114:	perl-update-Test-Harness.patch
-# could be 0.94
-Patch115:	perl-update-Test-Simple.patch
-Patch116:	perl-update-Time-HiRes.patch
-%define			    Time_HiRes_version 1.9719
-Patch117:	perl-update-Digest-SHA.patch
-# includes Fatal.pm
-Patch118:	perl-update-autodie.patch
-%define			    autodie_version 1.999
-# cpan has it under PathTools-3.30
-# could be 3.31
-Patch119:	perl-update-FileSpec.patch
-%define			    File_Spec_version 3.30
-# FIXME should be 2.023, to preserve upgrade path
+# Compress_Raw_Zlib_version FIXME should be 2.023, to preserve upgrade path
 # -- for now, we just cheat with the version number
-Patch120:	perl-update-Compress-Raw-Zlib.patch
-%define			    Compress_Raw_Zlib_version 2.023
-# could be 1.22
-Patch121:	perl-update-Scalar-List-Utils.patch
-%define			    Scalar_List_Utils 1.21
-Patch122:	perl-update-Module-Pluggable.patch
-
-# could be 2.023
-Patch124:	perl-update-IO-Compress-Base.patch
-%define			    IO_Compress_Base_version 2.020
-# could be 2.023
-Patch125:	perl-update-IO-Compress-Zlib.patch
-%define			    IO_Compress_Zlib_version 2.020
-#... also update version number of Compress::Zlib
 
 # FIXME: Compress-Raw-Zlib also contains Compress-Raw-Bzip2
 # and IO-Compress-Zlib contains IO-Compress-Bzip2
@@ -166,7 +113,6 @@ Patch125:	perl-update-IO-Compress-Zlib.patch
 # we should merge as well
 
 # and also ExtUtils-ParseXS 2.2002 -> 2.21
-
 
 
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
@@ -255,13 +201,13 @@ Requires(post): perl-libs
 # The original script might be /usr/lib/rpm/perl.req or
 # /usr/lib/rpm/redhat/perl.req, better use the original value of the macro:
 %{expand:%%define prev__perl_requires %{__perl_requires}}
-%define __perl_requires %{SOURCE11} %{prev__perl_requires}
+%define __perl_requires %{SOURCE1} %{prev__perl_requires}
 
 # When _use_internal_dependency_generator is 0, the perl.req script is
 # called from /usr/lib/rpm{,/redhat}/find-requires.sh
 # Likewise:
 %{expand:%%define prev__find_requires %{__find_requires}}
-%define __find_requires %{SOURCE11} %{prev__find_requires}
+%define __find_requires %{SOURCE1} %{prev__find_requires}
 
 
 %description
@@ -1101,13 +1047,13 @@ done
 #
 # libnet configuration file
 #
-install -p -m 644 %{SOURCE12} %{build_privlib}/Net/libnet.cfg
+install -p -m 644 %{SOURCE2} %{build_privlib}/Net/libnet.cfg
 
 #
 # perl RPM macros
 #
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/rpm
-install -p -m 644 %{SOURCE13} ${RPM_BUILD_ROOT}%{_sysconfdir}/rpm/
+install -p -m 644 %{SOURCE3} ${RPM_BUILD_ROOT}%{_sysconfdir}/rpm/
 
 #
 # Core modules removal
@@ -1825,6 +1771,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Mar 11 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-113
+- rebuild with new gdbm
+- clean spec a little more
+
 * Fri Mar  5 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-112
 - fix license according to advice from legal
 - clean unused patches
