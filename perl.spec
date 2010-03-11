@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        114%{?dist}
+Release:        115%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -106,6 +106,9 @@ Patch204:       perl-update-Parse-CPAN-Meta.patch
 # - was 2.21 previously; but it is not a subpackage, can wait
 # Compress_Raw_Zlib_version FIXME should be 2.023, to preserve upgrade path
 # -- for now, we just cheat with the version number
+%define                     Compress_Raw_Zlib_version 2.023
+%define                     IO_Compress_Base_version 2.020
+%define                     IO_Compress_Zlib_version 2.020
 
 # FIXME: Compress-Raw-Zlib also contains Compress-Raw-Bzip2
 # and IO-Compress-Zlib contains IO-Compress-Bzip2
@@ -1771,6 +1774,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Mar 11 2010 Paul Howarth <paul@city-fan.org> - 4:5.10.1-115
+- restore missing version macros for Compress::Raw::Zlib, IO::Compress::Base
+  and IO::Compress::Zlib
+
 * Thu Mar 11 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-114
 - clean spec a little more
 - rebuild with new gdbm
