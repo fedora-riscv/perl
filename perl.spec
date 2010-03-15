@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        115%{?dist}
+Release:        116%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -181,17 +181,9 @@ Provides: perl(utf8_heavy.pl)
 Provides: perl(validate.pl)
 Provides: perl(Carp::Heavy)
 
-# Parse_CPAN_Meta
-Provides: perl-Parse-CPAN-Meta = %{Parse_CPAN_Meta_version}
-Obsoletes: perl-Parse-CPAN-Meta < 1.40
-
 # Long history in 3rd-party repositories:
 Provides: perl-File-Temp = %{File_Temp_version}
 Obsoletes: perl-File-Temp < 0.20
-
-# Use new testing module perl-Test-Harness, obsolete it outside of this package
-Provides: perl-TAP-Harness = %{Test_Harness_version}
-Obsoletes: perl-TAP-Harness < 3.10
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -253,6 +245,7 @@ Summary:        Suidperl, for use with setuid perl scripts
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description suidperl
 Suidperl is a setuid binary copy of perl that allows for (hopefully)
@@ -267,6 +260,7 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        %{Archive_Extract_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description Archive-Extract
 Archive::Extract is a generic archive extraction mechanism.
@@ -280,6 +274,7 @@ Epoch:          0
 Version:        %{Archive_Tar_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Compress::Zlib), perl(IO::Zlib)
+BuildArch:      noarch
 
 %description Archive-Tar
 Archive::Tar provides an object oriented mechanism for handling tar
@@ -328,6 +323,7 @@ Epoch:          0
 Version:        1.9402
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Provides:       cpan = %{version}
+BuildArch:      noarch
 
 %description CPAN
 Query, download and build perl modules from CPAN sites.
@@ -345,6 +341,7 @@ Requires:       perl(DBIx::Simple)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Provides:       perl-CPANPLUS-Dist-Build = 0.06
 Obsoletes:	perl-CPANPLUS-Dist-Build <= 0.05
+BuildArch:      noarch
 
 %description CPANPLUS
 The CPANPLUS library is an API to the CPAN mirrors and a collection of
@@ -376,6 +373,7 @@ Epoch:          1
 Version:        %{ExtUtils_CBuilder_version}
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description ExtUtils-CBuilder
 This module can build the C portions of Perl modules by invoking the
@@ -392,6 +390,7 @@ Epoch:          0
 Version:        1.28
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description ExtUtils-Embed
 Utilities for embedding Perl in C/C++ applications.
@@ -407,6 +406,7 @@ Version:        6.55
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Test::Harness)
+BuildArch:      noarch
 
 %description ExtUtils-MakeMaker
 Create a module Makefile.
@@ -422,6 +422,7 @@ Epoch:          1
 Version:        2.20
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description ExtUtils-ParseXS
 ExtUtils::ParseXS will compile XS code into C code by embedding the
@@ -439,6 +440,7 @@ Requires:       perl(IPC::Cmd) >= 0.36
 Requires:       perl(Module::Load::Conditional) >= 0.04
 Requires:       perl(Params::Check) >= 0.07
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description File-Fetch
 File::Fetch is a generic file fetching mechanism.
@@ -480,6 +482,7 @@ Epoch:          1
 Version:        1.09
 Requires:       perl(Compress::Zlib)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description IO-Zlib
 This modules provides an IO:: style interface to the Compress::Zlib
@@ -497,6 +500,7 @@ Epoch:          1
 # do not upgrade in the future to _something version. They are testing!
 Version:        %{IPC_Cmd_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description IPC-Cmd
 IPC::Cmd allows you to run commands, interactively if desired, in a
@@ -511,6 +515,7 @@ License:        MIT
 Epoch:          1
 Version:        0.18
 Requires:	perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description Locale-Maketext-Simple
 This module is a simple wrapper around Locale::Maketext::Lexicon, designed
@@ -527,6 +532,7 @@ Version:        0.02
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 # Add a versioned provides, since we pull the unversioned one out.
 Provides:       perl(Log::Message::Handlers) = %{version}
+BuildArch:      noarch
 
 %description Log-Message
 Log::Message is a generic message storage mechanism. It allows you to 
@@ -544,6 +550,7 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.04
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description Log-Message-Simple
 This module provides standardized logging facilities using the
@@ -561,6 +568,7 @@ Requires:       perl(Archive::Tar) >= 1.08
 Requires:       perl(ExtUtils::CBuilder) >= 0.15
 Requires:       perl(ExtUtils::ParseXS) >= 1.02
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description Module-Build
 Module::Build is a system for building, testing, and installing Perl
@@ -582,6 +590,7 @@ Epoch:          0
 Version:        %{Module_CoreList_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(version)
+BuildArch:      noarch
 
 %description Module-CoreList
 Module::CoreList contains the hash of hashes %Module::CoreList::version,
@@ -597,6 +606,7 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        0.16
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description Module-Load
 Module::Load eliminates the need to know whether you are trying to
@@ -610,6 +620,7 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        %{Module_Load_Conditional_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description Module-Load-Conditional
 Module::Load::Conditional provides simple ways to query and possibly 
@@ -625,6 +636,7 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        0.02
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description Module-Loaded
 When testing applications, often you find yourself needing to provide
@@ -643,6 +655,7 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        %{Module_Pluggable_version} 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description Module-Pluggable
 Provides a simple but, hopefully, extensible way of having 'plugins' for
@@ -657,6 +670,7 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        0.34
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description Object-Accessor
 Object::Accessor provides an interface to create per object accessors 
@@ -672,6 +686,7 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        0.02
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description Package-Constants
 Package::Constants lists all the constants defined in a certain package.
@@ -687,6 +702,7 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        0.26
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description Params-Check
 Params::Check is a generic input parsing/checking mechanism.
@@ -700,6 +716,9 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        1.40
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
+# FIXME it could be removed now?
+Obsoletes:      perl-Parse-CPAN-Meta < 1.40
 
 %description Parse-CPAN-Meta 
 Parse::CPAN::Meta is a parser for META.yml files, based on the parser half
@@ -714,6 +733,7 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        1.04
 Requires:	perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description Pod-Escapes
 This module provides things that are useful in decoding Pod E<...>
@@ -729,6 +749,7 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        %{Pod_Simple_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description Pod-Simple
 Pod::Simple is a Perl library for parsing text in the Pod ("plain old
@@ -744,6 +765,7 @@ Epoch:          0
 Version:        0.20
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Log::Message::Simple)
+BuildArch:      noarch
 
 %description Term-UI
 Term::UI is a transparent way of eliminating the overhead of having to
@@ -759,6 +781,10 @@ Epoch:          0
 Version:        %{Test_Harness_version}
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
+# Use rewritten module perl-Test-Harness
+Provides:       perl-TAP-Harness = %{Test_Harness_version}
+Obsoletes:      perl-TAP-Harness < 3.10
 
 %description Test-Harness
 Run Perl standard test scripts with statistics.
@@ -772,6 +798,7 @@ Epoch:          0
 Version:        %{Test_Simple_version}
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description Test-Simple
 Basic utilities for writing tests.
@@ -800,6 +827,7 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        0.221
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description parent
 parent allows you to both load one or more modules, while setting up 
@@ -823,6 +851,7 @@ License:        GPL+ or Artistic
 Epoch:          3
 Version:        0.80
 Requires:	perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description version
 Perl extension for Version Objects
@@ -836,6 +865,7 @@ Group:          Development/Languages
 # "perl" license.
 License:        GPL+ or Artistic
 Epoch:          0
+#BuildArch:      noarch
 Version:        %{perl_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
@@ -1774,6 +1804,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Mar 15 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-116
+- add noarch into correct sub-packages
+- move Provides/Obsoletes into correct modules from main perl
+
 * Thu Mar 11 2010 Paul Howarth <paul@city-fan.org> - 4:5.10.1-115
 - restore missing version macros for Compress::Raw::Zlib, IO::Compress::Base
   and IO::Compress::Zlib
