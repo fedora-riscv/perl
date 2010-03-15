@@ -245,7 +245,6 @@ Summary:        Suidperl, for use with setuid perl scripts
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
-BuildArch:      noarch
 
 %description suidperl
 Suidperl is a setuid binary copy of perl that allows for (hopefully)
