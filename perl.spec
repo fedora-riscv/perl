@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        87%{?dist}
+Release:        88%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1954,6 +1954,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Mar 17 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-88
+- rebuild, e.g. Patch62 is missing in koji build
+
 * Tue Dec  1 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.0-87
 - fix patch-update-Compress-Raw-Zlib.patch (did not patch Zlib.pm)
 - update Compress::Raw::Zlib to 2.023
