@@ -5,9 +5,12 @@
 
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 
+# same as we provide in /etc/rpm/macros.perl
+%define perl5_testdir   %{_libexecdir}/perl5-tests
+
 Name:           perl
 Version:        %{perl_version}
-Release:        116%{?dist}
+Release:        117%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -238,6 +241,22 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 %description devel
 This package contains header files and development modules.
 Most perl packages will need to install perl-devel to build.
+
+%package tests
+Summary:        The Perl test suite
+Group:          Development/Languages
+License:        GPL+ or Artistic
+# right?
+AutoReqProv:    0
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+# FIXME - note this will need to change when doing the core/minimal swizzle
+Requires:       perl-core
+
+%description tests
+This package contains the test suite included with Perl %{perl_version}.
+
+Install this if you want to test your Perl installation (binary and core
+modules).
 
 
 %package suidperl
@@ -1159,6 +1178,18 @@ ln -s ../../../CORE/libperl.so $RPM_BUILD_ROOT%{_libdir}/perl5/5.10.0/%{perl_arc
 find $RPM_BUILD_ROOT -name Bzip2 | xargs rm -r
 find $RPM_BUILD_ROOT -name '*B*zip2*'| xargs rm
 
+# tests -- FIXME need to validate that this all works as expected
+mkdir -p %{buildroot}%{perl5_testdir}/perl-tests
+
+# "core"
+tar -cf - t/ | ( cd %{buildroot}%{perl5_testdir}/perl-tests && tar -xf - )
+
+# "dual-lifed"
+for dir in `find ext/ -type d -name t -maxdepth 2` ; do
+
+    tar -cf - $dir | ( cd %{buildroot}%{perl5_testdir}/perl-tests/t && tar -xf - )
+done
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -1490,6 +1521,10 @@ make test
 %{_mandir}/man1/xsubpp*
 %{_sysconfdir}/rpm/macros.perl
 
+%files tests
+%defattr(-,root,root,-)
+%{perl5_testdir}/
+
 %files suidperl
 %defattr(-,root,root,-)
 %{_bindir}/suidperl
@@ -1803,6 +1838,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Mar 16 2010 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.1-117
+- package tests in their own subpackage
+
 * Mon Mar 15 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-116
 - add noarch into correct sub-packages
 - move Provides/Obsoletes into correct modules from main perl
