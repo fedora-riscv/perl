@@ -10,7 +10,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        117%{?dist}
+Release:        118%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1005,7 +1005,6 @@ echo "RPM Build arch: %{_arch}"
 
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-DDEBUGGING=-g \
-	-Accflags="-DPERL_USE_SAFE_PUTENV" \
         -Dversion=%{perl_version} \
         -Dmyhostname=localhost \
         -Dperladmin=root@localhost \
@@ -1189,6 +1188,10 @@ for dir in `find ext/ -type d -name t -maxdepth 2` ; do
 
     tar -cf - $dir | ( cd %{buildroot}%{perl5_testdir}/perl-tests/t && tar -xf - )
 done
+
+# remove files used only during build process from rpm
+rm -rf $RPM_BUILD_ROOT/%{_vendorlib}/Unicode/Collate/allkeys.txt
+rm -rf $RPM_BUILD_ROOT/%{_vendorlib}/unicore/*.txt
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1838,6 +1841,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Apr  6 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-118
+- 463773 remove useless txt files from installation
+- 575842 remove PERL_USE_SAFE_PUTENV, use perl putenv
+
 * Tue Mar 16 2010 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.1-117
 - package tests in their own subpackage
 
