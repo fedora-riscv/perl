@@ -10,6 +10,7 @@
 
 Name:           perl
 Version:        %{perl_version}
+# DON'T BUILD NOW in rawhide, only into scratch or buildroot
 Release:        120%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
@@ -1676,7 +1677,7 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Fri Apr 23 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.0-120
+* Fri Apr 23 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.0-120-test
 - MODULE_COMPAT 5.12.0
 - remove BR man
 - clean configure
