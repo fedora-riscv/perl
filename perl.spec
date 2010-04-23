@@ -1,4 +1,4 @@
-%define perl_version    5.10.1
+%define perl_version    5.12.0
 %define perl_epoch      4
 %define perl_arch_stem -thread-multi
 %define perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -10,7 +10,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        118%{?dist}
+Release:        120%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -22,108 +22,48 @@ Group:          Development/Languages
 # Copyright Only: for example ext/Text-Soundex/Soundex.xs 
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and MIT and Public Domain and UCD
 Url:            http://www.perl.org/
-Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
+Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.gz
 Source1:        filter-requires.sh
 Source2:        perl-5.8.0-libnet.cfg
 Source3:        macros.perl
 
-# Specific to Fedora/RHEL
-Patch1:         perl-suid-noroot.patch
-
 # Removes date check, Fedora/RHEL specific
-Patch2:         perl-perlbug-tag.patch
+Patch1:         perl-perlbug-tag.patch
 
 # work around annoying rpath issue
 # This is only relevant for Fedora, as it is unlikely
 # that upstream will assume the existence of a libperl.so
-Patch3:         perl-5.8.8-rpath-make.patch
+Patch2:         perl-5.8.8-rpath-make.patch
 
 # Fedora/RHEL only (64bit only)
-Patch4:         perl-5.8.0-libdir64.patch
+Patch3:         perl-5.8.0-libdir64.patch
 
 # Fedora/RHEL specific (use libresolv instead of libbind)
-Patch5:         perl-5.10.0-libresolv.patch
+Patch4:         perl-5.10.0-libresolv.patch
 
 # FIXME: May need the "Fedora" references removed before upstreaming
 # patches ExtUtils-MakeMaker
-Patch6:         perl-USE_MM_LD_RUN_PATH.patch
+Patch5:         perl-USE_MM_LD_RUN_PATH.patch
 
 # Skip hostname tests, since hostname lookup isn't available in Fedora
 # buildroots by design.
 # patches Net::Config from libnet
-Patch7:         perl-5.10.0-disable_test_hosts.patch
+Patch6:         perl-disable_test_hosts.patch
 
 # The Fedora builders started randomly failing this futime test
 # only on x86_64, so we just don't run it. Works fine on normal
 # systems.
-Patch8:        perl-5.10.0-x86_64-io-test-failure.patch
-
-# Reorder @INC: Based on: http://github.com/rafl/perl/commit/b9ba2fadb18b54e35e5de54f945111a56cbcb249
-Patch9:	perl-5.10.0-reorderINC.patch
-
-# http://rt.perl.org/rt3/Ticket/Display.html?id=39060 (#221113)
-Patch10:	perl-perlio-incorrect-errno.patch
-
-# much better swap logic to support reentrancy and fix assert failure
-# http://perl5.git.perl.org/perl.git/commitdiff/e9105d30edfbaa7f444bc7984c9bafc8e991ad12
-# RT #60508
-Patch11:	perl-much-better-swap-logic.patch
+Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
 
 # temporarily export debug symbols even though DEBUGGING is not set:
-Patch12:	perl-add-symbols.patch
+Patch8:         perl-add-symbols.patch
 
-# CVE_2009_3626 rhbz#547656 
-Patch13:	perl-5.10.1-CVE_2009_3626.patch
-
-# version macros for some of the modules:
-%define			    Archive_Extract_version 0.34
-%define			    Archive_Tar_version 1.52
-%define			    File_Fetch_version 0.20
-%define			    File_Temp_version 0.22
-%define			    IPC_Cmd_version 0.46
-%define			    Module_CoreList_version 2.18
-%define			    Module_Load_Conditional_version 0.30
-%define			    Pod_Simple_version 3.07
-%define			    Test_Harness_version 3.17
-%define			    Test_Simple_version 0.92
-%define			    Digest_SHA_version 5.47
-# has to be 3.x0, not 3.x
-%define			    Module_Pluggable_version 3.90
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
-Patch201:	perl-update-ExtUtils-CBuilder.patch
-%define			    ExtUtils_CBuilder_version 0.27
-Patch202:	perl-update-File-Path.patch
-%define			    File_Path_version 2.08
-Patch203:	perl-update-Module-Build.patch
-%define			    Module_Build_real_version 0.35
-# For Module-Build-0.x, the second component has to have four digits.
-%define			    Module_Build_rpm_version  0.3500
-Patch204:       perl-update-Parse-CPAN-Meta.patch
-%define                     Parse_CPAN_Meta_version 1.40
-
-#--- MODULES ---
-# Storable_version FIXME; is 2.18->2.21, should be 2.20->2.21
-# - was 2.21 previously; but it is not a subpackage, can wait
-# Compress_Raw_Zlib_version FIXME should be 2.023, to preserve upgrade path
-# -- for now, we just cheat with the version number
-%define                     Compress_Raw_Zlib_version 2.023
-%define                     IO_Compress_Base_version 2.020
-%define                     IO_Compress_Zlib_version 2.020
-
-# FIXME: Compress-Raw-Zlib also contains Compress-Raw-Bzip2
-# and IO-Compress-Zlib contains IO-Compress-Bzip2
-# and some of these packages have been merged to IO-Compress on cpan,
-# we should merge as well
-
-# and also ExtUtils-ParseXS 2.2002 -> 2.21
-
-
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires:  tcsh, dos2unix, man, groff
-BuildRequires:  gdbm-devel, db4-devel, zlib-devel
+BuildRequires:  db4-devel, gdbm-devel, groff, tcsh, zlib-devel
 # For tests
 BuildRequires:  procps, rsyslog
 
@@ -134,9 +74,7 @@ Provides: perl(VMS::Filespec)
 Provides: perl(VMS::Stdio)
 
 # Compat provides
-Provides: perl(:MODULE_COMPAT_5.10.1)
-# during the transition period, provide also this:
-Provides: perl(:MODULE_COMPAT_5.10.0)
+Provides: perl(:MODULE_COMPAT_5.12.0)
 
 # Threading provides
 Provides: perl(:WITH_ITHREADS)
@@ -185,8 +123,11 @@ Provides: perl(validate.pl)
 Provides: perl(Carp::Heavy)
 
 # Long history in 3rd-party repositories:
-Provides: perl-File-Temp = %{File_Temp_version}
+Provides: perl-File-Temp = 0.22 
 Obsoletes: perl-File-Temp < 0.20
+
+# suidperl isn't created by upstream since 5.12.0
+Obsoletes: perl-suidperl <= 4:5.10.1-118
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -259,24 +200,13 @@ Install this if you want to test your Perl installation (binary and core
 modules).
 
 
-%package suidperl
-Summary:        Suidperl, for use with setuid perl scripts
-Group:          Development/Languages
-License:        GPL+ or Artistic
-Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
-
-%description suidperl
-Suidperl is a setuid binary copy of perl that allows for (hopefully)
-more secure running of setuid perl scripts.
-
-
 %package Archive-Extract
 Summary:        Generic archive extracting mechanism
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        %{Archive_Extract_version}
+Version:        0.38
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -289,7 +219,7 @@ Summary:        A module for Perl manipulation of .tar files
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        %{Archive_Tar_version}
+Version:        1.54 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Compress::Zlib), perl(IO::Zlib)
 BuildArch:      noarch
@@ -307,30 +237,12 @@ Summary:        Low-Level Interface to the zlib compression library
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        %{Compress_Raw_Zlib_version}
+Version:        2.024
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Compress-Raw-Zlib
 This module provides a Perl interface to the zlib compression library.
 It is used by IO::Compress::Zlib.
-
-
-%package Compress-Zlib
-Summary:        A module providing Perl interfaces to the zlib compression library
-Group:          Development/Libraries
-License:        GPL+ or Artistic
-Epoch:          0
-Version:        2.020
-Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
-
-%description Compress-Zlib
-The Compress::Zlib module provides a Perl interface to the zlib
-compression library. Most of the functionality provided by zlib is
-available in Compress::Zlib.
-
-The module can be split into two general areas of functionality,
-namely in-memory compression/decompression and read/write access to
-gzip files.
 
 
 %package CPAN
@@ -352,7 +264,7 @@ Summary:        API & CLI access to the CPAN mirrors
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.88
+Version:        0.90
 Requires:       perl(Module::Pluggable) >= 2.4
 Requires:       perl(Module::CoreList)
 Requires:       perl(DBIx::Simple)
@@ -372,7 +284,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        %{Digest_SHA_version}
+Version:        5.47
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Digest-SHA
@@ -388,7 +300,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        %{ExtUtils_CBuilder_version}
+Version:        0.27
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -419,8 +331,7 @@ Summary:        Create a module Makefile
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-# It's really 6.55_02, but we drop the _02.
-Version:        6.55
+Version:        6.56
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Test::Harness)
@@ -436,8 +347,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-# It's really 2.2002, but we drop the 02.
-Version:        2.20
+Version:        2.21
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -453,7 +363,7 @@ Summary:        Generic file fetching mechanism
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        %{File_Fetch_version}
+Version:        0.24 
 Requires:       perl(IPC::Cmd) >= 0.36
 Requires:       perl(Module::Load::Conditional) >= 0.04
 Requires:       perl(Params::Check) >= 0.07
@@ -464,31 +374,21 @@ BuildArch:      noarch
 File::Fetch is a generic file fetching mechanism.
 
 
-%package IO-Compress-Base
-Summary:        Base Class for IO::Compress modules
+%package IO-Compress
+Summary:        IO::Compress wrapper for modules
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        %{IO_Compress_Base_version}
+Version:        2.026
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Obsoletes:      perl(Compress::Zlib) <= 2.020
+Provides:       perl(IO::Uncompress::Bunzip2)
 
-%description IO-Compress-Base
+%description IO-Compress
 This module is the base class for all IO::Compress and IO::Uncompress
 modules. This module is not intended for direct use in application
 code. Its sole purpose is to to be sub-classed by IO::Compress
 modules.
-
-
-%package IO-Compress-Zlib
-Summary:        Perl interface to allow reading and writing of gzip and zip data
-Group:          Development/Libraries
-License:        GPL+ or Artistic
-Epoch:          0
-Version:        %{IO_Compress_Zlib_version}
-Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
-
-%description IO-Compress-Zlib
-This module provides an "IO::"-style Perl interface to "Compress::Zlib"
 
 
 %package IO-Zlib
@@ -497,7 +397,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        1.09
+Version:        1.10
 Requires:       perl(Compress::Zlib)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -515,8 +415,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-# do not upgrade in the future to _something version. They are testing!
-Version:        %{IPC_Cmd_version}
+Version:        0.54
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -531,7 +430,7 @@ Group:          Development/Libraries
 License:        MIT
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.18
+Version:        0.21
 Requires:	perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -566,7 +465,7 @@ Summary:        Simplified frontend to Log::Message
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.04
+Version:        0.06
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -581,7 +480,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        %{Module_Build_rpm_version}
+Version:        0.3603 
 Requires:       perl(Archive::Tar) >= 1.08
 Requires:       perl(ExtUtils::CBuilder) >= 0.15
 Requires:       perl(ExtUtils::ParseXS) >= 1.02
@@ -605,7 +504,7 @@ Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        %{Module_CoreList_version}
+Version:        2.29 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(version)
 BuildArch:      noarch
@@ -636,7 +535,7 @@ Summary:        Looking up module information / loading at runtime
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        %{Module_Load_Conditional_version}
+Version:        0.34
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -652,7 +551,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.02
+Version:        0.06
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -671,7 +570,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        %{Module_Pluggable_version} 
+Version:        3.90 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -686,7 +585,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.34
+Version:        0.36
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -765,7 +664,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        %{Pod_Simple_version}
+Version:        3.13
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -796,12 +695,12 @@ Summary:        Run Perl standard test scripts with statistics
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        %{Test_Harness_version}
+Version:        3.17
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 # Use rewritten module perl-Test-Harness
-Provides:       perl-TAP-Harness = %{Test_Harness_version}
+Provides:       perl-TAP-Harness = 3.17
 Obsoletes:      perl-TAP-Harness < 3.10
 
 %description Test-Harness
@@ -813,7 +712,7 @@ Summary:        Basic utilities for writing tests
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        %{Test_Simple_version}
+Version:        0.94
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -843,7 +742,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.221
+Version:        0.223
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -867,7 +766,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          3
-Version:        0.80
+Version:        0.82
 Requires:	perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -883,16 +782,15 @@ Group:          Development/Languages
 # "perl" license.
 License:        GPL+ or Artistic
 Epoch:          0
-#BuildArch:      noarch
 Version:        %{perl_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 
-Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-Compress-Raw-Zlib, perl-Compress-Zlib, perl-CPAN,
+Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-Compress-Raw-Zlib, perl-CPAN,
 Requires:       perl-CPANPLUS, perl-Digest-SHA, perl-ExtUtils-CBuilder,
 Requires:       perl-ExtUtils-Embed, perl-ExtUtils-MakeMaker, perl-ExtUtils-ParseXS,
-Requires:       perl-File-Fetch, perl-IO-Compress-Base, perl-IO-Compress-Zlib, perl-IO-Zlib,
+Requires:       perl-File-Fetch, perl-IO-Compress-Base, perl-IO-Zlib,
 Requires:       perl-IPC-Cmd, perl-Locale-Maketext-Simple, perl-Log-Message, perl-Log-Message-Simple,
 Requires:       perl-Module-Build, perl-Module-CoreList, perl-Module-Load,
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded,
@@ -900,8 +798,6 @@ Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Consta
 Requires:       perl-Params-Check, perl-Pod-Escapes, perl-Pod-Simple, perl-Term-UI, 
 Requires:       perl-Test-Harness, perl-Test-Simple, perl-Time-Piece, perl-version
 Requires:       perl-parent, perl-Parse-CPAN-Meta
-# Note: perl-suidperl has always been an independent subpackage
-# We don't want perl-core to drag it in.
 
 %description core
 A metapackage which requires all of the perl bits and modules in the
@@ -911,30 +807,21 @@ upstream tarball from perl.org.
 %prep
 %setup -q
 %patch1 -p1
-%patch2 -p1
 # This patch breaks sparc64 compilation
 # We should probably consider removing it for all arches.
 %ifnarch sparc64
-%patch3 -p1
+%patch2 -p1
 %endif
 %ifarch %{multilib_64_archs}
-%patch4 -p1
+%patch3 -p1
 %endif
+%patch4 -p1
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
-%patch9 -p1
+#debug symbols?
+#%patch8 -p1
 
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
-
-%patch201 -p1
-%patch202 -p1
-%patch203 -p1
-%patch204 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -952,9 +839,7 @@ recode README.tw big5
 recode pod/perlebcdic.pod
 recode pod/perlhack.pod
 recode pod/perlhist.pod
-recode pod/perlothrtut.pod
 recode pod/perlthrtut.pod
-recode lib/Unicode/Collate.pm
 recode AUTHORS
 
 find . -name \*.orig -exec rm -fv {} \;
@@ -970,6 +855,8 @@ cat << EOF > perl-prov
     sed -e '/^perl(Log::Message::Handlers)$/d' |\
     sed -e '/^perl(Math::BigInt)$/d' |\
     sed -e '/^perl(Net::Config)$/d' |\
+    sed -e '/^perl(POSIX)$/d' |\
+    sed -e '/^perl(Storable)$/'d |\
     sed -e '/^perl(Tie::Hash)$/d' |\
     sed -e '/^perl(bigint)$/d' |\
     sed -e '/^perl(bigrat)$/d' |\
@@ -984,7 +871,7 @@ chmod +x %{__perl_provides}
 sed -i 's|BUILD_ZLIB      = True|BUILD_ZLIB      = False|
 	s|INCLUDE         = ./zlib-src|INCLUDE         = %{_includedir}|
 	s|LIB             = ./zlib-src|LIB             = %{_libdir}|' \
-	ext/Compress-Raw-Zlib/config.in
+	cpan/Compress-Raw-Zlib/config.in
 
 %build
 echo "RPM Build arch: %{_arch}"
@@ -1004,7 +891,7 @@ echo "RPM Build arch: %{_arch}"
 %define archlib		%{_libdir}/perl5
 
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
-	-DDEBUGGING=-g \
+        -DDEBUGGING=-g \
         -Dversion=%{perl_version} \
         -Dmyhostname=localhost \
         -Dperladmin=root@localhost \
@@ -1019,17 +906,6 @@ echo "RPM Build arch: %{_arch}"
         -Dvendorlib="%{privlib}" \
         -Darchlib="%{archlib}" \
         -Dvendorarch="%{archlib}" \
-%if 0
-        -Dprivlib="%{_prefix}/lib/perl5/%{perl_version}" \
-        -Dsitelib="%{_prefix}/local/lib/perl5/site_perl/%{perl_version}" \
-        -Dvendorlib="%{_prefix}/lib/perl5/vendor_perl/%{perl_version}" \
-        -Darchlib="%{_libdir}/perl5/%{perl_version}/%{perl_archname}" \
-        -Dsitearch="%{_prefix}/local/%{_lib}/perl5/site_perl/%{perl_version}/%{perl_archname}" \
-        -Dvendorarch="%{_libdir}/perl5/vendor_perl/%{perl_version}/%{perl_archname}" \
-%endif
-%if 1
-        -Dinc_version_list="5.10.0" \
-%endif
         -Darchname=%{perl_archname} \
 %ifarch %{multilib_64_archs}
         -Dlibpth="/usr/local/lib64 /lib64 %{_prefix}/lib64" \
@@ -1041,7 +917,6 @@ echo "RPM Build arch: %{_arch}"
         -Dusethreads \
         -Duseithreads \
         -Duselargefiles \
-        -Dd_dosuid \
         -Dd_semctl_semun \
         -Di_db \
         -Ui_ndbm \
@@ -1060,9 +935,7 @@ echo "RPM Build arch: %{_arch}"
         -Dscriptdir='%{_bindir}' \
         -Dotherlibdirs="%{old_sitearch}:%{old_sitelib}:%{old_vendorarch}:%{old_vendorlib}:/usr/lib/perl5/site_perl"
 
-# this is promised to stay forever:
-#        -Dotherlibdirs=%{prefix}/lib/perl5/site_perl
-
+# -Duseshrplib creates libperl.so, -Ubincompat5005 help create DSO -> libperl.so
 
 %ifarch sparc64
 make
@@ -1111,17 +984,6 @@ install -p -m 644 %{SOURCE3} ${RPM_BUILD_ROOT}%{_sysconfdir}/rpm/
 find $RPM_BUILD_ROOT -name '*NDBM*' | xargs rm -rfv
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty | xargs rm -f 
 
-# Install sample cgi scripts (this used to happen automatically?),
-# cleanup binary paths and make cgi files executable
-cgidir=%{build_privlib}/CGI/eg/
-mkdir -p $cgidir
-cp -a lib/CGI/eg/* $cgidir
-pushd $cgidir
-  cgifiles='*.cgi make_links.pl RunMeFirst'
-  sed -i 's|/usr/local/bin/perl|%{_bindir}/perl|g' $cgifiles
-  chmod +x $cgifiles
-popd
-
 chmod -R u+w $RPM_BUILD_ROOT/*
 
 # miniperl? As an interpreter? How odd. Anyway, a symlink does it:
@@ -1132,6 +994,7 @@ ln -s ../../../bin/xsubpp %{build_privlib}/ExtUtils/
 rm %{build_archlib}/.packlist
 
 # Fix some manpages to be UTF-8
+mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1/
 pushd $RPM_BUILD_ROOT%{_mandir}/man1/
   for i in perl588delta.1 perldelta.1 ; do
     iconv -f MS-ANSI -t UTF-8 $i --output new-$i
@@ -1143,35 +1006,21 @@ popd
 # Local patch tracking
 pushd %{build_archlib}/CORE/
 %{new_perl} -x patchlevel.h \
-	'Fedora Patch1: Permit suidperl to install as nonroot' \
-	'Fedora Patch2: Removes date check, Fedora/RHEL specific' \
+	'Fedora Patch1: Removes date check, Fedora/RHEL specific' \
 %ifnarch sparc64 \
-	'Fedora Patch3: Work around annoying rpath issue' \
+	'Fedora Patch2: Work around annoying rpath issue' \
 %endif \
 %ifarch %{multilib_64_archs} \
-	'Fedora Patch4: support for libdir64' \
+	'Fedora Patch3: support for libdir64' \
 %endif \
-	'Fedora Patch5: use libresolv instead of libbind' \
-	'Fedora Patch6: USE_MM_LD_RUN_PATH' \
-	'Fedora Patch7: Skip hostname tests, due to builders not being network capable' \
-	'Fedora Patch8: Dont run one io test due to random builder failures' \
-	'Fedora Patch9: Reorder @INC, based on b9ba2fadb18b54e35e5de54f945111a56cbcb249' \
-	'Fedora Patch10: fix RT 39060, errno incorrectly set in perlio' \
-	'Fedora Patch11: much better swap logic to support reentrancy and fix assert failure' \
-	'Fedora Patch12: backward compatibility for the trasition' \
-        'Fedora Patch13: CVE_2009_3626' \
-	'Fedora Patch201: Update ExtUtils::CBuilder to %{ExtUtils_CBuilder_version}' \
-	'Fedora Patch202: Update File::Path to %{File_Path_version}' \
-	'Fedora Patch203: Update Module::Build to %{Module_Build_version}' \
-	'Fedora Patch204: Update Parse::CPAN::Meta::version to %{Parse_CPAN_Meta_version}'
+	'Fedora Patch4: use libresolv instead of libbind' \
+	'Fedora Patch5: USE_MM_LD_RUN_PATH' \
+	'Fedora Patch6: Skip hostname tests, due to builders not being network capable' \
+	'Fedora Patch7: Dont run one io test due to random builder failures' 
 	%{nil}
 
 rm patchlevel.bak
 popd
-
-#FIXME: temporary compatibility hack: for perl(:MODULE_COMPAT_5.10.0)
-mkdir -p $RPM_BUILD_ROOT%{_libdir}/perl5/5.10.0/%{perl_archname}/CORE
-ln -s ../../../CORE/libperl.so $RPM_BUILD_ROOT%{_libdir}/perl5/5.10.0/%{perl_archname}/CORE/libperl.so
 
 # for now, remove Bzip2:
 find $RPM_BUILD_ROOT -name Bzip2 | xargs rm -r
@@ -1197,10 +1046,7 @@ rm -rf $RPM_BUILD_ROOT/%{_vendorlib}/unicore/*.txt
 rm -rf $RPM_BUILD_ROOT
 
 %check
-# one test fails on ppc64 and s390x:
-# ext/threads-shared/t/stress......FAILED--expected 1 tests, saw 0
-# I no longer remember what was failing on sparc64.
-%ifnarch ppc64 s390x sparc64
+%ifnarch
 make test
 %endif
 
@@ -1219,7 +1065,6 @@ make test
 
 # libs
 %exclude %{archlib}/CORE/libperl.so
-%exclude %{_libdir}/perl5/5.10.0/%{perl_archname}/CORE/libperl.so
 
 # devel
 %exclude %{_bindir}/enc2xs
@@ -1234,10 +1079,6 @@ make test
 %exclude %{archlib}/CORE/*.h
 %exclude %{_bindir}/xsubpp
 %exclude %{_mandir}/man1/xsubpp*
-
-# suidperl
-%exclude %{_bindir}/suidperl
-%exclude %{_bindir}/sperl%{perl_version}
 
 # Archive-Extract
 %exclude %{privlib}/Archive/Extract.pm
@@ -1277,16 +1118,11 @@ make test
 %exclude %{_mandir}/man3/CPANPLUS*
 
 # Compress::Raw::Zlib
-%exclude %{archlib}/Compress
 %exclude %{archlib}/Compress/Raw/
 %exclude %{archlib}/auto/Compress
 %exclude %{archlib}/auto/Compress/Raw/
+%exclude %{archlib}/auto/Compress/Raw/Zlib/
 %exclude %{_mandir}/man3/Compress::Raw::Zlib*
-
-# Compress::Zlib
-%exclude %{archlib}/Compress/Zlib.pm
-%exclude %{archlib}/auto/Compress/Zlib/
-%exclude %{_mandir}/man3/Compress::Zlib*
 
 # Digest::SHA
 %exclude %{_bindir}/shasum
@@ -1344,32 +1180,37 @@ make test
 %exclude %{privlib}/File/Fetch.pm
 %exclude %{_mandir}/man3/File::Fetch.3*
 
+# IO::Compress
+
+# Compress::Zlib
+%exclude %{privlib}/Compress/Zlib.pm
+%exclude %{archlib}/auto/Compress/Zlib/
+%exclude %{_mandir}/man3/Compress::Zlib*
 # IO::Compress::Base
-%exclude %{archlib}/File/GlobMapper.pm
-%exclude %{archlib}/IO/Compress/Base/
-%exclude %{archlib}/IO/Compress/Base.pm
-%exclude %{archlib}/IO/Uncompress/AnyUncompress.pm
-%exclude %{archlib}/IO/Uncompress/Base.pm
+%exclude %{privlib}/File/GlobMapper.pm
+%exclude %{privlib}/IO/Compress/Base/
+%exclude %{privlib}/IO/Compress/Base.pm
+%exclude %{privlib}/IO/Uncompress/AnyUncompress.pm
+%exclude %{privlib}/IO/Uncompress/Base.pm
 %exclude %{_mandir}/man3/File::GlobMapper.*
 %exclude %{_mandir}/man3/IO::Compress::Base.*
 %exclude %{_mandir}/man3/IO::Uncompress::AnyUncompress.*
 %exclude %{_mandir}/man3/IO::Uncompress::Base.*
-
 # IO::Compress::Zlib
-%exclude %{archlib}/IO/Compress/Adapter/
-%exclude %{archlib}/IO/Compress/Deflate.pm
-%exclude %{archlib}/IO/Compress/Gzip/
-%exclude %{archlib}/IO/Compress/Gzip.pm
-%exclude %{archlib}/IO/Compress/RawDeflate.pm
-%exclude %{archlib}/IO/Compress/Zip/
-%exclude %{archlib}/IO/Compress/Zip.pm
-%exclude %{archlib}/IO/Compress/Zlib/
-%exclude %{archlib}/IO/Uncompress/Adapter/
-%exclude %{archlib}/IO/Uncompress/AnyInflate.pm
-%exclude %{archlib}/IO/Uncompress/Gunzip.pm
-%exclude %{archlib}/IO/Uncompress/Inflate.pm
-%exclude %{archlib}/IO/Uncompress/RawInflate.pm
-%exclude %{archlib}/IO/Uncompress/Unzip.pm
+%exclude %{privlib}/IO/Compress/Adapter/
+%exclude %{privlib}/IO/Compress/Deflate.pm
+%exclude %{privlib}/IO/Compress/Gzip/
+%exclude %{privlib}/IO/Compress/Gzip.pm
+%exclude %{privlib}/IO/Compress/RawDeflate.pm
+%exclude %{privlib}/IO/Compress/Zip/
+%exclude %{privlib}/IO/Compress/Zip.pm
+%exclude %{privlib}/IO/Compress/Zlib/
+%exclude %{privlib}/IO/Uncompress/Adapter/
+%exclude %{privlib}/IO/Uncompress/AnyInflate.pm
+%exclude %{privlib}/IO/Uncompress/Gunzip.pm
+%exclude %{privlib}/IO/Uncompress/Inflate.pm
+%exclude %{privlib}/IO/Uncompress/RawInflate.pm
+%exclude %{privlib}/IO/Uncompress/Unzip.pm
 %exclude %{_mandir}/man3/IO::Compress::Deflate*
 %exclude %{_mandir}/man3/IO::Compress::Gzip*
 %exclude %{_mandir}/man3/IO::Compress::RawDeflate*
@@ -1506,7 +1347,6 @@ make test
 %files libs
 %defattr(-,root,root)
 %{archlib}/CORE/libperl.so
-%{_libdir}/perl5/5.10.0/%{perl_archname}/CORE/libperl.so
 
 %files devel
 %defattr(-,root,root,-)
@@ -1522,16 +1362,11 @@ make test
 %{archlib}/CORE/*.h
 %{_bindir}/xsubpp
 %{_mandir}/man1/xsubpp*
-%{_sysconfdir}/rpm/macros.perl
+%attr(0644,root,root) %{_sysconfdir}/rpm/macros.perl
 
 %files tests
 %defattr(-,root,root,-)
 %{perl5_testdir}/
-
-%files suidperl
-%defattr(-,root,root,-)
-%{_bindir}/suidperl
-%{_bindir}/sperl%{perl_version}
 
 %files Archive-Extract
 %defattr(-,root,root,-)
@@ -1554,13 +1389,8 @@ make test
 %{archlib}/Compress/Raw/
 %dir %{archlib}/auto/Compress/
 %{archlib}/auto/Compress/Raw/
+%{archlib}/auto/Compress/Raw/Zlib/
 %{_mandir}/man3/Compress::Raw::Zlib*
-
-%files Compress-Zlib
-%defattr(-,root,root,-)
-%{archlib}/Compress/Zlib.pm
-%{archlib}/auto/Compress/Zlib/
-%{_mandir}/man3/Compress::Zlib*
 
 %files CPAN
 %defattr(-,root,root,-)
@@ -1645,34 +1475,39 @@ make test
 %{privlib}/File/Fetch.pm
 %{_mandir}/man3/File::Fetch.3*
 
-%files IO-Compress-Base
+%files IO-Compress
 %defattr(-,root,root,-)
-%{archlib}/File/GlobMapper.pm
-%{archlib}/IO/Compress/Base/
-%{archlib}/IO/Compress/Base.pm
-%{archlib}/IO/Uncompress/AnyUncompress.pm
-%{archlib}/IO/Uncompress/Base.pm
+# Compress-Zlib
+%{privlib}/Compress/Zlib.pm
+%{archlib}/auto/Compress/Zlib/
+%{_mandir}/man3/Compress::Zlib*
+#IO-Compress-Base
+%{privlib}/File/GlobMapper.pm
+%{privlib}/IO/Compress/Base/
+%{privlib}/IO/Compress/Base.pm
+%{privlib}/IO/Uncompress/AnyUncompress.pm
+%{privlib}/IO/Uncompress/Base.pm
 %{_mandir}/man3/File::GlobMapper.*
 %{_mandir}/man3/IO::Compress::Base.*
 %{_mandir}/man3/IO::Uncompress::AnyUncompress.*
 %{_mandir}/man3/IO::Uncompress::Base.*
 
-%files IO-Compress-Zlib
+# IO-Compress-Zlib
 %defattr(-,root,root,-)
-%{archlib}/IO/Compress/Adapter/
-%{archlib}/IO/Compress/Deflate.pm
-%{archlib}/IO/Compress/Gzip/
-%{archlib}/IO/Compress/Gzip.pm
-%{archlib}/IO/Compress/RawDeflate.pm
-%{archlib}/IO/Compress/Zip/
-%{archlib}/IO/Compress/Zip.pm
-%{archlib}/IO/Compress/Zlib/
-%{archlib}/IO/Uncompress/Adapter/
-%{archlib}/IO/Uncompress/AnyInflate.pm
-%{archlib}/IO/Uncompress/Gunzip.pm
-%{archlib}/IO/Uncompress/Inflate.pm
-%{archlib}/IO/Uncompress/RawInflate.pm
-%{archlib}/IO/Uncompress/Unzip.pm
+%{privlib}/IO/Compress/Adapter/
+%{privlib}/IO/Compress/Deflate.pm
+%{privlib}/IO/Compress/Gzip/
+%{privlib}/IO/Compress/Gzip.pm
+%{privlib}/IO/Compress/RawDeflate.pm
+%{privlib}/IO/Compress/Zip/
+%{privlib}/IO/Compress/Zip.pm
+%{privlib}/IO/Compress/Zlib/
+%{privlib}/IO/Uncompress/Adapter/
+%{privlib}/IO/Uncompress/AnyInflate.pm
+%{privlib}/IO/Uncompress/Gunzip.pm
+%{privlib}/IO/Uncompress/Inflate.pm
+%{privlib}/IO/Uncompress/RawInflate.pm
+%{privlib}/IO/Uncompress/Unzip.pm
 %{_mandir}/man3/IO::Compress::Deflate*
 %{_mandir}/man3/IO::Compress::Gzip*
 %{_mandir}/man3/IO::Compress::RawDeflate*
@@ -1841,6 +1676,18 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Apr 23 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.0-120
+- MODULE_COMPAT 5.12.0
+- remove BR man
+- clean configure
+- fix provides/requires in IO-Compress
+
+* Wed Apr 14 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.0-119.1
+- rebuild 5.12.0 without MODULE_COMPAT
+
+* Wed Apr 14 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.0-119
+- initial 5.12.0 build
+
 * Tue Apr  6 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-118
 - 463773 remove useless txt files from installation
 - 575842 remove PERL_USE_SAFE_PUTENV, use perl putenv
