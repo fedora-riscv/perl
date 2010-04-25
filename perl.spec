@@ -10,8 +10,8 @@
 
 Name:           perl
 Version:        %{perl_version}
-# DON'T BUILD NOW in rawhide, only into scratch or buildroot
-Release:        120%{?dist}
+# DON'T BUILD NOW in rawhide, only into scratch or test buildroot
+Release:        121%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1048,8 +1048,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %check
 %ifnarch
-## switch off for the first build
-##make test
+make test
 %endif
 
 %post libs -p /sbin/ldconfig
@@ -1678,6 +1677,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sun Apr 25 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.0-121
+- rebuild with tests in test buildroot
+
 * Fri Apr 23 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.0-120-test
 - MODULE_COMPAT 5.12.0
 - remove BR man
