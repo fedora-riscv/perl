@@ -1048,7 +1048,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %check
 %ifnarch
-make test
+## switch off for the first build
+##make test
 %endif
 
 %post libs -p /sbin/ldconfig
