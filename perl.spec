@@ -382,7 +382,7 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.026
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
-Obsoletes:      perl(Compress::Zlib) <= 2.020
+Obsoletes:      perl-Compress-Zlib <= 2.020
 Provides:       perl(IO::Uncompress::Bunzip2)
 
 %description IO-Compress
