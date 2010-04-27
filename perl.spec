@@ -11,7 +11,7 @@
 Name:           perl
 Version:        %{perl_version}
 # DON'T BUILD NOW in rawhide, only into scratch or test buildroot
-Release:        121%{?dist}
+Release:        122%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -76,6 +76,8 @@ Provides: perl(VMS::Stdio)
 
 # Compat provides
 Provides: perl(:MODULE_COMPAT_5.12.0)
+Provides: perl(:MODULE_COMPAT_5.10.1)
+Provides: perl(:MODULE_COMPAT_5.10.0)
 
 # Threading provides
 Provides: perl(:WITH_ITHREADS)
@@ -1677,6 +1679,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Apr 27 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.0-122
+- packages in buildroot needs MODULE_COMPAT 5.10.1, add it back for rebuild
+
 * Sun Apr 25 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.0-121
 - rebuild with tests in test buildroot
 
