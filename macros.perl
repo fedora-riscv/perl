@@ -5,6 +5,25 @@
 #
 # Chris Weyl <cweyl@alumni.drew.edu> 2009
 
+# This macro unsets several common vars used to control how Makefile.PL (et
+# al) build and install packages.  We also set a couple do help some of the
+# common systems be less interactive.  This was blatantly stolen from
+# cpanminus, and helps building rpms locally when one makes extensive use of
+# local::lib, etc.
+#
+# Useage, in %build, before "%{__perl} Makefile.PL ..."
+#
+#   %{?perl_ext_env_unset}
+
+%perl_ext_env_unset %{expand:
+unset PERL_MM_OPT MODULEBUILDRC PERL5INC
+export PERL_AUTOINSTALL="--defaultdeps"
+export PERL_MM_USE_DEFAULT=1
+}
+
+#############################################################################
+# Filtering macro incantations
+
 # keep track of what "revision" of the filtering we're at.  Each time we
 # change the filter we should increment this.
 
