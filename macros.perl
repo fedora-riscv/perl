@@ -6,7 +6,7 @@
 # Chris Weyl <cweyl@alumni.drew.edu> 2009
 
 # This macro unsets several common vars used to control how Makefile.PL (et
-# al) build and install packages.  We also set a couple do help some of the
+# al) build and install packages.  We also set a couple to help some of the
 # common systems be less interactive.  This was blatantly stolen from
 # cpanminus, and helps building rpms locally when one makes extensive use of
 # local::lib, etc.
