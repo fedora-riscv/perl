@@ -11,7 +11,7 @@
 # cpanminus, and helps building rpms locally when one makes extensive use of
 # local::lib, etc.
 #
-# Useage, in %build, before "%{__perl} Makefile.PL ..."
+# Usage, in %build, before "%{__perl} Makefile.PL ..."
 #
 #   %{?perl_ext_env_unset}
 
