@@ -11,7 +11,8 @@
 Name:           perl
 Version:        %{perl_version}
 # DON'T BUILD NOW in rawhide, only into scratch or test buildroot
-Release:        1%{?dist}
+# release number must be even higher, becase dual-lived modules will be broken otherwise
+Release:        123%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1678,7 +1679,7 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Thu Jun 10 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.1-1
+* Thu Jun 10 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.1-123
 - remove patch with debugging symbols, which should be now ok without it
 - update to 5.12.1
 - MODULE_COMPAT
