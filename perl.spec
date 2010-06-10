@@ -1,4 +1,4 @@
-%define perl_version    5.12.0
+%define perl_version    5.12.1
 %define perl_epoch      4
 %define perl_arch_stem -thread-multi
 %define perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -11,7 +11,7 @@
 Name:           perl
 Version:        %{perl_version}
 # DON'T BUILD NOW in rawhide, only into scratch or test buildroot
-Release:        122%{?dist}
+Release:        1%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -57,7 +57,7 @@ Patch6:         perl-disable_test_hosts.patch
 Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
 
 # temporarily export debug symbols even though DEBUGGING is not set:
-Patch8:         perl-add-symbols.patch
+#Patch8:         perl-add-symbols.patch
 
 
 # Update some of the bundled modules
@@ -75,9 +75,8 @@ Provides: perl(VMS::Filespec)
 Provides: perl(VMS::Stdio)
 
 # Compat provides
+Provides: perl(:MODULE_COMPAT_5.12.1)
 Provides: perl(:MODULE_COMPAT_5.12.0)
-Provides: perl(:MODULE_COMPAT_5.10.1)
-Provides: perl(:MODULE_COMPAT_5.10.0)
 
 # Threading provides
 Provides: perl(:WITH_ITHREADS)
@@ -177,7 +176,7 @@ The libraries for the perl runtime
 
 
 %package devel
-Summary:        Header files for use in perl development
+Summary:        Header #files for use in perl development
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -808,7 +807,7 @@ upstream tarball from perl.org.
 
 
 %prep
-%setup -q
+%setup -q -n perl-5.12.1
 %patch1 -p1
 # This patch breaks sparc64 compilation
 # We should probably consider removing it for all arches.
@@ -1679,6 +1678,11 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jun 10 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.1-1
+- remove patch with debugging symbols, which should be now ok without it
+- update to 5.12.1
+- MODULE_COMPAT
+
 * Tue Apr 27 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.0-122
 - packages in buildroot needs MODULE_COMPAT 5.10.1, add it back for rebuild
 
