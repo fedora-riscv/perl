@@ -24,6 +24,9 @@ Source11:       filter-requires.sh
 Source12:       perl-5.8.0-libnet.cfg
 Source13:       macros.perl
 
+# overload.pm is looking into wrong directories if perl was already installed
+# http://www.gossamer-threads.com/lists/perl/porters/242181
+Patch0:         perl-5.10.1-fix_local_build.patch
 # Specific to Fedora/RHEL
 Patch1:         perl-suid-noroot.patch
 
@@ -913,6 +916,7 @@ upstream tarball from perl.org.
 
 %prep
 %setup -q
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 # This patch breaks sparc64 compilation
@@ -1147,6 +1151,7 @@ popd
 # Local patch tracking
 pushd %{build_archlib}/CORE/
 %{new_perl} -x patchlevel.h \
+    'Fedora Patch0: Fix paths leading to build failure' \
 	'Fedora Patch1: Permit suidperl to install as nonroot' \
 	'Fedora Patch2: Removes date check, Fedora/RHEL specific' \
 %ifnarch sparc64 \
