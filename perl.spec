@@ -12,7 +12,7 @@ Name:           perl
 Version:        %{perl_version}
 # DON'T BUILD NOW in rawhide, only into scratch or test buildroot
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        123%{?dist}
+Release:        124%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1391,7 +1391,7 @@ make test
 %dir %{archlib}/Compress
 %{archlib}/Compress/Raw/
 %dir %{archlib}/auto/Compress/
-%{archlib}/auto/Compress/Raw/
+%dir %{archlib}/auto/Compress/Raw/
 %{archlib}/auto/Compress/Raw/Zlib/
 %{_mandir}/man3/Compress::Raw::Zlib*
 
@@ -1679,6 +1679,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jun 28 2010 Ralf Corsépius <corsepiu@fedoraproject.org> -  4:5.12.1-124
+- Address perl-Compress-Raw directory ownership (BZ 607881).
+
 * Thu Jun 10 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.1-123
 - remove patch with debugging symbols, which should be now ok without it
 - update to 5.12.1
