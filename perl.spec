@@ -1133,7 +1133,7 @@ pushd %{build_archlib}/CORE/
 	'Fedora Patch101: Update ExtUtils::CBuilder to %{ExtUtils_CBuilder_version}' \
 	'Fedora Patch102: Update File::Path to %{File_Path_version}' \
 	'Fedora Patch103: Update Module::Build to %{Module_Build_version}' \
-	'Fedora Patch104: Update Parse::CPAN::Meta::version to %{Parse_CPAN_Meta_version}'
+	'Fedora Patch104: Update Parse::CPAN::Meta::version to %{Parse_CPAN_Meta_version}' \
 	'Fedora Patch105: Update Archive::Tar to %{Archive_Tar_version}'
 	%{nil}
 
