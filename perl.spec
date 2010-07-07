@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        112%{?dist}
+Release:        113%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -56,120 +56,80 @@ Patch7:         perl-5.10.0-disable_test_hosts.patch
 # The Fedora builders started randomly failing this futime test
 # only on x86_64, so we just don't run it. Works fine on normal
 # systems.
-Patch8:        perl-5.10.0-x86_64-io-test-failure.patch
+Patch8:         perl-5.10.0-x86_64-io-test-failure.patch
 
 # Reorder @INC: Based on: http://github.com/rafl/perl/commit/b9ba2fadb18b54e35e5de54f945111a56cbcb249
-Patch9:	perl-5.10.0-reorderINC.patch
+Patch9:         perl-5.10.0-reorderINC.patch
 
 # http://rt.perl.org/rt3/Ticket/Display.html?id=39060 (#221113)
-Patch10:	perl-perlio-incorrect-errno.patch
+Patch10:        perl-perlio-incorrect-errno.patch
 
 # much better swap logic to support reentrancy and fix assert failure
 # http://perl5.git.perl.org/perl.git/commitdiff/e9105d30edfbaa7f444bc7984c9bafc8e991ad12
 # RT #60508
-Patch11:	perl-much-better-swap-logic.patch
+Patch11:        perl-much-better-swap-logic.patch
 
 # temporarily export debug symbols even though DEBUGGING is not set:
-Patch12:	perl-add-symbols.patch
+Patch12:        perl-add-symbols.patch
 
 # CVE_2009_3626 rhbz#547656 
-Patch13:	perl-5.10.1-CVE_2009_3626.patch
+Patch13:        perl-5.10.1-CVE_2009_3626.patch
 
-# version macros for some of the modules:
+# Version macros for some of the modules.
+# If comment starts with module name, distributed module is part of
+# perl bundle. Otherwise it belongs to module version macro
+# definition beneath:
+# could be 0.36
 %define			    Archive_Extract_version 0.34
-%define			    Archive_Tar_version 1.52
-%define			    File_Fetch_version 0.20
-%define			    File_Temp_version 0.22
-%define			    IPC_Cmd_version 0.46
-%define			    Module_CoreList_version 2.18
-%define			    Module_Load_Conditional_version 0.30
-%define			    Pod_Simple_version 3.07
-%define			    Test_Harness_version 3.17
-%define			    Test_Simple_version 0.92
+# CGI could be 3.48
+%define			    Compress_Raw_Zlib_version 2.023
+# constant could be 1.19
 %define			    Digest_SHA_version 5.47
+# ExtUtils-ParseXS could be 2.21
+# could be 0.22
+%define			    File_Fetch_version 0.20
+# File-Spec (PathTools in CPAN) could be 3.31
+%define			    File_Temp_version 0.22
+# could be 2.023
+%define			    IO_Compress_Base_version 2.020
+# could be 2.023
+%define			    IO_Compress_Zlib_version 2.020
+# could be 0.54
+%define			    IPC_Cmd_version 0.46
+# could be 2.23
+%define			    Module_CoreList_version 2.18
+# could be 0.34
+%define			    Module_Load_Conditional_version 0.30
 # has to be 3.x0, not 3.x
 %define			    Module_Pluggable_version 3.90
+# could be 3.10
+%define			    Pod_Simple_version 3.07
+# Scalar-List-Utils could be 1.22
+%define			    Test_Harness_version 3.17
+# could be 0.94
+%define			    Test_Simple_version 0.92
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
-Patch201:	perl-update-ExtUtils-CBuilder.patch
+Patch101:	perl-update-ExtUtils-CBuilder.patch
 %define			    ExtUtils_CBuilder_version 0.27
-Patch202:	perl-update-File-Path.patch
+Patch102:	perl-update-File-Path.patch
 %define			    File_Path_version 2.08
-Patch203:	perl-update-Module-Build.patch
+Patch103:	perl-update-Module-Build.patch
 %define			    Module_Build_real_version 0.35
 # For Module-Build-0.x, the second component has to have four digits.
 %define			    Module_Build_rpm_version  0.3500
-Patch204:       perl-update-Parse-CPAN-Meta.patch
-%define                     Parse_CPAN_Meta_version 1.40
+Patch104:	perl-update-Parse-CPAN-Meta.patch
+%define			    Parse_CPAN_Meta_version 1.40
+Patch105:	perl-update-Archive-Tar.patch
+%define				Archive_Tar_version 1.62
 
 #---
-# FIXME; is 2.18->2.21, should be 2.20->2.21
+# Storable FIXME; is 2.18->2.21, should be 2.20->2.21
 # - was 2.21 previously; but it is not a subpackage, can wait
-Patch99:	perl-update-Storable.patch
-%define             Storable_version 2.20
 
 # This patches are now unused:
-#could be 1.19
-Patch100:	perl-update-constant.patch
-%define			    constant_version 1.17
-# could be 0.36
-Patch101:	perl-update-Archive-Extract.patch
-# could be 1.54
-Patch102:	perl-update-Archive-Tar.patch
-# could be 3.43->3.48
-Patch103:	perl-update-CGI.patch
-# could be 0.22
-Patch105:	perl-update-File-Fetch.patch
-Patch107:	perl-update-File-Temp.patch
-# could be 0.54
-Patch108:	perl-update-IPC-Cmd.patch
-# could be 2.23
-Patch110:	perl-update-Module-CoreList.patch
-# could be 0.34
-Patch111:	perl-update-Module-Load-Conditional.patch
-# could be 3.10
-Patch112:	perl-update-Pod-Simple.patch
-Patch113:	perl-update-Sys-Syslog.patch
-%define			    Sys_Syslog_version 0.27
-Patch114:	perl-update-Test-Harness.patch
-# could be 0.94
-Patch115:	perl-update-Test-Simple.patch
-Patch116:	perl-update-Time-HiRes.patch
-%define			    Time_HiRes_version 1.9719
-Patch117:	perl-update-Digest-SHA.patch
-# includes Fatal.pm
-Patch118:	perl-update-autodie.patch
-%define			    autodie_version 1.999
-# cpan has it under PathTools-3.30
-# could be 3.31
-Patch119:	perl-update-FileSpec.patch
-%define			    File_Spec_version 3.30
-# FIXME should be 2.023, to preserve upgrade path
-# -- for now, we just cheat with the version number
-Patch120:	perl-update-Compress-Raw-Zlib.patch
-%define			    Compress_Raw_Zlib_version 2.023
-# could be 1.22
-Patch121:	perl-update-Scalar-List-Utils.patch
-%define			    Scalar_List_Utils 1.21
-Patch122:	perl-update-Module-Pluggable.patch
-
-# could be 2.023
-Patch124:	perl-update-IO-Compress-Base.patch
-%define			    IO_Compress_Base_version 2.020
-# could be 2.023
-Patch125:	perl-update-IO-Compress-Zlib.patch
-%define			    IO_Compress_Zlib_version 2.020
-#... also update version number of Compress::Zlib
-
-# FIXME: Compress-Raw-Zlib also contains Compress-Raw-Bzip2
-# and IO-Compress-Zlib contains IO-Compress-Bzip2
-# and some of these packages have been merged to IO-Compress on cpan,
-# we should merge as well
-
-# and also ExtUtils-ParseXS 2.2002 -> 2.21
-
 
 
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
@@ -938,10 +898,11 @@ upstream tarball from perl.org.
 %patch12 -p1
 %patch13 -p1
 
-%patch201 -p1
-%patch202 -p1
-%patch203 -p1
-%patch204 -p1
+%patch101 -p1
+%patch102 -p1
+%patch103 -p1
+%patch104 -p1
+%patch105 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1169,10 +1130,11 @@ pushd %{build_archlib}/CORE/
 	'Fedora Patch11: much better swap logic to support reentrancy and fix assert failure' \
 	'Fedora Patch12: backward compatibility for the trasition' \
         'Fedora Patch13: CVE_2009_3626' \
-	'Fedora Patch201: Update ExtUtils::CBuilder to %{ExtUtils_CBuilder_version}' \
-	'Fedora Patch202: Update File::Path to %{File_Path_version}' \
-	'Fedora Patch203: Update Module::Build to %{Module_Build_version}' \
-	'Fedora Patch204: Update Parse::CPAN::Meta::version to %{Parse_CPAN_Meta_version}'
+	'Fedora Patch101: Update ExtUtils::CBuilder to %{ExtUtils_CBuilder_version}' \
+	'Fedora Patch102: Update File::Path to %{File_Path_version}' \
+	'Fedora Patch103: Update Module::Build to %{Module_Build_version}' \
+	'Fedora Patch104: Update Parse::CPAN::Meta::version to %{Parse_CPAN_Meta_version}'
+	'Fedora Patch105: Update Archive::Tar to %{Archive_Tar_version}'
 	%{nil}
 
 rm patchlevel.bak
@@ -1830,6 +1792,11 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jul  7 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.1-113
+- fix incorrect return code on failed extraction by upgrading Archive::Tar
+  to 1.62 (bug #607687)
+- remove unused patches and renumber used ones
+
 * Fri Mar  5 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-112
 - fix license according to advice from legal
 - clean unused patches
