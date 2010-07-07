@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        88%{?dist}
+Release:        89%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1954,6 +1954,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jul  7 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.0-89
+- Fix perl-5.10.0-Encode-err.patch patch to be applicable
+
 * Wed Mar 17 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-88
 - rebuild, e.g. Patch62 is missing in koji build
 

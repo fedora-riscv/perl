@@ -18,5 +18,5 @@
 +    require Encode::ConfigLocal;
 +};
  
- sub encodings
- {
+ sub encodings {
+     my $class = shift;
