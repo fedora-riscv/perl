@@ -12,7 +12,7 @@ Name:           perl
 Version:        %{perl_version}
 # DON'T BUILD NOW in rawhide, only into scratch or test buildroot
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        124%{?dist}
+Release:        125%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1252,10 +1252,13 @@ make test
 
 # Module::Build
 %exclude %{_bindir}/config_data
+%exclude %{privlib}/inc/
+%exclude %{privlib}/inc/*
 %exclude %{privlib}/Module/Build/
 %exclude %{privlib}/Module/Build.pm
 %exclude %{_mandir}/man1/config_data.1*
 %exclude %{_mandir}/man3/Module::Build*
+%exclude %{_mandir}/man3/inc::latest.3*
 
 # Module-CoreList
 %exclude %{_bindir}/corelist
@@ -1555,10 +1558,13 @@ make test
 %files Module-Build
 %defattr(-,root,root,-)
 %{_bindir}/config_data
+%{privlib}/inc/
+%{privlib}/inc/*
 %{privlib}/Module/Build/
 %{privlib}/Module/Build.pm
 %{_mandir}/man1/config_data.1*
 %{_mandir}/man3/Module::Build*
+%{_mandir}/man3/inc::latest.3*
 
 %files Module-CoreList
 %defattr(-,root,root,-)
@@ -1679,6 +1685,9 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jul  8 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.1-125
+- 607505 add another dir into Module::Build (thanks to Paul Howarth)
+
 * Mon Jun 28 2010 Ralf Corsépius <corsepiu@fedoraproject.org> -  4:5.12.1-124
 - Address perl-Compress-Raw directory ownership (BZ 607881).
 
