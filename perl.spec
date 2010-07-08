@@ -204,7 +204,7 @@ Patch100:	perl-update-constant.patch
 Patch101:	perl-update-Archive-Extract.patch
 %define			    Archive_Extract_version 0.30
 Patch102:	perl-update-Archive-Tar.patch
-%define			    Archive_Tar_version 1.46
+%define			    Archive_Tar_version 1.62
 Patch103:	perl-update-CGI.patch
 %define			    CGI_version 3.43
 Patch104:	perl-update-ExtUtils-CBuilder.patch
@@ -1956,6 +1956,8 @@ TMPDIR="$PWD/tmp" make test
 %changelog
 * Wed Jul  7 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.0-89
 - Fix perl-5.10.0-Encode-err.patch patch to be applicable
+- Fix incorrect return code on failed extraction by upgrading Archive::Tar to
+  1.62 (bug #607687)
 
 * Wed Mar 17 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-88
 - rebuild, e.g. Patch62 is missing in koji build
