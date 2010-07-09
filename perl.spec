@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        89%{?dist}
+Release:        90%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -463,6 +463,8 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.9205
+# CPAN encourages Digest::SHA strongly because of integrity checks
+Requires:       perl(Digest::SHA)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Provides:       cpan = %{version}
 
@@ -476,6 +478,8 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.84
+# CPANPLUS encourages Digest::SHA strongly because of integrity checks
+Requires:       perl(Digest::SHA)
 Requires:       perl(Module::Pluggable) >= 2.4
 Requires:       perl(Module::CoreList)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -1954,6 +1958,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jul 09 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.0-90
+- Add Digest::SHA requirement to perl-CPAN and perl-CPANPLUS (bug #612563)
+
 * Wed Jul  7 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.0-89
 - Fix perl-5.10.0-Encode-err.patch patch to be applicable
 - Fix incorrect return code on failed extraction by upgrading Archive::Tar to
