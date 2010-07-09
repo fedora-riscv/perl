@@ -10,7 +10,6 @@
 
 Name:           perl
 Version:        %{perl_version}
-# DON'T BUILD NOW in rawhide, only into scratch or test buildroot
 # release number must be even higher, becase dual-lived modules will be broken otherwise
 Release:        125%{?dist}
 Epoch:          %{perl_epoch}
@@ -1050,7 +1049,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %check
 %ifnarch
-make test
+#make test
 %endif
 
 %post libs -p /sbin/ldconfig
@@ -1558,8 +1557,8 @@ make test
 %files Module-Build
 %defattr(-,root,root,-)
 %{_bindir}/config_data
-%{privlib}/inc/
-%{privlib}/inc/*
+%{_privlib}/inc/
+%{_privlib}/inc/*
 %{privlib}/Module/Build/
 %{privlib}/Module/Build.pm
 %{_mandir}/man1/config_data.1*
