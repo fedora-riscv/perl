@@ -1252,7 +1252,6 @@ rm -rf $RPM_BUILD_ROOT
 # Module::Build
 %exclude %{_bindir}/config_data
 %exclude %{privlib}/inc/
-%exclude %{privlib}/inc/*
 %exclude %{privlib}/Module/Build/
 %exclude %{privlib}/Module/Build.pm
 %exclude %{_mandir}/man1/config_data.1*
@@ -1557,8 +1556,7 @@ rm -rf $RPM_BUILD_ROOT
 %files Module-Build
 %defattr(-,root,root,-)
 %{_bindir}/config_data
-%{_privlib}/inc/
-%{_privlib}/inc/*
+%{privlib}/inc/
 %{privlib}/Module/Build/
 %{privlib}/Module/Build.pm
 %{_mandir}/man1/config_data.1*
