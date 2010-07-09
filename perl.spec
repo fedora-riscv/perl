@@ -11,7 +11,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        125%{?dist}
+Release:        126%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -253,6 +253,8 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.9402
+# CPAN encourages Digest::SHA strongly because of integrity checks
+Requires:       perl(Digest::SHA)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Provides:       cpan = %{version}
 BuildArch:      noarch
@@ -267,6 +269,8 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.90
+# CPANPLUS encourages Digest::SHA strongly because of integrity checks
+Requires:       perl(Digest::SHA)
 Requires:       perl(Module::Pluggable) >= 2.4
 Requires:       perl(Module::CoreList)
 Requires:       perl(DBIx::Simple)
@@ -1682,6 +1686,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jul 09 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.1-126
+- Add Digest::SHA requirement to perl-CPAN and perl-CPANPLUS (bug #612563)
+
 * Thu Jul  8 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.1-125
 - 607505 add another dir into Module::Build (thanks to Paul Howarth)
 
