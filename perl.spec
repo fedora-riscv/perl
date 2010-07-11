@@ -11,7 +11,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        126%{?dist}
+Release:        127%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -77,6 +77,11 @@ Provides: perl(VMS::Stdio)
 # Compat provides
 Provides: perl(:MODULE_COMPAT_5.12.1)
 Provides: perl(:MODULE_COMPAT_5.12.0)
+%ifarch s390 s390x
+# Temporary compat provides needed during catching the state of rawhide with koji-shadow
+Provides: perl(:MODULE_COMPAT_5.10.1)
+Provides: perl(:MODULE_COMPAT_5.10.0)
+%endif
 
 # Threading provides
 Provides: perl(:WITH_ITHREADS)
@@ -1686,6 +1691,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sun Jul 11 2010 Dan Horák <dan[at]danny.cz> - 4:5.12.1-127
+- add temporary compat provides needed on s390(x)
+
 * Fri Jul 09 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.1-126
 - Add Digest::SHA requirement to perl-CPAN and perl-CPANPLUS (bug #612563)
 
