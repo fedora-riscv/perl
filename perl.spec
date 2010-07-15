@@ -134,7 +134,7 @@ Provides: perl-File-Temp = 0.22
 Obsoletes: perl-File-Temp < 0.20
 
 # suidperl isn't created by upstream since 5.12.0
-Obsoletes: perl-suidperl <= 4:5.10.1-119
+Obsoletes: perl-suidperl <= 4:5.12.1
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 
