@@ -1,0 +1,130 @@
+From aee0279a5d6c3c12063e2c5488b35e88ccd13c54 Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Fri, 23 Apr 2010 19:28:35 +1000
+Subject: [PATCH] RT#73814 - unpack() didn't handle scalar context correctly for %32H and %32u
+
+split() would crash because the third item on the stack wasn't the
+regular expression it expected.  unpack("%2H", ...) would return both
+the unpacked result and the checksum on the stack, similarly for
+unpack("%2u", ...).
+---
+ pp_pack.c   |   33 +++++++++++++++++++++------------
+ t/op/pack.t |   10 +++++++++-
+ 2 files changed, 30 insertions(+), 13 deletions(-)
+
+diff --git a/pp_pack.c b/pp_pack.c
+index 0670548..0ae8afd 100644
+--- a/pp_pack.c
++++ b/pp_pack.c
+@@ -1562,9 +1562,11 @@ S_unpack_rec(pTHX_ tempsym_t* symptr, const char *s, const char *strbeg, const c
+ 	    /* Preliminary length estimate, acceptable for utf8 too */
+ 	    if (howlen == e_star || len > (strend - s) * 2)
+ 		len = (strend - s) * 2;
+-	    sv = sv_2mortal(newSV(len ? len : 1));
+-	    SvPOK_on(sv);
+-	    str = SvPVX(sv);
++	    if (!checksum) {
++		sv = sv_2mortal(newSV(len ? len : 1));
++		SvPOK_on(sv);
++		str = SvPVX(sv);
++	    }
+ 	    if (datumtype == 'h') {
+ 		U8 bits = 0;
+ 		I32 ai32 = len;
+@@ -1574,7 +1576,8 @@ S_unpack_rec(pTHX_ tempsym_t* symptr, const char *s, const char *strbeg, const c
+ 			if (s >= strend) break;
+ 			bits = uni_to_byte(aTHX_ &s, strend, datumtype);
+ 		    } else bits = * (U8 *) s++;
+-		    *str++ = PL_hexdigit[bits & 15];
++		    if (!checksum)
++			*str++ = PL_hexdigit[bits & 15];
+ 		}
+ 	    } else {
+ 		U8 bits = 0;
+@@ -1585,12 +1588,15 @@ S_unpack_rec(pTHX_ tempsym_t* symptr, const char *s, const char *strbeg, const c
+ 			if (s >= strend) break;
+ 			bits = uni_to_byte(aTHX_ &s, strend, datumtype);
+ 		    } else bits = *(U8 *) s++;
+-		    *str++ = PL_hexdigit[(bits >> 4) & 15];
++		    if (!checksum)
++			*str++ = PL_hexdigit[(bits >> 4) & 15];
+ 		}
+ 	    }
+-	    *str = '\0';
+-	    SvCUR_set(sv, str - SvPVX_const(sv));
+-	    XPUSHs(sv);
++	    if (!checksum) {
++		*str = '\0';
++		SvCUR_set(sv, str - SvPVX_const(sv));
++		XPUSHs(sv);
++	    }
+ 	    break;
+ 	}
+ 	case 'C':
+@@ -2123,7 +2129,7 @@ S_unpack_rec(pTHX_ tempsym_t* symptr, const char *s, const char *strbeg, const c
+ 	    break;
+ #endif
+ 	case 'u':
+-	    {
++	    if (!checksum) {
+                 const STRLEN l = (STRLEN) (strend - s) * 3 / 4;
+ 		sv = sv_2mortal(newSV(l));
+ 		if (l) SvPOK_on(sv);
+@@ -2141,7 +2147,8 @@ S_unpack_rec(pTHX_ tempsym_t* symptr, const char *s, const char *strbeg, const c
+ 			hunk[0] = (char)((a << 2) | (b >> 4));
+ 			hunk[1] = (char)((b << 4) | (c >> 2));
+ 			hunk[2] = (char)((c << 6) | d);
+-			sv_catpvn(sv, hunk, (len > 3) ? 3 : len);
++			if (!checksum)
++			    sv_catpvn(sv, hunk, (len > 3) ? 3 : len);
+ 			len -= 3;
+ 		    }
+ 		    if (s < strend) {
+@@ -2182,7 +2189,8 @@ S_unpack_rec(pTHX_ tempsym_t* symptr, const char *s, const char *strbeg, const c
+ 			hunk[0] = (char)((a << 2) | (b >> 4));
+ 			hunk[1] = (char)((b << 4) | (c >> 2));
+ 			hunk[2] = (char)((c << 6) | d);
+-			sv_catpvn(sv, hunk, (len > 3) ? 3 : len);
++			if (!checksum)
++			    sv_catpvn(sv, hunk, (len > 3) ? 3 : len);
+ 			len -= 3;
+ 		    }
+ 		    if (*s == '\n')
+@@ -2192,7 +2200,8 @@ S_unpack_rec(pTHX_ tempsym_t* symptr, const char *s, const char *strbeg, const c
+ 			    s += 2;
+ 		}
+ 	    }
+-	    XPUSHs(sv);
++	    if (!checksum)
++		XPUSHs(sv);
+ 	    break;
+ 	}
+ 
+diff --git a/t/op/pack.t b/t/op/pack.t
+index 4b5f9a5..5775caf 100644
+--- a/t/op/pack.t
++++ b/t/op/pack.t
+@@ -12,7 +12,7 @@ my $no_endianness = $] > 5.009 ? '' :
+ my $no_signedness = $] > 5.009 ? '' :
+   "Signed/unsigned pack modifiers not available on this perl";
+ 
+-plan tests => 14697;
++plan tests => 14699;
+ 
+ use strict;
+ use warnings qw(FATAL all);
+@@ -1985,3 +1985,11 @@ is(unpack('c'), 65, "one-arg unpack (change #18751)"); # defaulting to $_
+     my ($v) = split //, unpack ('(B)*', 'ab');
+     is($v, 0); # Doesn't SEGV :-)
+ }
++{
++    #73814
++    my $x = runperl( prog => 'print split( /,/, unpack(q(%2H*), q(hello world))), qq(\n)' );
++    is($x, "0\n", "split /a/, unpack('%2H*'...) didn't crash");
++
++    my $y = runperl( prog => 'print split( /,/, unpack(q(%32u*), q(#,3,Q)), qq(\n)), qq(\n)' );
++    is($y, "0\n", "split /a/, unpack('%32u*'...) didn't crash");
++}
+-- 
+1.5.6.5
+

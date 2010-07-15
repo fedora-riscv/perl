@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        114%{?dist}
+Release:        115%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -74,6 +74,9 @@ Patch12:        perl-add-symbols.patch
 
 # CVE_2009_3626 rhbz#547656 
 Patch13:        perl-5.10.1-CVE_2009_3626.patch
+
+# http://rt.perl.org/rt3//Public/Bug/Display.html?id=73814
+Patch14:        perl-5.10.1-unpack-didn-t-handle-scalar-context.patch
 
 # Version macros for some of the modules.
 # If comment starts with module name, distributed module is part of
@@ -901,6 +904,7 @@ upstream tarball from perl.org.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
 
 %patch101 -p1
 %patch102 -p1
@@ -1133,7 +1137,8 @@ pushd %{build_archlib}/CORE/
 	'Fedora Patch10: fix RT 39060, errno incorrectly set in perlio' \
 	'Fedora Patch11: much better swap logic to support reentrancy and fix assert failure' \
 	'Fedora Patch12: backward compatibility for the trasition' \
-        'Fedora Patch13: CVE_2009_3626' \
+    'Fedora Patch13: CVE_2009_3626' \
+    'Fedora Patch14: unpack RT 73814' \
 	'Fedora Patch101: Update ExtUtils::CBuilder to %{ExtUtils_CBuilder_version}' \
 	'Fedora Patch102: Update File::Path to %{File_Path_version}' \
 	'Fedora Patch103: Update Module::Build to %{Module_Build_version}' \
@@ -1796,6 +1801,10 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jul 15 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-115
+- 576824 backport unpack patch from upstream:
+   http://rt.perl.org/rt3//Public/Bug/Display.html?id=73814
+
 * Fri Jul 09 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.1-114
 - Add Digest::SHA requirement to perl-CPAN and perl-CPANPLUS (bug #612563)
 
