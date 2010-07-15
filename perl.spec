@@ -11,7 +11,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        127%{?dist}
+Release:        128%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -134,7 +134,7 @@ Provides: perl-File-Temp = 0.22
 Obsoletes: perl-File-Temp < 0.20
 
 # suidperl isn't created by upstream since 5.12.0
-Obsoletes: perl-suidperl <= 4:5.10.1-118
+Obsoletes: perl-suidperl <= 4:5.10.1-119
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -1691,6 +1691,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jul 15 2010  Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.1-128
+- 614662 wrong perl-suidperl version in obsolete
+
 * Sun Jul 11 2010 Dan Horák <dan[at]danny.cz> - 4:5.12.1-127
 - add temporary compat provides needed on s390(x)
 
