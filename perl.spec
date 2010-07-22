@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        90%{?dist}
+Release:        91%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -256,10 +256,15 @@ Patch124:	perl-update-IO-Compress-Base.patch
 %define			    IO_Compress_Base_version 2.015
 Patch125:	perl-update-IO-Compress-Zlib.patch
 %define			    IO_Compress_Zlib_version 2.015
+Patch126:   perl-update-Safe.patch
+%define             Safe_version 2.27
 
 # Fedora uses links instead of lynx
 # patches File-Fetch and CPAN
 Patch201:	perl-5.10.0-links.patch
+# RT#73814 - unpack() didn't handle scalar context correctly for %32H and %32u
+# aee0279a5d6c3c12063e2c5488b35e88ccd13c54
+Patch202:   perl-5.10.1-unpack-didn-t-handle-scalar-context.patch
 
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -1047,9 +1052,11 @@ touch t/Module_Pluggable/lib/Zot/.Zork.pm
 %patch123 -p1
 %patch124 -p1
 %patch125 -p1
+%patch126 -p1
 
 
 %patch201 -p1
+%patch202 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1332,7 +1339,9 @@ perl -x patchlevel.h \
 	'Fedora Patch123: Update Storable to %{Storable_version}' \
 	'Fedora Patch124: Update IO::Compress::Base to %{IO_Compress_Base_version}' \
 	'Fedora Patch125: Update IO::Compress::Zlib to %{IO_Compress_Zlib_version}' \
+	'Fedora Patch126: Update Safe to %{Safe_version}' \
 	'Fedora Patch201: Fedora uses links instead of lynx' \
+	'Fedora Patch202: RT#73814 - unpack scalar context correctly ' \
 	%{nil}
 
 rm patchlevel.bak
@@ -1958,6 +1967,13 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jul 21 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-91
+- CVE-2010-1168 perl Safe: Intended restriction bypass via object references
+- CVE-2010-1447 perl: Safe restriction bypass when reference to subroutine in
+ compartment is called from outside
+- 576824 RT#73814 - unpack() didn't handle scalar context correctly
+- Resolves: rhbz#588269, rhbz#576508
+
 * Fri Jul 09 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.0-90
 - Add Digest::SHA requirement to perl-CPAN and perl-CPANPLUS (bug #612563)
 
