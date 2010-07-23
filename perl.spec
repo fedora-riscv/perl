@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        115%{?dist}
+Release:        116%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -985,8 +985,7 @@ echo "RPM Build arch: %{_arch}"
 %define archlib		%{_libdir}/perl5
 
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
-	-DDEBUGGING=-g \
-	-Accflags="-DPERL_USE_SAFE_PUTENV" \
+        -DDEBUGGING=-g \
         -Dversion=%{perl_version} \
         -Dmyhostname=localhost \
         -Dperladmin=root@localhost \
@@ -1001,17 +1000,7 @@ echo "RPM Build arch: %{_arch}"
         -Dvendorlib="%{privlib}" \
         -Darchlib="%{archlib}" \
         -Dvendorarch="%{archlib}" \
-%if 0
-        -Dprivlib="%{_prefix}/lib/perl5/%{perl_version}" \
-        -Dsitelib="%{_prefix}/local/lib/perl5/site_perl/%{perl_version}" \
-        -Dvendorlib="%{_prefix}/lib/perl5/vendor_perl/%{perl_version}" \
-        -Darchlib="%{_libdir}/perl5/%{perl_version}/%{perl_archname}" \
-        -Dsitearch="%{_prefix}/local/%{_lib}/perl5/site_perl/%{perl_version}/%{perl_archname}" \
-        -Dvendorarch="%{_libdir}/perl5/vendor_perl/%{perl_version}/%{perl_archname}" \
-%endif
-%if 1
         -Dinc_version_list="5.10.0" \
-%endif
         -Darchname=%{perl_archname} \
 %ifarch %{multilib_64_archs}
         -Dlibpth="/usr/local/lib64 /lib64 %{_prefix}/lib64" \
@@ -1171,7 +1160,7 @@ rm -rf $RPM_BUILD_ROOT
 # ext/threads-shared/t/stress......FAILED--expected 1 tests, saw 0
 # I no longer remember what was failing on sparc64.
 %ifnarch ppc64 s390x sparc64
-#make test
+make test
 %endif
 
 %post libs -p /sbin/ldconfig
@@ -1807,6 +1796,10 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jul 23 2010  Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-116
+- 575842 remove -DPERL_USE_SAFE_PUTENV from Configure. All related bugs were
+ tested with perl compiled without this option.
+
 * Wed Jul 21 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-115 
 - CVE-2010-1168 perl Safe: Intended restriction bypass via object references
 - CVE-2010-1447 perl: Safe restriction bypass when reference to subroutine in
