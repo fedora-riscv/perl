@@ -639,7 +639,7 @@ diff -urN perl-5.10.1/ext/Safe/t.sec2/safeops.t perl-5.10.1/ext/Safe/t/safeops.t
  }
  
 -open my $fh, '<', '../opcode.pl' or die "Can't open opcode.pl: $!";
-+open my $fh, '<', '../../opcode.pl' or die "Can't open opcode.pl: $!";
++open my $fh, '<', '../opcode.pl' or die "Can't open opcode.pl: $!";
  while (<$fh>) {
      last if /^__END__/;
  }
