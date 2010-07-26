@@ -11,7 +11,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        128%{?dist}
+Release:        129%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1090,6 +1090,7 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{archlib}/CORE/*.h
 %exclude %{_bindir}/xsubpp
 %exclude %{_mandir}/man1/xsubpp*
+%exclude %{_mandir}/man1/perlxs*
 
 # Archive-Extract
 %exclude %{privlib}/Archive/Extract.pm
@@ -1375,6 +1376,7 @@ rm -rf $RPM_BUILD_ROOT
 %{archlib}/CORE/*.h
 %{_bindir}/xsubpp
 %{_mandir}/man1/xsubpp*
+%{_mandir}/man1/perlxs*
 %attr(0644,root,root) %{_sysconfdir}/rpm/macros.perl
 
 %files tests
@@ -1691,6 +1693,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jul 26 2010  Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.1-129
+- 617956 move perlxs* docs files into perl-devel
+
 * Thu Jul 15 2010  Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.1-128
 - 614662 wrong perl-suidperl version in obsolete
 
