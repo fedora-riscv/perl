@@ -4,10 +4,11 @@
 %define perl_archname %{_arch}-%{_os}%{perl_arch_stem}
 
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
+%define parallel_tests 1
 
 Name:           perl
 Version:        %{perl_version}
-Release:        116%{?dist}
+Release:        117%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -77,6 +78,9 @@ Patch13:        perl-5.10.1-CVE_2009_3626.patch
 
 # http://rt.perl.org/rt3//Public/Bug/Display.html?id=73814
 Patch14:        perl-5.10.1-unpack-didn-t-handle-scalar-context.patch
+
+# Fix IO tests to allow parallel testing
+Patch15:        perl-5.10.1-IO-isolate_tests.patch
 
 # Version macros for some of the modules.
 # If comment starts with module name, distributed module is part of
@@ -909,6 +913,7 @@ upstream tarball from perl.org.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
 
 %patch101 -p1
 %patch102 -p1
@@ -1133,6 +1138,7 @@ pushd %{build_archlib}/CORE/
 	'Fedora Patch12: backward compatibility for the trasition' \
     'Fedora Patch13: CVE_2009_3626' \
     'Fedora Patch14: unpack RT 73814' \
+    'Fedora Patch15: enable parallel tests of IO module' \
 	'Fedora Patch101: Update ExtUtils::CBuilder to %{ExtUtils_CBuilder_version}' \
 	'Fedora Patch102: Update File::Path to %{File_Path_version}' \
 	'Fedora Patch103: Update Module::Build to %{Module_Build_version}' \
@@ -1160,7 +1166,12 @@ rm -rf $RPM_BUILD_ROOT
 # ext/threads-shared/t/stress......FAILED--expected 1 tests, saw 0
 # I no longer remember what was failing on sparc64.
 %ifnarch ppc64 s390x sparc64
-make test
+%if %{parallel_tests}
+    JOBS=$(printf '%%s' "%{?_smp_mflags}" | sed 's/.*-j\([0-9][0-9]*\).*/\1/')
+    LC_ALL=C TEST_JOBS=$JOBS make test_harness
+%else
+    LC_ALL=C make test
+%endif
 %endif
 
 %post libs -p /sbin/ldconfig
@@ -1796,6 +1807,11 @@ make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jul 26 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.1-117
+- Enable parallel testing in IO module
+- Run tests in C locale to pass t/op/stat.t test in localized environment
+- Run tests in parallel
+
 * Fri Jul 23 2010  Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-116
 - 575842 remove -DPERL_USE_SAFE_PUTENV from Configure. All related bugs were
  tested with perl compiled without this option.

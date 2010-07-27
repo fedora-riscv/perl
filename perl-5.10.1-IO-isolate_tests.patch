@@ -1,0 +1,28 @@
+As perl5101delta documents, ext/IO/t/io_dir.t breaks parallel testing.
+
+Problem is the test operates on common directory that is touched by other
+tests. Because io_dir compares directory content with previous state,
+concurently running tests break assumption about non-volatility of the
+directory.
+
+This patch fixes the problem by moving io_dir tests into private directory.
+
+http://rt.perl.org/rt3/Ticket/Display.html?id=76740
+
+diff -Naur perl-5.10.1.orig/ext/IO/t/io_dir.t perl-5.10.1/ext/IO/t/io_dir.t
+--- perl-5.10.1.orig/ext/IO/t/io_dir.t	2009-06-23 22:02:03.000000000 +0200
++++ perl-5.10.1/ext/IO/t/io_dir.t	2010-07-26 18:00:28.186773222 +0200
+@@ -20,6 +20,13 @@
+ 
+ use strict;
+ 
++# Prepare standalone directory to avoid influence of other parallel tests
++# mangling CWD content.
++my $new_dir = "io_dir_test";
++mkdir "$new_dir" unless -d "$new_dir";
++mkdir "$new_dir/subdir" unless -d "$new_dir/subdir";
++chdir "$new_dir" or die "Could not change directory to $new_dir: $!";
++
+ my $DIR = $^O eq 'MacOS' ? ":" : ".";
+ 
+ my $CLASS = "IO::Dir";
