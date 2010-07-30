@@ -1,0 +1,14 @@
+Make test compilable as part of perl core.
+Fixed in Test::Harness 3.17.
+diff -Nuar perl-5.10.0.orig/ext/Test/Harness/t/taint.t perl-5.10.0/ext/Test/Harness/t/taint.t
+--- perl-5.10.0.orig/ext/Test/Harness/t/taint.t	2010-07-28 10:52:24.786814827 +0200
++++ perl-5.10.0/ext/Test/Harness/t/taint.t	2010-07-28 10:53:42.497690528 +0200
+@@ -43,7 +43,7 @@
+ }
+ 
+ {
+-    local $ENV{PERL5OPT} = '-Mstrict';
++    local $ENV{PERL5OPT} = $ENV{PERL_CORE} ? '-I../lib -Mstrict' : '-Mstrict';
+     run_test_file(<<'END');
+ #!/usr/bin/perl -T
+ 

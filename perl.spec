@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        91%{?dist}
+Release:        92%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -265,6 +265,8 @@ Patch201:	perl-5.10.0-links.patch
 # RT#73814 - unpack() didn't handle scalar context correctly for %32H and %32u
 # aee0279a5d6c3c12063e2c5488b35e88ccd13c54
 Patch202:   perl-5.10.1-unpack-didn-t-handle-scalar-context.patch
+# Do not throw ../lib from @lib. Fixed in Test-Harness-3.17.
+Patch203:   perl-Test-Harness-3.16-fix_taint_test.patch
 
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:  tcsh, dos2unix, man, groff
@@ -1057,6 +1059,7 @@ touch t/Module_Pluggable/lib/Zot/.Zork.pm
 
 %patch201 -p1
 %patch202 -p1
+%patch203 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1342,6 +1345,7 @@ perl -x patchlevel.h \
 	'Fedora Patch126: Update Safe to %{Safe_version}' \
 	'Fedora Patch201: Fedora uses links instead of lynx' \
 	'Fedora Patch202: RT#73814 - unpack scalar context correctly ' \
+	'Fedora Patch203: Fix taint.t test in Test::Harness ' \
 	%{nil}
 
 rm patchlevel.bak
@@ -1967,6 +1971,9 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jul 28 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.0-92
+- Fix taint.t test in Test::Harness
+
 * Wed Jul 21 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-91
 - CVE-2010-1168 perl Safe: Intended restriction bypass via object references
 - CVE-2010-1447 perl: Safe restriction bypass when reference to subroutine in
