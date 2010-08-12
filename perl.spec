@@ -1036,9 +1036,6 @@ echo "RPM Build arch: %{_arch}"
         -Dscriptdir='%{_bindir}' \
         -Dotherlibdirs="%{old_sitearch}:%{old_sitelib}:%{old_vendorarch}:%{old_vendorlib}:/usr/lib/perl5/site_perl"
 
-# this is promised to stay forever:
-#        -Dotherlibdirs=%{prefix}/lib/perl5/site_perl
-
 
 %ifarch sparc64
 make
@@ -1807,6 +1804,10 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Aug 12 2010  Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-117.1
+- 622896 remove paths, which were in INC duplicated. The rest of duplicated
+ must be here because it's always different macro: privlib/vendorlib.
+
 * Mon Jul 26 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.1-117
 - Enable parallel testing in IO module
 - Run tests in C locale to pass t/op/stat.t test in localized environment

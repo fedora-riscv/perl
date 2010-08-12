@@ -1,7 +1,6 @@
-diff -up perl-5.10.0/perl.c.BAD perl-5.10.0/perl.c
---- perl-5.10.0/perl.c.BAD	2009-03-09 09:55:05.000000000 -0400
-+++ perl-5.10.0/perl.c	2009-03-09 10:00:41.000000000 -0400
-@@ -4753,9 +4753,6 @@ S_init_perllib(pTHX)
+--- perl-5.10.1/perl.c.doub	2009-04-22 20:07:41.000000000 +0200
++++ perl-5.10.1/perl.c	2010-08-12 19:48:26.000000000 +0200
+@@ -4879,9 +4879,6 @@
      incpush(APPLLIB_EXP, TRUE, TRUE, TRUE, TRUE);
  #endif
  
@@ -11,7 +10,7 @@ diff -up perl-5.10.0/perl.c.BAD perl-5.10.0/perl.c
  #ifdef MACOS_TRADITIONAL
      {
  	Stat_t tmpstatbuf;
-@@ -4764,6 +4761,10 @@ S_init_perllib(pTHX)
+@@ -4890,6 +4887,10 @@
  	
  	if (!macperl)
  	    macperl = "";
@@ -22,7 +21,7 @@ diff -up perl-5.10.0/perl.c.BAD perl-5.10.0/perl.c
  	
  	Perl_sv_setpvf(aTHX_ privdir, "%slib:", macperl);
  	if (PerlLIO_stat(SvPVX(privdir), &tmpstatbuf) >= 0 && S_ISDIR(tmpstatbuf.st_mode))
-@@ -4777,14 +4778,6 @@ S_init_perllib(pTHX)
+@@ -4903,14 +4904,6 @@
      if (!PL_tainting)
  	incpush(":", FALSE, FALSE, TRUE, FALSE);
  #else
@@ -37,10 +36,32 @@ diff -up perl-5.10.0/perl.c.BAD perl-5.10.0/perl.c
  
  #ifdef SITEARCH_EXP
      /* sitearch is always relative to sitelib on Windows for
-@@ -4828,6 +4821,19 @@ S_init_perllib(pTHX)
-     incpush(PERL_VENDORLIB_STEM, FALSE, TRUE, TRUE, TRUE);
+@@ -4929,10 +4922,11 @@
+ #  endif
  #endif
  
+-#if defined(SITELIB_STEM) && defined(PERL_INC_VERSION_LIST)
+-    /* Search for version-specific dirs below here */
+-    incpush(SITELIB_STEM, FALSE, TRUE, TRUE, TRUE);
+-#endif
++/* This duplicates path     /usr/local/share/perl5
++ * #if defined(SITELIB_STEM) && defined(PERL_INC_VERSION_LIST)*/
++/* Search for version-specific dirs below here */
++/*    incpush(SITELIB_STEM, FALSE, TRUE, TRUE, TRUE);
++#endif*/
+ 
+ #ifdef PERL_VENDORARCH_EXP
+     /* vendorarch is always relative to vendorlib on Windows for
+@@ -4950,8 +4944,21 @@
+ #  endif
+ #endif
+ 
+-#ifdef PERL_VENDORLIB_STEM /* Search for version-specific dirs below here */
+-    incpush(PERL_VENDORLIB_STEM, FALSE, TRUE, TRUE, TRUE);
++/*#ifdef PERL_VENDORLIB_STEM /* Search for version-specific dirs below here */
++/*    incpush(PERL_VENDORLIB_STEM, FALSE, TRUE, TRUE, TRUE);
++#endif*/
++
 +#ifdef ARCHLIB_EXP
 +    incpush(ARCHLIB_EXP, FALSE, FALSE, TRUE, TRUE);
 +#endif
@@ -52,8 +73,6 @@ diff -up perl-5.10.0/perl.c.BAD perl-5.10.0/perl.c
 +    incpush(PRIVLIB_EXP, TRUE, FALSE, TRUE, TRUE);
 +#else
 +    incpush(PRIVLIB_EXP, FALSE, FALSE, TRUE, TRUE);
-+#endif
-+
- #ifdef PERL_OTHERLIBDIRS
-     incpush(PERL_OTHERLIBDIRS, TRUE, TRUE, TRUE, TRUE);
  #endif
+ 
+ #ifdef PERL_OTHERLIBDIRS
