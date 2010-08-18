@@ -282,7 +282,7 @@ Requires:       perl(Module::CoreList)
 Requires:       perl(DBIx::Simple)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Provides:       perl-CPANPLUS-Dist-Build = 0.06
-Obsoletes:	perl-CPANPLUS-Dist-Build <= 0.05
+Obsoletes:      perl-CPANPLUS-Dist-Build <= 0.05
 BuildArch:      noarch
 
 %description CPANPLUS
@@ -443,7 +443,7 @@ License:        MIT
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
 Version:        0.21
-Requires:	perl = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
 %description Locale-Maketext-Simple
@@ -656,12 +656,12 @@ of YAML::Tiny.
 
 %package Pod-Escapes
 Summary:        Perl module for resolving POD escape sequences
-Group:   	Development/Libraries
+Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
 Version:        1.04
-Requires:	perl = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
 %description Pod-Escapes
@@ -779,7 +779,7 @@ License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          3
 Version:        0.82
-Requires:	perl = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
 %description version
@@ -881,26 +881,26 @@ chmod +x %{__perl_provides}
 
 # Configure Compress::Zlib to use system zlib
 sed -i 's|BUILD_ZLIB      = True|BUILD_ZLIB      = False|
-	s|INCLUDE         = ./zlib-src|INCLUDE         = %{_includedir}|
-	s|LIB             = ./zlib-src|LIB             = %{_libdir}|' \
-	cpan/Compress-Raw-Zlib/config.in
+    s|INCLUDE         = ./zlib-src|INCLUDE         = %{_includedir}|
+    s|LIB             = ./zlib-src|LIB             = %{_libdir}|' \
+    cpan/Compress-Raw-Zlib/config.in
 
 %build
 echo "RPM Build arch: %{_arch}"
 
-# use "lib", not %{_lib}, for privlib, sitelib, and vendorlib
+# use "lib", not %%{_lib}, for privlib, sitelib, and vendorlib
 # To build production version, we would need -DDEBUGGING=-g
 
 # transition period:
-%define old_sitearch	%{_prefix}/local/%{_lib}/perl5/site_perl/5.10.0/%{perl_archname}
-%define old_sitelib	%{_prefix}/local/lib/perl5/site_perl/5.10.0
-%define old_vendorarch	%{_libdir}/perl5/vendor_perl/5.10.0/%{perl_archname}
+%define old_sitearch    %{_prefix}/local/%{_lib}/perl5/site_perl/5.10.0/%{perl_archname}
+%define old_sitelib     %{_prefix}/local/lib/perl5/site_perl/5.10.0
+%define old_vendorarch  %{_libdir}/perl5/vendor_perl/5.10.0/%{perl_archname}
 # for a reason that is not clear, the version component got stripped here:
-%define old_vendorlib	%{_prefix}/lib/perl5/vendor_perl
+%define old_vendorlib   %{_prefix}/lib/perl5/vendor_perl
 # No need to add old privdir and archdir to otherlibdirs.
 
-%define privlib		%{_prefix}/share/perl5
-%define archlib		%{_libdir}/perl5
+%define privlib     %{_prefix}/share/perl5
+%define archlib     %{_libdir}/perl5
 
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
         -Dccdlflags="-Wl,--enable-new-dtags" \
@@ -964,9 +964,9 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %define build_privlib $RPM_BUILD_ROOT%{privlib}
 %define build_bindir  $RPM_BUILD_ROOT%{_bindir}
 %define new_perl LD_PRELOAD="%{build_archlib}/CORE/libperl.so" \\\
-	LD_LIBRARY_PATH="%{build_archlib}/CORE" \\\
-	PERL5LIB="%{build_archlib}:%{build_privlib}" \\\
-	%{build_bindir}/perl
+    LD_LIBRARY_PATH="%{build_archlib}/CORE" \\\
+    PERL5LIB="%{build_archlib}:%{build_privlib}" \\\
+    %{build_bindir}/perl
 
 # perl doesn't create the auto subdirectory, but modules put things in it,
 # so we need to own it.
@@ -975,9 +975,9 @@ mkdir -p -m 755 %{build_archlib}/auto
 install -p -m 755 utils/pl2pm %{build_bindir}/pl2pm
 
 for i in asm/termios.h syscall.h syslimits.h syslog.h \
-	sys/ioctl.h sys/socket.h sys/time.h wait.h
+    sys/ioctl.h sys/socket.h sys/time.h wait.h
 do
-  %{new_perl} %{build_bindir}/h2ph -a -d %{build_archlib} $i || true
+    %{new_perl} %{build_bindir}/h2ph -a -d %{build_archlib} $i || true
 done
 
 #
@@ -1019,18 +1019,18 @@ popd
 # Local patch tracking
 pushd %{build_archlib}/CORE/
 %{new_perl} -x patchlevel.h \
-	'Fedora Patch1: Removes date check, Fedora/RHEL specific' \
+    'Fedora Patch1: Removes date check, Fedora/RHEL specific' \
 %ifnarch sparc64 \
-	'Fedora Patch2: Work around annoying rpath issue' \
+    'Fedora Patch2: Work around annoying rpath issue' \
 %endif \
 %ifarch %{multilib_64_archs} \
-	'Fedora Patch3: support for libdir64' \
+    'Fedora Patch3: support for libdir64' \
 %endif \
-	'Fedora Patch4: use libresolv instead of libbind' \
-	'Fedora Patch5: USE_MM_LD_RUN_PATH' \
-	'Fedora Patch6: Skip hostname tests, due to builders not being network capable' \
-	'Fedora Patch7: Dont run one io test due to random builder failures' 
-	%{nil}
+    'Fedora Patch4: use libresolv instead of libbind' \
+    'Fedora Patch5: USE_MM_LD_RUN_PATH' \
+    'Fedora Patch6: Skip hostname tests, due to builders not being network capable' \
+    'Fedora Patch7: Dont run one io test due to random builder failures' 
+    %{nil}
 
 rm patchlevel.bak
 popd
@@ -1705,6 +1705,7 @@ rm -rf $RPM_BUILD_ROOT
 - Add "-Wl,--enable-new-dtags" to linker to allow to override perl's rpath by
   LD_LIBRARY_PATH used in tests. Otherwise tested perl would link to old
   in-system libperl.so.
+- Normalize spec file indentation
 
 * Mon Jul 26 2010  Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.1-129
 - 617956 move perlxs* docs files into perl-devel
