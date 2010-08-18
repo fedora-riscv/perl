@@ -4,6 +4,7 @@
 %define perl_archname %{_arch}-%{_os}%{perl_arch_stem}
 
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
+%define parallel_tests 1
 
 # same as we provide in /etc/rpm/macros.perl
 %define perl5_testdir   %{_libexecdir}/perl5-tests
@@ -11,7 +12,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        129%{?dist}
+Release:        130%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1058,7 +1059,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %check
 %ifnarch
-#make test
+%if %{parallel_tests}
+    JOBS=$(printf '%%s' "%{?_smp_mflags}" | sed 's/.*-j\([0-9][0-9]*\).*/\1/')
+    LC_ALL=C TEST_JOBS=$JOBS make test_harness
+%else
+    LC_ALL=C make test
+%endif
 %endif
 
 %post libs -p /sbin/ldconfig
@@ -1693,6 +1699,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Aug 18 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.1-130
+- Run tests in parallel
+
 * Mon Jul 26 2010  Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.1-129
 - 617956 move perlxs* docs files into perl-devel
 
