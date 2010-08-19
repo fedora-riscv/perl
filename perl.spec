@@ -8,7 +8,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        117%{?dist}
+Release:        118%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -990,6 +990,7 @@ echo "RPM Build arch: %{_arch}"
 %define archlib		%{_libdir}/perl5
 
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
+        -Dccdlflags="-Wl,--enable-new-dtags" \
         -DDEBUGGING=-g \
         -Dversion=%{perl_version} \
         -Dmyhostname=localhost \
@@ -1804,6 +1805,11 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Aug 19 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.1-118
+- Add "-Wl,--enable-new-dtags" to linker to allow to override perl's rpath by
+  LD_LIBRARY_PATH used in tests. Otherwise tested perl would link to old
+  in-system libperl.so.
+
 * Thu Aug 12 2010  Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-117.1
 - 622896 remove paths, which were in INC duplicated. The rest of duplicated
  must be here because it's always different macro: privlib/vendorlib.
