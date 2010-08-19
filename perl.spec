@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        92%{?dist}
+Release:        93%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1122,6 +1122,7 @@ echo "RPM Build arch: %{_arch}"
 
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Accflags="-DPERL_USE_SAFE_PUTENV" \
+        -Dccdlflags="-Wl,--enable-new-dtags" \
         -Dversion=%{perl_version} \
         -Dmyhostname=localhost \
         -Dperladmin=root@localhost \
@@ -1971,6 +1972,11 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Aug 19 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.0-93
+- Add "-Wl,--enable-new-dtags" to linker to allow to override perl's rpath by
+  LD_LIBRARY_PATH used in tests. Otherwise tested perl would link to old
+  in-system libperl.so.
+
 * Wed Jul 28 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.0-92
 - Fix taint.t test in Test::Harness
 
