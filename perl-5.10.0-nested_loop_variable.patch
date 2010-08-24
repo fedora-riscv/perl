@@ -1,0 +1,420 @@
+commit 2e009339a1304837a1e4ffdc5abb249dd2a3b402
+Author: Nicholas Clark <nick@ccl4.org>
+Date:   Thu Oct 16 20:45:27 2008 +0000
+
+    Rebase 73072c95a77d4a9e353efb3fdb279b9650e31e8b
+    
+    Rebase 73072c95a77d4a9e353efb3fdb279b9650e31e8b to perl-5.10.0 to fix
+    rhbz#626411 and add PVBM definition to pass test.
+    
+    Integrate:
+    [ 33080]
+    Investigation reveals that the work of restoring the iterator to the
+    pad is shared between POPLOOP, using itersave, and the end of scope
+    restore action requested by Perl_save_padsv(). In fact, the only user
+    of SAVEt_PADSV is pp_enteriter, and it already provides enough
+    information to allow it to perform the sv_2mortal() in POPLOOP.
+    So make it do so. Rather than creating a new routine, use the existing
+    routine because nothing else (at least nothing else known to Google's
+    codesearch) uses it. But rename it just in case something we can't see
+    is being naughty and using our private functions - they will get
+    link errors against 5.12.
+    
+    All this means that itersave is now redundant. So remove it.
+    This makes struct context 48 bytes on ILP32 platforms with 32bit IVs,
+    down from 64 bytes in 5.10. 33% more context stack in the same memory.
+    
+    [ 33083]
+    Subject: [PATCH] util.c: some consting
+    From: Steven Schubiger <schubiger@gmail.com>
+    Date: Fri, 25 Jan 2008 01:10:52 +0100
+    Message-ID: <20080125001052.GA29980@refcnt.homeunix.org>
+    
+    [ 34171]
+    Subject: [PATCH] Tests for [perl #57564] and [perl #24524] Refcounting bug
+    From: Bram <p5p@perl.wizbit.be>
+    Date: Tue, 05 Aug 2008 19:58:00 +0200
+    Message-ID: <20080805195800.xq9k9kttwk0kwsk0@horde.wizbit.be>
+    
+    [Modified for maint by
+     1: Keeping the old Perl_save_padsv()
+     2: Keeping its save type
+     3: Not removing itersave from struct block_loop
+    
+     The seemingly unrelated change 33083 happened to have the update to
+     global.sym that I'd missed committing in 33080]
+    p4raw-link: @34171 on //depot/perl: fcf99ed44dc650ba48499b5fd6e385a04afd0979
+    p4raw-link: @33083 on //depot/perl: c9289b7b6da6fbd0919642909a950203eda422ad
+    p4raw-link: @33080 on //depot/perl: 09edbca0f5c7caf9dd4acef80d8e6275e5a95ea1
+    
+    p4raw-id: //depot/maint-5.10/perl@34495
+    p4raw-integrated: from //depot/perl@34493 'copy in' t/op/ref.t
+    	(@34092..)
+    p4raw-integrated: from //depot/perl@33083 'edit in' global.sym
+    	(@32934..)
+    p4raw-integrated: from //depot/perl@33080 'edit in' scope.h (@32793..)
+    	embed.fnc proto.h (@33004..) sv.c (@33073..) cop.h (@33076..)
+    	scope.c (@33078..) embed.h (@33079..) 'merge in' pp_ctl.c
+    	(@33073..)
+
+diff --git a/cop.h b/cop.h
+index 71397c3..d81b821 100644
+--- a/cop.h
++++ b/cop.h
+@@ -419,6 +419,9 @@ struct block_loop {
+     OP *	next_op;
+     SV **	itervar;
+ #endif
++    /* Eliminated in blead by change 33080, but for binary compatibility
++       reasons we can't remove it from the middle of a struct in a maintenance
++       release, so it gets to stay, and be set to NULL.  */
+     SV *	itersave;
+     /* (from inspection of source code) for a .. range of strings this is the
+        current string.  */
+@@ -453,17 +456,13 @@ struct block_loop {
+ 	 : (SV**)NULL)
+ #  define CX_ITERDATA_SET(cx,idata)					\
+ 	CX_CURPAD_SAVE(cx->blk_loop);					\
+-	if ((cx->blk_loop.iterdata = (idata)))				\
+-	    cx->blk_loop.itersave = SvREFCNT_inc(*CxITERVAR(cx));	\
+-	else								\
+-	    cx->blk_loop.itersave = NULL;
++	cx->blk_loop.itersave = NULL;					\
++	cx->blk_loop.iterdata = (idata);
+ #else
+ #  define CxITERVAR(c)		((c)->blk_loop.itervar)
+ #  define CX_ITERDATA_SET(cx,ivar)					\
+-	if ((cx->blk_loop.itervar = (SV**)(ivar)))			\
+-	    cx->blk_loop.itersave = SvREFCNT_inc(*CxITERVAR(cx));	\
+-	else								\
+-	    cx->blk_loop.itersave = NULL;
++	cx->blk_loop.itersave = NULL;					\
++	cx->blk_loop.itervar = (SV**)(ivar);
+ #endif
+ 
+ #ifdef USE_ITHREADS
+@@ -486,16 +485,6 @@ struct block_loop {
+ 
+ #define POPLOOP(cx)							\
+ 	SvREFCNT_dec(cx->blk_loop.iterlval);				\
+-	if (CxITERVAR(cx)) {						\
+-            if (SvPADMY(cx->blk_loop.itersave)) {			\
+-		SV ** const s_v_p = CxITERVAR(cx);			\
+-		sv_2mortal(*s_v_p);					\
+-		*s_v_p = cx->blk_loop.itersave;				\
+-	    }								\
+-	    else {							\
+-		SvREFCNT_dec(cx->blk_loop.itersave);			\
+-	    }								\
+-	}								\
+ 	if (cx->blk_loop.iterary && cx->blk_loop.iterary != PL_curstack)\
+ 	    SvREFCNT_dec(cx->blk_loop.iterary);
+ 
+diff --git a/embed.fnc b/embed.fnc
+index 2211eb6..7afdf29 100644
+--- a/embed.fnc
++++ b/embed.fnc
+@@ -775,6 +775,7 @@ Ap	|void	|save_pptr	|NN char** pptr
+ Ap	|void	|save_vptr	|NN void* pptr
+ Ap	|void	|save_re_context
+ Ap	|void	|save_padsv	|PADOFFSET off
++Ap	|void	|save_padsv_and_mortalize|PADOFFSET off
+ Ap	|void	|save_sptr	|NN SV** sptr
+ Ap	|SV*	|save_svref	|NN SV** sptr
+ p	|OP*	|sawparens	|NULLOK OP* o
+diff --git a/embed.h b/embed.h
+index deb30b3..dbe88f0 100644
+--- a/embed.h
++++ b/embed.h
+@@ -781,6 +781,7 @@
+ #define save_vptr		Perl_save_vptr
+ #define save_re_context		Perl_save_re_context
+ #define save_padsv		Perl_save_padsv
++#define save_padsv_and_mortalize	Perl_save_padsv_and_mortalize
+ #define save_sptr		Perl_save_sptr
+ #define save_svref		Perl_save_svref
+ #ifdef PERL_CORE
+@@ -3067,6 +3068,7 @@
+ #define save_vptr(a)		Perl_save_vptr(aTHX_ a)
+ #define save_re_context()	Perl_save_re_context(aTHX)
+ #define save_padsv(a)		Perl_save_padsv(aTHX_ a)
++#define save_padsv_and_mortalize(a)	Perl_save_padsv_and_mortalize(aTHX_ a)
+ #define save_sptr(a)		Perl_save_sptr(aTHX_ a)
+ #define save_svref(a)		Perl_save_svref(aTHX_ a)
+ #ifdef PERL_CORE
+diff --git a/global.sym b/global.sym
+index 4a546c2..28222ea 100644
+--- a/global.sym
++++ b/global.sym
+@@ -463,6 +463,7 @@ Perl_save_pptr
+ Perl_save_vptr
+ Perl_save_re_context
+ Perl_save_padsv
++Perl_save_padsv_and_mortalize
+ Perl_save_sptr
+ Perl_save_svref
+ Perl_scan_bin
+diff --git a/pp_ctl.c b/pp_ctl.c
+index 64157f3..949d637 100644
+--- a/pp_ctl.c
++++ b/pp_ctl.c
+@@ -1822,11 +1822,10 @@ PP(pp_enteriter)
+ 	    SAVESETSVFLAGS(PAD_SVl(PL_op->op_targ),
+ 		    SVs_PADSTALE, SVs_PADSTALE);
+ 	}
++	SAVEPADSVANDMORTALIZE(PL_op->op_targ);
+ #ifndef USE_ITHREADS
+ 	svp = &PAD_SVl(PL_op->op_targ);		/* "my" variable */
+-	SAVESPTR(*svp);
+ #else
+-	SAVEPADSV(PL_op->op_targ);
+ 	iterdata = INT2PTR(void*, PL_op->op_targ);
+ 	cxtype |= CXp_PADVAR;
+ #endif
+diff --git a/proto.h b/proto.h
+index a302ec4..18d8ba7 100644
+--- a/proto.h
++++ b/proto.h
+@@ -2092,6 +2092,7 @@ PERL_CALLCONV void	Perl_save_vptr(pTHX_ void* pptr)
+ 
+ PERL_CALLCONV void	Perl_save_re_context(pTHX);
+ PERL_CALLCONV void	Perl_save_padsv(pTHX_ PADOFFSET off);
++PERL_CALLCONV void	Perl_save_padsv_and_mortalize(pTHX_ PADOFFSET off);
+ PERL_CALLCONV void	Perl_save_sptr(pTHX_ SV** sptr)
+ 			__attribute__nonnull__(pTHX_1);
+ 
+diff --git a/scope.c b/scope.c
+index 17b7789..8244674 100644
+--- a/scope.c
++++ b/scope.c
+@@ -412,15 +412,15 @@ Perl_save_sptr(pTHX_ SV **sptr)
+ }
+ 
+ void
+-Perl_save_padsv(pTHX_ PADOFFSET off)
++Perl_save_padsv_and_mortalize(pTHX_ PADOFFSET off)
+ {
+     dVAR;
+     SSCHECK(4);
+     ASSERT_CURPAD_ACTIVE("save_padsv");
+-    SSPUSHPTR(PL_curpad[off]);
++    SSPUSHPTR(SvREFCNT_inc_simple_NN(PL_curpad[off]));
+     SSPUSHPTR(PL_comppad);
+     SSPUSHLONG((long)off);
+-    SSPUSHINT(SAVEt_PADSV);
++    SSPUSHINT(SAVEt_PADSV_AND_MORTALIZE);
+ }
+ 
+ void
+@@ -929,12 +929,18 @@ Perl_leave_scope(pTHX_ I32 base)
+ 	    else
+ 		PL_curpad = NULL;
+ 	    break;
+-	case SAVEt_PADSV:
++	case SAVEt_PADSV_AND_MORTALIZE:
+ 	    {
+ 		const PADOFFSET off = (PADOFFSET)SSPOPLONG;
++		SV **svp;
+ 		ptr = SSPOPPTR;
+-		if (ptr)
+-		    AvARRAY((PAD*)ptr)[off] = (SV*)SSPOPPTR;
++		assert (ptr);
++		svp = AvARRAY((PAD*)ptr) + off;
++		/* This mortalizing used to be done by POPLOOP() via itersave.
++		   But as we have all the information here, we can do it here,
++		   save even having to have itersave in the struct.  */
++		sv_2mortal(*svp);
++		*svp = (SV*)SSPOPPTR;
+ 	    }
+ 	    break;
+ 	case SAVEt_SAVESWITCHSTACK:
+@@ -965,6 +971,20 @@ Perl_leave_scope(pTHX_ I32 base)
+ 	    ptr = SSPOPPTR;
+ 	    *(long*)ptr = (long)SSPOPLONG;
+ 	    break;
++	    /* This case is rendered redundant by the integration of change
++	       33078. See the comment near Perl_save_padsv().  */
++	case SAVEt_PADSV:
++	    {
++		const PADOFFSET off = (PADOFFSET)SSPOPLONG;
++		ptr = SSPOPPTR;
++		if (ptr)
++		    AvARRAY((PAD*)ptr)[off] = (SV*)SSPOPPTR;
++		else {
++		  /* Bug, surely? We need to balance the push with a pop here.
++		   */
++		}
++	    }
++	    break;
+ 	case SAVEt_I16:				/* I16 reference */
+ 	    ptr = SSPOPPTR;
+ 	    *(I16*)ptr = (I16)SSPOPINT;
+@@ -1099,9 +1119,6 @@ Perl_cx_dump(pTHX_ PERL_CONTEXT *cx)
+ 		PTR2UV(cx->blk_loop.iterary));
+ 	PerlIO_printf(Perl_debug_log, "BLK_LOOP.ITERVAR = 0x%"UVxf"\n",
+ 		PTR2UV(CxITERVAR(cx)));
+-	if (CxITERVAR(cx))
+-	    PerlIO_printf(Perl_debug_log, "BLK_LOOP.ITERSAVE = 0x%"UVxf"\n",
+-		PTR2UV(cx->blk_loop.itersave));
+ 	PerlIO_printf(Perl_debug_log, "BLK_LOOP.ITERLVAL = 0x%"UVxf"\n",
+ 		PTR2UV(cx->blk_loop.iterlval));
+ 	break;
+@@ -1137,6 +1154,22 @@ Perl_cx_dump(pTHX_ PERL_CONTEXT *cx)
+ #endif	/* DEBUGGING */
+ }
+ 
++/* This is rendered a mathom by the integration of change 33078. However, until
++   we have versioned mathom logic in mathoms.c, we can't move it there for
++   5.10.1, as other code in production may have linked to it.  */
++
++void
++Perl_save_padsv(pTHX_ PADOFFSET off)
++{
++    dVAR;
++    SSCHECK(4);
++    ASSERT_CURPAD_ACTIVE("save_padsv");
++    SSPUSHPTR(PL_curpad[off]);
++    SSPUSHPTR(PL_comppad);
++    SSPUSHLONG((long)off);
++    SSPUSHINT(SAVEt_PADSV);
++}
++
+ /*
+  * Local variables:
+  * c-indentation-style: bsd
+diff --git a/scope.h b/scope.h
+index 42d1617..024d0da 100644
+--- a/scope.h
++++ b/scope.h
+@@ -54,6 +54,7 @@
+ #define SAVEt_COMPILE_WARNINGS	43
+ #define SAVEt_STACK_CXPOS	44
+ #define SAVEt_PARSER		45
++#define SAVEt_PADSV_AND_MORTALIZE	46
+ 
+ #ifndef SCOPE_SAVES_SIGNAL_MASK
+ #define SCOPE_SAVES_SIGNAL_MASK 0
+@@ -127,6 +128,7 @@ Closing bracket on a callback.  See C<ENTER> and L<perlcall>.
+ #define SAVEPPTR(s)	save_pptr((char**)&(s))
+ #define SAVEVPTR(s)	save_vptr((void*)&(s))
+ #define SAVEPADSV(s)	save_padsv(s)
++#define SAVEPADSVANDMORTALIZE(s)	save_padsv_and_mortalize(s)
+ #define SAVEFREESV(s)	save_freesv((SV*)(s))
+ #define SAVEMORTALIZESV(s)	save_mortalizesv((SV*)(s))
+ #define SAVEFREEOP(o)	save_freeop((OP*)(o))
+diff --git a/sv.c b/sv.c
+index 718e305..bef2c81 100644
+--- a/sv.c
++++ b/sv.c
+@@ -10385,12 +10385,11 @@ Perl_cx_dup(pTHX_ PERL_CONTEXT *cxs, I32 ix, I32 max, CLONE_PARAMS* param)
+ 					   : gv_dup((GV*)cx->blk_loop.iterdata, param));
+ 		ncx->blk_loop.oldcomppad
+ 		    = (PAD*)ptr_table_fetch(PL_ptr_table,
+-					    cx->blk_loop.oldcomppad);
+-		ncx->blk_loop.itersave	= sv_dup_inc(cx->blk_loop.itersave, param);
+-		ncx->blk_loop.iterlval	= sv_dup_inc(cx->blk_loop.iterlval, param);
+-		ncx->blk_loop.iterary	= av_dup_inc(cx->blk_loop.iterary, param);
+-		ncx->blk_loop.iterix	= cx->blk_loop.iterix;
+-		ncx->blk_loop.itermax	= cx->blk_loop.itermax;
++					    ncx->blk_loop.oldcomppad);
++		ncx->blk_loop.iterlval	= sv_dup_inc(ncx->blk_loop.iterlval,
++						     param);
++		ncx->blk_loop.iterary	= av_dup_inc(ncx->blk_loop.iterary,
++						     param);
+ 		break;
+ 	    case CXt_FORMAT:
+ 		ncx->blk_sub.cv		= cv_dup(cx->blk_sub.cv, param);
+@@ -10700,13 +10699,13 @@ Perl_ss_dup(pTHX_ PerlInterpreter *proto_perl, CLONE_PARAMS* param)
+ 		TOPPTR(nss,ix) = hv_dup_inc(hv, param);
+ 	    }
+ 	    break;
+-	case SAVEt_PADSV:
++	case SAVEt_PADSV_AND_MORTALIZE:
+ 	    longval = (long)POPLONG(ss,ix);
+ 	    TOPLONG(nss,ix) = longval;
+ 	    ptr = POPPTR(ss,ix);
+ 	    TOPPTR(nss,ix) = any_dup(ptr, proto_perl);
+ 	    sv = (SV*)POPPTR(ss,ix);
+-	    TOPPTR(nss,ix) = sv_dup(sv, param);
++	    TOPPTR(nss,ix) = sv_dup_inc(sv, param);
+ 	    break;
+ 	case SAVEt_BOOL:
+ 	    ptr = POPPTR(ss,ix);
+@@ -10791,6 +10790,17 @@ Perl_ss_dup(pTHX_ PerlInterpreter *proto_perl, CLONE_PARAMS* param)
+ 	    ptr = POPPTR(ss,ix);
+ 	    TOPPTR(nss,ix) = parser_dup((const yy_parser*)ptr, param);
+ 	    break;
++	case SAVEt_PADSV:
++	    /* Nothing should be using this any more, post the integration of
++	       blead change 33080. But keep it, in case something out there is
++	       generating these on the scope stack.  */
++	    longval = (long)POPLONG(ss,ix);
++	    TOPLONG(nss,ix) = longval;
++	    ptr = POPPTR(ss,ix);
++	    TOPPTR(nss,ix) = any_dup(ptr, proto_perl);
++	    sv = (SV*)POPPTR(ss,ix);
++	    TOPPTR(nss,ix) = sv_dup(sv, param);
++	    break;
+ 	default:
+ 	    Perl_croak(aTHX_
+ 		       "panic: ss_dup inconsistency (%"IVdf")", (IV) type);
+diff --git a/t/op/ref.t b/t/op/ref.t
+index 3fdc833..33bb534 100755
+--- a/t/op/ref.t
++++ b/t/op/ref.t
+@@ -8,7 +8,12 @@ BEGIN {
+ require 'test.pl';
+ use strict qw(refs subs);
+ 
+-plan(138);
++#<<<<<< HEAD
++#lan(138);
++#======
++#lan(189);
++#>>>>>> 73072c9... Integrate:
++plan(138+14);
+ 
+ # Test glob operations.
+ 
+@@ -135,6 +140,9 @@ is (ref $subref, 'CODE');
+ is (ref $ref, 'ARRAY');
+ is (ref $refref, 'HASH');
+ 
++# PVBM definition borrowed from 6e592b3a92f7ee35c9a857bd9a43297ab1693599 commit 
++sub PVBM () { 'foo' }
++
+ # Test anonymous hash syntax.
+ 
+ $anonhash = {};
+@@ -536,6 +544,31 @@ is ( (sub {"bar"})[0]->(), "bar", 'code deref from list slice w/ ->' );
+     is($ref, *{$ref}{IO}, "IO slot of the temporary glob is set correctly");
+ }
+ 
++# these will segfault if they fail
++
++my $pvbm = PVBM;
++my $rpvbm = \$pvbm;
++
++ok (!eval { *$rpvbm }, 'PVBM ref is not a GLOB ref');
++ok (!eval { *$pvbm }, 'PVBM is not a GLOB ref');
++ok (!eval { $$pvbm }, 'PVBM is not a SCALAR ref');
++ok (!eval { @$pvbm }, 'PVBM is not an ARRAY ref');
++ok (!eval { %$pvbm }, 'PVBM is not a HASH ref');
++ok (!eval { $pvbm->() }, 'PVBM is not a CODE ref');
++ok (!eval { $rpvbm->foo }, 'PVBM is not an object');
++
++# bug 24254
++is( runperl(stderr => 1, prog => 'map eval qq(exit),1 for 1'), "");
++is( runperl(stderr => 1, prog => 'eval { for (1) { map { die } 2 } };'), "");
++is( runperl(stderr => 1, prog => 'for (125) { map { exit } (213)}'), "");
++is( runperl(stderr => 1, prog => 'map die,4 for 3'), "Died at -e line 1.\n");
++is( runperl(stderr => 1, prog => 'grep die,4 for 3'), "Died at -e line 1.\n");
++is( runperl(stderr => 1, prog => 'for $a (3) {@b=sort {die} 4,5}'), "Died at -e line 1.\n");
++
++# bug 57564
++is( runperl(stderr => 1, prog => 'my $i;for $i (1) { for $i (2) { } }'), "");
++
++
+ # Bit of a hack to make test.pl happy. There are 3 more tests after it leaves.
+ $test = curr_test();
+ curr_test($test + 3);

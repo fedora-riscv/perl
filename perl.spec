@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        93%{?dist}
+Release:        94%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -196,6 +196,10 @@ Patch61:	perl-5.10.0-much-better-swap-logic.patch
 # fix paths to Encode
 # http://rt.cpan.org/Public/Bug/Display.html?id=11511#txn-481431
 Patch62:        perl-5.10.0-Encode-err.patch
+
+# Fix nested loop variable free warning by back-porting from 5.10.1
+# RT#70660, rhbz#626411
+Patch63:        perl-5.10.0-nested_loop_variable.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1024,6 +1028,7 @@ upstream tarball from perl.org.
 %patch60 -p1
 %patch61 -p1
 %patch62 -p1
+%patch63 -p1
 
 %patch100 -p1
 %patch101 -p1
@@ -1317,6 +1322,7 @@ perl -x patchlevel.h \
 	'Fedora Patch59: h2ph: generated *.ph files no longer produce warnings when processed' \
 	'Fedora Patch60: remove PREREQ_FATAL from Makefile.PLs processed by miniperl' \
 	'Fedora Patch61: much better swap logic to support reentrancy and fix assert failure' \
+	'Fedora Patch63: Fix nested loop variable free warning' \
 	'Fedora Patch100: Update module constant to %{constant_version}' \
 	'Fedora Patch101: Update Archive::Extract to %{Archive_Extract_version}' \
 	'Fedora Patch102: Update Archive::Tar to %{Archive_Tar_version}' \
@@ -1972,6 +1978,10 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Aug 24 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.0-94
+- Fix nested loop variable free warning by back-porting from 5.10.1
+  (RT#70660, rhbz#626411)
+
 * Wed Aug 19 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.0-93
 - Add "-Wl,--enable-new-dtags" to linker to allow to override perl's rpath by
   LD_LIBRARY_PATH used in tests. Otherwise tested perl would link to old
