@@ -1322,6 +1322,7 @@ perl -x patchlevel.h \
 	'Fedora Patch59: h2ph: generated *.ph files no longer produce warnings when processed' \
 	'Fedora Patch60: remove PREREQ_FATAL from Makefile.PLs processed by miniperl' \
 	'Fedora Patch61: much better swap logic to support reentrancy and fix assert failure' \
+	'Fedora Patch62: Fix paths to Encode' \
 	'Fedora Patch63: Fix nested loop variable free warning' \
 	'Fedora Patch100: Update module constant to %{constant_version}' \
 	'Fedora Patch101: Update Archive::Extract to %{Archive_Extract_version}' \
@@ -1981,6 +1982,7 @@ TMPDIR="$PWD/tmp" make test
 * Tue Aug 24 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.0-94
 - Fix nested loop variable free warning by back-porting from 5.10.1
   (RT#70660, rhbz#626411)
+- Log Patch62 by patchlevel.h
 
 * Wed Aug 19 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.0-93
 - Add "-Wl,--enable-new-dtags" to linker to allow to override perl's rpath by
