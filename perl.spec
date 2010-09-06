@@ -8,7 +8,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        118%{?dist}
+Release:        119%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -81,6 +81,9 @@ Patch14:        perl-5.10.1-unpack-didn-t-handle-scalar-context.patch
 
 # Fix IO tests to allow parallel testing
 Patch15:        perl-5.10.1-IO-isolate_tests.patch
+
+# Do not leak when destroying thread; RT #77352, RHBZ #630667
+Patch16:        perl-5.10.1-fix_thread_leak.patch
 
 # Version macros for some of the modules.
 # If comment starts with module name, distributed module is part of
@@ -914,6 +917,7 @@ upstream tarball from perl.org.
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
 
 %patch101 -p1
 %patch102 -p1
@@ -1137,6 +1141,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch13: CVE_2009_3626' \
     'Fedora Patch14: unpack RT 73814' \
     'Fedora Patch15: enable parallel tests of IO module' \
+    'Fedora Patch16: Do not leak when destroying thread; RT #77352' \
 	'Fedora Patch101: Update ExtUtils::CBuilder to %{ExtUtils_CBuilder_version}' \
 	'Fedora Patch102: Update File::Path to %{File_Path_version}' \
 	'Fedora Patch103: Update Module::Build to %{Module_Build_version}' \
@@ -1805,6 +1810,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Sep 06 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.1-119
+- Do not leak when destroying thread (RT #77352, RHBZ #630667)
+
 * Wed Aug 19 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.1-118
 - Add "-Wl,--enable-new-dtags" to linker to allow to override perl's rpath by
   LD_LIBRARY_PATH used in tests. Otherwise tested perl would link to old
