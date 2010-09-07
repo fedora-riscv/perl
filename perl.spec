@@ -1,4 +1,4 @@
-%define perl_version    5.12.1
+%define perl_version    5.12.2
 %define perl_epoch      4
 %define perl_arch_stem -thread-multi
 %define perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -12,7 +12,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        131%{?dist}
+Release:        1%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -65,7 +65,7 @@ Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires:  db4-devel, gdbm-devel, groff, tcsh, zlib-devel
+BuildRequires:  db4-devel, gdbm-devel, groff, tcsh, zlib-devel, systemtap-sdt-devel
 # For tests
 BuildRequires:  procps, rsyslog
 
@@ -76,6 +76,7 @@ Provides: perl(VMS::Filespec)
 Provides: perl(VMS::Stdio)
 
 # Compat provides
+Provides: perl(:MODULE_COMPAT_5.12.2)
 Provides: perl(:MODULE_COMPAT_5.12.1)
 Provides: perl(:MODULE_COMPAT_5.12.0)
 %ifarch s390 s390x
@@ -135,7 +136,7 @@ Provides: perl-File-Temp = 0.22
 Obsoletes: perl-File-Temp < 0.20
 
 # suidperl isn't created by upstream since 5.12.0
-Obsoletes: perl-suidperl <= 4:5.12.1
+Obsoletes: perl-suidperl <= 4:5.12.2
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -817,7 +818,7 @@ upstream tarball from perl.org.
 
 
 %prep
-%setup -q -n perl-5.12.1
+%setup -q -n perl-%{perl_version}
 %patch1 -p1
 # This patch breaks sparc64 compilation
 # We should probably consider removing it for all arches.
@@ -929,7 +930,7 @@ echo "RPM Build arch: %{_arch}"
         -Duseshrplib \
         -Dusethreads \
         -Duseithreads \
-		-Dusedtrace \
+        -Dusedtrace='/usr/bin/dtrace' \
         -Duselargefiles \
         -Dd_semctl_semun \
         -Di_db \
@@ -1701,6 +1702,12 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Sep  7 2010 Petr Sabata <psabata@redhat.com> - 4:5.12.2-1
+- Update to 5.12.2
+- Removed one hardcoded occurence of perl version in build process
+- Added correct path to dtrace binary
+- BuildRequires: systemtap-sdt-devel
+
 * Tue Sep  7 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.1-131
 - run Configure with -Dusedtrace for systemtap support
 
