@@ -12,7 +12,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        130%{?dist}
+Release:        131%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -929,6 +929,7 @@ echo "RPM Build arch: %{_arch}"
         -Duseshrplib \
         -Dusethreads \
         -Duseithreads \
+		-Dusedtrace \
         -Duselargefiles \
         -Dd_semctl_semun \
         -Di_db \
@@ -1700,6 +1701,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Sep  7 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.1-131
+- run Configure with -Dusedtrace for systemtap support
+
 * Wed Aug 18 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.1-130
 - Run tests in parallel
 - Add "-Wl,--enable-new-dtags" to linker to allow to override perl's rpath by
