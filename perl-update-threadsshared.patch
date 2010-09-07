@@ -1,0 +1,2662 @@
+diff -up perl-5.10.0/ext/threads/shared/shared.pm.shared perl-5.10.0/ext/threads/shared/shared.pm
+--- perl-5.10.0/ext/threads/shared/shared.pm.shared	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/threads/shared/shared.pm	2010-09-07 08:35:16.185631381 +0200
+@@ -5,7 +5,9 @@ use 5.008;
+ use strict;
+ use warnings;
+ 
+-our $VERSION = '1.14';
++use Scalar::Util qw(reftype refaddr blessed);
++
++our $VERSION = '1.29';
+ my $XS_VERSION = $VERSION;
+ $VERSION = eval $VERSION;
+ 
+@@ -41,7 +43,7 @@ sub import
+ {
+     # Exported subroutines
+     my @EXPORT = qw(share is_shared cond_wait cond_timedwait
+-                    cond_signal cond_broadcast);
++                    cond_signal cond_broadcast shared_clone);
+     if ($threads::threads) {
+         push(@EXPORT, 'bless');
+     }
+@@ -55,6 +57,10 @@ sub import
+ }
+ 
+ 
++# Predeclarations for internal functions
++my ($make_shared);
++
++
+ ### Methods, etc. ###
+ 
+ sub threads::shared::tie::SPLICE
+@@ -63,6 +69,114 @@ sub threads::shared::tie::SPLICE
+     Carp::croak('Splice not implemented for shared arrays');
+ }
+ 
++
++# Create a thread-shared clone of a complex data structure or object
++sub shared_clone
++{
++    if (@_ != 1) {
++        require Carp;
++        Carp::croak('Usage: shared_clone(REF)');
++    }
++
++    return $make_shared->(shift, {});
++}
++
++
++### Internal Functions ###
++
++# Used by shared_clone() to recursively clone
++#   a complex data structure or object
++$make_shared = sub {
++    my ($item, $cloned) = @_;
++
++    # Just return the item if:
++    # 1. Not a ref;
++    # 2. Already shared; or
++    # 3. Not running 'threads'.
++    return $item if (! ref($item) || is_shared($item) || ! $threads::threads);
++
++    # Check for previously cloned references
++    #   (this takes care of circular refs as well)
++    my $addr = refaddr($item);
++    if (exists($cloned->{$addr})) {
++        # Return the already existing clone
++        return $cloned->{$addr};
++    }
++
++    # Make copies of array, hash and scalar refs and refs of refs
++    my $copy;
++    my $ref_type = reftype($item);
++
++    # Copy an array ref
++    if ($ref_type eq 'ARRAY') {
++        # Make empty shared array ref
++        $copy = &share([]);
++        # Add to clone checking hash
++        $cloned->{$addr} = $copy;
++        # Recursively copy and add contents
++        push(@$copy, map { $make_shared->($_, $cloned) } @$item);
++    }
++
++    # Copy a hash ref
++    elsif ($ref_type eq 'HASH') {
++        # Make empty shared hash ref
++        $copy = &share({});
++        # Add to clone checking hash
++        $cloned->{$addr} = $copy;
++        # Recursively copy and add contents
++        foreach my $key (keys(%{$item})) {
++            $copy->{$key} = $make_shared->($item->{$key}, $cloned);
++        }
++    }
++
++    # Copy a scalar ref
++    elsif ($ref_type eq 'SCALAR') {
++        $copy = \do{ my $scalar = $$item; };
++        share($copy);
++        # Add to clone checking hash
++        $cloned->{$addr} = $copy;
++    }
++
++    # Copy of a ref of a ref
++    elsif ($ref_type eq 'REF') {
++        # Special handling for $x = \$x
++        if ($addr == refaddr($$item)) {
++            $copy = \$copy;
++            share($copy);
++            $cloned->{$addr} = $copy;
++        } else {
++            my $tmp;
++            $copy = \$tmp;
++            share($copy);
++            # Add to clone checking hash
++            $cloned->{$addr} = $copy;
++            # Recursively copy and add contents
++            $tmp = $make_shared->($$item, $cloned);
++        }
++
++    } else {
++        require Carp;
++        Carp::croak("Unsupported ref type: ", $ref_type);
++    }
++
++    # If input item is an object, then bless the copy into the same class
++    if (my $class = blessed($item)) {
++        bless($copy, $class);
++    }
++
++    # Clone READONLY flag
++    if ($ref_type eq 'SCALAR') {
++        if (Internals::SvREADONLY($$item)) {
++            Internals::SvREADONLY($$copy, 1) if ($] >= 5.008003);
++        }
++    }
++    if (Internals::SvREADONLY($item)) {
++        Internals::SvREADONLY($copy, 1) if ($] >= 5.008003);
++    }
++
++    return $copy;
++};
++
+ 1;
+ 
+ __END__
+@@ -73,7 +187,7 @@ threads::shared - Perl extension for sha
+ 
+ =head1 VERSION
+ 
+-This document describes threads::shared version 1.14
++This document describes threads::shared version 1.29
+ 
+ =head1 SYNOPSIS
+ 
+@@ -81,16 +195,28 @@ This document describes threads::shared 
+   use threads::shared;
+ 
+   my $var :shared;
+-  $var = $scalar_value;
+-  $var = $shared_ref_value;
+-  $var = share($simple_unshared_ref_value);
++  my %hsh :shared;
++  my @ary :shared;
+ 
+   my ($scalar, @array, %hash);
+   share($scalar);
+   share(@array);
+   share(%hash);
+-  my $bar = &share([]);
+-  $hash{bar} = &share({});
++
++  $var = $scalar_value;
++  $var = $shared_ref_value;
++  $var = shared_clone($non_shared_ref_value);
++  $var = shared_clone({'foo' => [qw/foo bar baz/]});
++
++  $hsh{'foo'} = $scalar_value;
++  $hsh{'bar'} = $shared_ref_value;
++  $hsh{'baz'} = shared_clone($non_shared_ref_value);
++  $hsh{'quz'} = shared_clone([1..3]);
++
++  $ary[0] = $scalar_value;
++  $ary[1] = $shared_ref_value;
++  $ary[2] = shared_clone($non_shared_ref_value);
++  $ary[3] = shared_clone([ {}, [] ]);
+ 
+   { lock(%hash); ...  }
+ 
+@@ -108,13 +234,17 @@ This document describes threads::shared 
+ 
+ By default, variables are private to each thread, and each newly created
+ thread gets a private copy of each existing variable.  This module allows you
+-to share variables across different threads (and pseudo-forks on Win32).  It is
+-used together with the L<threads> module.
++to share variables across different threads (and pseudo-forks on Win32).  It
++is used together with the L<threads> module.
++
++This module supports the sharing of the following data types only:  scalars
++and scalar refs, arrays and array refs, and hashes and hash refs.
+ 
+ =head1 EXPORT
+ 
+-C<share>, C<cond_wait>, C<cond_timedwait>, C<cond_signal>, C<cond_broadcast>,
+-C<is_shared>
++The following functions are exported by this module: C<share>,
++C<shared_clone>, C<is_shared>, C<cond_wait>, C<cond_timedwait>, C<cond_signal>
++and C<cond_broadcast>
+ 
+ Note that if this module is imported when L<threads> has not yet been loaded,
+ then these functions all become no-ops.  This makes it possible to write
+@@ -126,33 +256,60 @@ modules that will work in both threaded 
+ 
+ =item share VARIABLE
+ 
+-C<share> takes a value and marks it as shared. You can share a scalar, array,
+-hash, scalar ref, array ref, or hash ref.  C<share> will return the shared
+-rvalue, but always as a reference.
++C<share> takes a variable and marks it as shared:
++
++  my ($scalar, @array, %hash);
++  share($scalar);
++  share(@array);
++  share(%hash);
+ 
+-A variable can also be marked as shared at compile time by using the
+-C<:shared> attribute: C<my $var :shared;>.
++C<share> will return the shared rvalue, but always as a reference.
+ 
+-Due to problems with Perl's prototyping, if you want to share a newly created
+-reference, you need to use the C<&share([])> and C<&share({})> syntax.
++Variables can also be marked as shared at compile time by using the
++C<:shared> attribute:
+ 
+-The only values that can be assigned to a shared scalar are other scalar
+-values, or shared refs:
++  my ($var, %hash, @array) :shared;
+ 
+-  my $var :shared;
+-  $var = 1;              # ok
+-  $var = [];             # error
+-  $var = &share([]);     # ok
+-
+-C<share> will traverse up references exactly I<one> level.  C<share(\$a)> is
+-equivalent to C<share($a)>, while C<share(\\$a)> is not.  This means that you
+-must create nested shared data structures by first creating individual shared
+-leaf nodes, and then adding them to a shared hash or array.
++Shared variables can only store scalars, refs of shared variables, or
++refs of shared data (discussed in next section):
+ 
+-  my %hash :shared;
+-  $hash{'meaning'} = &share([]);
+-  $hash{'meaning'}[0] = &share({});
+-  $hash{'meaning'}[0]{'life'} = 42;
++  my ($var, %hash, @array) :shared;
++  my $bork;
++
++  # Storing scalars
++  $var = 1;
++  $hash{'foo'} = 'bar';
++  $array[0] = 1.5;
++
++  # Storing shared refs
++  $var = \%hash;
++  $hash{'ary'} = \@array;
++  $array[1] = \$var;
++
++  # The following are errors:
++  #   $var = \$bork;                    # ref of non-shared variable
++  #   $hash{'bork'} = [];               # non-shared array ref
++  #   push(@array, { 'x' => 1 });       # non-shared hash ref
++
++=item shared_clone REF
++
++C<shared_clone> takes a reference, and returns a shared version of its
++argument, performing a deep copy on any non-shared elements.  Any shared
++elements in the argument are used as is (i.e., they are not cloned).
++
++  my $cpy = shared_clone({'foo' => [qw/foo bar baz/]});
++
++Object status (i.e., the class an object is blessed into) is also cloned.
++
++  my $obj = {'foo' => [qw/foo bar baz/]};
++  bless($obj, 'Foo');
++  my $cpy = shared_clone($obj);
++  print(ref($cpy), "\n");         # Outputs 'Foo'
++
++For cloning empty array or hash refs, the following may also be used:
++
++  $var = &share([]);   # Same as $var = shared_clone([]);
++  $var = &share({});   # Same as $var = shared_clone({});
+ 
+ =item is_shared VARIABLE
+ 
+@@ -166,20 +323,33 @@ L<refaddr()|Scalar::Util/"refaddr EXPR">
+       print("\$var is not shared\n");
+   }
+ 
++When used on an element of an array or hash, C<is_shared> checks if the
++specified element belongs to a shared array or hash.  (It does not check
++the contents of that element.)
++
++  my %hash :shared;
++  if (is_shared(%hash)) {
++      print("\%hash is shared\n");
++  }
++
++  $hash{'elem'} = 1;
++  if (is_shared($hash{'elem'})) {
++      print("\$hash{'elem'} is in a shared hash\n");
++  }
++
+ =item lock VARIABLE
+ 
+-C<lock> places a lock on a variable until the lock goes out of scope.  If the
+-variable is locked by another thread, the C<lock> call will block until it's
+-available.  Multiple calls to C<lock> by the same thread from within
+-dynamically nested scopes are safe -- the variable will remain locked until
+-the outermost lock on the variable goes out of scope.
+-
+-Locking a container object, such as a hash or array, doesn't lock the elements
+-of that container. For example, if a thread does a C<lock(@a)>, any other
+-thread doing a C<lock($a[12])> won't block.
++C<lock> places a B<advisory> lock on a variable until the lock goes out of
++scope.  If the variable is locked by another thread, the C<lock> call will
++block until it's available.  Multiple calls to C<lock> by the same thread from
++within dynamically nested scopes are safe -- the variable will remain locked
++until the outermost lock on the variable goes out of scope.
+ 
+-C<lock()> follows references exactly I<one> level.  C<lock(\$a)> is equivalent
+-to C<lock($a)>, while C<lock(\\$a)> is not.
++C<lock> follows references exactly I<one> level:
++
++  my %hash :shared;
++  my $ref = \%hash;
++  lock($ref);           # This is equivalent to lock(%hash)
+ 
+ Note that you cannot explicitly unlock a variable; you can only wait for the
+ lock to go out of scope.  This is most easily accomplished by locking the
+@@ -193,6 +363,16 @@ variable inside a block.
+   }
+   # $var is now unlocked
+ 
++As locks are advisory, they do not prevent data access or modification by
++another thread that does not itself attempt to obtain a lock on the variable.
++
++You cannot lock the individual elements of a container variable:
++
++  my %hash :shared;
++  $hash{'foo'} = 'bar';
++  #lock($hash{'foo'});          # Error
++  lock(%hash);                  # Works
++
+ If you need more fine-grained control over shared variable access, see
+ L<Thread::Semaphore>.
+ 
+@@ -221,7 +401,7 @@ important to check the value of the vari
+ requirement is not fulfilled.  For example, to pause until a shared counter
+ drops to zero:
+ 
+-  { lock($counter); cond_wait($count) until $counter == 0; }
++  { lock($counter); cond_wait($counter) until $counter == 0; }
+ 
+ =item cond_timedwait VARIABLE, ABS_TIMEOUT
+ 
+@@ -279,17 +459,13 @@ a C<cond_wait> on the locked variable, r
+ L<threads::shared> exports a version of L<bless()|perlfunc/"bless REF"> that
+ works on shared objects such that I<blessings> propagate across threads.
+ 
+-  # Create a shared 'foo' object
+-  my $foo;
+-  share($foo);
+-  $foo = &share({});
+-  bless($foo, 'foo');
+-
+-  # Create a shared 'bar' object
+-  my $bar;
+-  share($bar);
+-  $bar = &share({});
+-  bless($bar, 'bar');
++  # Create a shared 'Foo' object
++  my $foo :shared = shared_clone({});
++  bless($foo, 'Foo');
++
++  # Create a shared 'Bar' object
++  my $bar :shared = shared_clone({});
++  bless($bar, 'Bar');
+ 
+   # Put 'bar' inside 'foo'
+   $foo->{'bar'} = $bar;
+@@ -297,26 +473,29 @@ works on shared objects such that I<bles
+   # Rebless the objects via a thread
+   threads->create(sub {
+       # Rebless the outer object
+-      bless($foo, 'yin');
++      bless($foo, 'Yin');
+ 
+       # Cannot directly rebless the inner object
+-      #bless($foo->{'bar'}, 'yang');
++      #bless($foo->{'bar'}, 'Yang');
+ 
+       # Retrieve and rebless the inner object
+       my $obj = $foo->{'bar'};
+-      bless($obj, 'yang');
++      bless($obj, 'Yang');
+       $foo->{'bar'} = $obj;
+ 
+   })->join();
+ 
+-  print(ref($foo),          "\n");    # Prints 'yin'
+-  print(ref($foo->{'bar'}), "\n");    # Prints 'yang'
+-  print(ref($bar),          "\n");    # Also prints 'yang'
++  print(ref($foo),          "\n");    # Prints 'Yin'
++  print(ref($foo->{'bar'}), "\n");    # Prints 'Yang'
++  print(ref($bar),          "\n");    # Also prints 'Yang'
+ 
+ =head1 NOTES
+ 
+-threads::shared is designed to disable itself silently if threads are not
+-available. If you want access to threads, you must C<use threads> before you
++L<threads::shared> is designed to disable itself silently if threads are not
++available.  This allows you to write modules and packages that can be used
++in both threaded and non-threaded applications.
++
++If you want access to threads, you must C<use threads> before you
+ C<use threads::shared>.  L<threads> will emit a warning if you use it after
+ L<threads::shared>.
+ 
+@@ -354,13 +533,54 @@ Taking references to the elements of sha
+ autovivify the elements, and neither does slicing a shared array/hash over
+ non-existent indices/keys autovivify the elements.
+ 
+-C<share()> allows you to C<< share($hashref->{key}) >> without giving any
+-error message.  But the C<< $hashref->{key} >> is B<not> shared, causing the
+-error "locking can only be used on shared values" to occur when you attempt to
+-C<< lock($hasref->{key}) >>.
++C<share()> allows you to C<< share($hashref->{key}) >> and
++C<< share($arrayref->[idx]) >> without giving any error message.  But the
++C<< $hashref->{key} >> or C<< $arrayref->[idx] >> is B<not> shared, causing
++the error "lock can only be used on shared values" to occur when you attempt
++to C<< lock($hasref->{key}) >> or C<< lock($arrayref->[idx]) >> in another
++thread.
++
++Using L<refaddr()|Scalar::Util/"refaddr EXPR">) is unreliable for testing
++whether or not two shared references are equivalent (e.g., when testing for
++circular references).  Use L<is_shared()/"is_shared VARIABLE">, instead:
++
++    use threads;
++    use threads::shared;
++    use Scalar::Util qw(refaddr);
++
++    # If ref is shared, use threads::shared's internal ID.
++    # Otherwise, use refaddr().
++    my $addr1 = is_shared($ref1) || refaddr($ref1);
++    my $addr2 = is_shared($ref2) || refaddr($ref2);
++
++    if ($addr1 == $addr2) {
++        # The refs are equivalent
++    }
++
++L<each()|perlfunc/"each HASH"> does not work properly on shared references
++embedded in shared structures.  For example:
++
++    my %foo :shared;
++    $foo{'bar'} = shared_clone({'a'=>'x', 'b'=>'y', 'c'=>'z'});
++
++    while (my ($key, $val) = each(%{$foo{'bar'}})) {
++        ...
++    }
++
++Either of the following will work instead:
++
++    my $ref = $foo{'bar'};
++    while (my ($key, $val) = each(%{$ref})) {
++        ...
++    }
++
++    foreach my $key (keys(%{$foo{'bar'}})) {
++        my $val = $foo{'bar'}{$key};
++        ...
++    }
+ 
+ View existing bug reports at, and submit any new bugs, problems, patches, etc.
+-to: L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=threads-shared>
++to: L<http://rt.cpan.org/Public/Dist/Display.html?Name=threads-shared>
+ 
+ =head1 SEE ALSO
+ 
+@@ -368,7 +588,7 @@ L<threads::shared> Discussion Forum on C
+ L<http://www.cpanforum.com/dist/threads-shared>
+ 
+ Annotated POD for L<threads::shared>:
+-L<http://annocpan.org/~JDHEDDEN/threads-shared-1.14/shared.pm>
++L<http://annocpan.org/~JDHEDDEN/threads-shared-1.29/shared.pm>
+ 
+ Source repository:
+ L<http://code.google.com/p/threads-shared/>
+@@ -385,10 +605,12 @@ L<http://lists.cpan.org/showlist.cgi?nam
+ 
+ Artur Bergman E<lt>sky AT crucially DOT netE<gt>
+ 
+-threads::shared is released under the same license as Perl.
+-
+ Documentation borrowed from the old Thread.pm.
+ 
+ CPAN version produced by Jerry D. Hedden E<lt>jdhedden AT cpan DOT orgE<gt>.
+ 
++=head1 LICENSE
++
++threads::shared is released under the same license as Perl.
++
+ =cut
+diff -up perl-5.10.0/ext/threads/shared/shared.xs.shared perl-5.10.0/ext/threads/shared/shared.xs
+--- perl-5.10.0/ext/threads/shared/shared.xs.shared	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/threads/shared/shared.xs	2010-09-07 08:35:16.188635414 +0200
+@@ -123,6 +123,7 @@
+ #  define NEED_sv_2pv_flags
+ #  define NEED_vnewSVpvf
+ #  define NEED_warner
++#  define NEED_newSVpvn_flags
+ #  include "ppport.h"
+ #  include "shared.h"
+ #endif
+@@ -712,6 +713,11 @@ sharedsv_scalar_mg_get(pTHX_ SV *sv, MAG
+     ENTER_LOCK;
+     if (SvROK(ssv)) {
+         S_get_RV(aTHX_ sv, ssv);
++        /* Look ahead for refs of refs */
++        if (SvROK(SvRV(ssv))) {
++            SvROK_on(SvRV(sv));
++            S_get_RV(aTHX_ SvRV(sv), SvRV(ssv));
++        }
+     } else {
+         sv_setsv_nomg(sv, ssv);
+     }
+@@ -867,10 +873,15 @@ sharedsv_elem_mg_FETCH(pTHX_ SV *sv, MAG
+         svp = av_fetch((AV*) saggregate, mg->mg_len, 0);
+     } else {
+         char *key = mg->mg_ptr;
+-        STRLEN len = mg->mg_len;
++        I32 len = mg->mg_len;
+         assert ( mg->mg_ptr != 0 );
+         if (mg->mg_len == HEf_SVKEY) {
+-           key = SvPV((SV *) mg->mg_ptr, len);
++            STRLEN slen;
++            key = SvPV((SV *)mg->mg_ptr, slen);
++            len = slen;
++            if (SvUTF8((SV *)mg->mg_ptr)) {
++                len = -len;
++            }
+         }
+         SHARED_CONTEXT;
+         svp = hv_fetch((HV*) saggregate, key, len, 0);
+@@ -880,9 +891,13 @@ sharedsv_elem_mg_FETCH(pTHX_ SV *sv, MAG
+         /* Exists in the array */
+         if (SvROK(*svp)) {
+             S_get_RV(aTHX_ sv, *svp);
++            /* Look ahead for refs of refs */
++            if (SvROK(SvRV(*svp))) {
++                SvROK_on(SvRV(sv));
++                S_get_RV(aTHX_ SvRV(sv), SvRV(*svp));
++            }
+         } else {
+-            /* XXX Can this branch ever happen? DAPM */
+-            /* XXX assert("no such branch"); */
++            /* $ary->[elem] or $ary->{elem} is a scalar */
+             Perl_sharedsv_associate(aTHX_ sv, *svp);
+             sv_setsv(sv, *svp);
+         }
+@@ -914,10 +929,16 @@ sharedsv_elem_mg_STORE(pTHX_ SV *sv, MAG
+         svp = av_fetch((AV*) saggregate, mg->mg_len, 1);
+     } else {
+         char *key = mg->mg_ptr;
+-        STRLEN len = mg->mg_len;
++        I32 len = mg->mg_len;
+         assert ( mg->mg_ptr != 0 );
+-        if (mg->mg_len == HEf_SVKEY)
+-           key = SvPV((SV *) mg->mg_ptr, len);
++        if (mg->mg_len == HEf_SVKEY) {
++            STRLEN slen;
++            key = SvPV((SV *)mg->mg_ptr, slen);
++            len = slen;
++            if (SvUTF8((SV *)mg->mg_ptr)) {
++                len = -len;
++            }
++        }
+         SHARED_CONTEXT;
+         svp = hv_fetch((HV*) saggregate, key, len, 1);
+     }
+@@ -945,10 +966,16 @@ sharedsv_elem_mg_DELETE(pTHX_ SV *sv, MA
+         av_delete((AV*) saggregate, mg->mg_len, G_DISCARD);
+     } else {
+         char *key = mg->mg_ptr;
+-        STRLEN len = mg->mg_len;
++        I32 len = mg->mg_len;
+         assert ( mg->mg_ptr != 0 );
+-        if (mg->mg_len == HEf_SVKEY)
+-           key = SvPV((SV *) mg->mg_ptr, len);
++        if (mg->mg_len == HEf_SVKEY) {
++            STRLEN slen;
++            key = SvPV((SV *)mg->mg_ptr, slen);
++            len = slen;
++            if (SvUTF8((SV *)mg->mg_ptr)) {
++                len = -len;
++            }
++        }
+         SHARED_CONTEXT;
+         hv_delete((HV*) saggregate, key, len, G_DISCARD);
+     }
+@@ -1033,9 +1060,15 @@ sharedsv_array_mg_free(pTHX_ SV *sv, MAG
+  * This is called when perl is about to access an element of
+  * the array -
+  */
++#if PERL_VERSION >= 11
++int
++sharedsv_array_mg_copy(pTHX_ SV *sv, MAGIC* mg,
++                       SV *nsv, const char *name, I32 namlen)
++#else
+ int
+ sharedsv_array_mg_copy(pTHX_ SV *sv, MAGIC* mg,
+                        SV *nsv, const char *name, int namlen)
++#endif
+ {
+     MAGIC *nmg = sv_magicext(nsv,mg->mg_obj,
+                             toLOWER(mg->mg_type),&sharedsv_elem_vtbl,
+@@ -1108,6 +1141,24 @@ Perl_sharedsv_locksv(pTHX_ SV *sv)
+ }
+ 
+ 
++/* Can a shared object be destroyed?
++ * True if not a shared,
++ * or if detroying last proxy on a shared object
++ */
++#ifdef PL_destroyhook
++bool
++Perl_shared_object_destroy(pTHX_ SV *sv)
++{
++    SV *ssv;
++
++    if (SvROK(sv))
++        sv = SvRV(sv);
++    ssv = Perl_sharedsv_find(aTHX_ sv);
++    return (!ssv || (SvREFCNT(ssv) <= 1));
++}
++#endif
++
++
+ /* Saves a space for keeping SVs wider than an interpreter. */
+ 
+ void
+@@ -1121,6 +1172,9 @@ Perl_sharedsv_init(pTHX)
+     recursive_lock_init(aTHX_ &PL_sharedsv_lock);
+     PL_lockhook = &Perl_sharedsv_locksv;
+     PL_sharehook = &Perl_sharedsv_share;
++#ifdef PL_destroyhook
++    PL_destroyhook = &Perl_shared_object_destroy;
++#endif
+ }
+ 
+ #endif /* USE_ITHREADS */
+@@ -1238,8 +1292,13 @@ EXISTS(SV *obj, SV *index)
+             SHARED_EDIT;
+             exists = av_exists((AV*) sobj, SvIV(index));
+         } else {
+-            STRLEN len;
+-            char *key = SvPV(index,len);
++            I32 len;
++            STRLEN slen;
++            char *key = SvPVutf8(index, slen);
++            len = slen;
++            if (SvUTF8(index)) {
++                len = -len;
++            }
+             SHARED_EDIT;
+             exists = hv_exists((HV*) sobj, key, len);
+         }
+@@ -1261,9 +1320,10 @@ FIRSTKEY(SV *obj)
+         hv_iterinit((HV*) sobj);
+         entry = hv_iternext((HV*) sobj);
+         if (entry) {
++            I32 utf8 = HeKUTF8(entry);
+             key = hv_iterkey(entry,&len);
+             CALLER_CONTEXT;
+-            ST(0) = sv_2mortal(newSVpv(key, len));
++            ST(0) = sv_2mortal(newSVpvn_utf8(key, len, utf8));
+         } else {
+             CALLER_CONTEXT;
+             ST(0) = &PL_sv_undef;
+@@ -1287,9 +1347,10 @@ NEXTKEY(SV *obj, SV *oldkey)
+         SHARED_CONTEXT;
+         entry = hv_iternext((HV*) sobj);
+         if (entry) {
++            I32 utf8 = HeKUTF8(entry);
+             key = hv_iterkey(entry,&len);
+             CALLER_CONTEXT;
+-            ST(0) = sv_2mortal(newSVpv(key, len));
++            ST(0) = sv_2mortal(newSVpvn_utf8(key, len, utf8));
+         } else {
+             CALLER_CONTEXT;
+             ST(0) = &PL_sv_undef;
+@@ -1309,6 +1370,8 @@ _id(SV *myref)
+         SV *ssv;
+     CODE:
+         myref = SvRV(myref);
++        if (SvMAGICAL(myref))
++            mg_get(myref);
+         if (SvROK(myref))
+             myref = SvRV(myref);
+         ssv = Perl_sharedsv_find(aTHX_ myref);
+diff -up perl-5.10.0/ext/threads/shared/t/0nothread.t.shared perl-5.10.0/ext/threads/shared/t/0nothread.t
+--- perl-5.10.0/ext/threads/shared/t/0nothread.t.shared	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/threads/shared/t/0nothread.t	2010-09-07 08:35:16.189630916 +0200
+@@ -1,18 +1,6 @@
+ use strict;
+ use warnings;
+ 
+-BEGIN {
+-    if ($ENV{'PERL_CORE'}){
+-        chdir 't';
+-        unshift @INC, '../lib';
+-    }
+-    use Config;
+-    if (! $Config{'useithreads'}) {
+-        print("1..0 # Skip: Perl not compiled with 'useithreads'\n");
+-        exit(0);
+-    }
+-}
+-
+ use Test::More (tests => 53);
+ 
+ ### Start of Testing ###
+@@ -70,7 +58,7 @@ sub array
+ 
+ ok((require threads::shared),"Require module");
+ 
+-if ($threads::shared::VERSION && ! exists($ENV{'PERL_CORE'})) {
++if ($threads::shared::VERSION && ! $ENV{'PERL_CORE'}) {
+     diag('Testing threads::shared ' . $threads::shared::VERSION);
+ }
+ 
+@@ -85,4 +73,6 @@ array(24, 42, 'Thing');
+ share(\%hash);
+ hash(24, 42, 'Thing');
+ 
++exit(0);
++
+ # EOF
+diff -up perl-5.10.0/ext/threads/shared/t/av_refs.t.shared perl-5.10.0/ext/threads/shared/t/av_refs.t
+--- perl-5.10.0/ext/threads/shared/t/av_refs.t.shared	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/threads/shared/t/av_refs.t	2010-09-07 08:35:16.191630997 +0200
+@@ -2,13 +2,9 @@ use strict;
+ use warnings;
+ 
+ BEGIN {
+-    if ($ENV{'PERL_CORE'}){
+-        chdir 't';
+-        unshift @INC, '../lib';
+-    }
+     use Config;
+     if (! $Config{'useithreads'}) {
+-        print("1..0 # Skip: Perl not compiled with 'useithreads'\n");
++        print("1..0 # SKIP Perl not compiled with 'useithreads'\n");
+         exit(0);
+     }
+ }
+@@ -94,4 +90,6 @@ ok(13, is_shared(@av), "Check for sharin
+ my $x :shared;
+ ok(14, is_shared($x), "Check for sharing");
+ 
++exit(0);
++
+ # EOF
+diff -up perl-5.10.0/ext/threads/shared/t/av_simple.t.shared perl-5.10.0/ext/threads/shared/t/av_simple.t
+--- perl-5.10.0/ext/threads/shared/t/av_simple.t.shared	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/threads/shared/t/av_simple.t	2010-09-07 08:35:16.192631387 +0200
+@@ -2,13 +2,9 @@ use strict;
+ use warnings;
+ 
+ BEGIN {
+-    if ($ENV{'PERL_CORE'}){
+-        chdir 't';
+-        unshift @INC, '../lib';
+-    }
+     use Config;
+     if (! $Config{'useithreads'}) {
+-        print("1..0 # Skip: Perl not compiled with 'useithreads'\n");
++        print("1..0 # SKIP Perl not compiled with 'useithreads'\n");
+         exit(0);
+     }
+ }
+@@ -134,4 +130,6 @@ ok(37, !defined delete($foo[0]), "Check 
+ 
+ ok(44, is_shared(@foo), "Check for sharing");
+ 
++exit(0);
++
+ # EOF
+diff -up perl-5.10.0/ext/threads/shared/t/blessed.t.shared perl-5.10.0/ext/threads/shared/t/blessed.t
+--- perl-5.10.0/ext/threads/shared/t/blessed.t.shared	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/threads/shared/t/blessed.t	2010-09-07 08:35:16.193631358 +0200
+@@ -2,13 +2,9 @@ use strict;
+ use warnings;
+ 
+ BEGIN {
+-    if ($ENV{'PERL_CORE'}){
+-        chdir 't';
+-        unshift @INC, '../lib';
+-    }
+     use Config;
+     if (! $Config{'useithreads'}) {
+-        print("1..0 # Skip: Perl not compiled with 'useithreads'\n");
++        print("1..0 # SKIP Perl not compiled with 'useithreads'\n");
+         exit(0);
+     }
+ }
+@@ -138,4 +134,6 @@ ok(35, ref($$hobj{'array'}) eq 'gnay', "
+ ok(36, ref($$hobj{'scalar'}) eq 'zab', "reblessed scalar in hash");
+ ok(37, ${$$hobj{'scalar'}} eq 'test', "reblessed scalar in hash contents");
+ 
++exit(0);
++
+ # EOF
+diff -up perl-5.10.0/ext/threads/shared/t/clone.t.shared perl-5.10.0/ext/threads/shared/t/clone.t
+--- perl-5.10.0/ext/threads/shared/t/clone.t.shared	2010-09-07 08:35:16.194632098 +0200
++++ perl-5.10.0/ext/threads/shared/t/clone.t	2010-09-07 08:35:16.194632098 +0200
+@@ -0,0 +1,175 @@
++use strict;
++use warnings;
++
++BEGIN {
++    use Config;
++    if (! $Config{'useithreads'}) {
++        print("1..0 # SKIP Perl not compiled with 'useithreads'\n");
++        exit(0);
++    }
++}
++
++use ExtUtils::testlib;
++
++sub ok {
++    my ($id, $ok, $name) = @_;
++
++    # You have to do it this way or VMS will get confused.
++    if ($ok) {
++        print("ok $id - $name\n");
++    } else {
++        print("not ok $id - $name\n");
++        printf("# Failed test at line %d\n", (caller)[2]);
++    }
++
++    return ($ok);
++}
++
++BEGIN {
++    $| = 1;
++    print("1..34\n");   ### Number of tests that will be run ###
++};
++
++my $test = 1;
++
++use threads;
++use threads::shared;
++ok($test++, 1, 'Loaded');
++
++### Start of Testing ###
++
++{
++    my $x = shared_clone(14);
++    ok($test++, $x == 14, 'number');
++
++    $x = shared_clone('test');
++    ok($test++, $x eq 'test', 'string');
++}
++
++{
++    my %hsh = ('foo' => 2);
++    eval {
++        my $x = shared_clone(%hsh);
++    };
++    ok($test++, $@ =~ /Usage:/, '1 arg');
++
++    threads->create(sub {})->join();  # Hide leaks, etc.
++}
++
++{
++    my $x = 'test';
++    my $foo :shared = shared_clone($x);
++    ok($test++, $foo eq 'test', 'cloned string');
++
++    $foo = shared_clone(\$x);
++    ok($test++, $$foo eq 'test', 'cloned scalar ref');
++
++    threads->create(sub {
++        ok($test++, $$foo eq 'test', 'cloned scalar ref in thread');
++    })->join();
++
++    $test++;
++}
++
++{
++    my $foo :shared;
++    $foo = shared_clone(\$foo);
++    ok($test++, ref($foo) eq 'REF', 'Circular ref typ');
++    ok($test++, threads::shared::_id($foo) == threads::shared::_id($$foo), 'Circular ref');
++
++    threads->create(sub {
++        ok($test++, threads::shared::_id($foo) == threads::shared::_id($$foo), 'Circular ref in thread');
++
++        my ($x, $y, $z);
++        $x = \$y; $y = \$z; $z = \$x;
++        $foo = shared_clone($x);
++    })->join();
++
++    $test++;
++
++    ok($test++, threads::shared::_id($$foo) == threads::shared::_id($$$$$foo),
++                    'Cloned circular refs from thread');
++}
++
++{
++    my @ary = (qw/foo bar baz/);
++    my $ary = shared_clone(\@ary);
++
++    ok($test++, $ary->[1] eq 'bar', 'Cloned array');
++    $ary->[1] = 99;
++    ok($test++, $ary->[1] == 99, 'Clone mod');
++    ok($test++, $ary[1] eq 'bar', 'Original array');
++
++    threads->create(sub {
++        ok($test++, $ary->[1] == 99, 'Clone mod in thread');
++
++        $ary[1] = 'bork';
++        $ary->[1] = 'thread';
++    })->join();
++
++    $test++;
++
++    ok($test++, $ary->[1] eq 'thread', 'Clone mod from thread');
++    ok($test++, $ary[1] eq 'bar', 'Original array');
++}
++
++{
++    my $hsh :shared = shared_clone({'foo' => [qw/foo bar baz/]});
++    ok($test++, is_shared($hsh), 'Shared hash ref');
++    ok($test++, is_shared($hsh->{'foo'}), 'Shared hash ref elem');
++    ok($test++, $$hsh{'foo'}[1] eq 'bar', 'Cloned structure');
++}
++
++{
++    my $obj = \do { my $bork = 99; };
++    bless($obj, 'Bork');
++    Internals::SvREADONLY($$obj, 1) if ($] >= 5.008003);
++
++    my $bork = shared_clone($obj);
++    ok($test++, $$bork == 99, 'cloned scalar ref object');
++    ok($test++, ($] < 5.008003) || Internals::SvREADONLY($$bork), 'read-only');
++    ok($test++, ref($bork) eq 'Bork', 'Object class');
++
++    threads->create(sub {
++        ok($test++, $$bork == 99, 'cloned scalar ref object in thread');
++        ok($test++, ($] < 5.008003) || Internals::SvREADONLY($$bork), 'read-only');
++        ok($test++, ref($bork) eq 'Bork', 'Object class');
++    })->join();
++
++    $test += 3;
++}
++
++{
++    my $scalar = 'zip';
++
++    my $obj = {
++        'ary' => [ 1, 'foo', [ 86 ], { 'bar' => [ 'baz' ] } ],
++        'ref' => \$scalar,
++    };
++
++    $obj->{'self'} = $obj;
++
++    bless($obj, 'Foo');
++
++    my $copy :shared;
++
++    threads->create(sub {
++        $copy = shared_clone($obj);
++
++        ok($test++, ${$copy->{'ref'}} eq 'zip', 'Obj ref in thread');
++        ok($test++, threads::shared::_id($copy) == threads::shared::_id($copy->{'self'}), 'Circular ref in cloned obj');
++        ok($test++, is_shared($copy->{'ary'}->[2]), 'Shared element in cloned obj');
++    })->join();
++
++    $test += 3;
++
++    ok($test++, ref($copy) eq 'Foo', 'Obj cloned by thread');
++    ok($test++, ${$copy->{'ref'}} eq 'zip', 'Obj ref in thread');
++    ok($test++, threads::shared::_id($copy) == threads::shared::_id($copy->{'self'}), 'Circular ref in cloned obj');
++    ok($test++, $copy->{'ary'}->[3]->{'bar'}->[0] eq 'baz', 'Deeply cloned');
++    ok($test++, ref($copy) eq 'Foo', 'Cloned object class');
++}
++
++exit(0);
++
++# EOF
+diff -up perl-5.10.0/ext/threads/shared/t/cond.t.shared perl-5.10.0/ext/threads/shared/t/cond.t
+--- perl-5.10.0/ext/threads/shared/t/cond.t.shared	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/threads/shared/t/cond.t	2010-09-07 08:35:16.195632627 +0200
+@@ -2,13 +2,9 @@ use strict;
+ use warnings;
+ 
+ BEGIN {
+-    if ($ENV{'PERL_CORE'}){
+-        chdir 't';
+-        unshift @INC, '../lib';
+-    }
+     use Config;
+     if (! $Config{'useithreads'}) {
+-        print("1..0 # Skip: Perl not compiled with 'useithreads'\n");
++        print("1..0 # SKIP Perl not compiled with 'useithreads'\n");
+         exit(0);
+     }
+ }
+@@ -282,4 +278,6 @@ $Base++;
+     $Base += 4;
+ }
+ 
++exit(0);
++
+ # EOF
+diff -up perl-5.10.0/ext/threads/shared/t/disabled.t.shared perl-5.10.0/ext/threads/shared/t/disabled.t
+--- perl-5.10.0/ext/threads/shared/t/disabled.t.shared	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/threads/shared/t/disabled.t	2010-09-07 08:35:16.196633017 +0200
+@@ -1,18 +1,6 @@
+ use strict;
+ use warnings;
+ 
+-BEGIN {
+-    if ($ENV{'PERL_CORE'}){
+-        chdir 't';
+-        unshift @INC, '../lib';
+-    }
+-    use Config;
+-    if (! $Config{'useithreads'}) {
+-        print("1..0 # Skip: Perl not compiled with 'useithreads'\n");
+-        exit(0);
+-    }
+-}
+-
+ use Test;
+ plan tests => 31;
+ 
+@@ -59,4 +47,6 @@ foreach my $func (qw(cond_wait cond_sign
+     ok( "@array", "1 2 3 4" );
+ }
+ 
++exit(0);
++
+ # EOF
+diff -up perl-5.10.0/ext/threads/shared/t/hv_refs.t.shared perl-5.10.0/ext/threads/shared/t/hv_refs.t
+--- perl-5.10.0/ext/threads/shared/t/hv_refs.t.shared	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/threads/shared/t/hv_refs.t	2010-09-07 08:35:16.196633017 +0200
+@@ -2,13 +2,9 @@ use strict;
+ use warnings;
+ 
+ BEGIN {
+-    if ($ENV{'PERL_CORE'}){
+-        chdir 't';
+-        unshift @INC, '../lib';
+-    }
+     use Config;
+     if (! $Config{'useithreads'}) {
+-        print("1..0 # Skip: Perl not compiled with 'useithreads'\n");
++        print("1..0 # SKIP Perl not compiled with 'useithreads'\n");
+         exit(0);
+     }
+ }
+@@ -110,4 +106,6 @@ ok(10, keys %foo == 0, "And make sure we
+ ok(19, is_shared($foo), "Check for sharing");
+ ok(20, is_shared(%foo), "Check for sharing");
+ 
++exit(0);
++
+ # EOF
+diff -up perl-5.10.0/ext/threads/shared/t/hv_simple.t.shared perl-5.10.0/ext/threads/shared/t/hv_simple.t
+--- perl-5.10.0/ext/threads/shared/t/hv_simple.t.shared	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/threads/shared/t/hv_simple.t	2010-09-07 08:35:16.197631382 +0200
+@@ -2,13 +2,9 @@ use strict;
+ use warnings;
+ 
+ BEGIN {
+-    if ($ENV{'PERL_CORE'}){
+-        chdir 't';
+-        unshift @INC, '../lib';
+-    }
+     use Config;
+     if (! $Config{'useithreads'}) {
+-        print("1..0 # Skip: Perl not compiled with 'useithreads'\n");
++        print("1..0 # SKIP Perl not compiled with 'useithreads'\n");
+         exit(0);
+     }
+ }
+@@ -77,4 +73,6 @@ ok(15, keys %hash == 0, "Check clear");
+ 
+ ok(16, is_shared(%hash), "Check for sharing");
+ 
++exit(0);
++
+ # EOF
+diff -up perl-5.10.0/ext/threads/shared/t/no_share.t.shared perl-5.10.0/ext/threads/shared/t/no_share.t
+--- perl-5.10.0/ext/threads/shared/t/no_share.t.shared	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/threads/shared/t/no_share.t	2010-09-07 08:35:16.198641759 +0200
+@@ -2,13 +2,9 @@ use strict;
+ use warnings;
+ 
+ BEGIN {
+-    if ($ENV{'PERL_CORE'}){
+-        chdir 't';
+-        unshift @INC, '../lib';
+-    }
+     use Config;
+     if (! $Config{'useithreads'}) {
+-        print("1..0 # Skip: Perl not compiled with 'useithreads'\n");
++        print("1..0 # SKIP Perl not compiled with 'useithreads'\n");
+         exit(0);
+     }
+ }
+@@ -61,4 +57,6 @@ ok(5, $test eq "bar" || $test eq 'baz', 
+ 
+ ok(6, ! is_shared($test), "Check for sharing");
+ 
++exit(0);
++
+ # EOF
+diff -up perl-5.10.0/ext/threads/shared/t/object.t.shared perl-5.10.0/ext/threads/shared/t/object.t
+--- perl-5.10.0/ext/threads/shared/t/object.t.shared	2010-09-07 08:35:16.199642219 +0200
++++ perl-5.10.0/ext/threads/shared/t/object.t	2010-09-07 08:35:16.199642219 +0200
+@@ -0,0 +1,179 @@
++use strict;
++use warnings;
++
++BEGIN {
++    use Config;
++    if (! $Config{'useithreads'}) {
++        print("1..0 # SKIP Perl not compiled with 'useithreads'\n");
++        exit(0);
++    }
++    if ($] < 5.010) {
++        print("1..0 # SKIP Needs Perl 5.10.0 or later\n");
++        exit(0);
++    }
++}
++
++use ExtUtils::testlib;
++
++BEGIN {
++    $| = 1;
++    print("1..28\n");   ### Number of tests that will be run ###
++};
++
++use threads;
++use threads::shared;
++
++my $TEST;
++BEGIN {
++    share($TEST);
++    $TEST = 1;
++}
++
++sub ok {
++    my ($ok, $name) = @_;
++
++    lock($TEST);
++    my $id = $TEST++;
++
++    # You have to do it this way or VMS will get confused.
++    if ($ok) {
++        print("ok $id - $name\n");
++    } else {
++        print("not ok $id - $name\n");
++        printf("# Failed test at line %d\n", (caller)[2]);
++    }
++
++    return ($ok);
++}
++
++ok(1, 'Loaded');
++
++### Start of Testing ###
++
++{ package Jar;
++    my @jar :shared;
++
++    sub new
++    {
++        bless(&threads::shared::share({}), shift);
++    }
++
++    sub store
++    {
++        my ($self, $cookie) = @_;
++        push(@jar, $cookie);
++        return $jar[-1];        # Results in destruction of proxy object
++    }
++
++    sub peek
++    {
++        return $jar[-1];
++    }
++
++    sub fetch
++    {
++        pop(@jar);
++    }
++}
++
++{ package Cookie;
++
++    sub new
++    {
++        my $self = bless(&threads::shared::share({}), shift);
++        $self->{'type'} = shift;
++        return $self;
++    }
++
++    sub DESTROY
++    {
++        delete(shift->{'type'});
++    }
++}
++
++my $C1 = 'chocolate chip';
++my $C2 = 'oatmeal raisin';
++my $C3 = 'vanilla wafer';
++
++my $cookie = Cookie->new($C1);
++ok($cookie->{'type'} eq $C1, 'Have cookie');
++
++my $jar = Jar->new();
++$jar->store($cookie);
++
++ok($cookie->{'type'}      eq $C1, 'Still have cookie');
++ok($jar->peek()->{'type'} eq $C1, 'Still have cookie');
++ok($cookie->{'type'}      eq $C1, 'Still have cookie');
++
++threads->create(sub {
++    ok($cookie->{'type'}      eq $C1, 'Have cookie in thread');
++    ok($jar->peek()->{'type'} eq $C1, 'Still have cookie in thread');
++    ok($cookie->{'type'}      eq $C1, 'Still have cookie in thread');
++
++    $jar->store(Cookie->new($C2));
++    ok($jar->peek()->{'type'} eq $C2, 'Added cookie in thread');
++})->join();
++
++ok($cookie->{'type'}      eq $C1, 'Still have original cookie after thread');
++ok($jar->peek()->{'type'} eq $C2, 'Still have added cookie after thread');
++
++$cookie = $jar->fetch();
++ok($cookie->{'type'}      eq $C2, 'Fetched cookie from jar');
++ok($jar->peek()->{'type'} eq $C1, 'Cookie still in jar');
++
++$cookie = $jar->fetch();
++ok($cookie->{'type'}      eq $C1, 'Fetched cookie from jar');
++undef($cookie);
++
++share($cookie);
++$cookie = $jar->store(Cookie->new($C3));
++ok($jar->peek()->{'type'} eq $C3, 'New cookie in jar');
++ok($cookie->{'type'}      eq $C3, 'Have cookie');
++
++threads->create(sub {
++    ok($cookie->{'type'}      eq $C3, 'Have cookie in thread');
++    $cookie = Cookie->new($C1);
++    ok($cookie->{'type'}      eq $C1, 'Change cookie in thread');
++    ok($jar->peek()->{'type'} eq $C3, 'Still have cookie in jar');
++})->join();
++
++ok($cookie->{'type'}      eq $C1, 'Have changed cookie after thread');
++ok($jar->peek()->{'type'} eq $C3, 'Still have cookie in jar');
++undef($cookie);
++ok($jar->peek()->{'type'} eq $C3, 'Still have cookie in jar');
++$cookie = $jar->fetch();
++ok($cookie->{'type'}      eq $C3, 'Fetched cookie from jar');
++
++{ package Foo;
++
++    my $ID = 1;
++    threads::shared::share($ID);
++
++    sub new
++    {
++        # Anonymous scalar with an internal ID
++        my $obj = \do{ my $scalar = $ID++; };
++        threads::shared::share($obj);   # Make it shared
++        return (bless($obj, 'Foo'));    # Make it an object
++    }
++}
++
++my $obj :shared;
++$obj = Foo->new();
++ok($$obj == 1, "Main: Object ID $$obj");
++
++threads->create( sub {
++        ok($$obj == 1, "Thread: Object ID $$obj");
++
++        $$obj = 10;
++        ok($$obj == 10, "Thread: Changed object ID $$obj");
++
++        $obj = Foo->new();
++        ok($$obj == 2, "Thread: New object ID $$obj");
++    } )->join();
++
++ok($$obj == 2, "Main: New object ID $$obj  # TODO - should be 2");
++
++exit(0);
++
++# EOF
+diff -up perl-5.10.0/ext/threads/shared/t/shared_attr.t.shared perl-5.10.0/ext/threads/shared/t/shared_attr.t
+--- perl-5.10.0/ext/threads/shared/t/shared_attr.t.shared	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/threads/shared/t/shared_attr.t	2010-09-07 08:35:16.200633181 +0200
+@@ -2,13 +2,9 @@ use strict;
+ use warnings;
+ 
+ BEGIN {
+-    if ($ENV{'PERL_CORE'}){
+-        chdir 't';
+-        unshift @INC, '../lib';
+-    }
+     use Config;
+     if (! $Config{'useithreads'}) {
+-        print("1..0 # Skip: Perl not compiled with 'useithreads'\n");
++        print("1..0 # SKIP Perl not compiled with 'useithreads'\n");
+         exit(0);
+     }
+ }
+@@ -78,4 +74,6 @@ for(1..10) {
+   ok($test_count++, $str1 eq $str2, 'contents');
+ }
+ 
++exit(0);
++
+ # EOF
+diff -up perl-5.10.0/ext/threads/shared/t/stress.t.shared perl-5.10.0/ext/threads/shared/t/stress.t
+--- perl-5.10.0/ext/threads/shared/t/stress.t.shared	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/threads/shared/t/stress.t	2010-09-07 08:35:16.201641951 +0200
+@@ -2,17 +2,13 @@ use strict;
+ use warnings;
+ 
+ BEGIN {
+-    if ($ENV{'PERL_CORE'}){
+-        chdir 't';
+-        unshift @INC, '../lib';
+-    }
+     use Config;
+     if (! $Config{'useithreads'}) {
+-        print("1..0 # Skip: Perl not compiled with 'useithreads'\n");
++        print("1..0 # SKIP Perl not compiled with 'useithreads'\n");
+         exit(0);
+     }
+     if ($^O eq 'hpux' && $Config{osvers} <= 10.20) {
+-        print("1..0 # Skip: Broken under HP-UX 10.20\n");
++        print("1..0 # SKIP Broken under HP-UX 10.20\n");
+         exit(0);
+     }
+ }
+@@ -38,16 +34,17 @@ use threads::shared;
+ {
+     my $cnt = 50;
+ 
+-    my $TIMEOUT = 30;
++    my $TIMEOUT = 60;
+ 
+     my $mutex = 1;
+     share($mutex);
+ 
+     my @threads;
+-    for (1..$cnt) {
++    for (reverse(1..$cnt)) {
+         $threads[$_] = threads->create(sub {
+                             my $tnum = shift;
+                             my $timeout = time() + $TIMEOUT;
++                            threads->yield();
+ 
+                             # Randomize the amount of work the thread does
+                             my $sum;
+@@ -79,42 +76,54 @@ use threads::shared;
+     # Gather thread results
+     my ($okay, $failures, $timeouts, $unknown) = (0, 0, 0, 0);
+     for (1..$cnt) {
+-        my $rc = $threads[$_]->join();
+-        if (! $rc) {
++        if (! $threads[$_]) {
+             $failures++;
+-        } elsif ($rc =~ /^timed out/) {
+-            $timeouts++;
+-        } elsif ($rc eq 'okay') {
+-            $okay++;
+         } else {
+-            $unknown++;
+-            print("# Unknown error: $rc\n");
++            my $rc = $threads[$_]->join();
++            if (! $rc) {
++                $failures++;
++            } elsif ($rc =~ /^timed out/) {
++                $timeouts++;
++            } elsif ($rc eq 'okay') {
++                $okay++;
++            } else {
++                $unknown++;
++                print(STDERR "# Unknown error: $rc\n");
++            }
+         }
+     }
++    if ($failures) {
++        # Most likely due to running out of memory
++        print(STDERR "# Warning: $failures threads failed\n");
++        print(STDERR "# Note: errno 12 = ENOMEM\n");
++        $cnt -= $failures;
++    }
+ 
+-    if ($failures || $unknown || (($okay + $timeouts) != $cnt)) {
+-        print('not ok 1');
+-        my $too_few = $cnt - ($okay + $failures + $timeouts + $unknown);
+-        print(" - $too_few too few threads reported") if $too_few;
+-        print(" - $failures threads failed")          if $failures;
+-        print(" - $unknown unknown errors")           if $unknown;
+-        print(" - $timeouts threads timed out")       if $timeouts;
+-        print("\n");
++    if ($unknown || (($okay + $timeouts) != $cnt)) {
++        print("not ok 1\n");
++        my $too_few = $cnt - ($okay + $timeouts + $unknown);
++        print(STDERR "# Test failed:\n");
++        print(STDERR "#\t$too_few too few threads reported\n") if $too_few;
++        print(STDERR "#\t$unknown unknown errors\n")           if $unknown;
++        print(STDERR "#\t$timeouts threads timed out\n")       if $timeouts;
+ 
+     } elsif ($timeouts) {
+         # Frequently fails under MSWin32 due to deadlocking bug in Windows
+         # hence test is TODO under MSWin32
+         #   http://rt.perl.org/rt3/Public/Bug/Display.html?id=41574
+         #   http://support.microsoft.com/kb/175332
+-        print('not ok 1');
+-        print(' # TODO - not reliable under MSWin32') if ($^O eq 'MSWin32');
+-        print(" - $timeouts threads timed out\n");
++        if ($^O eq 'MSWin32') {
++            print("not ok 1 # TODO - not reliable under MSWin32\n")
++        } else {
++            print("not ok 1\n");
++            print(STDERR "# Test failed: $timeouts threads timed out\n");
++        }
+ 
+     } else {
+-        print('ok 1');
+-        print(' # TODO - not reliable under MSWin32') if ($^O eq 'MSWin32');
+-        print("\n");
++        print("ok 1\n");
+     }
+ }
+ 
++exit(0);
++
+ # EOF
+diff -up perl-5.10.0/ext/threads/shared/t/sv_refs.t.shared perl-5.10.0/ext/threads/shared/t/sv_refs.t
+--- perl-5.10.0/ext/threads/shared/t/sv_refs.t.shared	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/threads/shared/t/sv_refs.t	2010-09-07 08:35:16.202640246 +0200
+@@ -2,13 +2,9 @@ use strict;
+ use warnings;
+ 
+ BEGIN {
+-    if ($ENV{'PERL_CORE'}){
+-        chdir 't';
+-        unshift @INC, '../lib';
+-    }
+     use Config;
+     if (! $Config{'useithreads'}) {
+-        print("1..0 # Skip: Perl not compiled with 'useithreads'\n");
++        print("1..0 # SKIP Perl not compiled with 'useithreads'\n");
+         exit(0);
+     }
+ }
+@@ -31,7 +27,7 @@ sub ok {
+ 
+ BEGIN {
+     $| = 1;
+-    print("1..11\n");   ### Number of tests that will be run ###
++    print("1..21\n");   ### Number of tests that will be run ###
+ };
+ 
+ use threads;
+@@ -74,4 +70,32 @@ ok(10,$t1 eq 'bar',"Check that assign to
+ 
+ ok(11, is_shared($foo), "Check for sharing");
+ 
++{
++    # Circular references with 3 shared scalars
++    my $x : shared;
++    my $y : shared;
++    my $z : shared;
++
++    $x = \$y;
++    $y = \$z;
++    $z = \$x;
++    ok(12, ref($x) eq 'REF', '$x ref type');
++    ok(13, ref($y) eq 'REF', '$y ref type');
++    ok(14, ref($z) eq 'REF', '$z ref type');
++
++    my @q :shared = ($x);
++    ok(15, ref($q[0]) eq 'REF', '$q[0] ref type');
++
++    my $w = $q[0];
++    ok(16, ref($w) eq 'REF', '$w ref type');
++    ok(17, ref($$w) eq 'REF', '$$w ref type');
++    ok(18, ref($$$w) eq 'REF', '$$$w ref type');
++    ok(19, ref($$$$w) eq 'REF', '$$$$w ref type');
++
++    ok(20, is_shared($x) == is_shared($w), '_id($x) == _id($w)');
++    ok(21, is_shared($w) == is_shared($$$$w), '_id($w) == _id($$$$w)');
++}
++
++exit(0);
++
+ # EOF
+diff -up perl-5.10.0/ext/threads/shared/t/sv_simple.t.shared perl-5.10.0/ext/threads/shared/t/sv_simple.t
+--- perl-5.10.0/ext/threads/shared/t/sv_simple.t.shared	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/threads/shared/t/sv_simple.t	2010-09-07 08:35:16.203631557 +0200
+@@ -2,13 +2,9 @@ use strict;
+ use warnings;
+ 
+ BEGIN {
+-    if ($ENV{'PERL_CORE'}){
+-        chdir 't';
+-        unshift @INC, '../lib';
+-    }
+     use Config;
+     if (! $Config{'useithreads'}) {
+-        print("1..0 # Skip: Perl not compiled with 'useithreads'\n");
++        print("1..0 # SKIP Perl not compiled with 'useithreads'\n");
+         exit(0);
+     }
+ }
+@@ -63,4 +59,6 @@ ok(10, !defined($test), "Check undef val
+ 
+ ok(11, is_shared($test), "Check for sharing");
+ 
++exit(0);
++
+ # EOF
+diff -up perl-5.10.0/ext/threads/shared/t/waithires.t.shared perl-5.10.0/ext/threads/shared/t/waithires.t
+--- perl-5.10.0/ext/threads/shared/t/waithires.t.shared	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/threads/shared/t/waithires.t	2010-09-07 08:35:16.205631429 +0200
+@@ -2,31 +2,26 @@ use strict;
+ use warnings;
+ 
+ BEGIN {
+-    if ($ENV{'PERL_CORE'}){
+-        chdir 't';
+-        unshift @INC, '../lib';
++    # Import test.pl into its own package
++    {
++        package Test;
++        require($ENV{PERL_CORE} ? './test.pl' : './t/test.pl');
+     }
++
+     use Config;
+     if (! $Config{'useithreads'}) {
+-        print("1..0 # Skip: Perl not compiled with 'useithreads'\n");
+-        exit(0);
++        Test::skip_all(q/Perl not compiled with 'useithreads'/);
+     }
+-    eval {
+-        require Time::HiRes;
+-        Time::HiRes->import('time');
+-    };
+-    if ($@) {
+-        print("1..0 # Skip: Time::HiRes not available.\n");
+-        exit(0);
++
++    if (! eval 'use Time::HiRes "time"; 1') {
++        Test::skip_all('Time::HiRes not available');
+     }
+ }
+ 
+ use ExtUtils::testlib;
+ 
+-my $Base = 0;
+ sub ok {
+     my ($id, $ok, $name) = @_;
+-    $id += $Base;
+ 
+     # You have to do it this way or VMS will get confused.
+     if ($ok) {
+@@ -47,8 +42,10 @@ BEGIN {
+ use threads;
+ use threads::shared;
+ 
+-ok(1, 1, 'Loaded');
+-$Base++;
++Test::watchdog(60);   # In case we get stuck
++
++my $TEST = 1;
++ok($TEST++, 1, 'Loaded');
+ 
+ ### Start of Testing ###
+ 
+@@ -65,149 +62,110 @@ $Base++;
+ # and consider upgrading their glibc.
+ 
+ 
+-sub forko (&$$); # To prevent deadlock from underlying pthread_* bugs (as in
+-                 # stock RH9 glibc/NPTL) or from our own errors, we run tests
+-                 # in separately forked and alarmed processes.
+-
+-*forko = ($^O =~ /^dos|os2|mswin32|netware|vms$/i)
+-? sub (&$$) { my $code = shift; goto &$code; }
+-: sub (&$$) {
+-  my ($code, $expected, $patience) = @_;
+-  my ($test_num, $pid);
+-  local *CHLD;
+-
+-  my $bump = $expected;
+-
+-  unless (defined($pid = open(CHLD, "-|"))) {
+-    die "fork: $!\n";
+-  }
+-  if (! $pid) {   # Child -- run the test
+-    alarm($patience || 60);
+-    &$code;
+-    exit;
+-  }
+-
+-  while (<CHLD>) {
+-    $expected--, $test_num=$1 if /^(?:not )?ok (\d+)/;
+-    #print "#forko: ($expected, $1) $_";
+-    print;
+-  }
+-
+-  close(CHLD);
+-
+-  while ($expected--) {
+-    ok(++$test_num, 0, "missing test result: child status $?");
+-  }
+-
+-  $Base += $bump;
+-};
+-
+-
+ # - TEST basics
+ 
+ my @wait_how = (
+-   "simple",  # cond var == lock var; implicit lock; e.g.: cond_wait($c)
+-   "repeat",  # cond var == lock var; explicit lock; e.g.: cond_wait($c, $c)
+-   "twain"    # cond var != lock var; explicit lock; e.g.: cond_wait($c, $l)
++    "simple",  # cond var == lock var; implicit lock; e.g.: cond_wait($c)
++    "repeat",  # cond var == lock var; explicit lock; e.g.: cond_wait($c, $c)
++    "twain"    # cond var != lock var; explicit lock; e.g.: cond_wait($c, $l)
+ );
+ 
++
+ SYNC_SHARED: {
+-  my $test : shared;  # simple|repeat|twain
+-  my $cond : shared;
+-  my $lock : shared;
+-
+-  ok(1, 1, "Shared synchronization tests preparation");
+-  $Base += 1;
+-
+-  sub signaller {
+-    ok(2,1,"$test: child before lock");
+-    $test =~ /twain/ ? lock($lock) : lock($cond);
+-    ok(3,1,"$test: child obtained lock");
+-    if ($test =~ 'twain') {
+-      no warnings 'threads';   # lock var != cond var, so disable warnings
+-      cond_signal($cond);
+-    } else {
+-      cond_signal($cond);
++    my $test_type :shared;   # simple|repeat|twain
++
++    my $cond :shared;
++    my $lock :shared;
++
++    ok($TEST++, 1, "Shared synchronization tests preparation");
++
++    # - TEST cond_timedwait success
++
++    sub signaller
++    {
++        my $testno = $_[0];
++
++        ok($testno++, 1, "$test_type: child before lock");
++        $test_type =~ /twain/ ? lock($lock) : lock($cond);
++        ok($testno++, 1, "$test_type: child obtained lock");
++
++        if ($test_type =~ 'twain') {
++            no warnings 'threads';   # lock var != cond var, so disable warnings
++            cond_signal($cond);
++        } else {
++            cond_signal($cond);
++        }
++        ok($testno++, 1, "$test_type: child signalled condition");
++
++        return($testno);
+     }
+-    ok(4,1,"$test: child signalled condition");
+-  }
+ 
+-  # - TEST cond_timedwait success
++    sub ctw_ok
++    {
++        my ($testnum, $to) = @_;
++
++        # Which lock to obtain?
++        $test_type =~ /twain/ ? lock($lock) : lock($cond);
++        ok($testnum++, 1, "$test_type: obtained initial lock");
++
++        my $thr = threads->create(\&signaller, $testnum);
++        my $ok = 0;
++        for ($test_type) {
++            $ok = cond_timedwait($cond, time() + $to), last        if /simple/;
++            $ok = cond_timedwait($cond, time() + $to, $cond), last if /repeat/;
++            $ok = cond_timedwait($cond, time() + $to, $lock), last if /twain/;
++            die "$test_type: unknown test\n";
++        }
++        $testnum = $thr->join();
++        ok($testnum++, $ok, "$test_type: condition obtained");
++
++        return ($testnum);
++    }
+ 
+-  forko( sub {
+     foreach (@wait_how) {
+-      $test = "cond_timedwait [$_]";
+-      threads->create(\&ctw, 0.05)->join;
+-      $Base += 5;
+-    }
+-  }, 5*@wait_how, 5);
+-
+-  sub ctw($) {
+-      my $to = shift;
+-
+-      # which lock to obtain?
+-      $test =~ /twain/ ? lock($lock) : lock($cond);
+-      ok(1,1, "$test: obtained initial lock");
+-
+-      my $thr = threads->create(\&signaller);
+-      my $ok = 0;
+-      for ($test) {
+-        $ok=cond_timedwait($cond, time() + $to), last        if    /simple/;
+-        $ok=cond_timedwait($cond, time() + $to, $cond), last if    /repeat/;
+-        $ok=cond_timedwait($cond, time() + $to, $lock), last if    /twain/;
+-        die "$test: unknown test\n";
+-      }
+-      $thr->join;
+-      ok(5,$ok, "$test: condition obtained");
+-  }
++        $test_type = "cond_timedwait [$_]";
++        my $thr = threads->create(\&ctw_ok, $TEST, 0.1);
++        $TEST = $thr->join();
++    }
++
++    # - TEST cond_timedwait timeout
++
++    sub ctw_fail
++    {
++        my ($testnum, $to) = @_;
++
++        if ($^O eq "hpux" && $Config{osvers} <= 10.20) {
++            # The lock obtaining would pass, but the wait will not.
++            ok($testnum++, 1, "$test_type: obtained initial lock");
++            ok($testnum++, 0, "# SKIP see perl583delta");
++
++        } else {
++            $test_type =~ /twain/ ? lock($lock) : lock($cond);
++            ok($testnum++, 1, "$test_type: obtained initial lock");
++            my $ok;
++            for ($test_type) {
++                $ok = cond_timedwait($cond, time() + $to), last        if /simple/;
++                $ok = cond_timedwait($cond, time() + $to, $cond), last if /repeat/;
++                $ok = cond_timedwait($cond, time() + $to, $lock), last if /twain/;
++                die "$test_type: unknown test\n";
++            }
++            ok($testnum++, ! defined($ok), "$test_type: timeout");
++        }
+ 
+-  # - TEST cond_timedwait timeout
++        return ($testnum);
++    }
+ 
+-  forko( sub {
+     foreach (@wait_how) {
+-      $test = "cond_timedwait pause, timeout [$_]";
+-      threads->create(\&ctw_fail, 0.3)->join;
+-      $Base += 2;
++        $test_type = "cond_timedwait pause, timeout [$_]";
++        my $thr = threads->create(\&ctw_fail, $TEST, 0.3);
++        $TEST = $thr->join();
+     }
+-  }, 2*@wait_how, 5);
+ 
+-  forko( sub {
+     foreach (@wait_how) {
+-      $test = "cond_timedwait instant timeout [$_]";
+-      threads->create(\&ctw_fail, -0.60)->join;
+-      $Base += 2;
+-    }
+-  }, 2*@wait_how, 5);
+-
+-  # cond_timedwait timeout (relative timeout)
+-  sub ctw_fail {
+-    my $to = shift;
+-    if ($^O eq "hpux" && $Config{osvers} <= 10.20) {
+-      # The lock obtaining would pass, but the wait will not.
+-      ok(1,1, "$test: obtained initial lock");
+-      ok(2,0, "# SKIP see perl583delta");
+-    } else {
+-      $test =~ /twain/ ? lock($lock) : lock($cond);
+-      ok(1,1, "$test: obtained initial lock");
+-      my $ok;
+-      my $delta = time();
+-      for ($test) {
+-        $ok=cond_timedwait($cond, time() + $to), last        if    /simple/;
+-        $ok=cond_timedwait($cond, time() + $to, $cond), last if    /repeat/;
+-        $ok=cond_timedwait($cond, time() + $to, $lock), last if    /twain/;
+-        die "$test: unknown test\n";
+-      }
+-      $delta = time() - $delta;
+-      ok(2, ! defined($ok), "$test: timeout");
+-
+-      if (($to > 0) && ($^O ne 'os2')) {
+-        # Timing tests can be problematic
+-        if (($delta < (0.9 * $to)) || ($delta > (1.0 + $to))) {
+-          print(STDERR "# Timeout: specified=$to  actual=$delta secs.\n");
+-        }
+-      }
++        $test_type = "cond_timedwait instant timeout [$_]";
++        my $thr = threads->create(\&ctw_fail, $TEST, -0.60);
++        $TEST = $thr->join();
+     }
+-  }
+ 
+ } # -- SYNCH_SHARED block
+ 
+@@ -215,107 +173,107 @@ SYNC_SHARED: {
+ # same as above, but with references to lock and cond vars
+ 
+ SYNCH_REFS: {
+-  my $test : shared;  # simple|repeat|twain
++    my $test_type :shared;   # simple|repeat|twain
+ 
+-  my $true_cond; share($true_cond);
+-  my $true_lock; share($true_lock);
++    my $true_cond :shared;
++    my $true_lock :shared;
+ 
+-  my $cond = \$true_cond;
+-  my $lock = \$true_lock;
++    my $cond = \$true_cond;
++    my $lock = \$true_lock;
+ 
+-  ok(1, 1, "Synchronization reference tests preparation");
+-  $Base += 1;
+-
+-  sub signaller2 {
+-    ok(2,1,"$test: child before lock");
+-    $test =~ /twain/ ? lock($lock) : lock($cond);
+-    ok(3,1,"$test: child obtained lock");
+-    if ($test =~ 'twain') {
+-      no warnings 'threads';   # lock var != cond var, so disable warnings
+-      cond_signal($cond);
+-    } else {
+-      cond_signal($cond);
++    ok($TEST++, 1, "Synchronization reference tests preparation");
++
++    # - TEST cond_timedwait success
++
++    sub signaller2
++    {
++        my $testno = $_[0];
++
++        ok($testno++, 1, "$test_type: child before lock");
++        $test_type =~ /twain/ ? lock($lock) : lock($cond);
++        ok($testno++, 1, "$test_type: child obtained lock");
++
++        if ($test_type =~ 'twain') {
++            no warnings 'threads';   # lock var != cond var, so disable warnings
++            cond_signal($cond);
++        } else {
++            cond_signal($cond);
++        }
++        ok($testno++, 1, "$test_type: child signalled condition");
++
++        return($testno);
+     }
+-    ok(4,1,"$test: child signalled condition");
+-  }
+ 
+-  # - TEST cond_timedwait success
++    sub ctw_ok2
++    {
++        my ($testnum, $to) = @_;
++
++        # Which lock to obtain?
++        $test_type =~ /twain/ ? lock($lock) : lock($cond);
++        ok($testnum++, 1, "$test_type: obtained initial lock");
++
++        my $thr = threads->create(\&signaller2, $testnum);
++        my $ok = 0;
++        for ($test_type) {
++            $ok = cond_timedwait($cond, time() + $to), last        if /simple/;
++            $ok = cond_timedwait($cond, time() + $to, $cond), last if /repeat/;
++            $ok = cond_timedwait($cond, time() + $to, $lock), last if /twain/;
++            die "$test_type: unknown test\n";
++        }
++        $testnum = $thr->join();
++        ok($testnum++, $ok, "$test_type: condition obtained");
++
++        return ($testnum);
++    }
+ 
+-  forko( sub {
+     foreach (@wait_how) {
+-      $test = "cond_timedwait [$_]";
+-      threads->create(\&ctw2, 0.05)->join;
+-      $Base += 5;
+-    }
+-  }, 5*@wait_how, 5);
+-
+-  sub ctw2($) {
+-      my $to = shift;
+-
+-      # which lock to obtain?
+-      $test =~ /twain/ ? lock($lock) : lock($cond);
+-      ok(1,1, "$test: obtained initial lock");
+-
+-      my $thr = threads->create(\&signaller2);
+-      my $ok = 0;
+-      for ($test) {
+-        $ok=cond_timedwait($cond, time() + $to), last        if    /simple/;
+-        $ok=cond_timedwait($cond, time() + $to, $cond), last if    /repeat/;
+-        $ok=cond_timedwait($cond, time() + $to, $lock), last if    /twain/;
+-        die "$test: unknown test\n";
+-      }
+-      $thr->join;
+-      ok(5,$ok, "$test: condition obtained");
+-  }
++        $test_type = "cond_timedwait [$_]";
++        my $thr = threads->create(\&ctw_ok2, $TEST, 0.05);
++        $TEST = $thr->join();
++    }
++
++    # - TEST cond_timedwait timeout
++
++    sub ctw_fail2
++    {
++        my ($testnum, $to) = @_;
++
++        if ($^O eq "hpux" && $Config{osvers} <= 10.20) {
++            # The lock obtaining would pass, but the wait will not.
++            ok($testnum++, 1, "$test_type: obtained initial lock");
++            ok($testnum++, 0, "# SKIP see perl583delta");
++
++        } else {
++            $test_type =~ /twain/ ? lock($lock) : lock($cond);
++            ok($testnum++, 1, "$test_type: obtained initial lock");
++            my $ok;
++            for ($test_type) {
++                $ok = cond_timedwait($cond, time() + $to), last        if /simple/;
++                $ok = cond_timedwait($cond, time() + $to, $cond), last if /repeat/;
++                $ok = cond_timedwait($cond, time() + $to, $lock), last if /twain/;
++                die "$test_type: unknown test\n";
++            }
++            ok($testnum++, ! defined($ok), "$test_type: timeout");
++        }
+ 
+-  # - TEST cond_timedwait timeout
++        return ($testnum);
++    }
+ 
+-  forko( sub {
+     foreach (@wait_how) {
+-      $test = "cond_timedwait pause, timeout [$_]";
+-      threads->create(\&ctw_fail2, 0.3)->join;
+-      $Base += 2;
++        $test_type = "cond_timedwait pause, timeout [$_]";
++        my $thr = threads->create(\&ctw_fail2, $TEST, 0.3);
++        $TEST = $thr->join();
+     }
+-  }, 2*@wait_how, 5);
+ 
+-  forko( sub {
+     foreach (@wait_how) {
+-      $test = "cond_timedwait instant timeout [$_]";
+-      threads->create(\&ctw_fail2, -0.60)->join;
+-      $Base += 2;
+-    }
+-  }, 2*@wait_how, 5);
+-
+-  sub ctw_fail2 {
+-    my $to = shift;
+-
+-    if ($^O eq "hpux" && $Config{osvers} <= 10.20) {
+-      # The lock obtaining would pass, but the wait will not.
+-      ok(1,1, "$test: obtained initial lock");
+-      ok(2,0, "# SKIP see perl583delta");
+-    } else {
+-      $test =~ /twain/ ? lock($lock) : lock($cond);
+-      ok(1,1, "$test: obtained initial lock");
+-      my $ok;
+-      my $delta = time();
+-      for ($test) {
+-        $ok=cond_timedwait($cond, time() + $to), last        if    /simple/;
+-        $ok=cond_timedwait($cond, time() + $to, $cond), last if    /repeat/;
+-        $ok=cond_timedwait($cond, time() + $to, $lock), last if    /twain/;
+-        die "$test: unknown test\n";
+-      }
+-      $delta = time() - $delta;
+-      ok(2, ! $ok, "$test: timeout");
+-
+-      if (($to > 0) && ($^O ne 'os2')) {
+-        # Timing tests can be problematic
+-        if (($delta < (0.9 * $to)) || ($delta > (1.0 + $to))) {
+-          print(STDERR "# Timeout: specified=$to  actual=$delta secs.\n");
+-        }
+-      }
++        $test_type = "cond_timedwait instant timeout [$_]";
++        my $thr = threads->create(\&ctw_fail2, $TEST, -0.60);
++        $TEST = $thr->join();
+     }
+-  }
+ 
+ } # -- SYNCH_REFS block
+ 
++# Done
++exit(0);
++
+ # EOF
+diff -up perl-5.10.0/ext/threads/shared/t/wait.t.shared perl-5.10.0/ext/threads/shared/t/wait.t
+--- perl-5.10.0/ext/threads/shared/t/wait.t.shared	2007-12-18 11:47:07.000000000 +0100
++++ perl-5.10.0/ext/threads/shared/t/wait.t	2010-09-07 08:35:16.207631092 +0200
+@@ -2,23 +2,22 @@ use strict;
+ use warnings;
+ 
+ BEGIN {
+-    if ($ENV{'PERL_CORE'}){
+-        chdir 't';
+-        unshift @INC, '../lib';
++    # Import test.pl into its own package
++    {
++        package Test;
++        require($ENV{PERL_CORE} ? './test.pl' : './t/test.pl');
+     }
++
+     use Config;
+     if (! $Config{'useithreads'}) {
+-        print("1..0 # Skip: Perl not compiled with 'useithreads'\n");
+-        exit(0);
++        Test::skip_all(q/Perl not compiled with 'useithreads'/);
+     }
+ }
+ 
+ use ExtUtils::testlib;
+ 
+-my $Base = 0;
+ sub ok {
+     my ($id, $ok, $name) = @_;
+-    $id += $Base;
+ 
+     # You have to do it this way or VMS will get confused.
+     if ($ok) {
+@@ -38,8 +37,11 @@ BEGIN {
+ 
+ use threads;
+ use threads::shared;
+-ok(1, 1, 'Loaded');
+-$Base++;
++
++Test::watchdog(300);   # In case we get stuck
++
++my $TEST = 1;
++ok($TEST++, 1, 'Loaded');
+ 
+ ### Start of Testing ###
+ 
+@@ -56,174 +58,147 @@ $Base++;
+ # and consider upgrading their glibc.
+ 
+ 
+-sub forko (&$$); # To prevent deadlock from underlying pthread_* bugs (as in
+-                 # stock RH9 glibc/NPTL) or from our own errors, we run tests
+-                 # in separately forked and alarmed processes.
+-
+-*forko = ($^O =~ /^dos|os2|mswin32|netware|vms$/i)
+-? sub (&$$) { my $code = shift; goto &$code; }
+-: sub (&$$) {
+-  my ($code, $expected, $patience) = @_;
+-  my ($test_num, $pid);
+-  local *CHLD;
+-
+-  my $bump = $expected;
+-
+-  unless (defined($pid = open(CHLD, "-|"))) {
+-    die "fork: $!\n";
+-  }
+-  if (! $pid) {   # Child -- run the test
+-    alarm($patience || 60);
+-    &$code;
+-    exit;
+-  }
+-
+-  while (<CHLD>) {
+-    $expected--, $test_num=$1 if /^(?:not )?ok (\d+)/;
+-    #print "#forko: ($expected, $1) $_";
+-    print;
+-  }
+-
+-  close(CHLD);
+-
+-  while ($expected--) {
+-    ok(++$test_num, 0, "missing test result: child status $?");
+-  }
+-
+-  $Base += $bump;
+-};
+-
+-
+ # - TEST basics
+ 
+-ok(1, defined &cond_wait, "cond_wait() present");
+-ok(2, (prototype(\&cond_wait) eq '\[$@%];\[$@%]'),
+-    q|cond_wait() prototype '\[$@%];\[$@%]'|);
+-ok(3, defined &cond_timedwait, "cond_timedwait() present");
+-ok(4, (prototype(\&cond_timedwait) eq '\[$@%]$;\[$@%]'),
+-    q|cond_timedwait() prototype '\[$@%]$;\[$@%]'|);
++ok($TEST++, defined &cond_wait, "cond_wait() present");
++ok($TEST++, (prototype(\&cond_wait) eq '\[$@%];\[$@%]'),
++                q/cond_wait() prototype '\[$@%];\[$@%]'/);
++ok($TEST++, defined &cond_timedwait, "cond_timedwait() present");
++ok($TEST++, (prototype(\&cond_timedwait) eq '\[$@%]$;\[$@%]'),
++                q/cond_timedwait() prototype '\[$@%]$;\[$@%]'/);
+ 
+-$Base += 4;
+ 
+ my @wait_how = (
+-   "simple",  # cond var == lock var; implicit lock; e.g.: cond_wait($c)
+-   "repeat",  # cond var == lock var; explicit lock; e.g.: cond_wait($c, $c)
+-   "twain"    # cond var != lock var; explicit lock; e.g.: cond_wait($c, $l)
++    "simple",  # cond var == lock var; implicit lock; e.g.: cond_wait($c)
++    "repeat",  # cond var == lock var; explicit lock; e.g.: cond_wait($c, $c)
++    "twain"    # cond var != lock var; explicit lock; e.g.: cond_wait($c, $l)
+ );
+ 
++
+ SYNC_SHARED: {
+-  my $test : shared;  # simple|repeat|twain
+-  my $cond : shared;
+-  my $lock : shared;
+-
+-  ok(1, 1, "Shared synchronization tests preparation");
+-  $Base += 1;
+-
+-  sub signaller {
+-    ok(2,1,"$test: child before lock");
+-    $test =~ /twain/ ? lock($lock) : lock($cond);
+-    ok(3,1,"$test: child obtained lock");
+-    if ($test =~ 'twain') {
+-      no warnings 'threads';   # lock var != cond var, so disable warnings
+-      cond_signal($cond);
+-    } else {
+-      cond_signal($cond);
++    my $test_type :shared;   # simple|repeat|twain
++
++    my $cond :shared;
++    my $lock :shared;
++
++    ok($TEST++, 1, "Shared synchronization tests preparation");
++
++    sub signaller
++    {
++        my $testno = $_[0];
++
++        ok($testno++, 1, "$test_type: child before lock");
++        $test_type =~ /twain/ ? lock($lock) : lock($cond);
++        ok($testno++, 1, "$test_type: child obtained lock");
++
++        if ($test_type =~ 'twain') {
++            no warnings 'threads';   # lock var != cond var, so disable warnings
++            cond_signal($cond);
++        } else {
++            cond_signal($cond);
++        }
++        ok($testno++, 1, "$test_type: child signalled condition");
++
++        return($testno);
++    }
++
++    # - TEST cond_wait
++
++    sub cw
++    {
++        my ($testnum, $to) = @_;
++
++        # Which lock to obtain?
++        $test_type =~ /twain/ ? lock($lock) : lock($cond);
++        ok($testnum++, 1, "$test_type: obtained initial lock");
++
++        my $thr = threads->create(\&signaller, $testnum);
++        for ($test_type) {
++            cond_wait($cond), last        if /simple/;
++            cond_wait($cond, $cond), last if /repeat/;
++            cond_wait($cond, $lock), last if /twain/;
++            die "$test_type: unknown test\n";
++        }
++        $testnum = $thr->join();
++        ok($testnum++, 1, "$test_type: condition obtained");
++
++        return ($testnum);
+     }
+-    ok(4,1,"$test: child signalled condition");
+-  }
+ 
+-  # - TEST cond_wait
+-  forko( sub {
+     foreach (@wait_how) {
+-      $test = "cond_wait [$_]";
+-      threads->create(\&cw)->join;
+-      $Base += 5;
+-    }
+-  }, 5*@wait_how, 90);
+-
+-  sub cw {
+-      # which lock to obtain?
+-      $test =~ /twain/ ? lock($lock) : lock($cond);
+-      ok(1,1, "$test: obtained initial lock");
+-
+-      my $thr = threads->create(\&signaller);
+-      for ($test) {
+-        cond_wait($cond), last        if    /simple/;
+-        cond_wait($cond, $cond), last if    /repeat/;
+-        cond_wait($cond, $lock), last if    /twain/;
+-        die "$test: unknown test\n";
+-      }
+-      $thr->join;
+-      ok(5,1, "$test: condition obtained");
+-  }
++        $test_type = "cond_wait [$_]";
++        my $thr = threads->create(\&cw, $TEST);
++        $TEST = $thr->join();
++    }
++
++    # - TEST cond_timedwait success
++
++    sub ctw_ok
++    {
++        my ($testnum, $to) = @_;
++
++        # Which lock to obtain?
++        $test_type =~ /twain/ ? lock($lock) : lock($cond);
++        ok($testnum++, 1, "$test_type: obtained initial lock");
++
++        my $thr = threads->create(\&signaller, $testnum);
++        my $ok = 0;
++        for ($test_type) {
++            $ok = cond_timedwait($cond, time() + $to), last        if /simple/;
++            $ok = cond_timedwait($cond, time() + $to, $cond), last if /repeat/;
++            $ok = cond_timedwait($cond, time() + $to, $lock), last if /twain/;
++            die "$test_type: unknown test\n";
++        }
++        $testnum = $thr->join();
++        ok($testnum++, $ok, "$test_type: condition obtained");
+ 
+-  # - TEST cond_timedwait success
++        return ($testnum);
++    }
+ 
+-  forko( sub {
+     foreach (@wait_how) {
+-      $test = "cond_timedwait [$_]";
+-      threads->create(\&ctw, 5)->join;
+-      $Base += 5;
+-    }
+-  }, 5*@wait_how, 90);
+-
+-  sub ctw($) {
+-      my $to = shift;
+-
+-      # which lock to obtain?
+-      $test =~ /twain/ ? lock($lock) : lock($cond);
+-      ok(1,1, "$test: obtained initial lock");
+-
+-      my $thr = threads->create(\&signaller);
+-      my $ok = 0;
+-      for ($test) {
+-        $ok=cond_timedwait($cond, time() + $to), last        if    /simple/;
+-        $ok=cond_timedwait($cond, time() + $to, $cond), last if    /repeat/;
+-        $ok=cond_timedwait($cond, time() + $to, $lock), last if    /twain/;
+-        die "$test: unknown test\n";
+-      }
+-      $thr->join;
+-      ok(5,$ok, "$test: condition obtained");
+-  }
++        $test_type = "cond_timedwait [$_]";
++        my $thr = threads->create(\&ctw_ok, $TEST, 5);
++        $TEST = $thr->join();
++    }
++
++    # - TEST cond_timedwait timeout
++
++    sub ctw_fail
++    {
++        my ($testnum, $to) = @_;
++
++        if ($^O eq "hpux" && $Config{osvers} <= 10.20) {
++            # The lock obtaining would pass, but the wait will not.
++            ok($testnum++, 1, "$test_type: obtained initial lock");
++            ok($testnum++, 0, "# SKIP see perl583delta");
++
++        } else {
++            $test_type =~ /twain/ ? lock($lock) : lock($cond);
++            ok($testnum++, 1, "$test_type: obtained initial lock");
++            my $ok;
++            for ($test_type) {
++                $ok = cond_timedwait($cond, time() + $to), last        if /simple/;
++                $ok = cond_timedwait($cond, time() + $to, $cond), last if /repeat/;
++                $ok = cond_timedwait($cond, time() + $to, $lock), last if /twain/;
++                die "$test_type: unknown test\n";
++            }
++            ok($testnum++, ! defined($ok), "$test_type: timeout");
++        }
+ 
+-  # - TEST cond_timedwait timeout
++        return ($testnum);
++    }
+ 
+-  forko( sub {
+     foreach (@wait_how) {
+-      $test = "cond_timedwait pause, timeout [$_]";
+-      threads->create(\&ctw_fail, 3)->join;
+-      $Base += 2;
++        $test_type = "cond_timedwait pause, timeout [$_]";
++        my $thr = threads->create(\&ctw_fail, $TEST, 3);
++        $TEST = $thr->join();
+     }
+-  }, 2*@wait_how, 90);
+ 
+-  forko( sub {
+     foreach (@wait_how) {
+-      $test = "cond_timedwait instant timeout [$_]";
+-      threads->create(\&ctw_fail, -60)->join;
+-      $Base += 2;
+-    }
+-  }, 2*@wait_how, 90);
+-
+-  # cond_timedwait timeout (relative timeout)
+-  sub ctw_fail {
+-    my $to = shift;
+-    if ($^O eq "hpux" && $Config{osvers} <= 10.20) {
+-      # The lock obtaining would pass, but the wait will not.
+-      ok(1,1, "$test: obtained initial lock");
+-      ok(2,0, "# SKIP see perl583delta");
+-    } else {
+-      $test =~ /twain/ ? lock($lock) : lock($cond);
+-      ok(1,1, "$test: obtained initial lock");
+-      my $ok;
+-      for ($test) {
+-        $ok=cond_timedwait($cond, time() + $to), last        if    /simple/;
+-        $ok=cond_timedwait($cond, time() + $to, $cond), last if    /repeat/;
+-        $ok=cond_timedwait($cond, time() + $to, $lock), last if    /twain/;
+-        die "$test: unknown test\n";
+-      }
+-      ok(2,!defined($ok), "$test: timeout");
++        $test_type = "cond_timedwait instant timeout [$_]";
++        my $thr = threads->create(\&ctw_fail, $TEST, -60);
++        $TEST = $thr->join();
+     }
+-  }
+ 
+ } # -- SYNCH_SHARED block
+ 
+@@ -231,123 +206,136 @@ SYNC_SHARED: {
+ # same as above, but with references to lock and cond vars
+ 
+ SYNCH_REFS: {
+-  my $test : shared;  # simple|repeat|twain
++    my $test_type :shared;   # simple|repeat|twain
+ 
+-  my $true_cond; share($true_cond);
+-  my $true_lock; share($true_lock);
++    my $true_cond :shared;
++    my $true_lock :shared;
+ 
+-  my $cond = \$true_cond;
+-  my $lock = \$true_lock;
++    my $cond = \$true_cond;
++    my $lock = \$true_lock;
+ 
+-  ok(1, 1, "Synchronization reference tests preparation");
+-  $Base += 1;
+-
+-  sub signaller2 {
+-    ok(2,1,"$test: child before lock");
+-    $test =~ /twain/ ? lock($lock) : lock($cond);
+-    ok(3,1,"$test: child obtained lock");
+-    if ($test =~ 'twain') {
+-      no warnings 'threads';   # lock var != cond var, so disable warnings
+-      cond_signal($cond);
+-    } else {
+-      cond_signal($cond);
++    ok($TEST++, 1, "Synchronization reference tests preparation");
++
++    sub signaller2
++    {
++        my $testno = $_[0];
++
++        ok($testno++, 1, "$test_type: child before lock");
++        $test_type =~ /twain/ ? lock($lock) : lock($cond);
++        ok($testno++, 1, "$test_type: child obtained lock");
++
++        if ($test_type =~ 'twain') {
++            no warnings 'threads';   # lock var != cond var, so disable warnings
++            cond_signal($cond);
++        } else {
++            cond_signal($cond);
++        }
++        ok($testno++, 1, "$test_type: child signalled condition");
++
++        return($testno);
++    }
++
++    # - TEST cond_wait
++
++    sub cw2
++    {
++        my ($testnum, $to) = @_;
++
++        # Which lock to obtain?
++        $test_type =~ /twain/ ? lock($lock) : lock($cond);
++        ok($testnum++, 1, "$test_type: obtained initial lock");
++
++        my $thr = threads->create(\&signaller2, $testnum);
++        for ($test_type) {
++            cond_wait($cond), last        if /simple/;
++            cond_wait($cond, $cond), last if /repeat/;
++            cond_wait($cond, $lock), last if /twain/;
++            die "$test_type: unknown test\n";
++        }
++        $testnum = $thr->join();
++        ok($testnum++, 1, "$test_type: condition obtained");
++
++        return ($testnum);
+     }
+-    ok(4,1,"$test: child signalled condition");
+-  }
+ 
+-  # - TEST cond_wait
+-  forko( sub {
+     foreach (@wait_how) {
+-      $test = "cond_wait [$_]";
+-      threads->create(\&cw2)->join;
+-      $Base += 5;
+-    }
+-  }, 5*@wait_how, 90);
+-
+-  sub cw2 {
+-      # which lock to obtain?
+-      $test =~ /twain/ ? lock($lock) : lock($cond);
+-      ok(1,1, "$test: obtained initial lock");
+-
+-      my $thr = threads->create(\&signaller2);
+-      for ($test) {
+-        cond_wait($cond), last        if    /simple/;
+-        cond_wait($cond, $cond), last if    /repeat/;
+-        cond_wait($cond, $lock), last if    /twain/;
+-        die "$test: unknown test\n";
+-      }
+-      $thr->join;
+-      ok(5,1, "$test: condition obtained");
+-  }
++        $test_type = "cond_wait [$_]";
++        my $thr = threads->create(\&cw2, $TEST);
++        $TEST = $thr->join();
++    }
++
++    # - TEST cond_timedwait success
++
++    sub ctw_ok2
++    {
++        my ($testnum, $to) = @_;
++
++        # Which lock to obtain?
++        $test_type =~ /twain/ ? lock($lock) : lock($cond);
++        ok($testnum++, 1, "$test_type: obtained initial lock");
++
++        my $thr = threads->create(\&signaller2, $testnum);
++        my $ok = 0;
++        for ($test_type) {
++            $ok = cond_timedwait($cond, time() + $to), last        if /simple/;
++            $ok = cond_timedwait($cond, time() + $to, $cond), last if /repeat/;
++            $ok = cond_timedwait($cond, time() + $to, $lock), last if /twain/;
++            die "$test_type: unknown test\n";
++        }
++        $testnum = $thr->join();
++        ok($testnum++, $ok, "$test_type: condition obtained");
+ 
+-  # - TEST cond_timedwait success
++        return ($testnum);
++    }
+ 
+-  forko( sub {
+     foreach (@wait_how) {
+-      $test = "cond_timedwait [$_]";
+-      threads->create(\&ctw2, 5)->join;
+-      $Base += 5;
+-    }
+-  }, 5*@wait_how, 90);
+-
+-  sub ctw2($) {
+-      my $to = shift;
+-
+-      # which lock to obtain?
+-      $test =~ /twain/ ? lock($lock) : lock($cond);
+-      ok(1,1, "$test: obtained initial lock");
+-
+-      my $thr = threads->create(\&signaller2);
+-      my $ok = 0;
+-      for ($test) {
+-        $ok=cond_timedwait($cond, time() + $to), last        if    /simple/;
+-        $ok=cond_timedwait($cond, time() + $to, $cond), last if    /repeat/;
+-        $ok=cond_timedwait($cond, time() + $to, $lock), last if    /twain/;
+-        die "$test: unknown test\n";
+-      }
+-      $thr->join;
+-      ok(5,$ok, "$test: condition obtained");
+-  }
++        $test_type = "cond_timedwait [$_]";
++        my $thr = threads->create(\&ctw_ok2, $TEST, 5);
++        $TEST = $thr->join();
++    }
++
++    # - TEST cond_timedwait timeout
++
++    sub ctw_fail2
++    {
++        my ($testnum, $to) = @_;
++
++        if ($^O eq "hpux" && $Config{osvers} <= 10.20) {
++            # The lock obtaining would pass, but the wait will not.
++            ok($testnum++, 1, "$test_type: obtained initial lock");
++            ok($testnum++, 0, "# SKIP see perl583delta");
++
++        } else {
++            $test_type =~ /twain/ ? lock($lock) : lock($cond);
++            ok($testnum++, 1, "$test_type: obtained initial lock");
++            my $ok;
++            for ($test_type) {
++                $ok = cond_timedwait($cond, time() + $to), last        if /simple/;
++                $ok = cond_timedwait($cond, time() + $to, $cond), last if /repeat/;
++                $ok = cond_timedwait($cond, time() + $to, $lock), last if /twain/;
++                die "$test_type: unknown test\n";
++            }
++            ok($testnum++, ! defined($ok), "$test_type: timeout");
++        }
+ 
+-  # - TEST cond_timedwait timeout
++        return ($testnum);
++    }
+ 
+-  forko( sub {
+     foreach (@wait_how) {
+-      $test = "cond_timedwait pause, timeout [$_]";
+-      threads->create(\&ctw_fail2, 3)->join;
+-      $Base += 2;
++        $test_type = "cond_timedwait pause, timeout [$_]";
++        my $thr = threads->create(\&ctw_fail2, $TEST, 3);
++        $TEST = $thr->join();
+     }
+-  }, 2*@wait_how, 90);
+ 
+-  forko( sub {
+     foreach (@wait_how) {
+-      $test = "cond_timedwait instant timeout [$_]";
+-      threads->create(\&ctw_fail2, -60)->join;
+-      $Base += 2;
+-    }
+-  }, 2*@wait_how, 90);
+-
+-  sub ctw_fail2 {
+-    my $to = shift;
+-
+-    if ($^O eq "hpux" && $Config{osvers} <= 10.20) {
+-      # The lock obtaining would pass, but the wait will not.
+-      ok(1,1, "$test: obtained initial lock");
+-      ok(2,0, "# SKIP see perl583delta");
+-    } else {
+-      $test =~ /twain/ ? lock($lock) : lock($cond);
+-      ok(1,1, "$test: obtained initial lock");
+-      my $ok;
+-      for ($test) {
+-        $ok=cond_timedwait($cond, time() + $to), last        if    /simple/;
+-        $ok=cond_timedwait($cond, time() + $to, $cond), last if    /repeat/;
+-        $ok=cond_timedwait($cond, time() + $to, $lock), last if    /twain/;
+-        die "$test: unknown test\n";
+-      }
+-      ok(2,!$ok, "$test: timeout");
++        $test_type = "cond_timedwait instant timeout [$_]";
++        my $thr = threads->create(\&ctw_fail2, $TEST, -60);
++        $TEST = $thr->join();
+     }
+-  }
+ 
+ } # -- SYNCH_REFS block
+ 
++# Done
++exit(0);
++
+ # EOF
+diff -up perl-5.10.0/MANIFEST.shared perl-5.10.0/MANIFEST
+--- perl-5.10.0/MANIFEST.shared	2010-09-07 08:35:16.136654173 +0200
++++ perl-5.10.0/MANIFEST	2010-09-07 08:36:40.562882613 +0200
+@@ -1169,17 +1169,16 @@ ext/threads/shared/t/0nothread.t	Tests f
+ ext/threads/shared/t/av_refs.t	Tests for arrays containing references
+ ext/threads/shared/t/av_simple.t	Tests for basic shared array functionality.
+ ext/threads/shared/t/blessed.t	Test blessed shared variables
++ext/threads/shared/t/clone.t	Test
++ext/threads/shared/t/object.t	Test
+ ext/threads/shared/t/cond.t	Test condition variables
+ ext/threads/shared/t/disabled.t	Test threads::shared when threads are disabled.
+ ext/threads/shared/t/hv_refs.t	Test shared hashes containing references
+-ext/threads/shared/t/hv_simple.t	Tests for basic shared hash functionality.
+ ext/threads/shared/t/no_share.t	Tests for disabled share on variables.
+ ext/threads/shared/t/shared_attr.t	Test :shared attribute
+ ext/threads/shared/t/stress.t	Stress test
+ ext/threads/shared/t/sv_refs.t	thread shared variables
+ ext/threads/shared/t/sv_simple.t	thread shared variables
+-ext/threads/shared/t/waithires.t	Test sub-second cond_timedwait
+-ext/threads/shared/t/wait.t	Test cond_wait and cond_timedwait
+ ext/threads/t/basic.t		ithreads
+ ext/threads/t/blocks.t		Test threads in special blocks
+ ext/threads/t/context.t		Explicit thread context
+@@ -1201,7 +1200,6 @@ ext/threads/t/state.t		Tests state metho
+ ext/threads/t/stress_cv.t	Test with multiple threads, coderef cv argument.
+ ext/threads/t/stress_re.t	Test with multiple threads, string cv argument and regexes.
+ ext/threads/t/stress_string.t	Test with multiple threads, string cv argument.
+-ext/threads/t/thread.t		General ithread tests from thr5005
+ ext/Time/HiRes/Changes		Time::HiRes extension
+ ext/Time/HiRes/fallback/const-c.inc	Time::HiRes extension
+ ext/Time/HiRes/fallback/const-xs.inc	Time::HiRes extension
+@@ -2816,10 +2814,16 @@ lib/Text/TabsWrap/t/wrap.t	See if Text::
+ lib/Text/Wrap.pm		Paragraph formatter
+ lib/Thread.pm			Thread extensions frontend
+ lib/Thread/Queue.pm		Threadsafe queue
+-lib/Thread/Queue.t		See if threadsafe queue works
+ lib/Thread/Semaphore.pm		Threadsafe semaphore
+ lib/Thread/Semaphore.t		See if threadsafe semaphore works
+ lib/Thread.t			Thread extensions frontend tests
++lib/Thread/Queue/t/01_basic.t	Test
++lib/Thread/Queue/t/03_peek.t	Test
++lib/Thread/Queue/t/04_errs.t	Test
++lib/Thread/Queue/t/05_extract.t	Test
++lib/Thread/Queue/t/06_insert.t	Test
++lib/Thread/Queue/t/07_lock.t	Test
++lib/Thread/Queue/t/08_nothreads.t	Test
+ lib/Tie/Array.pm		Base class for tied arrays
+ lib/Tie/Array/push.t		Test for Tie::Array
+ lib/Tie/Array/splice.t		Test for Tie::Array::SPLICE
