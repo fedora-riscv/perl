@@ -12,7 +12,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        1%{?dist}
+Release:        132%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1702,6 +1702,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Sep  7 2010 Petr Sabata <psabata@redhat.com> - 5:5.12.2-132
+- Fixing release number for modules
+
 * Tue Sep  7 2010 Petr Sabata <psabata@redhat.com> - 4:5.12.2-1
 - Update to 5.12.2
 - Removed one hardcoded occurence of perl version in build process
