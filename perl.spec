@@ -162,18 +162,17 @@ Requires(post): perl-libs
 
 
 %description
-Perl is a high-level programming language with roots in C, sed, awk
-and shell scripting.  Perl is good at handling processes and files,
-and is especially good at handling text.  Perl's hallmarks are
-practicality and efficiency.  While it is used to do a lot of
-different things, Perl's most common applications are system
-administration utilities and web programming.  A large proportion of
-the CGI scripts on the web are written in Perl.  You need the perl
-package installed on your system so that your system can handle Perl
+Perl is a high-level programming language with roots in C, sed, awk and shell
+scripting.  Perl is good at handling processes and files, and is especially
+good at handling text.  Perl's hallmarks are practicality and efficiency.
+While it is used to do a lot of different things, Perl's most common
+applications are system administration utilities and web programming.  A large
+proportion of the CGI scripts on the web are written in Perl.  You need the
+perl package installed on your system so that your system can handle Perl
 scripts.
 
-Install this package if you want to program in Perl or enable your
-system to handle Perl scripts.
+Install this package if you want to program in Perl or enable your system to
+handle Perl scripts.
 
 %package libs
 Summary:        The libraries for the perl runtime
@@ -237,11 +236,11 @@ Requires:       perl(Compress::Zlib), perl(IO::Zlib)
 BuildArch:      noarch
 
 %description Archive-Tar
-Archive::Tar provides an object oriented mechanism for handling tar
-files.  It provides class methods for quick and easy files handling
-while also allowing for the creation of tar file objects for custom
-manipulation.  If you have the IO::Zlib module installed, Archive::Tar
-will also support compressed or gzipped tar files.
+Archive::Tar provides an object oriented mechanism for handling tar files.  It
+provides class methods for quick and easy files handling while also allowing
+for the creation of tar file objects for custom manipulation.  If you have the
+IO::Zlib module installed, Archive::Tar will also support compressed or
+gzipped tar files.
 
 
 %package Compress-Raw-Zlib
@@ -323,9 +322,8 @@ BuildArch:      noarch
 
 %description ExtUtils-CBuilder
 This module can build the C portions of Perl modules by invoking the
-appropriate compilers and linkers in a cross-platform manner. It was
-motivated by the Module::Build project, but may be useful for other
-purposes as well.
+appropriate compilers and linkers in a cross-platform manner. It was motivated
+by the Module::Build project, but may be useful for other purposes as well.
 
 
 %package ExtUtils-Embed
@@ -369,9 +367,9 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
 %description ExtUtils-ParseXS
-ExtUtils::ParseXS will compile XS code into C code by embedding the
-constructs necessary to let C functions manipulate Perl values and
-creates the glue necessary to let Perl access those functions.
+ExtUtils::ParseXS will compile XS code into C code by embedding the constructs
+necessary to let C functions manipulate Perl values and creates the glue
+necessary to let Perl access those functions.
 
 
 %package File-Fetch
@@ -401,10 +399,9 @@ Obsoletes:      perl-Compress-Zlib <= 2.020
 Provides:       perl(IO::Uncompress::Bunzip2)
 
 %description IO-Compress
-This module is the base class for all IO::Compress and IO::Uncompress
-modules. This module is not intended for direct use in application
-code. Its sole purpose is to to be sub-classed by IO::Compress
-modules.
+This module is the base class for all IO::Compress and IO::Uncompress modules.
+This module is not intended for direct use in application code. Its sole
+purpose is to to be sub-classed by IO::Compress modules.
 
 
 %package IO-Zlib
@@ -419,10 +416,10 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
 %description IO-Zlib
-This modules provides an IO:: style interface to the Compress::Zlib
-package. The main advantage is that you can use an IO::Zlib object in
-much the same way as an IO::File object so you can have common code
-that doesn't know which sort of file it is using.
+This modules provides an IO:: style interface to the Compress::Zlib package.
+The main advantage is that you can use an IO::Zlib object in much the same way
+as an IO::File object so you can have common code that doesn't know which sort
+of file it is using.
 
 
 %package IPC-Cmd
@@ -436,8 +433,8 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
 %description IPC-Cmd
-IPC::Cmd allows you to run commands, interactively if desired, in a
-platform independent way, but have them still work.
+IPC::Cmd allows you to run commands, interactively if desired, in a platform
+independent way, but have them still work.
 
 
 %package Locale-Maketext-Simple
@@ -468,12 +465,12 @@ Provides:       perl(Log::Message::Handlers) = %{version}
 BuildArch:      noarch
 
 %description Log-Message
-Log::Message is a generic message storage mechanism. It allows you to 
-store messages on a stack -- either shared or private -- and assign meta-data 
-to it. Some meta-data will automatically be added for you, like a timestamp
-and a stack trace, but some can be filled in by the user, like a tag by
-which to identify it or group it, and a level at which to handle the
-message (for example, log it, or die with it).
+Log::Message is a generic message storage mechanism. It allows you to store
+messages on a stack -- either shared or private -- and assign meta-data to it.
+Some meta-data will automatically be added for you, like a timestamp and a
+stack trace, but some can be filled in by the user, like a tag by which to
+identify it or group it, and a level at which to handle the message (for
+example, log it, or die with it).
 
 
 %package Log-Message-Simple
@@ -504,15 +501,15 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
 %description Module-Build
-Module::Build is a system for building, testing, and installing Perl
-modules. It is meant to be an alternative to ExtUtils::MakeMaker.
-Developers may alter the behavior of the module through subclassing in a
-much more straightforward way than with MakeMaker. It also does not 
-require a make on your system - most of the Module::Build code is pure-perl and
-written in a very cross-platform way. In fact, you don't even need a 
-shell, so even platforms like MacOS (traditional) can use it fairly easily. Its
-only prerequisites are modules that are included with perl 5.6.0, and it
-works fine on perl 5.005 if you can install a few additional modules.
+Module::Build is a system for building, testing, and installing Perl modules.
+It is meant to be an alternative to ExtUtils::MakeMaker.  Developers may alter
+the behavior of the module through subclassing in a much more straightforward
+way than with MakeMaker. It also does not require a make on your system - most
+of the Module::Build code is pure-perl and written in a very cross-platform
+way. In fact, you don't even need a shell, so even platforms like MacOS
+(traditional) can use it fairly easily. Its only prerequisites are modules that
+are included with perl 5.6.0, and it works fine on perl 5.005 if you can
+install a few additional modules.
 
 
 %package Module-CoreList
@@ -526,9 +523,9 @@ Requires:       perl(version)
 BuildArch:      noarch
 
 %description Module-CoreList
-Module::CoreList contains the hash of hashes %Module::CoreList::version,
-this is keyed on perl version as indicated in $].  The second level hash
-is module => version pairs.
+Module::CoreList contains the hash of hashes %Module::CoreList::version, this
+is keyed on perl version as indicated in $].  The second level hash is module
+=> version pairs.
 
 
 %package Module-Load
@@ -542,8 +539,8 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
 %description Module-Load
-Module::Load eliminates the need to know whether you are trying to
-require either a file or a module.
+Module::Load eliminates the need to know whether you are trying to require
+either a file or a module.
 
 
 %package Module-Load-Conditional
@@ -556,9 +553,8 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
 %description Module-Load-Conditional
-Module::Load::Conditional provides simple ways to query and possibly 
-load
-any of the modules you have installed on your system during runtime.
+Module::Load::Conditional provides simple ways to query and possibly load any
+of the modules you have installed on your system during runtime.
 
 
 %package Module-Loaded
@@ -574,10 +570,9 @@ BuildArch:      noarch
 %description Module-Loaded
 When testing applications, often you find yourself needing to provide
 functionality in your test environment that would usually be provided by
-external modules. Rather than munging the %INC by hand to mark these
-external modules as loaded, so they are not attempted to be loaded by
-perl, this module offers you a very simple way to mark modules as loaded
-and/or unloaded.
+external modules. Rather than munging the %INC by hand to mark these external
+modules as loaded, so they are not attempted to be loaded by perl, this module
+offers you a very simple way to mark modules as loaded and/or unloaded.
 
 
 %package Module-Pluggable
@@ -591,8 +586,8 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
 %description Module-Pluggable
-Provides a simple but, hopefully, extensible way of having 'plugins' for
-your module.
+Provides a simple but, hopefully, extensible way of having 'plugins' for your
+module.
 
 
 %package Object-Accessor
@@ -606,9 +601,8 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
 %description Object-Accessor
-Object::Accessor provides an interface to create per object accessors 
-(as opposed to per Class accessors, as, for example, Class::Accessor 
-provides).
+Object::Accessor provides an interface to create per object accessors (as
+opposed to per Class accessors, as, for example, Class::Accessor provides).
 
 
 %package Package-Constants
@@ -622,9 +616,9 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
 %description Package-Constants
-Package::Constants lists all the constants defined in a certain package.
-This can be useful for, among others, setting up an autogenerated
-@EXPORT/@EXPORT_OK for a Constants.pm file.
+Package::Constants lists all the constants defined in a certain package.  This
+can be useful for, among others, setting up an autogenerated @EXPORT/@EXPORT_OK
+for a Constants.pm file.
 
 
 %package Params-Check
@@ -654,8 +648,8 @@ BuildArch:      noarch
 Obsoletes:      perl-Parse-CPAN-Meta < 1.40
 
 %description Parse-CPAN-Meta 
-Parse::CPAN::Meta is a parser for META.yml files, based on the parser half
-of YAML::Tiny.
+Parse::CPAN::Meta is a parser for META.yml files, based on the parser half of
+YAML::Tiny.
 
 
 %package Pod-Escapes
@@ -669,9 +663,8 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
 %description Pod-Escapes
-This module provides things that are useful in decoding Pod E<...>
-sequences. Presumably, it should be used only by Pod parsers and/or
-formatters.
+This module provides things that are useful in decoding Pod E<...> sequences.
+Presumably, it should be used only by Pod parsers and/or formatters.
 
 
 %package Pod-Simple
@@ -701,9 +694,9 @@ Requires:       perl(Log::Message::Simple)
 BuildArch:      noarch
 
 %description Term-UI
-Term::UI is a transparent way of eliminating the overhead of having to
-format a question and then validate the reply, informing the user if the
-answer was not proper and re-issuing the question.
+Term::UI is a transparent way of eliminating the overhead of having to format
+a question and then validate the reply, informing the user if the answer was not
+proper and re-issuing the question.
 
 
 %package Test-Harness
@@ -747,9 +740,9 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Time-Piece
 The Time::Piece module replaces the standard localtime and gmtime functions
-with implementations that return objects.  It does so in a backwards
-compatible manner, so that using localtime or gmtime as documented in
-perlfunc still behave as expected.
+with implementations that return objects.  It does so in a backwards compatible
+manner, so that using localtime or gmtime as documented in perlfunc still
+behave as expected.
 
 
 %package parent
@@ -763,9 +756,8 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
 %description parent
-parent allows you to both load one or more modules, while setting up 
-inheritance from those modules at the same time. Mostly similar in 
-effect to:
+parent allows you to both load one or more modules, while setting up
+inheritance from those modules at the same time. Mostly similar in effect to:
 
     package Baz;
 
@@ -785,12 +777,12 @@ Version:        1.32
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description threads-shared
-By default, variables are private to each thread, and each newly created thread 
-gets a private copy of each existing variable. This module allows you to share 
-variables across different threads (and pseudo-forks on Win32). It is used together 
-with the threads module.
-This module supports the sharing of the following data types only: scalars and 
-scalar refs, arrays and array refs, and hashes and hash refs.
+By default, variables are private to each thread, and each newly created thread
+gets a private copy of each existing variable. This module allows you to share
+variables across different threads (and pseudo-forks on Win32). It is used
+together with the threads module.  This module supports the sharing of the
+following data types only: scalars and scalar refs, arrays and array refs, and
+hashes and hash refs.
 
 
 %package version
@@ -833,8 +825,8 @@ Requires:       perl-Test-Harness, perl-Test-Simple, perl-Time-Piece, perl-versi
 Requires:       perl-threads-shared, perl-parent, perl-Parse-CPAN-Meta
 
 %description core
-A metapackage which requires all of the perl bits and modules in the
-upstream tarball from perl.org.
+A metapackage which requires all of the perl bits and modules in the upstream
+tarball from perl.org.
 
 
 %prep
@@ -924,6 +916,9 @@ echo "RPM Build arch: %{_arch}"
 %define privlib     %{_prefix}/share/perl5
 %define archlib     %{_libdir}/perl5
 
+%define perl_vendorlib  %{privlib}/vendor_perl
+%define perl_vendorarch %{archlib}/vendor_perl
+
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
         -Dccdlflags="-Wl,--enable-new-dtags" \
         -DDEBUGGING=-g \
@@ -938,9 +933,9 @@ echo "RPM Build arch: %{_arch}"
         -Dsitelib="%{_prefix}/local/share/perl5" \
         -Dsitearch="%{_prefix}/local/%{_lib}/perl5" \
         -Dprivlib="%{privlib}" \
-        -Dvendorlib="%{privlib}/vendor_perl" \
+        -Dvendorlib="%{perl_vendorlib}" \
         -Darchlib="%{archlib}" \
-        -Dvendorarch="%{archlib}/vendor_perl" \
+        -Dvendorarch="%{perl_vendorarch}" \
         -Darchname=%{perl_archname} \
 %ifarch %{multilib_64_archs}
         -Dlibpth="/usr/local/lib64 /lib64 %{_prefix}/lib64" \
@@ -1003,8 +998,8 @@ do
 done
 
 # vendor directories (in this case for third party rpms)
-mkdir -p $RPM_BUILD_ROOT%{archlib}/vendor_perl
-mkdir -p $RPM_BUILD_ROOT%{privlib}/vendor_perl
+mkdir -p $RPM_BUILD_ROOT%{perl_vendorarch}
+mkdir -p $RPM_BUILD_ROOT%{perl_vendorlib}
 
 #
 # libnet configuration file
@@ -1079,8 +1074,8 @@ for dir in `find ext/ -type d -name t -maxdepth 2` ; do
 done
 
 # remove files used only during build process from rpm
-rm -rf $RPM_BUILD_ROOT/%{_vendorlib}/Unicode/Collate/allkeys.txt
-rm -rf $RPM_BUILD_ROOT/%{_vendorlib}/unicore/*.txt
+rm -rf $RPM_BUILD_ROOT/%{privlib}/Unicode/Collate/allkeys.txt
+rm -rf $RPM_BUILD_ROOT/%{privlib}/unicore/*.txt
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1107,13 +1102,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/*
 %{privlib}
 %{archlib}
-%{privlib}/vendor_perl
+%{perl_vendorlib}
 %{_prefix}/local/share/perl5
 
 
 # libs
 %exclude %{archlib}/CORE/libperl.so
-%exclude %{archlib}/vendor_perl
+%exclude %{perl_vendorarch}
 
 # devel
 %exclude %{_bindir}/enc2xs
@@ -1405,7 +1400,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{archlib}/CORE/libperl.so
 %dir %{archlib}
-%dir %{archlib}/vendor_perl
+%dir %{perl_vendorarch}
 %dir %{_prefix}/local/%{_lib}/perl5
 
 %files devel
