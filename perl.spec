@@ -12,7 +12,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        133%{?dist}
+Release:        134%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -776,6 +776,23 @@ effect to:
         push @ISA, qw(Foo Bar); 
     }
 
+%package threads-shared
+Summary:        Perl extension for sharing data structures between threads
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.32
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description threads-shared
+By default, variables are private to each thread, and each newly created thread 
+gets a private copy of each existing variable. This module allows you to share 
+variables across different threads (and pseudo-forks on Win32). It is used together 
+with the threads module.
+This module supports the sharing of the following data types only: scalars and 
+scalar refs, arrays and array refs, and hashes and hash refs.
+
+
 %package version
 Summary:        Perl extension for Version Objects
 Group:          Development/Libraries
@@ -806,14 +823,14 @@ Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-Compress-Raw-Zlib, perl-CPAN,
 Requires:       perl-CPANPLUS, perl-Digest-SHA, perl-ExtUtils-CBuilder,
 Requires:       perl-ExtUtils-Embed, perl-ExtUtils-MakeMaker, perl-ExtUtils-ParseXS,
-Requires:       perl-File-Fetch, perl-IO-Compress-Base, perl-IO-Zlib,
+Requires:       perl-File-Fetch, perl-IO-Compress, perl-IO-Zlib,
 Requires:       perl-IPC-Cmd, perl-Locale-Maketext-Simple, perl-Log-Message, perl-Log-Message-Simple,
 Requires:       perl-Module-Build, perl-Module-CoreList, perl-Module-Load,
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded,
 Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Constants,
 Requires:       perl-Params-Check, perl-Pod-Escapes, perl-Pod-Simple, perl-Term-UI, 
 Requires:       perl-Test-Harness, perl-Test-Simple, perl-Time-Piece, perl-version
-Requires:       perl-parent, perl-Parse-CPAN-Meta
+Requires:       perl-threads-shared, perl-parent, perl-Parse-CPAN-Meta
 
 %description core
 A metapackage which requires all of the perl bits and modules in the
@@ -896,13 +913,13 @@ echo "RPM Build arch: %{_arch}"
 # use "lib", not %%{_lib}, for privlib, sitelib, and vendorlib
 # To build production version, we would need -DDEBUGGING=-g
 
-# transition period:
-%define old_sitearch    %{_prefix}/local/%{_lib}/perl5/site_perl/5.10.0/%{perl_archname}
-%define old_sitelib     %{_prefix}/local/lib/perl5/site_perl/5.10.0
-%define old_vendorarch  %{_libdir}/perl5/vendor_perl/5.10.0/%{perl_archname}
-# for a reason that is not clear, the version component got stripped here:
-%define old_vendorlib   %{_prefix}/lib/perl5/vendor_perl
-# No need to add old privdir and archdir to otherlibdirs.
+# Perl INC path (perl -V) in search order:
+# - /usr/local/share/perl5            -- for CPAN     (site lib)
+# - /usr/local/lib[64]/perl5          -- for CPAN     (site arch)
+# - /usr/share/perl5/vendor_perl      -- 3rd party    (vendor lib)
+# - /usr/lib[64]/perl5/vendor_perl    -- 3rd party    (vendor arch)
+# - /usr/share/perl5                  -- Fedora       (priv lib)
+# - /usr/lib[64]/perl5                -- Fedora       (arch lib)
 
 %define privlib     %{_prefix}/share/perl5
 %define archlib     %{_libdir}/perl5
@@ -921,9 +938,9 @@ echo "RPM Build arch: %{_arch}"
         -Dsitelib="%{_prefix}/local/share/perl5" \
         -Dsitearch="%{_prefix}/local/%{_lib}/perl5" \
         -Dprivlib="%{privlib}" \
-        -Dvendorlib="%{privlib}" \
+        -Dvendorlib="%{privlib}/vendor_perl" \
         -Darchlib="%{archlib}" \
-        -Dvendorarch="%{archlib}" \
+        -Dvendorarch="%{archlib}/vendor_perl" \
         -Darchname=%{perl_archname} \
 %ifarch %{multilib_64_archs}
         -Dlibpth="/usr/local/lib64 /lib64 %{_prefix}/lib64" \
@@ -951,8 +968,7 @@ echo "RPM Build arch: %{_arch}"
         -Dd_gethostent_r_proto -Ud_endhostent_r_proto -Ud_sethostent_r_proto \
         -Ud_endprotoent_r_proto -Ud_setprotoent_r_proto \
         -Ud_endservent_r_proto -Ud_setservent_r_proto \
-        -Dscriptdir='%{_bindir}' \
-        -Dotherlibdirs="%{old_sitearch}:%{old_sitelib}:%{old_vendorarch}:%{old_vendorlib}:/usr/lib/perl5/site_perl"
+        -Dscriptdir='%{_bindir}' 
 
 # -Duseshrplib creates libperl.so, -Ubincompat5005 help create DSO -> libperl.so
 
@@ -985,6 +1001,10 @@ for i in asm/termios.h syscall.h syslimits.h syslog.h \
 do
     %{new_perl} %{build_bindir}/h2ph -a -d %{build_archlib} $i || true
 done
+
+# vendor directories (in this case for third party rpms)
+mkdir -p $RPM_BUILD_ROOT%{archlib}/vendor_perl
+mkdir -p $RPM_BUILD_ROOT%{privlib}/vendor_perl
 
 #
 # libnet configuration file
@@ -1087,9 +1107,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/*
 %{privlib}
 %{archlib}
+%{privlib}/vendor_perl
+%{_prefix}/local/share/perl5
+
 
 # libs
 %exclude %{archlib}/CORE/libperl.so
+%exclude %{archlib}/vendor_perl
 
 # devel
 %exclude %{_bindir}/enc2xs
@@ -1365,6 +1389,11 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_mandir}/man3/Time::Piece.3*
 %exclude %{_mandir}/man3/Time::Seconds.3*
 
+# threads-shared
+%exclude %{archlib}/auto/threads/shared*
+%exclude %{archlib}/threads/shared*
+%exclude %{_mandir}/man3/threads::shared*
+
 # version
 %exclude %{privlib}/version.pm
 %exclude %{privlib}/version.pod
@@ -1375,6 +1404,9 @@ rm -rf $RPM_BUILD_ROOT
 %files libs
 %defattr(-,root,root)
 %{archlib}/CORE/libperl.so
+%dir %{archlib}
+%dir %{archlib}/vendor_perl
+%dir %{_prefix}/local/%{_lib}/perl5
 
 %files devel
 %defattr(-,root,root,-)
@@ -1694,6 +1726,12 @@ rm -rf $RPM_BUILD_ROOT
 %{privlib}/parent.pm
 %{_mandir}/man3/parent.3*
 
+%files threads-shared
+%defattr(-,root,root,-)
+%{archlib}/auto/threads/shared*
+%{archlib}/threads/shared*
+%{_mandir}/man3/threads::shared*
+
 %files version
 %defattr(-,root,root,-)
 %{privlib}/version.pm
@@ -1707,6 +1745,10 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Sep 23 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-134
+- add vendor path, clean paths in Configure in spec file
+- create sub-package threads-shared
+
 * Tue Sep  7 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-133
 - Do not leak when destroying thread (RT #77352, RHBZ #630667)
 
