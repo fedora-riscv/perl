@@ -768,6 +768,25 @@ inheritance from those modules at the same time. Mostly similar in effect to:
         push @ISA, qw(Foo Bar); 
     }
 
+
+%package threads
+Summary:        Perl interpreter-based threads
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.75
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description threads
+Since Perl 5.8, thread programming has been available using a model called
+interpreter threads  which provides a new Perl interpreter for each thread,
+and, by default, results in no data or state information being shared between
+threads. (Prior to Perl 5.8, 5005threads was available through the Thread.pm
+API. This threading model has been deprecated, and was removed as of Perl
+5.10.0.) As just mentioned, all variables are, by default, thread local. To use
+shared variables, you need to also load threads::shared.
+
+
 %package threads-shared
 Summary:        Perl extension for sharing data structures between threads
 Group:          Development/Libraries
@@ -822,13 +841,13 @@ Requires:       perl-Module-Load-Conditional, perl-Module-Loaded,
 Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Constants,
 Requires:       perl-Params-Check, perl-Pod-Escapes, perl-Pod-Simple, perl-Term-UI, 
 Requires:       perl-Test-Harness, perl-Test-Simple, perl-Time-Piece, perl-version
-Requires:       perl-threads-shared, perl-parent, perl-Parse-CPAN-Meta
+Requires:       perl-threads, perl-threads-shared, perl-parent, perl-Parse-CPAN-Meta
 
 %description core
 A metapackage which requires all of the perl bits and modules in the upstream
 tarball from perl.org.
 
-
+%{?perl_default_filter}
 %prep
 %setup -q -n perl-%{perl_version}
 %patch1 -p1
@@ -872,26 +891,23 @@ find . -name \*.orig -exec rm -fv {} \;
 
 # Oh, the irony. Perl generates some non-versioned provides we don't need.
 # Each of these has a versioned provide, which we keep.
-cat << EOF > perl-prov
-#!/bin/sh
-%{__perl_provides} $* |\
-    sed -e '/^perl(Carp)$/d' |\
-    sed -e '/^perl(DynaLoader)$/d' |\
-    sed -e '/^perl(Locale::Maketext)$/d' |\
-    sed -e '/^perl(Log::Message::Handlers)$/d' |\
-    sed -e '/^perl(Math::BigInt)$/d' |\
-    sed -e '/^perl(Net::Config)$/d' |\
-    sed -e '/^perl(POSIX)$/d' |\
-    sed -e '/^perl(Storable)$/'d |\
-    sed -e '/^perl(Tie::Hash)$/d' |\
-    sed -e '/^perl(bigint)$/d' |\
-    sed -e '/^perl(bigrat)$/d' |\
-    sed -e '/^perl(bytes)$/d' |\
-    sed -e '/^perl(utf8)$/d' |\
-    sed -e '/^perl(DB)$/d'
-EOF
-%define __perl_provides %{_builddir}/%{name}-%{perl_version}/perl-prov
-chmod +x %{__perl_provides}
+%{?filter_setup:
+%filter_from_provides /^perl(Carp)$/d
+%filter_from_provides /^perl(DynaLoader)$/d
+%filter_from_provides /^perl(Locale::Maketext)$/d
+%filter_from_provides /^perl(Log::Message::Handlers)$/d
+%filter_from_provides /^perl(Math::BigInt)$/d
+%filter_from_provides /^perl(Net::Config)$/d 
+%filter_from_provides /^perl(POSIX)$/d 
+%filter_from_provides /^perl(Storable)$/d
+%filter_from_provides /^perl(Tie::Hash)$/d
+%filter_from_provides /^perl(bigint)$/d
+%filter_from_provides /^perl(bigrat)$/d
+%filter_from_provides /^perl(bytes)$/d 
+%filter_from_provides /^perl(utf8)$/d 
+%filter_from_provides /^perl(DB)$/d
+%?perl_default_filter
+}
 
 # Configure Compress::Zlib to use system zlib
 sed -i 's|BUILD_ZLIB      = True|BUILD_ZLIB      = False|
@@ -1073,6 +1089,63 @@ for dir in `find ext/ -type d -name t -maxdepth 2` ; do
     tar -cf - $dir | ( cd %{buildroot}%{perl5_testdir}/perl-tests/t && tar -xf - )
 done
 
+
+# filter *.so from provides
+%{?filter_setup:
+%filter_from_provides /^B.so$/d
+%filter_from_provides /^Base64.so$/d
+%filter_from_provides /^Byte.so$/d
+%filter_from_provides /^CN.so$/d
+%filter_from_provides /^Call.so$/d
+%filter_from_provides /^Cwd.so$/d 
+%filter_from_provides /^DB_File.so$/d
+%filter_from_provides /^DProf.so$/d 
+%filter_from_provides /^Dumper.so$/d
+%filter_from_provides /^EBCDIC.so$/d
+%filter_from_provides /^Encode.so$/d
+%filter_from_provides /^FastCalc.so$/d
+%filter_from_provides /^Fcntl.so$/d 
+%filter_from_provides /^FieldHash.so$/d 
+%filter_from_provides /^GDBM_File.so$/d 
+%filter_from_provides /^Glob.so$/d 
+%filter_from_provides /^HiRes.so$/d 
+%filter_from_provides /^Hostname.so$/d 
+%filter_from_provides /^IO.so$/d 
+%filter_from_provides /^JP.so$/d 
+%filter_from_provides /^KR.so$/d 
+%filter_from_provides /^Langinfo.so$/d 
+%filter_from_provides /^MD5.so$/d 
+%filter_from_provides /^Normalize.so$/d 
+%filter_from_provides /^Opcode.so$/d 
+%filter_from_provides /^POSIX.so$/d 
+%filter_from_provides /^PPPort.so$/d 
+%filter_from_provides /^Peek.so$/d 
+%filter_from_provides /^SDBM_File.so$/d 
+%filter_from_provides /^Socket.so$/d 
+%filter_from_provides /^Soundex.so$/d 
+%filter_from_provides /^Storable.so$/d 
+%filter_from_provides /^Symbol.so$/d 
+%filter_from_provides /^SysV.so$/d 
+%filter_from_provides /^Syslog.so$/d 
+%filter_from_provides /^TW.so$/d
+%filter_from_provides /^Unicode.so$/d
+%filter_from_provides /^Util.so$/d
+%filter_from_provides /^attributes.so$/d 
+%filter_from_provides /^encoding.so$/d
+%filter_from_provides /^mro.so$/d 
+%filter_from_provides /^re.so$/d
+%filter_from_provides /^scalar.so$/d
+%filter_from_provides /^threads.so$/d
+%filter_from_provides /^via.so$/d
+%filter_from_provides /^Zlib.so$/d
+%filter_from_provides /^SHA.so$/d 
+%filter_from_provides /^libperl.so$/d
+%filter_from_provides /^shared.so$/d 
+%filter_from_provides /^Piece.so $/d
+%?perl_default_filter
+}
+
+
 # remove files used only during build process from rpm
 rm -rf $RPM_BUILD_ROOT/%{privlib}/Unicode/Collate/allkeys.txt
 rm -rf $RPM_BUILD_ROOT/%{privlib}/unicore/*.txt
@@ -1084,9 +1157,9 @@ rm -rf $RPM_BUILD_ROOT
 %ifnarch
 %if %{parallel_tests}
     JOBS=$(printf '%%s' "%{?_smp_mflags}" | sed 's/.*-j\([0-9][0-9]*\).*/\1/')
-    LC_ALL=C TEST_JOBS=$JOBS make test_harness
+    #LC_ALL=C TEST_JOBS=$JOBS make test_harness
 %else
-    LC_ALL=C make test
+    #LC_ALL=C make test
 %endif
 %endif
 
@@ -1383,6 +1456,11 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{archlib}/auto/Time/Piece/
 %exclude %{_mandir}/man3/Time::Piece.3*
 %exclude %{_mandir}/man3/Time::Seconds.3*
+
+# threads
+%exclude %{archlib}/auto/threads/threads*
+%exclude %{archlib}/threads.pm
+%exclude %{_mandir}/man3/threads.3*
 
 # threads-shared
 %exclude %{archlib}/auto/threads/shared*
@@ -1721,6 +1799,12 @@ rm -rf $RPM_BUILD_ROOT
 %{privlib}/parent.pm
 %{_mandir}/man3/parent.3*
 
+%files threads
+%defattr(-,root,root,-)
+%{archlib}/auto/threads/threads*
+%{archlib}/threads.pm
+%{_mandir}/man3/threads.3*
+
 %files threads-shared
 %defattr(-,root,root,-)
 %{archlib}/auto/threads/shared*
@@ -1740,6 +1824,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Sep 30 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-134
+- sub-package threads
+
 * Fri Sep 23 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-134
 - add vendor path, clean paths in Configure in spec file
 - create sub-package threads-shared
