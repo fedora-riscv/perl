@@ -1157,9 +1157,9 @@ rm -rf $RPM_BUILD_ROOT
 %ifnarch
 %if %{parallel_tests}
     JOBS=$(printf '%%s' "%{?_smp_mflags}" | sed 's/.*-j\([0-9][0-9]*\).*/\1/')
-    #LC_ALL=C TEST_JOBS=$JOBS make test_harness
+    LC_ALL=C TEST_JOBS=$JOBS make test_harness
 %else
-    #LC_ALL=C make test
+    LC_ALL=C make test
 %endif
 %endif
 
