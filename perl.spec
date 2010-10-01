@@ -1415,13 +1415,14 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_mandir}/man3/Time::Seconds.3*
 
 # threads
-%exclude %{archlib}/auto/threads
+%dir %exclude %{archlib}/auto/threads
 %exclude %{archlib}/auto/threads/threads*
 %exclude %{archlib}/threads.pm
 %exclude %{_mandir}/man3/threads.3*
 
 # threads-shared
 %exclude %{archlib}/auto/threads/shared*
+%exclude %dir %{archlib}/threads
 %exclude %{archlib}/threads/shared*
 %exclude %{_mandir}/man3/threads::shared*
 
@@ -1759,7 +1760,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files threads
 %defattr(-,root,root,-)
-%{archlib}/auto/threads
+%dir %{archlib}/auto/threads
 %{archlib}/auto/threads/threads*
 %{archlib}/threads.pm
 %{_mandir}/man3/threads.3*
@@ -1767,6 +1768,7 @@ rm -rf $RPM_BUILD_ROOT
 %files threads-shared
 %defattr(-,root,root,-)
 %{archlib}/auto/threads/shared*
+%dir %{archlib}/threads
 %{archlib}/threads/shared*
 %{_mandir}/man3/threads::shared*
 
@@ -1785,6 +1787,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Fri Oct 01 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-136
 - Reformat perl-threads description
+- Fix threads directories ownership
 
 * Thu Sep 30 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-135
 - sub-package threads
