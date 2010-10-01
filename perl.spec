@@ -7,7 +7,7 @@
 %define parallel_tests 1
 
 # internal filter just for this spec
-%define %perl_default_filter %{?filter_setup: %{expand: \
+%define perl_default_filter %{?filter_setup: %{expand: \
 %filter_provides_in %{perl_vendorarch}/.*\\.so$ \
 %filter_provides_in %{archlib}/.*\\.so$ \
 %filter_provides_in -P %{perl_archlib}/(?!CORE/libperl).*\\.so$ \
