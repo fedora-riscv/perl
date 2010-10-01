@@ -12,8 +12,6 @@
 %filter_provides_in %{archlib}/.*\\.so$ \
 %filter_provides_in -P %{perl_archlib}/(?!CORE/libperl).*\\.so$ \
 %filter_from_provides /perl(UNIVERSAL)/d; /perl(DB)/d \
-%filter_provides_in %{_docdir} \
-%filter_requires_in %{_docdir} \
 %filter_setup \
 }}
 
@@ -23,7 +21,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        136%{?dist}
+Release:        137%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -190,6 +188,7 @@ Summary:        The libraries for the perl runtime
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Provides:		libperl.so
 
 %description libs
 The libraries for the perl runtime
@@ -920,6 +919,10 @@ find . -name \*.orig -exec rm -fv {} \;
 %filter_from_provides /^perl(bytes)$/d 
 %filter_from_provides /^perl(utf8)$/d 
 %filter_from_provides /^perl(DB)$/d
+%filter_from_requires /^perl(Mac::BuildTools)/d
+%filter_from_requires /^perl(Your::Module::Here)/d
+%filter_from_requires /^perl(Mac::InternetConfig)/d
+%filter_from_requires /^perl(Tk::Pod)/d
 %?perl_default_filter
 }
 
@@ -1785,6 +1788,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Oct  1 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-137
+- filter useless requires, provide libperl.so
+
 * Fri Oct 01 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-136
 - Reformat perl-threads description
 - Fix threads directories ownership
