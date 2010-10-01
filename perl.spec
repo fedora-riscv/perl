@@ -6,6 +6,17 @@
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 %define parallel_tests 1
 
+# internal filter just for this spec
+%define %perl_default_filter %{?filter_setup: %{expand: \
+%filter_provides_in %{perl_vendorarch}/.*\\.so$ \
+%filter_provides_in %{archlib}/.*\\.so$ \
+%filter_provides_in -P %{perl_archlib}/(?!CORE/libperl).*\\.so$ \
+%filter_from_provides /perl(UNIVERSAL)/d; /perl(DB)/d \
+%filter_provides_in %{_docdir} \
+%filter_requires_in %{_docdir} \
+%filter_setup \
+}}
+
 # same as we provide in /etc/rpm/macros.perl
 %define perl5_testdir   %{_libexecdir}/perl5-tests
 
@@ -1088,63 +1099,6 @@ for dir in `find ext/ -type d -name t -maxdepth 2` ; do
 
     tar -cf - $dir | ( cd %{buildroot}%{perl5_testdir}/perl-tests/t && tar -xf - )
 done
-
-
-# filter *.so from provides
-%{?filter_setup:
-%filter_from_provides /^B.so$/d
-%filter_from_provides /^Base64.so$/d
-%filter_from_provides /^Byte.so$/d
-%filter_from_provides /^CN.so$/d
-%filter_from_provides /^Call.so$/d
-%filter_from_provides /^Cwd.so$/d 
-%filter_from_provides /^DB_File.so$/d
-%filter_from_provides /^DProf.so$/d 
-%filter_from_provides /^Dumper.so$/d
-%filter_from_provides /^EBCDIC.so$/d
-%filter_from_provides /^Encode.so$/d
-%filter_from_provides /^FastCalc.so$/d
-%filter_from_provides /^Fcntl.so$/d 
-%filter_from_provides /^FieldHash.so$/d 
-%filter_from_provides /^GDBM_File.so$/d 
-%filter_from_provides /^Glob.so$/d 
-%filter_from_provides /^HiRes.so$/d 
-%filter_from_provides /^Hostname.so$/d 
-%filter_from_provides /^IO.so$/d 
-%filter_from_provides /^JP.so$/d 
-%filter_from_provides /^KR.so$/d 
-%filter_from_provides /^Langinfo.so$/d 
-%filter_from_provides /^MD5.so$/d 
-%filter_from_provides /^Normalize.so$/d 
-%filter_from_provides /^Opcode.so$/d 
-%filter_from_provides /^POSIX.so$/d 
-%filter_from_provides /^PPPort.so$/d 
-%filter_from_provides /^Peek.so$/d 
-%filter_from_provides /^SDBM_File.so$/d 
-%filter_from_provides /^Socket.so$/d 
-%filter_from_provides /^Soundex.so$/d 
-%filter_from_provides /^Storable.so$/d 
-%filter_from_provides /^Symbol.so$/d 
-%filter_from_provides /^SysV.so$/d 
-%filter_from_provides /^Syslog.so$/d 
-%filter_from_provides /^TW.so$/d
-%filter_from_provides /^Unicode.so$/d
-%filter_from_provides /^Util.so$/d
-%filter_from_provides /^attributes.so$/d 
-%filter_from_provides /^encoding.so$/d
-%filter_from_provides /^mro.so$/d 
-%filter_from_provides /^re.so$/d
-%filter_from_provides /^scalar.so$/d
-%filter_from_provides /^threads.so$/d
-%filter_from_provides /^via.so$/d
-%filter_from_provides /^Zlib.so$/d
-%filter_from_provides /^SHA.so$/d 
-%filter_from_provides /^libperl.so$/d
-%filter_from_provides /^shared.so$/d 
-%filter_from_provides /^Piece.so $/d
-%?perl_default_filter
-}
-
 
 # remove files used only during build process from rpm
 rm -rf $RPM_BUILD_ROOT/%{privlib}/Unicode/Collate/allkeys.txt
