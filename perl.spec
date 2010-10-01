@@ -23,7 +23,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        135%{?dist}
+Release:        136%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -792,10 +792,13 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Since Perl 5.8, thread programming has been available using a model called
 interpreter threads  which provides a new Perl interpreter for each thread,
 and, by default, results in no data or state information being shared between
-threads. (Prior to Perl 5.8, 5005threads was available through the Thread.pm
-API. This threading model has been deprecated, and was removed as of Perl
-5.10.0.) As just mentioned, all variables are, by default, thread local. To use
-shared variables, you need to also load threads::shared.
+threads.
+
+(Prior to Perl 5.8, 5005threads was available through the Thread.pm API. This
+threading model has been deprecated, and was removed as of Perl 5.10.0.)
+
+As just mentioned, all variables are, by default, thread local. To use shared
+variables, you need to also load threads::shared.
 
 
 %package threads-shared
@@ -1780,6 +1783,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Oct 01 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-136
+- Reformat perl-threads description
+
 * Thu Sep 30 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-135
 - sub-package threads
 
