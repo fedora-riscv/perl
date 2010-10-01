@@ -1412,6 +1412,7 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_mandir}/man3/Time::Seconds.3*
 
 # threads
+%exclude %{archlib}/auto/threads
 %exclude %{archlib}/auto/threads/threads*
 %exclude %{archlib}/threads.pm
 %exclude %{_mandir}/man3/threads.3*
@@ -1755,6 +1756,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files threads
 %defattr(-,root,root,-)
+%{archlib}/auto/threads
 %{archlib}/auto/threads/threads*
 %{archlib}/threads.pm
 %{_mandir}/man3/threads.3*
