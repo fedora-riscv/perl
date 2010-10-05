@@ -8,9 +8,7 @@
 
 # internal filter just for this spec
 %define perl_default_filter %{?filter_setup: %{expand: \
-%filter_provides_in %{perl_vendorarch}/.*\\.so$ \
-%filter_provides_in %{archlib}/.*\\.so$ \
-%filter_provides_in -P %{perl_archlib}/(?!CORE/libperl).*\\.so$ \
+%filter_provides_in -P %{archlib}/(?!CORE/libperl).*\\.so$ \
 %filter_from_provides /perl(UNIVERSAL)/d; /perl(DB)/d \
 %filter_setup \
 }}
@@ -174,7 +172,6 @@ Summary:        The libraries for the perl runtime
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
-Provides:		libperl.so
 
 %description libs
 The libraries for the perl runtime
@@ -1778,6 +1775,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Oct 05 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-138
 - Consolidate Requires filtering
+- Consolidate libperl.so* Provides
 
 * Fri Oct  1 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-137
 - filter useless requires, provide libperl.so
