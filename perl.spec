@@ -21,7 +21,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        137%{?dist}
+Release:        138%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -34,7 +34,6 @@ Group:          Development/Languages
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and MIT and Public Domain and UCD
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.gz
-Source1:        filter-requires.sh
 Source2:        perl-5.8.0-libnet.cfg
 Source3:        macros.perl
 
@@ -155,19 +154,6 @@ Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 # We need this to break the dependency loop, and ensure that perl-libs 
 # gets installed before perl.
 Requires(post): perl-libs
-
-# Filter the automatically generated dependencies.
-#
-# The original script might be /usr/lib/rpm/perl.req or
-# /usr/lib/rpm/redhat/perl.req, better use the original value of the macro:
-%{expand:%%define prev__perl_requires %{__perl_requires}}
-%define __perl_requires %{SOURCE1} %{prev__perl_requires}
-
-# When _use_internal_dependency_generator is 0, the perl.req script is
-# called from /usr/lib/rpm{,/redhat}/find-requires.sh
-# Likewise:
-%{expand:%%define prev__find_requires %{__find_requires}}
-%define __find_requires %{SOURCE1} %{prev__find_requires}
 
 
 %description
@@ -919,10 +905,12 @@ find . -name \*.orig -exec rm -fv {} \;
 %filter_from_provides /^perl(bytes)$/d 
 %filter_from_provides /^perl(utf8)$/d 
 %filter_from_provides /^perl(DB)$/d
-%filter_from_requires /^perl(Mac::BuildTools)/d
+# Filter the automatically generated dependencies.
+%filter_from_requires /^perl(FCGI)/d
+%filter_from_requires /^perl(Mac::/d
+%filter_from_requires /^perl(Tk)/d
+%filter_from_requires /^perl(Tk::/d
 %filter_from_requires /^perl(Your::Module::Here)/d
-%filter_from_requires /^perl(Mac::InternetConfig)/d
-%filter_from_requires /^perl(Tk::Pod)/d
 %?perl_default_filter
 }
 
@@ -1788,6 +1776,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Oct 05 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-138
+- Consolidate Requires filtering
+
 * Fri Oct  1 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-137
 - filter useless requires, provide libperl.so
 
