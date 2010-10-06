@@ -1033,7 +1033,6 @@ install -p -m 644 %{SOURCE3} ${RPM_BUILD_ROOT}%{_sysconfdir}/rpm/
 #
 # Core modules removal
 #
-find $RPM_BUILD_ROOT -name '*NDBM*' | xargs rm -rfv
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty | xargs rm -f 
 
 chmod -R u+w $RPM_BUILD_ROOT/*
@@ -1773,6 +1772,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Oct  6 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-138
+- remove removal of NDBM
+
 * Tue Oct 05 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-138
 - Consolidate Requires filtering
 - Consolidate libperl.so* Provides
