@@ -12,7 +12,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        133%{?dist}
+Release:        134%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1000,7 +1000,6 @@ install -p -m 644 %{SOURCE3} ${RPM_BUILD_ROOT}%{_sysconfdir}/rpm/
 #
 # Core modules removal
 #
-find $RPM_BUILD_ROOT -name '*NDBM*' | xargs rm -rfv
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty | xargs rm -f 
 
 chmod -R u+w $RPM_BUILD_ROOT/*
@@ -1707,6 +1706,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Oct  6 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-134
+- remove removal of NDBM
+
 * Tue Sep  7 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-133
 - Do not leak when destroying thread (RT #77352, RHBZ #630667)
 
