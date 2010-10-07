@@ -1707,8 +1707,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files Test-Simple-tests
 %defattr(-,root,root,-)
-%dir %{perl_testdir}
-%{perl_testdir}/Test-Simple
+%dir %{perl5_testdir}
+%{perl5_testdir}/Test-Simple
 
 %files Time-Piece
 %defattr(-,root,root,-)
