@@ -19,8 +19,8 @@ function process_dir() {
         NEW_RPM=$(echo ${F}-[0-9]*-${NEW_RELEASE}.*)
         
         test \( ! -e "$OLD_RPM" \) -a \( ! -e "$NEW_RPM" \) && continue
-        if [ ! -e "$OLD_RPM" ]; then echo "+ Package ${F}"; fi
-        if [ ! -e "$NEW_RPM" ]; then echo "- Package ${F}"; fi
+        if [ ! -e "$OLD_RPM" ]; then echo "+ Package ${F}"; continue; fi
+        if [ ! -e "$NEW_RPM" ]; then echo "- Package ${F}"; continue; fi
 
         DIFF=$(rpmdiff -i S -i 5 -i T "$OLD_RPM" "$NEW_RPM" | \
             grep -vE 'REQUIRES perl = | REQUIRES rpmlib\(' )
