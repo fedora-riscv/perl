@@ -1114,6 +1114,15 @@ for package in Test-Simple; do
 done
 popd
 
+# TODO: Canonicalize test files (rewrite intrerpreter path, fix permissions)
+# XXX: We cannot rewrite ./perl before %%check phase. Otherwise the test
+# would run against system perl at build-time.
+# See __spec_check_pre global macro in macros.perl.
+#T_FILES=`find %%{buildroot}%%{perl5_testdir} -type f -name '*.t'`
+#%%fix_shbang_line $T_FILES
+#%%{__chmod} +x $T_FILES
+#%%{_fixperms} %%{buildroot}%%{perl5_testdir}
+
 # remove files used only during build process from rpm
 rm -rf $RPM_BUILD_ROOT/%{privlib}/Unicode/Collate/allkeys.txt
 rm -rf $RPM_BUILD_ROOT/%{privlib}/unicore/*.txt
