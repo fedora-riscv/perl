@@ -12,7 +12,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        134%{?dist}
+Release:        135%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -737,6 +737,21 @@ BuildArch:      noarch
 Basic utilities for writing tests.
 
 
+%package Test-Simple-tests
+Summary:        Test suite for package perl-Test-Simple
+Group:          Development/Debug
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.94
+Requires:       perl-Test-Simple = 0:0.94-%{release}
+Requires:       /usr/bin/prove
+AutoReqProv:    0
+BuildArch:      noarch
+
+%description Test-Simple-tests
+This package provides the test suite for package perl-Test-Simple.
+
+
 %package Time-Piece
 Summary:        Time objects from localtime and gmtime
 Group:          Development/Libraries
@@ -1056,6 +1071,15 @@ for dir in `find ext/ -type d -name t -maxdepth 2` ; do
 
     tar -cf - $dir | ( cd %{buildroot}%{perl5_testdir}/perl-tests/t && tar -xf - )
 done
+
+# Selected "Dual-lifed cpan" packages
+pushd cpan
+for package in Test-Simple; do
+    for dir in `find ${package} -type d -name t -maxdepth 2` ; do
+        tar -cf - $dir | ( cd %{buildroot}%{perl5_testdir} && tar -xf - )
+    done
+done
+popd
 
 # remove files used only during build process from rpm
 rm -rf $RPM_BUILD_ROOT/%{_vendorlib}/Unicode/Collate/allkeys.txt
@@ -1395,6 +1419,7 @@ rm -rf $RPM_BUILD_ROOT
 %files tests
 %defattr(-,root,root,-)
 %{perl5_testdir}/
+%exclude %{perl5_testdir}/Test-Simple
 
 %files Archive-Extract
 %defattr(-,root,root,-)
@@ -1680,6 +1705,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/Test::Simple*
 %{_mandir}/man3/Test::Tutorial*
 
+%files Test-Simple-tests
+%defattr(-,root,root,-)
+%dir %{perl_testdir}
+%{perl_testdir}/Test-Simple
+
 %files Time-Piece
 %defattr(-,root,root,-)
 %{archlib}/Time/Piece.pm 
@@ -1706,6 +1736,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Oct 07 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-135
+- Package Test-Simple tests to dual-live with standalone package (bug #640752)
+
 * Wed Oct  6 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-134
 - remove removal of NDBM
 
