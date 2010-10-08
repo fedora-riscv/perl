@@ -1812,8 +1812,8 @@ rm -rf $RPM_BUILD_ROOT
 # Old changelog entries are preserved in CVS.
 %changelog
 * Thu Oct 07 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-140
-- Package Test-Simple tests to dual-live with standalone package
-
+- Package Test-Simple tests to dual-live with standalone package (bug #640752)
+ 
 * Wed Oct  6 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-139
 - remove removal of NDBM
 
