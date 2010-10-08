@@ -8,7 +8,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        119%{?dist}
+Release:        120%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -847,6 +847,28 @@ effect to:
         push @ISA, qw(Foo Bar); 
     }
 
+
+%package threads
+Summary:        Perl interpreter-based threads
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.72
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description threads
+Since Perl 5.8, thread programming has been available using a model called
+interpreter threads  which provides a new Perl interpreter for each thread,
+and, by default, results in no data or state information being shared between
+threads.
+
+(Prior to Perl 5.8, 5005threads was available through the Thread.pm API. This
+threading model has been deprecated, and was removed as of Perl 5.10.0.)
+
+As just mentioned, all variables are, by default, thread local. To use shared
+variables, you need to also load threads::shared.
+
+
 %package version
 Summary:        Perl extension for Version Objects
 Group:          Development/Libraries
@@ -882,8 +904,9 @@ Requires:       perl-Module-Build, perl-Module-CoreList, perl-Module-Load,
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded,
 Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Constants,
 Requires:       perl-Params-Check, perl-Pod-Escapes, perl-Pod-Simple, perl-Term-UI, 
-Requires:       perl-Test-Harness, perl-Test-Simple, perl-Time-Piece, perl-version
-Requires:       perl-parent, perl-Parse-CPAN-Meta
+Requires:       perl-Test-Harness, perl-Test-Simple, perl-threads,
+Requires:       perl-Time-Piece, perl-version, perl-parent,
+Requires:       perl-Parse-CPAN-Meta
 # Note: perl-suidperl has always been an independent subpackage
 # We don't want perl-core to drag it in.
 
@@ -1469,6 +1492,12 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_mandir}/man3/Time::Piece.3*
 %exclude %{_mandir}/man3/Time::Seconds.3*
 
+# threads
+%dir %exclude %{archlib}/auto/threads
+%exclude %{archlib}/auto/threads/threads*
+%exclude %{archlib}/threads.pm
+%exclude %{_mandir}/man3/threads.3*
+
 # version
 %exclude %{privlib}/version.pm
 %exclude %{privlib}/version.pod
@@ -1797,6 +1826,13 @@ rm -rf $RPM_BUILD_ROOT
 %{privlib}/parent.pm
 %{_mandir}/man3/parent.3*
 
+%files threads
+%defattr(-,root,root,-)
+%dir %{archlib}/auto/threads
+%{archlib}/auto/threads/threads*
+%{archlib}/threads.pm
+%{_mandir}/man3/threads.3*
+
 %files version
 %defattr(-,root,root,-)
 %{privlib}/version.pm
@@ -1810,6 +1846,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Oct 11 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.1-120
+- Sub-package threads (bug #622190)
+
 * Mon Sep 06 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.1-119
 - Do not leak when destroying thread (RT #77352, RHBZ #630667)
 
