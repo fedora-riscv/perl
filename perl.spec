@@ -7,7 +7,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        95%{?dist}
+Release:        96%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -262,10 +262,14 @@ Patch125:	perl-update-IO-Compress-Zlib.patch
 %define			    IO_Compress_Zlib_version 2.015
 Patch126:   perl-update-Safe.patch
 %define             Safe_version 2.27
-Patch127:   perl-update-threadsshared.patch
-%define             threadsshared_version 1.29
-Patch128:   perl-update-Thread-Queue.patch
+Patch127:   perl-update-thread.patch
+%define             thread_version 1.79
+Patch128:   perl-update-threadsshared.patch
+%define             threadsshared_version 1.34
+Patch129:   perl-update-Thread-Queue.patch
 %define             ThreadQueue_version 2.11
+# change MANIFEST at last
+Patch130:   manifest.patch
 
 # Fedora uses links instead of lynx
 # patches File-Fetch and CPAN
@@ -276,7 +280,7 @@ Patch202:   perl-5.10.1-unpack-didn-t-handle-scalar-context.patch
 # Do not throw ../lib from @lib. Fixed in Test-Harness-3.17.
 Patch203:   perl-Test-Harness-3.16-fix_taint_test.patch
 
-BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+##BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:  tcsh, dos2unix, man, groff
 BuildRequires:  gdbm-devel, db4-devel, zlib-devel
 # For tests
@@ -1064,8 +1068,10 @@ touch t/Module_Pluggable/lib/Zot/.Zork.pm
 %patch124 -p1
 %patch125 -p1
 %patch126 -p1
-%patch127 -p1
-%patch128 -p1
+%patch127 -p1 -b .newthread
+%patch128 -p1 -E -b .newshare
+%patch129 -p1
+%patch130 -p1 -b .newmanifest
 
 %patch201 -p1
 %patch202 -p1
@@ -1356,8 +1362,10 @@ perl -x patchlevel.h \
 	'Fedora Patch124: Update IO::Compress::Base to %{IO_Compress_Base_version}' \
 	'Fedora Patch125: Update IO::Compress::Zlib to %{IO_Compress_Zlib_version}' \
 	'Fedora Patch126: Update Safe to %{Safe_version}' \
-	'Fedora Patch127: Update threads::shared to %{threadsshared_version}'\
-	'Fedora Patch128: Update Thread::Queue to %{ThreadQueue_version}'\
+	'Fedora Patch127: Update threads to %{thread_version} '\
+	'Fedora Patch128: Update threads::shared to %{threadsshared_version}'\
+	'Fedora Patch129: Update Thread::Queue to %{ThreadQueue_version}'\
+	'Fedora Patch130: Fix files in MANIFEST '\
 	'Fedora Patch201: Fedora uses links instead of lynx' \
 	'Fedora Patch202: RT#73814 - unpack scalar context correctly ' \
 	'Fedora Patch203: Fix taint.t test in Test::Harness ' \
@@ -1986,6 +1994,10 @@ TMPDIR="$PWD/tmp" make test
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Oct 11 2010  Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-96
+- update of threads::shared and threads, which should fix failure of
+ threads in previous update
+
 * Tue Sep  7 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-95
 - update thread modules - Thread::Queue, threads::shared, which also fix
   627192 

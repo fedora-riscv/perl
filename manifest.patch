@@ -1,0 +1,40 @@
+diff -up perl-5.10.0/MANIFEST.newmanifest perl-5.10.0/MANIFEST
+--- perl-5.10.0/MANIFEST.newmanifest	2010-10-12 11:21:25.346237001 +0200
++++ perl-5.10.0/MANIFEST	2010-10-12 11:23:55.260237012 +0200
+@@ -1170,16 +1170,15 @@ ext/threads/shared/t/av_refs.t	Tests for
+ ext/threads/shared/t/av_simple.t	Tests for basic shared array functionality.
+ ext/threads/shared/t/blessed.t	Test blessed shared variables
+ ext/threads/shared/t/cond.t	Test condition variables
++ext/threads/shared/t/clone.t	Test
+ ext/threads/shared/t/disabled.t	Test threads::shared when threads are disabled.
+ ext/threads/shared/t/hv_refs.t	Test shared hashes containing references
+-ext/threads/shared/t/hv_simple.t	Tests for basic shared hash functionality.
+ ext/threads/shared/t/no_share.t	Tests for disabled share on variables.
++ext/threads/shared/t/object.t	Test
+ ext/threads/shared/t/shared_attr.t	Test :shared attribute
+ ext/threads/shared/t/stress.t	Stress test
+ ext/threads/shared/t/sv_refs.t	thread shared variables
+ ext/threads/shared/t/sv_simple.t	thread shared variables
+-ext/threads/shared/t/waithires.t	Test sub-second cond_timedwait
+-ext/threads/shared/t/wait.t	Test cond_wait and cond_timedwait
+ ext/threads/t/basic.t		ithreads
+ ext/threads/t/blocks.t		Test threads in special blocks
+ ext/threads/t/context.t		Explicit thread context
+@@ -2816,10 +2815,16 @@ lib/Text/TabsWrap/t/wrap.t	See if Text::
+ lib/Text/Wrap.pm		Paragraph formatter
+ lib/Thread.pm			Thread extensions frontend
+ lib/Thread/Queue.pm		Threadsafe queue
+-lib/Thread/Queue.t		See if threadsafe queue works
+ lib/Thread/Semaphore.pm		Threadsafe semaphore
+ lib/Thread/Semaphore.t		See if threadsafe semaphore works
+ lib/Thread.t			Thread extensions frontend tests
++lib/Thread/Queue/t/01_basic.t	Test
++lib/Thread/Queue/t/03_peek.t	Test
++lib/Thread/Queue/t/04_errs.t	Test
++lib/Thread/Queue/t/05_extract.t	Test
++lib/Thread/Queue/t/06_insert.t	Test
++lib/Thread/Queue/t/07_lock.t	Test
++lib/Thread/Queue/t/08_nothreads.t	Test
+ lib/Tie/Array.pm		Base class for tied arrays
+ lib/Tie/Array/push.t		Test for Tie::Array
+ lib/Tie/Array/splice.t		Test for Tie::Array::SPLICE
