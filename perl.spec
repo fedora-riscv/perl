@@ -12,7 +12,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        137%{?dist}
+Release:        138%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -63,6 +63,8 @@ Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
 # Do not leak when destroying thread; RT #77352, RHBZ #630667
 Patch9:         perl-5.12.1-fix_thread_leak.patch
 
+# h2ph produces incorrect code in preamble, based mainly on RT #74614
+Patch10:        perl-5.12.2-h2ph.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -879,6 +881,7 @@ upstream tarball from perl.org.
 #debug symbols?
 #%patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 
 #
@@ -1776,7 +1779,11 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Mon Nov 08 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-142
+* Tue Oct 19 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-138
+- 643447 fix redefinition of constant C in h2ph (visible in git send mail,
+  XML::Twig test suite)
+
+* Mon Nov 08 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-137
 - Make perl(ExtUtils::ParseXS) version 4 digits long (bug #650882)
 
 * Fri Oct 08 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-136
