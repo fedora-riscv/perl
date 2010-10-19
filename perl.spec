@@ -19,7 +19,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        140%{?dist}
+Release:        141%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -69,6 +69,8 @@ Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
 # Do not leak when destroying thread; RT #77352, RHBZ #630667
 Patch9:         perl-5.12.1-fix_thread_leak.patch
 
+# h2ph produces incorrect code in preamble , based mainly on RT #74614
+Patch10:        perl-5.12.2-h2ph.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -877,6 +879,7 @@ tarball from perl.org.
 #debug symbols?
 #%patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 
 #
@@ -1811,6 +1814,10 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Oct 19 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-141
+- 643447 fix redefinition of constant C in h2ph (visible in git send mail,
+  XML::Twig test suite)
+
 * Thu Oct 07 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-140
 - Package Test-Simple tests to dual-live with standalone package (bug #640752)
  

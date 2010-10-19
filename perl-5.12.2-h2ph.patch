@@ -1,0 +1,197 @@
+diff -up perl-5.12.2/lib/h2ph.t.bug perl-5.12.2/lib/h2ph.t
+--- perl-5.12.2/lib/h2ph.t.bug	2010-09-07 01:30:32.000000000 +0200
++++ perl-5.12.2/lib/h2ph.t	2010-10-19 10:09:27.000000000 +0200
+@@ -18,7 +18,7 @@ if (!(-e $extracted_program)) {
+     exit 0;
+ }
+ 
+-plan(4);
++plan(5);
+ 
+ # quickly compare two text files
+ sub txt_compare {
+@@ -28,21 +28,27 @@ sub txt_compare {
+     $A cmp $B;
+ }
+ 
+-my $result = runperl( progfile => $extracted_program, 
++my $result = runperl( progfile => $extracted_program,
++                      stderr => 1,
+                       args => ['-d.', '-Q', 'lib/h2ph.h']);
++is( $result, '', "output is free of warnings" );
+ is( $?, 0, "$extracted_program runs successfully" );
+-    
+-is ( txt_compare("lib/h2ph.ph", "lib/h2ph.pht"), 
+-     0,
+-     "generated file has expected contents" );
+-    
+-$result = runperl( progfile => 'lib/h2ph.pht', 
+-                   switches => ['-c'], 
++
++$result = runperl( progfile => 'lib/h2ph.pht',
++                   switches => ['-c'],
+                    stderr => 1 );
+ like( $result, qr/syntax OK$/, "output compiles");
+ 
+-$result = runperl( switches => ["-w"], 
+-                   prog => '$SIG{__WARN__} = sub { die $_[0] }; require q(lib/h2ph.pht);');
++$result = runperl( progfile => '_h2ph_pre.ph',
++                   switches => ['-c'],
++                   stderr => 1 );
++like( $result, qr/syntax OK$/, "preamble compiles");
++
++$result = runperl( switches => ["-w"],
++                   stderr => 1,
++                   prog => <<'PROG' );
++$SIG{__WARN__} = sub { die $_[0] }; require q(lib/h2ph.pht);
++PROG
+ is( $result, '', "output free of warnings" );
+ 
+ # cleanup
+diff -up perl-5.12.2/t/lib/h2ph.h.bug perl-5.12.2/t/lib/h2ph.h
+--- perl-5.12.2/t/lib/h2ph.h.bug	2010-09-05 17:14:33.000000000 +0200
++++ perl-5.12.2/t/lib/h2ph.h	2010-10-19 08:53:43.000000000 +0200
+@@ -132,6 +132,11 @@ enum flimflam {
+   flam                      
+  } flamflim;
+ 
++static __inline__ int blli_in_use(struct atm_blli blli)
++{
++	return blli.l2_proto || blli.l3_proto;
++}
++
+ /* Handle multi-line quoted strings: */
+ __asm__ __volatile__("
+     this
+diff -up perl-5.12.2/t/lib/h2ph.pht.bug perl-5.12.2/t/lib/h2ph.pht
+--- perl-5.12.2/t/lib/h2ph.pht.bug	2010-09-05 17:14:33.000000000 +0200
++++ perl-5.12.2/t/lib/h2ph.pht	2010-10-19 08:53:43.000000000 +0200
+@@ -90,6 +90,10 @@ unless(defined(&_H2PH_H_)) {
+     }
+     eval("sub flim () { 0; }") unless defined(&flim);
+     eval("sub flam () { 1; }") unless defined(&flam);
++    eval 'sub blli_in_use {
++        my($blli) = @_;
++        eval q({  ($blli->{l2_proto}) ||  ($blli->{l3_proto}); });
++    }' unless defined(&blli_in_use);
+     eval 'sub multiline () {"multilinestring";}' unless defined(&multiline);
+ }
+ 1;
+diff -up perl-5.12.2/utils/h2ph.PL.bug perl-5.12.2/utils/h2ph.PL
+--- perl-5.12.2/utils/h2ph.PL.bug	2010-09-07 01:30:32.000000000 +0200
++++ perl-5.12.2/utils/h2ph.PL	2010-10-19 08:53:43.000000000 +0200
+@@ -147,23 +147,7 @@ while (defined (my $file = next_file()))
+ 		    s/^\s+//;
+ 		    expr();
+ 		    $new =~ s/(["\\])/\\$1/g;       #"]);
+-		  EMIT:
+-		    $new = reindent($new);
+-		    $args = reindent($args);
+-		    if ($t ne '') {
+-			$new =~ s/(['\\])/\\$1/g;   #']);
+-			if ($opt_h) {
+-			    print OUT $t,
+-                            "eval \"\\n#line $eval_index $outfile\\n\" . 'sub $name $proto\{\n$t    ${args}eval q($new);\n$t}' unless defined(\&$name);\n";
+-                            $eval_index++;
+-			} else {
+-			    print OUT $t,
+-                            "eval 'sub $name $proto\{\n$t    ${args}eval q($new);\n$t}' unless defined(\&$name);\n";
+-			}
+-		    } else {
+-                      print OUT "unless(defined(\&$name)) {\n    sub $name $proto\{\n\t${args}eval q($new);\n    }\n}\n";
+-		    }
+-		    %curargs = ();
++			EMIT($proto);
+ 		} else {
+ 		    s/^\s+//;
+ 		    expr();
+@@ -380,7 +364,7 @@ while (defined (my $file = next_file()))
+ 	    $new =~ s/&$_\b/\$$_/g for @local_variables;
+ 	    $new =~ s/(["\\])/\\$1/g;       #"]);
+ 	    # now that's almost like a macro (we hope)
+-	    goto EMIT;
++		EMIT($proto);
+ 	}
+     }
+     $Is_converted{$file} = 1;
+@@ -400,8 +384,33 @@ if ($opt_e && (scalar(keys %bad_file) > 
+ 
+ exit $Exit;
+ 
++sub EMIT {
++	my $proto = shift;
++	
++    $new = reindent($new);
++    $args = reindent($args);
++    if ($t ne '') {
++	    $new =~ s/(['\\])/\\$1/g;   #']);
++	    if ($opt_h) {
++	        print OUT $t,
++	            "eval \"\\n#line $eval_index $outfile\\n\" . 'sub $name $proto\{\n$t    ${args}eval q($new);\n$t}' unless defined(\&$name);\n";
++            $eval_index++;
++	    } else {
++	        print OUT $t,
++	            "eval 'sub $name $proto\{\n$t    ${args}eval q($new);\n$t}' unless defined(\&$name);\n";
++	    }
++	} else {
++	     print OUT "unless(defined(\&$name)) {\n    sub $name $proto\{\n\t${args}eval q($new);\n    }\n}\n";
++	}
++    %curargs = ();
++    return;
++}
++
+ sub expr {
+-    $new = '"(assembly code)"' and return if /\b__asm__\b/; # freak out.
++    if (/\b__asm__\b/) {   # freak out
++        $new = '"(assembly code)"';
++        return 
++    }
+     my $joined_args;
+     if(keys(%curargs)) {
+ 	$joined_args = join('|', keys(%curargs));
+@@ -770,7 +779,7 @@ sub inc_dirs
+ sub build_preamble_if_necessary
+ {
+     # Increment $VERSION every time this function is modified:
+-    my $VERSION     = 2;
++    my $VERSION     = 3;
+     my $preamble    = "$Dest_dir/_h2ph_pre.ph";
+ 
+     # Can we skip building the preamble file?
+@@ -798,7 +807,16 @@ sub build_preamble_if_necessary
+ 		# parenthesized value:  d=(v)
+ 		$define{$_} = $1;
+ 	    }
+-	    if ($define{$_} =~ /^([+-]?(\d+)?\.\d+([eE][+-]?\d+)?)[FL]?$/) {
++	    if (/^(\w+)\((\w)\)$/) {
++			my($macro, $arg) = ($1, $2);
++			my $def = $define{$_};
++			$def =~ s/$arg/\$\{$arg\}/g;
++			print PREAMBLE <<DEFINE;
++		unless (defined &$macro) { sub $macro(\$) { my (\$$arg) = \@_; \"$def\" } }
++
++DEFINE
++		} elsif
++		($define{$_} =~ /^([+-]?(\d+)?\.\d+([eE][+-]?\d+)?)[FL]?$/) {
+ 		# float:
+ 		print PREAMBLE
+ 		    "unless (defined &$_) { sub $_() { $1 } }\n\n";
+@@ -807,9 +825,15 @@ sub build_preamble_if_necessary
+ 		print PREAMBLE
+ 		    "unless (defined &$_) { sub $_() { $1 } }\n\n";
+ 	    } elsif ($define{$_} =~ /^\w+$/) {
+-		print PREAMBLE
+-		    "unless (defined &$_) { sub $_() { &$define{$_} } }\n\n";
+-	    } else {
++		my $def = $define{$_};
++		if ($isatype{$def}) {
++	         print PREAMBLE
++	           "unless (defined &$_) { sub $_() { \"$def\" } }\n\n";
++		} else {
++			print PREAMBLE
++				"unless (defined &$_) { sub $_() { &$def } }\n\n";
++        }
++		} else {
+ 		print PREAMBLE
+ 		    "unless (defined &$_) { sub $_() { \"",
+ 		    quotemeta($define{$_}), "\" } }\n\n";
