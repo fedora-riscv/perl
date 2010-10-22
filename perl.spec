@@ -90,11 +90,6 @@ Provides: perl(VMS::Stdio)
 Provides: perl(:MODULE_COMPAT_5.12.2)
 Provides: perl(:MODULE_COMPAT_5.12.1)
 Provides: perl(:MODULE_COMPAT_5.12.0)
-%ifarch s390 s390x
-# Temporary compat provides needed during catching the state of rawhide with koji-shadow
-Provides: perl(:MODULE_COMPAT_5.10.1)
-Provides: perl(:MODULE_COMPAT_5.10.0)
-%endif
 
 # Threading provides
 Provides: perl(:WITH_ITHREADS)
@@ -1817,6 +1812,7 @@ rm -rf $RPM_BUILD_ROOT
 * Tue Oct 19 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-141
 - 643447 fix redefinition of constant C in h2ph (visible in git send mail,
   XML::Twig test suite)
+- remove ifdef for s390
 
 * Thu Oct 07 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-140
 - Package Test-Simple tests to dual-live with standalone package (bug #640752)
