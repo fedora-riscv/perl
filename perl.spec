@@ -69,7 +69,7 @@ Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
 # Do not leak when destroying thread; RT #77352, RHBZ #630667
 Patch9:         perl-5.12.1-fix_thread_leak.patch
 
-# h2ph produces incorrect code in preamble , based mainly on RT #74614
+# h2ph produces incorrect code in preamble, based mainly on RT #74614
 Patch10:        perl-5.12.2-h2ph.patch
 
 # Update some of the bundled modules
@@ -879,7 +879,7 @@ tarball from perl.org.
 #debug symbols?
 #%patch8 -p1
 %patch9 -p1
-%patch10 -p1
+%patch10 -p1 -b .bug
 
 
 #
