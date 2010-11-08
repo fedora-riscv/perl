@@ -19,7 +19,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        141%{?dist}
+Release:        142%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -351,10 +351,14 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        2.21
+# We must preserve 4-digit precison since 2.2002 version
+%define         ExtUtils_ParseXS_real_version 2.21
+%define         ExtUtils_ParseXS_version %{ExtUtils_ParseXS_real_version}00
+Version:        %{ExtUtils_ParseXS_version}
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
+Provides:       perl(ExtUtils::ParseXS) = %{ExtUtils_ParseXS_version}
 
 %description ExtUtils-ParseXS
 ExtUtils::ParseXS will compile XS code into C code by embedding the constructs
@@ -921,6 +925,8 @@ find . -name \*.orig -exec rm -fv {} \;
 %filter_from_requires /^perl(Tk)/d
 %filter_from_requires /^perl(Tk::/d
 %filter_from_requires /^perl(Your::Module::Here)/d
+# Filter less specific versions
+%filter_from_provides /^perl(ExtUtils::ParseXS) = %{ExtUtils_ParseXS_real_version}$/d
 %?perl_default_filter
 }
 
@@ -1809,6 +1815,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Nov 08 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-142
+- Make perl(ExtUtils::ParseXS) version 4 digits long (bug #650882)
+
 * Tue Oct 19 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-141
 - 643447 fix redefinition of constant C in h2ph (visible in git send mail,
   XML::Twig test suite)
