@@ -1779,7 +1779,7 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Tue Oct 19 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-138
+* Mon Nov 08 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-138
 - 643447 fix redefinition of constant C in h2ph (visible in git send mail,
   XML::Twig test suite)
 
