@@ -12,7 +12,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        136%{?dist}
+Release:        137%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -363,10 +363,14 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        2.21
+# We must preserve 4-digit precison since 2.2002 version
+%define         ExtUtils_ParseXS_real_version 2.21
+%define         ExtUtils_ParseXS_version %{ExtUtils_ParseXS_real_version}00
+Version:        %{ExtUtils_ParseXS_version}
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
+Provides:       perl(ExtUtils::ParseXS) = %{ExtUtils_ParseXS_version}
 
 %description ExtUtils-ParseXS
 ExtUtils::ParseXS will compile XS code into C code by embedding the
@@ -916,7 +920,8 @@ cat << EOF > perl-prov
     sed -e '/^perl(bigrat)$/d' |\
     sed -e '/^perl(bytes)$/d' |\
     sed -e '/^perl(utf8)$/d' |\
-    sed -e '/^perl(DB)$/d'
+    sed -e '/^perl(DB)$/d' |\
+    sed -e '/^perl(ExtUtils::ParseXS) = %{ExtUtils_ParseXS_real_version}$/d'
 EOF
 %define __perl_provides %{_builddir}/%{name}-%{perl_version}/perl-prov
 chmod +x %{__perl_provides}
@@ -1771,6 +1776,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Nov 08 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-142
+- Make perl(ExtUtils::ParseXS) version 4 digits long (bug #650882)
+
 * Fri Oct 08 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-136
 - Sub-package threads (bug #622190)
 
