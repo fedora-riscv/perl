@@ -240,6 +240,7 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.36
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
 
 %description Class-ISA
 Suppose you have a class (like Food::Fish::Fishstick) that is derived, via
