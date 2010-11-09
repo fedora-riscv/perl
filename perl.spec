@@ -19,7 +19,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        142%{?dist}
+Release:        143%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -231,6 +231,22 @@ provides class methods for quick and easy files handling while also allowing
 for the creation of tar file objects for custom manipulation.  If you have the
 IO::Zlib module installed, Archive::Tar will also support compressed or
 gzipped tar files.
+
+
+%package Class-ISA
+Summary:        Report the search path for a class's ISA tree
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.36
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Class-ISA
+Suppose you have a class (like Food::Fish::Fishstick) that is derived, via
+its @ISA, from one or more superclasses (as Food::Fish::Fishstick is from
+Food::Fish, Life::Fungus, and Chemicals), and some of those superclasses
+may themselves each be derived, via its @ISA, from one or more superclasses
+(as above).
 
 
 %package Compress-Raw-Zlib
@@ -843,7 +859,8 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 
-Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-Compress-Raw-Zlib, perl-CPAN,
+Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-Class-ISA,
+Requires:       perl-Compress-Raw-Zlib, perl-CPAN,
 Requires:       perl-CPANPLUS, perl-Digest-SHA, perl-ExtUtils-CBuilder,
 Requires:       perl-ExtUtils-Embed, perl-ExtUtils-MakeMaker, perl-ExtUtils-ParseXS,
 Requires:       perl-File-Fetch, perl-IO-Compress, perl-IO-Zlib,
@@ -1192,6 +1209,10 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_mandir}/man1/ptardiff.1*
 %exclude %{_mandir}/man3/Archive::Tar*
 
+# Class-ISA
+%exclude %{privlib}/Class/ISA.pm
+%exclude %{_mandir}/man3/Class::ISA.3*
+
 # CPAN
 %exclude %{_bindir}/cpan
 %exclude %{privlib}/CPAN/
@@ -1500,6 +1521,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ptar.1*
 %{_mandir}/man1/ptardiff.1*
 %{_mandir}/man3/Archive::Tar* 
+
+%files Class-ISA
+%defattr(-,root,root,-)
+%{privlib}/Class/ISA.pm
+%{_mandir}/man3/Class::ISA.3*
 
 %files Compress-Raw-Zlib
 %defattr(-,root,root,-)
@@ -1815,6 +1841,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Nov 09 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-143
+- Sub-package perl-Class-ISA (bug #651317)
+
 * Mon Nov 08 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-142
 - Make perl(ExtUtils::ParseXS) version 4 digits long (bug #650882)
 
