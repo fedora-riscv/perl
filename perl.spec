@@ -19,7 +19,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        143%{?dist}
+Release:        144%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -248,6 +248,26 @@ its @ISA, from one or more superclasses (as Food::Fish::Fishstick is from
 Food::Fish, Life::Fungus, and Chemicals), and some of those superclasses
 may themselves each be derived, via its @ISA, from one or more superclasses
 (as above).
+
+
+%package CGI
+Summary:        Handle Common Gateway Interface requests and responses
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        3.49
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
+
+%description CGI
+CGI.pm is a stable, complete and mature solution for processing and preparing
+HTTP requests and responses. Major features including processing form
+submissions, file uploads, reading and writing cookies, query string generation
+and manipulation, and processing and preparing HTTP headers. Some HTML
+generation utilities are included as well.
+
+CGI.pm performs very well in in a vanilla CGI.pm environment and also comes
+with built-in support for mod_perl and mod_perl2 as well as FastCGI.
 
 
 %package Compress-Raw-Zlib
@@ -861,7 +881,7 @@ Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 
 Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-Class-ISA,
-Requires:       perl-Compress-Raw-Zlib, perl-CPAN,
+Requires:       perl-Compress-Raw-Zlib, perl-CGI, perl-CPAN,
 Requires:       perl-CPANPLUS, perl-Digest-SHA, perl-ExtUtils-CBuilder,
 Requires:       perl-ExtUtils-Embed, perl-ExtUtils-MakeMaker, perl-ExtUtils-ParseXS,
 Requires:       perl-File-Fetch, perl-IO-Compress, perl-IO-Zlib,
@@ -1214,6 +1234,12 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{privlib}/Class/ISA.pm
 %exclude %{_mandir}/man3/Class::ISA.3*
 
+# CGI
+%exclude %{privlib}/CGI/
+%exclude %{privlib}/CGI.pm
+%exclude %{_mandir}/man3/CGI.3*
+%exclude %{_mandir}/man3/CGI::*.3*
+
 # CPAN
 %exclude %{_bindir}/cpan
 %exclude %{privlib}/CPAN/
@@ -1527,6 +1553,13 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{privlib}/Class/ISA.pm
 %{_mandir}/man3/Class::ISA.3*
+
+%files CGI
+%defattr(-,root,root,-)
+%{privlib}/CGI/
+%{privlib}/CGI.pm
+%{_mandir}/man3/CGI.3*
+%{_mandir}/man3/CGI::*.3*
 
 %files Compress-Raw-Zlib
 %defattr(-,root,root,-)
@@ -1842,6 +1875,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Nov 29 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-144
+- create sub-package for CGI 3.49
+
 * Tue Nov 09 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-143
 - Sub-package perl-Class-ISA (bug #651317)
 
