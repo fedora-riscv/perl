@@ -8,7 +8,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        120%{?dist}
+Release:        121%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -91,7 +91,7 @@ Patch16:        perl-5.10.1-fix_thread_leak.patch
 # definition beneath:
 # could be 0.36
 %define			    Archive_Extract_version 0.34
-# CGI could be 3.48
+# CGI could be 3.50
 %define			    Compress_Raw_Zlib_version 2.023
 # constant could be 1.19
 %define			    Digest_SHA_version 5.47
@@ -315,6 +315,25 @@ files.  It provides class methods for quick and easy files handling
 while also allowing for the creation of tar file objects for custom
 manipulation.  If you have the IO::Zlib module installed, Archive::Tar
 will also support compressed or gzipped tar files.
+
+%package CGI
+Summary:        Handle Common Gateway Interface requests and responses
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        3.43
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
+
+%description CGI
+CGI.pm is a stable, complete and mature solution for processing and preparing
+HTTP requests and responses. Major features including processing form
+submissions, file uploads, reading and writing cookies, query string generation
+and manipulation, and processing and preparing HTTP headers. Some HTML
+generation utilities are included as well.
+
+CGI.pm performs very well in in a vanilla CGI.pm environment and also comes
+with built-in support for mod_perl and mod_perl2 as well as FastCGI.
 
 
 %package Compress-Raw-Zlib
@@ -896,7 +915,7 @@ Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 
 Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-Compress-Raw-Zlib, perl-Compress-Zlib, perl-CPAN,
-Requires:       perl-CPANPLUS, perl-Digest-SHA, perl-ExtUtils-CBuilder,
+Requires:       perl-CPANPLUS, perl-CGI, perl-Digest-SHA, perl-ExtUtils-CBuilder,
 Requires:       perl-ExtUtils-Embed, perl-ExtUtils-MakeMaker, perl-ExtUtils-ParseXS,
 Requires:       perl-File-Fetch, perl-IO-Compress-Base, perl-IO-Compress-Zlib, perl-IO-Zlib,
 Requires:       perl-IPC-Cmd, perl-Locale-Maketext-Simple, perl-Log-Message, perl-Log-Message-Simple,
@@ -1248,6 +1267,12 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_mandir}/man1/ptardiff.1*
 %exclude %{_mandir}/man3/Archive::Tar*
 
+# CGI
+%exclude %{privlib}/CGI/
+%exclude %{privlib}/CGI.pm
+%exclude %{_mandir}/man3/CGI.3*
+%exclude %{_mandir}/man3/CGI::*.3*
+
 # CPAN
 %exclude %{_bindir}/cpan
 %exclude %{privlib}/CPAN/
@@ -1545,6 +1570,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ptar.1*
 %{_mandir}/man1/ptardiff.1*
 %{_mandir}/man3/Archive::Tar* 
+
+%files CGI
+%defattr(-,root,root,-)
+%{privlib}/CGI/
+%{privlib}/CGI.pm
+%{_mandir}/man3/CGI.3*
+%{_mandir}/man3/CGI::*.3*
 
 %files Compress-Raw-Zlib
 %defattr(-,root,root,-)
@@ -1846,6 +1878,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Dec  1 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-121
+- create sub-package for CGI 3.43
+
 * Fri Oct 11 2010 Petr Pisar <ppisar@redhat.com> - 4:5.10.1-120
 - Sub-package threads (bug #622190)
 
