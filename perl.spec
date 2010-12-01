@@ -856,6 +856,23 @@ As just mentioned, all variables are, by default, thread local. To use shared
 variables, you need to also load threads::shared.
 
 
+%package threads-shared
+Summary:        Perl extension for sharing data structures between threads
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.32
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description threads-shared
+By default, variables are private to each thread, and each newly created thread
+gets a private copy of each existing variable. This module allows you to share
+variables across different threads (and pseudo-forks on Win32). It is used
+together with the threads module.  This module supports the sharing of the
+following data types only: scalars and scalar refs, arrays and array refs, and
+hashes and hash refs.
+
+
 %package version
 Summary:        Perl extension for Version Objects
 Group:          Development/Libraries
@@ -894,7 +911,7 @@ Requires:       perl-Module-Load-Conditional, perl-Module-Loaded,
 Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Constants,
 Requires:       perl-Params-Check, perl-Pod-Escapes, perl-Pod-Simple, perl-Term-UI, 
 Requires:       perl-Test-Harness, perl-Test-Simple, perl-Time-Piece, perl-version
-Requires:       perl-threads, perl-parent, perl-Parse-CPAN-Meta
+Requires:       perl-threads, perl-threads-shared, perl-parent, perl-Parse-CPAN-Meta
 
 %description core
 A metapackage which requires all of the perl bits and modules in the
@@ -1472,6 +1489,12 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{archlib}/threads.pm
 %exclude %{_mandir}/man3/threads.3*
 
+# threads-shared
+%exclude %{archlib}/auto/threads/shared*
+%exclude %dir %{archlib}/threads
+%exclude %{archlib}/threads/shared*
+%exclude %{_mandir}/man3/threads::shared*
+
 # version
 %exclude %{privlib}/version.pm
 %exclude %{privlib}/version.pod
@@ -1826,6 +1849,13 @@ rm -rf $RPM_BUILD_ROOT
 %{archlib}/threads.pm
 %{_mandir}/man3/threads.3*
 
+%files threads-shared
+%defattr(-,root,root,-)
+%{archlib}/auto/threads/shared*
+%dir %{archlib}/threads
+%{archlib}/threads/shared*
+%{_mandir}/man3/threads::shared*
+
 %files version
 %defattr(-,root,root,-)
 %{privlib}/version.pm
@@ -1841,6 +1871,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Dec  1 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-140
 - create sub-package for CGI 3.49
+- create sub-package for threads-shared
 
 * Tue Nov 09 2010 Petr Pisar <ppisar@redhat.com> - 4:5.12.2-139
 - Sub-package perl-Class-ISA (bug #651317)
