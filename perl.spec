@@ -19,7 +19,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        144%{?dist}
+Release:        145%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -178,6 +178,7 @@ The libraries for the perl runtime
 Summary:        Header #files for use in perl development
 Group:          Development/Languages
 License:        GPL+ or Artistic
+Requires:       systemtap-sdt-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description devel
@@ -1875,6 +1876,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Dec  9 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-145
+- required systemtap-sdt-devel on request in 661553
+
 * Mon Nov 29 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-144
 - create sub-package for CGI 3.49
 
