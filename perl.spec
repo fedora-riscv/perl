@@ -19,7 +19,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        145%{?dist}
+Release:        146%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1166,10 +1166,6 @@ popd
 #%%{__chmod} +x $T_FILES
 #%%{_fixperms} %%{buildroot}%%{perl5_testdir}
 
-# remove files used only during build process from rpm
-rm -rf $RPM_BUILD_ROOT/%{privlib}/Unicode/Collate/allkeys.txt
-rm -rf $RPM_BUILD_ROOT/%{privlib}/unicore/*.txt
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -1876,6 +1872,10 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Dec  9 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-146
+- 463773 revert change. txt files are needed for example by UCD::Unicode,
+ PDF::API2,...
+
 * Thu Dec  9 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-145
 - required systemtap-sdt-devel on request in 661553
 
