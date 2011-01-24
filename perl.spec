@@ -1,4 +1,4 @@
-%define perl_version    5.12.2
+%define perl_version    5.12.3
 %define perl_epoch      4
 %define perl_arch_stem -thread-multi
 %define perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -19,7 +19,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        146%{?dist}
+Release:        147%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1872,6 +1872,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jan 24 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-147
+- stable update 5.12.3
+
 * Thu Dec  9 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-146
 - 463773 revert change. txt files are needed for example by UCD::Unicode,
  PDF::API2,...
