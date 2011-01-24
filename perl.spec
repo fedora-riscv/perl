@@ -1,4 +1,4 @@
-%define perl_version    5.12.2
+%define perl_version    5.12.3
 %define perl_epoch      4
 %define perl_arch_stem -thread-multi
 %define perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -12,7 +12,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        140%{?dist}
+Release:        141%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -61,10 +61,10 @@ Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
 #Patch8:         perl-add-symbols.patch
 
 # Do not leak when destroying thread; RT #77352, RHBZ #630667
-Patch9:         perl-5.12.1-fix_thread_leak.patch
+Patch8:         perl-5.12.1-fix_thread_leak.patch
 
 # h2ph produces incorrect code in preamble, based mainly on RT #74614
-Patch10:        perl-5.12.2-h2ph.patch
+Patch9:         perl-5.12.2-h2ph.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -81,6 +81,7 @@ Provides: perl(VMS::Filespec)
 Provides: perl(VMS::Stdio)
 
 # Compat provides
+Provides: perl(:MODULE_COMPAT_5.12.3)
 Provides: perl(:MODULE_COMPAT_5.12.2)
 Provides: perl(:MODULE_COMPAT_5.12.1)
 Provides: perl(:MODULE_COMPAT_5.12.0)
@@ -935,8 +936,8 @@ upstream tarball from perl.org.
 %patch7 -p1
 #debug symbols?
 #%patch8 -p1
+%patch8 -p1
 %patch9 -p1
-%patch10 -p1
 
 
 #
@@ -1135,7 +1136,8 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch5: USE_MM_LD_RUN_PATH' \
     'Fedora Patch6: Skip hostname tests, due to builders not being network capable' \
     'Fedora Patch7: Dont run one io test due to random builder failures' \
-    'Fedora Patch9: Do not leak when destroying thread; RT #77352' \
+    'Fedora Patch8: Do not leak when destroying thread; RT #77352' \
+    'Fedora Patch9: h2ph produces incorrect code in preamble, based mainly on RT #74614 ' \
     %{nil}
 
 rm patchlevel.bak
@@ -1869,6 +1871,10 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jan 24 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-148
+- stable update 5.12.3
+- add COMPAT
+
 * Wed Dec  1 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-140
 - create sub-package for CGI 3.49
 - create sub-package for threads-shared
