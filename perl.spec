@@ -57,9 +57,6 @@ Patch6:         perl-disable_test_hosts.patch
 # systems.
 Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
 
-# temporarily export debug symbols even though DEBUGGING is not set:
-#Patch8:         perl-add-symbols.patch
-
 # Do not leak when destroying thread; RT #77352, RHBZ #630667
 Patch8:         perl-5.12.1-fix_thread_leak.patch
 
@@ -934,8 +931,6 @@ upstream tarball from perl.org.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-#debug symbols?
-#%patch8 -p1
 %patch8 -p1
 %patch9 -p1
 
