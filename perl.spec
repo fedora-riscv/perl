@@ -8,11 +8,11 @@
 %global tapsetdir   %{_datadir}/systemtap/tapset
 
 # internal filter just for this spec
-# XXX: perl_default_filter as %%global does not work. Why?
-%define perl_default_filter %{?filter_setup: %{expand: \
-%filter_provides_in -P %{archlib}/(?!CORE/libperl).*\\.so$ \
-%filter_from_provides /perl(UNIVERSAL)/d; /perl(DB)/d \
-%filter_setup \
+# XXX: %%global expands now, archlib must be pre-defined.
+%global perl_default_filter %%{?filter_setup: %%{expand: \
+%%filter_provides_in -P %%{archlib}/(?!CORE/libperl).*\\.so$ \
+%%filter_from_provides /perl(UNIVERSAL)/d; /perl(DB)/d \
+%%filter_setup \
 }}
 
 # same as we provide in /etc/rpm/macros.perl
@@ -1893,7 +1893,7 @@ rm -rf $RPM_BUILD_ROOT
 # Old changelog entries are preserved in CVS.
 %changelog
 * Wed Jan 26 2011 Petr Pisar <ppisar@redhat.com> - 4:5.12.3-150
-- Do not %global perl_default_filter
+- Make %%global perl_default_filter lazy
 - Do not hard-code tapsetdir path
 
 * Tue Jan 25 2011 Lukas Berk <lberk@redhat.com> - 4:5.12.3-149
