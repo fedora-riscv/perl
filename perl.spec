@@ -5,7 +5,7 @@
 
 %global multilib_64_archs x86_64 s390x ppc64 sparc64
 %global parallel_tests 1
-%global tapsetdir   /usr/share/systemtap/tapset
+%global tapsetdir   %{_datadir}/systemtap/tapset
 
 # internal filter just for this spec
 # XXX: perl_default_filter as %%global does not work. Why?
@@ -1894,6 +1894,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Jan 26 2011 Petr Pisar <ppisar@redhat.com> - 4:5.12.3-150
 - Do not %global perl_default_filter
+- Do not hard-code tapsetdir path
 
 * Tue Jan 25 2011 Lukas Berk <lberk@redhat.com> - 4:5.12.3-149
 - added systemtap tapset to make use of systemtap-sdt-devel
