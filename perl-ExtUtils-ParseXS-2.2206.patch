@@ -380,12 +380,12 @@ diff -up perl-5.12.3/cpan/ExtUtils-ParseXS/t/lib/IncludeTester.pm.22206 perl-5.1
 +
 diff -up perl-5.12.3/MANIFEST.22206 perl-5.12.3/MANIFEST
 --- perl-5.12.3/MANIFEST.22206	2011-01-26 16:36:42.933549001 -0500
-+++ perl-5.12.3/MANIFEST	2011-01-26 16:37:22.611549000 -0500
-@@ -1053,6 +1053,7 @@ cpan/ExtUtils-ParseXS/t/XSTest.pm		Test 
- cpan/ExtUtils-ParseXS/t/XSTest.xs		Test file for ExtUtils::ParseXS tests
- cpan/ExtUtils-ParseXS/t/XSUsage.pm		ExtUtils::ParseXS tests
- cpan/ExtUtils-ParseXS/t/XSUsage.xs		ExtUtils::ParseXS tests
++++ perl-5.12.3/MANIFEST	2011-01-26 16:50:52.762549003 -0500
+@@ -1044,6 +1044,7 @@ cpan/ExtUtils-ParseXS/Changes			ExtUtils
+ cpan/ExtUtils-ParseXS/lib/ExtUtils/ParseXS.pm	converts Perl XS code into C code
+ cpan/ExtUtils-ParseXS/lib/ExtUtils/xsubpp	External subroutine preprocessor
+ cpan/ExtUtils-ParseXS/t/basic.t			See if ExtUtils::ParseXS works
 +cpan/ExtUtils-ParseXS/t/lib/IncludeTester.pm
- cpan/File-Fetch/lib/File/Fetch.pm	File::Fetch
- cpan/File-Fetch/t/01_File-Fetch.t	File::Fetch tests
- cpan/File-Fetch/t/null_subclass.t
+ cpan/ExtUtils-ParseXS/t/more.t			Extended ExtUtils::ParseXS testing
+ cpan/ExtUtils-ParseXS/t/typemap			Standard typemap for controlled testing
+ cpan/ExtUtils-ParseXS/t/usage.t			ExtUtils::ParseXS tests
