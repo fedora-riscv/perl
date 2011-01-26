@@ -21,7 +21,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        150%{?dist}
+Release:        151%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -77,6 +77,10 @@ Patch9:         perl-5.12.2-h2ph.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
+
+# Update ExtUtils::ParseXS to 2.2206
+Patch10:	perl-ExtUtils-ParseXS-2.2206.patch
+
 
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:  db4-devel, gdbm-devel, groff, tcsh, zlib-devel, systemtap-sdt-devel
@@ -394,8 +398,8 @@ License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
 # We must preserve 4-digit precison since 2.2002 version
-%global         ExtUtils_ParseXS_real_version 2.21
-%global         ExtUtils_ParseXS_version %{ExtUtils_ParseXS_real_version}00
+%global         ExtUtils_ParseXS_real_version 2.22
+%global         ExtUtils_ParseXS_version %{ExtUtils_ParseXS_real_version}06
 Version:        %{ExtUtils_ParseXS_version}
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -920,6 +924,7 @@ tarball from perl.org.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1892,6 +1897,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jan 26 2011 Tom Callaway <spot@fedoraproject.org> - 4:5.12.3-151
+- update ExtUtils::ParseXS to 2.2206 (current) to fix Wx build
+
 * Wed Jan 26 2011 Petr Pisar <ppisar@redhat.com> - 4:5.12.3-150
 - Make %%global perl_default_filter lazy
 - Do not hard-code tapsetdir path
