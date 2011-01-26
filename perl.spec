@@ -1,21 +1,21 @@
-%define perl_version    5.12.3
-%define perl_epoch      4
-%define perl_arch_stem -thread-multi
-%define perl_archname %{_arch}-%{_os}%{perl_arch_stem}
+%global perl_version    5.12.3
+%global perl_epoch      4
+%global perl_arch_stem -thread-multi
+%global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
 
-%define multilib_64_archs x86_64 s390x ppc64 sparc64
-%define parallel_tests 1
+%global multilib_64_archs x86_64 s390x ppc64 sparc64
+%global parallel_tests 1
 %global tapsetdir   /usr/share/systemtap/tapset
 
 # internal filter just for this spec
-%define perl_default_filter %{?filter_setup: %{expand: \
+%global perl_default_filter %{?filter_setup: %{expand: \
 %filter_provides_in -P %{archlib}/(?!CORE/libperl).*\\.so$ \
 %filter_from_provides /perl(UNIVERSAL)/d; /perl(DB)/d \
 %filter_setup \
 }}
 
 # same as we provide in /etc/rpm/macros.perl
-%define perl5_testdir   %{_libexecdir}/perl5-tests
+%global perl5_testdir   %{_libexecdir}/perl5-tests
 
 Name:           perl
 Version:        %{perl_version}
@@ -393,8 +393,8 @@ License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
 # We must preserve 4-digit precison since 2.2002 version
-%define         ExtUtils_ParseXS_real_version 2.21
-%define         ExtUtils_ParseXS_version %{ExtUtils_ParseXS_real_version}00
+%global         ExtUtils_ParseXS_real_version 2.21
+%global         ExtUtils_ParseXS_version %{ExtUtils_ParseXS_real_version}00
 Version:        %{ExtUtils_ParseXS_version}
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -992,11 +992,11 @@ echo "RPM Build arch: %{_arch}"
 # - /usr/share/perl5                  -- Fedora       (priv lib)
 # - /usr/lib[64]/perl5                -- Fedora       (arch lib)
 
-%define privlib     %{_prefix}/share/perl5
-%define archlib     %{_libdir}/perl5
+%global privlib     %{_prefix}/share/perl5
+%global archlib     %{_libdir}/perl5
 
-%define perl_vendorlib  %{privlib}/vendor_perl
-%define perl_vendorarch %{archlib}/vendor_perl
+%global perl_vendorlib  %{privlib}/vendor_perl
+%global perl_vendorarch %{archlib}/vendor_perl
 
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
         -Dccdlflags="-Wl,--enable-new-dtags" \
@@ -1056,10 +1056,10 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
-%define build_archlib $RPM_BUILD_ROOT%{archlib}
-%define build_privlib $RPM_BUILD_ROOT%{privlib}
-%define build_bindir  $RPM_BUILD_ROOT%{_bindir}
-%define new_perl LD_PRELOAD="%{build_archlib}/CORE/libperl.so" \\\
+%global build_archlib $RPM_BUILD_ROOT%{archlib}
+%global build_privlib $RPM_BUILD_ROOT%{privlib}
+%global build_bindir  $RPM_BUILD_ROOT%{_bindir}
+%global new_perl LD_PRELOAD="%{build_archlib}/CORE/libperl.so" \\\
     LD_LIBRARY_PATH="%{build_archlib}/CORE" \\\
     PERL5LIB="%{build_archlib}:%{build_privlib}" \\\
     %{build_bindir}/perl
