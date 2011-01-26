@@ -354,3 +354,38 @@ diff -up perl-5.12.3/cpan/ExtUtils-ParseXS/t/XSMore.xs.22206 perl-5.12.3/cpan/Ex
  #if 1
  
  INCLUDE: XSInclude.xsh
+diff -up perl-5.12.3/cpan/ExtUtils-ParseXS/t/lib/IncludeTester.pm.22206 perl-5.12.3/cpan/ExtUtils-ParseXS/t/lib/IncludeTester.pm
+--- perl-5.12.3/cpan/ExtUtils-ParseXS/t/lib/IncludeTester.pm.22206	2011-01-26 16:38:04.432549002 -0500
++++ perl-5.12.3/cpan/ExtUtils-ParseXS/t/lib/IncludeTester.pm	2011-01-26 16:37:49.862549001 -0500
+@@ -0,0 +1,20 @@
++package IncludeTester;
++use strict;
++
++sub print_xs {
++  print <<'HERE';
++
++int
++sum(a, b)
++    int a
++    int b
++  CODE:
++    RETVAL = a + b;
++  OUTPUT:
++    RETVAL
++
++HERE
++}
++
++1;
++
+diff -up perl-5.12.3/MANIFEST.22206 perl-5.12.3/MANIFEST
+--- perl-5.12.3/MANIFEST.22206	2011-01-26 16:36:42.933549001 -0500
++++ perl-5.12.3/MANIFEST	2011-01-26 16:37:22.611549000 -0500
+@@ -1053,6 +1053,7 @@ cpan/ExtUtils-ParseXS/t/XSTest.pm		Test 
+ cpan/ExtUtils-ParseXS/t/XSTest.xs		Test file for ExtUtils::ParseXS tests
+ cpan/ExtUtils-ParseXS/t/XSUsage.pm		ExtUtils::ParseXS tests
+ cpan/ExtUtils-ParseXS/t/XSUsage.xs		ExtUtils::ParseXS tests
++cpan/ExtUtils-ParseXS/t/lib/IncludeTester.pm
+ cpan/File-Fetch/lib/File/Fetch.pm	File::Fetch
+ cpan/File-Fetch/t/01_File-Fetch.t	File::Fetch tests
+ cpan/File-Fetch/t/null_subclass.t
