@@ -8,7 +8,8 @@
 %global tapsetdir   /usr/share/systemtap/tapset
 
 # internal filter just for this spec
-%global perl_default_filter %{?filter_setup: %{expand: \
+# XXX: perl_default_filter as %%global does not work. Why?
+%define perl_default_filter %{?filter_setup: %{expand: \
 %filter_provides_in -P %{archlib}/(?!CORE/libperl).*\\.so$ \
 %filter_from_provides /perl(UNIVERSAL)/d; /perl(DB)/d \
 %filter_setup \
@@ -20,7 +21,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        149%{?dist}
+Release:        150%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1891,6 +1892,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jan 26 2011 Petr Pisar <ppisar@redhat.com> - 4:5.12.3-150
+- Do not %global perl_default_filter
+
 * Tue Jan 25 2011 Lukas Berk <lberk@redhat.com> - 4:5.12.3-149
 - added systemtap tapset to make use of systemtap-sdt-devel
 - added an example systemtap script
