@@ -5,6 +5,7 @@
 
 %define multilib_64_archs x86_64 s390x ppc64 sparc64
 %define parallel_tests 1
+%global tapsetdir   /usr/share/systemtap/tapset
 
 # internal filter just for this spec
 %define perl_default_filter %{?filter_setup: %{expand: \
@@ -19,7 +20,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        148%{?dist}
+Release:        149%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -34,6 +35,10 @@ Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.gz
 Source2:        perl-5.8.0-libnet.cfg
 Source3:        macros.perl
+#Systemtap tapset and example that make use of systemtap-sdt-devel
+# build requirement. Written by lberk; Not yet upstream.
+Source4:        perl.stp
+Source5:        perl-example.stp
 
 # Removes date check, Fedora/RHEL specific
 Patch1:         perl-perlbug-tag.patch
@@ -915,6 +920,8 @@ tarball from perl.org.
 %patch8 -p1
 %patch9 -p1
 
+#copy the example script
+cp -a %{SOURCE5} .
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1153,6 +1160,19 @@ for package in Test-Simple; do
     done
 done
 popd
+
+# Systemtap tapset install
+mkdir -p %{buildroot}%{tapsetdir}
+%ifarch %{multilib_64_archs}
+%global libperl_stp libperl%{perl_version}-64.stp
+%else
+%global libperl_stp libperl%{perl_version}-32.stp
+%endif
+
+sed \
+  -e "s|LIBRARY_PATH|%{archlib}/CORE/libperl.so|" \
+  %{SOURCE4} \
+  > %{buildroot}%{tapsetdir}/%{libperl_stp}
 
 # TODO: Canonicalize test files (rewrite intrerpreter path, fix permissions)
 # XXX: We cannot rewrite ./perl before %%check phase. Otherwise the test
@@ -1522,6 +1542,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/xsubpp*
 %{_mandir}/man1/perlxs*
 %attr(0644,root,root) %{_sysconfdir}/rpm/macros.perl
+%{tapsetdir}/%{libperl_stp}
+%doc perl-example.stp
 
 %files tests
 %defattr(-,root,root,-)
@@ -1869,6 +1891,10 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jan 25 2011 Lukas Berk <lberk@redhat.com> - 4:5.12.3-149
+- added systemtap tapset to make use of systemtap-sdt-devel
+- added an example systemtap script
+
 * Mon Jan 24 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-148
 - stable update 5.12.3
 - add COMPAT
