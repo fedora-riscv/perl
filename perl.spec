@@ -21,7 +21,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        151%{?dist}
+Release:        152%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1137,6 +1137,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch7: Dont run one io test due to random builder failures' \
     'Fedora Patch8: Do not leak when destroying thread; RT #77352' \
     'Fedora Patch9: h2ph produces incorrect code in preamble, based mainly on RT #74614 ' \
+    'Fedora Patch10: Update ExtUtils::ParseXS to 2.2206' \
     %{nil}
 
 rm patchlevel.bak
@@ -1897,6 +1898,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jan 27 2011 Petr Pisar <ppisar@redhat.com> - 4:5.12.3-152
+- Document ExtUtils::ParseXS upgrade in local patch tracking
+
 * Wed Jan 26 2011 Tom Callaway <spot@fedoraproject.org> - 4:5.12.3-151
 - update ExtUtils::ParseXS to 2.2206 (current) to fix Wx build
 
