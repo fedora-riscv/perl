@@ -12,7 +12,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        141%{?dist}
+Release:        142%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -62,6 +62,10 @@ Patch8:         perl-5.12.1-fix_thread_leak.patch
 
 # h2ph produces incorrect code in preamble, based mainly on RT #74614
 Patch9:         perl-5.12.2-h2ph.patch
+
+# Update ExtUtils::ParseXS to 2.2206
+Patch10:	perl-ExtUtils-ParseXS-2.2206.patch
+
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -401,8 +405,8 @@ License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
 # We must preserve 4-digit precison since 2.2002 version
-%define         ExtUtils_ParseXS_real_version 2.21
-%define         ExtUtils_ParseXS_version %{ExtUtils_ParseXS_real_version}00
+%define         ExtUtils_ParseXS_real_version 2.22
+%define         ExtUtils_ParseXS_version %{ExtUtils_ParseXS_real_version}06
 Version:        %{ExtUtils_ParseXS_version}
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -933,7 +937,7 @@ upstream tarball from perl.org.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
-
+%patch10 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1133,6 +1137,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch7: Dont run one io test due to random builder failures' \
     'Fedora Patch8: Do not leak when destroying thread; RT #77352' \
     'Fedora Patch9: h2ph produces incorrect code in preamble, based mainly on RT #74614 ' \
+    'Fedora Patch10: Update ExtUtils::ParseXS to 2.2206' \
     %{nil}
 
 rm patchlevel.bak
@@ -1866,6 +1871,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Mar 10 2011 Tom Callaway <spot@fedoraproject.org> - 4:5.12.3-142
+- update ExtUtils::ParseXS to 2.2206 (current) to fix Wx build
+
 * Mon Jan 24 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-141
 - stable update 5.12.3
 - add COMPAT
