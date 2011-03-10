@@ -8,7 +8,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        121%{?dist}
+Release:        122%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -138,6 +138,7 @@ Patch105:	perl-update-Archive-Tar.patch
 # CVE-2010-1447 perl: Safe restriction bypass when reference to subroutine in
 Patch106:   perl-update-Safe.patch
 %define             Safe_version 2.27
+Patch107:	perl-5.10.1-ExtUtils-ParseXS-2.2206.patch
 
 #---
 # Storable FIXME; is 2.18->2.21, should be 2.20->2.21
@@ -470,7 +471,7 @@ License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
 # It's really 2.2002, but we drop the 02.
-Version:        2.20
+Version:        2.2206
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
@@ -982,6 +983,7 @@ upstream tarball from perl.org.
 %patch104 -p1
 %patch105 -p1
 %patch106 -p1
+%patch107 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1204,7 +1206,8 @@ pushd %{build_archlib}/CORE/
 	'Fedora Patch103: Update Module::Build to %{Module_Build_version}' \
 	'Fedora Patch104: Update Parse::CPAN::Meta::version to %{Parse_CPAN_Meta_version}' \
 	'Fedora Patch105: Update Archive::Tar to %{Archive_Tar_version}' \
-	'Fedora Patch106: Update Safe to %{Safe_version}'
+	'Fedora Patch106: Update Safe to %{Safe_version}' \
+        'Fedora Patch107: Update ExtUtils::ParseXS to 2.2206' \
 	%{nil}
 
 rm patchlevel.bak
@@ -1906,6 +1909,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Mar 10 2011 Tom Callaway <spot@fedoraproject.org> - 4:5.12.3-142
+- update ExtUtils::ParseXS to 2.2206 (current) to fix Wx build
+
 * Wed Dec  1 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-121
 - create sub-package for CGI 3.43
 - create sub-package for threads-shared
