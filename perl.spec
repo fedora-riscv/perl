@@ -21,7 +21,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        154%{?dist}
+Release:        155%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -734,6 +734,20 @@ Pod::Simple is a Perl library for parsing text in the Pod ("plain old
 documentation") markup language that is typically used for writing
 documentation for Perl and for Perl modules.
 
+%package Scalar-List-Utils
+Summary:        A selection of general-utility scalar and list subroutines
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.22
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Scalar-List-Utils
+Scalar::Util and List::Util contain a selection of subroutines that people have
+expressed would be nice to have in the perl core, but the usage would not
+really be high enough to warrant the use of a keyword, and the size so small
+such that being individual extensions would be wasteful.
+
 
 %package Term-UI
 Summary:        Term::ReadLine UI made easy
@@ -910,7 +924,7 @@ Requires:       perl-IPC-Cmd, perl-Locale-Maketext-Simple, perl-Log-Message, per
 Requires:       perl-Module-Build, perl-Module-CoreList, perl-Module-Load,
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded,
 Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Constants, perl-PathTools
-Requires:       perl-Params-Check, perl-Pod-Escapes, perl-Pod-Simple, perl-Term-UI, 
+Requires:       perl-Params-Check, perl-Pod-Escapes, perl-Pod-Simple, perl-Scalar-List-Utils, perl-Term-UI
 Requires:       perl-Test-Harness, perl-Test-Simple, perl-Time-Piece, perl-version
 Requires:       perl-threads, perl-threads-shared, perl-parent, perl-Parse-CPAN-Meta
 
@@ -1493,6 +1507,18 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{privlib}/Pod/Simple.pod
 %exclude %{_mandir}/man3/Pod::Simple*
 
+# Scalar-List-Utils
+%exclude %{archlib}/List/
+%exclude %{archlib}/List/Util/
+%exclude %{archlib}/List/Util.pm
+%exclude %{archlib}/Scalar/
+%exclude %{archlib}/Scalar/Util/
+%exclude %{archlib}/Scalar/Util.pm
+%exclude %{archlib}/auto/List/
+%exclude %{archlib}/auto/List/Util/
+%exclude %{_mandir}/man3/List::Util*
+%exclude %{_mandir}/man3/Scalar::Util*
+
 # Term-UI
 %exclude %{privlib}/Term/UI.pm
 %exclude %{privlib}/Term/UI/
@@ -1850,6 +1876,19 @@ rm -rf $RPM_BUILD_ROOT
 %{privlib}/Pod/Simple.pod
 %{_mandir}/man3/Pod::Simple*
 
+%files Scalar-List-Utils
+%defattr(-,root,root,-)
+%{archlib}/List/
+%{archlib}/List/Util/
+%{archlib}/List/Util.pm
+%{archlib}/Scalar/
+%{archlib}/Scalar/Util/
+%{archlib}/Scalar/Util.pm
+%{archlib}/auto/List/
+%{archlib}/auto/List/Util/
+%{_mandir}/man3/List::Util*
+%{_mandir}/man3/Scalar::Util*
+
 %files Term-UI
 %defattr(-,root,root,-)
 %{privlib}/Term/UI/
@@ -1923,6 +1962,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Mar 16 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-155
+- cherry pick Ian Arnell's sub-package Scalar-List-Utils
+
 * Mon Feb 28 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-154
 - create sub-package for PathTools (Cwd) 680923
 
