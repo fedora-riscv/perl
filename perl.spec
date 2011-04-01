@@ -21,7 +21,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        156%{?dist}
+Release:        157%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1486,6 +1486,7 @@ rm -rf $RPM_BUILD_ROOT
 # PathTools
 %exclude %{archlib}/Cwd.pm
 %exclude %{archlib}/File/Spec*
+%exclude %{archlib}/auto/Cwd/
 %exclude %{_mandir}/man3/Cwd*
 %exclude %{_mandir}/man3/File::Spec*
 
@@ -1849,6 +1850,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{archlib}/Cwd.pm
 %{archlib}/File/Spec*
+%{archlib}/auto/Cwd/
 %{_mandir}/man3/Cwd*
 %{_mandir}/man3/File::Spec*
 
@@ -1962,6 +1964,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Apr  1 2011 Robin Lee <cheeselee@fedoraproject.org> - 4:5.12.3-157
+- Cwd.so go to the PathTools sub-package
+
 * Tue Mar 15 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-156
 - sub-package Path-Tools
 
