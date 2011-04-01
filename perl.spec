@@ -80,7 +80,8 @@ Patch9:         perl-5.12.2-h2ph.patch
 
 # Update ExtUtils::ParseXS to 2.2206
 Patch10:	perl-ExtUtils-ParseXS-2.2206.patch
-
+# 692900 - lc launders tainted flag, RT #87336
+Patch11:    perl-87336-lc-uc-first-fail-to-taint-the-returned-st.patch
 
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:  db4-devel, gdbm-devel, groff, tcsh, zlib-devel, systemtap-sdt-devel
@@ -951,6 +952,7 @@ tarball from perl.org.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1164,6 +1166,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch8: Do not leak when destroying thread; RT #77352' \
     'Fedora Patch9: h2ph produces incorrect code in preamble, based mainly on RT #74614 ' \
     'Fedora Patch10: Update ExtUtils::ParseXS to 2.2206' \
+    'Fedora Patch11: lc launders tainted flag RT #87336' \
     %{nil}
 
 rm patchlevel.bak
@@ -1966,6 +1969,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Fri Apr  1 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-156
 - Cwd.so go to the PathTools sub-package #692830
+- 692900 - lc launders tainted flag, RT #87336
 
 * Wed Mar 16 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-155
 - cherry pick Ian Arnell's sub-package Scalar-List-Utils
