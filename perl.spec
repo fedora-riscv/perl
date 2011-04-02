@@ -12,7 +12,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        142%{?dist}
+Release:        143%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -66,6 +66,8 @@ Patch9:         perl-5.12.2-h2ph.patch
 # Update ExtUtils::ParseXS to 2.2206
 Patch10:	perl-ExtUtils-ParseXS-2.2206.patch
 
+# 692900 - lc launders tainted flag, RT #87336
+Patch11:    perl-87336-lc-uc-first-fail-to-taint-the-returned-st.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -938,6 +940,7 @@ upstream tarball from perl.org.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1138,6 +1141,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch8: Do not leak when destroying thread; RT #77352' \
     'Fedora Patch9: h2ph produces incorrect code in preamble, based mainly on RT #74614 ' \
     'Fedora Patch10: Update ExtUtils::ParseXS to 2.2206' \
+    'Fedora Patch11: lc launders tainted flag RT #87336' \
     %{nil}
 
 rm patchlevel.bak
@@ -1871,6 +1875,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Apr  1 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-143 
+- 692900 - lc launders tainted flag, RT #87336
+
 * Thu Mar 10 2011 Tom Callaway <spot@fedoraproject.org> - 4:5.12.3-142
 - update ExtUtils::ParseXS to 2.2206 (current) to fix Wx build
 
