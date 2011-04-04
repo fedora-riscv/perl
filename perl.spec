@@ -8,7 +8,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        122%{?dist}
+Release:        123%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -84,6 +84,9 @@ Patch15:        perl-5.10.1-IO-isolate_tests.patch
 
 # Do not leak when destroying thread; RT #77352, RHBZ #630667
 Patch16:        perl-5.10.1-fix_thread_leak.patch
+
+# 692900 - lc launders tainted flag, RT #87336
+Patch17:    perl-87336-lc-uc-first-fail-to-taint-the-returned-st.patch
 
 # Version macros for some of the modules.
 # If comment starts with module name, distributed module is part of
@@ -976,6 +979,7 @@ upstream tarball from perl.org.
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
 
 %patch101 -p1
 %patch102 -p1
@@ -1201,13 +1205,14 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch14: unpack RT 73814' \
     'Fedora Patch15: enable parallel tests of IO module' \
     'Fedora Patch16: Do not leak when destroying thread; RT #77352' \
-	'Fedora Patch101: Update ExtUtils::CBuilder to %{ExtUtils_CBuilder_version}' \
-	'Fedora Patch102: Update File::Path to %{File_Path_version}' \
-	'Fedora Patch103: Update Module::Build to %{Module_Build_version}' \
-	'Fedora Patch104: Update Parse::CPAN::Meta::version to %{Parse_CPAN_Meta_version}' \
-	'Fedora Patch105: Update Archive::Tar to %{Archive_Tar_version}' \
-	'Fedora Patch106: Update Safe to %{Safe_version}' \
-        'Fedora Patch107: Update ExtUtils::ParseXS to 2.2206' \
+    'Fedora Patch17: lc launders tainted flag RT #87336' \
+    'Fedora Patch101: Update ExtUtils::CBuilder to %{ExtUtils_CBuilder_version}' \
+    'Fedora Patch102: Update File::Path to %{File_Path_version}' \
+    'Fedora Patch103: Update Module::Build to %{Module_Build_version}' \
+    'Fedora Patch104: Update Parse::CPAN::Meta::version to %{Parse_CPAN_Meta_version}' \
+    'Fedora Patch105: Update Archive::Tar to %{Archive_Tar_version}' \
+    'Fedora Patch106: Update Safe to %{Safe_version}' \
+    'Fedora Patch107: Update ExtUtils::ParseXS to 2.2206' \
 	%{nil}
 
 rm patchlevel.bak
@@ -1909,7 +1914,10 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Thu Mar 10 2011 Tom Callaway <spot@fedoraproject.org> - 4:5.12.3-142
+* Mon Apr  4 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-123
+- 692900 - lc launders tainted flag, RT #87336
+
+* Thu Mar 10 2011 Tom Callaway <spot@fedoraproject.org> - 4:5.12.3-122
 - update ExtUtils::ParseXS to 2.2206 (current) to fix Wx build
 
 * Wed Dec  1 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.1-121
