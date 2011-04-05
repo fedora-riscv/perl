@@ -1,0 +1,63 @@
+diff -up perl-5.12.3/pp.c.87 perl-5.12.3/pp.c
+--- perl-5.12.3/pp.c.87	2011-01-09 21:20:58.000000000 +0100
++++ perl-5.12.3/pp.c	2011-04-01 15:06:23.000000000 +0200
+@@ -3949,6 +3949,8 @@ PP(pp_ucfirst)
+ 	    SvCUR_set(dest, need - 1);
+ 	}
+     }
++    if (dest != source && SvTAINTED(source))
++        SvTAINT(dest);
+     SvSETMAGIC(dest);
+     RETURN;
+ }
+@@ -4008,7 +4010,8 @@ PP(pp_uc)
+ 	SvUPGRADE(dest, SVt_PV);
+ 	d = (U8*)SvGROW(dest, min);
+ 	(void)SvPOK_only(dest);
+-
++	if (dest != source && SvTAINTED(source))
++	    SvTAINT(dest);
+ 	SETs(dest);
+     }
+ 
+@@ -4433,6 +4436,8 @@ PP(pp_lc)
+ 	    SvCUR_set(dest, d - (U8*)SvPVX_const(dest));
+ 	}
+     }
++    if (dest != source && SvTAINTED(source))
++        SvTAINT(dest);
+     SvSETMAGIC(dest);
+     RETURN;
+ }
+diff -up perl-5.10.1/t/op/taint.t.87 perl-5.10.1/t/op/taint.t
+--- perl-5.10.1/t/op/taint.t.87	2009-06-26 18:11:27.000000000 +0200
++++ perl-5.10.1/t/op/taint.t	2011-04-04 14:36:00.434735677 +0200
+@@ -17,7 +17,7 @@ use Config;
+ use File::Spec::Functions;
+ 
+ BEGIN { require './test.pl'; }
+-plan tests => 301;
++plan tests => 305;
+ 
+ $| = 1;
+ 
+@@ -1316,6 +1316,19 @@ foreach my $ord (78, 163, 256) {
+     ok(tainted($zz), "pack a*a* preserves tainting");
+ }
+ 
++{
++    # [perl #87336] lc/uc(first) failing to taint the returned string
++    my $source = "foo$TAINT";
++    my $dest = lc $source;
++    test $dest, "lc(tainted) taints its return value";
++    $dest = lcfirst $source;
++    test $dest, "lcfirst(tainted) taints its return value";
++    $dest = uc $source;
++    test $dest, "uc(tainted) taints its return value";
++    $dest = ucfirst $source;
++    test $dest, "ucfirst(tainted) taints its return value";
++}
++
+ # This may bomb out with the alarm signal so keep it last
+ SKIP: {
+     skip "No alarm()"  unless $Config{d_alarm};
