@@ -21,7 +21,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        158%{?dist}
+Release:        159%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -43,11 +43,6 @@ Source5:        perl-example.stp
 
 # Removes date check, Fedora/RHEL specific
 Patch1:         perl-perlbug-tag.patch
-
-# work around annoying rpath issue
-# This is only relevant for Fedora, as it is unlikely
-# that upstream will assume the existence of a libperl.so
-Patch2:         perl-5.8.8-rpath-make.patch
 
 # Fedora/RHEL only (64bit only)
 Patch3:         perl-5.8.0-libdir64.patch
@@ -941,11 +936,6 @@ tarball from perl.org.
 %prep
 %setup -q -n perl-%{perl_version}
 %patch1 -p1
-# This patch breaks sparc64 compilation
-# We should probably consider removing it for all arches.
-%ifnarch sparc64
-%patch2 -p1
-%endif
 %ifarch %{multilib_64_archs}
 %patch3 -p1
 %endif
@@ -1157,9 +1147,6 @@ popd
 pushd %{build_archlib}/CORE/
 %{new_perl} -x patchlevel.h \
     'Fedora Patch1: Removes date check, Fedora/RHEL specific' \
-%ifnarch sparc64 \
-    'Fedora Patch2: Work around annoying rpath issue' \
-%endif \
 %ifarch %{multilib_64_archs} \
     'Fedora Patch3: support for libdir64' \
 %endif \
@@ -1971,6 +1958,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Apr 07 2011 Petr Pisar <ppisar@redhat.com> - 4:5.12.3-159
+- Remove rpath-make patch because we use --enable-new-dtags linker option
+
 * Fri Apr  1 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-158
 - 692900 - lc launders tainted flag, RT #87336
 
