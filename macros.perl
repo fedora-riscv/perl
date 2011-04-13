@@ -39,7 +39,6 @@ export PERL_MM_USE_DEFAULT=1
 %perl_default_filter %{?filter_setup: %{expand: \
 %filter_provides_in %{perl_vendorarch}/.*\\.so$ \
 %filter_provides_in -P %{perl_archlib}/(?!CORE/libperl).*\\.so$ \
-%filter_from_provides /perl(UNIVERSAL)/d; /perl(DB)/d \
 %filter_provides_in %{_docdir} \
 %filter_requires_in %{_docdir} \
 %filter_setup \
