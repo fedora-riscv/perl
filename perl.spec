@@ -11,7 +11,6 @@
 # XXX: %%global expands now, archlib must be pre-defined.
 %global perl_default_filter %%{?filter_setup: %%{expand: \
 %%filter_provides_in -P %%{archlib}/(?!CORE/libperl).*\\.so$ \
-%%filter_from_provides /perl(UNIVERSAL)/d; /perl(DB)/d \
 %%filter_setup \
 }}
 
@@ -21,7 +20,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        159%{?dist}
+Release:        160%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1958,6 +1957,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Apr 13 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-160
+- add provides UNIVERSAL and DB back into perl
+
 * Thu Apr 07 2011 Petr Pisar <ppisar@redhat.com> - 4:5.12.3-159
 - Remove rpath-make patch because we use --enable-new-dtags linker option
 
