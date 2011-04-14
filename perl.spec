@@ -11,7 +11,6 @@
 # XXX: %%global expands now, archlib must be pre-defined.
 %global perl_default_filter %%{?filter_setup: %%{expand: \
 %%filter_provides_in -P %%{archlib}/(?!CORE/libperl).*\\.so$ \
-%%filter_from_provides /perl(UNIVERSAL)/d; /perl(DB)/d \
 %%filter_setup \
 }}
 
@@ -21,7 +20,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        156%{?dist}
+Release:        157%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -82,6 +81,9 @@ Patch9:         perl-5.12.2-h2ph.patch
 Patch10:	perl-ExtUtils-ParseXS-2.2206.patch
 # 692900 - lc launders tainted flag, RT #87336
 Patch11:    perl-87336-lc-uc-first-fail-to-taint-the-returned-st.patch
+
+# Update some of the bundled modules
+# see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:  db4-devel, gdbm-devel, groff, tcsh, zlib-devel, systemtap-sdt-devel
@@ -1967,6 +1969,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Apr 13 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-157
+- remove provides UNIVERSAL and DB
+
 * Fri Apr  1 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-156
 - Cwd.so go to the PathTools sub-package #692830
 - 692900 - lc launders tainted flag, RT #87336
