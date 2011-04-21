@@ -8,7 +8,7 @@
 
 Name:           perl
 Version:        %{perl_version}
-Release:        123%{?dist}
+Release:        124%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1914,6 +1914,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Apr 21 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-124
+- nice people from debian fixed test of RT #87336
+
 * Mon Apr  4 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-123
 - 692900 - lc launders tainted flag, RT #87336
 

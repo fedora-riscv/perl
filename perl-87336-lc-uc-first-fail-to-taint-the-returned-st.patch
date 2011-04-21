@@ -49,13 +49,13 @@ diff -up perl-5.10.1/t/op/taint.t.87 perl-5.10.1/t/op/taint.t
 +    # [perl #87336] lc/uc(first) failing to taint the returned string
 +    my $source = "foo$TAINT";
 +    my $dest = lc $source;
-+    test $dest, "lc(tainted) taints its return value";
++    test tainted $dest, "lc(tainted) taints its return value";
 +    $dest = lcfirst $source;
-+    test $dest, "lcfirst(tainted) taints its return value";
++    test tainted $dest, "lcfirst(tainted) taints its return value";
 +    $dest = uc $source;
-+    test $dest, "uc(tainted) taints its return value";
++    test tainted $dest, "uc(tainted) taints its return value";
 +    $dest = ucfirst $source;
-+    test $dest, "ucfirst(tainted) taints its return value";
++    test tainted $dest, "ucfirst(tainted) taints its return value";
 +}
 +
  # This may bomb out with the alarm signal so keep it last
