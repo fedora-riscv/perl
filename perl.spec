@@ -66,7 +66,6 @@ Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
-BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:  db4-devel, gdbm-devel, groff, tcsh, zlib-devel, systemtap-sdt-devel
 # For tests
 BuildRequires:  procps, rsyslog
