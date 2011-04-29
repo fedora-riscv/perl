@@ -1,4 +1,4 @@
-%global perl_version    5.12.3
+%global perl_version    5.14.0
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -20,7 +20,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        160%{?dist}
+Release:        161%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -32,7 +32,7 @@ Group:          Development/Languages
 # Copyright Only: for example ext/Text-Soundex/Soundex.xs 
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and MIT and Public Domain and UCD
 Url:            http://www.perl.org/
-Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.gz
+Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}-RC1.tar.bz2
 Source2:        perl-5.8.0-libnet.cfg
 Source3:        macros.perl
 #Systemtap tapset and example that make use of systemtap-sdt-devel
@@ -63,21 +63,6 @@ Patch6:         perl-disable_test_hosts.patch
 # systems.
 Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
 
-# Do not leak when destroying thread; RT #77352, RHBZ #630667
-Patch8:         perl-5.12.1-fix_thread_leak.patch
-
-# h2ph produces incorrect code in preamble, based mainly on RT #74614
-Patch9:         perl-5.12.2-h2ph.patch
-
-# Update some of the bundled modules
-# see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
-
-# Update ExtUtils::ParseXS to 2.2206
-Patch10:	perl-ExtUtils-ParseXS-2.2206.patch
-
-# 692900 - lc launders tainted flag, RT #87336
-Patch11:    perl-87336-lc-uc-first-fail-to-taint-the-returned-st.patch
-
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -93,6 +78,7 @@ Provides: perl(VMS::Filespec)
 Provides: perl(VMS::Stdio)
 
 # Compat provides
+Provides: perl(:MODULE_COMPAT_5.14.0)
 Provides: perl(:MODULE_COMPAT_5.12.3)
 Provides: perl(:MODULE_COMPAT_5.12.2)
 Provides: perl(:MODULE_COMPAT_5.12.1)
@@ -215,7 +201,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.38
+Version:        0.48
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -228,7 +214,7 @@ Summary:        A module for Perl manipulation of .tar files
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.54 
+Version:        1.76 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Compress::Zlib), perl(IO::Zlib)
 BuildArch:      noarch
@@ -241,29 +227,12 @@ IO::Zlib module installed, Archive::Tar will also support compressed or
 gzipped tar files.
 
 
-%package Class-ISA
-Summary:        Report the search path for a class's ISA tree
-Group:          Development/Libraries
-License:        GPL+ or Artistic
-Epoch:          0
-Version:        0.36
-Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
-BuildArch:      noarch
-
-%description Class-ISA
-Suppose you have a class (like Food::Fish::Fishstick) that is derived, via
-its @ISA, from one or more superclasses (as Food::Fish::Fishstick is from
-Food::Fish, Life::Fungus, and Chemicals), and some of those superclasses
-may themselves each be derived, via its @ISA, from one or more superclasses
-(as above).
-
-
 %package CGI
 Summary:        Handle Common Gateway Interface requests and responses
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        3.49
+Version:        3.52
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -283,7 +252,7 @@ Summary:        Low-Level Interface to the zlib compression library
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.024
+Version:        2.033
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Compress-Raw-Zlib
@@ -296,7 +265,7 @@ Summary:        Query, download and build perl modules from CPAN sites
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.9402
+Version:        1.9600
 # CPAN encourages Digest::SHA strongly because of integrity checks
 Requires:       perl(Digest::SHA)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -312,14 +281,15 @@ Summary:        API & CLI access to the CPAN mirrors
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.90
+# real version 0.9103
+Version:        0.91.3
 # CPANPLUS encourages Digest::SHA strongly because of integrity checks
 Requires:       perl(Digest::SHA)
 Requires:       perl(Module::Pluggable) >= 2.4
 Requires:       perl(Module::CoreList)
 Requires:       perl(DBIx::Simple)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
-Provides:       perl-CPANPLUS-Dist-Build = 0.06
+Provides:       perl-CPANPLUS-Dist-Build = 0.54
 Obsoletes:      perl-CPANPLUS-Dist-Build <= 0.05
 BuildArch:      noarch
 
@@ -334,7 +304,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        5.47
+Version:        5.61
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Digest-SHA
@@ -350,7 +320,8 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.27
+# real version 0.280203 https://fedoraproject.org/wiki/Perl/Tips#Dot_approach
+Version:        0.28.2.3
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -366,7 +337,7 @@ Summary:        Utilities for embedding Perl in C/C++ applications
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.28
+Version:        1.30
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -380,7 +351,7 @@ Summary:        Create a module Makefile
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        6.56
+Version:        6.57.5
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Test::Harness)
@@ -396,10 +367,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-# We must preserve 4-digit precison since 2.2002 version
-%global         ExtUtils_ParseXS_real_version 2.22
-%global         ExtUtils_ParseXS_version %{ExtUtils_ParseXS_real_version}06
-Version:        %{ExtUtils_ParseXS_version}
+Version:        2.2210
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -416,7 +384,7 @@ Summary:        Generic file fetching mechanism
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.24 
+Version:        0.32 
 Requires:       perl(IPC::Cmd) >= 0.36
 Requires:       perl(Module::Load::Conditional) >= 0.04
 Requires:       perl(Params::Check) >= 0.07
@@ -432,7 +400,7 @@ Summary:        IO::Compress wrapper for modules
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.026
+Version:        2.033
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Obsoletes:      perl-Compress-Zlib <= 2.020
 Provides:       perl(IO::Uncompress::Bunzip2)
@@ -467,7 +435,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.54
+Version:        0.70
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -497,7 +465,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.02
+Version:        0.04
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 # Add a versioned provides, since we pull the unversioned one out.
 Provides:       perl(Log::Message::Handlers) = %{version}
@@ -517,7 +485,7 @@ Summary:        Simplified frontend to Log::Message
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.06
+Version:        0.08
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -532,7 +500,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.3603 
+Version:        0.3800 
 Requires:       perl(Archive::Tar) >= 1.08
 Requires:       perl(ExtUtils::CBuilder) >= 0.15
 Requires:       perl(ExtUtils::ParseXS) >= 1.02
@@ -556,7 +524,7 @@ Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.29 
+Version:        2.47 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(version)
 BuildArch:      noarch
@@ -573,7 +541,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.16
+Version:        0.18
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -587,7 +555,7 @@ Summary:        Looking up module information / loading at runtime
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.34
+Version:        0.44
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -635,7 +603,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.36
+Version:        0.38
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -662,10 +630,11 @@ for a Constants.pm file.
 
 %package PathTools
 Summary:        PathTools Perl module (Cwd, File::Spec)
+# PathTools aka File::Spec
 Group:          Development/Libraries
 License:        (GPL+ or Artistic) and BSD
 Epoch:          0
-Version:        3.31
+Version:        3.33
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description PathTools
@@ -678,7 +647,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.26
+Version:        0.28
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -692,7 +661,8 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        1.40
+# 1.4401
+Version:        1.44.1
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 # FIXME it could be removed now?
@@ -724,7 +694,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        3.13
+Version:        3.16
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -738,7 +708,7 @@ Summary:        A selection of general-utility scalar and list subroutines
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.22
+Version:        1.23
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Scalar-List-Utils
@@ -753,7 +723,7 @@ Summary:        Term::ReadLine UI made easy
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.20
+Version:        0.26
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Log::Message::Simple)
 BuildArch:      noarch
@@ -769,7 +739,7 @@ Summary:        Run Perl standard test scripts with statistics
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        3.17
+Version:        3.23
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -786,7 +756,7 @@ Summary:        Basic utilities for writing tests
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.94
+Version:        0.98
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -800,8 +770,8 @@ Summary:        Test suite for package perl-Test-Simple
 Group:          Development/Debug
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.94
-Requires:       perl-Test-Simple = 0:0.94-%{release}
+Version:        0.98
+Requires:       perl-Test-Simple = 0:0.98-%{release}
 Requires:       /usr/bin/prove
 AutoReqProv:    0
 BuildArch:      noarch
@@ -815,7 +785,8 @@ Summary:        Time objects from localtime and gmtime
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.15
+# real 1.20_01
+Version:        1.20.1
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Time-Piece
@@ -831,7 +802,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.223
+Version:        0.225
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -854,7 +825,7 @@ Summary:        Perl interpreter-based threads
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.75
+Version:        1.83
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description threads
@@ -875,7 +846,7 @@ Summary:        Perl extension for sharing data structures between threads
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.32
+Version:        1.37
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description threads-shared
@@ -893,7 +864,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          3
-Version:        0.82
+Version:        0.88
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -914,18 +885,18 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 
-Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-Class-ISA,
-Requires:       perl-Compress-Raw-Zlib, perl-CGI, perl-CPAN,
-Requires:       perl-CPANPLUS, perl-Digest-SHA, perl-ExtUtils-CBuilder,
-Requires:       perl-ExtUtils-Embed, perl-ExtUtils-MakeMaker, perl-ExtUtils-ParseXS,
-Requires:       perl-File-Fetch, perl-IO-Compress, perl-IO-Zlib,
-Requires:       perl-IPC-Cmd, perl-Locale-Maketext-Simple, perl-Log-Message, perl-Log-Message-Simple,
-Requires:       perl-Module-Build, perl-Module-CoreList, perl-Module-Load,
-Requires:       perl-Module-Load-Conditional, perl-Module-Loaded,
+Requires:       perl-Archive-Extract, perl-Archive-Tar
+Requires:       perl-Compress-Raw-Zlib, perl-CGI, perl-CPAN
+Requires:       perl-CPANPLUS, perl-Digest-SHA, perl-ExtUtils-CBuilder
+Requires:       perl-ExtUtils-Embed, perl-ExtUtils-MakeMaker, perl-ExtUtils-ParseXS
+Requires:       perl-File-Fetch, perl-IO-Compress, perl-IO-Zlib
+Requires:       perl-IPC-Cmd, perl-Locale-Maketext-Simple, perl-Log-Message, perl-Log-Message-Simple
+Requires:       perl-Module-Build, perl-Module-CoreList, perl-Module-Load
+Requires:       perl-Module-Load-Conditional, perl-Module-Loaded
 Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Constants, perl-PathTools
-Requires:       perl-Params-Check, perl-Pod-Escapes, perl-Pod-Simple, perl-Term-UI, 
+Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Pod-Escapes, perl-Pod-Simple, perl-Term-UI 
 Requires:       perl-Test-Harness, perl-Test-Simple, perl-Time-Piece, perl-version
-Requires:       perl-threads, perl-threads-shared, perl-parent, perl-Parse-CPAN-Meta
+Requires:       perl-threads, perl-threads-shared, perl-parent
 
 %description core
 A metapackage which requires all of the perl bits and modules in the upstream
@@ -933,7 +904,7 @@ tarball from perl.org.
 
 %{?perl_default_filter}
 %prep
-%setup -q -n perl-%{perl_version}
+%setup -q -n perl-%{perl_version}-RC1
 %patch1 -p1
 %ifarch %{multilib_64_archs}
 %patch3 -p1
@@ -942,10 +913,6 @@ tarball from perl.org.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1080,7 +1047,6 @@ make %{?_smp_mflags}
 %endif
 
 %install
-rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
 %global build_archlib $RPM_BUILD_ROOT%{archlib}
@@ -1153,10 +1119,6 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch5: USE_MM_LD_RUN_PATH' \
     'Fedora Patch6: Skip hostname tests, due to builders not being network capable' \
     'Fedora Patch7: Dont run one io test due to random builder failures' \
-    'Fedora Patch8: Do not leak when destroying thread; RT #77352' \
-    'Fedora Patch9: h2ph produces incorrect code in preamble, based mainly on RT #74614 ' \
-    'Fedora Patch10: Update ExtUtils::ParseXS to 2.2206' \
-    'Fedora Patch11: lc launders tainted flag RT #87336' \
     %{nil}
 
 rm patchlevel.bak
@@ -1208,9 +1170,6 @@ sed \
 #%%fix_shbang_line $T_FILES
 #%%{__chmod} +x $T_FILES
 #%%{_fixperms} %%{buildroot}%%{perl5_testdir}
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %check
 %ifnarch
@@ -1269,10 +1228,6 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_mandir}/man1/ptar.1*
 %exclude %{_mandir}/man1/ptardiff.1*
 %exclude %{_mandir}/man3/Archive::Tar*
-
-# Class-ISA
-%exclude %{privlib}/Class/ISA.pm
-%exclude %{_mandir}/man3/Class::ISA.3*
 
 # CGI
 %exclude %{privlib}/CGI/
@@ -1371,7 +1326,6 @@ rm -rf $RPM_BUILD_ROOT
 
 # Compress::Zlib
 %exclude %{privlib}/Compress/Zlib.pm
-%exclude %{archlib}/auto/Compress/Zlib/
 %exclude %{_mandir}/man3/Compress::Zlib*
 # IO::Compress::Base
 %exclude %{privlib}/File/GlobMapper.pm
@@ -1610,11 +1564,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ptardiff.1*
 %{_mandir}/man3/Archive::Tar* 
 
-%files Class-ISA
-%defattr(-,root,root,-)
-%{privlib}/Class/ISA.pm
-%{_mandir}/man3/Class::ISA.3*
-
 %files CGI
 %defattr(-,root,root,-)
 %{privlib}/CGI/
@@ -1718,7 +1667,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 # Compress-Zlib
 %{privlib}/Compress/Zlib.pm
-%{archlib}/auto/Compress/Zlib/
 %{_mandir}/man3/Compress::Zlib*
 #IO-Compress-Base
 %{privlib}/File/GlobMapper.pm
@@ -1957,6 +1905,12 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Apr 22 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0.RC1-161
+- build RC1 of 5.14.0
+- remove Class::ISA from sub-packages
+- patches 8+ are part of new release
+- remove vendorarch/auto/Compress/Zlib
+
 * Wed Apr 13 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-160
 - add provides UNIVERSAL and DB back into perl
 
