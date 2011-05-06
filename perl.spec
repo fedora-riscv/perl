@@ -1185,7 +1185,6 @@ sed \
 %postun libs -p /sbin/ldconfig
 
 %files
-%defattr(-,root,root,-)
 %doc Artistic AUTHORS Copying README Changes
 %{_mandir}/man1/*.1*
 %{_mandir}/man3/*.3*
@@ -1525,7 +1524,6 @@ sed \
 %dir %{_prefix}/local/%{_lib}/perl5
 
 %files devel
-%defattr(-,root,root,-)
 %{_bindir}/enc2xs
 %{_mandir}/man1/enc2xs*
 %{privlib}/Encode/
@@ -1544,17 +1542,14 @@ sed \
 %doc perl-example.stp
 
 %files tests
-%defattr(-,root,root,-)
 %{perl5_testdir}/
 %exclude %{perl5_testdir}/Test-Simple
 
 %files Archive-Extract
-%defattr(-,root,root,-)
 %{privlib}/Archive/Extract.pm
 %{_mandir}/man3/Archive::Extract.3*
 
 %files Archive-Tar
-%defattr(-,root,root,-)
 %{_bindir}/ptar
 %{_bindir}/ptardiff
 %{privlib}/Archive/Tar/ 
@@ -1564,14 +1559,12 @@ sed \
 %{_mandir}/man3/Archive::Tar* 
 
 %files CGI
-%defattr(-,root,root,-)
 %{privlib}/CGI/
 %{privlib}/CGI.pm
 %{_mandir}/man3/CGI.3*
 %{_mandir}/man3/CGI::*.3*
 
 %files Compress-Raw-Zlib
-%defattr(-,root,root,-)
 %dir %{archlib}/Compress
 %{archlib}/Compress/Raw/
 %dir %{archlib}/auto/Compress/
@@ -1580,7 +1573,6 @@ sed \
 %{_mandir}/man3/Compress::Raw::Zlib*
 
 %files CPAN
-%defattr(-,root,root,-)
 %{_bindir}/cpan
 %{privlib}/CPAN/
 %{privlib}/CPAN.pm
@@ -1589,7 +1581,6 @@ sed \
 %{_mandir}/man3/CPAN:*
 
 %files CPANPLUS
-%defattr(-,root,root,-)
 %{_bindir}/cpan2dist
 %{_bindir}/cpanp
 %{_bindir}/cpanp-run-perl
@@ -1600,7 +1591,6 @@ sed \
 %{_mandir}/man3/CPANPLUS*
 
 %files Digest-SHA
-%defattr(-,root,root,-)
 %{_bindir}/shasum
 %dir %{archlib}/Digest/
 %{archlib}/Digest/SHA.pm
@@ -1609,18 +1599,15 @@ sed \
 %{_mandir}/man3/Digest::SHA.3*
 
 %files ExtUtils-CBuilder
-%defattr(-,root,root,-)
 %{privlib}/ExtUtils/CBuilder/
 %{privlib}/ExtUtils/CBuilder.pm
 %{_mandir}/man3/ExtUtils::CBuilder*
 
 %files ExtUtils-Embed
-%defattr(-,root,root,-)
 %{privlib}/ExtUtils/Embed.pm
 %{_mandir}/man3/ExtUtils::Embed*
 
 %files ExtUtils-MakeMaker
-%defattr(-,root,root,-)
 %{_bindir}/instmodsh
 %{privlib}/ExtUtils/Command/
 %{privlib}/ExtUtils/Install.pm
@@ -1652,18 +1639,15 @@ sed \
 %{_mandir}/man3/ExtUtils::testlib.3*
 
 %files ExtUtils-ParseXS
-%defattr(-,root,root,-)
 %{privlib}/ExtUtils/ParseXS.pm
 %{privlib}/ExtUtils/xsubpp
 %{_mandir}/man3/ExtUtils::ParseXS.3*
 
 %files File-Fetch
-%defattr(-,root,root,-)
 %{privlib}/File/Fetch.pm
 %{_mandir}/man3/File::Fetch.3*
 
 %files IO-Compress
-%defattr(-,root,root,-)
 # Compress-Zlib
 %{privlib}/Compress/Zlib.pm
 %{_mandir}/man3/Compress::Zlib*
@@ -1679,7 +1663,6 @@ sed \
 %{_mandir}/man3/IO::Uncompress::Base.*
 
 # IO-Compress-Zlib
-%defattr(-,root,root,-)
 %{privlib}/IO/Compress/Adapter/
 %{privlib}/IO/Compress/Deflate.pm
 %{privlib}/IO/Compress/Gzip/
@@ -1705,22 +1688,18 @@ sed \
 %{_mandir}/man3/IO::Uncompress::Unzip*
 
 %files IO-Zlib
-%defattr(-,root,root,-)
 %{privlib}/IO/Zlib.pm
 %{_mandir}/man3/IO::Zlib.*
 
 %files IPC-Cmd
-%defattr(-,root,root,-)
 %{privlib}/IPC/Cmd.pm
 %{_mandir}/man3/IPC::Cmd.3*
 
 %files Locale-Maketext-Simple
-%defattr(-,root,root,-)
 %{privlib}/Locale/Maketext/Simple.pm
 %{_mandir}/man3/Locale::Maketext::Simple.*
 
 %files Log-Message
-%defattr(-,root,root,-)
 %{privlib}/Log/Message.pm
 %{privlib}/Log/Message/Config.pm
 %{privlib}/Log/Message/Handlers.pm
@@ -1731,12 +1710,10 @@ sed \
 %{_mandir}/man3/Log::Message::Item.3*
 
 %files Log-Message-Simple
-%defattr(-,root,root,-)
 %{privlib}/Log/Message/Simple.pm
 %{_mandir}/man3/Log::Message::Simple.3*
 
 %files Module-Build
-%defattr(-,root,root,-)
 %{_bindir}/config_data
 %{privlib}/inc/
 %{privlib}/Module/Build/
@@ -1746,30 +1723,25 @@ sed \
 %{_mandir}/man3/inc::latest.3*
 
 %files Module-CoreList
-%defattr(-,root,root,-)
 %{_bindir}/corelist
 %{privlib}/Module/CoreList.pm
 %{_mandir}/man1/corelist*
 %{_mandir}/man3/Module::CoreList*
 
 %files Module-Load
-%defattr(-,root,root,-)
 %{privlib}/Module/Load.pm
 %{_mandir}/man3/Module::Load.*
 
 %files Module-Load-Conditional
-%defattr(-,root,root,-)
 %{privlib}/Module/Load/
 %{_mandir}/man3/Module::Load::Conditional* 
 
 %files Module-Loaded
-%defattr(-,root,root,-)
 %dir %{privlib}/Module/
 %{privlib}/Module/Loaded.pm
 %{_mandir}/man3/Module::Loaded*
 
 %files Module-Pluggable
-%defattr(-,root,root,-)
 %{privlib}/Devel/InnerPackage.pm
 %{privlib}/Module/Pluggable/
 %{privlib}/Module/Pluggable.pm
@@ -1777,17 +1749,14 @@ sed \
 %{_mandir}/man3/Module::Pluggable*
 
 %files Object-Accessor
-%defattr(-,root,root,-)
 %{privlib}/Object/
 %{_mandir}/man3/Object::Accessor*
 
 %files Package-Constants
-%defattr(-,root,root,-)
 %{privlib}/Package/
 %{_mandir}/man3/Package::Constants*
 
 %files PathTools
-%defattr(-,root,root,-)
 %{archlib}/Cwd.pm
 %{archlib}/File/Spec*
 %{archlib}/auto/Cwd/
@@ -1795,31 +1764,26 @@ sed \
 %{_mandir}/man3/File::Spec*
 
 %files Params-Check
-%defattr(-,root,root,-)
 %{privlib}/Params/
 %{_mandir}/man3/Params::Check*
 
 %files Parse-CPAN-Meta
-%defattr(-,root,root,-)
 %dir %{privlib}/Parse/
 %dir %{privlib}/Parse/CPAN/
 %{privlib}/Parse/CPAN/Meta.pm
 %{_mandir}/man3/Parse::CPAN::Meta.3*
 
 %files Pod-Escapes
-%defattr(-,root,root,-)
 %{privlib}/Pod/Escapes.pm
 %{_mandir}/man3/Pod::Escapes.*
 
 %files Pod-Simple
-%defattr(-,root,root,-)
 %{privlib}/Pod/Simple/ 
 %{privlib}/Pod/Simple.pm
 %{privlib}/Pod/Simple.pod
 %{_mandir}/man3/Pod::Simple*
 
 %files Scalar-List-Utils
-%defattr(-,root,root,-)
 %{archlib}/List/
 %{archlib}/List/Util/
 %{archlib}/List/Util.pm
@@ -1832,13 +1796,11 @@ sed \
 %{_mandir}/man3/Scalar::Util*
 
 %files Term-UI
-%defattr(-,root,root,-)
 %{privlib}/Term/UI/
 %{privlib}/Term/UI.pm
 %{_mandir}/man3/Term::UI*
 
 %files Test-Harness
-%defattr(-,root,root,-)
 %{_bindir}/prove
 %{privlib}/App*
 %{privlib}/TAP*
@@ -1849,7 +1811,6 @@ sed \
 %{_mandir}/man3/Test::Harness*
 
 %files Test-Simple
-%defattr(-,root,root,-)
 %{privlib}/Test/More*
 %{privlib}/Test/Builder*
 %{privlib}/Test/Simple*
@@ -1860,12 +1821,10 @@ sed \
 %{_mandir}/man3/Test::Tutorial*
 
 %files Test-Simple-tests
-%defattr(-,root,root,-)
 %dir %{perl5_testdir}
 %{perl5_testdir}/Test-Simple
 
 %files Time-Piece
-%defattr(-,root,root,-)
 %{archlib}/Time/Piece.pm 
 %{archlib}/Time/Seconds.pm
 %{archlib}/auto/Time/Piece/        
@@ -1873,26 +1832,22 @@ sed \
 %{_mandir}/man3/Time::Seconds.3*
 
 %files parent 
-%defattr(-,root,root,-)
 %{privlib}/parent.pm
 %{_mandir}/man3/parent.3*
 
 %files threads
-%defattr(-,root,root,-)
 %dir %{archlib}/auto/threads
 %{archlib}/auto/threads/threads*
 %{archlib}/threads.pm
 %{_mandir}/man3/threads.3*
 
 %files threads-shared
-%defattr(-,root,root,-)
 %{archlib}/auto/threads/shared*
 %dir %{archlib}/threads
 %{archlib}/threads/shared*
 %{_mandir}/man3/threads::shared*
 
 %files version
-%defattr(-,root,root,-)
 %{privlib}/version.pm
 %{privlib}/version.pod
 %{privlib}/version/
