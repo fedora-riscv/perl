@@ -73,8 +73,9 @@ BuildRequires:  procps, rsyslog
 # The long line of Perl provides.
 
 # These provides are needed by the perl pkg itself with auto-generated perl.req
-Provides: perl(VMS::Filespec)
-Provides: perl(VMS::Stdio)
+# TODO: do not add them, requires should be filtered.
+#Provides: perl(VMS::Filespec)
+#Provides: perl(VMS::Stdio)
 
 # Compat provides
 Provides: perl(:MODULE_COMPAT_5.14.0)
