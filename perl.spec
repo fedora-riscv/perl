@@ -32,7 +32,7 @@ Group:          Development/Languages
 # Copyright Only: for example ext/Text-Soundex/Soundex.xs 
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and MIT and Public Domain and UCD
 Url:            http://www.perl.org/
-Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}-RC1.tar.bz2
+Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}-RC2.tar.bz2
 Source2:        perl-5.8.0-libnet.cfg
 Source3:        macros.perl
 #Systemtap tapset and example that make use of systemtap-sdt-devel
@@ -903,7 +903,7 @@ tarball from perl.org.
 
 %{?perl_default_filter}
 %prep
-%setup -q -n perl-%{perl_version}-RC1
+%setup -q -n perl-%{perl_version}-RC2
 %patch1 -p1
 %ifarch %{multilib_64_archs}
 %patch3 -p1
