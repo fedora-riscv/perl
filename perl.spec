@@ -1069,7 +1069,8 @@ echo "RPM Build arch: %{_arch}"
         -Dd_gethostent_r_proto -Ud_endhostent_r_proto -Ud_sethostent_r_proto \
         -Ud_endprotoent_r_proto -Ud_setprotoent_r_proto \
         -Ud_endservent_r_proto -Ud_setservent_r_proto \
-        -Dscriptdir='%{_bindir}' 
+        -Dscriptdir='%{_bindir}' \
+        -Dusesitecustomize
 
 # -Duseshrplib creates libperl.so, -Ubincompat5005 help create DSO -> libperl.so
 
@@ -1957,6 +1958,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu May 05 2011 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.12.3-161
+- add -Dusesitecustomize
+
 * Wed Apr 13 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-160
 - add provides UNIVERSAL and DB back into perl
 
