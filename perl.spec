@@ -1860,8 +1860,8 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Fri Apr 22 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0.RC1-161
-- build RC1 of 5.14.0
+* Mon May 16 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-161
+- test build of released 5.14.0
 - remove Class::ISA from sub-packages
 - patches 8+ are part of new release
 - remove vendorarch/auto/Compress/Zlib
