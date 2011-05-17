@@ -1172,13 +1172,11 @@ sed \
 #%%{_fixperms} %%{buildroot}%%{perl5_testdir}
 
 %check
-%ifnarch
 %if %{parallel_tests}
     JOBS=$(printf '%%s' "%{?_smp_mflags}" | sed 's/.*-j\([0-9][0-9]*\).*/\1/')
     LC_ALL=C TEST_JOBS=$JOBS make test_harness
 %else
     LC_ALL=C make test
-%endif
 %endif
 
 %post libs -p /sbin/ldconfig
