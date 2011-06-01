@@ -20,7 +20,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        160%{?dist}
+Release:        161%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1073,7 +1073,7 @@ echo "RPM Build arch: %{_arch}"
 
 # -Duseshrplib creates libperl.so, -Ubincompat5005 help create DSO -> libperl.so
 
-%ifarch sparc64
+%ifarch sparc64 armv5tel
 make
 %else
 make %{?_smp_mflags}
@@ -1957,6 +1957,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jun  1 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-161
+- arm can't do parallel builds
+
 * Wed Apr 13 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-160
 - add provides UNIVERSAL and DB back into perl
 
