@@ -319,10 +319,10 @@ Epoch:          0
 Version:        0.90
 # CPANPLUS encourages Digest::SHA strongly because of integrity checks
 Requires:       perl(Digest::SHA)
+Requires:       perl(IPC::Cmd)
 Requires:       perl(Module::Pluggable) >= 2.4
 Requires:       perl(Module::CoreList)
 Requires:       perl(DBIx::Simple)
-Requires:       perl(ExtUtils::MakeMaker)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Provides:       perl-CPANPLUS-Dist-Build = 0.06
 Obsoletes:      perl-CPANPLUS-Dist-Build <= 0.05
@@ -473,6 +473,7 @@ License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
 Version:        0.54
+Requires:       perl(ExtUtils::MakeMaker)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -1972,7 +1973,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Jun  1 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-158
 - arm can't do parallel build
-- add require EE::MM into CPANPLUS 711486
+- add require EE::MM into IPC::Cmd & IPC::Cmd into CPANPLUS 711486
 
 * Wed Apr 13 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-157
 - remove provides UNIVERSAL and DB
