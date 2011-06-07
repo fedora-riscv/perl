@@ -322,6 +322,7 @@ Requires:       perl(Digest::SHA)
 Requires:       perl(Module::Pluggable) >= 2.4
 Requires:       perl(Module::CoreList)
 Requires:       perl(DBIx::Simple)
+Requires:       perl(ExtUtils::MakeMaker)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Provides:       perl-CPANPLUS-Dist-Build = 0.06
 Obsoletes:      perl-CPANPLUS-Dist-Build <= 0.05
@@ -1971,6 +1972,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Jun  1 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-158
 - arm can't do parallel build
+- add require EE::MM into CPANPLUS 711486
 
 * Wed Apr 13 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-157
 - remove provides UNIVERSAL and DB
