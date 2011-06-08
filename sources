@@ -1,6 +1,5 @@
 aceea3db13a159cd5f7e5f2e3ad9534f  perl-5.8.0-libdir64.patch
-26be2f310eef77f206c47e380518cbd8  macros.perl
 ad5d07285d6e4914384b43c9abc2bdba  filter-requires.sh
-29975a69dce54e47fcd6331c085c6c99  perl-5.12.3.tar.gz
 1737a36154bb5bca781296794afc6791  perl.stp
 df28fe2c574e8807d0a803308c545dca  perl-example.stp
+e688b0ddad50bca9a6223693a85c439d  perl-5.14.0.tar.gz
