@@ -324,7 +324,6 @@ Epoch:          0
 Version:        0.90
 # CPANPLUS encourages Digest::SHA strongly because of integrity checks
 Requires:       perl(Digest::SHA)
-Requires:       perl(IPC::Cmd)
 Requires:       perl(Module::Pluggable) >= 2.4
 Requires:       perl(Module::CoreList)
 Requires:       perl(DBIx::Simple)
@@ -1879,7 +1878,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Jun  1 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-144
 - arm can't do parallel build
-- add require EE::MM into IPC::Cmd & IPC::Cmd into CPANPLUS 711486
+- add require EE::MM into IPC::Cmd 711486
 
 * Fri Apr  1 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-143 
 - 692900 - lc launders tainted flag, RT #87336
