@@ -41,11 +41,12 @@ export PERL_MM_USE_DEFAULT=1
 # Note that this must be invoked in the spec file, preferably as 
 # "%{?perl_default_filter}", before any %description block.
 
-%perl_default_filter %{?filter_setup: %{expand: \
-%define __provides_exclude_from (%{_perl_vendorarch}\/auto\/*|%{perl_archlib}/(?!CORE/libperl).*)\.so*|%{_docdir} \
-%define __requires_exclude_from %{_docdir} \
-%filter_setup \
-}}
+%perl_default_filter %{expand: \
+%global __provides_exclude_from %{perl_vendorarch}/auto/.*\.so|%{perl_archlib}/.*\.so|%{_docdir}
+%global __requires_exclude_from %{_docdir}
+%global __provides_exclude perl\\\\(VMS|perl\\\\(Win32|perl\\\\(BSD::|perl\\\\(DB\\\\)|perl\\\\(UNIVERSAL\\\\)
+%global __requires_exclude perl\\\\(VMS|perl\\\\(BSD::|perl\\\\(Win32
+}
 
 #############################################################################
 # Macros to assist with generating a "-tests" subpackage in a semi-automatic
