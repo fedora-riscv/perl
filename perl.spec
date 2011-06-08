@@ -436,6 +436,7 @@ License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
 Version:        0.70
+Requires:       perl(ExtUtils::MakeMaker)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -1040,7 +1041,7 @@ echo "RPM Build arch: %{_arch}"
 
 # -Duseshrplib creates libperl.so, -Ubincompat5005 help create DSO -> libperl.so
 
-%ifarch sparc64
+%ifarch sparc64 armv5tel
 make
 %else
 make %{?_smp_mflags}
@@ -1858,6 +1859,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jun  1 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-161
+- arm can't do parallel builds
+- add require EE::MM into IPC::Cmd 711486
+
 * Mon May 16 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-161
 - test build of released 5.14.0
 - remove Class::ISA from sub-packages
