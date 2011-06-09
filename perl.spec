@@ -9,8 +9,8 @@
 
 %global __provides_exclude_from %{_libdir}/perl5/vendor_perl/auto/.*\.so|%{_prefix}/share/perl5/vendor_perl/.*\.so|%{_docdir}
 %global __requires_exclude_from %{_docdir}
-%global __provides_exclude perl\\(VMS|perl\\(Win32|perl\\(BSD::|perl\\(DB\\)|perl\\(UNIVERSAL\\)
-%global __requires_exclude perl\\(VMS|perl\\(BSD::|perl\\(Win32
+%global __provides_exclude perl\\(VMS|perl\\(Win32|perl\\(BSD::|perl\\(DB\\)|perl\\(UNIVERSAL\\)|perl\\(DynaLoader|perl\\(Carp|perl\\(Math::BigInt|perl\\(POSIX|perl\\(Tie::Hash|perl\\(bigrat
+%global __requires_exclude perl\\(VMS|perl\\(BSD::|perl\\(Win32|perl\\(Tk
 # same as we provide in /etc/rpm/macros.perl
 %global perl5_testdir   %{_libexecdir}/perl5-tests
 
@@ -1010,7 +1010,6 @@ Requires:       perl-threads, perl-threads-shared, perl-parent
 A metapackage which requires all of the perl bits and modules in the upstream
 tarball from perl.org.
 
-%{?perl_default_filter}
 %prep
 %setup -q -n perl-%{perl_version}
 %patch1 -p1
@@ -1045,34 +1044,6 @@ recode pod/perlthrtut.pod
 recode AUTHORS
 
 find . -name \*.orig -exec rm -fv {} \;
-
-# Oh, the irony. Perl generates some non-versioned provides we don't need.
-# Each of these has a versioned provide, which we keep.
-%{?filter_setup:
-%filter_from_provides /^perl(Carp)$/d
-%filter_from_provides /^perl(DynaLoader)$/d
-%filter_from_provides /^perl(Locale::Maketext)$/d
-%filter_from_provides /^perl(Log::Message::Handlers)$/d
-%filter_from_provides /^perl(Math::BigInt)$/d
-%filter_from_provides /^perl(Net::Config)$/d 
-%filter_from_provides /^perl(POSIX)$/d 
-%filter_from_provides /^perl(Storable)$/d
-%filter_from_provides /^perl(Tie::Hash)$/d
-%filter_from_provides /^perl(bigint)$/d
-%filter_from_provides /^perl(bigrat)$/d
-%filter_from_provides /^perl(bytes)$/d 
-%filter_from_provides /^perl(utf8)$/d 
-%filter_from_provides /^perl(DB)$/d
-# Filter the automatically generated dependencies.
-%filter_from_requires /^perl(FCGI)/d
-%filter_from_requires /^perl(Mac::/d
-%filter_from_requires /^perl(Tk)/d
-%filter_from_requires /^perl(Tk::/d
-%filter_from_requires /^perl(Your::Module::Here)/d
-# Filter less specific versions
-%filter_from_provides /^perl(ExtUtils::ParseXS) = %{ExtUtils_ParseXS_real_version}$/d
-%?perl_default_filter
-}
 
 # Configure Compress::Zlib to use system zlib
 sed -i 's|BUILD_ZLIB      = True|BUILD_ZLIB      = False|
@@ -1280,7 +1251,6 @@ sed \
 #%%{_fixperms} %%{buildroot}%%{perl5_testdir}
 
 %check
-exit 0
 %if %{parallel_tests}
     JOBS=$(printf '%%s' "%{?_smp_mflags}" | sed 's/.*-j\([0-9][0-9]*\).*/\1/')
     LC_ALL=C TEST_JOBS=$JOBS make test_harness
