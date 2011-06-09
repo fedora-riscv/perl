@@ -283,18 +283,6 @@ Version:        2.110.440
 Release:        1%{?dist}
 License:        GPL+ or Artistic
 Group:          Development/Libraries
-BuildRequires:  perl(Carp)
-BuildRequires:  perl(CPAN::Meta::YAML) >= 0.002
-BuildRequires:  perl(ExtUtils::MakeMaker) >= 6.31
-BuildRequires:  perl(File::Spec)
-BuildRequires:  perl(File::Temp) >= 0.20
-BuildRequires:  perl(IO::Dir)
-BuildRequires:  perl(JSON::PP)
-BuildRequires:  perl(Parse::CPAN::Meta)
-BuildRequires:  perl(Scalar::Util)
-BuildRequires:  perl(Test::More) >= 0.96
-BuildRequires:  perl(version) >= 0.82
-BuildRequires:  perl(Version::Requirements) >= 0.101020
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -314,12 +302,6 @@ Summary:        Read and write a subset of YAML for CPAN Meta files
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 BuildArch:      noarch
-BuildRequires:  perl(ExtUtils::MakeMaker)
-BuildRequires:  perl(File::Spec)
-BuildRequires:  perl(Test::CPAN::Meta)
-BuildRequires:  perl(Test::More)
-BuildRequires:  perl(Test::Pod)
-BuildRequires:  perl(YAML)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description CPAN-Meta-YAML
@@ -523,9 +505,6 @@ Release:        1%{?dist}
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 BuildArch:      noarch
-BuildRequires:  perl(ExtUtils::MakeMaker)
-BuildRequires:  perl(Test::More)
-BuildRequires:  perl(Tie::IxHash)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release} 
 Conflicts:      perl-JSON < 2.50
 
@@ -681,18 +660,6 @@ Release:        4%{?dist}
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 BuildArch:      noarch
-BuildRequires:  perl(Cwd)
-BuildRequires:  perl(Data::Dumper)
-BuildRequires:  perl(Exporter)
-BuildRequires:  perl(ExtUtils::MakeMaker)
-BuildRequires:  perl(File::Path)
-BuildRequires:  perl(File::Spec)
-BuildRequires:  perl(File::Temp)
-BuildRequires:  perl(IO::File)
-BuildRequires:  perl(Test::More)
-BuildRequires:  perl(Test::Pod)
-BuildRequires:  perl(Test::Pod::Coverage)
-BuildRequires:  perl(version) >= 0.87
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Module-Metadata
@@ -796,16 +763,6 @@ Epoch:          0
 Release:        5%{?dist}
 License:        GPL+ or Artistic
 Group:          Development/Libraries
-BuildRequires:  perl(constant)
-BuildRequires:  perl(Exporter)
-BuildRequires:  perl(ExtUtils::MakeMaker)
-BuildRequires:  perl(File::Temp)
-BuildRequires:  perl(Pod::Coverage::TrustPod)
-BuildRequires:  perl(Test::CPAN::Meta)
-BuildRequires:  perl(Test::More)
-BuildRequires:  perl(Test::Pod)
-BuildRequires:  perl(Test::Pod::Coverage)
-BuildRequires:  perl(Test::Portability::Files)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -1025,12 +982,6 @@ Group:          Development/Libraries
 Version:        0.101020
 Epoch:          0
 Release:        5%{?dist}
-BuildRequires:  perl(ExtUtils::MakeMaker)
-BuildRequires:  perl(Pod::Coverage::TrustPod)
-BuildRequires:  perl(Test::More) >= 0.88
-BuildRequires:  perl(Test::Pod)
-BuildRequires:  perl(Test::Pod::Coverage)
-BuildRequires:  perl(version) >= 0.77
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -2101,7 +2052,7 @@ exit 0
 # Old changelog entries are preserved in CVS.
 %changelog
 * Thu Jun  9 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-162
-- add new sub-packages
+- add new sub-packages, remove BR in them
 
 * Wed Jun  1 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-161
 - arm can't do parallel builds
