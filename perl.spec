@@ -7,13 +7,10 @@
 %global parallel_tests 1
 %global tapsetdir   %{_datadir}/systemtap/tapset
 
-# internal filter just for this spec
-# XXX: %%global expands now, archlib must be pre-defined.
-%global perl_default_filter %%{?filter_setup: %%{expand: \
-%%filter_provides_in -P %%{archlib}/(?!CORE/libperl).*\\.so$ \
-%%filter_setup \
-}}
-
+%global __provides_exclude_from %{_libdir}/perl5/vendor_perl/auto/.*\.so|%{_prefix}/share/perl5/vendor_perl/.*\.so|%{_docdir}
+%global __requires_exclude_from %{_docdir}
+%global __provides_exclude perl\\(VMS|perl\\(Win32|perl\\(BSD::|perl\\(DB\\)|perl\\(UNIVERSAL\\)
+%global __requires_exclude perl\\(VMS|perl\\(BSD::|perl\\(Win32
 # same as we provide in /etc/rpm/macros.perl
 %global perl5_testdir   %{_libexecdir}/perl5-tests
 
@@ -72,17 +69,8 @@ BuildRequires:  procps, rsyslog
 
 # The long line of Perl provides.
 
-# These provides are needed by the perl pkg itself with auto-generated perl.req
-# TODO: do not add them, requires should be filtered.
-#Provides: perl(VMS::Filespec)
-#Provides: perl(VMS::Stdio)
-
 # Compat provides
 Provides: perl(:MODULE_COMPAT_5.14.0)
-Provides: perl(:MODULE_COMPAT_5.12.3)
-Provides: perl(:MODULE_COMPAT_5.12.2)
-Provides: perl(:MODULE_COMPAT_5.12.1)
-Provides: perl(:MODULE_COMPAT_5.12.0)
 
 # Threading provides
 Provides: perl(:WITH_ITHREADS)
