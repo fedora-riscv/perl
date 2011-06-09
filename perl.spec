@@ -20,7 +20,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        161%{?dist}
+Release:        162%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -275,6 +275,58 @@ BuildArch:      noarch
 %description CPAN
 Query, download and build perl modules from CPAN sites.
 
+%package CPAN-Meta
+Summary:        Distribution metadata for a CPAN dist
+Epoch:          0
+# normalize version
+Version:        2.110.440
+Release:        1%{?dist}
+License:        GPL+ or Artistic
+Group:          Development/Libraries
+BuildRequires:  perl(Carp)
+BuildRequires:  perl(CPAN::Meta::YAML) >= 0.002
+BuildRequires:  perl(ExtUtils::MakeMaker) >= 6.31
+BuildRequires:  perl(File::Spec)
+BuildRequires:  perl(File::Temp) >= 0.20
+BuildRequires:  perl(IO::Dir)
+BuildRequires:  perl(JSON::PP) >= 2.27103
+BuildRequires:  perl(Parse::CPAN::Meta) >= 1.4400
+BuildRequires:  perl(Scalar::Util)
+BuildRequires:  perl(Test::More) >= 0.96
+BuildRequires:  perl(version) >= 0.82
+BuildRequires:  perl(Version::Requirements) >= 0.101020
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
+
+%description CPAN-Meta
+Software distributions released to the CPAN include a META.json or, for
+older distributions, META.yml, which describes the distribution, its
+contents, and the requirements for building and installing the
+distribution. The data structure stored in the META.json file is described
+in CPAN::Meta::Spec.
+
+
+%package CPAN-Meta-YAML
+Version:        0.003
+Epoch:          0
+Release:        5%{?dist}
+Summary:        Read and write a subset of YAML for CPAN Meta files
+License:        GPL+ or Artistic
+Group:          Development/Libraries
+BuildArch:      noarch
+BuildRequires:  perl(ExtUtils::MakeMaker)
+BuildRequires:  perl(File::Spec)
+BuildRequires:  perl(Test::CPAN::Meta)
+BuildRequires:  perl(Test::More)
+BuildRequires:  perl(Test::Pod)
+BuildRequires:  perl(YAML)
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description CPAN-Meta-YAML
+This module implements a subset of the YAML specification for use in reading
+and writing CPAN metadata files like META.yml and MYMETA.yml. It should not be
+used for any other general YAML parsing or generation task.
+
 
 %package CPANPLUS
 Summary:        API & CLI access to the CPAN mirrors
@@ -445,6 +497,44 @@ IPC::Cmd allows you to run commands, interactively if desired, in a platform
 independent way, but have them still work.
 
 
+%package HTTP-Tiny
+Summary:        A small, simple, correct HTTP/1.1 client
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.012
+Requires:       perl(Carp)
+Requires:       perl(IO::Socket)
+BuildArch:      noarch
+
+%description HTTP-Tiny
+This is a very simple HTTP/1.1 client, designed primarily for doing simple GET 
+requests without the overhead of a large framework like LWP::UserAgent.
+It is more correct and more complete than HTTP::Lite. It supports proxies 
+(currently only non-authenticating ones) and redirection. It also correctly 
+resumes after EINTR.
+
+
+%package JSON-PP
+Summary:        JSON::XS compatible pure-Perl module
+Epoch:          0
+Version:        2.271.50
+Release:        1%{?dist}
+License:        GPL+ or Artistic
+Group:          Development/Libraries
+BuildArch:      noarch
+BuildRequires:  perl(ExtUtils::MakeMaker)
+BuildRequires:  perl(Test::More)
+BuildRequires:  perl(Tie::IxHash)
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release} 
+Conflicts:      perl-JSON < 2.50
+
+%description JSON-PP
+JSON::XS is the fastest and most proper JSON module on CPAN. It is written by
+Marc Lehmann in C, so must be compiled and installed in the used environment.
+JSON::PP is a pure-Perl module and is compatible with JSON::XS.
+
+
 %package Locale-Maketext-Simple
 Summary:        Simple interface to Locale::Maketext::Lexicon
 Group:          Development/Libraries
@@ -583,6 +673,31 @@ modules as loaded, so they are not attempted to be loaded by perl, this module
 offers you a very simple way to mark modules as loaded and/or unloaded.
 
 
+%package Module-Metadata
+Summary:        Gather package and POD information from perl module files
+Epoch:          0
+Version:        1.000004
+Release:        4%{?dist}
+License:        GPL+ or Artistic
+Group:          Development/Libraries
+BuildArch:      noarch
+BuildRequires:  perl(Cwd)
+BuildRequires:  perl(Data::Dumper)
+BuildRequires:  perl(Exporter)
+BuildRequires:  perl(ExtUtils::MakeMaker)
+BuildRequires:  perl(File::Path)
+BuildRequires:  perl(File::Spec)
+BuildRequires:  perl(File::Temp)
+BuildRequires:  perl(IO::File)
+BuildRequires:  perl(Test::More)
+BuildRequires:  perl(Test::Pod)
+BuildRequires:  perl(Test::Pod::Coverage)
+BuildRequires:  perl(version) >= 0.87
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Module-Metadata
+Gather package and POD information from perl module files
+
 %package Module-Pluggable
 Summary:        Automatically give your module the ability to have plugins
 Group:          Development/Libraries
@@ -672,6 +787,36 @@ Obsoletes:      perl-Parse-CPAN-Meta < 1.40
 %description Parse-CPAN-Meta 
 Parse::CPAN::Meta is a parser for META.yml files, based on the parser half of
 YAML::Tiny.
+
+
+%package Perl-OSType
+Summary:        Map Perl operating system names to generic types
+Version:        1.002
+Epoch:          0
+Release:        5%{?dist}
+License:        GPL+ or Artistic
+Group:          Development/Libraries
+BuildRequires:  perl(constant)
+BuildRequires:  perl(Exporter)
+BuildRequires:  perl(ExtUtils::MakeMaker)
+BuildRequires:  perl(File::Temp)
+BuildRequires:  perl(Pod::Coverage::TrustPod)
+BuildRequires:  perl(Test::CPAN::Meta)
+BuildRequires:  perl(Test::More)
+BuildRequires:  perl(Test::Pod)
+BuildRequires:  perl(Test::Pod::Coverage)
+BuildRequires:  perl(Test::Portability::Files)
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
+
+%description Perl-OSType
+Modules that provide OS-specific behaviors often need to know if the current
+operating system matches a more generic type of operating systems. For example,
+'linux' is a type of 'Unix' operating system and so is 'freebsd'.
+This module provides a mapping between an operating system name as given by $^O
+and a more generic type. The initial version is based on the OS type mappings
+provided in Module::Build and ExtUtils::CBuilder (thus, Microsoft operating
+systems are given the type 'Windows' rather than 'Win32').
 
 
 %package Pod-Escapes
@@ -873,6 +1018,29 @@ BuildArch:      noarch
 Perl extension for Version Objects
 
 
+%package Version-Requirements
+Summary:        Set of version requirements for a CPAN dist
+License:        GPL+ or Artistic
+Group:          Development/Libraries
+Version:        0.101020
+Epoch:          0
+Release:        5%{?dist}
+BuildRequires:  perl(ExtUtils::MakeMaker)
+BuildRequires:  perl(Pod::Coverage::TrustPod)
+BuildRequires:  perl(Test::More) >= 0.88
+BuildRequires:  perl(Test::Pod)
+BuildRequires:  perl(Test::Pod::Coverage)
+BuildRequires:  perl(version) >= 0.77
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
+
+%description Version-Requirements
+A Version::Requirements object models a set of version constraints like
+those specified in the META.yml or META.json files in CPAN distributions.
+It can be built up by adding more and more constraints, and it will reduce
+them to the simplest representation.
+
+
 %package core
 Summary:        Base perl metapackage
 Group:          Development/Languages
@@ -887,16 +1055,16 @@ Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 
 Requires:       perl-Archive-Extract, perl-Archive-Tar
-Requires:       perl-Compress-Raw-Zlib, perl-CGI, perl-CPAN
+Requires:       perl-Compress-Raw-Zlib, perl-CGI, perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-YAML
 Requires:       perl-CPANPLUS, perl-Digest-SHA, perl-ExtUtils-CBuilder
 Requires:       perl-ExtUtils-Embed, perl-ExtUtils-MakeMaker, perl-ExtUtils-ParseXS
-Requires:       perl-File-Fetch, perl-IO-Compress, perl-IO-Zlib
-Requires:       perl-IPC-Cmd, perl-Locale-Maketext-Simple, perl-Log-Message, perl-Log-Message-Simple
+Requires:       perl-File-Fetch, perl-HTTP-Tiny, perl-IO-Compress, perl-IO-Zlib
+Requires:       perl-IPC-Cmd, perl-JSON-PP, perl-Locale-Maketext-Simple, perl-Log-Message, perl-Log-Message-Simple
 Requires:       perl-Module-Build, perl-Module-CoreList, perl-Module-Load
-Requires:       perl-Module-Load-Conditional, perl-Module-Loaded
+Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Metadata
 Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Constants, perl-PathTools
-Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Pod-Escapes, perl-Pod-Simple, perl-Term-UI 
-Requires:       perl-Test-Harness, perl-Test-Simple, perl-Time-Piece, perl-version
+Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType, perl-Pod-Escapes, perl-Pod-Simple, perl-Term-UI 
+Requires:       perl-Test-Harness, perl-Test-Simple, perl-Time-Piece, perl-Version-Requirements, perl-version
 Requires:       perl-threads, perl-threads-shared, perl-parent
 
 %description core
@@ -1241,6 +1409,20 @@ sed \
 %exclude %{_mandir}/man3/CPAN.*
 %exclude %{_mandir}/man3/CPAN:*
 
+# CPAN-Meta
+%exclude %{privlib}/CPAN/Meta.pm
+%exclude %{privlib}/CPAN/Meta/Converter.pm
+%exclude %{privlib}/CPAN/Meta/Feature.pm
+%exclude %{privlib}/CPAN/Meta/History.pm
+%exclude %{privlib}/CPAN/Meta/Prereqs.pm
+%exclude %{privlib}/CPAN/Meta/Spec.pm
+%exclude %{privlib}/CPAN/Meta/Validator.pm
+%exclude %{_mandir}/man3/CPAN::Meta*
+
+# CPAN-Meta-YAML
+%exclude %{privlib}/CPAN/Meta/YAML.pm
+%exclude %{_mandir}/man3/CPAN::Meta::YAML*
+
 # Parse-CPAN-Meta
 %exclude %dir %{privlib}/Parse/
 %exclude %dir %{privlib}/Parse/CPAN/
@@ -1364,9 +1546,21 @@ sed \
 %exclude %{privlib}/IO/Zlib.pm
 %exclude %{_mandir}/man3/IO::Zlib.*
 
+# HTTP::Tiny
+%exclude %{privlib}/HTTP/Tiny.pm
+%exclude %{_mandir}/man3/HTTP::Tiny*
+
 # IPC::Cmd
 %exclude %{privlib}/IPC/Cmd.pm
 %exclude %{_mandir}/man3/IPC::Cmd.3*
+
+# JSON::PP
+%exclude %{_bindir}/json_pp
+%exclude %{privlib}/JSON/PP
+%exclude %{privlib}/JSON/PP.pm
+%exclude %{_mandir}/man1/json_pp.1*
+%exclude %{_mandir}/man3/JSON::PP.3*
+%exclude %{_mandir}/man3/JSON::PP::Boolean.3pm*
 
 # Locale::Maketext::Simple
 %exclude %{privlib}/Locale/Maketext/Simple.pm
@@ -1413,6 +1607,10 @@ sed \
 %exclude %{privlib}/Module/Loaded.pm
 %exclude %{_mandir}/man3/Module::Loaded*
 
+# Module-Metadata
+%exclude %{perl_privlib}/Module/Metadata.pm
+%exclude %{_mandir}/man3/Module::Metadata.3pm*
+
 # Module-Pluggable
 %exclude %{privlib}/Devel/InnerPackage.pm
 %exclude %{privlib}/Module/Pluggable/
@@ -1438,6 +1636,10 @@ sed \
 # Params-Check
 %exclude %{privlib}/Params/
 %exclude %{_mandir}/man3/Params::Check*
+
+# Perl-OSType
+%exclude %{privlib}/Perl/OSType.pm
+%exclude %{_mandir}/man3/Perl::OSType.3pm*
 
 # parent
 %exclude %{privlib}/parent.pm
@@ -1580,6 +1782,20 @@ sed \
 %{_mandir}/man3/CPAN.*
 %{_mandir}/man3/CPAN:*
 
+%files CPAN-Meta
+%{privlib}/CPAN/Meta.pm
+%{privlib}/CPAN/Meta/Converter.pm
+%{privlib}/CPAN/Meta/Feature.pm
+%{privlib}/CPAN/Meta/History.pm
+%{privlib}/CPAN/Meta/Prereqs.pm
+%{privlib}/CPAN/Meta/Spec.pm
+%{privlib}/CPAN/Meta/Validator.pm
+%{_mandir}/man3/CPAN::Meta.*
+
+%files CPAN-Meta-YAML
+%{privlib}/CPAN/Meta/YAML.pm
+%{_mandir}/man3/CPAN::Meta::YAML*
+
 %files CPANPLUS
 %{_bindir}/cpan2dist
 %{_bindir}/cpanp
@@ -1691,9 +1907,21 @@ sed \
 %{privlib}/IO/Zlib.pm
 %{_mandir}/man3/IO::Zlib.*
 
+%files HTTP-Tiny
+%{privlib}/HTTP/Tiny.pm
+%{_mandir}/man3/HTTP::Tiny*
+
 %files IPC-Cmd
 %{privlib}/IPC/Cmd.pm
 %{_mandir}/man3/IPC::Cmd.3*
+
+%files JSON-PP
+%{_bindir}/json_pp
+%{privlib}/JSON/PP
+%{privlib}/JSON/PP.pm
+%{_mandir}/man1/json_pp.1*
+%{_mandir}/man3/JSON::PP.3*
+%{_mandir}/man3/JSON::PP::Boolean.3pm*
 
 %files Locale-Maketext-Simple
 %{privlib}/Locale/Maketext/Simple.pm
@@ -1741,6 +1969,10 @@ sed \
 %{privlib}/Module/Loaded.pm
 %{_mandir}/man3/Module::Loaded*
 
+%files Module-Metadata
+%{privlib}/Module/Metadata.pm
+%{_mandir}/man3/Module::Metadata.3pm*
+
 %files Module-Pluggable
 %{privlib}/Devel/InnerPackage.pm
 %{privlib}/Module/Pluggable/
@@ -1772,6 +2004,14 @@ sed \
 %dir %{privlib}/Parse/CPAN/
 %{privlib}/Parse/CPAN/Meta.pm
 %{_mandir}/man3/Parse::CPAN::Meta.3*
+
+%files parent
+%{privlib}/parent.pm
+%{_mandir}/man3/parent.3*
+
+%files Perl-OSType
+%{privlib}/Perl/OSType.pm
+%{_mandir}/man3/Perl::OSType.3pm*
 
 %files Pod-Escapes
 %{privlib}/Pod/Escapes.pm
@@ -1859,6 +2099,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jun  9 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-162
+- add new sub-packages
+
 * Wed Jun  1 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-161
 - arm can't do parallel builds
 - add require EE::MM into IPC::Cmd 711486
