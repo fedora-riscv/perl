@@ -7,9 +7,9 @@
 %global parallel_tests 1
 %global tapsetdir   %{_datadir}/systemtap/tapset
 
-%global __provides_exclude_from %{_libdir}/perl5/vendor_perl/auto/.*\.so|%{_prefix}/share/perl5/vendor_perl/.*\.so|%{_docdir}
+%global __provides_exclude_from .*/auto/.*\.so|.*/%{perl_archlib}/.*\.so|%{_docdir}
 %global __requires_exclude_from %{_docdir}
-%global __provides_exclude perl\\(VMS|perl\\(Win32|perl\\(BSD::|perl\\(DB\\)|perl\\(UNIVERSAL\\)|perl\\(DynaLoader|perl\\(Carp|perl\\(Math::BigInt|perl\\(POSIX|perl\\(Tie::Hash|perl\\(bigrat
+%global __provides_exclude perl\\(VMS|perl\\(Win32|perl\\(BSD::|perl\\(DB\\)|perl\\(UNIVERSAL\\)
 %global __requires_exclude perl\\(VMS|perl\\(BSD::|perl\\(Win32|perl\\(Tk
 # same as we provide in /etc/rpm/macros.perl
 %global perl5_testdir   %{_libexecdir}/perl5-tests
@@ -71,6 +71,10 @@ BuildRequires:  procps, rsyslog
 
 # Compat provides
 Provides: perl(:MODULE_COMPAT_5.14.0)
+Provides: perl(:MODULE_COMPAT_5.12.3)
+Provides: perl(:MODULE_COMPAT_5.12.2)
+Provides: perl(:MODULE_COMPAT_5.12.1)
+Provides: perl(:MODULE_COMPAT_5.12.0)
 
 # Threading provides
 Provides: perl(:WITH_ITHREADS)
