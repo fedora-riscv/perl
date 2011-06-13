@@ -272,7 +272,6 @@ Summary:        Distribution metadata for a CPAN dist
 Epoch:          0
 # normalize version
 Version:        2.110.440
-Release:        1%{?dist}
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -289,7 +288,6 @@ in CPAN::Meta::Spec.
 %package CPAN-Meta-YAML
 Version:        0.003
 Epoch:          0
-Release:        5%{?dist}
 Summary:        Read and write a subset of YAML for CPAN Meta files
 License:        GPL+ or Artistic
 Group:          Development/Libraries
@@ -493,7 +491,6 @@ resumes after EINTR.
 Summary:        JSON::XS compatible pure-Perl module
 Epoch:          0
 Version:        2.271.50
-Release:        1%{?dist}
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 BuildArch:      noarch
@@ -648,7 +645,6 @@ offers you a very simple way to mark modules as loaded and/or unloaded.
 Summary:        Gather package and POD information from perl module files
 Epoch:          0
 Version:        1.000004
-Release:        4%{?dist}
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 BuildArch:      noarch
@@ -752,7 +748,6 @@ YAML::Tiny.
 Summary:        Map Perl operating system names to generic types
 Version:        1.002
 Epoch:          0
-Release:        5%{?dist}
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -973,7 +968,6 @@ License:        GPL+ or Artistic
 Group:          Development/Libraries
 Version:        0.101020
 Epoch:          0
-Release:        5%{?dist}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
