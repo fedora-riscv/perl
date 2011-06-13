@@ -17,7 +17,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        166%{?dist}
+Release:        167%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2007,8 +2007,8 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Fri Jun 10 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-166
-- Perl 5.14 mass rebuild
+* Mon Jun 13 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-167
+- Perl 5.14 mass rebuild, bump release, remove releases in subpackages
 
 * Thu Jun 09 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-165
 - Perl 5.14 mass rebuild
