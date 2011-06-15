@@ -17,7 +17,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        168%{?dist}
+Release:        169%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1457,6 +1457,7 @@ sed \
 %exclude %{privlib}/IO/Compress/Zlib/
 %exclude %{privlib}/IO/Uncompress/Adapter/
 %exclude %{privlib}/IO/Uncompress/AnyInflate.pm
+%exclude %{privlib}/IO/Uncompress/Bunzip2.pm
 %exclude %{privlib}/IO/Uncompress/Gunzip.pm
 %exclude %{privlib}/IO/Uncompress/Inflate.pm
 %exclude %{privlib}/IO/Uncompress/RawInflate.pm
@@ -1467,6 +1468,7 @@ sed \
 %exclude %{_mandir}/man3/IO::Compress::RawDeflate*
 %exclude %{_mandir}/man3/IO::Compress::Zip*
 %exclude %{_mandir}/man3/IO::Uncompress::AnyInflate*
+%exclude %{_mandir}/man3/IO::Uncompress::Bunzip2*
 %exclude %{_mandir}/man3/IO::Uncompress::Gunzip*
 %exclude %{_mandir}/man3/IO::Uncompress::Inflate*
 %exclude %{_mandir}/man3/IO::Uncompress::RawInflate*
@@ -1829,6 +1831,7 @@ sed \
 %{privlib}/IO/Compress/Zlib/
 %{privlib}/IO/Uncompress/Adapter/
 %{privlib}/IO/Uncompress/AnyInflate.pm
+%{privlib}/IO/Uncompress/Bunzip2.pm
 %{privlib}/IO/Uncompress/Gunzip.pm
 %{privlib}/IO/Uncompress/Inflate.pm
 %{privlib}/IO/Uncompress/RawInflate.pm
@@ -1839,6 +1842,7 @@ sed \
 %{_mandir}/man3/IO::Compress::RawDeflate*
 %{_mandir}/man3/IO::Compress::Zip*
 %{_mandir}/man3/IO::Uncompress::AnyInflate*
+%{_mandir}/man3/IO::Uncompress::Bunzip2*
 %{_mandir}/man3/IO::Uncompress::Gunzip*
 %{_mandir}/man3/IO::Uncompress::Inflate*
 %{_mandir}/man3/IO::Uncompress::RawInflate*
@@ -2044,9 +2048,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Wed Jun 15 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-168
+* Wed Jun 15 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-169
 - filter even Mac:: requires, polish filter again for correct installation
 - add sub-package Compress-Raw-Bzip2, solve Bzip2 conflicts after install
+- and add IO::Uncompress::Bunzip2 correctly into IO-Compress
 
 * Mon Jun 13 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-167
 - Perl 5.14 mass rebuild, bump release, remove releases in subpackages
