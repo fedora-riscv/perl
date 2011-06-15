@@ -9,15 +9,15 @@
 
 %global __provides_exclude_from .*/auto/.*\.so|.*/%{perl_archlib}/.*\.so|%{_docdir}
 %global __requires_exclude_from %{_docdir}
-%global __provides_exclude perl\\(VMS|perl\\(Win32|perl\\(BSD::|perl\\(DB\\)|perl\\(UNIVERSAL\\)
-%global __requires_exclude perl\\(VMS|perl\\(BSD::|perl\\(Win32|perl\\(Tk
+%global __provides_exclude perl\\(VMS|perl\\(Win32|perl\\(BSD::|perl\\(DB\\)
+%global __requires_exclude perl\\(VMS|perl\\(BSD::|perl\\(Win32|perl\\(Tk|perl\\(Mac::|perl\\(Your::Module::Here
 # same as we provide in /etc/rpm/macros.perl
 %global perl5_testdir   %{_libexecdir}/perl5-tests
 
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        167%{?dist}
+Release:        168%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -237,6 +237,19 @@ generation utilities are included as well.
 
 CGI.pm performs very well in in a vanilla CGI.pm environment and also comes
 with built-in support for mod_perl and mod_perl2 as well as FastCGI.
+
+
+%package Compress-Raw-Bzip2
+Summary:        Low-Level Interface to bzip2 compression library
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.033
+Requires:       perl(Exporter), perl(File::Temp)
+
+%description Compress-Raw-Bzip2
+This module provides a Perl interface to the bzip2 compression library.
+It is used by IO::Compress::Bzip2.
 
 
 %package Compress-Raw-Zlib
@@ -991,7 +1004,7 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 
-Requires:       perl-Archive-Extract, perl-Archive-Tar
+Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-Compress-Raw-Bzip2
 Requires:       perl-Compress-Raw-Zlib, perl-CGI, perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-YAML
 Requires:       perl-CPANPLUS, perl-Digest-SHA, perl-ExtUtils-CBuilder
 Requires:       perl-ExtUtils-Embed, perl-ExtUtils-MakeMaker, perl-ExtUtils-ParseXS
@@ -1202,8 +1215,9 @@ rm patchlevel.bak
 popd
 
 # for now, remove Bzip2:
-find $RPM_BUILD_ROOT -name Bzip2 | xargs rm -r
-find $RPM_BUILD_ROOT -name '*B*zip2*'| xargs rm
+# Why? Now is missing Bzip2 files and provides
+##find $RPM_BUILD_ROOT -name Bzip2 | xargs rm -r
+##find $RPM_BUILD_ROOT -name '*B*zip2*'| xargs rm
 
 # tests -- FIXME need to validate that this all works as expected
 mkdir -p %{buildroot}%{perl5_testdir}/perl-tests
@@ -1347,12 +1361,18 @@ sed \
 %exclude %{_mandir}/man1/cpanp.1*
 %exclude %{_mandir}/man3/CPANPLUS*
 
+# Compress-Raw-Bzip2
+%exclude %dir %{archlib}/Compress
+%exclude %{archlib}/Compress/Raw/Bzip2.pm
+%exclude %{_mandir}/man3/Compress::Raw::Bzip2*
+
 # Compress::Raw::Zlib
 %exclude %{archlib}/Compress/Raw/
 %exclude %{archlib}/auto/Compress
 %exclude %{archlib}/auto/Compress/Raw/
 %exclude %{archlib}/auto/Compress/Raw/Zlib/
 %exclude %{_mandir}/man3/Compress::Raw::Zlib*
+%exclude %{_mandir}/man3/Compress::Raw::Bzip2*
 
 # Digest::SHA
 %exclude %{_bindir}/shasum
@@ -1431,6 +1451,7 @@ sed \
 %exclude %{privlib}/IO/Compress/Gzip/
 %exclude %{privlib}/IO/Compress/Gzip.pm
 %exclude %{privlib}/IO/Compress/RawDeflate.pm
+%exclude %{privlib}/IO/Compress/Bzip2.pm
 %exclude %{privlib}/IO/Compress/Zip/
 %exclude %{privlib}/IO/Compress/Zip.pm
 %exclude %{privlib}/IO/Compress/Zlib/
@@ -1441,6 +1462,7 @@ sed \
 %exclude %{privlib}/IO/Uncompress/RawInflate.pm
 %exclude %{privlib}/IO/Uncompress/Unzip.pm
 %exclude %{_mandir}/man3/IO::Compress::Deflate*
+%exclude %{_mandir}/man3/IO::Compress::Bzip2*
 %exclude %{_mandir}/man3/IO::Compress::Gzip*
 %exclude %{_mandir}/man3/IO::Compress::RawDeflate*
 %exclude %{_mandir}/man3/IO::Compress::Zip*
@@ -1607,6 +1629,10 @@ sed \
 %exclude %{_mandir}/man3/Time::Piece.3*
 %exclude %{_mandir}/man3/Time::Seconds.3*
 
+# Version-Requirements
+%exclude %{privlib}/Version/Requirements.pm
+%exclude %{_mandir}/man3/Version::Requirements*
+
 # threads
 %dir %exclude %{archlib}/auto/threads
 %exclude %{archlib}/auto/threads/threads*
@@ -1674,9 +1700,14 @@ sed \
 %{_mandir}/man3/CGI.3*
 %{_mandir}/man3/CGI::*.3*
 
+%files Compress-Raw-Bzip2
+%dir %{archlib}/Compress
+%{archlib}/Compress/Raw/Bzip2.pm
+%{_mandir}/man3/Compress::Raw::Bzip2*
+
 %files Compress-Raw-Zlib
 %dir %{archlib}/Compress
-%{archlib}/Compress/Raw/
+%{archlib}/Compress/Raw/Zlib.pm
 %dir %{archlib}/auto/Compress/
 %dir %{archlib}/auto/Compress/Raw/
 %{archlib}/auto/Compress/Raw/Zlib/
@@ -1789,6 +1820,7 @@ sed \
 # IO-Compress-Zlib
 %{privlib}/IO/Compress/Adapter/
 %{privlib}/IO/Compress/Deflate.pm
+%{privlib}/IO/Compress/Bzip2.pm
 %{privlib}/IO/Compress/Gzip/
 %{privlib}/IO/Compress/Gzip.pm
 %{privlib}/IO/Compress/RawDeflate.pm
@@ -1803,6 +1835,7 @@ sed \
 %{privlib}/IO/Uncompress/Unzip.pm
 %{_mandir}/man3/IO::Compress::Deflate*
 %{_mandir}/man3/IO::Compress::Gzip*
+%{_mandir}/man3/IO::Compress::Bzip2*
 %{_mandir}/man3/IO::Compress::RawDeflate*
 %{_mandir}/man3/IO::Compress::Zip*
 %{_mandir}/man3/IO::Uncompress::AnyInflate*
@@ -1979,6 +2012,10 @@ sed \
 %{_mandir}/man3/Time::Piece.3*
 %{_mandir}/man3/Time::Seconds.3*
 
+%files Version-Requirements
+%{privlib}/Version/Requirements.pm
+%{_mandir}/man3/Version::Requirements*
+
 %files parent 
 %{privlib}/parent.pm
 %{_mandir}/man3/parent.3*
@@ -2007,6 +2044,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jun 15 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-168
+- filter even Mac:: requires, polish filter again for correct installation
+- add sub-package Compress-Raw-Bzip2, solve Bzip2 conflicts after install
+
 * Mon Jun 13 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-167
 - Perl 5.14 mass rebuild, bump release, remove releases in subpackages
 
