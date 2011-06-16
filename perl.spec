@@ -17,7 +17,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        169%{?dist}
+Release:        170%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -59,6 +59,10 @@ Patch6:         perl-disable_test_hosts.patch
 # only on x86_64, so we just don't run it. Works fine on normal
 # systems.
 Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
+
+# update to 5.14.1 will be probably contain new release of EE::MM
+# patching to 6.57_11 which fix bug with strict refs
+Patch8:         ExtUtils-MakeMaker.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1031,6 +1035,7 @@ tarball from perl.org.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -2048,6 +2053,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jun 16 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-170
+- update ExtUtils::MakeMaker, hopefully update to 5.14.1 will contain new
+  version, which fix bug RT#67618
+
 * Wed Jun 15 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-169
 - filter even Mac:: requires, polish filter again for correct installation
 - add sub-package Compress-Raw-Bzip2, solve Bzip2 conflicts after install

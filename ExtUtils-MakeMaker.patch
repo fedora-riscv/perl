@@ -1,0 +1,4938 @@
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/Command/MM.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/Command/MM.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/Command/MM.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/Command/MM.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -8,9 +8,9 @@
+ require Exporter;
+ our @ISA = qw(Exporter);
+ 
+-our @EXPORT  = qw(test_harness pod2man perllocal_install uninstall
++our @EXPORT  = qw(test_harness pod2man perllocal_install uninstall 
+                   warn_if_old_packlist);
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
+ 
+ my $Is_VMS = $^O eq 'VMS';
+ 
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/Liblist/Kid.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/Liblist/Kid.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/Liblist/Kid.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/Liblist/Kid.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -6,214 +6,241 @@
+ # $self is not a Makemaker.
+ 
+ use 5.006;
++
+ # Broken out of MakeMaker from version 4.11
+ 
+ use strict;
+-our $VERSION = 6.57_05;
++use warnings;
++our $VERSION = '6.57_11';
+ 
+-use Config;
++use ExtUtils::MakeMaker::Config;
+ use Cwd 'cwd';
+ use File::Basename;
+ use File::Spec;
+ 
+ sub ext {
+-  if   ($^O eq 'VMS')     { return &_vms_ext;      }
+-  elsif($^O eq 'MSWin32') { return &_win32_ext;    }
+-  else                    { return &_unix_os2_ext; }
++    if    ( $^O eq 'VMS' )     { return &_vms_ext; }
++    elsif ( $^O eq 'MSWin32' ) { return &_win32_ext; }
++    else                       { return &_unix_os2_ext; }
+ }
+ 
+ sub _unix_os2_ext {
+-    my($self,$potential_libs, $verbose, $give_libs) = @_;
++    my ( $self, $potential_libs, $verbose, $give_libs ) = @_;
+     $verbose ||= 0;
+ 
+-    if ($^O =~ 'os2' and $Config{perllibs}) { 
+-	# Dynamic libraries are not transitive, so we may need including
+-	# the libraries linked against perl.dll again.
++    if ( $^O =~ 'os2' and $Config{perllibs} ) {
++
++        # Dynamic libraries are not transitive, so we may need including
++        # the libraries linked against perl.dll again.
+ 
+-	$potential_libs .= " " if $potential_libs;
+-	$potential_libs .= $Config{perllibs};
++        $potential_libs .= " " if $potential_libs;
++        $potential_libs .= $Config{perllibs};
+     }
+-    return ("", "", "", "", ($give_libs ? [] : ())) unless $potential_libs;
++    return ( "", "", "", "", ( $give_libs ? [] : () ) ) unless $potential_libs;
+     warn "Potential libraries are '$potential_libs':\n" if $verbose;
+ 
+-    my($so)   = $Config{so};
+-    my($libs) = defined $Config{perllibs} ? $Config{perllibs} : $Config{libs};
++    my ( $so ) = $Config{so};
++    my ( $libs ) = defined $Config{perllibs} ? $Config{perllibs} : $Config{libs};
+     my $Config_libext = $Config{lib_ext} || ".a";
+     my $Config_dlext = $Config{dlext};
+ 
+-
+     # compute $extralibs, $bsloadlibs and $ldloadlibs from
+     # $potential_libs
+     # this is a rewrite of Andy Dougherty's extliblist in perl
+ 
+-    my(@searchpath); # from "-L/path" entries in $potential_libs
+-    my(@libpath) = split " ", $Config{'libpth'};
+-    my(@ldloadlibs, @bsloadlibs, @extralibs, @ld_run_path, %ld_run_path_seen);
+-    my(@libs, %libs_seen);
+-    my($fullname, @fullname);
+-    my($pwd) = cwd(); # from Cwd.pm
+-    my($found) = 0;
+-
+-    foreach my $thislib (split ' ', $potential_libs) {
+-
+-	# Handle possible linker path arguments.
+-	if ($thislib =~ s/^(-[LR]|-Wl,-R)//){	# save path flag type
+-	    my($ptype) = $1;
+-	    unless (-d $thislib){
+-		warn "$ptype$thislib ignored, directory does not exist\n"
+-			if $verbose;
+-		next;
+-	    }
+-	    my($rtype) = $ptype;
+-	    if (($ptype eq '-R') or ($ptype eq '-Wl,-R')) {
+-		if ($Config{'lddlflags'} =~ /-Wl,-R/) {
+-		    $rtype = '-Wl,-R';
+-		} elsif ($Config{'lddlflags'} =~ /-R/) {
+-		    $rtype = '-R';
+-		}
+-	    }
+-	    unless (File::Spec->file_name_is_absolute($thislib)) {
+-	      warn "Warning: $ptype$thislib changed to $ptype$pwd/$thislib\n";
+-	      $thislib = $self->catdir($pwd,$thislib);
+-	    }
+-	    push(@searchpath, $thislib);
+-	    push(@extralibs,  "$ptype$thislib");
+-	    push(@ldloadlibs, "$rtype$thislib");
+-	    next;
+-	}
+-
+-	# Handle possible library arguments.
+-	unless ($thislib =~ s/^-l//){
+-	  warn "Unrecognized argument in LIBS ignored: '$thislib'\n";
+-	  next;
+-	}
+-
+-	my($found_lib)=0;
+-	foreach my $thispth (@searchpath, @libpath) {
+-
+-		# Try to find the full name of the library.  We need this to
+-		# determine whether it's a dynamically-loadable library or not.
+-		# This tends to be subject to various os-specific quirks.
+-		# For gcc-2.6.2 on linux (March 1995), DLD can not load
+-		# .sa libraries, with the exception of libm.sa, so we
+-		# deliberately skip them.
+-	    if (@fullname =
+-		    $self->lsdir($thispth,"^\Qlib$thislib.$so.\E[0-9]+")){
+-		# Take care that libfoo.so.10 wins against libfoo.so.9.
+-		# Compare two libraries to find the most recent version
+-		# number.  E.g.  if you have libfoo.so.9.0.7 and
+-		# libfoo.so.10.1, first convert all digits into two
+-		# decimal places.  Then we'll add ".00" to the shorter
+-		# strings so that we're comparing strings of equal length
+-		# Thus we'll compare libfoo.so.09.07.00 with
+-		# libfoo.so.10.01.00.  Some libraries might have letters
+-		# in the version.  We don't know what they mean, but will
+-		# try to skip them gracefully -- we'll set any letter to
+-		# '0'.  Finally, sort in reverse so we can take the
+-		# first element.
+-
+-		#TODO: iterate through the directory instead of sorting
+-
+-		$fullname = "$thispth/" .
+-		(sort { my($ma) = $a;
+-			my($mb) = $b;
+-			$ma =~ tr/A-Za-z/0/s;
+-			$ma =~ s/\b(\d)\b/0$1/g;
+-			$mb =~ tr/A-Za-z/0/s;
+-			$mb =~ s/\b(\d)\b/0$1/g;
+-			while (length($ma) < length($mb)) { $ma .= ".00"; }
+-			while (length($mb) < length($ma)) { $mb .= ".00"; }
+-			# Comparison deliberately backwards
+-			$mb cmp $ma;} @fullname)[0];
+-	    } elsif (-f ($fullname="$thispth/lib$thislib.$so")
+-		 && (($Config{'dlsrc'} ne "dl_dld.xs") || ($thislib eq "m"))){
+-	    } elsif (-f ($fullname="$thispth/lib${thislib}_s$Config_libext")
+-                 && ($Config{'archname'} !~ /RM\d\d\d-svr4/)
+-		 && ($thislib .= "_s") ){ # we must explicitly use _s version
+-	    } elsif (-f ($fullname="$thispth/lib$thislib$Config_libext")){
+-	    } elsif (defined($Config_dlext)
+-                 && -f ($fullname="$thispth/lib$thislib.$Config_dlext")){
+-	    } elsif (-f ($fullname="$thispth/$thislib$Config_libext")){
+-	    } elsif (-f ($fullname="$thispth/lib$thislib.dll$Config_libext")){
+-	    } elsif (-f ($fullname="$thispth/Slib$thislib$Config_libext")){
+-	    } elsif ($^O eq 'dgux'
+-		 && -l ($fullname="$thispth/lib$thislib$Config_libext")
+-		 && readlink($fullname) =~ /^elink:/s) {
+-		 # Some of DG's libraries look like misconnected symbolic
+-		 # links, but development tools can follow them.  (They
+-		 # look like this:
+-		 #
+-		 #    libm.a -> elink:${SDE_PATH:-/usr}/sde/\
+-		 #    ${TARGET_BINARY_INTERFACE:-m88kdgux}/usr/lib/libm.a
+-		 #
+-		 # , the compilation tools expand the environment variables.)
+-	    } else {
+-		warn "$thislib not found in $thispth\n" if $verbose;
+-		next;
+-	    }
+-	    warn "'-l$thislib' found at $fullname\n" if $verbose;
+-	    push @libs, $fullname unless $libs_seen{$fullname}++;
+-	    $found++;
+-	    $found_lib++;
+-
+-	    # Now update library lists
+-
+-	    # what do we know about this library...
+-	    my $is_dyna = ($fullname !~ /\Q$Config_libext\E\z/);
+-	    my $in_perl = ($libs =~ /\B-l\Q${thislib}\E\b/s);
++    my ( @searchpath );    # from "-L/path" entries in $potential_libs
++    my ( @libpath ) = split " ", $Config{'libpth'};
++    my ( @ldloadlibs, @bsloadlibs, @extralibs, @ld_run_path, %ld_run_path_seen );
++    my ( @libs,       %libs_seen );
++    my ( $fullname,   @fullname );
++    my ( $pwd )   = cwd();    # from Cwd.pm
++    my ( $found ) = 0;
++
++    foreach my $thislib ( split ' ', $potential_libs ) {
++
++        # Handle possible linker path arguments.
++        if ( $thislib =~ s/^(-[LR]|-Wl,-R)// ) {    # save path flag type
++            my ( $ptype ) = $1;
++            unless ( -d $thislib ) {
++                warn "$ptype$thislib ignored, directory does not exist\n"
++                  if $verbose;
++                next;
++            }
++            my ( $rtype ) = $ptype;
++            if ( ( $ptype eq '-R' ) or ( $ptype eq '-Wl,-R' ) ) {
++                if ( $Config{'lddlflags'} =~ /-Wl,-R/ ) {
++                    $rtype = '-Wl,-R';
++                }
++                elsif ( $Config{'lddlflags'} =~ /-R/ ) {
++                    $rtype = '-R';
++                }
++            }
++            unless ( File::Spec->file_name_is_absolute( $thislib ) ) {
++                warn "Warning: $ptype$thislib changed to $ptype$pwd/$thislib\n";
++                $thislib = $self->catdir( $pwd, $thislib );
++            }
++            push( @searchpath, $thislib );
++            push( @extralibs,  "$ptype$thislib" );
++            push( @ldloadlibs, "$rtype$thislib" );
++            next;
++        }
++
++        # Handle possible library arguments.
++        unless ( $thislib =~ s/^-l// ) {
++            warn "Unrecognized argument in LIBS ignored: '$thislib'\n";
++            next;
++        }
++
++        my ( $found_lib ) = 0;
++        foreach my $thispth ( @searchpath, @libpath ) {
++
++            # Try to find the full name of the library.  We need this to
++            # determine whether it's a dynamically-loadable library or not.
++            # This tends to be subject to various os-specific quirks.
++            # For gcc-2.6.2 on linux (March 1995), DLD can not load
++            # .sa libraries, with the exception of libm.sa, so we
++            # deliberately skip them.
++            if ( @fullname = $self->lsdir( $thispth, "^\Qlib$thislib.$so.\E[0-9]+" ) ) {
++
++                # Take care that libfoo.so.10 wins against libfoo.so.9.
++                # Compare two libraries to find the most recent version
++                # number.  E.g.  if you have libfoo.so.9.0.7 and
++                # libfoo.so.10.1, first convert all digits into two
++                # decimal places.  Then we'll add ".00" to the shorter
++                # strings so that we're comparing strings of equal length
++                # Thus we'll compare libfoo.so.09.07.00 with
++                # libfoo.so.10.01.00.  Some libraries might have letters
++                # in the version.  We don't know what they mean, but will
++                # try to skip them gracefully -- we'll set any letter to
++                # '0'.  Finally, sort in reverse so we can take the
++                # first element.
++
++                #TODO: iterate through the directory instead of sorting
++
++                $fullname = "$thispth/" . (
++                    sort {
++                        my ( $ma ) = $a;
++                        my ( $mb ) = $b;
++                        $ma =~ tr/A-Za-z/0/s;
++                        $ma =~ s/\b(\d)\b/0$1/g;
++                        $mb =~ tr/A-Za-z/0/s;
++                        $mb =~ s/\b(\d)\b/0$1/g;
++                        while ( length( $ma ) < length( $mb ) ) { $ma .= ".00"; }
++                        while ( length( $mb ) < length( $ma ) ) { $mb .= ".00"; }
++
++                        # Comparison deliberately backwards
++                        $mb cmp $ma;
++                      } @fullname
++                )[0];
++            }
++            elsif ( -f ( $fullname = "$thispth/lib$thislib.$so" )
++                && ( ( $Config{'dlsrc'} ne "dl_dld.xs" ) || ( $thislib eq "m" ) ) )
++            {
++            }
++            elsif (-f ( $fullname = "$thispth/lib${thislib}_s$Config_libext" )
++                && ( $Config{'archname'} !~ /RM\d\d\d-svr4/ )
++                && ( $thislib .= "_s" ) )
++            {    # we must explicitly use _s version
++            }
++            elsif ( -f ( $fullname = "$thispth/lib$thislib$Config_libext" ) ) {
++            }
++            elsif ( defined( $Config_dlext )
++                && -f ( $fullname = "$thispth/lib$thislib.$Config_dlext" ) )
++            {
++            }
++            elsif ( -f ( $fullname = "$thispth/$thislib$Config_libext" ) ) {
++            }
++            elsif ( -f ( $fullname = "$thispth/lib$thislib.dll$Config_libext" ) ) {
++            }
++            elsif ( -f ( $fullname = "$thispth/Slib$thislib$Config_libext" ) ) {
++            }
++            elsif ($^O eq 'dgux'
++                && -l ( $fullname = "$thispth/lib$thislib$Config_libext" )
++                && readlink( $fullname ) =~ /^elink:/s )
++            {
++
++                # Some of DG's libraries look like misconnected symbolic
++                # links, but development tools can follow them.  (They
++                # look like this:
++                #
++                #    libm.a -> elink:${SDE_PATH:-/usr}/sde/\
++                #    ${TARGET_BINARY_INTERFACE:-m88kdgux}/usr/lib/libm.a
++                #
++                # , the compilation tools expand the environment variables.)
++            }
++            else {
++                warn "$thislib not found in $thispth\n" if $verbose;
++                next;
++            }
++            warn "'-l$thislib' found at $fullname\n" if $verbose;
++            push @libs, $fullname unless $libs_seen{$fullname}++;
++            $found++;
++            $found_lib++;
++
++            # Now update library lists
++
++            # what do we know about this library...
++            my $is_dyna = ( $fullname !~ /\Q$Config_libext\E\z/ );
++            my $in_perl = ( $libs =~ /\B-l\Q${thislib}\E\b/s );
+ 
+             # include the path to the lib once in the dynamic linker path
+             # but only if it is a dynamic lib and not in Perl itself
+-            my($fullnamedir) = dirname($fullname);
++            my ( $fullnamedir ) = dirname( $fullname );
+             push @ld_run_path, $fullnamedir
+-                 if $is_dyna && !$in_perl &&
+-                    !$ld_run_path_seen{$fullnamedir}++;
++              if $is_dyna
++                  && !$in_perl
++                  && !$ld_run_path_seen{$fullnamedir}++;
++
++            # Do not add it into the list if it is already linked in
++            # with the main perl executable.
++            # We have to special-case the NeXT, because math and ndbm
++            # are both in libsys_s
++            unless (
++                $in_perl
++                || ( $Config{'osname'} eq 'next'
++                    && ( $thislib eq 'm' || $thislib eq 'ndbm' ) )
++              )
++            {
++                push( @extralibs, "-l$thislib" );
++            }
++
++            # We might be able to load this archive file dynamically
++            if (   ( $Config{'dlsrc'} =~ /dl_next/ && $Config{'osvers'} lt '4_0' )
++                || ( $Config{'dlsrc'} =~ /dl_dld/ ) )
++            {
++
++                # We push -l$thislib instead of $fullname because
++                # it avoids hardwiring a fixed path into the .bs file.
++                # Mkbootstrap will automatically add dl_findfile() to
++                # the .bs file if it sees a name in the -l format.
++                # USE THIS, when dl_findfile() is fixed:
++                # push(@bsloadlibs, "-l$thislib");
++                # OLD USE WAS while checking results against old_extliblist
++                push( @bsloadlibs, "$fullname" );
++            }
++            else {
++                if ( $is_dyna ) {
+ 
+-	    # Do not add it into the list if it is already linked in
+-	    # with the main perl executable.
+-	    # We have to special-case the NeXT, because math and ndbm 
+-	    # are both in libsys_s
+-	    unless ($in_perl || 
+-		($Config{'osname'} eq 'next' &&
+-		    ($thislib eq 'm' || $thislib eq 'ndbm')) ){
+-		push(@extralibs, "-l$thislib");
+-	    }
+-
+-	    # We might be able to load this archive file dynamically
+-	    if ( ($Config{'dlsrc'} =~ /dl_next/ && $Config{'osvers'} lt '4_0')
+-	    ||   ($Config{'dlsrc'} =~ /dl_dld/) )
+-	    {
+-		# We push -l$thislib instead of $fullname because
+-		# it avoids hardwiring a fixed path into the .bs file.
+-		# Mkbootstrap will automatically add dl_findfile() to
+-		# the .bs file if it sees a name in the -l format.
+-		# USE THIS, when dl_findfile() is fixed: 
+-		# push(@bsloadlibs, "-l$thislib");
+-		# OLD USE WAS while checking results against old_extliblist
+-		push(@bsloadlibs, "$fullname");
+-	    } else {
+-		if ($is_dyna){
+                     # For SunOS4, do not add in this shared library if
+                     # it is already linked in the main perl executable
+-		    push(@ldloadlibs, "-l$thislib")
+-			unless ($in_perl and $^O eq 'sunos');
+-		} else {
+-		    push(@ldloadlibs, "-l$thislib");
+-		}
+-	    }
+-	    last;	# found one here so don't bother looking further
+-	}
+-	warn "Note (probably harmless): "
+-		     ."No library found for -l$thislib\n"
+-	    unless $found_lib>0;
++                    push( @ldloadlibs, "-l$thislib" )
++                      unless ( $in_perl and $^O eq 'sunos' );
++                }
++                else {
++                    push( @ldloadlibs, "-l$thislib" );
++                }
++            }
++            last;    # found one here so don't bother looking further
++        }
++        warn "Note (probably harmless): " . "No library found for -l$thislib\n"
++          unless $found_lib > 0;
+     }
+ 
+-    unless( $found ) {
+-        return ('','','','', ($give_libs ? \@libs : ()));
++    unless ( $found ) {
++        return ( '', '', '', '', ( $give_libs ? \@libs : () ) );
+     }
+     else {
+-        return ("@extralibs", "@bsloadlibs", "@ldloadlibs",
+-                join(":",@ld_run_path), ($give_libs ? \@libs : ()));
++        return ( "@extralibs", "@bsloadlibs", "@ldloadlibs", join( ":", @ld_run_path ), ( $give_libs ? \@libs : () ) );
+     }
+ }
+ 
+@@ -221,329 +248,378 @@
+ 
+     require Text::ParseWords;
+ 
+-    my($self, $potential_libs, $verbose, $give_libs) = @_;
++    my ( $self, $potential_libs, $verbose, $give_libs ) = @_;
+     $verbose ||= 0;
+ 
+     # If user did not supply a list, we punt.
+     # (caller should probably use the list in $Config{libs})
+-    return ("", "", "", "", ($give_libs ? [] : ())) unless $potential_libs;
++    return ( "", "", "", "", ( $give_libs ? [] : () ) ) unless $potential_libs;
++
++    # TODO: make this use MM_Win32.pm's compiler detection
++    my %libs_seen;
++    my @extralibs;
++    my $cc         = $Config{cc} || '';
++    my $VC         = $cc =~ /\bcl\b/i;
++    my $GC         = $cc =~ /\bgcc\b/i;
++    my $libext     = _win32_lib_extensions();
++    my @searchpath = ( '' );                               # from "-L/path" entries in $potential_libs
++    my @libpath    = _win32_default_search_paths( $VC );
++    my $pwd        = cwd();                                # from Cwd.pm
++    my $search     = 1;
++
++    # compute @extralibs from $potential_libs
++    my @lib_search_list = _win32_make_lib_search_list( $potential_libs, $verbose );
++    for ( @lib_search_list ) {
+ 
+-    my $cc		= $Config{cc};
+-    my $VC		= $cc =~ /^cl/i;
+-    my $BC		= $cc =~ /^bcc/i;
+-    my $GC		= $cc =~ /^gcc/i;
+-    my $so		= $Config{'so'};
+-    my $libs		= $Config{'perllibs'};
+-    my $libpth		= $Config{'libpth'};
+-    my $libext		= $Config{'lib_ext'} || ".lib";
+-    my(@libs, %libs_seen);
+-
+-    if ($libs and $potential_libs !~ /:nodefault/i) { 
+-	# If Config.pm defines a set of default libs, we always
+-	# tack them on to the user-supplied list, unless the user
+-	# specified :nodefault
++        my $thislib = $_;
+ 
+-	$potential_libs .= " " if $potential_libs;
+-	$potential_libs .= $libs;
++        # see if entry is a flag
++        if ( /^:\w+$/ ) {
++            $search = 0 if lc eq ':nosearch';
++            $search = 1 if lc eq ':search';
++            _debug( "Ignoring unknown flag '$thislib'\n", $verbose ) if !/^:(no)?(search|default)$/i;
++            next;
++        }
++
++        # if searching is disabled, do compiler-specific translations
++        unless ( $search ) {
++            s/^-l(.+)$/$1.lib/ unless $GC;
++            s/^-L/-libpath:/ if $VC;
++            push( @extralibs, $_ );
++            next;
++        }
++
++        # handle possible linker path arguments
++        if ( s/^-L// and not -d ) {
++            _debug( "$thislib ignored, directory does not exist\n", $verbose );
++            next;
++        }
++        elsif ( -d ) {
++            unless ( File::Spec->file_name_is_absolute( $_ ) ) {
++                warn "Warning: '$thislib' changed to '-L$pwd/$_'\n";
++                $_ = $self->catdir( $pwd, $_ );
++            }
++            push( @searchpath, $_ );
++            next;
++        }
++
++        my @paths = ( @searchpath, @libpath );
++        my ( $fullname, $path ) = _win32_search_file( $thislib, $libext, \@paths, $verbose, $GC );
++
++        if ( !$fullname ) {
++            warn "Note (probably harmless): No library found for $thislib\n";
++            next;
++        }
++
++        _debug( "'$thislib' found as '$fullname'\n", $verbose );
++        push( @extralibs, $fullname );
++        $libs_seen{$fullname} = 1 if $path;    # why is this a special case?
+     }
+-    warn "Potential libraries are '$potential_libs':\n" if $verbose;
+ 
+-    # normalize to forward slashes
+-    $libpth =~ s,\\,/,g;
+-    $potential_libs =~ s,\\,/,g;
++    my @libs = keys %libs_seen;
+ 
+-    # compute $extralibs from $potential_libs
++    return ( '', '', '', '', ( $give_libs ? \@libs : () ) ) unless @extralibs;
+ 
+-    my @searchpath;		    # from "-L/path" in $potential_libs
+-    my @libpath		= Text::ParseWords::quotewords('\s+', 0, $libpth);
+-    my @extralibs;
+-    my $pwd		= cwd();    # from Cwd.pm
+-    my $lib		= '';
+-    my $found		= 0;
+-    my $search		= 1;
+-    my($fullname);
++    # make sure paths with spaces are properly quoted
++    @extralibs = map { /\s/ ? qq["$_"] : $_ } @extralibs;
++    @libs      = map { /\s/ ? qq["$_"] : $_ } @libs;
++
++    my $lib = join( ' ', @extralibs );
++
++    # normalize back to backward slashes (to help braindead tools)
++    # XXX this may break equally braindead GNU tools that don't understand
++    # backslashes, either.  Seems like one can't win here.  Cursed be CP/M.
++    $lib =~ s,/,\\,g;
++
++    _debug( "Result: $lib\n", $verbose );
++    wantarray ? ( $lib, '', $lib, '', ( $give_libs ? \@libs : () ) ) : $lib;
++}
++
++sub _win32_make_lib_search_list {
++    my ( $potential_libs, $verbose ) = @_;
++
++    # If Config.pm defines a set of default libs, we always
++    # tack them on to the user-supplied list, unless the user
++    # specified :nodefault
++    my $libs = $Config{'perllibs'};
++    $potential_libs = join( ' ', $potential_libs, $libs ) if $libs and $potential_libs !~ /:nodefault/i;
++    _debug( "Potential libraries are '$potential_libs':\n", $verbose );
++
++    $potential_libs =~ s,\\,/,g;    # normalize to forward slashes
++
++    my @list = Text::ParseWords::quotewords( '\s+', 0, $potential_libs );
++
++    return @list;
++}
++
++sub _win32_default_search_paths {
++    my ( $VC ) = @_;
++
++    my $libpth = $Config{'libpth'} || '';
++    $libpth =~ s,\\,/,g;            # normalize to forward slashes
+ 
+-    # add "$Config{installarchlib}/CORE" to default search path
+-    push @libpath, "$Config{installarchlib}/CORE";
++    my @libpath = Text::ParseWords::quotewords( '\s+', 0, $libpth );
++    push @libpath, "$Config{installarchlib}/CORE";    # add "$Config{installarchlib}/CORE" to default search path
+ 
+-    if ($VC and exists $ENV{LIB} and $ENV{LIB}) {
++    if ( $VC and exists $ENV{LIB} and $ENV{LIB} ) {
+         push @libpath, split /;/, $ENV{LIB};
+     }
+ 
+-    foreach (Text::ParseWords::quotewords('\s+', 0, $potential_libs)){
++    return @libpath;
++}
+ 
+-	my $thislib = $_;
++sub _win32_search_file {
++    my ( $thislib, $libext, $paths, $verbose, $GC ) = @_;
+ 
+-        # see if entry is a flag
+-	if (/^:\w+$/) {
+-	    $search	= 0 if lc eq ':nosearch';
+-	    $search	= 1 if lc eq ':search';
+-	    warn "Ignoring unknown flag '$thislib'\n"
+-		if $verbose and !/^:(no)?(search|default)$/i;
+-	    next;
+-	}
+-
+-	# if searching is disabled, do compiler-specific translations
+-	unless ($search) {
+-	    s/^-l(.+)$/$1.lib/ unless $GC;
+-	    s/^-L/-libpath:/ if $VC;
+-	    push(@extralibs, $_);
+-	    $found++;
+-	    next;
+-	}
+-
+-	# handle possible linker path arguments
+-	if (s/^-L// and not -d) {
+-	    warn "$thislib ignored, directory does not exist\n"
+-		if $verbose;
+-	    next;
+-	}
+-	elsif (-d) {
+-	    unless (File::Spec->file_name_is_absolute($_)) {
+-	      warn "Warning: '$thislib' changed to '-L$pwd/$_'\n";
+-	      $_ = $self->catdir($pwd,$_);
+-	    }
+-	    push(@searchpath, $_);
+-	    next;
+-	}
+-
+-	# handle possible library arguments
+-	if (s/^-l// and $GC and !/^lib/i) {
+-	    $_ = "lib$_";
+-	}
+-	$_ .= $libext if !/\Q$libext\E$/i;
+-
+-	my $secondpass = 0;
+-    LOOKAGAIN:
+-
+-        # look for the file itself
+-	if (-f) {
+-	    warn "'$thislib' found as '$_'\n" if $verbose;
+-	    $found++;
+-	    push(@extralibs, $_);
+-	    next;
+-	}
+-
+-	my $found_lib = 0;
+-	foreach my $thispth (@searchpath, @libpath){
+-	    unless (-f ($fullname="$thispth\\$_")) {
+-		warn "'$thislib' not found as '$fullname'\n" if $verbose;
+-		next;
+-	    }
+-	    warn "'$thislib' found as '$fullname'\n" if $verbose;
+-	    $found++;
+-	    $found_lib++;
+-	    push(@extralibs, $fullname);
+-	    push @libs, $fullname unless $libs_seen{$fullname}++;
+-	    last;
+-	}
+-
+-	# do another pass with (or without) leading 'lib' if they used -l
+-	if (!$found_lib and $thislib =~ /^-l/ and !$secondpass++) {
+-	    if ($GC) {
+-		goto LOOKAGAIN if s/^lib//i;
+-	    }
+-	    elsif (!/^lib/i) {
+-		$_ = "lib$_";
+-		goto LOOKAGAIN;
+-	    }
+-	}
+-
+-	# give up
+-	warn "Note (probably harmless): "
+-		     ."No library found for $thislib\n"
+-	    unless $found_lib>0;
++    my @file_list = _win32_build_file_list( $thislib, $GC, $libext );
++
++    for my $lib_file ( @file_list ) {
++        for my $path ( @{$paths} ) {
++            my $fullname = $lib_file;
++            $fullname = "$path\\$fullname" if $path;
+ 
++            return ( $fullname, $path ) if -f $fullname;
++
++            _debug( "'$thislib' not found as '$fullname'\n", $verbose );
++        }
+     }
+ 
+-    return ('','','','', ($give_libs ? \@libs : ())) unless $found;
++    return;
++}
+ 
+-    # make sure paths with spaces are properly quoted
+-    @extralibs = map { (/\s/ && !/^".*"$/) ? qq["$_"] : $_ } @extralibs;
+-    @libs = map { (/\s/ && !/^".*"$/) ? qq["$_"] : $_ } @libs;
+-    $lib = join(' ',@extralibs);
++sub _win32_build_file_list {
++    my ( $lib, $GC, $extensions ) = @_;
+ 
+-    # normalize back to backward slashes (to help braindead tools)
+-    # XXX this may break equally braindead GNU tools that don't understand
+-    # backslashes, either.  Seems like one can't win here.  Cursed be CP/M.
+-    $lib =~ s,/,\\,g;
++    my @pre_fixed = _win32_build_prefixed_list( $lib, $GC );
++    return map _win32_attach_extensions( $_, $extensions ), @pre_fixed;
++}
++
++sub _win32_build_prefixed_list {
++    my ( $lib, $GC ) = @_;
++
++    return $lib if $lib !~ s/^-l//;
++    return $lib if $lib =~ /^lib/ and !$GC;
++
++    ( my $no_prefix = $lib ) =~ s/^lib//i;
++    $lib = "lib$lib" if $no_prefix eq $lib;
++
++    return ( $lib, $no_prefix ) if $GC;
++    return ( $no_prefix, $lib );
++}
++
++sub _win32_attach_extensions {
++    my ( $lib, $extensions ) = @_;
++    return map _win32_try_attach_extension( $lib, $_ ), @{$extensions};
++}
++
++sub _win32_try_attach_extension {
++    my ( $lib, $extension ) = @_;
+ 
+-    warn "Result: $lib\n" if $verbose;
+-    wantarray ? ($lib, '', $lib, '', ($give_libs ? \@libs : ())) : $lib;
++    return $lib if $lib =~ /\Q$extension\E$/i;
++    return "$lib$extension";
+ }
+ 
++sub _win32_lib_extensions {
++    my %extensions;
++    $extensions{ $Config{'lib_ext'} } = 1 if $Config{'lib_ext'};
++    $extensions{".lib"} = 1;
++    return [ keys %extensions ];
++}
++
++sub _debug {
++    my ( $message, $verbose ) = @_;
++    return if !$verbose;
++    warn $message;
++    return;
++}
+ 
+ sub _vms_ext {
+-  my($self, $potential_libs, $verbose, $give_libs) = @_;
+-  $verbose ||= 0;
++    my ( $self, $potential_libs, $verbose, $give_libs ) = @_;
++    $verbose ||= 0;
++
++    my ( @crtls, $crtlstr );
++    @crtls = ( ( $Config{'ldflags'} =~ m-/Debug-i ? $Config{'dbgprefix'} : '' ) . 'PerlShr/Share' );
++    push( @crtls, grep { not /\(/ } split /\s+/, $Config{'perllibs'} );
++    push( @crtls, grep { not /\(/ } split /\s+/, $Config{'libc'} );
++
++    # In general, we pass through the basic libraries from %Config unchanged.
++    # The one exception is that if we're building in the Perl source tree, and
++    # a library spec could be resolved via a logical name, we go to some trouble
++    # to insure that the copy in the local tree is used, rather than one to
++    # which a system-wide logical may point.
++    if ( $self->{PERL_SRC} ) {
++        my ( $locspec, $type );
++        foreach my $lib ( @crtls ) {
++            if ( ( $locspec, $type ) = $lib =~ m{^([\w\$-]+)(/\w+)?} and $locspec =~ /perl/i ) {
++                if    ( lc $type eq '/share' )   { $locspec .= $Config{'exe_ext'}; }
++                elsif ( lc $type eq '/library' ) { $locspec .= $Config{'lib_ext'}; }
++                else                             { $locspec .= $Config{'obj_ext'}; }
++                $locspec = $self->catfile( $self->{PERL_SRC}, $locspec );
++                $lib = "$locspec$type" if -e $locspec;
++            }
++        }
++    }
++    $crtlstr = @crtls ? join( ' ', @crtls ) : '';
++
++    unless ( $potential_libs ) {
++        warn "Result:\n\tEXTRALIBS: \n\tLDLOADLIBS: $crtlstr\n" if $verbose;
++        return ( '', '', $crtlstr, '', ( $give_libs ? [] : () ) );
++    }
++
++    my ( %found, @fndlibs, $ldlib );
++    my $cwd = cwd();
++    my ( $so, $lib_ext, $obj_ext ) = @Config{ 'so', 'lib_ext', 'obj_ext' };
++
++    # List of common Unix library names and their VMS equivalents
++    # (VMS equivalent of '' indicates that the library is automatically
++    # searched by the linker, and should be skipped here.)
++    my ( @flibs, %libs_seen );
++    my %libmap = (
++        'm'      => '',
++        'f77'    => '',
++        'F77'    => '',
++        'V77'    => '',
++        'c'      => '',
++        'malloc' => '',
++        'crypt'  => '',
++        'resolv' => '',
++        'c_s'    => '',
++        'socket' => '',
++        'X11'    => 'DECW$XLIBSHR',
++        'Xt'     => 'DECW$XTSHR',
++        'Xm'     => 'DECW$XMLIBSHR',
++        'Xmu'    => 'DECW$XMULIBSHR'
++    );
++    if ( $Config{'vms_cc_type'} ne 'decc' ) { $libmap{'curses'} = 'VAXCCURSE'; }
++
++    warn "Potential libraries are '$potential_libs'\n" if $verbose;
++
++    # First, sort out directories and library names in the input
++    my ( @dirs, @libs );
++    foreach my $lib ( split ' ', $potential_libs ) {
++        push( @dirs, $1 ),   next if $lib =~ /^-L(.*)/;
++        push( @dirs, $lib ), next if $lib =~ /[:>\]]$/;
++        push( @dirs, $lib ), next if -d $lib;
++        push( @libs, $1 ),   next if $lib =~ /^-l(.*)/;
++        push( @libs, $lib );
++    }
++    push( @dirs, split( ' ', $Config{'libpth'} ) );
++
++    # Now make sure we've got VMS-syntax absolute directory specs
++    # (We don't, however, check whether someone's hidden a relative
++    # path in a logical name.)
++    foreach my $dir ( @dirs ) {
++        unless ( -d $dir ) {
++            warn "Skipping nonexistent Directory $dir\n" if $verbose > 1;
++            $dir = '';
++            next;
++        }
++        warn "Resolving directory $dir\n" if $verbose;
++        if ( File::Spec->file_name_is_absolute( $dir ) ) {
++            $dir = $self->fixpath( $dir, 1 );
++        }
++        else {
++            $dir = $self->catdir( $cwd, $dir );
++        }
++    }
++    @dirs = grep { length( $_ ) } @dirs;
++    unshift( @dirs, '' );    # Check each $lib without additions first
++
++  LIB: foreach my $lib ( @libs ) {
++        if ( exists $libmap{$lib} ) {
++            next unless length $libmap{$lib};
++            $lib = $libmap{$lib};
++        }
++
++        my ( @variants, $cand );
++        my ( $ctype ) = '';
++
++        # If we don't have a file type, consider it a possibly abbreviated name and
++        # check for common variants.  We try these first to grab libraries before
++        # a like-named executable image (e.g. -lperl resolves to perlshr.exe
++        # before perl.exe).
++        if ( $lib !~ /\.[^:>\]]*$/ ) {
++            push( @variants, "${lib}shr", "${lib}rtl", "${lib}lib" );
++            push( @variants, "lib$lib" ) if $lib !~ /[:>\]]/;
++        }
++        push( @variants, $lib );
++        warn "Looking for $lib\n" if $verbose;
++        foreach my $variant ( @variants ) {
++            my ( $fullname, $name );
++
++            foreach my $dir ( @dirs ) {
++                my ( $type );
++
++                $name = "$dir$variant";
++                warn "\tChecking $name\n" if $verbose > 2;
++                $fullname = VMS::Filespec::rmsexpand( $name );
++                if ( defined $fullname and -f $fullname ) {
++
++                    # It's got its own suffix, so we'll have to figure out the type
++                    if    ( $fullname =~ /(?:$so|exe)$/i )      { $type = 'SHR'; }
++                    elsif ( $fullname =~ /(?:$lib_ext|olb)$/i ) { $type = 'OLB'; }
++                    elsif ( $fullname =~ /(?:$obj_ext|obj)$/i ) {
++                        warn "Note (probably harmless): " . "Plain object file $fullname found in library list\n";
++                        $type = 'OBJ';
++                    }
++                    else {
++                        warn "Note (probably harmless): " . "Unknown library type for $fullname; assuming shared\n";
++                        $type = 'SHR';
++                    }
++                }
++                elsif (-f ( $fullname = VMS::Filespec::rmsexpand( $name, $so ) )
++                    or -f ( $fullname = VMS::Filespec::rmsexpand( $name, '.exe' ) ) )
++                {
++                    $type = 'SHR';
++                    $name = $fullname unless $fullname =~ /exe;?\d*$/i;
++                }
++                elsif (
++                    not length( $ctype ) and    # If we've got a lib already,
++                                                # don't bother
++                    ( -f ( $fullname = VMS::Filespec::rmsexpand( $name, $lib_ext ) ) or -f ( $fullname = VMS::Filespec::rmsexpand( $name, '.olb' ) ) )
++                  )
++                {
++                    $type = 'OLB';
++                    $name = $fullname unless $fullname =~ /olb;?\d*$/i;
++                }
++                elsif (
++                    not length( $ctype ) and    # If we've got a lib already,
++                                                # don't bother
++                    ( -f ( $fullname = VMS::Filespec::rmsexpand( $name, $obj_ext ) ) or -f ( $fullname = VMS::Filespec::rmsexpand( $name, '.obj' ) ) )
++                  )
++                {
++                    warn "Note (probably harmless): " . "Plain object file $fullname found in library list\n";
++                    $type = 'OBJ';
++                    $name = $fullname unless $fullname =~ /obj;?\d*$/i;
++                }
++                if ( defined $type ) {
++                    $ctype = $type;
++                    $cand  = $name;
++                    last if $ctype eq 'SHR';
++                }
++            }
++            if ( $ctype ) {
++
++                # This has to precede any other CRTLs, so just make it first
++                if ( $cand eq 'VAXCCURSE' ) { unshift @{ $found{$ctype} }, $cand; }
++                else                        { push @{ $found{$ctype} }, $cand; }
++                warn "\tFound as $cand (really $fullname), type $ctype\n"
++                  if $verbose > 1;
++                push @flibs, $name unless $libs_seen{$fullname}++;
++                next LIB;
++            }
++        }
++        warn "Note (probably harmless): " . "No library found for $lib\n";
++    }
++
++    push @fndlibs, @{ $found{OBJ} } if exists $found{OBJ};
++    push @fndlibs, map { "$_/Library" } @{ $found{OLB} } if exists $found{OLB};
++    push @fndlibs, map { "$_/Share" } @{ $found{SHR} }   if exists $found{SHR};
++    my $lib = join( ' ', @fndlibs );
+ 
+-  my(@crtls,$crtlstr);
+-  @crtls = ( ($Config{'ldflags'} =~ m-/Debug-i ? $Config{'dbgprefix'} : '')
+-              . 'PerlShr/Share' );
+-  push(@crtls, grep { not /\(/ } split /\s+/, $Config{'perllibs'});
+-  push(@crtls, grep { not /\(/ } split /\s+/, $Config{'libc'});
+-  # In general, we pass through the basic libraries from %Config unchanged.
+-  # The one exception is that if we're building in the Perl source tree, and
+-  # a library spec could be resolved via a logical name, we go to some trouble
+-  # to insure that the copy in the local tree is used, rather than one to
+-  # which a system-wide logical may point.
+-  if ($self->{PERL_SRC}) {
+-    my($locspec,$type);
+-    foreach my $lib (@crtls) { 
+-      if (($locspec,$type) = $lib =~ m{^([\w\$-]+)(/\w+)?} and $locspec =~ /perl/i) {
+-        if    (lc $type eq '/share')   { $locspec .= $Config{'exe_ext'}; }
+-        elsif (lc $type eq '/library') { $locspec .= $Config{'lib_ext'}; }
+-        else                           { $locspec .= $Config{'obj_ext'}; }
+-        $locspec = $self->catfile($self->{PERL_SRC},$locspec);
+-        $lib = "$locspec$type" if -e $locspec;
+-      }
+-    }
+-  }
+-  $crtlstr = @crtls ? join(' ',@crtls) : '';
+-
+-  unless ($potential_libs) {
+-    warn "Result:\n\tEXTRALIBS: \n\tLDLOADLIBS: $crtlstr\n" if $verbose;
+-    return ('', '', $crtlstr, '', ($give_libs ? [] : ()));
+-  }
+-
+-  my(%found,@fndlibs,$ldlib);
+-  my $cwd = cwd();
+-  my($so,$lib_ext,$obj_ext) = @Config{'so','lib_ext','obj_ext'};
+-  # List of common Unix library names and their VMS equivalents
+-  # (VMS equivalent of '' indicates that the library is automatically
+-  # searched by the linker, and should be skipped here.)
+-  my(@flibs, %libs_seen);
+-  my %libmap = ( 'm' => '', 'f77' => '', 'F77' => '', 'V77' => '', 'c' => '',
+-                 'malloc' => '', 'crypt' => '', 'resolv' => '', 'c_s' => '',
+-                 'socket' => '', 'X11' => 'DECW$XLIBSHR',
+-                 'Xt' => 'DECW$XTSHR', 'Xm' => 'DECW$XMLIBSHR',
+-                 'Xmu' => 'DECW$XMULIBSHR');
+-  if ($Config{'vms_cc_type'} ne 'decc') { $libmap{'curses'} = 'VAXCCURSE'; }
+-
+-  warn "Potential libraries are '$potential_libs'\n" if $verbose;
+-
+-  # First, sort out directories and library names in the input
+-  my(@dirs, @libs);
+-  foreach my $lib (split ' ',$potential_libs) {
+-    push(@dirs,$1),   next if $lib =~ /^-L(.*)/;
+-    push(@dirs,$lib), next if $lib =~ /[:>\]]$/;
+-    push(@dirs,$lib), next if -d $lib;
+-    push(@libs,$1),   next if $lib =~ /^-l(.*)/;
+-    push(@libs,$lib);
+-  }
+-  push(@dirs,split(' ',$Config{'libpth'}));
+-
+-  # Now make sure we've got VMS-syntax absolute directory specs
+-  # (We don't, however, check whether someone's hidden a relative
+-  # path in a logical name.)
+-  foreach my $dir (@dirs) {
+-    unless (-d $dir) {
+-      warn "Skipping nonexistent Directory $dir\n" if $verbose > 1;
+-      $dir = '';
+-      next;
+-    }
+-    warn "Resolving directory $dir\n" if $verbose;
+-    if (File::Spec->file_name_is_absolute($dir)) { 
+-        $dir = $self->fixpath($dir,1); 
+-    }
+-    else { 
+-        $dir = $self->catdir($cwd,$dir); 
+-    }
+-  }
+-  @dirs = grep { length($_) } @dirs;
+-  unshift(@dirs,''); # Check each $lib without additions first
+-
+-  LIB: foreach my $lib (@libs) {
+-    if (exists $libmap{$lib}) {
+-      next unless length $libmap{$lib};
+-      $lib = $libmap{$lib};
+-    }
+-
+-    my(@variants,$cand);
+-    my($ctype) = '';
+-
+-    # If we don't have a file type, consider it a possibly abbreviated name and
+-    # check for common variants.  We try these first to grab libraries before
+-    # a like-named executable image (e.g. -lperl resolves to perlshr.exe
+-    # before perl.exe).
+-    if ($lib !~ /\.[^:>\]]*$/) {
+-      push(@variants,"${lib}shr","${lib}rtl","${lib}lib");
+-      push(@variants,"lib$lib") if $lib !~ /[:>\]]/;
+-    }
+-    push(@variants,$lib);
+-    warn "Looking for $lib\n" if $verbose;
+-    foreach my $variant (@variants) {
+-      my($fullname, $name);
+-
+-      foreach my $dir (@dirs) {
+-        my($type);
+-
+-        $name = "$dir$variant";
+-        warn "\tChecking $name\n" if $verbose > 2;
+-        $fullname = VMS::Filespec::rmsexpand($name);
+-        if (defined $fullname and -f $fullname) {
+-          # It's got its own suffix, so we'll have to figure out the type
+-          if    ($fullname =~ /(?:$so|exe)$/i)      { $type = 'SHR'; }
+-          elsif ($fullname =~ /(?:$lib_ext|olb)$/i) { $type = 'OLB'; }
+-          elsif ($fullname =~ /(?:$obj_ext|obj)$/i) {
+-            warn "Note (probably harmless): "
+-                ."Plain object file $fullname found in library list\n";
+-            $type = 'OBJ';
+-          }
+-          else {
+-            warn "Note (probably harmless): "
+-                ."Unknown library type for $fullname; assuming shared\n";
+-            $type = 'SHR';
+-          }
+-        }
+-        elsif (-f ($fullname = VMS::Filespec::rmsexpand($name,$so))      or
+-               -f ($fullname = VMS::Filespec::rmsexpand($name,'.exe')))     {
+-          $type = 'SHR';
+-          $name = $fullname unless $fullname =~ /exe;?\d*$/i;
+-        }
+-        elsif (not length($ctype) and  # If we've got a lib already, 
+-                                       # don't bother
+-               ( -f ($fullname = VMS::Filespec::rmsexpand($name,$lib_ext)) or
+-                 -f ($fullname = VMS::Filespec::rmsexpand($name,'.olb'))))  {
+-          $type = 'OLB';
+-          $name = $fullname unless $fullname =~ /olb;?\d*$/i;
+-        }
+-        elsif (not length($ctype) and  # If we've got a lib already, 
+-                                       # don't bother
+-               ( -f ($fullname = VMS::Filespec::rmsexpand($name,$obj_ext)) or
+-                 -f ($fullname = VMS::Filespec::rmsexpand($name,'.obj'))))  {
+-          warn "Note (probably harmless): "
+-		       ."Plain object file $fullname found in library list\n";
+-          $type = 'OBJ';
+-          $name = $fullname unless $fullname =~ /obj;?\d*$/i;
+-        }
+-        if (defined $type) {
+-          $ctype = $type; $cand = $name;
+-          last if $ctype eq 'SHR';
+-        }
+-      }
+-      if ($ctype) { 
+-        # This has to precede any other CRTLs, so just make it first
+-        if ($cand eq 'VAXCCURSE') { unshift @{$found{$ctype}}, $cand; }  
+-        else                      { push    @{$found{$ctype}}, $cand; }
+-        warn "\tFound as $cand (really $fullname), type $ctype\n" 
+-          if $verbose > 1;
+-	push @flibs, $name unless $libs_seen{$fullname}++;
+-        next LIB;
+-      }
+-    }
+-    warn "Note (probably harmless): "
+-		 ."No library found for $lib\n";
+-  }
+-
+-  push @fndlibs, @{$found{OBJ}}                      if exists $found{OBJ};
+-  push @fndlibs, map { "$_/Library" } @{$found{OLB}} if exists $found{OLB};
+-  push @fndlibs, map { "$_/Share"   } @{$found{SHR}} if exists $found{SHR};
+-  my $lib = join(' ',@fndlibs);
+-
+-  $ldlib = $crtlstr ? "$lib $crtlstr" : $lib;
+-  warn "Result:\n\tEXTRALIBS: $lib\n\tLDLOADLIBS: $ldlib\n" if $verbose;
+-  wantarray ? ($lib, '', $ldlib, '', ($give_libs ? \@flibs : ())) : $lib;
++    $ldlib = $crtlstr ? "$lib $crtlstr" : $lib;
++    warn "Result:\n\tEXTRALIBS: $lib\n\tLDLOADLIBS: $ldlib\n" if $verbose;
++    wantarray ? ( $lib, '', $ldlib, '', ( $give_libs ? \@flibs : () ) ) : $lib;
+ }
+ 
+ 1;
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/Liblist.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/Liblist.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/Liblist.pm	2011-06-16 14:40:50.640181018 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/Liblist.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ 
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
+ 
+ use File::Spec;
+ require ExtUtils::Liblist::Kid;
+@@ -88,11 +88,6 @@
+ in LDLOADLIBS. It is passed as an environment variable to the process
+ that links the shared library.
+ 
+-Fedora extension: This generation of LD_RUN_PATH is disabled by default.
+-To use the generated LD_RUN_PATH for all links, set the USE_MM_LD_RUN_PATH
+-MakeMaker object attribute / argument, (or set the $USE_MM_LD_RUN_PATH
+-environment variable).
+-
+ =head2 BSLOADLIBS
+ 
+ List of those libraries that are needed but can be linked in
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MakeMaker/Config.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker/Config.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MakeMaker/Config.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker/Config.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ 
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
+ 
+ use Config ();
+ 
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MakeMaker/FAQ.pod perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker/FAQ.pod
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MakeMaker/FAQ.pod	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker/FAQ.pod	2011-05-20 02:27:11.000000000 +0200
+@@ -1,6 +1,6 @@
+ package ExtUtils::MakeMaker::FAQ;
+ 
+-our $VERSION = '6.57_01';
++our $VERSION = '6.57_11';
+ 
+ 1;
+ __END__
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MakeMaker/Tutorial.pod perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker/Tutorial.pod
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MakeMaker/Tutorial.pod	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker/Tutorial.pod	2011-05-20 02:27:11.000000000 +0200
+@@ -1,6 +1,6 @@
+ package ExtUtils::MakeMaker::Tutorial;
+ 
+-our $VERSION = 6.57_01;
++our $VERSION = 6.57_11;
+ 
+ 
+ =head1 NAME
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MakeMaker/YAML.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker/YAML.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MakeMaker/YAML.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker/YAML.pm	1970-01-01 01:00:00.000000000 +0100
+@@ -1,658 +0,0 @@
+-package ExtUtils::MakeMaker::YAML;
+-
+-use strict;
+-
+-# UTF Support?
+-sub HAVE_UTF8 () { $] >= 5.007003 }
+-BEGIN {
+-	if ( HAVE_UTF8 ) {
+-		# The string eval helps hide this from Test::MinimumVersion
+-		eval "require utf8;";
+-		die "Failed to load UTF-8 support" if $@;
+-	}
+-
+-	# Class structure
+-	require 5.004;
+-	require Exporter;
+-	require Carp;
+-	$ExtUtils::MakeMaker::YAML::VERSION   = '1.44';
+-	@ExtUtils::MakeMaker::YAML::ISA       = qw{ Exporter  };
+-	@ExtUtils::MakeMaker::YAML::EXPORT    = qw{ Load Dump };
+-	@ExtUtils::MakeMaker::YAML::EXPORT_OK = qw{ LoadFile DumpFile freeze thaw };
+-
+-	# Error storage
+-	$ExtUtils::MakeMaker::YAML::errstr    = '';
+-}
+-
+-# The character class of all characters we need to escape
+-# NOTE: Inlined, since it's only used once
+-# my $RE_ESCAPE = '[\\x00-\\x08\\x0b-\\x0d\\x0e-\\x1f\"\n]';
+-
+-# Printed form of the unprintable characters in the lowest range
+-# of ASCII characters, listed by ASCII ordinal position.
+-my @UNPRINTABLE = qw(
+-	z    x01  x02  x03  x04  x05  x06  a
+-	x08  t    n    v    f    r    x0e  x0f
+-	x10  x11  x12  x13  x14  x15  x16  x17
+-	x18  x19  x1a  e    x1c  x1d  x1e  x1f
+-);
+-
+-# Printable characters for escapes
+-my %UNESCAPES = (
+-	z => "\x00", a => "\x07", t    => "\x09",
+-	n => "\x0a", v => "\x0b", f    => "\x0c",
+-	r => "\x0d", e => "\x1b", '\\' => '\\',
+-);
+-
+-# Special magic boolean words
+-my %QUOTE = map { $_ => 1 } qw{
+-	null Null NULL
+-	y Y yes Yes YES n N no No NO
+-	true True TRUE false False FALSE
+-	on On ON off Off OFF
+-};
+-
+-
+-
+-
+-
+-#####################################################################
+-# Implementation
+-
+-# Create an empty ExtUtils::MakeMaker::YAML object
+-sub new {
+-	my $class = shift;
+-	bless [ @_ ], $class;
+-}
+-
+-# Create an object from a file
+-sub read {
+-	my $class = ref $_[0] ? ref shift : shift;
+-
+-	# Check the file
+-	my $file = shift or return $class->_error( 'You did not specify a file name' );
+-	return $class->_error( "File '$file' does not exist" )              unless -e $file;
+-	return $class->_error( "'$file' is a directory, not a file" )       unless -f _;
+-	return $class->_error( "Insufficient permissions to read '$file'" ) unless -r _;
+-
+-	# Slurp in the file
+-	local $/ = undef;
+-	local *CFG;
+-	unless ( open(CFG, $file) ) {
+-		return $class->_error("Failed to open file '$file': $!");
+-	}
+-	my $contents = <CFG>;
+-	unless ( close(CFG) ) {
+-		return $class->_error("Failed to close file '$file': $!");
+-	}
+-
+-	$class->read_string( $contents );
+-}
+-
+-# Create an object from a string
+-sub read_string {
+-	my $class  = ref $_[0] ? ref shift : shift;
+-	my $self   = bless [], $class;
+-	my $string = $_[0];
+-	unless ( defined $string ) {
+-		return $self->_error("Did not provide a string to load");
+-	}
+-
+-	# Byte order marks
+-	# NOTE: Keeping this here to educate maintainers
+-	# my %BOM = (
+-	#     "\357\273\277" => 'UTF-8',
+-	#     "\376\377"     => 'UTF-16BE',
+-	#     "\377\376"     => 'UTF-16LE',
+-	#     "\377\376\0\0" => 'UTF-32LE'
+-	#     "\0\0\376\377" => 'UTF-32BE',
+-	# );
+-	if ( $string =~ /^(?:\376\377|\377\376|\377\376\0\0|\0\0\376\377)/ ) {
+-		return $self->_error("Stream has a non UTF-8 BOM");
+-	} else {
+-		# Strip UTF-8 bom if found, we'll just ignore it
+-		$string =~ s/^\357\273\277//;
+-	}
+-
+-	# Try to decode as utf8
+-	utf8::decode($string) if HAVE_UTF8;
+-
+-	# Check for some special cases
+-	return $self unless length $string;
+-	unless ( $string =~ /[\012\015]+\z/ ) {
+-		return $self->_error("Stream does not end with newline character");
+-	}
+-
+-	# Split the file into lines
+-	my @lines = grep { ! /^\s*(?:\#.*)?\z/ }
+-	            split /(?:\015{1,2}\012|\015|\012)/, $string;
+-
+-	# Strip the initial YAML header
+-	@lines and $lines[0] =~ /^\%YAML[: ][\d\.]+.*\z/ and shift @lines;
+-
+-	# A nibbling parser
+-	while ( @lines ) {
+-		# Do we have a document header?
+-		if ( $lines[0] =~ /^---\s*(?:(.+)\s*)?\z/ ) {
+-			# Handle scalar documents
+-			shift @lines;
+-			if ( defined $1 and $1 !~ /^(?:\#.+|\%YAML[: ][\d\.]+)\z/ ) {
+-				push @$self, $self->_read_scalar( "$1", [ undef ], \@lines );
+-				next;
+-			}
+-		}
+-
+-		if ( ! @lines or $lines[0] =~ /^(?:---|\.\.\.)/ ) {
+-			# A naked document
+-			push @$self, undef;
+-			while ( @lines and $lines[0] !~ /^---/ ) {
+-				shift @lines;
+-			}
+-
+-		} elsif ( $lines[0] =~ /^\s*\-/ ) {
+-			# An array at the root
+-			my $document = [ ];
+-			push @$self, $document;
+-			$self->_read_array( $document, [ 0 ], \@lines );
+-
+-		} elsif ( $lines[0] =~ /^(\s*)\S/ ) {
+-			# A hash at the root
+-			my $document = { };
+-			push @$self, $document;
+-			$self->_read_hash( $document, [ length($1) ], \@lines );
+-
+-		} else {
+-			Carp::croak("ExtUtils::MakeMaker::YAML failed to classify the line '$lines[0]'");
+-		}
+-	}
+-
+-	$self;
+-}
+-
+-# Deparse a scalar string to the actual scalar
+-sub _read_scalar {
+-	my ($self, $string, $indent, $lines) = @_;
+-
+-	# Trim trailing whitespace
+-	$string =~ s/\s*\z//;
+-
+-	# Explitic null/undef
+-	return undef if $string eq '~';
+-
+-	# Single quote
+-	if ( $string =~ /^\'(.*?)\'\z/ ) {
+-		return '' unless defined $1;
+-		$string = $1;
+-		$string =~ s/\'\'/\'/g;
+-		return $string;
+-	}
+-
+-	# Double quote.
+-	# The commented out form is simpler, but overloaded the Perl regex
+-	# engine due to recursion and backtracking problems on strings
+-	# larger than 32,000ish characters. Keep it for reference purposes.
+-	# if ( $string =~ /^\"((?:\\.|[^\"])*)\"\z/ ) {
+-	if ( $string =~ /^\"([^\\"]*(?:\\.[^\\"]*)*)\"\z/ ) {
+-		# Reusing the variable is a little ugly,
+-		# but avoids a new variable and a string copy.
+-		$string = $1;
+-		$string =~ s/\\"/"/g;
+-		$string =~ s/\\([never\\fartz]|x([0-9a-fA-F]{2}))/(length($1)>1)?pack("H2",$2):$UNESCAPES{$1}/gex;
+-		return $string;
+-	}
+-
+-	# Special cases
+-	if ( $string =~ /^[\'\"!&]/ ) {
+-		Carp::croak("ExtUtils::MakeMaker::YAML does not support a feature in line '$lines->[0]'");
+-	}
+-	return {} if $string eq '{}';
+-	return [] if $string eq '[]';
+-
+-	# Regular unquoted string
+-	return $string unless $string =~ /^[>|]/;
+-
+-	# Error
+-	Carp::croak("ExtUtils::MakeMaker::YAML failed to find multi-line scalar content") unless @$lines;
+-
+-	# Check the indent depth
+-	$lines->[0]   =~ /^(\s*)/;
+-	$indent->[-1] = length("$1");
+-	if ( defined $indent->[-2] and $indent->[-1] <= $indent->[-2] ) {
+-		Carp::croak("ExtUtils::MakeMaker::YAML found bad indenting in line '$lines->[0]'");
+-	}
+-
+-	# Pull the lines
+-	my @multiline = ();
+-	while ( @$lines ) {
+-		$lines->[0] =~ /^(\s*)/;
+-		last unless length($1) >= $indent->[-1];
+-		push @multiline, substr(shift(@$lines), length($1));
+-	}
+-
+-	my $j = (substr($string, 0, 1) eq '>') ? ' ' : "\n";
+-	my $t = (substr($string, 1, 1) eq '-') ? ''  : "\n";
+-	return join( $j, @multiline ) . $t;
+-}
+-
+-# Parse an array
+-sub _read_array {
+-	my ($self, $array, $indent, $lines) = @_;
+-
+-	while ( @$lines ) {
+-		# Check for a new document
+-		if ( $lines->[0] =~ /^(?:---|\.\.\.)/ ) {
+-			while ( @$lines and $lines->[0] !~ /^---/ ) {
+-				shift @$lines;
+-			}
+-			return 1;
+-		}
+-
+-		# Check the indent level
+-		$lines->[0] =~ /^(\s*)/;
+-		if ( length($1) < $indent->[-1] ) {
+-			return 1;
+-		} elsif ( length($1) > $indent->[-1] ) {
+-			Carp::croak("ExtUtils::MakeMaker::YAML found bad indenting in line '$lines->[0]'");
+-		}
+-
+-		if ( $lines->[0] =~ /^(\s*\-\s+)[^\'\"]\S*\s*:(?:\s+|$)/ ) {
+-			# Inline nested hash
+-			my $indent2 = length("$1");
+-			$lines->[0] =~ s/-/ /;
+-			push @$array, { };
+-			$self->_read_hash( $array->[-1], [ @$indent, $indent2 ], $lines );
+-
+-		} elsif ( $lines->[0] =~ /^\s*\-(\s*)(.+?)\s*\z/ ) {
+-			# Array entry with a value
+-			shift @$lines;
+-			push @$array, $self->_read_scalar( "$2", [ @$indent, undef ], $lines );
+-
+-		} elsif ( $lines->[0] =~ /^\s*\-\s*\z/ ) {
+-			shift @$lines;
+-			unless ( @$lines ) {
+-				push @$array, undef;
+-				return 1;
+-			}
+-			if ( $lines->[0] =~ /^(\s*)\-/ ) {
+-				my $indent2 = length("$1");
+-				if ( $indent->[-1] == $indent2 ) {
+-					# Null array entry
+-					push @$array, undef;
+-				} else {
+-					# Naked indenter
+-					push @$array, [ ];
+-					$self->_read_array( $array->[-1], [ @$indent, $indent2 ], $lines );
+-				}
+-
+-			} elsif ( $lines->[0] =~ /^(\s*)\S/ ) {
+-				push @$array, { };
+-				$self->_read_hash( $array->[-1], [ @$indent, length("$1") ], $lines );
+-
+-			} else {
+-				Carp::croak("ExtUtils::MakeMaker::YAML failed to classify line '$lines->[0]'");
+-			}
+-
+-		} elsif ( defined $indent->[-2] and $indent->[-1] == $indent->[-2] ) {
+-			# This is probably a structure like the following...
+-			# ---
+-			# foo:
+-			# - list
+-			# bar: value
+-			#
+-			# ... so lets return and let the hash parser handle it
+-			return 1;
+-
+-		} else {
+-			Carp::croak("ExtUtils::MakeMaker::YAML failed to classify line '$lines->[0]'");
+-		}
+-	}
+-
+-	return 1;
+-}
+-
+-# Parse an array
+-sub _read_hash {
+-	my ($self, $hash, $indent, $lines) = @_;
+-
+-	while ( @$lines ) {
+-		# Check for a new document
+-		if ( $lines->[0] =~ /^(?:---|\.\.\.)/ ) {
+-			while ( @$lines and $lines->[0] !~ /^---/ ) {
+-				shift @$lines;
+-			}
+-			return 1;
+-		}
+-
+-		# Check the indent level
+-		$lines->[0] =~ /^(\s*)/;
+-		if ( length($1) < $indent->[-1] ) {
+-			return 1;
+-		} elsif ( length($1) > $indent->[-1] ) {
+-			Carp::croak("ExtUtils::MakeMaker::YAML found bad indenting in line '$lines->[0]'");
+-		}
+-
+-		# Get the key
+-		unless ( $lines->[0] =~ s/^\s*([^\'\" ][^\n]*?)\s*:(\s+|$)// ) {
+-			if ( $lines->[0] =~ /^\s*[?\'\"]/ ) {
+-				Carp::croak("ExtUtils::MakeMaker::YAML does not support a feature in line '$lines->[0]'");
+-			}
+-			Carp::croak("ExtUtils::MakeMaker::YAML failed to classify line '$lines->[0]'");
+-		}
+-		my $key = $1;
+-
+-		# Do we have a value?
+-		if ( length $lines->[0] ) {
+-			# Yes
+-			$hash->{$key} = $self->_read_scalar( shift(@$lines), [ @$indent, undef ], $lines );
+-		} else {
+-			# An indent
+-			shift @$lines;
+-			unless ( @$lines ) {
+-				$hash->{$key} = undef;
+-				return 1;
+-			}
+-			if ( $lines->[0] =~ /^(\s*)-/ ) {
+-				$hash->{$key} = [];
+-				$self->_read_array( $hash->{$key}, [ @$indent, length($1) ], $lines );
+-			} elsif ( $lines->[0] =~ /^(\s*)./ ) {
+-				my $indent2 = length("$1");
+-				if ( $indent->[-1] >= $indent2 ) {
+-					# Null hash entry
+-					$hash->{$key} = undef;
+-				} else {
+-					$hash->{$key} = {};
+-					$self->_read_hash( $hash->{$key}, [ @$indent, length($1) ], $lines );
+-				}
+-			}
+-		}
+-	}
+-
+-	return 1;
+-}
+-
+-# Save an object to a file
+-sub write {
+-	my $self = shift;
+-	my $file = shift or return $self->_error('No file name provided');
+-
+-	# Write it to the file
+-	open( CFG, '>' . $file ) or return $self->_error(
+-		"Failed to open file '$file' for writing: $!"
+-		);
+-	print CFG $self->write_string;
+-	close CFG;
+-
+-	return 1;
+-}
+-
+-# Save an object to a string
+-sub write_string {
+-	my $self = shift;
+-	return '' unless @$self;
+-
+-	# Iterate over the documents
+-	my $indent = 0;
+-	my @lines  = ();
+-	foreach my $cursor ( @$self ) {
+-		push @lines, '---';
+-
+-		# An empty document
+-		if ( ! defined $cursor ) {
+-			# Do nothing
+-
+-		# A scalar document
+-		} elsif ( ! ref $cursor ) {
+-			$lines[-1] .= ' ' . $self->_write_scalar( $cursor, $indent );
+-
+-		# version object
+-		} elsif ( ref $cursor eq 'version' ) {
+-			$lines[-1] .= ' ' . $self->_write_scalar( $cursor->stringify, $indent );
+-
+-		# A list at the root
+-		} elsif ( ref $cursor eq 'ARRAY' ) {
+-			unless ( @$cursor ) {
+-				$lines[-1] .= ' []';
+-				next;
+-			}
+-			push @lines, $self->_write_array( $cursor, $indent, {} );
+-
+-		# A hash at the root
+-		} elsif ( ref $cursor eq 'HASH' ) {
+-			unless ( %$cursor ) {
+-				$lines[-1] .= ' {}';
+-				next;
+-			}
+-			push @lines, $self->_write_hash( $cursor, $indent, {} );
+-
+-		} else {
+-			Carp::croak("Cannot serialize " . ref($cursor));
+-		}
+-	}
+-
+-	join '', map { "$_\n" } @lines;
+-}
+-
+-sub _write_scalar {
+-	my $string = $_[1];
+-	return '~'  unless defined $string;
+-	return "''" unless length  $string;
+-	if ( $string =~ /[\x00-\x08\x0b-\x0d\x0e-\x1f\"\'\n]/ ) {
+-		$string =~ s/\\/\\\\/g;
+-		$string =~ s/"/\\"/g;
+-		$string =~ s/\n/\\n/g;
+-		$string =~ s/([\x00-\x1f])/\\$UNPRINTABLE[ord($1)]/g;
+-		return qq|"$string"|;
+-	}
+-	if ( $string =~ /(?:^\W|\s)/ or $QUOTE{$string} ) {
+-		return "'$string'";
+-	}
+-	return $string;
+-}
+-
+-sub _write_array {
+-	my ($self, $array, $indent, $seen) = @_;
+-	if ( $seen->{refaddr($array)}++ ) {
+-		die "ExtUtils::MakeMaker::YAML does not support circular references";
+-	}
+-	my @lines  = ();
+-	foreach my $el ( @$array ) {
+-		my $line = ('  ' x $indent) . '-';
+-		my $type = ref $el;
+-		if ( ! $type ) {
+-			$line .= ' ' . $self->_write_scalar( $el, $indent + 1 );
+-			push @lines, $line;
+-
+-		# version object
+-		} elsif ( $type eq 'version' ) {
+-			$line .= ' ' . $self->_write_scalar( $el->stringify, $indent + 1 );
+-			push @lines, $line;
+-
+-		} elsif ( $type eq 'ARRAY' ) {
+-			if ( @$el ) {
+-				push @lines, $line;
+-				push @lines, $self->_write_array( $el, $indent + 1, $seen );
+-			} else {
+-				$line .= ' []';
+-				push @lines, $line;
+-			}
+-
+-		} elsif ( $type eq 'HASH' ) {
+-			if ( keys %$el ) {
+-				push @lines, $line;
+-				push @lines, $self->_write_hash( $el, $indent + 1, $seen );
+-			} else {
+-				$line .= ' {}';
+-				push @lines, $line;
+-			}
+-
+-		} else {
+-			die "ExtUtils::MakeMaker::YAML does not support $type references";
+-		}
+-	}
+-
+-	@lines;
+-}
+-
+-sub _write_hash {
+-	my ($self, $hash, $indent, $seen) = @_;
+-	if ( $seen->{refaddr($hash)}++ ) {
+-		die "ExtUtils::MakeMaker::YAML does not support circular references";
+-	}
+-	my @lines  = ();
+-	foreach my $name ( sort keys %$hash ) {
+-		my $el   = $hash->{$name};
+-		my $line = ('  ' x $indent) . "$name:";
+-		my $type = ref $el;
+-		if ( ! $type ) {
+-			$line .= ' ' . $self->_write_scalar( $el, $indent + 1 );
+-			push @lines, $line;
+-
+-		# version object
+-		} elsif ( $type eq 'version' ) {
+-			$line .= ' ' . $self->_write_scalar( $el->stringify, $indent + 1 );
+-			push @lines, $line;
+-
+-		} elsif ( $type eq 'ARRAY' ) {
+-			if ( @$el ) {
+-				push @lines, $line;
+-				push @lines, $self->_write_array( $el, $indent + 1, $seen );
+-			} else {
+-				$line .= ' []';
+-				push @lines, $line;
+-			}
+-
+-		} elsif ( $type eq 'HASH' ) {
+-			if ( keys %$el ) {
+-				push @lines, $line;
+-				push @lines, $self->_write_hash( $el, $indent + 1, $seen );
+-			} else {
+-				$line .= ' {}';
+-				push @lines, $line;
+-			}
+-
+-		} else {
+-			die "ExtUtils::MakeMaker::YAML does not support $type references";
+-		}
+-	}
+-
+-	@lines;
+-}
+-
+-# Set error
+-sub _error {
+-	$ExtUtils::MakeMaker::YAML::errstr = $_[1];
+-	undef;
+-}
+-
+-# Retrieve error
+-sub errstr {
+-	$ExtUtils::MakeMaker::YAML::errstr;
+-}
+-
+-
+-
+-
+-
+-#####################################################################
+-# YAML Compatibility
+-
+-sub Dump {
+-	ExtUtils::MakeMaker::YAML->new(@_)->write_string;
+-}
+-
+-sub Load {
+-	my $self = ExtUtils::MakeMaker::YAML->read_string(@_);
+-	unless ( $self ) {
+-		Carp::croak("Failed to load YAML document from string");
+-	}
+-	if ( wantarray ) {
+-		return @$self;
+-	} else {
+-		# To match YAML.pm, return the last document
+-		return $self->[-1];
+-	}
+-}
+-
+-BEGIN {
+-	*freeze = *Dump;
+-	*thaw   = *Load;
+-}
+-
+-sub DumpFile {
+-	my $file = shift;
+-	ExtUtils::MakeMaker::YAML->new(@_)->write($file);
+-}
+-
+-sub LoadFile {
+-	my $self = ExtUtils::MakeMaker::YAML->read($_[0]);
+-	unless ( $self ) {
+-		Carp::croak("Failed to load YAML document from '" . ($_[0] || '') . "'");
+-	}
+-	if ( wantarray ) {
+-		return @$self;
+-	} else {
+-		# Return only the last document to match YAML.pm, 
+-		return $self->[-1];
+-	}
+-}
+-
+-
+-
+-
+-
+-#####################################################################
+-# Use Scalar::Util if possible, otherwise emulate it
+-
+-BEGIN {
+-	eval {
+-		require Scalar::Util;
+-		*refaddr = *Scalar::Util::refaddr;
+-	};
+-	eval <<'END_PERL' if $@;
+-# Failed to load Scalar::Util	
+-sub refaddr {
+-	my $pkg = ref($_[0]) or return undef;
+-	if (!!UNIVERSAL::can($_[0], 'can')) {
+-		bless $_[0], 'Scalar::Util::Fake';
+-	} else {
+-		$pkg = undef;
+-	}
+-	"$_[0]" =~ /0x(\w+)/;
+-	my $i = do { local $^W; hex $1 };
+-	bless $_[0], $pkg if defined $pkg;
+-	$i;
+-}
+-END_PERL
+-
+-}
+-
+-1;
+-
+-__END__
+-
+-=pod
+-
+-=head1 NAME
+-
+-ExtUtils::MakeMaker::YAML - clone of YAML::Tiny
+-
+-=head1 SYNOPSIS
+-
+-See L<YAML::Tiny>
+-
+-=head1 AUTHOR
+-
+-Adam Kennedy E<lt>adamk@cpan.orgE<gt>
+-
+-=head1 SEE ALSO
+-
+-L<YAML>, L<YAML::Syck>
+-
+-=head1 COPYRIGHT
+-
+-Copyright 2006 - 2010 Adam Kennedy.
+-
+-This program is free software; you can redistribute
+-it and/or modify it under the same terms as Perl itself.
+-
+-=cut
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MakeMaker.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MakeMaker.pm	2011-06-16 14:40:50.643181003 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -7,7 +7,7 @@
+ 
+ require Exporter;
+ use ExtUtils::MakeMaker::Config;
+-use Carp ();
++use Carp;
+ use File::Path;
+ 
+ our $Verbose = 0;       # exported
+@@ -18,7 +18,8 @@
+ my @Prepend_parent;
+ my %Recognized_Att_Keys;
+ 
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
++$VERSION = eval $VERSION;
+ 
+ # Emulate something resembling CVS $Revision$
+ (our $Revision = $VERSION) =~ s{_}{};
+@@ -47,13 +48,13 @@
+ 
+ 
+ sub WriteMakefile {
+-    Carp::croak "WriteMakefile: Need even number of args" if @_ % 2;
++    croak "WriteMakefile: Need even number of args" if @_ % 2;
+ 
+     require ExtUtils::MY;
+     my %att = @_;
+ 
+     _convert_compat_attrs(\%att);
+-
++    
+     _verify_att(\%att);
+ 
+     my $mm = MM->new(\%att);
+@@ -114,7 +115,7 @@
+ @Att_Sigs{keys %Recognized_Att_Keys} = ('') x keys %Recognized_Att_Keys;
+ @Att_Sigs{keys %Special_Sigs} = values %Special_Sigs;
+ 
+-sub _convert_compat_attrs {
++sub _convert_compat_attrs { #result of running several times should be same
+     my($att) = @_;
+     if (exists $att->{AUTHOR}) {
+         if ($att->{AUTHOR}) {
+@@ -176,7 +177,7 @@
+ 
+ sub prompt ($;$) {  ## no critic
+     my($mess, $def) = @_;
+-    Carp::confess("prompt function called without an argument") 
++    confess("prompt function called without an argument") 
+         unless defined $mess;
+ 
+     my $isa_tty = -t STDIN && (-t STDOUT || !(-f STDOUT || -c STDOUT)) ;
+@@ -224,7 +225,7 @@
+ 
+ sub eval_in_x {
+     my($self,$dir) = @_;
+-    chdir $dir or Carp::carp("Couldn't change to directory $dir: $!");
++    chdir $dir or carp("Couldn't change to directory $dir: $!");
+ 
+     {
+         package main;
+@@ -278,7 +279,7 @@
+     PERL_SRC PERM_DIR PERM_RW PERM_RWX
+     PL_FILES PM PM_FILTER PMLIBDIRS PMLIBPARENTDIRS POLLUTE PPM_INSTALL_EXEC
+     PPM_INSTALL_SCRIPT PREREQ_FATAL PREREQ_PM PREREQ_PRINT PRINT_PREREQ
+-    SIGN SKIP TYPEMAPS USE_MM_LD_RUN_PATH VERSION VERSION_FROM XS XSOPT XSPROTOARG
++    SIGN SKIP TYPEMAPS VERSION VERSION_FROM XS XSOPT XSPROTOARG
+     XS_VERSION clean depend dist dynamic_lib linkext macro realclean
+     tool_autosplit
+ 
+@@ -401,6 +402,8 @@
+     my($class,$self) = @_;
+     my($key);
+ 
++    _convert_compat_attrs($self) if defined $self && $self;
++
+     # Store the original args passed to WriteMakefile()
+     foreach my $k (keys %$self) {
+         $self->{ARGS}{$k} = $self->{$k};
+@@ -408,13 +411,17 @@
+ 
+     $self = {} unless defined $self;
+ 
+-    $self->{PREREQ_PM}      ||= {};
+-    $self->{BUILD_REQUIRES} ||= {};
+-
+     # Temporarily bless it into MM so it can be used as an
+     # object.  It will be blessed into a temp package later.
+     bless $self, "MM";
+ 
++    # Cleanup all the module requirement bits
++    for my $key (qw(PREREQ_PM BUILD_REQUIRES CONFIGURE_REQUIRES)) {
++        $self->{$key}      ||= {};
++        $self->clean_versions( $key );
++    }
++
++
+     if ("@ARGV" =~ /\bPREREQ_PRINT\b/) {
+         $self->_PREREQ_PRINT;
+     }
+@@ -422,27 +429,7 @@
+     # PRINT_PREREQ is RedHatism.
+     if ("@ARGV" =~ /\bPRINT_PREREQ\b/) {
+         $self->_PRINT_PREREQ;
+-    }
+-
+-    # USE_MM_LD_RUN_PATH - another RedHatism to disable automatic RPATH generation
+-    if ( ( ! $self->{USE_MM_LD_RUN_PATH} )
+-       &&( ("@ARGV" =~ /\bUSE_MM_LD_RUN_PATH(=([01]))?\b/)
+-        ||( exists( $ENV{USE_MM_LD_RUN_PATH} )
+-           &&( $ENV{USE_MM_LD_RUN_PATH} =~ /([01])?$/ )
+-           )
+-        )
+-       )
+-    {
+-       my $v = $1;
+-       if( $v )
+-       {
+-           $v = ($v=~/=([01])$/)[0];
+-       }else
+-       {
+-           $v = 1;
+-       };
+-       $self->{USE_MM_LD_RUN_PATH}=$v;
+-    };
++   }
+ 
+     print STDOUT "MakeMaker (v$VERSION)\n" if $Verbose;
+     if (-f "MANIFEST" && ! -f "Makefile" && ! $ENV{PERL_CORE}){
+@@ -466,7 +453,7 @@
+     };
+     if (!$perl_version_ok) {
+         if (!defined $perl_version_ok) {
+-            warn <<'END';
++            die <<'END';
+ Warning: MIN_PERL_VERSION is not in a recognized format.
+ Recommended is a quoted numerical value like '5.005' or '5.008001'.
+ END
+@@ -535,13 +522,13 @@
+             _convert_compat_attrs(\%configure_att);
+             $self = { %$self, %configure_att };
+         } else {
+-            Carp::croak "Attribute 'CONFIGURE' to WriteMakefile() not a code reference\n";
++            croak "Attribute 'CONFIGURE' to WriteMakefile() not a code reference\n";
+         }
+     }
+ 
+     # This is for old Makefiles written pre 5.00, will go away
+     if ( Carp::longmess("") =~ /runsubdirpl/s ){
+-        Carp::carp("WARNING: Please rerun 'perl Makefile.PL' to regenerate your Makefiles\n");
++        carp("WARNING: Please rerun 'perl Makefile.PL' to regenerate your Makefiles\n");
+     }
+ 
+     my $newclass = ++$PACKNAME;
+@@ -712,11 +699,11 @@
+ }
+ 
+ sub WriteEmptyMakefile {
+-    Carp::croak "WriteEmptyMakefile: Need an even number of args" if @_ % 2;
++    croak "WriteEmptyMakefile: Need an even number of args" if @_ % 2;
+ 
+     my %att = @_;
+     my $self = MM->new(\%att);
+-    
++
+     my $new = $self->{MAKEFILE};
+     my $old = $self->{MAKEFILE_OLD};
+     if (-f $old) {
+@@ -1049,9 +1036,10 @@
+ 
+     unless ($self->{NO_MYMETA}) {
+         # Write MYMETA.yml to communicate metadata up to the CPAN clients
+-        print STDOUT "Writing MYMETA.yml\n";
++        if ( $self->write_mymeta( $self->mymeta ) ) {;
++            print STDOUT "Writing MYMETA.yml and MYMETA.json\n";
++        }
+ 
+-        $self->write_mymeta( $self->mymeta );
+     }
+     my %keep = map { ($_ => 1) } qw(NEEDS_LINKING HAS_LINK_CODE);
+     if ($self->{PARENT} && !$self->{_KEEP_AFTER_FLUSH}) {
+@@ -1123,6 +1111,22 @@
+     return "{ ".join(', ',@m)." }";
+ }
+ 
++# Look for weird version numbers, warn about them and set them to 0
++# before CPAN::Meta chokes.
++sub clean_versions {
++    my($self, $key) = @_;
++
++    my $reqs = $self->{$key};
++    for my $module (keys %$reqs) {
++        my $version = $reqs->{$module};
++
++        if( !defined $version or $version !~ /^[\d_\.]+$/ ) {
++            carp "Unparsable version '$version' for prerequisite $module";
++            $reqs->{$module} = 0;
++        }
++    }
++}
++
+ sub selfdocument {
+     my($self) = @_;
+     my(@m);
+@@ -1511,8 +1515,8 @@
+ =item AUTHOR
+ 
+ Array of strings containing name (and email address) of package author(s).
+-Is used in META.yml and PPD (Perl Package Description) files for PPM (Perl
+-Package Manager).
++Is used in CPAN Meta files (META.yml or META.json) and PPD
++(Perl Package Description) files for PPM (Perl Package Manager).
+ 
+ =item BINARY_LOCATION
+ 
+@@ -1529,7 +1533,8 @@
+ 
+ A hash of modules that are needed to build your module but not run it.
+ 
+-This will go into the C<build_requires> field of your F<META.yml>.
++This will go into the C<build_requires> field of your CPAN Meta file.
++(F<META.yml> or F<META.json>).
+ 
+ The format is the same as PREREQ_PM.
+ 
+@@ -1576,7 +1581,8 @@
+ A hash of modules that are required to run Makefile.PL itself, but not
+ to run your distribution.
+ 
+-This will go into the C<configure_requires> field of your F<META.yml>.
++This will go into the C<configure_requires> field of your CPAN Meta file
++(F<META.yml> or F<META.json>)
+ 
+ Defaults to C<<< { "ExtUtils::MakeMaker" => 0 } >>>
+ 
+@@ -1983,7 +1989,8 @@
+ 
+ =item META_MERGE
+ 
+-A hashrefs of items to add to the F<META.yml>.
++A hashrefs of items to add to the CPAN Meta file (F<META.yml> or
++F<META.json>).
+ 
+ They differ in how they behave if they have the same key as the
+ default metadata.  META_ADD will override the default value with its
+@@ -2032,14 +2039,14 @@
+ =item NO_META
+ 
+ When true, suppresses the generation and addition to the MANIFEST of
+-the META.yml module meta-data file during 'make distdir'.
++the META.yml and META.json module meta-data files during 'make distdir'.
+ 
+ Defaults to false.
+ 
+ =item NO_MYMETA
+ 
+-When true, suppresses the generation of MYMETA.yml module meta-data file
+-during 'perl Makefile.PL'.
++When true, suppresses the generation of MYMETA.yml and MYMETA.json module
++meta-data files during 'perl Makefile.PL'.
+ 
+ Defaults to false.
+ 
+@@ -2296,7 +2303,8 @@
+ the module names ie. Test::More, and the minimum version is the
+ value. If the required version number is 0 any version will do.
+ 
+-This will go into the C<requires> field of your F<META.yml>.
++This will go into the C<requires> field of your CPAN Meta file
++(F<META.yml> or F<META.json>).
+ 
+     PREREQ_PM => {
+         # Require Test::More at least 0.47
+@@ -2372,40 +2380,6 @@
+ precedence, even if it isn't listed in TYPEMAPS.  The default system
+ typemap has lowest precedence.
+ 
+-=item USE_MM_LD_RUN_PATH
+-
+-boolean
+-The Fedora perl MakeMaker distribution differs from the standard
+-upstream release in that it disables use of the MakeMaker generated
+-LD_RUN_PATH by default, UNLESS this attribute is specified , or the
+-USE_MM_LD_RUN_PATH environment variable is set during the MakeMaker run.
+-
+-The upstream MakeMaker will set the ld(1) environment variable LD_RUN_PATH
+-to the concatenation of every -L ld(1) option directory in which a -l ld(1)
+-option library is found, which is used as the ld(1) -rpath option if none
+-is specified. This means that, if your application builds shared libraries
+-and your MakeMaker application links to them, that the absolute paths of the
+-libraries in the build tree will be inserted into the RPATH header of all
+-MakeMaker generated binaries, and that such binaries will be unable to link
+-to these libraries if they do not still reside in the build tree directories
+-(unlikely) or in the system library directories (/lib or /usr/lib), regardless
+-of any LD_LIBRARY_PATH setting. So if you specified -L../mylib -lmylib , and
+- your 'libmylib.so' gets installed into /some_directory_other_than_usr_lib,
+- your MakeMaker application will be unable to link to it, even if LD_LIBRARY_PATH
+-is set to include /some_directory_other_than_usr_lib, because RPATH overrides
+-LD_LIBRARY_PATH.
+-
+-So for Fedora MakeMaker builds LD_RUN_PATH is NOT generated by default for
+-every link. You can still use explicit -rpath ld options or the LD_RUN_PATH
+-environment variable during the build to generate an RPATH for the binaries.
+-
+-You can set the USE_MM_LD_RUN_PATH attribute to 1 on the MakeMaker command
+-line or in the WriteMakefile arguments to enable generation of LD_RUN_PATH
+-for every link command.
+-
+-USE_MM_LD_RUN_PATH will default to 1 (LD_RUN_PATH will be used) IF the
+-$USE_MM_LD_RUN_PATH environment variable is set during a MakeMaker run.
+-
+ =item VENDORPREFIX
+ 
+ Like PERLPREFIX, but only for the vendor install locations.
+@@ -2695,8 +2669,8 @@
+ directory with the name C<$(DISTNAME)-$(VERSION)>. If that directory
+ exists, it will be removed first.
+ 
+-Additionally, it will create a META.yml module meta-data file in the
+-distdir and add this to the distdir's MANIFEST.  You can shut this
++Additionally, it will create META.yml and META.json module meta-data file
++in the distdir and add this to the distdir's MANIFEST.  You can shut this
+ behavior off with the NO_META flag.
+ 
+ =item   make disttest
+@@ -2770,26 +2744,37 @@
+     );
+ 
+ 
+-=head2 Module Meta-Data
++=head2 Module Meta-Data (META and MYMETA)
+ 
+ Long plaguing users of MakeMaker based modules has been the problem of
+ getting basic information about the module out of the sources
+ I<without> running the F<Makefile.PL> and doing a bunch of messy
+-heuristics on the resulting F<Makefile>.  To this end a simple module
+-meta-data file has been introduced, F<META.yml>.
+-
+-F<META.yml> is a YAML document (see http://www.yaml.org) containing
+-basic information about the module (name, version, prerequisites...)
+-in an easy to read format.  The format is developed and defined by the
+-Module::Build developers (see 
+-http://module-build.sourceforge.net/META-spec.html)
+-
+-MakeMaker will automatically generate a F<META.yml> file for you and
+-add it to your F<MANIFEST> as part of the 'distdir' target (and thus
+-the 'dist' target).  This is intended to seamlessly and rapidly
+-populate CPAN with module meta-data.  If you wish to shut this feature
+-off, set the C<NO_META> C<WriteMakefile()> flag to true.
+-
++heuristics on the resulting F<Makefile>.  Over the years, it has become
++standard to keep this information in one or more CPAN Meta files
++distributed with each distribution.
++
++The original format of CPAN Meta files was L<YAML> and the corresponding
++file was called F<META.yml>.  In 2010, version 2 of the L<CPAN::Meta::Spec>
++was released, which mandates JSON format for the metadata in order to
++overcome certain compatibility issues between YAML serializers and to
++avoid breaking older clients unable to handle a new version of the spec.
++The L<CPAN::Meta> library is now standard for accessing old and new-style
++Meta files.
++
++If L<CPAN::Meta> is installed, MakeMaker will automatically generate
++F<META.json> and F<META.yml> files for you and add them to your F<MANIFEST> as
++part of the 'distdir' target (and thus the 'dist' target).  This is intended to
++seamlessly and rapidly populate CPAN with module meta-data.  If you wish to
++shut this feature off, set the C<NO_META> C<WriteMakefile()> flag to true.
++
++At the 2008 QA Hackathon in Oslo, Perl module toolchain maintainers agrees
++to use the CPAN Meta format to communicate post-configuration requirements
++between toolchain components.  These files, F<MYMETA.json> and F<MYMETA.yml>,
++are generated when F<Makefile.PL> generates a F<Makefile> (if L<CPAN::Meta>
++is installed).  Clients like L<CPAN> or L<CPANPLUS> will read this
++files to see what prerequisites must be fulfilled before building or testing
++the distribution.  If you with to shut this feature off, set the C<NO_MYMETA>
++C<WriteMakeFile()> flag to true.
+ 
+ =head2 Disabling an extension
+ 
+@@ -2866,6 +2851,8 @@
+ L<ExtUtils::ModuleMaker> and L<Module::Starter> are both modules to
+ help you setup your distribution.
+ 
++L<CPAN::Meta> and L<CPAN::Meta::Spec> explain CPAN Meta files in detail.
++
+ =head1 AUTHORS
+ 
+ Andy Dougherty C<doughera@lafayette.edu>, Andreas KE<ouml>nig
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/Mkbootstrap.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/Mkbootstrap.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/Mkbootstrap.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/Mkbootstrap.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -3,7 +3,7 @@
+ # There's just too much Dynaloader incest here to turn on strict vars.
+ use strict 'refs';
+ 
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
+ 
+ require Exporter;
+ our @ISA = ('Exporter');
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/Mksymlists.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/Mksymlists.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/Mksymlists.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/Mksymlists.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -10,7 +10,7 @@
+ 
+ our @ISA = qw(Exporter);
+ our @EXPORT = qw(&Mksymlists);
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
+ 
+ sub Mksymlists {
+     my(%spec) = @_;
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_AIX.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_AIX.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_AIX.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_AIX.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -1,7 +1,7 @@
+ package ExtUtils::MM_AIX;
+ 
+ use strict;
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
+ 
+ require ExtUtils::MM_Unix;
+ our @ISA = qw(ExtUtils::MM_Unix);
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_Any.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Any.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_Any.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Any.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -1,7 +1,7 @@
+ package ExtUtils::MM_Any;
+ 
+ use strict;
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
+ 
+ use Carp;
+ use File::Spec;
+@@ -486,8 +486,8 @@
+                         split /\s+/, $attribs{FILES}   ;
+     }
+ 
+-    push(@files, qw[$(MAKE_APERL_FILE)
+-                    MYMETA.yml perlmain.c tmon.out mon.out so_locations
++    push(@files, qw[$(MAKE_APERL_FILE) 
++                    MYMETA.json MYMETA.yml perlmain.c tmon.out mon.out so_locations
+                     blibdirs.ts pm_to_blib pm_to_blib.ts
+                     *$(OBJ_EXT) *$(LIB_EXT) perl.exe perl perl$(EXE_EXT)
+                     $(BOOTSTRAP) $(BASEEXT).bso
+@@ -728,6 +728,13 @@
+     return $manify;
+ }
+ 
++sub _has_cpan_meta {
++    return eval {
++      $INC{'CPAN/Meta.pm'} or require CPAN::Meta;
++      CPAN::Meta->VERSION(2.110350);
++      1;
++    };
++}
+ 
+ =head3 metafile_target
+ 
+@@ -743,28 +750,106 @@
+ 
+ sub metafile_target {
+     my $self = shift;
+-
+-    return <<'MAKE_FRAG' if $self->{NO_META};
++    return <<'MAKE_FRAG' if $self->{NO_META} or ! _has_cpan_meta();
+ metafile :
+ 	$(NOECHO) $(NOOP)
+ MAKE_FRAG
+ 
+-    my @metadata   = $self->metafile_data(
++    my %metadata   = $self->metafile_data(
+         $self->{META_ADD}   || {},
+         $self->{META_MERGE} || {},
+     );
+-    my $meta       = $self->metafile_file(@metadata);
+-    my @write_meta = $self->echo($meta, 'META_new.yml');
++    
++    _fix_metadata_before_conversion( \%metadata );
++
++    # paper over validation issues, but still complain, necessary because
++    # there's no guarantee that the above will fix ALL errors
++    my $meta = eval { CPAN::Meta->create( \%metadata, { lazy_validation => 1 } ) };
++    warn $@ if $@ and 
++               $@ !~ /encountered CODE.*, but JSON can only represent references to arrays or hashes/;
++
++    # use the original metadata straight if the conversion failed
++    # or if it can't be stringified.
++    if( !$meta                                                  ||
++        !eval { $meta->as_string( { version => "1.4" } ) }      ||
++        !eval { $meta->as_string }
++    )
++    {
++        $meta = bless \%metadata, 'CPAN::Meta';
++    }
+ 
+-    return sprintf <<'MAKE_FRAG', join("\n\t", @write_meta);
++    my @write_metayml = $self->echo(
++      $meta->as_string({version => "1.4"}), 'META_new.yml'
++    );
++    my @write_metajson = $self->echo(
++      $meta->as_string(), 'META_new.json'
++    );
++
++    my $metayml = join("\n\t", @write_metayml);
++    my $metajson = join("\n\t", @write_metajson);
++    return sprintf <<'MAKE_FRAG', $metayml, $metajson;
+ metafile : create_distdir
+ 	$(NOECHO) $(ECHO) Generating META.yml
+ 	%s
+ 	-$(NOECHO) $(MV) META_new.yml $(DISTVNAME)/META.yml
++	$(NOECHO) $(ECHO) Generating META.json
++	%s
++	-$(NOECHO) $(MV) META_new.json $(DISTVNAME)/META.json
+ MAKE_FRAG
+ 
+ }
+ 
++=begin private
++
++=head3 _fix_metadata_before_conversion
++
++    _fix_metadata_before_conversion( \%metadata );
++
++Fixes errors in the metadata before it's handed off to CPAN::Meta for
++conversion. This hopefully results in something that can be used further
++on, no guarantee is made though.
++
++=end private
++
++=cut
++
++sub _fix_metadata_before_conversion {
++    my ( $metadata ) = @_;
++
++    my $bad_version = $metadata->{version} &&
++                      !CPAN::Meta::Validator->new->version( 'version', $metadata->{version} );
++
++    # just delete all invalid versions
++    if( $bad_version ) {
++        warn "Can't parse version '$metadata->{version}'\n";
++        $metadata->{version} = '';
++    }
++
++    my $validator = CPAN::Meta::Validator->new( $metadata );
++    return if $validator->is_valid;
++
++    # fix non-camelcase custom resource keys (only other trick we know)
++    for my $error ( $validator->errors ) {
++        my ( $key ) = ( $error =~ /Custom resource '(.*)' must be in CamelCase./ );
++        next if !$key;
++
++        # first try to remove all non-alphabetic chars
++        ( my $new_key = $key ) =~ s/[^_a-zA-Z]//g;
++
++        # if that doesn't work, uppercase first one
++        $new_key = ucfirst $new_key if !$validator->custom_1( $new_key );
++
++        # copy to new key if that worked
++        $metadata->{resources}{$new_key} = $metadata->{resources}{$key}
++          if $validator->custom_1( $new_key );
++
++        # and delete old one in any case
++        delete $metadata->{resources}{$key};
++    }
++
++    return;
++}
++
+ 
+ =begin private
+ 
+@@ -816,57 +901,16 @@
+     my $self = shift;
+     my($meta_add, $meta_merge) = @_;
+ 
+-    # The order in which standard meta keys should be written.
+-    my @meta_order = qw(
+-        name
+-        version
+-        abstract
+-        author
+-        license
+-        distribution_type
+-
+-        configure_requires
+-        build_requires
+-        requires
+-
+-        resources
+-
+-        provides
+-        no_index
+-
+-        generated_by
+-        meta-spec
+-    );
+-
+-    # Check the original args so we can tell between the user setting it
+-    # to an empty hash and it just being initialized.
+-    my $configure_requires;
+-    if( $self->{ARGS}{CONFIGURE_REQUIRES} ) {
+-        $configure_requires = $self->{CONFIGURE_REQUIRES};
+-    } else {
+-        $configure_requires = {
+-            'ExtUtils::MakeMaker'       => 0,
+-        };
+-    }
+-    my $build_requires;
+-    if( $self->{ARGS}{BUILD_REQUIRES} ) {
+-        $build_requires = $self->{BUILD_REQUIRES};
+-    } else {
+-        $build_requires = {
+-            'ExtUtils::MakeMaker'       => 0,
+-        };
+-    }
+-
+     my %meta = (
++        # required
+         name         => $self->{DISTNAME},
+-        version      => $self->{VERSION},
+-        abstract     => $self->{ABSTRACT},
++        version      => _normalize_version($self->{VERSION}),
++        abstract     => $self->{ABSTRACT} || 'unknown',
+         license      => $self->{LICENSE} || 'unknown',
+-        distribution_type => $self->{PM} ? 'module' : 'script',
+-
+-        configure_requires => $configure_requires,
++        dynamic_config => 1,
+ 
+-        build_requires => $build_requires,
++        # optional
++        distribution_type => $self->{PM} ? 'module' : 'script',
+ 
+         no_index     => {
+             directory   => [qw(t inc)]
+@@ -882,8 +926,18 @@
+     # The author key is required and it takes a list.
+     $meta{author}   = defined $self->{AUTHOR}    ? $self->{AUTHOR} : [];
+ 
+-    $meta{requires} = $self->{PREREQ_PM} if defined $self->{PREREQ_PM};
+-    $meta{requires}{perl} = $self->{MIN_PERL_VERSION} if $self->{MIN_PERL_VERSION};
++    # Check the original args so we can tell between the user setting it
++    # to an empty hash and it just being initialized.
++    if( $self->{ARGS}{CONFIGURE_REQUIRES} ) {
++        $meta{configure_requires}
++            = _normalize_prereqs($self->{CONFIGURE_REQUIRES});
++    } else {
++        $meta{configure_requires} = {
++            'ExtUtils::MakeMaker'       => 0,
++        };
++    }
++
++    %meta = $self->_add_requirements_to_meta( %meta );
+ 
+     while( my($key, $val) = each %$meta_add ) {
+         $meta{$key} = $val;
+@@ -893,25 +947,63 @@
+         $self->_hash_merge(\%meta, $key, $val);
+     }
+ 
+-    my @meta_pairs;
++    return %meta;
++}
+ 
+-    # Put the standard keys first in the proper order.
+-    for my $key (@meta_order) {
+-        next unless exists $meta{$key};
+ 
+-        push @meta_pairs, $key, delete $meta{$key};
+-    }
++=begin private
++
++=cut
++
++sub _add_requirements_to_meta {
++    my ( $self, %meta ) = @_;
+ 
+-    # Then tack everything else onto the end, alpha sorted.
+-    for my $key (sort {lc $a cmp lc $b} keys %meta) {
+-        push @meta_pairs, $key, $meta{$key};
++    # Check the original args so we can tell between the user setting it
++    # to an empty hash and it just being initialized.
++
++    if( $self->{ARGS}{BUILD_REQUIRES} ) {
++        $meta{build_requires} = _normalize_prereqs($self->{BUILD_REQUIRES});
++    } else {
++        $meta{build_requires} = {
++            'ExtUtils::MakeMaker'       => 0,
++        };
+     }
+ 
+-    return @meta_pairs
++    $meta{requires} = _normalize_prereqs($self->{PREREQ_PM})
++        if defined $self->{PREREQ_PM};
++    $meta{requires}{perl} = _normalize_version($self->{MIN_PERL_VERSION})
++        if $self->{MIN_PERL_VERSION};
++
++    return %meta;
++}
++
++sub _normalize_prereqs {
++  my ($hash) = @_;
++  my %prereqs;
++  while ( my ($k,$v) = each %$hash ) {
++    $prereqs{$k} = _normalize_version($v);
++  }
++  return \%prereqs;
++}
++
++# Adapted from Module::Build::Base
++sub _normalize_version {
++  my ($version) = @_;
++  $version = 0 unless defined $version;
++
++  if ( ref $version eq 'version' ) { # version objects
++    $version = $version->is_qv ? $version->normal : $version->stringify;
++  }
++  elsif ( $version =~ /^[^v][^.]*\.[^.]+\./ ) { # no leading v, multiple dots
++    # normalize string tuples without "v": "1.2.3" -> "v1.2.3"
++    $version = "v$version";
++  }
++  else {
++    # leave alone
++  }
++  return $version;
+ }
+ 
+-=begin private
+-
+ =head3 _dump_hash
+ 
+     $yaml = _dump_hash(\%options, %hash);
+@@ -1069,16 +1161,25 @@
+ sub distmeta_target {
+     my $self = shift;
+ 
+-    my $add_meta = $self->oneliner(<<'CODE', ['-MExtUtils::Manifest=maniadd']);
+-eval { maniadd({q{META.yml} => q{Module meta-data (added by MakeMaker)}}) } 
++    my @add_meta = (
++      $self->oneliner(<<'CODE', ['-MExtUtils::Manifest=maniadd']),
++exit unless -e q{META.yml};
++eval { maniadd({q{META.yml} => q{Module YAML meta-data (added by MakeMaker)}}) }
+     or print "Could not add META.yml to MANIFEST: $${'@'}\n"
+ CODE
++      $self->oneliner(<<'CODE', ['-MExtUtils::Manifest=maniadd'])
++exit unless -f q{META.json};
++eval { maniadd({q{META.json} => q{Module JSON meta-data (added by MakeMaker)}}) }
++    or print "Could not add META.json to MANIFEST: $${'@'}\n"
++CODE
++    );
+ 
+-    my $add_meta_to_distdir = $self->cd('$(DISTVNAME)', $add_meta);
++    my @add_meta_to_distdir = map { $self->cd('$(DISTVNAME)', $_) } @add_meta;
+ 
+-    return sprintf <<'MAKE', $add_meta_to_distdir;
++    return sprintf <<'MAKE', @add_meta_to_distdir;
+ distmeta : create_distdir metafile
+ 	$(NOECHO) %s
++	$(NOECHO) %s
+ 
+ MAKE
+ 
+@@ -1096,12 +1197,9 @@
+ 
+ sub mymeta {
+     my $self = shift;
++    my $file = shift || ''; # for testing
+ 
+-    my $mymeta;
+-
+-    if ( -e 'META.yml' ) {
+-        $mymeta = $self->_mymeta_from_meta();
+-    }
++    my $mymeta = $self->_mymeta_from_meta($file);
+ 
+     unless ( $mymeta ) {
+         my @metadata = $self->metafile_data(
+@@ -1111,6 +1209,10 @@
+         $mymeta = {@metadata};
+     }
+ 
++    # Overwrite the non-configure dependency hashes
++
++    $mymeta = { $self->_add_requirements_to_meta( %$mymeta ) };
++
+     $mymeta->{dynamic_config} = 0;
+ 
+     return $mymeta;
+@@ -1119,14 +1221,20 @@
+ 
+ sub _mymeta_from_meta {
+     my $self = shift;
++    my $metafile = shift || ''; # for testing
++
++    return unless _has_cpan_meta();
+ 
+     my $meta;
+-    eval {
+-        my @yaml = ExtUtils::MakeMaker::YAML::LoadFile('META.yml');
+-        $meta = $yaml[0];
+-    };
++    for my $file ( $metafile, "META.json", "META.yml" ) {
++      next unless -e $file;
++      eval {
++          $meta = CPAN::Meta->load_file($file)->as_struct( {version => "1.4"} );
++      };
++      last if $meta;
++    }
+     return undef unless $meta;
+-
++    
+     # META.yml before 6.25_01 cannot be trusted.  META.yml lived in the source directory.
+     # There was a good chance the author accidentally uploaded a stale META.yml if they
+     # rolled their own tarball rather than using "make dist".
+@@ -1138,20 +1246,9 @@
+         }
+     }
+ 
+-    # Overwrite the non-configure dependency hashs
+-    delete $meta->{requires};
+-    delete $meta->{build_requires};
+-    delete $meta->{recommends};
+-    if ( exists $self->{PREREQ_PM} ) {
+-        $meta->{requires} = $self->{PREREQ_PM} || {};
+-    }
+-    if ( exists $self->{BUILD_REQUIRES} ) {
+-        $meta->{build_requires} = $self->{BUILD_REQUIRES} || {};
+-    }
+     return $meta;
+ }
+ 
+-
+ =head3 write_mymeta
+ 
+     $self->write_mymeta( $mymeta );
+@@ -1166,18 +1263,19 @@
+     my $self = shift;
+     my $mymeta = shift;
+ 
+-    require ExtUtils::MakeMaker::YAML;
+-    my $mymeta_content = ExtUtils::MakeMaker::YAML::Dump($mymeta);
++    return unless _has_cpan_meta();
+ 
+-    open(my $myfh, ">", "MYMETA.yml")
+-      or die "Unable to open MYMETA.yml: $!";
+-    print $myfh $mymeta_content;
+-    close $myfh;
+-
+-    return;
++    _fix_metadata_before_conversion( $mymeta );
++    
++    # this can still blow up
++    # not sure if i should just eval this and skip file creation if it
++    # blows up
++    my $meta_obj = CPAN::Meta->new( $mymeta, { lazy_validation => 1 } );
++    $meta_obj->save( 'MYMETA.json' );
++    $meta_obj->save( 'MYMETA.yml', { version => "1.4" } );
++    return 1;
+ }
+ 
+-
+ =head3 realclean (o)
+ 
+ Defines the realclean target.
+@@ -1398,7 +1496,7 @@
+     # perl has been built and installed. Setting INST_LIB allows
+     # you to build directly into, say $Config{privlibexp}.
+     unless ($self->{INST_LIB}){
+-	if ($self->{PERL_CORE}) {
++        if ($self->{PERL_CORE}) {
+             if (defined $Cross::platform) {
+                 $self->{INST_LIB} = $self->{INST_ARCHLIB} = 
+                   $self->catdir($self->{PERL_LIB},"..","xlib",
+@@ -1407,9 +1505,9 @@
+             else {
+                 $self->{INST_LIB} = $self->{INST_ARCHLIB} = $self->{PERL_LIB};
+             }
+-	} else {
+-	    $self->{INST_LIB} = $self->catdir($Curdir,"blib","lib");
+-	}
++        } else {
++            $self->{INST_LIB} = $self->catdir($Curdir,"blib","lib");
++        }
+     }
+ 
+     my @parentdir = split(/::/, $self->{PARENT_NAME});
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_BeOS.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_BeOS.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_BeOS.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_BeOS.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -26,7 +26,7 @@
+ require ExtUtils::MM_Unix;
+ 
+ our @ISA = qw( ExtUtils::MM_Any ExtUtils::MM_Unix );
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
+ 
+ 
+ =item os_flavor
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_Cygwin.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Cygwin.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_Cygwin.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Cygwin.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -9,7 +9,7 @@
+ require ExtUtils::MM_Win32;
+ our @ISA = qw( ExtUtils::MM_Unix );
+ 
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
+ 
+ 
+ =head1 NAME
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_Darwin.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Darwin.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_Darwin.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Darwin.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -7,7 +7,7 @@
+     our @ISA = qw( ExtUtils::MM_Unix );
+ }
+ 
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
+ 
+ 
+ =head1 NAME
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_DOS.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_DOS.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_DOS.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_DOS.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ 
+-our $VERSION = 6.57_05;
++our $VERSION = '6.57_11';
+ 
+ require ExtUtils::MM_Any;
+ require ExtUtils::MM_Unix;
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_MacOS.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_MacOS.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_MacOS.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_MacOS.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ 
+-our $VERSION = 6.57_05;
++our $VERSION = '6.57_11';
+ 
+ sub new {
+     die <<'UNSUPPORTED';
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_NW5.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_NW5.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_NW5.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_NW5.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -22,7 +22,7 @@
+ use ExtUtils::MakeMaker::Config;
+ use File::Basename;
+ 
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
+ 
+ require ExtUtils::MM_Win32;
+ our @ISA = qw(ExtUtils::MM_Win32);
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_OS2.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_OS2.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_OS2.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_OS2.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -5,7 +5,7 @@
+ use ExtUtils::MakeMaker qw(neatvalue);
+ use File::Spec;
+ 
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
+ 
+ require ExtUtils::MM_Any;
+ require ExtUtils::MM_Unix;
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -3,7 +3,7 @@
+ use strict;
+ use ExtUtils::MakeMaker::Config;
+ 
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
+ 
+ require ExtUtils::Liblist;
+ require ExtUtils::MakeMaker;
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_QNX.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_QNX.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_QNX.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_QNX.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -1,7 +1,7 @@
+ package ExtUtils::MM_QNX;
+ 
+ use strict;
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
+ 
+ require ExtUtils::MM_Unix;
+ our @ISA = qw(ExtUtils::MM_Unix);
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_Unix.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Unix.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_Unix.pm	2011-06-16 14:40:50.808180180 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Unix.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -15,7 +15,8 @@
+ 
+ # If we make $VERSION an our variable parse_version() breaks
+ use vars qw($VERSION);
+-$VERSION = '6.57_05';
++$VERSION = '6.57_11';
++$VERSION = eval $VERSION;
+ 
+ require ExtUtils::MM_Any;
+ our @ISA = qw(ExtUtils::MM_Any);
+@@ -944,7 +945,7 @@
+     }
+ 
+     my $ld_run_path_shell = "";
+-    if (($self->{LD_RUN_PATH} ne "") && ($self->{USE_MM_LD_RUN_PATH})) {
++    if ($self->{LD_RUN_PATH} ne "") {
+ 	$ld_run_path_shell = 'LD_RUN_PATH="$(LD_RUN_PATH)" ';
+     }
+ 
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_UWIN.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_UWIN.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_UWIN.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_UWIN.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -1,7 +1,7 @@
+ package ExtUtils::MM_UWIN;
+ 
+ use strict;
+-our $VERSION = 6.57_05;
++our $VERSION = '6.57_11';
+ 
+ require ExtUtils::MM_Unix;
+ our @ISA = qw(ExtUtils::MM_Unix);
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_VMS.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_VMS.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_VMS.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_VMS.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -15,7 +15,7 @@
+ 
+ use File::Basename;
+ 
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
+ 
+ require ExtUtils::MM_Any;
+ require ExtUtils::MM_Unix;
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_VOS.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_VOS.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_VOS.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_VOS.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -1,7 +1,7 @@
+ package ExtUtils::MM_VOS;
+ 
+ use strict;
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
+ 
+ require ExtUtils::MM_Unix;
+ our @ISA = qw(ExtUtils::MM_Unix);
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_Win32.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Win32.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_Win32.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Win32.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -27,13 +27,21 @@
+ require ExtUtils::MM_Any;
+ require ExtUtils::MM_Unix;
+ our @ISA = qw( ExtUtils::MM_Any ExtUtils::MM_Unix );
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
+ 
+ $ENV{EMXSHELL} = 'sh'; # to run `commands`
+ 
+-my $BORLAND = $Config{'cc'} =~ /^bcc/i ? 1 : 0;
+-my $GCC     = $Config{'cc'} =~ /\bgcc$/i ? 1 : 0;
+-my $DLLTOOL = $Config{'dlltool'} || 'dlltool';
++my ( $BORLAND, $GCC, $DLLTOOL ) = _identify_compiler_environment( \%Config );
++
++sub _identify_compiler_environment {
++	my ( $config ) = @_;
++
++	my $BORLAND = $config->{cc} =~ /^bcc/i ? 1 : 0;
++	my $GCC     = $config->{cc} =~ /\bgcc\b/i ? 1 : 0;
++	my $DLLTOOL = $config->{dlltool} || 'dlltool';
++
++	return ( $BORLAND, $GCC, $DLLTOOL );
++}
+ 
+ 
+ =head2 Overridden methods
+@@ -195,6 +203,8 @@
+     my($self) = shift;
+ 
+     $self->{MM_Win32_VERSION} = $VERSION;
++
++    return;
+ }
+ 
+ sub platform_constants {
+@@ -211,6 +221,36 @@
+ }
+ 
+ 
++=item constants
++
++Add MAXLINELENGTH for dmake before all the constants are output.
++
++=cut
++
++sub constants {
++    my $self = shift;
++
++    my $make_text = $self->SUPER::constants;
++    return $make_text unless $self->is_make_type('dmake');
++
++    # dmake won't read any single "line" (even those with escaped newlines)
++    # larger than a certain size which can be as small as 8k.  PM_TO_BLIB
++    # on large modules like DateTime::TimeZone can create lines over 32k.
++    # So we'll crank it up to a <ironic>WHOPPING</ironic> 64k.
++    #
++    # This has to come here before all the constants and not in
++    # platform_constants which is after constants.
++    my $size = $self->{MAXLINELENGTH} || 64 * 1024;
++    my $prefix = qq{
++# Get dmake to read long commands like PM_TO_BLIB
++MAXLINELENGTH = $size
++
++};
++
++    return $prefix . $make_text;
++}
++
++
+ =item special_targets
+ 
+ Add .USESHELL target for dmake.
+@@ -447,9 +487,31 @@
+ sub quote_literal {
+     my($self, $text) = @_;
+ 
+-    # I don't know if this is correct, but it seems to work on
+-    # Win98's command.com
+-    $text =~ s{"}{\\"}g;
++    # DOS batch processing is hilarious:
++    # Quotes need to be converted into triple quotes.
++    # Certain special characters need to be escaped with a caret if an odd
++    # number of quotes came before them.
++    my @text        = split '', $text;
++    my $quote_count = 0;
++    my %caret_chars = map { $_ => 1 } qw( < > | );
++    for my $char ( @text ) {
++        if ( $char eq '"' ) {
++            $quote_count++;
++            $char = '"""';
++        }
++        elsif ( $caret_chars{$char} and $quote_count % 2 ) {
++            $char = "^$char";
++        }
++        elsif ( $char eq "\\" ) {
++            $char = "\\\\";
++        }
++    }
++    $text = join '', @text;
++    
++    # There is a terribly confusing edge case here, where this will do entirely the wrong thing:
++    # perl -e "use Data::Dumper; @ARGV = '%PATH%'; print Dumper( \@ARGV );print qq{@ARGV};" --
++    # I have no idea how to fix this manually, much less programmatically.
++    # However as it is such a rare edge case i'll just leave this documentation here and hope it never happens.
+ 
+     # dmake eats '{' inside double quotes and leaves alone { outside double
+     # quotes; however it transforms {{ into { either inside and outside double
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_Win95.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Win95.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MM_Win95.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Win95.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -2,7 +2,7 @@
+ 
+ use strict;
+ 
+-our $VERSION = '6.57_05';
++our $VERSION = '6.57_11';
+ 
+ require ExtUtils::MM_Win32;
+ our @ISA = qw(ExtUtils::MM_Win32);
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MY.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MY.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/MY.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MY.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -3,7 +3,7 @@
+ use strict;
+ require ExtUtils::MM;
+ 
+-our $VERSION = 6.57_05;
++our $VERSION = '6.57_11';
+ our @ISA = qw(ExtUtils::MM);
+ 
+ {
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/testlib.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/testlib.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils.eemm/testlib.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/testlib.pm	2011-05-20 02:27:11.000000000 +0200
+@@ -3,7 +3,7 @@
+ use strict;
+ use warnings;
+ 
+-our $VERSION = 6.57_05;
++our $VERSION = '6.57_11';
+ 
+ use Cwd;
+ use File::Spec;
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/00compile.t perl-5.14.0/cpan/ExtUtils-MakeMaker/t/00compile.t
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/00compile.t	2011-04-13 13:36:34.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/t/00compile.t	2011-04-12 17:49:15.000000000 +0200
+@@ -12,7 +12,11 @@
+     $Has_Test_Pod = eval 'use Test::Pod 0.95; 1';
+ }
+ 
++plan skip_all => 'No MANIFEST'
++  unless -e "../MANIFEST";
++  
+ chdir "..";
++
+ my $manifest = "MANIFEST";
+ open(my $manifest_fh, "<", $manifest) or die "Can't open $manifest: $!";
+ my @modules = map  { m{^lib/(\S+)}; $1 } 
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/basic.t perl-5.14.0/cpan/ExtUtils-MakeMaker/t/basic.t
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/basic.t	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/t/basic.t	2011-04-12 17:49:16.000000000 +0200
+@@ -11,7 +11,7 @@
+ use Config;
+ use ExtUtils::MakeMaker;
+ 
+-use Test::More tests => 98;
++use Test::More tests => 171;
+ use MakeMaker::Test::Utils;
+ use MakeMaker::Test::Setup::BFD;
+ use File::Find;
+@@ -31,8 +31,8 @@
+ 
+ ok( setup_recurs(), 'setup' );
+ END {
+-    ok( chdir File::Spec->updir );
+-    ok( teardown_recurs(), 'teardown' );
++    ok chdir File::Spec->updir or die;
++    ok teardown_recurs, "teardown";
+ }
+ 
+ ok( chdir('Big-Dummy'), "chdir'd to Big-Dummy" ) ||
+@@ -230,123 +230,162 @@
+ $distdir =~ s/\./_/g if $Is_VMS;
+ my $meta_yml = "$distdir/META.yml";
+ my $mymeta_yml = "$distdir/MYMETA.yml";
+-
+-ok( !-f 'META.yml',  'META.yml not written to source dir' );
+-ok( -f $meta_yml,    'META.yml written to dist dir' );
+-ok( !-e "META_new.yml", 'temp META.yml file not left around' );
+-
+-ok( -f 'MYMETA.yml',  'MYMETA.yml is written to source dir' );
+-ok( -f $mymeta_yml,    'MYMETA.yml is written to dist dir on disttest' );
++my $meta_json = "$distdir/META.json";
++my $mymeta_json = "$distdir/MYMETA.json";
+ 
+ SKIP: {
+-    # META.yml spec 1.4 was added in 0.11
+-    skip "Test::YAML::Meta >= 0.11 required", 4
+-      unless eval { require Test::YAML::Meta }   and
+-             Test::YAML::Meta->VERSION >= 0.11;
+-
+-    Test::YAML::Meta::meta_spec_ok($meta_yml);
+-    Test::YAML::Meta::meta_spec_ok($mymeta_yml);
+-}
++    skip "CPAN::Meta required", 104 unless eval { require CPAN::Meta };
+ 
+-ok open META, $meta_yml or diag $!;
+-my $meta = join '', <META>;
+-ok close META;
+-
+-is $meta, <<"END";
+---- #YAML:1.0
+-name:               Big-Dummy
+-version:            0.01
+-abstract:           Try "our" hot dog's
+-author:
+-    - Michael G Schwern <schwern\@pobox.com>
+-license:            unknown
+-distribution_type:  module
+-configure_requires:
+-    ExtUtils::MakeMaker:  0
+-build_requires:
+-    warnings:  0
+-requires:
+-    strict:  0
+-no_index:
+-    directory:
+-        - t
+-        - inc
+-generated_by:       ExtUtils::MakeMaker version $ExtUtils::MakeMaker::VERSION
+-meta-spec:
+-    url:      http://module-build.sourceforge.net/META-spec-v1.4.html
+-    version:  1.4
+-END
+-
+-my $mymeta_expected_content=<<"END";
+----
+-abstract: "Try \\"our\\" hot dog's"
+-author:
+-  - 'Michael G Schwern <schwern\@pobox.com>'
+-build_requires:
+-  warnings: 0
+-configure_requires:
+-  ExtUtils::MakeMaker: 0
+-distribution_type: module
+-dynamic_config: 0
+-generated_by: 'ExtUtils::MakeMaker version $ExtUtils::MakeMaker::VERSION'
+-license: unknown
+-meta-spec:
+-  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+-  version: 1.4
+-name: Big-Dummy
+-no_index:
+-  directory:
+-    - t
+-    - inc
+-requires:
+-  strict: 0
+-version: 0.01
+-END
+-
+-{
+-ok open META, $mymeta_yml or diag $!;
+-my $mymeta_content = join '', <META>;
+-ok close META;
++    ok( !-f 'META.yml',  'META.yml not written to source dir' );
++    ok( -f $meta_yml,    'META.yml written to dist dir' );
++    ok( !-e "META_new.yml", 'temp META.yml file not left around' );
++
++    ok( -f 'MYMETA.yml',  'MYMETA.yml is written to source dir' );
++    ok( -f $mymeta_yml,    'MYMETA.yml is written to dist dir on disttest' );
++
++    ok( !-f 'META.json',  'META.json not written to source dir' );
++    ok( -f $meta_json,    'META.json written to dist dir' );
++    ok( !-e "META_new.json", 'temp META.json file not left around' );
++
++    ok( -f 'MYMETA.json',  'MYMETA.json is written to source dir' );
++    ok( -f $mymeta_json,    'MYMETA.json is written to dist dir on disttest' );
++
++    for my $case (
++      ['META.yml', $meta_yml],
++      ['MYMETA.yml', $mymeta_yml],
++      ['META.json', $meta_json],
++      ['MYMETA.json', $mymeta_json],
++      ['MYMETA.yml', 'MYMETA.yml'],
++      ['MYMETA.json', 'MYMETA.json'],
++    ) {
++      my ($label, $meta_name) = @$case;
++      ok(
++        my $obj = eval {
++          CPAN::Meta->load_file($meta_name, {lazy_validation => 0})
++        },
++        "$label validates"
++      );
++      my $is = sub {
++        my ($m,$e) = @_;
++        is($obj->$m, $e, "$label -> $m")
++      };
++      my $is_list = sub {
++        my ($m,$e) = @_;
++        is_deeply([$obj->$m], $e, "$label -> $m")
++      };
++      my $is_map = sub {
++        my ($m,$e) = @_;
++        is_deeply($obj->$m, $e, "$label -> $m")
++      };
++      $is->( name => "Big-Dummy" );
++      $is->( version => "0.01" );
++      $is->( abstract => q{Try "our" hot dog's} );
++      $is_list->( licenses => [q{unknown}] );
++      $is_list->( authors => [ q{Michael G Schwern <schwern@pobox.com>} ] );
++      $is_map->( prereqs => {
++          configure => {
++            requires => {
++              'ExtUtils::MakeMaker' => 0
++            },
++          },
++          build => {
++            requires => {
++              'warnings' => 0
++            }
++          },
++          runtime => {
++            requires => {
++              'strict' => 0
++            }
++          },
++        }
++      );
++      $is_map->(
++        no_index => {
++          directory => [qw/t inc/],
++        }
++      );
++      $is->( dynamic_config => ($label =~ /MYMETA/) ? 0 : 1 );
++    }
+ 
+-is($mymeta_content,$mymeta_expected_content,"MYMETA.yml (using Parse::CPAN::Meta) content is correct");
+-}
++    my $manifest = maniread("$distdir/MANIFEST");
++    # VMS is non-case preserving, so we can't know what the MANIFEST will
++    # look like. :(
++    _normalize($manifest);
++    is( $manifest->{'meta.yml'}, 'Module YAML meta-data (added by MakeMaker)',
++      "MANIFEST has META.yml"
++    );
++    is( $manifest->{'meta.json'}, 'Module JSON meta-data (added by MakeMaker)',
++      "MANFIEST has META.json"
++    );
++
++    # Test NO_META META.yml suppression
++    for my $f ( $meta_yml, $meta_json, 'MYMETA.yml', 'MYMETA.json' ) {
++      1 while unlink $f;
++    }
++    ok( !-f $meta_yml,   'META.yml deleted' );
++    ok( !-f 'MYMETA.yml','MYMETA.yml deleted' );
++    ok( !-f $meta_json,   'META.json deleted' );
++    ok( !-f 'MYMETA.json','MYMETA.json deleted' );
++
++    @mpl_out = run(qq{$perl Makefile.PL "NO_META=1"});
++    ok( -f 'MYMETA.yml', 'MYMETA.yml generation not suppressed by NO_META' );
++    ok( -f 'MYMETA.json', 'MYMETA.json generation not suppressed by NO_META' );
++    cmp_ok( $?, '==', 0, 'Makefile.PL exited with zero' ) || diag(@mpl_out);
++    ok( !-f $meta_yml,   'META.yml generation suppressed by NO_META' );
++    ok( !-f $meta_json,   'META.json generation suppressed by NO_META' );
++    my $distdir_out = run("$make distdir");
++    is( $?, 0, 'distdir' ) || diag($distdir_out);
++    ok( !-f $meta_yml,   'META.yml generation suppressed by NO_META' );
++    ok( !-f $meta_json,   'META.json generation suppressed by NO_META' );
+ 
+-{
+-ok open META, 'MYMETA.yml' or diag $!;
+-my $mymeta_content = join '', <META>;
+-ok close META;
++    for my $f ( 'MYMETA.yml', 'MYMETA.json' ) {
++      1 while unlink $f;
++    }
++    ok( !-f 'MYMETA.yml','MYMETA.yml deleted' );
++    ok( !-f 'MYMETA.json','MYMETA.json deleted' );
+ 
+-is($mymeta_content,$mymeta_expected_content,"MYMETA.yml (generated from scratch)content is correct");
++    @mpl_out = run(qq{$perl Makefile.PL "NO_MYMETA=1"});
++    cmp_ok( $?, '==', 0, 'Makefile.PL exited with zero' ) || diag(@mpl_out);
++    $distdir_out = run("$make distdir");
++    is( $?, 0, 'distdir' ) || diag($distdir_out);
++    ok( !-f 'MYMETA.yml','MYMETA.yml generation suppressed by NO_MYMETA' );
++    ok( !-f 'MYMETA.json','MYMETA.json generation suppressed by NO_MYMETA' );
++    ok( -f $meta_yml,    'META.yml generation not suppressed by NO_MYMETA' );
++    ok( -f $meta_json,    'META.json generation not suppressed by NO_MYMETA' );
++
++    # Test MYMETA really comes from META except for prereqs
++    for my $f ( $meta_yml, $meta_json, 'MYMETA.yml', 'MYMETA.json' ) {
++      1 while unlink $f;
++    }
++    @mpl_out = run(qq{$perl Makefile.PL});
++    cmp_ok( $?, '==', 0, 'Makefile.PL exited with zero' ) || diag(@mpl_out);
++    $distdir_out = run("$make distdir");
++    is( $?, 0, 'distdir' ) || diag($distdir_out);
++    ok( -f $meta_yml,    'META.yml generated in distdir' );
++    ok( -f $meta_json,    'META.json generated in distdir' );
++    ok( ! -f $mymeta_yml,    'MYMETA.yml not yet generated in distdir' );
++    ok( ! -f $mymeta_json,    'MYMETA.json generated in distdir' );
++    my $edit_meta = CPAN::Meta->load_file($meta_json)->as_struct;
++    $edit_meta->{abstract} = "New abstract";
++    my $meta_obj = CPAN::Meta->new($edit_meta);
++    is( $meta_obj->abstract, "New abstract", "MYMETA abstract from META, not Makefile.PL");
++    ok( $meta_obj->save($meta_json), "Saved edited META.json in distdir" );
++    ok( $meta_obj->save($meta_yml, {version => 1.4}), "Saved edited META.yml in distdir");
++    ok( chdir $distdir );
++    ok( -f 'META.yml',    'META.yml confirmed in distdir' );
++    ok( -f 'META.json',    'META.json confirmed in distdir' );
++    @mpl_out = run(qq{$perl Makefile.PL});
++    cmp_ok( $?, '==', 0, 'Makefile.PL in distdir exited with zero' ) || diag(@mpl_out);
++    ok( chdir File::Spec->updir );
++    ok( -f $mymeta_yml,    'MYMETA.yml generated in distdir' );
++    ok( -f $mymeta_json,    'MYMETA.json generated in distdir' );
++    $meta_obj = CPAN::Meta->load_file($meta_json);
++    is( $meta_obj->abstract, "New abstract", "META abstract is same as was saved");
++    $meta_obj = CPAN::Meta->load_file($mymeta_json);
++    is( $meta_obj->abstract, "New abstract", "MYMETA abstract from META, not Makefile.PL");
+ }
+ 
+-my $manifest = maniread("$distdir/MANIFEST");
+-# VMS is non-case preserving, so we can't know what the MANIFEST will
+-# look like. :(
+-_normalize($manifest);
+-is( $manifest->{'meta.yml'}, 'Module meta-data (added by MakeMaker)' );
+-
+-
+-# Test NO_META META.yml suppression
+-unlink $meta_yml;
+-unlink 'MYMETA.yml';
+-ok( !-f $meta_yml,   'META.yml deleted' );
+-ok( !-f 'MYMETA.yml','MYMETA.yml deleted' );
+-@mpl_out = run(qq{$perl Makefile.PL "NO_META=1"});
+-ok( -f 'MYMETA.yml', 'MYMETA.yml generation not suppressed by NO_META' );
+-cmp_ok( $?, '==', 0, 'Makefile.PL exited with zero' ) || diag(@mpl_out);
+-ok( !-f $meta_yml,   'META.yml generation suppressed by NO_META' );
+-my $distdir_out = run("$make distdir");
+-is( $?, 0, 'distdir' ) || diag($distdir_out);
+-ok( !-f $meta_yml,   'META.yml generation suppressed by NO_META' );
+-unlink 'MYMETA.yml';
+-
+-ok( !-f 'MYMETA.yml','MYMETA.yml deleted' );
+-@mpl_out = run(qq{$perl Makefile.PL "NO_MYMETA=1"});
+-cmp_ok( $?, '==', 0, 'Makefile.PL exited with zero' ) || diag(@mpl_out);
+-$distdir_out = run("$make distdir");
+-is( $?, 0, 'distdir' ) || diag($distdir_out);
+-ok( !-f 'MYMETA.yml','MYMETA.yml generation suppressed by NO_MYMETA' );
+-ok( -f $meta_yml,    'META.yml generation not suppressed by NO_MYMETA' );
+ 
+ 
+ # Make sure init_dirscan doesn't go into the distdir
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/INST_PREFIX.t perl-5.14.0/cpan/ExtUtils-MakeMaker/t/INST_PREFIX.t
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/INST_PREFIX.t	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/t/INST_PREFIX.t	2011-04-12 17:49:15.000000000 +0200
+@@ -50,12 +50,12 @@
+ 
+ like( $stdout->read, qr{
+                         Writing\ $Makefile\ for\ Big::Liar\n
+-			Writing\ MYMETA.yml\n
++                        (?:Writing\ MYMETA.yml\ and\ MYMETA.json\n)?
+                         Big::Liar's\ vars\n
+                         INST_LIB\ =\ \S+\n
+                         INST_ARCHLIB\ =\ \S+\n
+                         Writing\ $Makefile\ for\ Big::Dummy\n
+-			Writing\ MYMETA.yml\n
++                        (?:Writing\ MYMETA.yml\ and\ MYMETA.json\n)?
+ }x );
+ 
+ is( $mm->{PREFIX}, '$(SITEPREFIX)', 'PREFIX set based on INSTALLDIRS' );
+@@ -80,12 +80,12 @@
+ );
+ like( $stdout->read, qr{
+                         Writing\ $Makefile\ for\ Big::Liar\n
+-			Writing\ MYMETA.yml\n
++                        (?:Writing\ MYMETA.yml\ and\ MYMETA.json\n)?
+                         Big::Liar's\ vars\n
+                         INST_LIB\ =\ \S+\n
+                         INST_ARCHLIB\ =\ \S+\n
+                         Writing\ $Makefile\ for\ Big::Dummy\n
+-			Writing\ MYMETA.yml\n
++                        (?:Writing\ MYMETA.yml\ and\ MYMETA.json\n)?
+ }x );
+ undef $stdout;
+ untie *STDOUT;
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/INST.t perl-5.14.0/cpan/ExtUtils-MakeMaker/t/INST.t
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/INST.t	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/t/INST.t	2011-04-12 17:49:15.000000000 +0200
+@@ -46,12 +46,12 @@
+ );
+ like( $stdout->read, qr{
+                         Writing\ $Makefile\ for\ Big::Liar\n
+-                        Writing\ MYMETA.yml\n
++                        (?:Writing\ MYMETA.yml\ and\ MYMETA.json\n)?
+                         Big::Liar's\ vars\n
+                         INST_LIB\ =\ \S+\n
+                         INST_ARCHLIB\ =\ \S+\n
+                         Writing\ $Makefile\ for\ Big::Dummy\n
+-                        Writing\ MYMETA.yml\n
++                        (?:Writing\ MYMETA.yml\ and\ MYMETA.json\n)?
+ }x );
+ undef $stdout;
+ untie *STDOUT;
+@@ -128,12 +128,12 @@
+ );
+ like( $stdout->read, qr{
+                         Writing\ $Makefile\ for\ Big::Liar\n
+-			Writing\ MYMETA.yml\n
++                        (?:Writing\ MYMETA.yml\ and\ MYMETA.json\n)?
+                         Big::Liar's\ vars\n
+                         INST_LIB\ =\ \S+\n
+                         INST_ARCHLIB\ =\ \S+\n
+                         Writing\ $Makefile\ for\ Big::Dummy\n
+-			Writing\ MYMETA.yml\n
++                        (?:Writing\ MYMETA.yml\ and\ MYMETA.json\n)?
+ }x );
+ undef $stdout;
+ untie *STDOUT;
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/lib/MakeMaker/Test/Setup/SAS.pm perl-5.14.0/cpan/ExtUtils-MakeMaker/t/lib/MakeMaker/Test/Setup/SAS.pm
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/lib/MakeMaker/Test/Setup/SAS.pm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/t/lib/MakeMaker/Test/Setup/SAS.pm	2011-04-12 17:49:16.000000000 +0200
+@@ -1,67 +1,67 @@
+-package MakeMaker::Test::Setup::SAS;
+-
+-@ISA = qw(Exporter);
+-require Exporter;
+-@EXPORT = qw(setup_recurs teardown_recurs);
+-
+-use strict;
+-use File::Path;
+-use File::Basename;
+-
+-our $dirname='Multiple-Authors';
+-my %Files = (
+-             $dirname.'/Makefile.PL'   => <<'END',
+-use ExtUtils::MakeMaker;
+-
+-WriteMakefile(
+-    NAME             => 'Multiple::Authors',
+-    AUTHOR           => ['John Doe <jd@example.com>', 'Jane Doe <jd@example.com>'],
+-    VERSION_FROM     => 'lib/Multiple/Authors.pm',
+-    PREREQ_PM        => { strict => 0 },
+-);
+-END
+-
+-             $dirname.'/lib/Multiple/Authors.pm'    => <<'END',
+-package Multiple::Authors;
+-
+-$VERSION = 0.05;
+-
+-=head1 NAME
+-
+-Multiple::Authors - several authors
+-
+-=cut
+-
+-1;
+-END
+-
+-);
+-
+-
+-sub setup_recurs {
+-    while(my($file, $text) = each %Files) {
+-        # Convert to a relative, native file path.
+-        $file = File::Spec->catfile(File::Spec->curdir, split m{\/}, $file);
+-
+-        my $dir = dirname($file);
+-        mkpath $dir;
+-        open(FILE, ">$file") || die "Can't create $file: $!";
+-        print FILE $text;
+-        close FILE;
+-    }
+-
+-    return 1;
+-}
+-
+-sub teardown_recurs {
+-    foreach my $file (keys %Files) {
+-        my $dir = dirname($file);
+-        if( -e $dir ) {
+-            rmtree($dir) || return;
+-        }
+-    }
+-    return 1;
+-}
+-
+-
+-1;
++package MakeMaker::Test::Setup::SAS;
++
++@ISA = qw(Exporter);
++require Exporter;
++@EXPORT = qw(setup_recurs teardown_recurs);
++
++use strict;
++use File::Path;
++use File::Basename;
++
++our $dirname='Multiple-Authors';
++my %Files = (
++             $dirname.'/Makefile.PL'   => <<'END',
++use ExtUtils::MakeMaker;
++
++WriteMakefile(
++    NAME             => 'Multiple::Authors',
++    AUTHOR           => ['John Doe <jd@example.com>', 'Jane Doe <jd@example.com>'],
++    VERSION_FROM     => 'lib/Multiple/Authors.pm',
++    PREREQ_PM        => { strict => 0 },
++);
++END
++
++             $dirname.'/lib/Multiple/Authors.pm'    => <<'END',
++package Multiple::Authors;
++
++$VERSION = 0.05;
++
++=head1 NAME
++
++Multiple::Authors - several authors
++
++=cut
++
++1;
++END
++
++);
++
++
++sub setup_recurs {
++    while(my($file, $text) = each %Files) {
++        # Convert to a relative, native file path.
++        $file = File::Spec->catfile(File::Spec->curdir, split m{\/}, $file);
++
++        my $dir = dirname($file);
++        mkpath $dir;
++        open(FILE, ">$file") || die "Can't create $file: $!";
++        print FILE $text;
++        close FILE;
++    }
++
++    return 1;
++}
++
++sub teardown_recurs {
++    foreach my $file (keys %Files) {
++        my $dir = dirname($file);
++        if( -e $dir ) {
++            rmtree($dir) || return;
++        }
++    }
++    return 1;
++}
++
++
++1;
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/Liblist_Kid.t perl-5.14.0/cpan/ExtUtils-MakeMaker/t/Liblist_Kid.t
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/Liblist_Kid.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/t/Liblist_Kid.t	2011-04-12 17:49:15.000000000 +0200
+@@ -0,0 +1,154 @@
++#!/usr/bin/perl
++
++use strict;
++use warnings;
++
++# This makes sure the test is run from the same place, with the same @INC,
++# no matter whether it's started via prove or via Komodo IDE.
++
++BEGIN {
++    use Cwd;
++    chdir 't' if -d 't';
++    use lib getcwd() . '/lib', getcwd() . '/../lib';
++}
++
++# Liblist wants to be an object which has File::Spec capabilities, so we
++# mock one.
++
++BEGIN {
++    package MockEUMM;
++    use base 'File::Spec';    # what.
++    sub new { return bless {}, 'MockEUMM'; }
++}
++
++package liblist_kid_test;
++
++use Test::More 'no_plan';
++use ExtUtils::MakeMaker::Config;
++use File::Spec;
++
++run();
++
++exit;
++
++sub run {
++    use_ok( 'ExtUtils::Liblist::Kid' );
++
++    move_to_os_test_data_dir();
++    alias_kid_ext_for_convenience();
++
++    conf_reset();
++
++    return test_kid_win32() if $^O eq 'MSWin32';
++    return;
++}
++
++# This allows us to get a clean playing field and ensure that the current
++# system configuration does not affect the test results.
++
++sub conf_reset {
++    delete $Config{$_} for keys %Config;
++    delete $ENV{LIB};
++    
++    return;
++}
++
++# This keeps the directory paths in the tests short and allows easy
++# separation of OS-specific files.
++
++sub move_to_os_test_data_dir {
++    my %os_test_dirs = ( MSWin32 => 'liblist/win32', );
++    chdir $os_test_dirs{$^O} if $os_test_dirs{$^O};
++
++    return;
++}
++
++# With this we can use a short function name in the tests and use the same
++# one everywhere.
++
++sub alias_kid_ext_for_convenience {
++    my %os_ext_funcs = ( MSWin32 => \&ExtUtils::Liblist::Kid::_win32_ext, );
++    *_kid_ext = $os_ext_funcs{$^O} if $os_ext_funcs{$^O};
++
++    return;
++}
++sub _kid_ext;
++
++# Since liblist is object-based, we need to provide a mock object.
++
++sub _ext { _kid_ext( MockEUMM->new, @_ ); }
++
++# tests go here
++
++sub test_kid_win32 {
++
++    $Config{installarchlib} = 'lib';
++
++    is_deeply( [ _ext() ],                           [ '',                    '', '',                    '' ], 'empty input results in empty output' );
++    is_deeply( [ _ext( 'unreal_test' ) ],            [ '',                    '', '',                    '' ], 'non-existent file results in empty output' );
++    is_deeply( [ _ext( 'test' ) ],                   [ 'test.lib',            '', 'test.lib',            '' ], 'existent file results in a path to the file. .lib is default extension with empty %Config' );
++    is_deeply( [ _ext( 'c_test' ) ],                 [ 'lib\CORE\c_test.lib', '', 'lib\CORE\c_test.lib', '' ], '$Config{installarchlib}/CORE is the default search dir aside from cwd' );
++    is_deeply( [ _ext( 'double' ) ],                 [ 'double.lib',          '', 'double.lib',          '' ], 'once an instance of a lib is found, the search stops' );
++    is_deeply( [ _ext( 'test.lib' ) ],               [ 'test.lib',            '', 'test.lib',            '' ], 'the extension is not tacked on twice' );
++    is_deeply( [ _ext( 'test.a' ) ],                 [ 'test.a.lib',          '', 'test.a.lib',          '' ], 'but it will be tacked onto filenamess with other kinds of library extension' );
++    is_deeply( [ _ext( 'test test2' ) ],             [ 'test.lib test2.lib',  '', 'test.lib test2.lib',  '' ], 'multiple existing files end up separated by spaces' );
++    is_deeply( [ _ext( 'test test2 unreal_test' ) ], [ 'test.lib test2.lib',  '', 'test.lib test2.lib',  '' ], "some existing files don't cause false positives" );
++    is_deeply( [ _ext( '-l_test' ) ],                [ 'lib_test.lib',        '', 'lib_test.lib',        '' ], 'prefixing a lib with -l triggers a second search with prefix "lib" when gcc is not in use' );
++    is_deeply( [ _ext( '-l__test' ) ],               [ '__test.lib',          '', '__test.lib',          '' ], 'unprefixed lib files are found first when -l is used' );
++    is_deeply( [ _ext( '-llibtest' ) ],              [ '',                    '', '',                    '' ], 'if -l is used and the lib name is already prefixed no second search without the prefix is done' );
++    is_deeply( [ _ext( '-lunreal_test' ) ],          [ '',                    '', '',                    '' ], 'searching with -l for a non-existent library does not cause an endless loop' );
++    is_deeply( [ _ext( '"space lib"' ) ],            [ '"space lib.lib"',     '', '"space lib.lib"',     '' ], 'lib with spaces in the name can be found with the help of quotes' );
++    is_deeply( [ _ext( '"""space lib"""' ) ],        [ '"space lib.lib"',     '', '"space lib.lib"',     '' ], 'Text::Parsewords deals with extraneous quotes' );
++
++    is_deeply( [ scalar _ext( 'test' ) ], ['test.lib'], 'asking for a scalar gives a single string' );
++
++    is_deeply( [ _ext( undef,             0, 1 ) ], [ '',                                        '', '',                                        '', [] ],                      'asking for real names with empty input results in an empty extra array' );
++    is_deeply( [ _ext( 'unreal_test',     0, 1 ) ], [ '',                                        '', '',                                        '', [] ],                      'asking for real names with non-existent file results in an empty extra array' );
++    is_deeply( [ _ext( 'c_test',          0, 1 ) ], [ 'lib\CORE\c_test.lib',                     '', 'lib\CORE\c_test.lib',                     '', ['lib/CORE\c_test.lib'] ], 'asking for real names with an existent file in search dir results in an extra array with a mixed-os file path?!' );
++    is_deeply( [ _ext( 'test c_test',     0, 1 ) ], [ 'test.lib lib\CORE\c_test.lib',            '', 'test.lib lib\CORE\c_test.lib',            '', ['lib/CORE\c_test.lib'] ], 'files in cwd do not appear in the real name list?!' );
++    is_deeply( [ _ext( '-lc_test c_test', 0, 1 ) ], [ 'lib\CORE\c_test.lib lib\CORE\c_test.lib', '', 'lib\CORE\c_test.lib lib\CORE\c_test.lib', '', ['lib/CORE\c_test.lib'] ], 'finding the same lib in a search dir both with and without -l results in a single listing in the array' );
++
++    is_deeply( [ _ext( 'test :nosearch unreal_test test2' ) ],         [ 'test.lib unreal_test test2',     '', 'test.lib unreal_test test2',     '' ], ':nosearch can force passing through of filenames as they are' );
++    is_deeply( [ _ext( 'test :nosearch -lunreal_test test2' ) ],       [ 'test.lib unreal_test.lib test2', '', 'test.lib unreal_test.lib test2', '' ], 'lib names with -l after a :nosearch are suffixed with .lib and the -l is removed' );
++    is_deeply( [ _ext( 'test :nosearch unreal_test :search test2' ) ], [ 'test.lib unreal_test test2.lib', '', 'test.lib unreal_test test2.lib', '' ], ':search enables file searching again' );
++    is_deeply( [ _ext( 'test :meep test2' ) ],                         [ 'test.lib test2.lib',             '', 'test.lib test2.lib',             '' ], 'unknown :flags are safely ignored' );
++
++    my $curr = File::Spec->rel2abs( '' );
++    is_deeply( [ _ext( "-L$curr/dir dir_test" ) ], [ $curr . '\dir\dir_test.lib',         '', $curr . '\dir\dir_test.lib',         '' ], 'directories in -L parameters are searched' );
++    is_deeply( [ _ext( "-L/non_dir dir_test" ) ],  [ '',                                  '', '',                                  '' ], 'non-existent -L dirs are ignored safely' );
++    is_deeply( [ _ext( "-Ldir dir_test" ) ],       [ $curr . '\dir\dir_test.lib',         '', $curr . '\dir\dir_test.lib',         '' ], 'relative -L directories work' );
++    is_deeply( [ _ext( '-L"di r" dir_test' ) ],    [ '"' . $curr . '\di r\dir_test.lib"', '', '"' . $curr . '\di r\dir_test.lib"', '' ], '-L directories with spaces work' );
++
++    $Config{perllibs} = 'pl';
++    is_deeply( [ _ext( 'unreal_test' ) ],            [ 'pl.lib', '', 'pl.lib', '' ], '$Config{perllibs} adds extra libs to be searched' );
++    is_deeply( [ _ext( 'unreal_test :nodefault' ) ], [ '',       '', '',       '' ], ':nodefault flag prevents $Config{perllibs} from being added' );
++    delete $Config{perllibs};
++
++    $Config{libpth} = 'libpath';
++    is_deeply( [ _ext( 'lp_test' ) ], [ 'libpath\lp_test.lib', '', 'libpath\lp_test.lib', '' ], '$Config{libpth} adds extra search paths' );
++    delete $Config{libpth};
++
++    $Config{lib_ext} = '.meep';
++    is_deeply( [ _ext( 'test' ) ], [ 'test.meep', '', 'test.meep', '' ], '$Config{lib_ext} changes the lib extension to be searched for' );
++    delete $Config{lib_ext};
++
++    $Config{cc} = 'C:/MinGW/bin/gcc.exe';
++
++    is_deeply( [ _ext( 'test' ) ],                    [ 'test.lib',      '', 'test.lib',      '' ], '[gcc] searching for straight lib names remains unchanged' );
++    is_deeply( [ _ext( '-l__test' ) ],                [ 'lib__test.lib', '', 'lib__test.lib', '' ], '[gcc] lib-prefixed library files are found first when -l is in use' );
++    is_deeply( [ _ext( '-ltest' ) ],                  [ 'test.lib',      '', 'test.lib',      '' ], '[gcc] non-lib-prefixed library files are found on the second search when -l is in use' );
++    is_deeply( [ _ext( '-llibtest' ) ],               [ 'test.lib',      '', 'test.lib',      '' ], '[gcc] if -l is used and the lib name is already prefixed a second search without the lib is done' );
++    is_deeply( [ _ext( ':nosearch -lunreal_test' ) ], [ '-lunreal_test', '', '-lunreal_test', '' ], '[gcc] lib names with -l after a :nosearch remain as they are' );
++
++    $Config{cc} = 'c:/Programme/Microsoft Visual Studio 9.0/VC/bin/cl.exe';
++
++    is_deeply( [ _ext( 'test' ) ], [ 'test.lib', '', 'test.lib', '' ], '[vc] searching for straight lib names remains unchanged' );
++    is_deeply( [ _ext( ':nosearch -Lunreal_test' ) ], [ '-libpath:unreal_test', '', '-libpath:unreal_test', '' ], '[vc] lib dirs with -L after a :nosearch are prefixed with -libpath:' );
++    ok( !exists $ENV{LIB}, '[vc] $ENV{LIB} is not autovivified' );
++
++    $ENV{LIB} = 'vc';
++    is_deeply( [ _ext( 'vctest.lib' ) ], [ 'vc\vctest.lib', '', 'vc\vctest.lib', '' ], '[vc] $ENV{LIB} adds search paths' );
++
++    return;
++}
++
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/meta_convert.t perl-5.14.0/cpan/ExtUtils-MakeMaker/t/meta_convert.t
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/meta_convert.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/t/meta_convert.t	2011-05-20 02:12:15.000000000 +0200
+@@ -0,0 +1,127 @@
++BEGIN {
++    chdir '..' if -d '../t';
++    unshift @INC, 't/lib';
++    use lib 'lib';
++}
++
++use strict;
++use warnings;
++use Test::More 'no_plan';
++
++require ExtUtils::MM_Any;
++
++sub ExtUtils::MM_Any::quote_literal { $_[1] }
++
++my $new_mm = sub {
++    return bless { ARGS => {@_}, @_ }, 'ExtUtils::MM_Any';
++};
++
++my $warn_ok = sub {
++    my($code, $want, $name) = @_;
++
++    my @have;
++    my $ret;
++    {
++        local $SIG{__WARN__} = sub { push @have, @_ };
++        $ret = $code->();
++    }
++
++    like join("", @have), $want, $name;
++    return $ret;
++};
++
++my $version_regex = qr/version: ''/;
++my $version_action = "they're converted to empty string";
++
++
++note "Filename as version"; {
++    my $mm = $new_mm->(
++        DISTNAME => 'Net::FTP::Recursive',
++        VERSION  => 'Recursive.pm',
++    );
++
++    my $res = $warn_ok->(
++        sub { eval { $mm->metafile_target } },
++        qr{Can't parse version 'Recursive.pm'}
++    );
++    ok $res, 'we know how to deal with bogus versions defined in Makefile.PL';
++    like $res, $version_regex, $version_action;
++}
++
++
++note "'undef' version from parse_version"; {
++    my $mm = $new_mm->(
++        DISTNAME => 'Image::Imgur',
++        VERSION  => 'undef',
++    );
++    my $res = $warn_ok->(
++        sub { eval { $mm->metafile_target } },
++        qr{Can't parse version 'undef'}
++    );
++    ok $res, q|when there's no $VERSION in Module.pm, $self->{VERSION} = 'undef'; via MM_Unix::parse_version and we know how to deal with that|;
++    like $res, $version_regex, $version_action;
++}
++
++
++note "x.y.z version"; {
++    my $mm = $new_mm->(
++        DISTNAME => 'SQL::Library',
++        VERSION  => 0.0.3,
++    );
++
++    # It would be more useful if the warning got translated to visible characters
++    my $res = $warn_ok->(
++        sub { eval { $mm->metafile_target } },
++        qr{Can't parse version '\x00\x00\x03'}
++    );
++    ok $res, q|we know how to deal with our $VERSION = 0.0.3; style versions defined in the module|;
++    like $res, $version_regex, $version_action;
++}
++
++
++note ".5 version"; {
++    my $mm = $new_mm->(
++        DISTNAME => 'Array::Suffix',
++        VERSION  => '.5',
++    );
++    my $res = $warn_ok->(
++        sub { eval { $mm->metafile_target } },
++        qr{Can't parse version '.5'}
++    );
++    ok $res, q|we know how to deal with our $VERSION = '.5'; style versions defined in the module|;
++    like $res, $version_regex, $version_action;
++}
++
++
++note "Non-camel case metadata"; {
++    my $mm = $new_mm->(
++        DISTNAME   => 'Attribute::Signature',
++        META_MERGE => {
++            resources => {
++                repository         => 'http://github.com/chorny/Attribute-Signature',
++                'Repository-clone' => 'git://github.com/chorny/Attribute-Signature.git',
++            },
++        },
++    );
++    my $res = eval { $mm->metafile_target };
++    ok $res, q|we know how to deal with non-camel-cased custom meta resource keys defined in Makefile.PL|;
++    like $res, qr/x_Repositoryclone:/, "they're camel-cased";
++}
++
++
++note "version object in provides"; {
++    my $mm = $new_mm->(
++        DISTNAME   => 'CPAN::Testers::ParseReport',
++        VERSION    => '2.34',
++        META_ADD => {
++            provides => {
++                "CPAN::Testers::ParseReport" => {
++                    version => version->declare("v1.2.3"),
++                    file    => "lib/CPAN/Testers/ParseReport.pm"
++                }
++            }
++        },
++    );
++    my $res = eval { $mm->metafile_target };
++    like $res, qr{version: \s* v1.2.3}x;
++}
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/metafile_data.t perl-5.14.0/cpan/ExtUtils-MakeMaker/t/metafile_data.t
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/metafile_data.t	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/t/metafile_data.t	2011-04-12 17:49:16.000000000 +0200
+@@ -3,12 +3,51 @@
+ }
+ 
+ use strict;
+-use Test::More tests => 7;
++use Test::More tests => 19;
+ 
+ use Data::Dumper;
++use File::Temp;
++use Cwd;
++use Parse::CPAN::Meta;
+ 
+ require ExtUtils::MM_Any;
+ 
++sub in_dir(&;$) {
++    my $code = shift;
++    my $dir = shift || File::Temp->newdir;
++
++    # chdir to the new directory
++    my $orig_dir = cwd();
++    chdir $dir or die "Can't chdir to $dir: $!";
++
++    # Run the code, but trap the error so we can chdir back
++    my $return;
++    my $ok = eval { $return = $code->(); 1; };
++    my $err = $@;
++
++    # chdir back
++    chdir $orig_dir or die "Can't chdir to $orig_dir: $!";
++
++    # rethrow if necessary
++    die $err unless $ok;
++
++    return $return;
++}
++
++sub mymeta_ok {
++    my($have, $want, $name) = @_;
++
++    local $Test::Builder::Level = $Test::Builder::Level + 1;
++
++    my $have_gen = delete $have->{generated_by};
++    my $want_gen = delete $want->{generated_by};
++
++    is_deeply $have, $want, $name;
++    like $have_gen, qr{CPAN::Meta}, "CPAN::Meta mentioned in the generated_by";
++
++    return;
++}
++
+ my $new_mm = sub {
+     return bless { ARGS => {@_}, @_ }, 'ExtUtils::MM_Any';
+ };
+@@ -22,12 +61,13 @@
+         },
+     );
+ 
+-    is_deeply [$mm->metafile_data], [
++    is_deeply {$mm->metafile_data}, {
+         name            => 'Foo-Bar',
+         version         => 1.23,
+-        abstract        => undef,
++        abstract        => 'unknown',
+         author          => [],
+         license         => 'unknown',
++        dynamic_config  => 1,
+         distribution_type       => 'module',
+ 
+         configure_requires      => {
+@@ -46,15 +86,16 @@
+             url         => 'http://module-build.sourceforge.net/META-spec-v1.4.html', 
+             version     => 1.4
+         },
+-    ];
++    };
+ 
+ 
+-    is_deeply [$mm->metafile_data({}, { no_index => { directory => [qw(foo)] } })], [
++    is_deeply {$mm->metafile_data({}, { no_index => { directory => [qw(foo)] } })}, {
+         name            => 'Foo-Bar',
+         version         => 1.23,
+-        abstract        => undef,
++        abstract        => 'unknown',
+         author          => [],
+         license         => 'unknown',
++        dynamic_config  => 1,
+         distribution_type       => 'module',
+ 
+         configure_requires      => {
+@@ -73,7 +114,7 @@
+             url         => 'http://module-build.sourceforge.net/META-spec-v1.4.html', 
+             version     => 1.4
+         },
+-    ], 'rt.cpan.org 39348';
++    }, 'rt.cpan.org 39348';
+ }
+ 
+ 
+@@ -88,7 +129,7 @@
+         },
+     );
+ 
+-    is_deeply [$mm->metafile_data(
++    is_deeply {$mm->metafile_data(
+         {
+             configure_requires => {
+                 Stuff   => 2.34
+@@ -101,13 +142,14 @@
+             },
+             wibble      => 23
+         },
+-    )],
+-    [
++    )},
++    {
+         name            => 'Foo-Bar',
+         version         => 1.23,
+-        abstract        => undef,
++        abstract        => 'unknown',
+         author          => ['Some Guy'],
+         license         => 'unknown',
++        dynamic_config  => 1,
+         distribution_type       => 'script',
+ 
+         configure_requires      => {
+@@ -135,7 +177,7 @@
+ 
+         wibble  => 23,
+         wobble  => 42,
+-    ];
++    };
+ }
+ 
+ 
+@@ -150,12 +192,13 @@
+         MIN_PERL_VERSION => 5.006,
+     );
+ 
+-    is_deeply [$mm->metafile_data], [
++    is_deeply {$mm->metafile_data}, {
+         name            => 'Foo-Bar',
+         version         => 1.23,
+-        abstract        => undef,
++        abstract        => 'unknown',
+         author          => [],
+         license         => 'unknown',
++        dynamic_config  => 1,
+         distribution_type       => 'module',
+ 
+         configure_requires      => {
+@@ -178,7 +221,7 @@
+             url         => 'http://module-build.sourceforge.net/META-spec-v1.4.html', 
+             version     => 1.4
+         },
+-    ];
++    };
+ }
+ 
+ 
+@@ -196,12 +239,13 @@
+         },
+     );
+ 
+-    is_deeply [$mm->metafile_data], [
++    is_deeply {$mm->metafile_data}, {
+         name            => 'Foo-Bar',
+         version         => 1.23,
+-        abstract        => undef,
++        abstract        => 'unknown',
+         author          => [],
+         license         => 'unknown',
++        dynamic_config  => 1,
+         distribution_type       => 'module',
+ 
+         configure_requires      => {
+@@ -225,7 +269,7 @@
+             url         => 'http://module-build.sourceforge.net/META-spec-v1.4.html', 
+             version     => 1.4
+         },
+-    ];
++    };
+ }
+ 
+ # Test CONFIGURE_REQUIRES
+@@ -241,12 +285,13 @@
+         },
+     );
+ 
+-    is_deeply [$mm->metafile_data], [
++    is_deeply {$mm->metafile_data}, {
+         name            => 'Foo-Bar',
+         version         => 1.23,
+-        abstract        => undef,
++        abstract        => 'unknown',
+         author          => [],
+         license         => 'unknown',
++        dynamic_config  => 1,
+         distribution_type       => 'module',
+ 
+         configure_requires      => {
+@@ -265,7 +310,7 @@
+             url         => 'http://module-build.sourceforge.net/META-spec-v1.4.html', 
+             version     => 1.4
+         },
+-    ],'CONFIGURE_REQUIRES';
++    },'CONFIGURE_REQUIRES';
+ }
+ 
+ # Test BUILD_REQUIRES
+@@ -281,12 +326,13 @@
+         },
+     );
+ 
+-    is_deeply [$mm->metafile_data], [
++    is_deeply {$mm->metafile_data}, {
+         name            => 'Foo-Bar',
+         version         => 1.23,
+-        abstract        => undef,
++        abstract        => 'unknown',
+         author          => [],
+         license         => 'unknown',
++        dynamic_config  => 1,
+         distribution_type       => 'module',
+ 
+         configure_requires      => {
+@@ -305,5 +351,149 @@
+             url         => 'http://module-build.sourceforge.net/META-spec-v1.4.html', 
+             version     => 1.4
+         },
+-    ],'CONFIGURE_REQUIRES';
++    },'CONFIGURE_REQUIRES';
++}
++
++# Test _REQUIRES key priority over META_ADD
++
++{
++    my $mm = $new_mm->(
++        DISTNAME        => 'Foo-Bar',
++        VERSION         => 1.23,
++        BUILD_REQUIRES => {
++            "Fake::Module1" => 1.01,
++        },
++        META_ADD => (my $meta_add = { build_requires => {} }),
++        PM              => {
++            "Foo::Bar"          => 'lib/Foo/Bar.pm',
++        },
++    );
++
++    is_deeply {$mm->metafile_data($meta_add)}, {
++        name            => 'Foo-Bar',
++        version         => 1.23,
++        abstract        => 'unknown',
++        author          => [],
++        license         => 'unknown',
++        dynamic_config  => 1,
++        distribution_type       => 'module',
++
++        configure_requires      => {
++            'ExtUtils::MakeMaker'       => 0,
++        },
++        build_requires      => { },
++
++        no_index        => {
++            directory           => [qw(t inc)],
++        },
++
++        generated_by => "ExtUtils::MakeMaker version $ExtUtils::MakeMaker::VERSION",
++        'meta-spec'  => {
++            url         => 'http://module-build.sourceforge.net/META-spec-v1.4.html', 
++            version     => 1.4
++        },
++    },'META.yml data (META_ADD wins)';
++
++
++    # Yes, this is all hard coded.
++    require CPAN::Meta;
++    my $want_mymeta = {
++        name            => 'ExtUtils-MakeMaker',
++        version         => '6.57_07',
++        abstract        => 'Create a module Makefile',
++        author          => ['Michael G Schwern <schwern@pobox.com>'],
++        license         => 'perl',
++        dynamic_config  => 0,
++
++        requires        => {
++            "DirHandle"         => 0,
++            "File::Basename"    => 0,
++            "File::Spec"        => "0.8",
++            "Pod::Man"          => 0,
++            "perl"              => "5.006"
++        },
++
++        configure_requires      => {
++        },
++        build_requires      => {
++            'Fake::Module1'       => 1.01,
++        },
++
++        resources => {
++            license     =>      'http://dev.perl.org/licenses/',
++            homepage    =>      'http://makemaker.org',
++            bugtracker  =>      'http://rt.cpan.org/NoAuth/Bugs.html?Dist=ExtUtils-MakeMaker',
++            repository  =>      'http://github.com/Perl-Toolchain-Gang/ExtUtils-MakeMaker',
++            x_MailingList =>      'makemaker@perl.org',
++        },
++
++        no_index        => {
++            directory           => [qw(t inc)],
++            package             => ["DynaLoader", "in"],
++        },
++
++        generated_by => "ExtUtils::MakeMaker version 6.5707, CPAN::Meta::Converter version 2.110580",
++        'meta-spec'  => {
++            url         => 'http://module-build.sourceforge.net/META-spec-v1.4.html', 
++            version     => 1.4
++        },
++    };
++
++    mymeta_ok $mm->mymeta("t/META_for_testing.json"),
++              $want_mymeta,
++              'MYMETA JSON data (BUILD_REQUIRES wins)';
++
++    mymeta_ok $mm->mymeta("t/META_for_testing.yml"),
++              $want_mymeta,
++              'MYMETA YAML data (BUILD_REQUIRES wins)';
++}
++
++
++note "CPAN::Meta bug using the module version instead of the meta spec version"; {
++    my $mm = $new_mm->(
++        NAME      => 'GD::Barcode::Code93',
++        AUTHOR    => 'Chris DiMartino',
++        ABSTRACT  => 'Code 93 implementation of GD::Barcode family',
++        PREREQ_PM => {
++            'GD::Barcode' => 0,
++            'GD'          => 0
++        },
++        VERSION   => '1.4',
++    );
++
++    my $meta = $mm->mymeta("t/META_for_testing_tricky_version.yml");
++    is $meta->{'meta-spec'}{version}, 1.4;
++
++    in_dir {
++        $mm->write_mymeta($meta);
++        ok -e "MYMETA.yml";
++        ok -e "MYMETA.json";
++
++        my $meta_yml = Parse::CPAN::Meta->load_file("MYMETA.yml");
++        is $meta_yml->{'meta-spec'}{version}, 1.4, "MYMETA.yml correctly downgraded to 1.4";
++
++        my $meta_json = Parse::CPAN::Meta->load_file("MYMETA.json");
++        cmp_ok $meta_json->{'meta-spec'}{version}, ">=", 2, "MYMETA.json at 2 or better";
++    };
++
++}
++
++
++note "A bad license string"; {
++    my $mm = $new_mm->(
++        DISTNAME  => 'Foo::Bar',
++        VERSION   => '1.4',
++        LICENSE   => 'death and retribution',
++    );
++
++    in_dir {
++        my $meta = $mm->mymeta;
++        $mm->write_mymeta($meta);
++
++        my $meta_yml = Parse::CPAN::Meta->load_file("MYMETA.yml");
++        is $meta_yml->{license}, "unknown", "in yaml";
++
++        my $meta_json = Parse::CPAN::Meta->load_file("MYMETA.json");
++        is_deeply $meta_json->{license}, ["unknown"], "in json";
++    };
+ }
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/META_for_testing.json perl-5.14.0/cpan/ExtUtils-MakeMaker/t/META_for_testing.json
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/META_for_testing.json	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/t/META_for_testing.json	2011-04-12 17:49:15.000000000 +0200
+@@ -0,0 +1,60 @@
++{
++   "abstract" : "Create a module Makefile",
++   "author" : [
++      "Michael G Schwern <schwern@pobox.com>"
++   ],
++   "dynamic_config" : 1,
++   "generated_by" : "ExtUtils::MakeMaker version 6.5707, CPAN::Meta::Converter version 2.110580",
++   "license" : [
++      "perl_5"
++   ],
++   "meta-spec" : {
++      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
++      "version" : "2"
++   },
++   "name" : "ExtUtils-MakeMaker",
++   "no_index" : {
++      "directory" : [
++         "t",
++         "inc"
++      ],
++      "package" : [
++         "DynaLoader",
++         "in"
++      ]
++   },
++   "prereqs" : {
++      "build" : {
++         "requires" : {
++            "Data::Dumper" : 0
++         }
++      },
++      "configure" : {
++         "requires" : {}
++      },
++      "runtime" : {
++         "requires" : {
++            "DirHandle" : 0,
++            "File::Basename" : 0,
++            "File::Spec" : "0.8",
++            "Pod::Man" : 0,
++            "perl" : "5.006"
++         }
++      }
++   },
++   "release_status" : "testing",
++   "resources" : {
++      "bugtracker" : {
++         "web" : "http://rt.cpan.org/NoAuth/Bugs.html?Dist=ExtUtils-MakeMaker"
++      },
++      "homepage" : "http://makemaker.org",
++      "license" : [
++         "http://dev.perl.org/licenses/"
++      ],
++      "repository" : {
++         "url" : "http://github.com/Perl-Toolchain-Gang/ExtUtils-MakeMaker"
++      },
++      "x_MailingList" : "makemaker@perl.org"
++   },
++   "version" : "6.57_07"
++}
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/META_for_testing_tricky_version.yml perl-5.14.0/cpan/ExtUtils-MakeMaker/t/META_for_testing_tricky_version.yml
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/META_for_testing_tricky_version.yml	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/t/META_for_testing_tricky_version.yml	2011-04-12 17:49:15.000000000 +0200
+@@ -0,0 +1,23 @@
++--- #YAML:1.0
++name:               GD-Barcode-Code93
++version:            1.4
++abstract:           Code 93 implementation of GD::Barcode family
++author:
++    - Chris DiMartino
++license:            unknown
++distribution_type:  module
++configure_requires:
++    ExtUtils::MakeMaker:  0
++build_requires:
++    ExtUtils::MakeMaker:  0
++requires:
++    GD:           0
++    GD::Barcode:  0
++no_index:
++    directory:
++        - t
++        - inc
++generated_by:       ExtUtils::MakeMaker version 6.55_02
++meta-spec:
++    url:      http://module-build.sourceforge.net/META-spec-v1.4.html
++    version:  1.4
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/META_for_testing.yml perl-5.14.0/cpan/ExtUtils-MakeMaker/t/META_for_testing.yml
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/META_for_testing.yml	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/t/META_for_testing.yml	2011-04-12 17:49:15.000000000 +0200
+@@ -0,0 +1,34 @@
++---
++abstract: 'Create a module Makefile'
++author:
++  - 'Michael G Schwern <schwern@pobox.com>'
++build_requires:
++  Data::Dumper: 0
++configure_requires: {}
++dynamic_config: 1
++generated_by: 'ExtUtils::MakeMaker version 6.5707, CPAN::Meta::Converter version 2.110580'
++license: perl
++meta-spec:
++  url: http://module-build.sourceforge.net/META-spec-v1.4.html
++  version: 1.4
++name: ExtUtils-MakeMaker
++no_index:
++  directory:
++    - t
++    - inc
++  package:
++    - DynaLoader
++    - in
++requires:
++  DirHandle: 0
++  File::Basename: 0
++  File::Spec: 0.8
++  Pod::Man: 0
++  perl: 5.006
++resources:
++  bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=ExtUtils-MakeMaker
++  homepage: http://makemaker.org
++  license: http://dev.perl.org/licenses/
++  repository: http://github.com/Perl-Toolchain-Gang/ExtUtils-MakeMaker
++  x_MailingList: makemaker@perl.org
++version: 6.57_07
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/miniperl.t perl-5.14.0/cpan/ExtUtils-MakeMaker/t/miniperl.t
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/miniperl.t	2011-04-13 13:36:34.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/t/miniperl.t	2011-04-12 17:49:16.000000000 +0200
+@@ -6,7 +6,15 @@
+ use strict;
+ use lib 't/lib';
+ 
+-use Test::More 'no_plan';
++use Test::More;
++
++# In a BEGIN block so the END tests aren't registered.
++BEGIN {
++    plan skip_all => "miniperl test only necessary for the perl core"
++      if !$ENV{PERL_CORE};
++    
++    plan "no_plan";
++}
+ 
+ BEGIN {
+     ok !$INC{"ExtUtils/MakeMaker.pm"}, "MakeMaker is not yet loaded";
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/min_perl_version.t perl-5.14.0/cpan/ExtUtils-MakeMaker/t/min_perl_version.t
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/min_perl_version.t	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/t/min_perl_version.t	2011-04-12 17:49:16.000000000 +0200
+@@ -8,7 +8,7 @@
+ }
+ 
+ use strict;
+-use Test::More tests => 35;
++use Test::More tests => 32;
+ 
+ use TieOut;
+ use MakeMaker::Test::Utils;
+@@ -102,13 +102,11 @@
+             MIN_PERL_VERSION => 'foobar',
+         );
+     };
+-    ok( '' ne $warnings,    'MIN_PERL_VERSION=foobar triggers a warning' );
+-    is( $warnings, <<'END', '  with expected message text' );
++    is( $@, <<'END', 'Invalid MIN_PERL_VERSION is fatal' );
+ Warning: MIN_PERL_VERSION is not in a recognized format.
+ Recommended is a quoted numerical value like '5.005' or '5.008001'.
+ END
+ 
+-    is( $@, '',             '  and without a hard failure' );
+ }
+ 
+ 
+@@ -158,7 +156,6 @@
+     ok( -e $makefile, 'Makefile present' );
+ }
+ 
+-
+ # ----- ppd output -----
+ {
+     my $ppd_file = 'Min-PerlVers.ppd';
+@@ -180,24 +177,31 @@
+     my $distdir  = 'Min-PerlVers-0.05';
+     $distdir =~ s{\.}{_}g if $Is_VMS;
+ 
+-    my $mymeta_yml = "MYMETA.yml";
+-    my $mymeta = slurp($mymeta_yml);
+-
+-    ok( defined($mymeta),  '  MYMETA.yml present' );
+-
+-    like( $mymeta, qr{\nrequires:[^\S\n]*\n\s+perl:\s+5\.005\n\s+strict:\s+0\n},
+-                         '  MYMETA.yml content good');
+-
+     my $meta_yml = "$distdir/META.yml";
++    my $meta_json = "$distdir/META.json";
+     my @make_out    = run(qq{$make metafile});
+     END { rmtree $distdir }
+ 
+-    cmp_ok( $?, '==', 0, 'Make metafile exiting normally' ) || diag(@make_out);
+-    my $meta = slurp($meta_yml);
+-    ok( defined($meta),  '  META.yml present' );
++    SKIP: {
++      skip "CPAN::Meta required", 4
++        unless eval { require CPAN::Meta };
+ 
+-    like( $meta, qr{\nrequires:[^\S\n]*\n\s+perl:\s+5\.005\n\s+strict:\s+0\n},
+-                         '  META.yml content good');
++      for my $case (
++        ['META.yml', $meta_yml],
++        ['META.json', $meta_json],
++      ) {
++        my ($label, $meta_name) = @$case;
++        ok(
++          my $obj = eval {
++            CPAN::Meta->load_file($meta_name, {lazy_validation => 0})
++          },
++          "$label validates"
++        );
++        is( $obj->prereqs->{runtime}{requires}{perl}, '5.005',
++          "$label has runtime/requires perl 5.005"
++        );
++      }
++    }
+ }
+ 
+ __END__
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/MM_Win32.t perl-5.14.0/cpan/ExtUtils-MakeMaker/t/MM_Win32.t
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/MM_Win32.t	2011-04-13 13:36:34.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/t/MM_Win32.t	2011-04-12 17:49:16.000000000 +0200
+@@ -10,7 +10,7 @@
+ 
+ BEGIN {
+ 	if ($^O =~ /MSWin32/i) {
+-		plan tests => 49;
++		plan tests => 61;
+ 	} else {
+ 		plan skip_all => 'This is not Win32';
+ 	}
+@@ -272,6 +272,100 @@
+     is( $MM->pasthru(), $pastru, 'pasthru()' );
+ }
+ 
++# _identify_compiler_environment()
++{
++	sub _run_cc_id {
++		my ( $config ) = @_;
++
++		$config->{cc} ||= '';
++
++		my @cc_env = ExtUtils::MM_Win32::_identify_compiler_environment( $config );
++
++		my %cc_env = ( BORLAND => $cc_env[0], GCC => $cc_env[1], DLLTOOL => $cc_env[2] );
++
++		return \%cc_env;
++	}
++
++	sub _check_cc_id_value {
++		my ( $test ) = @_;
++
++		my $res = _run_cc_id( $test->{config} );
++
++		fail( "unknown key '$test->{key}'" ) if !exists $res->{$test->{key}};
++		my $val = $res->{$test->{key}};
++
++		is( $val, $test->{expect}, $test->{desc} );
++
++		return;
++	}
++
++	my @tests = (
++		{
++			config => {},
++			key => 'DLLTOOL', expect => 'dlltool',
++			desc => 'empty dlltool defaults to "dlltool"',
++		},
++		{
++			config => { dlltool => 'test' },
++			key => 'DLLTOOL', expect => 'test',
++			desc => 'dlltool value is taken over verbatim from %Config, if set',
++		},
++		{
++			config => {},
++			key => 'GCC', expect => 0,
++			desc => 'empty cc is not recognized as gcc',
++		},
++		{
++			config => { cc => 'gcc' },
++			key => 'GCC', expect => 1,
++			desc => 'plain "gcc" is recognized',
++		},
++		{
++			config => { cc => 'C:/MinGW/bin/gcc.exe' },
++			key => 'GCC', expect => 1,
++			desc => 'fully qualified "gcc" is recognized',
++		},
++		{
++			config => { cc => 'C:/MinGW/bin/gcc-1.exe' },
++			key => 'GCC', expect => 1,
++			desc => 'dash-extended gcc is recognized',
++		},
++		{
++			config => { cc => 'C:/MinGW/bin/gcc_1.exe' },
++			key => 'GCC', expect => 0,
++			desc => 'underscore-extended gcc is not recognized',
++		},
++		{
++			config => {},
++			key => 'BORLAND', expect => 0,
++			desc => 'empty cc is not recognized as borland',
++		},
++		{
++			config => { cc => 'bcc' },
++			key => 'BORLAND', expect => 1,
++			desc => 'plain "bcc" is recognized',
++		},
++		{
++			config => { cc => 'C:/Borland/bin/bcc.exe' },
++			key => 'BORLAND', expect => 0,
++			desc => 'fully qualified borland cc is not recognized',
++		},
++		{
++			config => { cc => 'bcc-1.exe' },
++			key => 'BORLAND', expect => 1,
++			desc => 'dash-extended borland cc is recognized',
++		},
++		{
++			config => { cc => 'bcc_1.exe' },
++			key => 'BORLAND', expect => 1,
++			desc => 'underscore-extended borland cc is recognized',
++		},
++	);
++
++	_check_cc_id_value($_) for @tests;
++
++}
++
+ package FakeOut;
+ 
+ sub TIEHANDLE {
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/oneliner.t perl-5.14.0/cpan/ExtUtils-MakeMaker/t/oneliner.t
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/oneliner.t	2011-04-13 13:36:34.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/t/oneliner.t	2011-04-12 17:49:16.000000000 +0200
+@@ -7,7 +7,7 @@
+ chdir 't';
+ 
+ use MakeMaker::Test::Utils;
+-use Test::More tests => 6;
++use Test::More tests => 11;
+ use File::Spec;
+ 
+ my $TB = Test::More->builder;
+@@ -40,6 +40,13 @@
+ # switches?
+ try_oneliner(q{print 'foo'}, ['-l'],           "foo\n",       'switches' );
+ 
++# some DOS-specific things
++try_oneliner(q{print " \" "}, [],  q{ " },  'single quote' );
++try_oneliner(q{print " < \" "}, [],  q{ < " },  'bracket, then quote' );
++try_oneliner(q{print " \" < "}, [],  q{ " < },  'quote, then bracket' );
++try_oneliner(q{print " < \"\" < \" < \" < "}, [],  q{ < "" < " < " < },  'quotes and brackets mixed' );
++try_oneliner(q{print " < \" | \" < | \" < \" < "}, [],  q{ < " | " < | " < " < },  'brackets, pipes and quotes' );
++
+ # XXX gotta rethink the newline test.  The Makefile does newline
+ # escaping, then the shell.
+ 
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/prereq.t perl-5.14.0/cpan/ExtUtils-MakeMaker/t/prereq.t
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/prereq.t	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/t/prereq.t	2011-04-12 17:49:16.000000000 +0200
+@@ -8,7 +8,7 @@
+ }
+ 
+ use strict;
+-use Test::More tests => 13;
++use Test::More tests => 16;
+ 
+ use TieOut;
+ use MakeMaker::Test::Utils;
+@@ -36,7 +36,7 @@
+         $warnings .= join '', @_;
+     };
+     # prerequisite warnings are disabled while building the perl core:
+-    local $ENV{PERL_CORE} = undef;
++    local $ENV{PERL_CORE} = 0;
+ 
+     WriteMakefile(
+         NAME            => 'Big::Dummy',
+@@ -67,6 +67,20 @@
+     is $warnings, 
+     "Warning: prerequisite I::Do::Not::Exist 0 not found.\n";
+ 
++
++    $warnings = '';
++    WriteMakefile(
++        NAME            => 'Big::Dummy',
++        PREREQ_PM       => {
++            "I::Do::Not::Exist" => "",
++        }
++    );
++    my @warnings = split /\n/, $warnings;
++    is @warnings, 2;
++    like $warnings[0], qr{^Unparsable version '' for prerequisite I::Do::Not::Exist\b};
++    is $warnings[1], "Warning: prerequisite I::Do::Not::Exist 0 not found.";
++
++
+     $warnings = '';
+     WriteMakefile(
+         NAME            => 'Big::Dummy',
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/several_authors.t perl-5.14.0/cpan/ExtUtils-MakeMaker/t/several_authors.t
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/several_authors.t	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/t/several_authors.t	2011-04-12 17:49:16.000000000 +0200
+@@ -1,130 +1,151 @@
+-#!/usr/bin/perl -w
+-
+-# This is a test checking various aspects of the optional argument
+-# MIN_PERL_VERSION to WriteMakefile.
+-
+-BEGIN {
+-    unshift @INC, 't/lib';
+-}
+-
+-use strict;
+-use Test::More tests => 18;
+-
+-use TieOut;
+-use MakeMaker::Test::Utils;
+-use MakeMaker::Test::Setup::SAS;
+-use File::Path;
+-
+-use ExtUtils::MakeMaker;
+-
+-# avoid environment variables interfering with our make runs
+-delete @ENV{qw(LIB MAKEFLAGS)};
+-
+-my $perl     = which_perl();
+-my $make     = make_run();
+-my $makefile = makefile_name();
+-
+-chdir 't';
+-
+-perl_lib();
+-
+-ok( setup_recurs(), 'setup' );
+-END {
+-    ok( chdir(File::Spec->updir), 'leaving dir' );
+-    ok( teardown_recurs(), 'teardown' );
+-}
+-
+-ok( chdir $MakeMaker::Test::Setup::SAS::dirname, "entering dir $MakeMaker::Test::Setup::SAS::dirname" ) ||
+-    diag("chdir failed: $!");
+-
+-{
+-    # ----- argument verification -----
+-
+-    my $stdout = tie *STDOUT, 'TieOut';
+-    ok( $stdout, 'capturing stdout' );
+-    my $warnings = '';
+-    local $SIG{__WARN__} = sub {
+-        $warnings .= join '', @_;
+-    };
+-
+-    eval {
+-        WriteMakefile(
+-            NAME             => 'Multiple::Authors',
+-            AUTHOR           => ['John Doe <jd@example.com>', 'Jane Doe <jd@example.com>'],
+-        );
+-    };
+-    is( $warnings, '', 'arrayref in AUTHOR does not trigger a warning' );
+-    is( $@, '',        '  nor a hard failure' );
+-
+-}
+-
+-
+-{
+-    # ----- argument verification -----
+-
+-    my $stdout = tie *STDOUT, 'TieOut';
+-    ok( $stdout, 'capturing stdout' );
+-    my $warnings = '';
+-    local $SIG{__WARN__} = sub {
+-        $warnings .= join '', @_;
+-    };
+-
+-    eval {
+-        WriteMakefile(
+-            NAME             => 'Multiple::Authors',
+-            CONFIGURE => sub { 
+-               return {AUTHOR => 'John Doe <jd@example.com>',};
+-            },
+-        );
+-    };
+-    is( $warnings, '', 'scalar in AUTHOR inside CONFIGURE does not trigger a warning' );
+-    is( $@, '',        '  nor a hard failure' );
+-
+-}
+-
+-
+-# ----- generated files verification -----
+-{
+-    unlink $makefile;
+-    my @mpl_out = run(qq{$perl Makefile.PL});
+-    END { unlink $makefile, makefile_backup() }
+-
+-    cmp_ok( $?, '==', 0, 'Makefile.PL exiting normally' ) || diag(@mpl_out);
+-    ok( -e $makefile, 'Makefile present' );
+-}
+-
+-
+-# ----- ppd output -----
+-{
+-    my $ppd_file = 'Multiple-Authors.ppd';
+-    my @make_out = run(qq{$make ppd});
+-    END { unlink $ppd_file }
+-
+-    cmp_ok( $?, '==', 0,    'Make ppd exiting normally' ) || diag(@make_out);
+-
+-    my $ppd_html = slurp($ppd_file);
+-    ok( defined($ppd_html), '  .ppd file present' );
+-
+-    like( $ppd_html, qr{John Doe &lt;jd\@example.com&gt;, Jane Doe &lt;jd\@example.com&gt;},
+-                            '  .ppd file content good' );
+-}
+-
+-
+-# ----- META.yml output -----
+-{
+-    my $distdir  = 'Multiple-Authors-0.05';
+-    $distdir =~ s{\.}{_}g if $Is_VMS;
+-
+-    my $meta_yml = "$distdir/META.yml";
+-    my @make_out    = run(qq{$make metafile});
+-    END { rmtree $distdir }
+-
+-    cmp_ok( $?, '==', 0, 'Make metafile exiting normally' ) || diag(@make_out);
+-    my $meta = slurp($meta_yml);
+-    ok( defined($meta),  '  META.yml present' );
+-
+-    like( $meta, qr{\nauthor:\n\s+- John Doe <jd\@example.com>\n\s+- Jane Doe <jd\@example.com>\n},
+-                         '  META.yml content good');
+-}
+-
+-__END__
++#!/usr/bin/perl -w
++
++# This is a test checking various aspects of the optional argument
++# MIN_PERL_VERSION to WriteMakefile.
++
++BEGIN {
++    unshift @INC, 't/lib';
++}
++
++use strict;
++use Test::More tests => 20;
++
++use TieOut;
++use MakeMaker::Test::Utils;
++use MakeMaker::Test::Setup::SAS;
++use File::Path;
++
++use ExtUtils::MakeMaker;
++
++# avoid environment variables interfering with our make runs
++delete @ENV{qw(LIB MAKEFLAGS)};
++
++my $perl     = which_perl();
++my $make     = make_run();
++my $makefile = makefile_name();
++
++chdir 't';
++
++perl_lib();
++
++ok( setup_recurs(), 'setup' );
++END {
++    ok( chdir(File::Spec->updir), 'leaving dir' );
++    ok( teardown_recurs(), 'teardown' );
++}
++
++ok( chdir $MakeMaker::Test::Setup::SAS::dirname, "entering dir $MakeMaker::Test::Setup::SAS::dirname" ) ||
++    diag("chdir failed: $!");
++
++{
++    # ----- argument verification -----
++
++    my $stdout = tie *STDOUT, 'TieOut';
++    ok( $stdout, 'capturing stdout' );
++    my $warnings = '';
++    local $SIG{__WARN__} = sub {
++        $warnings .= join '', @_;
++    };
++
++    eval {
++        WriteMakefile(
++            NAME             => 'Multiple::Authors',
++            AUTHOR           => ['John Doe <jd@example.com>', 'Jane Doe <jd@example.com>'],
++        );
++    };
++    is( $warnings, '', 'arrayref in AUTHOR does not trigger a warning' );
++    is( $@, '',        '  nor a hard failure' );
++
++}
++
++
++{
++    # ----- argument verification -----
++
++    my $stdout = tie *STDOUT, 'TieOut';
++    ok( $stdout, 'capturing stdout' );
++    my $warnings = '';
++    local $SIG{__WARN__} = sub {
++        $warnings .= join '', @_;
++    };
++
++    eval {
++        WriteMakefile(
++            NAME             => 'Multiple::Authors',
++            CONFIGURE => sub { 
++               return {AUTHOR => 'John Doe <jd@example.com>',};
++            },
++        );
++    };
++    is( $warnings, '', 'scalar in AUTHOR inside CONFIGURE does not trigger a warning' );
++    is( $@, '',        '  nor a hard failure' );
++
++}
++
++
++# ----- generated files verification -----
++{
++    unlink $makefile;
++    my @mpl_out = run(qq{$perl Makefile.PL});
++    END { unlink $makefile, makefile_backup() }
++
++    cmp_ok( $?, '==', 0, 'Makefile.PL exiting normally' ) || diag(@mpl_out);
++    ok( -e $makefile, 'Makefile present' );
++}
++
++
++# ----- ppd output -----
++{
++    my $ppd_file = 'Multiple-Authors.ppd';
++    my @make_out = run(qq{$make ppd});
++    END { unlink $ppd_file }
++
++    cmp_ok( $?, '==', 0,    'Make ppd exiting normally' ) || diag(@make_out);
++
++    my $ppd_html = slurp($ppd_file);
++    ok( defined($ppd_html), '  .ppd file present' );
++
++    like( $ppd_html, qr{John Doe &lt;jd\@example.com&gt;, Jane Doe &lt;jd\@example.com&gt;},
++                            '  .ppd file content good' );
++}
++
++
++# ----- META.yml output -----
++{
++    my $distdir  = 'Multiple-Authors-0.05';
++    $distdir =~ s{\.}{_}g if $Is_VMS;
++
++    my $meta_yml = "$distdir/META.yml";
++    my $meta_json = "$distdir/META.json";
++    my @make_out    = run(qq{$make metafile});
++    END { rmtree $distdir }
++
++    cmp_ok( $?, '==', 0, 'Make metafile exiting normally' ) || diag(@make_out);
++
++    SKIP: {
++      skip "CPAN::Meta required", 4
++        unless eval { require CPAN::Meta };
++
++      for my $case (
++        ['META.yml', $meta_yml],
++        ['META.json', $meta_json],
++      ) {
++        my ($label, $meta_name) = @$case;
++        ok(
++          my $obj = eval {
++            CPAN::Meta->load_file($meta_name, {lazy_validation => 0})
++          },
++          "$label validates"
++        );
++        is_deeply( [ $obj->authors ],
++          [
++            q{John Doe <jd@example.com>},
++            q{Jane Doe <jd@example.com>},
++          ],
++          "$label content good"
++        );
++      }
++    }
++}
++
++__END__
+diff -urN perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/writemakefile_args.t perl-5.14.0/cpan/ExtUtils-MakeMaker/t/writemakefile_args.t
+--- perl-5.14.0/cpan/ExtUtils-MakeMaker/t.eemm/writemakefile_args.t	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/cpan/ExtUtils-MakeMaker/t/writemakefile_args.t	2011-04-12 17:49:16.000000000 +0200
+@@ -225,7 +225,7 @@
+     };
+     is( $warnings, '' );
+     is_deeply( $mm->{AUTHOR},  ["test"] );
+-
++    
+ 
+     # AUTHOR / array
+     $warnings = '';
+@@ -238,5 +238,5 @@
+     };
+     is( $warnings, '' );
+     is_deeply( $mm->{AUTHOR},  ["test1","test2"] );
+-
++    
+ }
+diff -up perl-5.14.0/MANIFEST.eemm perl-5.14.0/MANIFEST
+--- perl-5.14.0/MANIFEST.eemm	2011-05-08 05:10:08.000000000 +0200
++++ perl-5.14.0/MANIFEST	2011-06-16 14:53:32.647828454 +0200
+@@ -984,7 +984,6 @@ cpan/ExtUtils-MakeMaker/lib/ExtUtils/Mak
+ cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker/FAQ.pod		MakeMaker FAQ
+ cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker.pm		Write Makefiles for extensions
+ cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker/Tutorial.pod	Writing a module with MakeMaker
+-cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker/YAML.pm		clone of YAML::Tiny
+ cpan/ExtUtils-MakeMaker/lib/ExtUtils/Mkbootstrap.pm		Writes a bootstrap file (see MakeMaker)
+ cpan/ExtUtils-MakeMaker/lib/ExtUtils/Mksymlists.pm		Writes a linker options file for extensions
+ cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_AIX.pm			MakeMaker methods for AIX
