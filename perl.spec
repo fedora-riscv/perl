@@ -60,6 +60,9 @@ Patch6:         perl-disable_test_hosts.patch
 # systems.
 Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
 
+# switch off test, which is failing only on koji (fork)
+Patch8:         perl-5.14.1-offtest.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -1031,6 +1034,7 @@ tarball from perl.org.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -2050,6 +2054,7 @@ sed \
 %changelog
 * Mon Jun 20 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-171
 - update to 5.14.1 - no new modules, just serious bugfixes and doc
+- switch off fork test, which is failing only on koji
 
 * Thu Jun 16 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-170
 - try to update to latest ExtUtils::MakeMaker, no luck -> rebuild with current 
