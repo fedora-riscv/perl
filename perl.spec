@@ -16,8 +16,8 @@
 
 Name:           perl
 Version:        %{perl_version}
-# release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        171%{?dist}
+# release number must be even higher, because dual-lived modules will be broken otherwise
+Release:        172%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -73,6 +73,7 @@ BuildRequires:  procps, rsyslog
 # The long line of Perl provides.
 
 # Compat provides
+Provides: perl(:MODULE_COMPAT_5.14.1)
 Provides: perl(:MODULE_COMPAT_5.14.0)
 Provides: perl(:MODULE_COMPAT_5.12.3)
 Provides: perl(:MODULE_COMPAT_5.12.2)
@@ -2052,6 +2053,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jun 20 2011 Paul Howarth <paul@city-fan.org> - 4:5.14.0-172
+- add provide for perl(:MODULE_COMPAT_5.14.1)
+
 * Mon Jun 20 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-171
 - update to 5.14.1 - no new modules, just serious bugfixes and doc
 - switch off fork test, which is failing only on koji
