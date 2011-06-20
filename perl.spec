@@ -17,7 +17,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        172%{?dist}
+Release:        173%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1316,10 +1316,12 @@ sed \
 # Archive-Tar
 %exclude %{_bindir}/ptar
 %exclude %{_bindir}/ptardiff
+%exclude %{_bindir}/ptargrep
 %exclude %{privlib}/Archive/Tar/
 %exclude %{privlib}/Archive/Tar.pm
 %exclude %{_mandir}/man1/ptar.1*
 %exclude %{_mandir}/man1/ptardiff.1*
+%exclude %{_mandir}/man1/ptargrep.1*
 %exclude %{_mandir}/man3/Archive::Tar*
 
 # CGI
@@ -1695,10 +1697,12 @@ sed \
 %files Archive-Tar
 %{_bindir}/ptar
 %{_bindir}/ptardiff
+%{_bindir}/ptargrep
 %{privlib}/Archive/Tar/ 
 %{privlib}/Archive/Tar.pm
 %{_mandir}/man1/ptar.1*
 %{_mandir}/man1/ptardiff.1*
+%{_mandir}/man1/ptargrep.1*
 %{_mandir}/man3/Archive::Tar* 
 
 %files CGI
@@ -2053,10 +2057,14 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Mon Jun 20 2011 Paul Howarth <paul@city-fan.org> - 4:5.14.0-172
+* Mon Jun 20 2011 Iain Arnell <iarnell@gmail.com> 4:5.14.1-173
+- move ptargrep to Archive-Tar sub-package
+- fix version numbers in last two changelog entries
+
+* Mon Jun 20 2011 Paul Howarth <paul@city-fan.org> - 4:5.14.1-172
 - add provide for perl(:MODULE_COMPAT_5.14.1)
 
-* Mon Jun 20 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-171
+* Mon Jun 20 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.1-171
 - update to 5.14.1 - no new modules, just serious bugfixes and doc
 - switch off fork test, which is failing only on koji
 
