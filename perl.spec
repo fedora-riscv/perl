@@ -1,4 +1,4 @@
-%global perl_version    5.14.0
+%global perl_version    5.14.1
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -17,7 +17,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        170%{?dist}
+Release:        171%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1031,7 +1031,6 @@ tarball from perl.org.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -2049,6 +2048,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jun 20 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-171
+- update to 5.14.1 - no new modules, just serious bugfixes and doc
+
 * Thu Jun 16 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.0-170
 - try to update to latest ExtUtils::MakeMaker, no luck -> rebuild with current 
   version, fix bug RT#67618 in modules
