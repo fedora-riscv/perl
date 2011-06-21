@@ -1081,7 +1081,7 @@ echo "RPM Build arch: %{_arch}"
 
 # -Duseshrplib creates libperl.so, -Ubincompat5005 help create DSO -> libperl.so
 
-%ifarch sparc64 armv5tel
+%ifarch sparc64 %{arm}
 make
 %else
 make %{?_smp_mflags}
