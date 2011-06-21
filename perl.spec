@@ -17,7 +17,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        173%{?dist}
+Release:        174%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -75,10 +75,6 @@ BuildRequires:  procps, rsyslog
 # Compat provides
 Provides: perl(:MODULE_COMPAT_5.14.1)
 Provides: perl(:MODULE_COMPAT_5.14.0)
-Provides: perl(:MODULE_COMPAT_5.12.3)
-Provides: perl(:MODULE_COMPAT_5.12.2)
-Provides: perl(:MODULE_COMPAT_5.12.1)
-Provides: perl(:MODULE_COMPAT_5.12.0)
 
 # Threading provides
 Provides: perl(:WITH_ITHREADS)
@@ -2057,6 +2053,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jun 21 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.1-174
+- remove old MODULE_COMPATs
+
 * Mon Jun 20 2011 Iain Arnell <iarnell@gmail.com> 4:5.14.1-173
 - move ptargrep to Archive-Tar sub-package
 - fix version numbers in last two changelog entries
