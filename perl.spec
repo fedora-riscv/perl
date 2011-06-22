@@ -12,7 +12,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        144%{?dist}
+Release:        145%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -24,7 +24,7 @@ Group:          Development/Languages
 # Copyright Only: for example ext/Text-Soundex/Soundex.xs 
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and MIT and Public Domain and UCD
 Url:            http://www.perl.org/
-Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.gz
+Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
 Source1:        filter-requires.sh
 Source2:        perl-5.8.0-libnet.cfg
 Source3:        macros.perl
@@ -66,9 +66,6 @@ Patch9:         perl-5.12.2-h2ph.patch
 # Update ExtUtils::ParseXS to 2.2206
 Patch10:	perl-ExtUtils-ParseXS-2.2206.patch
 
-# 692900 - lc launders tainted flag, RT #87336
-Patch11:    perl-87336-lc-uc-first-fail-to-taint-the-returned-st.patch
-
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -84,6 +81,7 @@ Provides: perl(VMS::Filespec)
 Provides: perl(VMS::Stdio)
 
 # Compat provides
+Provides: perl(:MODULE_COMPAT_5.12.4)
 Provides: perl(:MODULE_COMPAT_5.12.3)
 Provides: perl(:MODULE_COMPAT_5.12.2)
 Provides: perl(:MODULE_COMPAT_5.12.1)
@@ -568,7 +566,7 @@ Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.29 
+Version:        2.50 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(version)
 BuildArch:      noarch
@@ -909,7 +907,7 @@ Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-Class-ISA,
 Requires:       perl-Compress-Raw-Zlib, perl-CGI, perl-CPAN,
 Requires:       perl-CPANPLUS, perl-Digest-SHA, perl-ExtUtils-CBuilder,
 Requires:       perl-ExtUtils-Embed, perl-ExtUtils-MakeMaker, perl-ExtUtils-ParseXS,
-Requires:       perl-File-Fetch, perl-IO-Compress-Base, perl-IO-Zlib,
+Requires:       perl-File-Fetch, perl-IO-Compress, perl-IO-Zlib,
 Requires:       perl-IPC-Cmd, perl-Locale-Maketext-Simple, perl-Log-Message, perl-Log-Message-Simple,
 Requires:       perl-Module-Build, perl-Module-CoreList, perl-Module-Load,
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded,
@@ -941,7 +939,6 @@ upstream tarball from perl.org.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
-%patch11 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1090,6 +1087,10 @@ do
     %{new_perl} %{build_bindir}/h2ph -a -d %{build_archlib} $i || true
 done
 
+# vendor directories (in this case for third party rpms)
+mkdir -p $RPM_BUILD_ROOT%{perl_vendorarch}
+mkdir -p $RPM_BUILD_ROOT%{perl_vendorlib}
+
 #
 # libnet configuration file
 #
@@ -1142,7 +1143,6 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch8: Do not leak when destroying thread; RT #77352' \
     'Fedora Patch9: h2ph produces incorrect code in preamble, based mainly on RT #74614 ' \
     'Fedora Patch10: Update ExtUtils::ParseXS to 2.2206' \
-    'Fedora Patch11: lc launders tainted flag RT #87336' \
     %{nil}
 
 rm patchlevel.bak
@@ -1202,9 +1202,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/*
 %{privlib}
 %{archlib}
+%{perl_vendorlib}
+%{_prefix}/local/share/perl5
 
 # libs
 %exclude %{archlib}/CORE/libperl.so
+%exclude %{perl_vendorarch}
 
 # devel
 %exclude %{_bindir}/enc2xs
@@ -1512,6 +1515,9 @@ rm -rf $RPM_BUILD_ROOT
 %files libs
 %defattr(-,root,root)
 %{archlib}/CORE/libperl.so
+%dir %{archlib}
+%dir %{perl_vendorarch}
+%dir %{_prefix}/local/%{_lib}/perl5
 
 %files devel
 %defattr(-,root,root,-)
@@ -1876,6 +1882,12 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jun 22 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.4-145
+- update to minor update release 5.12.4
+- Upstream changes: remove patch for lc tainting RT #87336,
+-          updated Module-CoreList v2.50 in tarball
+- add un-owned but existing perl_vendorarch
+
 * Wed Jun  1 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-144
 - arm can't do parallel build
 - add require EE::MM into IPC::Cmd 711486
