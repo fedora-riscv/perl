@@ -1,4 +1,4 @@
-%define perl_version    5.12.3
+%define perl_version    5.12.4
 %define perl_epoch      4
 %define perl_arch_stem -thread-multi
 %define perl_archname %{_arch}-%{_os}%{perl_arch_stem}
