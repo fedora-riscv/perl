@@ -1349,24 +1349,20 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{privlib}/IO/Compress/Gzip/
 %exclude %{privlib}/IO/Compress/Gzip.pm
 %exclude %{privlib}/IO/Compress/RawDeflate.pm
-%exclude %{privlib}/IO/Compress/Bzip2.pm
 %exclude %{privlib}/IO/Compress/Zip/
 %exclude %{privlib}/IO/Compress/Zip.pm
 %exclude %{privlib}/IO/Compress/Zlib/
 %exclude %{privlib}/IO/Uncompress/Adapter/
 %exclude %{privlib}/IO/Uncompress/AnyInflate.pm
-%exclude %{privlib}/IO/Uncompress/Bunzip2.pm
 %exclude %{privlib}/IO/Uncompress/Gunzip.pm
 %exclude %{privlib}/IO/Uncompress/Inflate.pm
 %exclude %{privlib}/IO/Uncompress/RawInflate.pm
 %exclude %{privlib}/IO/Uncompress/Unzip.pm
 %exclude %{_mandir}/man3/IO::Compress::Deflate*
-%exclude %{_mandir}/man3/IO::Compress::Bzip2*
 %exclude %{_mandir}/man3/IO::Compress::Gzip*
 %exclude %{_mandir}/man3/IO::Compress::RawDeflate*
 %exclude %{_mandir}/man3/IO::Compress::Zip*
 %exclude %{_mandir}/man3/IO::Uncompress::AnyInflate*
-%exclude %{_mandir}/man3/IO::Uncompress::Bunzip2*
 %exclude %{_mandir}/man3/IO::Uncompress::Gunzip*
 %exclude %{_mandir}/man3/IO::Uncompress::Inflate*
 %exclude %{_mandir}/man3/IO::Uncompress::RawInflate*
@@ -1675,7 +1671,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{privlib}/IO/Compress/Adapter/
 %{privlib}/IO/Compress/Deflate.pm
-%{privlib}/IO/Compress/Bzip2.pm
 %{privlib}/IO/Compress/Gzip/
 %{privlib}/IO/Compress/Gzip.pm
 %{privlib}/IO/Compress/RawDeflate.pm
@@ -1684,18 +1679,15 @@ rm -rf $RPM_BUILD_ROOT
 %{privlib}/IO/Compress/Zlib/
 %{privlib}/IO/Uncompress/Adapter/
 %{privlib}/IO/Uncompress/AnyInflate.pm
-%{privlib}/IO/Uncompress/Bunzip2.pm
 %{privlib}/IO/Uncompress/Gunzip.pm
 %{privlib}/IO/Uncompress/Inflate.pm
 %{privlib}/IO/Uncompress/RawInflate.pm
 %{privlib}/IO/Uncompress/Unzip.pm
 %{_mandir}/man3/IO::Compress::Deflate*
 %{_mandir}/man3/IO::Compress::Gzip*
-%{_mandir}/man3/IO::Compress::Bzip2*
 %{_mandir}/man3/IO::Compress::RawDeflate*
 %{_mandir}/man3/IO::Compress::Zip*
 %{_mandir}/man3/IO::Uncompress::AnyInflate*
-%{_mandir}/man3/IO::Uncompress::Bunzip2*
 %{_mandir}/man3/IO::Uncompress::Gunzip*
 %{_mandir}/man3/IO::Uncompress::Inflate*
 %{_mandir}/man3/IO::Uncompress::RawInflate*
@@ -1883,7 +1875,6 @@ rm -rf $RPM_BUILD_ROOT
 * Fri Jun 24 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.4-146
 - every Fedora has different paths -> remove dirs, which were added in
   previous commit
-- add missing files IO::Compress::Bzip2 into IO::Compress
 
 * Wed Jun 22 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.4-145
 - update to minor update release 5.12.4
