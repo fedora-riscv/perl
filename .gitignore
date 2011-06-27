@@ -1,6 +1,5 @@
 perl-5.12.1.tar.gz
 perl-5.8.0-libdir64.patch
-macros.perl
 filter-requires.sh
 /perl-5.12.2.tar.gz
 /perl-5.12.3.tar.gz
