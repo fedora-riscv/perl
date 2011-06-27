@@ -17,7 +17,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        176%{?dist}
+Release:        177%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2054,8 +2054,8 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Mon Jun 27 2011 arcela Mašláňová <mmaslano@redhat.com> - 4:5.14.1-176
-- update macros -> add %%perl_bootstrap 0
+* Mon Jun 27 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.1-177
+- update macros -> add %%perl_bootstrap 1 and example for readability
 - add into Module::Build dependency on perl-devel (contains macros.perl)
 
 * Thu Jun 23 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.1-175

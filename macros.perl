@@ -53,10 +53,9 @@ export PERL_MM_USE_DEFAULT=1
 # For rebuild of Perl and all related packages is needed switch, which enable
 # only vital build requires. This could help cyclic dependencies, for example:
 # perl-Test-Minimum-Version <-> perl-Perl-Minimum-Version
-# 0 - for bootstrap
-# 1 - without bootstrap
-
-%perl_bootstrap 0
+# Defined for bootstraping, undefined otherwise. Usage:
+# %%if !%%{defined perl_bootstrap} ... %%endif
+%perl_bootstrap 1
 
 #############################################################################
 # Macros to assist with generating a "-tests" subpackage in a semi-automatic
