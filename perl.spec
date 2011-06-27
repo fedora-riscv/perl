@@ -17,7 +17,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        175%{?dist}
+Release:        176%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -576,6 +576,7 @@ Version:        0.3800
 Requires:       perl(Archive::Tar) >= 1.08
 Requires:       perl(ExtUtils::CBuilder) >= 0.15
 Requires:       perl(ExtUtils::ParseXS) >= 1.02
+Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -2053,6 +2054,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jun 27 2011 arcela Mašláňová <mmaslano@redhat.com> - 4:5.14.1-176
+- update macros -> add %%perl_bootstrap 0
+- add into Module::Build dependency on perl-devel (contains macros.perl)
+
 * Thu Jun 23 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.1-175
 - remove from macros BSD, because there exists BSD::Resources
 
