@@ -17,7 +17,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        177%{?dist}
+Release:        178%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -134,6 +134,9 @@ Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 # We need this to break the dependency loop, and ensure that perl-libs 
 # gets installed before perl.
 Requires(post): perl-libs
+# Same as perl-libs. We need macros in basic buildroot, where Perl is only
+# because of git.
+Requires(post): perl-macros
 
 
 %description
@@ -169,6 +172,19 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 %description devel
 This package contains header files and development modules.
 Most perl packages will need to install perl-devel to build.
+
+
+%package macros
+Summary:        Macros for rpmbuild
+Group:          Development/Languages
+License:        GPL+ or Artistic
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description macros
+Macros for rpmbuild are needed during build of srpm in koji. This
+sub-package must be installed into buildroot, so it will be needed
+by perl. Perl is needed because of git.
+
 
 %package tests
 Summary:        The Perl test suite
@@ -1004,6 +1020,7 @@ Version:        %{perl_version}
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl-macros
 
 Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-Compress-Raw-Bzip2
 Requires:       perl-Compress-Raw-Zlib, perl-CGI, perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-YAML
@@ -1679,9 +1696,11 @@ sed \
 %{_bindir}/xsubpp
 %{_mandir}/man1/xsubpp*
 %{_mandir}/man1/perlxs*
-%attr(0644,root,root) %{_sysconfdir}/rpm/macros.perl
 %{tapsetdir}/%{libperl_stp}
 %doc perl-example.stp
+
+%files macros
+%attr(0644,root,root) %{_sysconfdir}/rpm/macros.perl
 
 %files tests
 %{perl5_testdir}/
@@ -2054,9 +2073,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Mon Jun 27 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.1-177
+* Mon Jun 27 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.1-178
 - update macros -> add %%perl_bootstrap 1 and example for readability
 - add into Module::Build dependency on perl-devel (contains macros.perl)
+- create new sub-package macros, because we need macros in minimal buildroot
 
 * Thu Jun 23 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.1-175
 - remove from macros BSD, because there exists BSD::Resources
