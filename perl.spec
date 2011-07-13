@@ -17,7 +17,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        178%{?dist}
+Release:        179%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -299,8 +299,7 @@ Query, download and build perl modules from CPAN sites.
 %package CPAN-Meta
 Summary:        Distribution metadata for a CPAN dist
 Epoch:          0
-# normalize version
-Version:        2.110.440
+Version:        2.110440
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -519,7 +518,7 @@ resumes after EINTR.
 %package JSON-PP
 Summary:        JSON::XS compatible pure-Perl module
 Epoch:          0
-Version:        2.271.50
+Version:        2.27150
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 BuildArch:      noarch
@@ -762,10 +761,11 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-# 1.4401
-Version:        1.44.1
+Version:        1.4401
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
+Requires:       perl(CPAN::Meta::YAML) >= 0.002
+Requires:       perl(JSON::PP) >= 2.27103
 # FIXME it could be removed now?
 Obsoletes:      perl-Parse-CPAN-Meta < 1.40
 
@@ -1747,8 +1747,12 @@ sed \
 %{_mandir}/man1/cpan.1*
 %{_mandir}/man3/CPAN.*
 %{_mandir}/man3/CPAN:*
+%exclude %{privlib}/CPAN/Meta/
+%exclude %{privlib}/CPAN/Meta.pm
+%exclude %{_mandir}/man3/CPAN::Meta*
 
 %files CPAN-Meta
+%dir %{privlib}/CPAN/Meta
 %{privlib}/CPAN/Meta.pm
 %{privlib}/CPAN/Meta/Converter.pm
 %{privlib}/CPAN/Meta/Feature.pm
@@ -1756,7 +1760,8 @@ sed \
 %{privlib}/CPAN/Meta/Prereqs.pm
 %{privlib}/CPAN/Meta/Spec.pm
 %{privlib}/CPAN/Meta/Validator.pm
-%{_mandir}/man3/CPAN::Meta.*
+%{_mandir}/man3/CPAN::Meta*
+%exclude %{_mandir}/man3/CPAN::Meta::YAML*
 
 %files CPAN-Meta-YAML
 %{privlib}/CPAN/Meta/YAML.pm
@@ -2073,6 +2078,12 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jul 13 2011 Iain Arnell <iarnell@gmail.com> 4:5.14.1-179
+- Parse-CPAN-Meta explicitly requires CPAN::Meta::YAML and JSON::PP
+- Exclude CPAN::Meta* from CPAN sub-package
+- Don't try to normalize CPAN-Meta, JSON-PP, and Parse-CPAN-Meta versions;
+  their dual-life packages aren't and have much higher numbers already
+
 * Mon Jun 27 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.1-178
 - update macros -> add %%perl_bootstrap 1 and example for readability
 - add into Module::Build dependency on perl-devel (contains macros.perl)
