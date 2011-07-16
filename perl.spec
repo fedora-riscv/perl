@@ -7,7 +7,7 @@
 %global parallel_tests 1
 %global tapsetdir   %{_datadir}/systemtap/tapset
 
-%global __provides_exclude_from .*/auto/.*\.so|.*/%{perl_archlib}/.*\.so|%{_docdir}
+%global __provides_exclude_from .*/auto/.*\\.so$|.*/%{perl_archlib}/.*\\.so$|%{_docdir}
 %global __requires_exclude_from %{_docdir}
 %global __provides_exclude perl\\(VMS|perl\\(Win32|perl\\(BSD::|perl\\(DB\\)
 %global __requires_exclude perl\\(VMS|perl\\(BSD::|perl\\(Win32|perl\\(Tk|perl\\(Mac::|perl\\(Your::Module::Here
@@ -17,7 +17,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        179%{?dist}
+Release:        180%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2078,6 +2078,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sat Jul 16 2011 Iain Arnell <iarnell@gmail.com> 4:5.14.1-180
+- fix escaping of the __provides_exclude_from macro
+
 * Wed Jul 13 2011 Iain Arnell <iarnell@gmail.com> 4:5.14.1-179
 - Parse-CPAN-Meta explicitly requires CPAN::Meta::YAML and JSON::PP
 - Exclude CPAN::Meta* from CPAN sub-package
