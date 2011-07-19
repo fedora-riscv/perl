@@ -17,7 +17,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        180%{?dist}
+Release:        181%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -75,6 +75,10 @@ BuildRequires:  procps, rsyslog
 # Compat provides
 Provides: perl(:MODULE_COMPAT_5.14.1)
 Provides: perl(:MODULE_COMPAT_5.14.0)
+Provides: perl(:MODULE_COMPAT_5.12.3)
+Provides: perl(:MODULE_COMPAT_5.12.2)
+Provides: perl(:MODULE_COMPAT_5.12.1)
+Provides: perl(:MODULE_COMPAT_5.12.0)
 
 # Threading provides
 Provides: perl(:WITH_ITHREADS)
@@ -2078,6 +2082,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jul 19 2011 Petr Sabata <contyk@redhat.com> - 4:5.14.1-181
+- Temporarily provide 5.12.* MODULE_COMPAT
+
 * Sat Jul 16 2011 Iain Arnell <iarnell@gmail.com> 4:5.14.1-180
 - fix escaping of the __provides_exclude_from macro
 

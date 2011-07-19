@@ -55,7 +55,7 @@ export PERL_MM_USE_DEFAULT=1
 # perl-Test-Minimum-Version <-> perl-Perl-Minimum-Version
 # Defined for bootstraping, undefined otherwise. Usage:
 # %%if !%%{defined perl_bootstrap} ... %%endif
-%perl_bootstrap 1
+#perl_bootstrap 1
 
 #############################################################################
 # Macros to assist with generating a "-tests" subpackage in a semi-automatic
