@@ -17,7 +17,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        181%{?dist}
+Release:        182%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -593,6 +593,7 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        0.3800 
 Requires:       perl(Archive::Tar) >= 1.08
+Requires:       perl(CPAN::Meta) >= 2.110420
 Requires:       perl(ExtUtils::CBuilder) >= 0.15
 Requires:       perl(ExtUtils::ParseXS) >= 1.02
 Requires:       perl-devel
@@ -2082,6 +2083,11 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jul 22 2011 Paul Howarth <paul@city-fan.org> - 4:5.14.1-182
+- Have perl-Module-Build explicitly require perl(CPAN::Meta) >= 2.110420,
+  needed for creation of MYMETA files by Build.PL; the dual-life version of
+  the package already has this dependency
+
 * Tue Jul 19 2011 Petr Sabata <contyk@redhat.com> - 4:5.14.1-181
 - Temporarily provide 5.12.* MODULE_COMPAT
 
