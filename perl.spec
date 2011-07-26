@@ -17,7 +17,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        182%{?dist}
+Release:        183%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -75,10 +75,6 @@ BuildRequires:  procps, rsyslog
 # Compat provides
 Provides: perl(:MODULE_COMPAT_5.14.1)
 Provides: perl(:MODULE_COMPAT_5.14.0)
-Provides: perl(:MODULE_COMPAT_5.12.3)
-Provides: perl(:MODULE_COMPAT_5.12.2)
-Provides: perl(:MODULE_COMPAT_5.12.1)
-Provides: perl(:MODULE_COMPAT_5.12.0)
 
 # Threading provides
 Provides: perl(:WITH_ITHREADS)
@@ -2083,6 +2079,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jul 26 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.1-183
+- remove from provides MODULE_COMPAT 5.12.*
+
 * Fri Jul 22 2011 Paul Howarth <paul@city-fan.org> - 4:5.14.1-182
 - Have perl-Module-Build explicitly require perl(CPAN::Meta) >= 2.110420,
   needed for creation of MYMETA files by Build.PL; the dual-life version of
