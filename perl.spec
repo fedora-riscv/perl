@@ -17,7 +17,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        183%{?dist}
+Release:        184%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2092,6 +2092,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jul 29 2011 Iain Arnell <iarnell@gmail.com> 4:5.14.1-184
+- fix Compress-Raw-Bzip2 pacakging
+- ensure that we never bundle bzip2 or zlib
+
 * Tue Jul 26 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.1-183
 - remove from provides MODULE_COMPAT 5.12.*
 
