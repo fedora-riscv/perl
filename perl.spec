@@ -66,7 +66,7 @@ Patch8:         perl-5.14.1-offtest.patch
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
-BuildRequires:  db4-devel, gdbm-devel, groff, tcsh, zlib-devel, systemtap-sdt-devel
+BuildRequires:  db4-devel, gdbm-devel, groff, tcsh, zlib-devel, bzip2-devel, systemtap-sdt-devel
 # For tests
 BuildRequires:  procps, rsyslog
 
@@ -1082,6 +1082,11 @@ sed -i 's|BUILD_ZLIB      = True|BUILD_ZLIB      = False|
     s|LIB             = ./zlib-src|LIB             = %{_libdir}|' \
     cpan/Compress-Raw-Zlib/config.in
 
+# Ensure that we never accidentally bundle zlib or bzip2
+rm -rf cpan/Compress-Raw-Zlib/zlib-src
+rm -rf cpan/Compress-Raw-Bzip2/bzip2-src
+sed -i '/\(bzip2\|zlib\)-src/d' MANIFEST
+
 %build
 echo "RPM Build arch: %{_arch}"
 
@@ -1149,6 +1154,10 @@ echo "RPM Build arch: %{_arch}"
         -Dscriptdir='%{_bindir}' 
 
 # -Duseshrplib creates libperl.so, -Ubincompat5005 help create DSO -> libperl.so
+
+BUILD_BZIP2=0
+BZIP2_LIB=%{_libdir}
+export BUILD_BZIP2 BZIP2_LIB
 
 %ifarch sparc64 %{arm}
 make
@@ -1394,7 +1403,6 @@ sed \
 %exclude %{archlib}/auto/Compress/Raw/
 %exclude %{archlib}/auto/Compress/Raw/Zlib/
 %exclude %{_mandir}/man3/Compress::Raw::Zlib*
-%exclude %{_mandir}/man3/Compress::Raw::Bzip2*
 
 # Digest::SHA
 %exclude %{_bindir}/shasum
@@ -1730,11 +1738,16 @@ sed \
 
 %files Compress-Raw-Bzip2
 %dir %{archlib}/Compress
+%dir %{archlib}/Compress/Raw
 %{archlib}/Compress/Raw/Bzip2.pm
+%dir %{archlib}/auto/Compress/
+%dir %{archlib}/auto/Compress/Raw/
+%{archlib}/auto/Compress/Raw/Bzip2/
 %{_mandir}/man3/Compress::Raw::Bzip2*
 
 %files Compress-Raw-Zlib
 %dir %{archlib}/Compress
+%dir %{archlib}/Compress/Raw
 %{archlib}/Compress/Raw/Zlib.pm
 %dir %{archlib}/auto/Compress/
 %dir %{archlib}/auto/Compress/Raw/
