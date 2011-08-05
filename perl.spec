@@ -17,7 +17,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        184%{?dist}
+Release:        185%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -167,6 +167,7 @@ Summary:        Header #files for use in perl development
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Requires:       systemtap-sdt-devel
+Requires:       perl(ExtUtils::ParseXS)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description devel
@@ -1329,8 +1330,6 @@ sed \
 %exclude %{_bindir}/perlivp
 %exclude %{_mandir}/man1/perlivp*
 %exclude %{archlib}/CORE/*.h
-%exclude %{_bindir}/xsubpp
-%exclude %{_mandir}/man1/xsubpp*
 %exclude %{_mandir}/man1/perlxs*
 
 # Archive-Extract
@@ -1454,6 +1453,8 @@ sed \
 # ExtUtils::ParseXS
 %exclude %{privlib}/ExtUtils/ParseXS.pm
 %exclude %{privlib}/ExtUtils/xsubpp
+%exclude %{_bindir}/xsubpp
+%exclude %{_mandir}/man1/xsubpp*
 %exclude %{_mandir}/man3/ExtUtils::ParseXS.3*
 
 # File::Fetch
@@ -1702,8 +1703,6 @@ sed \
 %{_bindir}/perlivp
 %{_mandir}/man1/perlivp*
 %{archlib}/CORE/*.h
-%{_bindir}/xsubpp
-%{_mandir}/man1/xsubpp*
 %{_mandir}/man1/perlxs*
 %{tapsetdir}/%{libperl_stp}
 %doc perl-example.stp
@@ -1842,6 +1841,8 @@ sed \
 %files ExtUtils-ParseXS
 %{privlib}/ExtUtils/ParseXS.pm
 %{privlib}/ExtUtils/xsubpp
+%{_bindir}/xsubpp
+%{_mandir}/man1/xsubpp*
 %{_mandir}/man3/ExtUtils::ParseXS.3*
 
 %files File-Fetch
@@ -2092,6 +2093,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Aug 05 2011 Petr Sabata <contyk@redhat.com> - 4:5.14.1-185
+- Move xsubpp to ExtUtils::ParseXS (#728393)
+
 * Fri Jul 29 2011 Iain Arnell <iarnell@gmail.com> 4:5.14.1-184
 - fix Compress-Raw-Bzip2 pacakging
 - ensure that we never bundle bzip2 or zlib
