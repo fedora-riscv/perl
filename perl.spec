@@ -206,6 +206,7 @@ The libraries for the perl runtime
 Summary:        Header #files for use in perl development
 Group:          Development/Languages
 License:        GPL+ or Artistic
+Requires:       perl(ExtUtils::ParseXS)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description devel
@@ -1237,8 +1238,6 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_bindir}/perlivp
 %exclude %{_mandir}/man1/perlivp*
 %exclude %{archlib}/CORE/*.h
-%exclude %{_bindir}/xsubpp
-%exclude %{_mandir}/man1/xsubpp*
 %exclude %{_mandir}/man1/perlxs*
 
 # Archive-Extract
@@ -1345,6 +1344,8 @@ rm -rf $RPM_BUILD_ROOT
 # ExtUtils::ParseXS
 %exclude %{privlib}/ExtUtils/ParseXS.pm
 %exclude %{privlib}/ExtUtils/xsubpp
+%exclude %{_bindir}/xsubpp
+%exclude %{_mandir}/man1/xsubpp*
 %exclude %{_mandir}/man3/ExtUtils::ParseXS.3*
 
 # File::Fetch
@@ -1545,8 +1546,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/perlivp
 %{_mandir}/man1/perlivp*
 %{archlib}/CORE/*.h
-%{_bindir}/xsubpp
-%{_mandir}/man1/xsubpp*
 %{_mandir}/man1/perlxs*
 %attr(0644,root,root) %{_sysconfdir}/rpm/macros.perl
 
@@ -1667,6 +1666,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{privlib}/ExtUtils/ParseXS.pm
 %{privlib}/ExtUtils/xsubpp
+%{_bindir}/xsubpp
+%{_mandir}/man1/xsubpp*
 %{_mandir}/man3/ExtUtils::ParseXS.3*
 
 %files File-Fetch
@@ -1901,6 +1902,7 @@ rm -rf $RPM_BUILD_ROOT
   (bug #720610)
 - Fixes CVE-2011-2728 (File::Glob bsd_glob() crash with certain glob flags)
   (bug #742987)
+- Move xsubpp to ExtUtils::ParseXS (#728393)
 
 * Wed Oct 05 2011 Petr Pisar <ppisar@redhat.com> - 4:5.12.4-147
 - Fix CVE-2011-3597 (code injection in Digest) (bug #743010)
