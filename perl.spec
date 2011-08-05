@@ -20,7 +20,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        159%{?dist}
+Release:        160%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -189,6 +189,7 @@ Summary:        Header #files for use in perl development
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Requires:       systemtap-sdt-devel
+Requires:       perl(ExtUtils::ParseXS)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description devel
@@ -1263,8 +1264,6 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_bindir}/perlivp
 %exclude %{_mandir}/man1/perlivp*
 %exclude %{archlib}/CORE/*.h
-%exclude %{_bindir}/xsubpp
-%exclude %{_mandir}/man1/xsubpp*
 %exclude %{_mandir}/man1/perlxs*
 
 # Archive-Extract
@@ -1371,6 +1370,8 @@ rm -rf $RPM_BUILD_ROOT
 # ExtUtils::ParseXS
 %exclude %{privlib}/ExtUtils/ParseXS.pm
 %exclude %{privlib}/ExtUtils/xsubpp
+%exclude %{_bindir}/xsubpp
+%exclude %{_mandir}/man1/xsubpp*
 %exclude %{_mandir}/man3/ExtUtils::ParseXS.3*
 
 # File::Fetch
@@ -1593,8 +1594,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/perlivp
 %{_mandir}/man1/perlivp*
 %{archlib}/CORE/*.h
-%{_bindir}/xsubpp
-%{_mandir}/man1/xsubpp*
 %{_mandir}/man1/perlxs*
 %attr(0644,root,root) %{_sysconfdir}/rpm/macros.perl
 %{tapsetdir}/%{libperl_stp}
@@ -1717,6 +1716,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{privlib}/ExtUtils/ParseXS.pm
 %{privlib}/ExtUtils/xsubpp
+%{_bindir}/xsubpp
+%{_mandir}/man1/xsubpp*
 %{_mandir}/man3/ExtUtils::ParseXS.3*
 
 %files File-Fetch
@@ -1967,6 +1968,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Aug 05 2011 Petr Sabata <contyk@redhat.com> - 4:5.12.3-160
+- Move xsubpp to ExtUtils::ParseXS (#728393)
+
 * Tue Jun 21 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.3-159
 - update to minor update release 5.12.4
 - Upstream changes: remove patch for lc tainting RT #87336,
