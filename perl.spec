@@ -17,7 +17,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        185%{?dist}
+Release:        186%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2093,6 +2093,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sun Aug 14 2011 Iain Arnell <iarnell@gmail.com> 4:5.14.1-186
+- perl needs to own vendorarch/auto directory
+
 * Fri Aug 05 2011 Petr Sabata <contyk@redhat.com> - 4:5.14.1-185
 - Move xsubpp to ExtUtils::ParseXS (#728393)
 
