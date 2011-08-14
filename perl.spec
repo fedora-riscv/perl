@@ -1100,10 +1100,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
     PERL5LIB="%{build_archlib}:%{build_privlib}" \\\
     %{build_bindir}/perl
 
-# perl doesn't create the auto subdirectory, but modules put things in it,
-# so we need to own it.
-mkdir -p -m 755 %{build_archlib}/auto
-
 install -p -m 755 utils/pl2pm %{build_bindir}/pl2pm
 
 for i in asm/termios.h syscall.h syslimits.h syslog.h \
@@ -1113,7 +1109,10 @@ do
 done
 
 # vendor directories (in this case for third party rpms)
-mkdir -p $RPM_BUILD_ROOT%{perl_vendorarch}
+# perl doesn't create the auto subdirectory, but modules put things in it,
+# so we need to own it.
+
+mkdir -p $RPM_BUILD_ROOT%{perl_vendorarch}/auto
 mkdir -p $RPM_BUILD_ROOT%{perl_vendorlib}
 
 #
@@ -1580,6 +1579,7 @@ rm -rf $RPM_BUILD_ROOT
 %{archlib}/CORE/libperl.so
 %dir %{archlib}
 %dir %{perl_vendorarch}
+%dir %{perl_vendorarch}/auto
 %dir %{_prefix}/local/%{_lib}/perl5
 
 %files devel
