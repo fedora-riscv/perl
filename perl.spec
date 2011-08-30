@@ -17,7 +17,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        186%{?dist}
+Release:        187%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -532,6 +532,22 @@ Marc Lehmann in C, so must be compiled and installed in the used environment.
 JSON::PP is a pure-Perl module and is compatible with JSON::XS.
 
 
+%package Locale-Codes
+Summary:        Distribution of modules to handle locale codes
+Epoch:          0
+Version:        3.16
+License:        GPL+ or Artistic
+Group:          Development/Libraries
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl(constant)
+BuildArch:      noarch
+
+%description Locale-Codes
+Locale-Codes is a distribution containing a set of modules. The modules
+each deal with different types of codes which identify parts of the locale
+including languages, countries, currency, etc.
+
+
 %package Locale-Maketext-Simple
 Summary:        Simple interface to Locale::Maketext::Lexicon
 Group:          Development/Libraries
@@ -1029,7 +1045,8 @@ Requires:       perl-Compress-Raw-Zlib, perl-CGI, perl-CPAN, perl-CPAN-Meta, per
 Requires:       perl-CPANPLUS, perl-Digest-SHA, perl-ExtUtils-CBuilder
 Requires:       perl-ExtUtils-Embed, perl-ExtUtils-MakeMaker, perl-ExtUtils-ParseXS
 Requires:       perl-File-Fetch, perl-HTTP-Tiny, perl-IO-Compress, perl-IO-Zlib
-Requires:       perl-IPC-Cmd, perl-JSON-PP, perl-Locale-Maketext-Simple, perl-Log-Message, perl-Log-Message-Simple
+Requires:       perl-IPC-Cmd, perl-JSON-PP, perl-Locale-Codes
+Requires:       perl-Locale-Maketext-Simple, perl-Log-Message, perl-Log-Message-Simple
 Requires:       perl-Module-Build, perl-Module-CoreList, perl-Module-Load
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Metadata
 Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Constants, perl-PathTools
@@ -1524,6 +1541,22 @@ sed \
 %exclude %{_mandir}/man3/JSON::PP.3*
 %exclude %{_mandir}/man3/JSON::PP::Boolean.3pm*
 
+# Locale::Codes
+%exclude %{privlib}/Locale/Codes
+%exclude %{privlib}/Locale/Codes.*
+%exclude %{privlib}/Locale/Constants.*
+%exclude %{privlib}/Locale/Country.*
+%exclude %{privlib}/Locale/Currency.*
+%exclude %{privlib}/Locale/Language.*
+%exclude %{privlib}/Locale/Script.*
+%exclude %{_mandir}/man3/Locale::Codes::*
+%exclude %{_mandir}/man3/Locale::Codes.*
+%exclude %{_mandir}/man3/Locale::Constants.*
+%exclude %{_mandir}/man3/Locale::Country.*
+%exclude %{_mandir}/man3/Locale::Currency.*
+%exclude %{_mandir}/man3/Locale::Language.*
+%exclude %{_mandir}/man3/Locale::Script.*
+
 # Locale::Maketext::Simple
 %exclude %{privlib}/Locale/Maketext/Simple.pm
 %exclude %{_mandir}/man3/Locale::Maketext::Simple.*
@@ -1913,6 +1946,22 @@ sed \
 %{_mandir}/man3/JSON::PP.3*
 %{_mandir}/man3/JSON::PP::Boolean.3pm*
 
+%files Locale-Codes
+%{privlib}/Locale/Codes
+%{privlib}/Locale/Codes.*
+%{privlib}/Locale/Constants.*
+%{privlib}/Locale/Country.*
+%{privlib}/Locale/Currency.*
+%{privlib}/Locale/Language.*
+%{privlib}/Locale/Script.*
+%{_mandir}/man3/Locale::Codes::*
+%{_mandir}/man3/Locale::Codes.*
+%{_mandir}/man3/Locale::Constants.*
+%{_mandir}/man3/Locale::Country.*
+%{_mandir}/man3/Locale::Currency.*
+%{_mandir}/man3/Locale::Language.*
+%{_mandir}/man3/Locale::Script.*
+
 %files Locale-Maketext-Simple
 %{privlib}/Locale/Maketext/Simple.pm
 %{_mandir}/man3/Locale::Maketext::Simple.*
@@ -2093,6 +2142,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Aug 30 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-187
+- Split Locale::Codes into standalone sub-package to dual-live with newer
+  versions (bug #717863)
+
 * Sun Aug 14 2011 Iain Arnell <iarnell@gmail.com> 4:5.14.1-186
 - perl needs to own vendorarch/auto directory
 
