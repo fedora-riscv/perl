@@ -14,10 +14,13 @@
 # same as we provide in /etc/rpm/macros.perl
 %global perl5_testdir   %{_libexecdir}/perl5-tests
 
+# We can bootstrap without gdbm
+%bcond_without gdbm
+
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        187%{?dist}
+Release:        188%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -66,7 +69,11 @@ Patch8:         perl-5.14.1-offtest.patch
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
-BuildRequires:  db4-devel, gdbm-devel, groff, tcsh, zlib-devel, bzip2-devel, systemtap-sdt-devel
+BuildRequires:  db4-devel, groff, tcsh, zlib-devel, bzip2-devel, systemtap-sdt-devel
+%if %{with gdbm}
+BuildRequires: gdbm-devel
+%endif
+
 # For tests
 BuildRequires:  procps, rsyslog
 
@@ -1157,7 +1164,9 @@ echo "RPM Build arch: %{_arch}"
         -Dd_semctl_semun \
         -Di_db \
         -Ui_ndbm \
+%if %{with gdbm}
         -Di_gdbm \
+%endif
         -Di_shadow \
         -Di_syslog \
         -Dman3ext=3pm \
@@ -2142,6 +2151,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Sep 13 CEST 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-188
+- Make gdbm support optional to bootstrap with new gdbm
+
 * Tue Aug 30 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-187
 - Split Locale::Codes into standalone sub-package to dual-live with newer
   versions (bug #717863)
