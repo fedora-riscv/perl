@@ -2151,7 +2151,7 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Tue Sep 13 CEST 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-188
+* Tue Sep 13 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-188
 - Make gdbm support optional to bootstrap with new gdbm
 
 * Tue Aug 30 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-187
