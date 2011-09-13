@@ -127,7 +127,6 @@ Provides: perl(termcap.pl)
 Provides: perl(timelocal.pl)
 Provides: perl(utf8_heavy.pl)
 Provides: perl(validate.pl)
-Provides: perl(Carp::Heavy)
 
 # Long history in 3rd-party repositories:
 Provides: perl-File-Temp = 0.22 
@@ -241,6 +240,29 @@ provides class methods for quick and easy files handling while also allowing
 for the creation of tar file objects for custom manipulation.  If you have the
 IO::Zlib module installed, Archive::Tar will also support compressed or
 gzipped tar files.
+
+
+%package Carp
+Summary:        Alternative warn and die for modules
+Epoch:          0
+Version:        1.20
+License:        GPL+ or Artistic
+Group:          Development/Libraries
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Provides:       perl(Carp::Heavy) = %{version}
+BuildArch:      noarch
+
+# Do not export unversioned module
+%global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\(Carp\\)\s*$
+
+%description Carp
+The Carp routines are useful in your own modules because they act like
+die() or warn(), but with a message which is more likely to be useful to a
+user of your module. In the case of cluck, confess, and longmess that
+context is a summary of every call in the call-stack. For a shorter message
+you can use carp or croak which report the error as being from where your
+module was called. There is no guarantee that that is where the error was,
+but it is a good educated guess.
 
 
 %package CGI
@@ -1048,7 +1070,8 @@ Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-macros
 
 Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-Compress-Raw-Bzip2
-Requires:       perl-Compress-Raw-Zlib, perl-CGI, perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-YAML
+Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-CPAN,
+Requires:       perl-CPAN-Meta, perl-CPAN-Meta-YAML
 Requires:       perl-CPANPLUS, perl-Digest-SHA, perl-ExtUtils-CBuilder
 Requires:       perl-ExtUtils-Embed, perl-ExtUtils-MakeMaker, perl-ExtUtils-ParseXS
 Requires:       perl-File-Fetch, perl-HTTP-Tiny, perl-IO-Compress, perl-IO-Zlib
@@ -1371,6 +1394,11 @@ sed \
 %exclude %{_mandir}/man1/ptardiff.1*
 %exclude %{_mandir}/man1/ptargrep.1*
 %exclude %{_mandir}/man3/Archive::Tar*
+
+# Carp
+%exclude %{privlib}/Carp
+%exclude %{privlib}/Carp.*
+%exclude %{_mandir}/man3/Carp.*
 
 # CGI
 %exclude %{privlib}/CGI/
@@ -1771,6 +1799,11 @@ sed \
 %{_mandir}/man1/ptargrep.1*
 %{_mandir}/man3/Archive::Tar* 
 
+%files Carp
+%{privlib}/Carp
+%{privlib}/Carp.*
+%{_mandir}/man3/Carp.*
+
 %files CGI
 %{privlib}/CGI/
 %{privlib}/CGI.pm
@@ -2153,6 +2186,8 @@ sed \
 %changelog
 * Tue Sep 13 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-188
 - Make gdbm support optional to bootstrap with new gdbm
+- Split Carp into standalone sub-package to dual-live with newer versions
+  (bug #736768)
 
 * Tue Aug 30 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-187
 - Split Locale::Codes into standalone sub-package to dual-live with newer
