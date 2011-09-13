@@ -253,7 +253,7 @@ Provides:       perl(Carp::Heavy) = %{version}
 BuildArch:      noarch
 
 # Do not export unversioned module
-%global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\(Carp\\)\s*$
+%global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\(Carp\\)\\s*$
 
 %description Carp
 The Carp routines are useful in your own modules because they act like
