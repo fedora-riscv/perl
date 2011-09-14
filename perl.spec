@@ -20,7 +20,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        188%{?dist}
+Release:        189%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -272,7 +272,15 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        3.52
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Provides:       perl(CGI) = %{version}
 BuildArch:      noarch
+
+# Do not export unversioned module
+%global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\(CGI\\)\\s*$
+# Do not export private modules
+%global __provides_exclude %{__provides_exclude}|^perl\\(Fh\\)\\s*$
+%global __provides_exclude %{__provides_exclude}|^perl\\(MultipartBuffer\\)\\s*$
+%global __provides_exclude %{__provides_exclude}|^perl\\(utf8\\)\\s*$
 
 %description CGI
 CGI.pm is a stable, complete and mature solution for processing and preparing
@@ -2184,6 +2192,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Sep 14 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-189
+- Correct perl-CGI list of Provides
+
 * Tue Sep 13 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-188
 - Make gdbm support optional to bootstrap with new gdbm
 - Split Carp into standalone sub-package to dual-live with newer versions
