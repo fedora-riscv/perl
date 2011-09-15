@@ -463,7 +463,6 @@ Version:        2.2210
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
-Provides:       perl(ExtUtils::ParseXS) = %{ExtUtils_ParseXS_version}
 
 %description ExtUtils-ParseXS
 ExtUtils::ParseXS will compile XS code into C code by embedding the constructs
@@ -2199,6 +2198,7 @@ sed \
 * Thu Sep 15 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-189
 - Correct perl-CGI list of Provides
 - Make tests optional
+- Correct perl-ExtUtils-ParseXS Provides
 
 * Tue Sep 13 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-188
 - Make gdbm support optional to bootstrap with new gdbm
