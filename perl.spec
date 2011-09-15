@@ -674,7 +674,7 @@ Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.47 
+Version:        2.49 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(version)
 BuildArch:      noarch
@@ -2206,6 +2206,7 @@ sed \
 - Make tests optional
 - Correct perl-ExtUtils-ParseXS Provides
 - Correct perl-Locale-Codes Provides
+- Correct perl-Module-CoreList version
 
 * Tue Sep 13 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-188
 - Make gdbm support optional to bootstrap with new gdbm
