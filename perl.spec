@@ -954,7 +954,7 @@ Group:          Development/Debug
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.98
-Requires:       perl-Test-Simple = 0:0.98-%{release}
+Requires:       perl-Test-Simple = %{epoch}:%{version}-%{release}
 Requires:       /usr/bin/prove
 AutoReqProv:    0
 BuildArch:      noarch
@@ -2208,6 +2208,7 @@ sed \
 - Correct perl-ExtUtils-ParseXS Provides
 - Correct perl-Locale-Codes Provides
 - Correct perl-Module-CoreList version
+- Automate perl-Test-Simple-tests Requires version
 
 * Tue Sep 13 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-188
 - Make gdbm support optional to bootstrap with new gdbm
