@@ -558,7 +558,11 @@ License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(constant)
+Provides:       perl(Locale::Codes) = %{version}
 BuildArch:      noarch
+
+# Do not export unversioned module
+%global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\(Locale::Codes\\)\\s*$
 
 %description Locale-Codes
 Locale-Codes is a distribution containing a set of modules. The modules
@@ -2170,6 +2174,7 @@ sed \
 - Correct perl-CGI list of Provides
 - Make tests optional
 - Correct perl-ExtUtils-ParseXS Provides
+- Correct perl-Locale-Codes Provides
 
 * Wed Oct 05 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-188
 - Fix CVE-2011-3597 (code injection in Digest) (bug #743010)
