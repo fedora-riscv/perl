@@ -580,7 +580,11 @@ License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(constant)
+Provides:       perl(Locale::Codes) = %{version}
 BuildArch:      noarch
+
+# Do not export unversioned module
+%global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\(Locale::Codes\\)\\s*$
 
 %description Locale-Codes
 Locale-Codes is a distribution containing a set of modules. The modules
@@ -2201,6 +2205,7 @@ sed \
 - Correct perl-CGI list of Provides
 - Make tests optional
 - Correct perl-ExtUtils-ParseXS Provides
+- Correct perl-Locale-Codes Provides
 
 * Tue Sep 13 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-188
 - Make gdbm support optional to bootstrap with new gdbm
