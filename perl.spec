@@ -578,7 +578,7 @@ Requires:       perl(version)
 BuildArch:      noarch
 
 %description Module-CoreList
-Module::CoreList contains the hash of hashes %Module::CoreList::version,
+Module::CoreList contains the hash of hashes %%Module::CoreList::version,
 this is keyed on perl version as indicated in $].  The second level hash
 is module => version pairs.
 
