@@ -441,7 +441,6 @@ Version:        2.2210
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
-Provides:       perl(ExtUtils::ParseXS) = %{ExtUtils_ParseXS_version}
 
 %description ExtUtils-ParseXS
 ExtUtils::ParseXS will compile XS code into C code by embedding the constructs
@@ -2168,6 +2167,7 @@ sed \
 * Wed Nov 02 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-189
 - Correct perl-CGI list of Provides
 - Make tests optional
+- Correct perl-ExtUtils-ParseXS Provides
 
 * Wed Oct 05 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-188
 - Fix CVE-2011-3597 (code injection in Digest) (bug #743010)
