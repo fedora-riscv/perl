@@ -14,6 +14,9 @@
 # same as we provide in /etc/rpm/macros.perl
 %global perl5_testdir   %{_libexecdir}/perl5-tests
 
+# We can skip %%check phase
+%bcond_without test
+
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
@@ -1327,11 +1330,13 @@ sed \
 #%%{_fixperms} %%{buildroot}%%{perl5_testdir}
 
 %check
+%if %{with test}
 %if %{parallel_tests}
     JOBS=$(printf '%%s' "%{?_smp_mflags}" | sed 's/.*-j\([0-9][0-9]*\).*/\1/')
     LC_ALL=C TEST_JOBS=$JOBS make test_harness
 %else
     LC_ALL=C make test
+%endif
 %endif
 
 %post libs -p /sbin/ldconfig
@@ -2162,6 +2167,7 @@ sed \
 %changelog
 * Wed Nov 02 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-189
 - Correct perl-CGI list of Provides
+- Make tests optional
 
 * Wed Oct 05 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-188
 - Fix CVE-2011-3597 (code injection in Digest) (bug #743010)
