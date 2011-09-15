@@ -535,6 +535,8 @@ resumes after EINTR.
 %package JSON-PP
 Summary:        JSON::XS compatible pure-Perl module
 Epoch:          0
+# 2.27150 version is a typo but we cannot fix it because it would break
+# monotony
 Version:        2.27150
 License:        GPL+ or Artistic
 Group:          Development/Libraries
