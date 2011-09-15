@@ -652,7 +652,7 @@ Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.47 
+Version:        2.49 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(version)
 BuildArch:      noarch
@@ -2175,6 +2175,7 @@ sed \
 - Make tests optional
 - Correct perl-ExtUtils-ParseXS Provides
 - Correct perl-Locale-Codes Provides
+- Correct perl-Module-CoreList version
 
 * Wed Oct 05 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-188
 - Fix CVE-2011-3597 (code injection in Digest) (bug #743010)
