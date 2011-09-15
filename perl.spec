@@ -750,6 +750,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
+# Keep two digit decimal part
 Version:        3.90 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
