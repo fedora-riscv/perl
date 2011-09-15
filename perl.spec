@@ -16,6 +16,8 @@
 
 # We can bootstrap without gdbm
 %bcond_without gdbm
+# We can skip %%check phase
+%bcond_without test
 
 Name:           perl
 Version:        %{perl_version}
@@ -1349,11 +1351,13 @@ sed \
 #%%{_fixperms} %%{buildroot}%%{perl5_testdir}
 
 %check
+%if %{with test}
 %if %{parallel_tests}
     JOBS=$(printf '%%s' "%{?_smp_mflags}" | sed 's/.*-j\([0-9][0-9]*\).*/\1/')
     LC_ALL=C TEST_JOBS=$JOBS make test_harness
 %else
     LC_ALL=C make test
+%endif
 %endif
 
 %post libs -p /sbin/ldconfig
@@ -2192,8 +2196,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Wed Sep 14 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-189
+* Thu Sep 15 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-189
 - Correct perl-CGI list of Provides
+- Make tests optional
 
 * Tue Sep 13 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-188
 - Make gdbm support optional to bootstrap with new gdbm
