@@ -15,14 +15,14 @@
 %global perl5_testdir   %{_libexecdir}/perl5-tests
 
 # We can bootstrap without gdbm
-%bcond_without gdbm
+%bcond_with gdbm
 # We can skip %%check phase
 %bcond_without test
 
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        189%{?dist}
+Release:        190%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2202,6 +2202,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Sep 21 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-190
+- Disable GDBM support temporarily to build new GDBM
+
 * Thu Sep 15 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-189
 - Correct perl-CGI list of Provides
 - Make tests optional
