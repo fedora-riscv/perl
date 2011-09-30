@@ -22,7 +22,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        190%{?dist}
+Release:        191%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1151,6 +1151,12 @@ rm -rf cpan/Compress-Raw-Zlib/zlib-src
 rm -rf cpan/Compress-Raw-Bzip2/bzip2-src
 sed -i '/\(bzip2\|zlib\)-src/d' MANIFEST
 
+%if !%{with gdbm}
+# Do not install anything requiring NDBM_File if NDBM is not available.
+rm -rf 'cpan/Memoize/Memoize/NDBM_File.pm'
+sed -i '\|cpan/Memoize/Memoize/NDBM_File.pm|d' MANIFEST
+%endif
+
 %build
 echo "RPM Build arch: %{_arch}"
 
@@ -1202,8 +1208,8 @@ echo "RPM Build arch: %{_arch}"
         -Duselargefiles \
         -Dd_semctl_semun \
         -Di_db \
-        -Ui_ndbm \
 %if %{with gdbm}
+        -Ui_ndbm \
         -Di_gdbm \
 %endif
         -Di_shadow \
@@ -2202,6 +2208,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Sep 30 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-191
+- Disable NDBM support temporarily too as it's provided by gdbm package
+
 * Wed Sep 21 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-190
 - Disable GDBM support temporarily to build new GDBM
 
