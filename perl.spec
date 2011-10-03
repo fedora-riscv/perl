@@ -1,4 +1,4 @@
-%global perl_version    5.14.1
+%global perl_version    5.14.2
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -22,7 +22,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        192%{?dist}
+Release:        193%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -34,7 +34,7 @@ Group:          Development/Languages
 # Copyright Only: for example ext/Text-Soundex/Soundex.xs 
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and MIT and Public Domain and UCD
 Url:            http://www.perl.org/
-Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.gz
+Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
 Source2:        perl-5.8.0-libnet.cfg
 Source3:        macros.perl
 #Systemtap tapset and example that make use of systemtap-sdt-devel
@@ -326,7 +326,7 @@ Summary:        Query, download and build perl modules from CPAN sites
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.9600
+Version:        1.9600.01
 # CPAN encourages Digest::SHA strongly because of integrity checks
 Requires:       perl(Digest::SHA)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -2208,6 +2208,15 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Oct 03 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-193
+- 5.14.2 bump (see
+  https://metacpan.org/module/FLORA/perl-5.14.2/pod/perldelta.pod for release
+  notes).
+- Fixes panics when processing regular expression with \b class and /aa
+  modifier (bug #731062)
+- Fixes CVE-2011-2728 (File::Glob bsd_glob() crash with certain glob flags)
+  (bug #742987)
+
 * Mon Oct 03 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-192
 - Enable GDBM support again to build against new gdbm 1.9.1
 
