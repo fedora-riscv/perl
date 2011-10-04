@@ -1952,7 +1952,7 @@ sed \
 
 %files Digest
 %{privlib}/Digest.pm
-%dir %{archlib}/Digest
+%dir %{privlib}/Digest
 %{privlib}/Digest/base.pm
 %{privlib}/Digest/file.pm
 %{_mandir}/man3/Digest.3*
