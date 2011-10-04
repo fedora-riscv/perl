@@ -22,7 +22,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        193%{?dist}
+Release:        194%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -82,6 +82,7 @@ BuildRequires:  procps, rsyslog
 # The long line of Perl provides.
 
 # Compat provides
+Provides: perl(:MODULE_COMPAT_5.14.2)
 Provides: perl(:MODULE_COMPAT_5.14.1)
 Provides: perl(:MODULE_COMPAT_5.14.0)
 
@@ -2208,6 +2209,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Oct 04 2011 Iain Arnell <iarnell@gmail.com> 4:5.14.2-194
+- add provide for perl(:MODULE_COMPAT_5.14.2)
+
 * Mon Oct 03 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-193
 - 5.14.2 bump (see
   https://metacpan.org/module/FLORA/perl-5.14.2/pod/perldelta.pod for release
