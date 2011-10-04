@@ -1366,7 +1366,6 @@ sed \
 %{privlib}
 %{archlib}
 %{perl_vendorlib}
-%{_prefix}/local/share/perl5
 
 
 # libs
@@ -1761,7 +1760,6 @@ sed \
 %dir %{archlib}
 %dir %{perl_vendorarch}
 %dir %{perl_vendorarch}/auto
-%dir %{_prefix}/local/%{_lib}/perl5
 
 %files devel
 %{_bindir}/enc2xs
@@ -2198,6 +2196,7 @@ sed \
   (bug #736714)
 - Change Perl_repeatcpy() prototype to allow repeat count above 2^31
   (bug #720610)
+- Do not own site directories located in /usr/local (bug #732799)
 
 * Wed Oct 05 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-188
 - Fix CVE-2011-3597 (code injection in Digest) (bug #743010)
