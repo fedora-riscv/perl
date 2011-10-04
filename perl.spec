@@ -22,7 +22,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        194%{?dist}
+Release:        195%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -67,6 +67,9 @@ Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
 
 # switch off test, which is failing only on koji (fork)
 Patch8:         perl-5.14.1-offtest.patch
+
+# Fix code injection in Digest, rhbz #743010, RT#71390, fixed in Digest-1.17.
+Patch9:         perl-5.14.2-digest_eval.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1116,6 +1119,7 @@ tarball from perl.org.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1310,6 +1314,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch5: USE_MM_LD_RUN_PATH' \
     'Fedora Patch6: Skip hostname tests, due to builders not being network capable' \
     'Fedora Patch7: Dont run one io test due to random builder failures' \
+    'Fedora Patch9: Fix code injection in Digest->new()' \
     %{nil}
 
 rm patchlevel.bak
@@ -2209,6 +2214,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Oct 04 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-195
+- Fix code injection in Digest (bug #743010)
+
 * Tue Oct 04 2011 Iain Arnell <iarnell@gmail.com> 4:5.14.2-194
 - add provide for perl(:MODULE_COMPAT_5.14.2)
 
