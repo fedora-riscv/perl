@@ -1264,7 +1264,6 @@ rm -rf $RPM_BUILD_ROOT
 %{privlib}
 %{archlib}
 %{perl_vendorlib}
-%{_prefix}/local/share/perl5
 
 
 # libs
@@ -1599,7 +1598,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{archlib}
 %dir %{perl_vendorarch}
 %dir %{perl_vendorarch}/auto
-%dir %{_prefix}/local/%{_lib}/perl5
 
 %files devel
 %defattr(-,root,root,-)
@@ -1990,6 +1988,7 @@ rm -rf $RPM_BUILD_ROOT
 * Fri Nov 04 2011 Petr Pisar <ppisar@redhat.com> - 4:5.12.4-163
 - Change Perl_repeatcpy() prototype to allow repeat count above 2^31
   (bug #720610)
+- Do not own site directories located in /usr/local (bug #732799)
 
 * Wed Oct 05 2011 Petr Pisar <ppisar@redhat.com> - 4:5.12.4-162
 - Fix CVE-2011-3597 (code injection in Digest) (bug #743010)
