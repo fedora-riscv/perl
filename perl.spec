@@ -1432,7 +1432,15 @@ sed \
 %endif
 %endif
 
-%post libs -p /sbin/ldconfig
+%post libs
+/sbin/ldconfig
+# Inform about missing site directories (bug #732799).
+# There is no scriptlet executable on uprgrade after removing old package to
+# create them automatically.
+echo "%{name}-libs:" \
+    "Perl site paths %{_prefix}/local/{%{_lib},share}/perl5" \
+    "are searched but not created automatically because %{_prefix}/local" \
+    "is your private area. Create them manually if needed."
 
 %postun libs -p /sbin/ldconfig
 
@@ -1444,7 +1452,6 @@ sed \
 %{privlib}
 %{archlib}
 %{perl_vendorlib}
-%{_prefix}/local/share/perl5
 
 
 # libs
@@ -1858,7 +1865,6 @@ sed \
 %dir %{archlib}
 %dir %{perl_vendorarch}
 %dir %{perl_vendorarch}/auto
-%dir %{_prefix}/local/%{_lib}/perl5
 
 %files devel
 %{_bindir}/enc2xs
@@ -2296,11 +2302,12 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Thu Oct 06 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-196
+* Fri Oct 14 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-196
 - Filter false perl(DynaLoader) provide from perl-ExtUtils-MakeMaker
   (bug #736714)
 - Change Perl_repeatcpy() prototype to allow repeat count above 2^31
   (bug #720610)
+- Do not own site directories located in /usr/local (bug #732799)
 
 * Tue Oct 04 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-195
 - Fix CVE-2011-3597 (code injection in Digest) (bug #743010)
