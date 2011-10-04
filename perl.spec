@@ -394,6 +394,43 @@ The CPANPLUS library is an API to the CPAN mirrors and a collection of
 interactive shells, commandline programs, etc, that use this API.
 
 
+%package Digest
+Summary:        Modules that calculate message digests
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          0
+Version:        1.16
+BuildArch:      noarch
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl(MIME::Base64)
+
+%description Digest
+The Digest:: modules calculate digests, also called "fingerprints" or
+"hashes", of some data, called a message. The digest is (usually)
+some small/fixed size string. The actual size of the digest depend of
+the algorithm used. The message is simply a sequence of arbitrary
+bytes or bits.
+
+
+%package Digest-MD5
+Summary:        Perl interface to the MD5 Algorithm
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          0
+Version:        2.51
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+# Recommended
+Requires:       perl(Digest::base) >= 1.00
+
+%description Digest-MD5
+The Digest::MD5 module allows you to use the RSA Data Security Inc. MD5
+Message Digest algorithm from within Perl programs. The algorithm takes as
+input a message of arbitrary length and produces as output a 128-bit
+"fingerprint" or "message digest" of the input.
+
+
 %package Digest-SHA
 Summary:        Perl extension for SHA-1/224/256/384/512
 Group:          Development/Libraries
@@ -402,6 +439,9 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        5.61
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+# Recommended
+Requires:       perl(Digest::base)
+Requires:       perl(MIME::Base64)
 
 %description Digest-SHA
 Digest::SHA is a complete implementation of the NIST Secure Hash
@@ -1091,9 +1131,10 @@ Requires:       perl-macros
 
 Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-Compress-Raw-Bzip2
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-CPAN,
-Requires:       perl-CPAN-Meta, perl-CPAN-Meta-YAML
-Requires:       perl-CPANPLUS, perl-Digest-SHA, perl-ExtUtils-CBuilder
-Requires:       perl-ExtUtils-Embed, perl-ExtUtils-MakeMaker, perl-ExtUtils-ParseXS
+Requires:       perl-CPAN-Meta, perl-CPAN-Meta-YAML, perl-CPANPLUS,
+Requires:       perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
+Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Embed,
+Requires:       perl-ExtUtils-MakeMaker, perl-ExtUtils-ParseXS
 Requires:       perl-File-Fetch, perl-HTTP-Tiny, perl-IO-Compress, perl-IO-Zlib
 Requires:       perl-IPC-Cmd, perl-JSON-PP, perl-Locale-Codes
 Requires:       perl-Locale-Maketext-Simple, perl-Log-Message, perl-Log-Message-Simple
@@ -1485,6 +1526,20 @@ sed \
 %exclude %{archlib}/auto/Compress/Raw/
 %exclude %{archlib}/auto/Compress/Raw/Zlib/
 %exclude %{_mandir}/man3/Compress::Raw::Zlib*
+
+# Digest
+%exclude %{privlib}/Digest.pm
+%exclude %dir %{privlib}/Digest
+%exclude %{privlib}/Digest/base.pm
+%exclude %{privlib}/Digest/file.pm
+%exclude %{_mandir}/man3/Digest.3*
+%exclude %{_mandir}/man3/Digest::base.3*
+%exclude %{_mandir}/man3/Digest::file.3*
+
+# Digest::MD5
+%exclude %{archlib}/Digest/MD5.pm
+%exclude %{archlib}/auto/Digest/MD5/
+%exclude %{_mandir}/man3/Digest::MD5.3*
 
 # Digest::SHA
 %exclude %{_bindir}/shasum
@@ -1895,6 +1950,20 @@ sed \
 %{_mandir}/man1/cpanp.1*
 %{_mandir}/man3/CPANPLUS*
 
+%files Digest
+%{privlib}/Digest.pm
+%dir %{archlib}/Digest
+%{privlib}/Digest/base.pm
+%{privlib}/Digest/file.pm
+%{_mandir}/man3/Digest.3*
+%{_mandir}/man3/Digest::base.3*
+%{_mandir}/man3/Digest::file.3*
+
+%files Digest-MD5
+%{archlib}/Digest/MD5.pm
+%{archlib}/auto/Digest/MD5/
+%{_mandir}/man3/Digest::MD5.3*
+
 %files Digest-SHA
 %{_bindir}/shasum
 %dir %{archlib}/Digest/
@@ -2216,6 +2285,7 @@ sed \
 %changelog
 * Tue Oct 04 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-195
 - Fix code injection in Digest (bug #743010)
+- Sub-package Digest and thus Digest::MD5 module (bug #743247)
 
 * Tue Oct 04 2011 Iain Arnell <iarnell@gmail.com> 4:5.14.2-194
 - add provide for perl(:MODULE_COMPAT_5.14.2)
