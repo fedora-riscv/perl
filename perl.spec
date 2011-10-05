@@ -69,6 +69,9 @@ Patch10:	perl-ExtUtils-ParseXS-2.2206.patch
 # Fix code injection in Digest, rhbz #743010, RT#71390, fixed in Digest-1.17.
 Patch11:         perl-5.14.2-digest_eval.patch
 
+# Fix CVE-2011-2939, rhbz #731246, fixed in perl-5.14.2.
+Patch12:        perl-5.14.1-CVE-2011-2939.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -943,6 +946,7 @@ upstream tarball from perl.org.
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1144,6 +1148,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch9: h2ph produces incorrect code in preamble, based mainly on RT #74614 ' \
     'Fedora Patch10: Update ExtUtils::ParseXS to 2.2206' \
     'Fedora Patch11: Fix code injection in Digest->new()' \
+    'Fedora Patch12: Fix CVE-2011-2939' \
     %{nil}
 
 rm patchlevel.bak
@@ -1879,6 +1884,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Oct 05 2011 Petr Pisar <ppisar@redhat.com> - 4:5.12.4-147
 - Fix CVE-2011-3597 (code injection in Digest) (bug #743010)
+- Fix CVE-2011-2939 (heap overflow while decoding Unicode string) (bug #731246)
 
 * Fri Jun 24 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.4-146
 - every Fedora has different paths -> remove dirs, which were added in
