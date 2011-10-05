@@ -2284,7 +2284,7 @@ sed \
 # Old changelog entries are preserved in CVS.
 %changelog
 * Tue Oct 04 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-195
-- Fix code injection in Digest (bug #743010)
+- Fix CVE-2011-3597 (code injection in Digest) (bug #743010)
 - Sub-package Digest and thus Digest::MD5 module (bug #743247)
 
 * Tue Oct 04 2011 Iain Arnell <iarnell@gmail.com> 4:5.14.2-194
