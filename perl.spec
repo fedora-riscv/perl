@@ -12,7 +12,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        147%{?dist}
+Release:        148%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -71,6 +71,10 @@ Patch11:         perl-5.14.2-digest_eval.patch
 
 # Fix CVE-2011-2939, rhbz #731246, fixed in perl-5.14.2.
 Patch12:        perl-5.14.1-CVE-2011-2939.patch
+
+# Change Perl_repeatcpy() prototype to allow repeat count above 2^31
+# rhbz #720610, Perl RT#94560, accepted as v5.15.4-24-g26e1303.
+Patch13:        perl-5.14.2-large-repeat-heap-abuse.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -947,6 +951,7 @@ upstream tarball from perl.org.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -1015,6 +1020,9 @@ echo "RPM Build arch: %{_arch}"
 
 %define privlib     %{_prefix}/share/perl5
 %define archlib     %{_libdir}/perl5
+
+# For perl-5.14.2-large-repeat-heap-abuse.patch 
+perl regen.pl -v
 
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
         -Dccdlflags="-Wl,--enable-new-dtags" \
@@ -1149,6 +1157,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch10: Update ExtUtils::ParseXS to 2.2206' \
     'Fedora Patch11: Fix code injection in Digest->new()' \
     'Fedora Patch12: Fix CVE-2011-2939' \
+    'Fedora Patch13: Change Perl_repeatcpy() to allow count above 2^31' \
     %{nil}
 
 rm patchlevel.bak
@@ -1882,6 +1891,10 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Nov 04 2011 Petr Pisar <ppisar@redhat.com> - 4:5.12.4-148
+- Change Perl_repeatcpy() prototype to allow repeat count above 2^31
+  (bug #720610)
+
 * Wed Oct 05 2011 Petr Pisar <ppisar@redhat.com> - 4:5.12.4-147
 - Fix CVE-2011-3597 (code injection in Digest) (bug #743010)
 - Fix CVE-2011-2939 (heap overflow while decoding Unicode string) (bug #731246)
