@@ -22,7 +22,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        195%{?dist}
+Release:        196%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -492,6 +492,10 @@ Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Test::Harness)
 BuildArch:      noarch
+
+# Filter false DynaLoader provides. Versioned perl(DynaLoader) keeps
+# unfiltered on perl package, no need to reinject it.
+%global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\(DynaLoader\\)\\s*$
 
 %description ExtUtils-MakeMaker
 Create a module Makefile.
@@ -2283,6 +2287,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Oct 06 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-196
+- Filter false perl(DynaLoader) provide from perl-ExtUtils-MakeMaker
+  (bug #736714)
+
 * Tue Oct 04 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-195
 - Fix CVE-2011-3597 (code injection in Digest) (bug #743010)
 - Sub-package Digest and thus Digest::MD5 module (bug #743247)
