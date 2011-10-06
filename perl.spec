@@ -71,6 +71,10 @@ Patch8:         perl-5.14.1-offtest.patch
 # Fix code injection in Digest, rhbz #743010, RT#71390, fixed in Digest-1.17.
 Patch9:         perl-5.14.2-digest_eval.patch
 
+# Change Perl_repeatcpy() prototype to allow repeat count above 2^31
+# rhbz #720610, Perl RT#94560
+Patch10:        perl-5.14.2-large-repeat-heap-abuse.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -1165,6 +1169,7 @@ tarball from perl.org.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1226,6 +1231,9 @@ echo "RPM Build arch: %{_arch}"
 
 %global perl_vendorlib  %{privlib}/vendor_perl
 %global perl_vendorarch %{archlib}/vendor_perl
+
+# For perl-5.14.2-large-repeat-heap-abuse.patch 
+perl regen.pl -v
 
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
         -Dccdlflags="-Wl,--enable-new-dtags" \
@@ -1360,6 +1368,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch6: Skip hostname tests, due to builders not being network capable' \
     'Fedora Patch7: Dont run one io test due to random builder failures' \
     'Fedora Patch9: Fix code injection in Digest->new()' \
+    'Fedora Patch10: Change Perl_repeatcpy() to allow count above 2^31' \ 
     %{nil}
 
 rm patchlevel.bak
@@ -2290,6 +2299,8 @@ sed \
 * Thu Oct 06 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-196
 - Filter false perl(DynaLoader) provide from perl-ExtUtils-MakeMaker
   (bug #736714)
+- Change Perl_repeatcpy() prototype to allow repeat count above 2^31
+  (bug #720610)
 
 * Tue Oct 04 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-195
 - Fix CVE-2011-3597 (code injection in Digest) (bug #743010)
