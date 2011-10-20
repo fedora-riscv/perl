@@ -22,7 +22,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        196%{?dist}
+Release:        197%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1745,7 +1745,7 @@ echo "%{name}-libs:" \
 %exclude %{_mandir}/man3/Module::Loaded*
 
 # Module-Metadata
-%exclude %{perl_privlib}/Module/Metadata.pm
+%exclude %{privlib}/Module/Metadata.pm
 %exclude %{_mandir}/man3/Module::Metadata.3pm*
 
 # Module-Pluggable
@@ -2274,10 +2274,6 @@ echo "%{name}-libs:" \
 %{privlib}/Version/Requirements.pm
 %{_mandir}/man3/Version::Requirements*
 
-%files parent 
-%{privlib}/parent.pm
-%{_mandir}/man3/parent.3*
-
 %files threads
 %dir %{archlib}/auto/threads
 %{archlib}/auto/threads/threads*
@@ -2302,6 +2298,11 @@ echo "%{name}-libs:" \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Oct 20 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.2-197
+- cleaned spec (thanks to Grigory Batalov)
+-  Module-Metadata sub-package contained perl_privlib instead of privlib
+-  %%files parent section was repeated twice
+
 * Fri Oct 14 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-196
 - Filter false perl(DynaLoader) provide from perl-ExtUtils-MakeMaker
   (bug #736714)
