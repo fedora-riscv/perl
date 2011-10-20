@@ -1640,7 +1640,7 @@ sed \
 %exclude %{_mandir}/man3/Module::Loaded*
 
 # Module-Metadata
-%exclude %{perl_privlib}/Module/Metadata.pm
+%exclude %{privlib}/Module/Metadata.pm
 %exclude %{_mandir}/man3/Module::Metadata.3pm*
 
 # Module-Pluggable
@@ -2150,10 +2150,6 @@ sed \
 %{privlib}/Version/Requirements.pm
 %{_mandir}/man3/Version::Requirements*
 
-%files parent 
-%{privlib}/parent.pm
-%{_mandir}/man3/parent.3*
-
 %files threads
 %dir %{archlib}/auto/threads
 %{archlib}/auto/threads/threads*
@@ -2197,6 +2193,9 @@ sed \
 - Change Perl_repeatcpy() prototype to allow repeat count above 2^31
   (bug #720610)
 - Do not own site directories located in /usr/local (bug #732799)
+- cleaned spec (thanks to Grigory Batalov)
+-  Module-Metadata sub-package contained perl_privlib instead of privlib
+-  %%files parent section was repeated twice
 
 * Wed Oct 05 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.1-188
 - Fix CVE-2011-3597 (code injection in Digest) (bug #743010)
