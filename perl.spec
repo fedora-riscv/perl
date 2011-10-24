@@ -72,7 +72,7 @@ Patch8:         perl-5.14.1-offtest.patch
 Patch9:         perl-5.14.2-digest_eval.patch
 
 # Change Perl_repeatcpy() prototype to allow repeat count above 2^31
-# rhbz #720610, Perl RT#94560
+# rhbz #720610, Perl RT#94560, accepted as v5.15.4-24-g26e1303.
 Patch10:        perl-5.14.2-large-repeat-heap-abuse.patch
 
 # Update some of the bundled modules
