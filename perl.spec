@@ -22,7 +22,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        197%{?dist}
+Release:        198%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1432,15 +1432,7 @@ sed \
 %endif
 %endif
 
-%post libs
-/sbin/ldconfig
-# Inform about missing site directories (bug #732799).
-# There is no scriptlet executable on uprgrade after removing old package to
-# create them automatically.
-echo "%{name}-libs:" \
-    "Perl site paths %{_prefix}/local/{%{_lib},share}/perl5" \
-    "are searched but not created automatically because %{_prefix}/local" \
-    "is your private area. Create them manually if needed."
+%post libs -p /sbin/ldconfig
 
 %postun libs -p /sbin/ldconfig
 
@@ -2298,6 +2290,9 @@ echo "%{name}-libs:" \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Oct 24 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-198
+- Do not warn about missing site directories (bug #732799)
+
 * Thu Oct 20 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.2-197
 - cleaned spec (thanks to Grigory Batalov)
 -  Module-Metadata sub-package contained perl_privlib instead of privlib
