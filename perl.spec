@@ -7,10 +7,12 @@
 %global parallel_tests 1
 %global tapsetdir   %{_datadir}/systemtap/tapset
 
+# This set overrides filters from build root (/etc/rpm/macros.perl)
+# intentionally (e.g. the perl(DB))
 %global __provides_exclude_from .*/auto/.*\\.so$|.*/%{perl_archlib}/.*\\.so$|%{_docdir}
 %global __requires_exclude_from %{_docdir}
-%global __provides_exclude perl\\(VMS|perl\\(Win32|perl\\(BSD::|perl\\(DB\\)
-%global __requires_exclude perl\\(VMS|perl\\(BSD::|perl\\(Win32|perl\\(Tk|perl\\(Mac::|perl\\(Your::Module::Here
+%global __provides_exclude perl\\((VMS|Win32|BSD::|DB\\)$)
+%global __requires_exclude perl\\((VMS|BSD::|Win32|Tk|Mac::|Your::Module::Here)
 # same as we provide in /etc/rpm/macros.perl
 %global perl5_testdir   %{_libexecdir}/perl5-tests
 
@@ -20,7 +22,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        189%{?dist}
+Release:        190%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2174,6 +2176,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Nov 03 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-190
+- Provide perl(DB) by perl
+
 * Wed Nov 02 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-189
 - Correct perl-CGI list of Provides
 - Make tests optional
