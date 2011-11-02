@@ -69,9 +69,6 @@ Patch8:         perl-5.14.1-offtest.patch
 # Fix code injection in Digest, rhbz #743010, RT#71390, fixed in Digest-1.17.
 Patch9:         perl-5.14.2-digest_eval.patch
 
-# Fix CVE-2011-2939, rhbz #731246, fixed in perl-5.14.2.
-Patch10:        perl-5.14.1-CVE-2011-2939.patch
-
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -1098,7 +1095,6 @@ tarball from perl.org.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
-%patch10 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1286,7 +1282,6 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch6: Skip hostname tests, due to builders not being network capable' \
     'Fedora Patch7: Dont run one io test due to random builder failures' \
     'Fedora Patch9: Fix code injection in Digest->new()' \
-    'Fedora Patch10: Fix CVE-2011-2939' \
     %{nil}
 
 rm patchlevel.bak
