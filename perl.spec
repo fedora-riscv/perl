@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        199%{?dist}
+Release:        200%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -389,7 +389,6 @@ Version:        0.91.3
 Requires:       perl(Digest::SHA)
 Requires:       perl(Module::Pluggable) >= 2.4
 Requires:       perl(Module::CoreList)
-Requires:       perl(DBIx::Simple)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Provides:       perl-CPANPLUS-Dist-Build = 0.54
 Obsoletes:      perl-CPANPLUS-Dist-Build <= 0.05
@@ -2292,6 +2291,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Nov  2 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.2-200
+- perl(DBIx::Simple) is not needed in spec requirement in CPANPLUS. It's generated
+  automatically.
+
 * Wed Nov 02 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-199
 - Provide perl(DB) by perl
 
