@@ -1995,7 +1995,7 @@ rm -rf $RPM_BUILD_ROOT
 - Fix CVE-2011-2939 (heap overflow while decoding Unicode string) (bug #731246)
 
 * Sun Aug 14 2011 Iain Arnell <iarnell@gmail.com> 4:5.12.4-161
-- perl needs to own vendorarch/auto directory
+- perl needs to own vendorarch/auto directory (bug #709466)
 - fix version number in last two changelog entries
 
 * Fri Aug 05 2011 Petr Sabata <contyk@redhat.com> - 4:5.12.4-160
