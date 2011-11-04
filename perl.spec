@@ -90,6 +90,9 @@ Patch12:        perl-5.14.1-CVE-2011-2939.patch
 # rhbz #720610, Perl RT#94560, accepted as v5.15.4-24-g26e1303.
 Patch13:        perl-5.14.2-large-repeat-heap-abuse.patch
 
+# Fix CVE-2011-2728, rhbz#742987, fixed in Perl 5.14.2.
+Patch14:        perl-5.12.4-CVE-2011-2728.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -968,6 +971,7 @@ tarball from perl.org.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1185,7 +1189,8 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch10: Update ExtUtils::ParseXS to 2.2206' \
     'Fedora Patch11: Fix code injection in Digest->new()' \
     'Fedora Patch12: Fix CVE-2011-2939' \
-    'Fedora Patch13: Change Perl_repeatcpy() to allow count above 2^31' \ 
+    'Fedora Patch13: Change Perl_repeatcpy() to allow count above 2^31' \
+    'Fedora Patch14: Fix CVE-2011-2728' \
     %{nil}
 
 rm patchlevel.bak
@@ -1989,6 +1994,8 @@ rm -rf $RPM_BUILD_ROOT
 - Change Perl_repeatcpy() prototype to allow repeat count above 2^31
   (bug #720610)
 - Do not own site directories located in /usr/local (bug #732799)
+- Fixes CVE-2011-2728 (File::Glob bsd_glob() crash with certain glob flags)
+  (bug #742987)
 
 * Wed Oct 05 2011 Petr Pisar <ppisar@redhat.com> - 4:5.12.4-162
 - Fix CVE-2011-3597 (code injection in Digest) (bug #743010)
