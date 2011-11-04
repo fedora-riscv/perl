@@ -1369,7 +1369,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch6: Skip hostname tests, due to builders not being network capable' \
     'Fedora Patch7: Dont run one io test due to random builder failures' \
     'Fedora Patch9: Fix code injection in Digest->new()' \
-    'Fedora Patch10: Change Perl_repeatcpy() to allow count above 2^31' \ 
+    'Fedora Patch10: Change Perl_repeatcpy() to allow count above 2^31' \
     %{nil}
 
 rm patchlevel.bak
