@@ -22,7 +22,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        190%{?dist}
+Release:        191%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -659,7 +659,7 @@ install a few additional modules.
 Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
-Epoch:          0
+Epoch:          1
 Version:        2.49 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(version)
@@ -2176,6 +2176,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Nov 18 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-191
+- Increase epoch of perl-Module-CoreList to overcome version regression in
+  upstream (bug #754641)
+
 * Thu Nov 03 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-190
 - Provide perl(DB) by perl
 
