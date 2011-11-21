@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        201%{?dist}
+Release:        202%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -924,6 +924,22 @@ This module provides things that are useful in decoding Pod E<...> sequences.
 Presumably, it should be used only by Pod parsers and/or formatters.
 
 
+%package Pod-Perldoc
+Summary:        Look up Perl documentation in Pod format
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        3.15.04
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
+
+%description Pod-Perldoc
+perldoc looks up a piece of documentation in .pod format that is embedded
+in the perl installation tree or in a perl script, and displays it via
+"groff -man | $PAGER". This is primarily used for the documentation for
+the perl library modules.
+
+
 %package Pod-Simple
 Summary:        Framework for parsing POD documentation
 Group:          Development/Libraries
@@ -1150,8 +1166,10 @@ Requires:       perl-Locale-Maketext-Simple, perl-Log-Message, perl-Log-Message-
 Requires:       perl-Module-Build, perl-Module-CoreList, perl-Module-Load
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Metadata
 Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Constants, perl-PathTools
-Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType, perl-Pod-Escapes, perl-Pod-Simple, perl-Term-UI 
-Requires:       perl-Test-Harness, perl-Test-Simple, perl-Time-Piece, perl-Version-Requirements, perl-version
+Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
+Requires:       perl-Pod-Escapes, perl-Pod-Perldoc, perl-Pod-Simple
+Requires:       perl-Term-UI, perl-Test-Harness, perl-Test-Simple
+Requires:       perl-Time-Piece, perl-Version-Requirements, perl-version
 Requires:       perl-threads, perl-threads-shared, perl-parent
 
 %description core
@@ -1779,6 +1797,14 @@ sed \
 %exclude %{privlib}/Pod/Escapes.pm
 %exclude %{_mandir}/man3/Pod::Escapes.*
 
+# Pod-Perldoc
+%exclude %{_bindir}/perldoc
+%exclude %{privlib}/pod/perldoc.pod
+%exclude %{privlib}/Pod/Perldoc.pm
+%exclude %{privlib}/Pod/Perldoc/
+%exclude %{_mandir}/man1/perldoc.1*
+%exclude %{_mandir}/man3/Pod::Perldoc*
+
 # Pod-Simple
 %exclude %{privlib}/Pod/Simple/
 %exclude %{privlib}/Pod/Simple.pm
@@ -2209,6 +2235,14 @@ sed \
 %{privlib}/Pod/Escapes.pm
 %{_mandir}/man3/Pod::Escapes.*
 
+%files Pod-Perldoc
+%{_bindir}/perldoc
+%{privlib}/pod/perldoc.pod
+%{privlib}/Pod/Perldoc.pm
+%{privlib}/Pod/Perldoc/
+%{_mandir}/man1/perldoc.1*
+%{_mandir}/man3/Pod::Perldoc*
+
 %files Pod-Simple
 %{privlib}/Pod/Simple/ 
 %{privlib}/Pod/Simple.pm
@@ -2291,6 +2325,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Nov 21 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-202
+- Sub-package Pod::Perldoc
+
 * Fri Nov 18 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-201
 - Increase epoch of perl-Module-CoreList to overcome version regression in
   upstream (bug #754641)
