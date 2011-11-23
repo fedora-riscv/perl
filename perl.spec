@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        202%{?dist}
+Release:        203%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1072,6 +1072,22 @@ inheritance from those modules at the same time. Mostly similar in effect to:
     }
 
 
+%package Socket
+Summary:        C socket.h defines and structure manipulators
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.94
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Socket
+This module is just a translation of the C socket.h file.  Unlike the old
+mechanism of requiring a translated socket.ph file, this uses the h2xs program
+(see the Perl source distribution) and your native C compiler.  This means
+that it has a far more likely chance of getting the numbers right.  This
+includes all of the commonly used pound-defines like AF_INET, SOCK_STREAM, etc.
+
+
 %package threads
 Summary:        Perl interpreter-based threads
 Group:          Development/Libraries
@@ -1168,7 +1184,7 @@ Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Me
 Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Constants, perl-PathTools
 Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
 Requires:       perl-Pod-Escapes, perl-Pod-Perldoc, perl-Pod-Simple
-Requires:       perl-Term-UI, perl-Test-Harness, perl-Test-Simple
+Requires:       perl-Socket, perl-Term-UI, perl-Test-Harness, perl-Test-Simple
 Requires:       perl-Time-Piece, perl-Version-Requirements, perl-version
 Requires:       perl-threads, perl-threads-shared, perl-parent
 
@@ -1859,6 +1875,12 @@ sed \
 %exclude %{privlib}/Version/Requirements.pm
 %exclude %{_mandir}/man3/Version::Requirements*
 
+# Socket
+%exclude %dir %{archlib}/auto/Socket
+%exclude %{archlib}/auto/Socket/Socket.*
+%exclude %{archlib}/Socket.pm
+%exclude %{_mandir}/man3/Socket.3*
+
 # threads
 %dir %exclude %{archlib}/auto/threads
 %exclude %{archlib}/auto/threads/threads*
@@ -2301,6 +2323,12 @@ sed \
 %{privlib}/Version/Requirements.pm
 %{_mandir}/man3/Version::Requirements*
 
+%files Socket
+%dir %{archlib}/auto/Socket
+%{archlib}/auto/Socket/Socket.*
+%{archlib}/Socket.pm
+%{_mandir}/man3/Socket.3*
+
 %files threads
 %dir %{archlib}/auto/threads
 %{archlib}/auto/threads/threads*
@@ -2325,6 +2353,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Nov 23 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-203
+- Sub-package Socket
+
 * Mon Nov 21 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-202
 - Sub-package Pod::Perldoc
 
