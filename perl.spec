@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        203%{?dist}
+Release:        204%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1272,6 +1272,7 @@ perl regen.pl -v
 
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
         -Dccdlflags="-Wl,--enable-new-dtags" \
+        -Dlddlflags="-shared $RPM_OPT_FLAGS $RPM_LD_FLAGS" \
         -DDEBUGGING=-g \
         -Dversion=%{perl_version} \
         -Dmyhostname=localhost \
@@ -2353,6 +2354,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Nov 24 2011 Ville Skyttä <ville.skytta@iki.fi> - 4:5.14.2-204
+- Add $RPM_LD_FLAGS to lddlflags.
+
 * Wed Nov 23 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-203
 - Sub-package Socket
 
