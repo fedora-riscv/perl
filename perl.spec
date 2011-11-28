@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        204%{?dist}
+Release:        205%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -485,6 +485,21 @@ BuildArch:      noarch
 
 %description ExtUtils-Embed
 Utilities for embedding Perl in C/C++ applications.
+
+
+%package ExtUtils-Install
+Summary:        Install files from here to there
+Group:          Development/Languages
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.56
+Requires:       perl-devel
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
+
+%description ExtUtils-Install
+Handles the installing and uninstalling of perl modules, scripts, man
+pages, etc.
 
 
 %package ExtUtils-MakeMaker
@@ -1175,11 +1190,12 @@ Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-CPAN,
 Requires:       perl-CPAN-Meta, perl-CPAN-Meta-YAML, perl-CPANPLUS,
 Requires:       perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Embed,
-Requires:       perl-ExtUtils-MakeMaker, perl-ExtUtils-ParseXS
-Requires:       perl-File-Fetch, perl-HTTP-Tiny, perl-IO-Compress, perl-IO-Zlib
-Requires:       perl-IPC-Cmd, perl-JSON-PP, perl-Locale-Codes
-Requires:       perl-Locale-Maketext-Simple, perl-Log-Message, perl-Log-Message-Simple
-Requires:       perl-Module-Build, perl-Module-CoreList, perl-Module-Load
+Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
+Requires:       perl-ExtUtils-ParseXS, perl-File-Fetch, perl-HTTP-Tiny
+Requires:       perl-IO-Compress, perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
+Requires:       perl-Locale-Codes, perl-Locale-Maketext-Simple
+Requires:       perl-Log-Message, perl-Log-Message-Simple, perl-Module-Build
+Requires:       perl-Module-CoreList, perl-Module-Load
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Metadata
 Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Constants, perl-PathTools
 Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
@@ -1605,11 +1621,17 @@ sed \
 %exclude %{privlib}/ExtUtils/Embed.pm
 %exclude %{_mandir}/man3/ExtUtils::Embed*
 
+# ExtUtils::Install
+%exclude %{privlib}/ExtUtils/Install.pm
+%exclude %{privlib}/ExtUtils/Installed.pm
+%exclude %{privlib}/ExtUtils/Packlist.pm
+%exclude %{_mandir}/man3/ExtUtils::Install.3*
+%exclude %{_mandir}/man3/ExtUtils::Installed.3*
+%exclude %{_mandir}/man3/ExtUtils::Packlist.3*
+
 # ExtUtils::MakeMaker
 %exclude %{_bindir}/instmodsh
 %exclude %{privlib}/ExtUtils/Command/
-%exclude %{privlib}/ExtUtils/Install.pm
-%exclude %{privlib}/ExtUtils/Installed.pm
 %exclude %{privlib}/ExtUtils/Liblist/
 %exclude %{privlib}/ExtUtils/Liblist.pm
 %exclude %{privlib}/ExtUtils/MakeMaker/
@@ -1620,12 +1642,9 @@ sed \
 %exclude %{privlib}/ExtUtils/Manifest.pm
 %exclude %{privlib}/ExtUtils/Mkbootstrap.pm
 %exclude %{privlib}/ExtUtils/Mksymlists.pm
-%exclude %{privlib}/ExtUtils/Packlist.pm
 %exclude %{privlib}/ExtUtils/testlib.pm
 %exclude %{_mandir}/man1/instmodsh.1*
 %exclude %{_mandir}/man3/ExtUtils::Command::MM*
-%exclude %{_mandir}/man3/ExtUtils::Install.3*
-%exclude %{_mandir}/man3/ExtUtils::Installed.3*
 %exclude %{_mandir}/man3/ExtUtils::Liblist.3*
 %exclude %{_mandir}/man3/ExtUtils::MM*
 %exclude %{_mandir}/man3/ExtUtils::MY.3*
@@ -1633,7 +1652,6 @@ sed \
 %exclude %{_mandir}/man3/ExtUtils::Manifest.3*
 %exclude %{_mandir}/man3/ExtUtils::Mkbootstrap.3*
 %exclude %{_mandir}/man3/ExtUtils::Mksymlists.3*
-%exclude %{_mandir}/man3/ExtUtils::Packlist.3*
 %exclude %{_mandir}/man3/ExtUtils::testlib.3*
 
 # ExtUtils::ParseXS
@@ -2042,11 +2060,17 @@ sed \
 %{privlib}/ExtUtils/Embed.pm
 %{_mandir}/man3/ExtUtils::Embed*
 
+%files ExtUtils-Install
+%{privlib}/ExtUtils/Install.pm
+%{privlib}/ExtUtils/Installed.pm
+%{privlib}/ExtUtils/Packlist.pm
+%{_mandir}/man3/ExtUtils::Install.3*
+%{_mandir}/man3/ExtUtils::Installed.3*
+%{_mandir}/man3/ExtUtils::Packlist.3*
+
 %files ExtUtils-MakeMaker
 %{_bindir}/instmodsh
 %{privlib}/ExtUtils/Command/
-%{privlib}/ExtUtils/Install.pm
-%{privlib}/ExtUtils/Installed.pm
 %{privlib}/ExtUtils/Liblist/
 %{privlib}/ExtUtils/Liblist.pm
 %{privlib}/ExtUtils/MakeMaker/
@@ -2057,12 +2081,9 @@ sed \
 %{privlib}/ExtUtils/Manifest.pm
 %{privlib}/ExtUtils/Mkbootstrap.pm
 %{privlib}/ExtUtils/Mksymlists.pm
-%{privlib}/ExtUtils/Packlist.pm
 %{privlib}/ExtUtils/testlib.pm
 %{_mandir}/man1/instmodsh.1*
 %{_mandir}/man3/ExtUtils::Command::MM*
-%{_mandir}/man3/ExtUtils::Install.3*
-%{_mandir}/man3/ExtUtils::Installed.3*
 %{_mandir}/man3/ExtUtils::Liblist.3*
 %{_mandir}/man3/ExtUtils::MM*
 %{_mandir}/man3/ExtUtils::MY.3*
@@ -2070,7 +2091,6 @@ sed \
 %{_mandir}/man3/ExtUtils::Manifest.3*
 %{_mandir}/man3/ExtUtils::Mkbootstrap.3*
 %{_mandir}/man3/ExtUtils::Mksymlists.3*
-%{_mandir}/man3/ExtUtils::Packlist.3*
 %{_mandir}/man3/ExtUtils::testlib.3*
 
 %files ExtUtils-ParseXS
@@ -2354,6 +2374,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Nov 29 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-205
+- Sub-package ExtUtils::Install
+
 * Thu Nov 24 2011 Ville Skyttä <ville.skytta@iki.fi> - 4:5.14.2-204
 - Add $RPM_LD_FLAGS to lddlflags.
 
