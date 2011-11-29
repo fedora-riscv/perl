@@ -517,6 +517,7 @@ BuildArch:      noarch
 # Filter false DynaLoader provides. Versioned perl(DynaLoader) keeps
 # unfiltered on perl package, no need to reinject it.
 %global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\(DynaLoader\\)\\s*$
+%global __provides_exclude %__provides_exclude|^perl\\(ExtUtils::MakeMaker::_version\\)
 
 %description ExtUtils-MakeMaker
 Create a module Makefile.
@@ -2397,6 +2398,7 @@ sed \
 * Tue Nov 29 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-205
 - Sub-package ExtUtils::Install
 - Sub-package ExtUtils::Manifest
+- Do not provide private perl(ExtUtils::MakeMaker::_version)
 
 * Thu Nov 24 2011 Ville Skyttä <ville.skytta@iki.fi> - 4:5.14.2-204
 - Add $RPM_LD_FLAGS to lddlflags.
