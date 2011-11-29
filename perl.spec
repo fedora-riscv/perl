@@ -510,6 +510,7 @@ Epoch:          0
 Version:        6.57.5
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl(ExtUtils::Manifest)
 Requires:       perl(Test::Harness)
 BuildArch:      noarch
 
@@ -519,6 +520,20 @@ BuildArch:      noarch
 
 %description ExtUtils-MakeMaker
 Create a module Makefile.
+
+
+%package ExtUtils-Manifest
+Summary:        Utilities to write and check a MANIFEST file
+Group:          Development/Languages
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.58
+Requires:       perl-devel
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+BuildArch:      noarch
+
+%description ExtUtils-Manifest
+%{summary}.
 
 
 %package ExtUtils-ParseXS
@@ -1191,6 +1206,7 @@ Requires:       perl-CPAN-Meta, perl-CPAN-Meta-YAML, perl-CPANPLUS,
 Requires:       perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Embed,
 Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
+Requires:       perl-ExtUtils-Manifest
 Requires:       perl-ExtUtils-ParseXS, perl-File-Fetch, perl-HTTP-Tiny
 Requires:       perl-IO-Compress, perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
 Requires:       perl-Locale-Codes, perl-Locale-Maketext-Simple
@@ -1629,6 +1645,11 @@ sed \
 %exclude %{_mandir}/man3/ExtUtils::Installed.3*
 %exclude %{_mandir}/man3/ExtUtils::Packlist.3*
 
+# ExtUtils::Manifest
+%exclude %{privlib}/ExtUtils/Manifest.pm
+%exclude %{privlib}/ExtUtils/MANIFEST.SKIP
+%exclude %{_mandir}/man3/ExtUtils::Manifest.3*
+
 # ExtUtils::MakeMaker
 %exclude %{_bindir}/instmodsh
 %exclude %{privlib}/ExtUtils/Command/
@@ -1636,10 +1657,8 @@ sed \
 %exclude %{privlib}/ExtUtils/Liblist.pm
 %exclude %{privlib}/ExtUtils/MakeMaker/
 %exclude %{privlib}/ExtUtils/MakeMaker.pm
-%exclude %{privlib}/ExtUtils/MANIFEST.SKIP
 %exclude %{privlib}/ExtUtils/MM*.pm
 %exclude %{privlib}/ExtUtils/MY.pm
-%exclude %{privlib}/ExtUtils/Manifest.pm
 %exclude %{privlib}/ExtUtils/Mkbootstrap.pm
 %exclude %{privlib}/ExtUtils/Mksymlists.pm
 %exclude %{privlib}/ExtUtils/testlib.pm
@@ -1649,7 +1668,6 @@ sed \
 %exclude %{_mandir}/man3/ExtUtils::MM*
 %exclude %{_mandir}/man3/ExtUtils::MY.3*
 %exclude %{_mandir}/man3/ExtUtils::MakeMaker*
-%exclude %{_mandir}/man3/ExtUtils::Manifest.3*
 %exclude %{_mandir}/man3/ExtUtils::Mkbootstrap.3*
 %exclude %{_mandir}/man3/ExtUtils::Mksymlists.3*
 %exclude %{_mandir}/man3/ExtUtils::testlib.3*
@@ -2068,6 +2086,11 @@ sed \
 %{_mandir}/man3/ExtUtils::Installed.3*
 %{_mandir}/man3/ExtUtils::Packlist.3*
 
+%files ExtUtils-Manifest
+%{privlib}/ExtUtils/Manifest.pm
+%{privlib}/ExtUtils/MANIFEST.SKIP
+%{_mandir}/man3/ExtUtils::Manifest.3*
+
 %files ExtUtils-MakeMaker
 %{_bindir}/instmodsh
 %{privlib}/ExtUtils/Command/
@@ -2075,10 +2098,8 @@ sed \
 %{privlib}/ExtUtils/Liblist.pm
 %{privlib}/ExtUtils/MakeMaker/
 %{privlib}/ExtUtils/MakeMaker.pm
-%{privlib}/ExtUtils/MANIFEST.SKIP
 %{privlib}/ExtUtils/MM*.pm
 %{privlib}/ExtUtils/MY.pm
-%{privlib}/ExtUtils/Manifest.pm
 %{privlib}/ExtUtils/Mkbootstrap.pm
 %{privlib}/ExtUtils/Mksymlists.pm
 %{privlib}/ExtUtils/testlib.pm
@@ -2088,7 +2109,6 @@ sed \
 %{_mandir}/man3/ExtUtils::MM*
 %{_mandir}/man3/ExtUtils::MY.3*
 %{_mandir}/man3/ExtUtils::MakeMaker*
-%{_mandir}/man3/ExtUtils::Manifest.3*
 %{_mandir}/man3/ExtUtils::Mkbootstrap.3*
 %{_mandir}/man3/ExtUtils::Mksymlists.3*
 %{_mandir}/man3/ExtUtils::testlib.3*
@@ -2376,6 +2396,7 @@ sed \
 %changelog
 * Tue Nov 29 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-205
 - Sub-package ExtUtils::Install
+- Sub-package ExtUtils::Manifest
 
 * Thu Nov 24 2011 Ville Skyttä <ville.skytta@iki.fi> - 4:5.14.2-204
 - Add $RPM_LD_FLAGS to lddlflags.
