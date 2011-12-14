@@ -20,7 +20,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        163%{?dist}
+Release:        164%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -92,6 +92,10 @@ Patch13:        perl-5.14.2-large-repeat-heap-abuse.patch
 
 # Fix CVE-2011-2728, rhbz#742987, fixed in Perl 5.14.2.
 Patch14:        perl-5.12.4-CVE-2011-2728.patch
+
+# Fix leak with non-matching named captures. rhbz#767597, RT#78266, fixed
+# after 5.14.2.
+Patch15:        perl-5.14.2-Don-t-leak-memory-when-accessing-named-capt.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -972,6 +976,7 @@ tarball from perl.org.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1191,6 +1196,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch12: Fix CVE-2011-2939' \
     'Fedora Patch13: Change Perl_repeatcpy() to allow count above 2^31' \
     'Fedora Patch14: Fix CVE-2011-2728' \
+    'Fedora Patch15: Fix leak with non-matching named captures' \
     %{nil}
 
 rm patchlevel.bak
@@ -1990,6 +1996,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Dec 14 2011 Petr Pisar <ppisar@redhat.com> - 4:5.12.4-164
+- Fix leak with non-matching named captures (bug #767597)
+
 * Fri Nov 04 2011 Petr Pisar <ppisar@redhat.com> - 4:5.12.4-163
 - Change Perl_repeatcpy() prototype to allow repeat count above 2^31
   (bug #720610)
