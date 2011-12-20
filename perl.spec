@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        206%{?dist}
+Release:        207%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -80,6 +80,9 @@ Patch10:        perl-5.14.2-large-repeat-heap-abuse.patch
 # Fix leak with non-matching named captures. rhbz#767597, RT#78266, fixed
 # after 5.14.2.
 Patch11:        perl-5.14.2-Don-t-leak-memory-when-accessing-named-capt.patch
+
+# Fix interrupted reading, rhbz#767931, fixed after 5.15.3.
+Patch12:        perl-5.14.2-add-a-couple-missing-LEAVEs-in-perlio_async_run.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1243,6 +1246,7 @@ tarball from perl.org.
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1444,6 +1448,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch9: Fix code injection in Digest->new()' \
     'Fedora Patch10: Change Perl_repeatcpy() to allow count above 2^31' \
     'Fedora Patch11: Fix leak with non-matching named captures' \
+    'Fedora Patch12: Fix interrupted reading' \
     %{nil}
 
 rm patchlevel.bak
@@ -2401,6 +2406,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Dec 20 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-207
+- Fix interrupted reading. Thanks to Šimon Lukašík for reporting this issue
+  and thanks to Marcela Mašláňová for finding fix. (bug #767931)
+
 * Wed Dec 14 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-206
 - Fix leak with non-matching named captures (bug #767597)
 
