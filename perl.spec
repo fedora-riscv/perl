@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        207%{?dist}
+Release:        208%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2406,6 +2406,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jan  6 2012 Paul Howarth <paul@city-fan.org> - 4:5.14.2-208
+- Rebuild for gcc 4.7
+
 * Tue Dec 20 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-207
 - Fix interrupted reading. Thanks to Šimon Lukašík for reporting this issue
   and thanks to Marcela Mašláňová for finding fix. (bug #767931)
