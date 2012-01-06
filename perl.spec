@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        208%{?dist}
+Release:        209%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -517,6 +517,7 @@ Epoch:          0
 Version:        6.57.5
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl(ExtUtils::Install)
 Requires:       perl(ExtUtils::Manifest)
 Requires:       perl(Test::Harness)
 BuildArch:      noarch
@@ -2406,6 +2407,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jan 06 2012 Iain Arnell <iarnell@gmail.com> -4:5.14.2-209
+- perl-ExtUtils-MakeMaker sub-package requires ExtUtils::Install
+
 * Fri Jan  6 2012 Paul Howarth <paul@city-fan.org> - 4:5.14.2-208
 - Rebuild for gcc 4.7
 
