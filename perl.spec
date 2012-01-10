@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        209%{?dist}
+Release:        210%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2407,6 +2407,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jan 10 2012 Paul Howarth <paul@city-fan.org> - 4:5.14.2-210
+- Rebuild again now that perl dependency generator is fixed (#772632, #772699)
+
 * Fri Jan 06 2012 Iain Arnell <iarnell@gmail.com> -4:5.14.2-209
 - perl-ExtUtils-MakeMaker sub-package requires ExtUtils::Install
 
