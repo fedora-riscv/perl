@@ -22,7 +22,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        193%{?dist}
+Release:        194%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -996,6 +996,22 @@ inheritance from those modules at the same time. Mostly similar in effect to:
     }
 
 
+%package Socket
+Summary:        C socket.h defines and structure manipulators
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.94
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Socket
+This module is just a translation of the C socket.h file.  Unlike the old
+mechanism of requiring a translated socket.ph file, this uses the h2xs program
+(see the Perl source distribution) and your native C compiler.  This means
+that it has a far more likely chance of getting the numbers right.  This
+includes all of the commonly used pound-defines like AF_INET, SOCK_STREAM, etc.
+
+
 %package threads
 Summary:        Perl interpreter-based threads
 Group:          Development/Libraries
@@ -1088,7 +1104,7 @@ Requires:       perl-Locale-Maketext-Simple, perl-Log-Message, perl-Log-Message-
 Requires:       perl-Module-Build, perl-Module-CoreList, perl-Module-Load
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Metadata
 Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Constants, perl-PathTools
-Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType, perl-Pod-Escapes, perl-Pod-Simple, perl-Term-UI 
+Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType, perl-Pod-Escapes, perl-Pod-Simple, perl-Socket, perl-Term-UI 
 Requires:       perl-Test-Harness, perl-Test-Simple, perl-Time-Piece, perl-Version-Requirements, perl-version
 Requires:       perl-threads, perl-threads-shared, perl-parent
 
@@ -1748,6 +1764,12 @@ sed \
 %exclude %{privlib}/Version/Requirements.pm
 %exclude %{_mandir}/man3/Version::Requirements*
 
+%files Socket
+%dir %{archlib}/auto/Socket
+%{archlib}/auto/Socket/Socket.*
+%{archlib}/Socket.pm
+%{_mandir}/man3/Socket.3*
+
 # threads
 %dir %exclude %{archlib}/auto/threads
 %exclude %{archlib}/auto/threads/threads*
@@ -2187,6 +2209,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Feb 02 2012 Petr Šabata <contyk@redhat.com> - 4:5.14.2-194
+- Sub-package Socket for IO::Socket::IP
+
 * Tue Dec 20 2011 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-193
 - Fix interrupted reading. Thanks to Šimon Lukašík for reporting this issue
   and thanks to Marcela Mašláňová for finding fix. (bug #767931)
