@@ -101,6 +101,9 @@ Patch15:        perl-5.14.2-Don-t-leak-memory-when-accessing-named-capt.patch
 # rhbz#771228, RT#107216, fixed after 5.15.6.
 Patch16:        perl-5.14.2-Signal-handlers-must-run-before-sigsuspend-returns.patch
 
+# Stop !$^V from leaking, rhbz#787613, RT#109762, fixed after 5.15.7.
+Patch17:        perl-5.12.4-Stop-V-from-leaking.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -982,6 +985,7 @@ tarball from perl.org.
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1203,6 +1207,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch14: Fix CVE-2011-2728' \
     'Fedora Patch15: Fix leak with non-matching named captures' \
     'Fedora Patch16: Run signal handlers before returning from sigsuspend' \
+    'Fedora Patch17: Stop !$^V from leaking' \
     %{nil}
 
 rm patchlevel.bak
@@ -1996,6 +2001,7 @@ rm -rf $RPM_BUILD_ROOT
 - Run safe signal handlers before returning from sigsuspend() and pause()
   (bug #771228)
 - Correct perl-Scalar-List-Utils files list
+- Stop !$^V from leaking (bug #787613)
 
 * Wed Dec 14 2011 Petr Pisar <ppisar@redhat.com> - 4:5.12.4-164
 - Fix leak with non-matching named captures (bug #767597)

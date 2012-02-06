@@ -1,0 +1,34 @@
+From b7533612bcf6efd60fc446c79a428833a50f56b7 Mon Sep 17 00:00:00 2001
+From: Father Chrysostomos <sprout@cpan.org>
+Date: Fri, 3 Feb 2012 21:55:31 -0800
+Subject: [PATCH] Stop !$^V from leaking
+
+by mortalising the temporary SVs.
+
+Petr Pisar: Back-port for 5.12.4.
+---
+ universal.c |    8 +++++++-
+ 1 files changed, 7 insertions(+), 1 deletions(-)
+
+diff --git a/universal.c b/universal.c
+index 006baa2..aee0283 100644
+--- a/universal.c
++++ b/universal.c
+@@ -689,7 +689,13 @@ XS(XS_version_boolean)
+     SP -= items;
+     if (sv_derived_from(ST(0), "version")) {
+ 	SV * const lobj = SvRV(ST(0));
+-	SV * const rs = newSViv( vcmp(lobj,new_version(newSVpvs("0"))) );
++	SV * const rs =
++	    newSViv( vcmp(lobj,
++			  sv_2mortal(new_version(
++					sv_2mortal(newSVpvs("0"))
++				    ))
++			 )
++		   );
+ 	mPUSHs(rs);
+ 	PUTBACK;
+ 	return;
+-- 
+1.7.7.6
+
