@@ -1730,13 +1730,8 @@ sed \
 
 # Scalar-List-Utils
 %exclude %{archlib}/List/
-%exclude %{archlib}/List/Util/
-%exclude %{archlib}/List/Util.pm
 %exclude %{archlib}/Scalar/
-%exclude %{archlib}/Scalar/Util/
-%exclude %{archlib}/Scalar/Util.pm
 %exclude %{archlib}/auto/List/
-%exclude %{archlib}/auto/List/Util/
 %exclude %{_mandir}/man3/List::Util*
 %exclude %{_mandir}/man3/Scalar::Util*
 
@@ -2147,13 +2142,8 @@ sed \
 
 %files Scalar-List-Utils
 %{archlib}/List/
-%{archlib}/List/Util/
-%{archlib}/List/Util.pm
 %{archlib}/Scalar/
-%{archlib}/Scalar/Util/
-%{archlib}/Scalar/Util.pm
 %{archlib}/auto/List/
-%{archlib}/auto/List/Util/
 %{_mandir}/man3/List::Util*
 %{_mandir}/man3/Scalar::Util*
 
@@ -2225,6 +2215,7 @@ sed \
 - Fix searching for Unicode::Collate::Locale data (bug #756118)
 - Run safe signal handlers before returning from sigsuspend() and pause()
   (bug #771228)
+- Correct perl-Scalar-List-Utils files list
 
 * Thu Feb 02 2012 Petr Šabata <contyk@redhat.com> - 4:5.14.2-194
 - Sub-package Socket for IO::Socket::IP
