@@ -86,6 +86,10 @@ Patch12:        perl-5.14.2-add-a-couple-missing-LEAVEs-in-perlio_async_run.patc
 # fixed in Unicode-Collate-0.87.
 Patch13:        perl-5.14.2-locale-search-inc.patch
 
+# Run safe signal handlers before returning from sigsuspend() and pause(),
+# rhbz#771228, RT#107216, fixed after 5.15.6.
+Patch14:        perl-5.14.2-Signal-handlers-must-run-before-sigsuspend-returns.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -1132,6 +1136,7 @@ tarball from perl.org.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1326,6 +1331,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch11: Fix leak with non-matching named captures' \
     'Fedora Patch12: Fix interrupted reading' \
     'Fedora Patch13: Fix searching for Unicode::Collate::Locale data' \
+    'Fedora Patch14: Run signal handlers before returning from sigsuspend' \
     %{nil}
 
 rm patchlevel.bak
@@ -2217,6 +2223,8 @@ sed \
 %changelog
 * Mon Feb 06 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-195
 - Fix searching for Unicode::Collate::Locale data (bug #756118)
+- Run safe signal handlers before returning from sigsuspend() and pause()
+  (bug #771228)
 
 * Thu Feb 02 2012 Petr Šabata <contyk@redhat.com> - 4:5.14.2-194
 - Sub-package Socket for IO::Socket::IP
