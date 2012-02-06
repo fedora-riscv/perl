@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        210%{?dist}
+Release:        211%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -83,6 +83,10 @@ Patch11:        perl-5.14.2-Don-t-leak-memory-when-accessing-named-capt.patch
 
 # Fix interrupted reading, rhbz#767931, fixed after 5.15.3.
 Patch12:        perl-5.14.2-add-a-couple-missing-LEAVEs-in-perlio_async_run.patch
+
+# Fix searching for Unicode::Collate::Locale data, rhbz#756118, CPANRT#72666,
+# fixed in Unicode-Collate-0.87.
+Patch13:        perl-5.14.2-locale-search-inc.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1248,6 +1252,7 @@ tarball from perl.org.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1450,6 +1455,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch10: Change Perl_repeatcpy() to allow count above 2^31' \
     'Fedora Patch11: Fix leak with non-matching named captures' \
     'Fedora Patch12: Fix interrupted reading' \
+    'Fedora Patch13: Fix searching for Unicode::Collate::Locale data' \
     %{nil}
 
 rm patchlevel.bak
@@ -2407,6 +2413,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Feb 06 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-211
+- Fix searching for Unicode::Collate::Locale data (bug #756118)
+
 * Tue Jan 10 2012 Paul Howarth <paul@city-fan.org> - 4:5.14.2-210
 - Rebuild again now that perl dependency generator is fixed (#772632, #772699)
 
