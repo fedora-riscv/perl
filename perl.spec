@@ -1548,13 +1548,8 @@ rm -rf $RPM_BUILD_ROOT
 
 # Scalar-List-Utils
 %exclude %{archlib}/List/
-%exclude %{archlib}/List/Util/
-%exclude %{archlib}/List/Util.pm
 %exclude %{archlib}/Scalar/
-%exclude %{archlib}/Scalar/Util/
-%exclude %{archlib}/Scalar/Util.pm
 %exclude %{archlib}/auto/List/
-%exclude %{archlib}/auto/List/Util/
 %exclude %{_mandir}/man3/List::Util*
 %exclude %{_mandir}/man3/Scalar::Util*
 
@@ -1919,13 +1914,8 @@ rm -rf $RPM_BUILD_ROOT
 %files Scalar-List-Utils
 %defattr(-,root,root,-)
 %{archlib}/List/
-%{archlib}/List/Util/
-%{archlib}/List/Util.pm
 %{archlib}/Scalar/
-%{archlib}/Scalar/Util/
-%{archlib}/Scalar/Util.pm
 %{archlib}/auto/List/
-%{archlib}/auto/List/Util/
 %{_mandir}/man3/List::Util*
 %{_mandir}/man3/Scalar::Util*
 
@@ -2005,6 +1995,7 @@ rm -rf $RPM_BUILD_ROOT
 * Mon Feb 06 2012 Petr Pisar <ppisar@redhat.com> - 4:5.12.4-165
 - Run safe signal handlers before returning from sigsuspend() and pause()
   (bug #771228)
+- Correct perl-Scalar-List-Utils files list
 
 * Wed Dec 14 2011 Petr Pisar <ppisar@redhat.com> - 4:5.12.4-164
 - Fix leak with non-matching named captures (bug #767597)
