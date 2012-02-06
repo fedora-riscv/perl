@@ -90,6 +90,9 @@ Patch13:        perl-5.14.2-locale-search-inc.patch
 # rhbz#771228, RT#107216, fixed after 5.15.6.
 Patch14:        perl-5.14.2-Signal-handlers-must-run-before-sigsuspend-returns.patch
 
+# Stop !$^V from leaking, rhbz#787613, RT#109762, fixed after 5.15.7.
+Patch15:        perl-5.14.2-Stop-V-from-leaking.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -1137,6 +1140,7 @@ tarball from perl.org.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1332,6 +1336,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch12: Fix interrupted reading' \
     'Fedora Patch13: Fix searching for Unicode::Collate::Locale data' \
     'Fedora Patch14: Run signal handlers before returning from sigsuspend' \
+    'Fedora Patch15: Stop !$^V from leaking' \
     %{nil}
 
 rm patchlevel.bak
@@ -2216,6 +2221,7 @@ sed \
 - Run safe signal handlers before returning from sigsuspend() and pause()
   (bug #771228)
 - Correct perl-Scalar-List-Utils files list
+- Stop !$^V from leaking (bug #787613)
 
 * Thu Feb 02 2012 Petr Šabata <contyk@redhat.com> - 4:5.14.2-194
 - Sub-package Socket for IO::Socket::IP
