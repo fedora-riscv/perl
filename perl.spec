@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        211%{?dist}
+Release:        212%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -587,6 +587,20 @@ BuildArch:      noarch
 
 %description File-Fetch
 File::Fetch is a generic file fetching mechanism.
+
+
+%package Filter
+Summary:        Perl source filters
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.37
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+
+%description Filter
+Source filters alter the program text of a module before Perl sees it, much as
+a C preprocessor alters the source text of a C program before the compiler
+sees it.
 
 
 %package IO-Compress
@@ -1227,7 +1241,8 @@ Requires:       perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Embed,
 Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
 Requires:       perl-ExtUtils-Manifest
-Requires:       perl-ExtUtils-ParseXS, perl-File-Fetch, perl-HTTP-Tiny
+Requires:       perl-ExtUtils-ParseXS, perl-File-Fetch, perl-Filter,
+Requires:       perl-HTTP-Tiny
 Requires:       perl-IO-Compress, perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
 Requires:       perl-Locale-Codes, perl-Locale-Maketext-Simple
 Requires:       perl-Log-Message, perl-Log-Message-Simple, perl-Module-Build
@@ -1713,6 +1728,13 @@ sed \
 %exclude %{privlib}/File/Fetch.pm
 %exclude %{_mandir}/man3/File::Fetch.3*
 
+# Filter
+%exclude %{archlib}/auto/Filter/Util
+%exclude %{archlib}/Filter/Util
+%exclude %{privlib}/pod/perlfilter.pod
+%exclude %{_mandir}/man1/perlfilter.*
+%exclude %{_mandir}/man3/Filter::Util::*
+
 # IO::Compress
 
 # Compress::Zlib
@@ -2149,6 +2171,13 @@ sed \
 %{privlib}/File/Fetch.pm
 %{_mandir}/man3/File::Fetch.3*
 
+%files Filter
+%{archlib}/auto/Filter/Util
+%{archlib}/Filter/Util
+%{privlib}/pod/perlfilter.pod
+%{_mandir}/man1/perlfilter.*
+%{_mandir}/man3/Filter::Util::*
+
 %files IO-Compress
 # Compress-Zlib
 %{privlib}/Compress/Zlib.pm
@@ -2414,6 +2443,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Feb 21 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-212
+- Sub-package Filter (bug #790349)
+
 * Mon Feb 06 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-211
 - Fix searching for Unicode::Collate::Locale data (bug #756118)
 - Run safe signal handlers before returning from sigsuspend() and pause()
