@@ -2373,6 +2373,12 @@ sed \
 %{_mandir}/man3/List::Util*
 %{_mandir}/man3/Scalar::Util*
 
+%files Socket
+%dir %{archlib}/auto/Socket
+%{archlib}/auto/Socket/Socket.*
+%{archlib}/Socket.pm
+%{_mandir}/man3/Socket.3*
+
 %files Term-UI
 %{privlib}/Term/UI/
 %{privlib}/Term/UI.pm
@@ -2412,12 +2418,6 @@ sed \
 %files Version-Requirements
 %{privlib}/Version/Requirements.pm
 %{_mandir}/man3/Version::Requirements*
-
-%files Socket
-%dir %{archlib}/auto/Socket
-%{archlib}/auto/Socket/Socket.*
-%{archlib}/Socket.pm
-%{_mandir}/man3/Socket.3*
 
 %files threads
 %dir %{archlib}/auto/threads
