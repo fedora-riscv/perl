@@ -22,7 +22,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        196%{?dist}
+Release:        197%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1740,6 +1740,12 @@ sed \
 %exclude %{_mandir}/man3/List::Util*
 %exclude %{_mandir}/man3/Scalar::Util*
 
+# Socket
+%exclude %dir %{archlib}/auto/Socket
+%exclude %{archlib}/auto/Socket/Socket.*
+%exclude %{archlib}/Socket.pm
+%exclude %{_mandir}/man3/Socket.3*
+
 # Term-UI
 %exclude %{privlib}/Term/UI.pm
 %exclude %{privlib}/Term/UI/
@@ -2216,6 +2222,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Feb 23 2012 Paul Howarth <paul@city-fan.org> - 4:5.14.2-197
+- Add %%exclude entries for Socket sub-package so as not to duplicate its
+  files in the main perl package
+
 * Thu Feb 23 2012 Paul Howarth <paul@city-fan.org> - 4:5.14.2-196
 - Move %%files list for Socket to correct place so as retain proper %%exclude
   entries for main perl package (#549306)
