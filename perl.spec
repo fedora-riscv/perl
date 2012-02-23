@@ -22,7 +22,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        195%{?dist}
+Release:        196%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1776,12 +1776,6 @@ sed \
 %exclude %{privlib}/Version/Requirements.pm
 %exclude %{_mandir}/man3/Version::Requirements*
 
-%files Socket
-%dir %{archlib}/auto/Socket
-%{archlib}/auto/Socket/Socket.*
-%{archlib}/Socket.pm
-%{_mandir}/man3/Socket.3*
-
 # threads
 %dir %exclude %{archlib}/auto/threads
 %exclude %{archlib}/auto/threads/threads*
@@ -2152,6 +2146,12 @@ sed \
 %{_mandir}/man3/List::Util*
 %{_mandir}/man3/Scalar::Util*
 
+%files Socket
+%dir %{archlib}/auto/Socket
+%{archlib}/auto/Socket/Socket.*
+%{archlib}/Socket.pm
+%{_mandir}/man3/Socket.3*
+
 %files Term-UI
 %{privlib}/Term/UI/
 %{privlib}/Term/UI.pm
@@ -2216,6 +2216,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Feb 23 2012 Paul Howarth <paul@city-fan.org> - 4:5.14.2-196
+- Move %%files list for Socket to correct place so as retain proper %%exclude
+  entries for main perl package (#549306)
+
 * Mon Feb 06 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-195
 - Fix searching for Unicode::Collate::Locale data (bug #756118)
 - Run safe signal handlers before returning from sigsuspend() and pause()
