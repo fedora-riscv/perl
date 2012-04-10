@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        212%{?dist}
+Release:        213%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -415,6 +415,22 @@ BuildArch:      noarch
 %description CPANPLUS
 The CPANPLUS library is an API to the CPAN mirrors and a collection of
 interactive shells, commandline programs, etc, that use this API.
+
+
+%package Data-Dumper
+Summary:        Stringify perl data structures, suitable for printing and eval
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.130.02
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl(XSLoader)
+
+%description Data-Dumper
+Given a list of scalars or reference variables, writes out their contents
+in perl syntax. The references can also be objects. The content of each
+variable is output in a single Perl statement. Handles self-referential
+structures correctly.
 
 
 %package Digest
@@ -1237,7 +1253,7 @@ Requires:       perl-macros
 Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-Compress-Raw-Bzip2
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-CPAN,
 Requires:       perl-CPAN-Meta, perl-CPAN-Meta-YAML, perl-CPANPLUS,
-Requires:       perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
+Requires:       perl-Data-Dumper, perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Embed,
 Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
 Requires:       perl-ExtUtils-Manifest
@@ -1651,6 +1667,14 @@ sed \
 %exclude %{archlib}/auto/Compress/Raw/
 %exclude %{archlib}/auto/Compress/Raw/Zlib/
 %exclude %{_mandir}/man3/Compress::Raw::Zlib*
+
+# Data::Dumper
+%exclude %dir %{archlib}/auto/Data
+%exclude %dir %{archlib}/auto/Data/Dumper
+%exclude %{archlib}/auto/Data/Dumper/Dumper.so
+%exclude %dir %{archlib}/Data
+%exclude %{archlib}/Data/Dumper.pm
+%exclude %{_mandir}/man3/Data::Dumper.3*
 
 # Digest
 %exclude %{privlib}/Digest.pm
@@ -2094,6 +2118,14 @@ sed \
 %{_mandir}/man1/cpanp.1*
 %{_mandir}/man3/CPANPLUS*
 
+%files Data-Dumper
+%dir %{archlib}/auto/Data
+%dir %{archlib}/auto/Data/Dumper
+%{archlib}/auto/Data/Dumper/Dumper.so
+%dir %{archlib}/Data
+%{archlib}/Data/Dumper.pm
+%{_mandir}/man3/Data::Dumper.3*
+
 %files Digest
 %{privlib}/Digest.pm
 %dir %{privlib}/Digest
@@ -2443,6 +2475,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Apr 10 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-213
+- Sub-package Data::Dumper (bug #811239)
+
 * Tue Feb 21 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-212
 - Sub-package Filter (bug #790349)
 
