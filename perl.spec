@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        213%{?dist}
+Release:        214%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -424,6 +424,7 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.130.02
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl(Scalar::Util)
 Requires:       perl(XSLoader)
 
 %description Data-Dumper
@@ -2475,6 +2476,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Apr 13 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-214
+- perl-Data-Dumper requires Scalar::Util (bug #811239)
+
 * Tue Apr 10 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-213
 - Sub-package Data::Dumper (bug #811239)
 
