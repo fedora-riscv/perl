@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        214%{?dist}
+Release:        215%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -98,7 +98,8 @@ Patch15:        perl-5.14.2-Stop-V-from-leaking.patch
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
-BuildRequires:  db4-devel, groff, tcsh, zlib-devel, bzip2-devel, systemtap-sdt-devel
+BuildRequires:  groff, libdb-devel, tcsh, zlib-devel, bzip2-devel
+BuildRequires:  systemtap-sdt-devel
 %if %{with gdbm}
 BuildRequires: gdbm-devel
 %endif
@@ -2476,6 +2477,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Apr 19 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-215
+- Rebuild perl against Berkeley database version 5 (bug #768846)
+
 * Fri Apr 13 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-214
 - perl-Data-Dumper requires Scalar::Util (bug #811239)
 
