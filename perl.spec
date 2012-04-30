@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        215%{?dist}
+Release:        216%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1407,7 +1407,8 @@ perl regen.pl -v
         -Dd_gethostent_r_proto -Ud_endhostent_r_proto -Ud_sethostent_r_proto \
         -Ud_endprotoent_r_proto -Ud_setprotoent_r_proto \
         -Ud_endservent_r_proto -Ud_setservent_r_proto \
-        -Dscriptdir='%{_bindir}' 
+        -Dscriptdir='%{_bindir}' \
+        -Dusesitecustomize
 
 # -Duseshrplib creates libperl.so, -Ubincompat5005 help create DSO -> libperl.so
 
@@ -2477,6 +2478,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Apr 30 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-216
+- Enable usesitecustomize
+
 * Thu Apr 19 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-215
 - Rebuild perl against Berkeley database version 5 (bug #768846)
 
