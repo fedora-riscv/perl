@@ -20,7 +20,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, becase dual-lived modules will be broken otherwise
-Release:        165%{?dist}
+Release:        166%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -103,6 +103,10 @@ Patch16:        perl-5.14.2-Signal-handlers-must-run-before-sigsuspend-returns.p
 
 # Stop !$^V from leaking, rhbz#787613, RT#109762, fixed after 5.15.7.
 Patch17:        perl-5.12.4-Stop-V-from-leaking.patch
+
+# Count capturing parenthesis properly, rhbz#821405, RT#112874, fixed after
+# 5.13.10.
+Patch18:        perl-5.12.4-Accessing-2-causes-the-interpreter-to-crash.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -986,6 +990,7 @@ tarball from perl.org.
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
+%patch18 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1208,6 +1213,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch15: Fix leak with non-matching named captures' \
     'Fedora Patch16: Run signal handlers before returning from sigsuspend' \
     'Fedora Patch17: Stop !$^V from leaking' \
+    'Fedora Patch18: Count catpturing parenthesis properly' \
     %{nil}
 
 rm patchlevel.bak
@@ -1997,6 +2003,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon May 14 2012 Petr Pisar <ppisar@redhat.com> - 4:5.12.4-166
+- Count capturing parenthesis properly (bug #821405)
+
 * Mon Feb 06 2012 Petr Pisar <ppisar@redhat.com> - 4:5.12.4-165
 - Run safe signal handlers before returning from sigsuspend() and pause()
   (bug #771228)

@@ -1,0 +1,93 @@
+From 17d2206aa8868f59b80dbae247a146e423d28704 Mon Sep 17 00:00:00 2001
+From: Father Chrysostomos <sprout@cpan.org>
+Date: Fri, 25 Feb 2011 20:45:08 -0800
+Subject: [PATCH] Accessing $2 causes the interpreter to crash
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Petr Pisar: Ported to 5.12.4.
+
+Actually, it doesn’t. The original test case was:
+
+my $rx = qr'\$ (?| {(.+?)} | (.+?); | (.+?)(\s) )'x;
+my $test = '/home/$USERNAME ';
+die unless $test =~ $rx;
+print "1: $1\n";
+print "2: $2\n" if defined $2;
+
+This crashes even if I put an ‘exit’ right after the pattern match.
+
+What’s happening is that regcomp miscounts the number of capturing
+parenthesis pairs (cf. [perl #59734]), so the execution of the regular
+expression causes a buffer overflow which overwrites the op_sibling
+field of the regcreset op, causing a crash when the op is freed. (The
+exact failure may differ between builds, platforms, etc., of course.)
+
+S_reg in regcomp.c keeps a count of the parenthesised groups in a
+(?|...) construct, which it updates after each branch, if that branch
+has more captures than any previous branch. But it was not updating
+the count after the last branch.
+
+So this bug would occur if the last branch had more capturing paren-
+theses than any previous branch.
+
+Commit ee91d26, which fixed bug #59734, only solved the problem when
+there was just one branch (by updating the count before the loop that
+deals with subsequent branches was entered).
+
+This commit changes the code at the end of S_reg to take into account
+that RExC_npar (the current paren count) might have been increased by
+the last branch.
+
+Since the loop to deal with subsequent branches resets the count
+*before* each branch, the code that commit ee91d26 added is no longer
+necessary, so this commit removes it.
+---
+ regcomp.c     |    8 +-------
+ t/re/re_tests |    3 +++
+ 2 files changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/regcomp.c b/regcomp.c
+index 9652bbd..7b031fc 100644
+--- a/regcomp.c
++++ b/regcomp.c
+@@ -6163,12 +6163,6 @@ S_reg(pTHX_ RExC_state_t *pRExC_state, I32 paren, I32 *flagp,U32 depth)
+     parse_start = RExC_parse;   /* MJD */
+     br = regbranch(pRExC_state, &flags, 1,depth+1);
+ 
+-    if (freeze_paren) {
+-        if (RExC_npar > after_freeze)
+-            after_freeze = RExC_npar;
+-        RExC_npar = freeze_paren;
+-    }
+-
+     /*     branch_len = (paren != 0); */
+ 
+     if (br == NULL)
+@@ -6308,7 +6302,7 @@ S_reg(pTHX_ RExC_state_t *pRExC_state, I32 paren, I32 *flagp,U32 depth)
+ 	    FAIL("Junk on end of regexp");	/* "Can't happen". */
+ 	/* NOTREACHED */
+     }
+-    if (after_freeze)
++    if (after_freeze > RExC_npar)
+         RExC_npar = after_freeze;
+     return(ret);
+ }
+diff --git a/t/re/re_tests b/t/re/re_tests
+index 1807ffc..ce8db14 100644
+--- a/t/re/re_tests
++++ b/t/re/re_tests
+@@ -1326,6 +1326,9 @@ X(\w+)(?=\s)|X(\w+)	Xab	y	[$1-$2]	[-ab]
+ (?|(?<foo>x)|(?<bar>y))	x	y	$+{foo}	x
+ (?|(?<bar>y)|(?<foo>x))	x	y	$+{foo}	x
+ (?<bar>)(?|(?<foo>x))	x	y	$+{foo}	x
++# Used to crash, because the last branch was ignored when the parens
++# were counted:
++(?|(b)|()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()(a))	a	y	$&	a
+ 
+ #Bug #41492
+ (?(DEFINE)(?<A>(?&B)+)(?<B>a))(?&A)	a	y	$&	a
+-- 
+1.7.7.6
+
