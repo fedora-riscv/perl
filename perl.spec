@@ -1,4 +1,4 @@
-%global perl_version    5.14.2
+%global perl_version    5.16.0
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        216%{?dist}
+Release:        217%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -36,7 +36,7 @@ Group:          Development/Languages
 # Copyright Only: for example ext/Text-Soundex/Soundex.xs 
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and MIT and Public Domain and UCD
 Url:            http://www.perl.org/
-Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
+Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}-RC2.tar.gz
 Source2:        perl-5.8.0-libnet.cfg
 Source3:        macros.perl
 #Systemtap tapset and example that make use of systemtap-sdt-devel
@@ -70,30 +70,10 @@ Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
 # switch off test, which is failing only on koji (fork)
 Patch8:         perl-5.14.1-offtest.patch
 
-# Fix code injection in Digest, rhbz #743010, RT#71390, fixed in Digest-1.17.
-Patch9:         perl-5.14.2-digest_eval.patch
-
-# Change Perl_repeatcpy() prototype to allow repeat count above 2^31
-# rhbz #720610, Perl RT#94560, accepted as v5.15.4-24-g26e1303.
-Patch10:        perl-5.14.2-large-repeat-heap-abuse.patch
-
-# Fix leak with non-matching named captures. rhbz#767597, RT#78266, fixed
-# after 5.14.2.
-Patch11:        perl-5.14.2-Don-t-leak-memory-when-accessing-named-capt.patch
-
-# Fix interrupted reading, rhbz#767931, fixed after 5.15.3.
-Patch12:        perl-5.14.2-add-a-couple-missing-LEAVEs-in-perlio_async_run.patch
-
 # Fix searching for Unicode::Collate::Locale data, rhbz#756118, CPANRT#72666,
 # fixed in Unicode-Collate-0.87.
-Patch13:        perl-5.14.2-locale-search-inc.patch
-
-# Run safe signal handlers before returning from sigsuspend() and pause(),
-# rhbz#771228, RT#107216, fixed after 5.15.6.
-Patch14:        perl-5.14.2-Signal-handlers-must-run-before-sigsuspend-returns.patch
-
-# Stop !$^V from leaking, rhbz#787613, RT#109762, fixed after 5.15.7.
-Patch15:        perl-5.14.2-Stop-V-from-leaking.patch
+# TODO Looks like it was fixed differently?
+#Patch13:        perl-5.14.2-locale-search-inc.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -110,6 +90,7 @@ BuildRequires:  procps, rsyslog
 # The long line of Perl provides.
 
 # Compat provides
+Provides: perl(:MODULE_COMPAT_5.16.0)
 Provides: perl(:MODULE_COMPAT_5.14.2)
 Provides: perl(:MODULE_COMPAT_5.14.1)
 Provides: perl(:MODULE_COMPAT_5.14.0)
@@ -1278,7 +1259,7 @@ A metapackage which requires all of the perl bits and modules in the upstream
 tarball from perl.org.
 
 %prep
-%setup -q -n perl-%{perl_version}
+%setup -q -n perl-%{perl_version}-RC2
 %patch1 -p1
 %ifarch %{multilib_64_archs}
 %patch3 -p1
@@ -1288,13 +1269,6 @@ tarball from perl.org.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
-%patch15 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -2478,6 +2452,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed May 16 2012 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.16.0-RC2-217
+- clean patches, not needed with new version
+
 * Mon Apr 30 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-216
 - Enable usesitecustomize
 
