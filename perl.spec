@@ -1289,7 +1289,8 @@ recode()
 recode README.cn euc-cn
 recode README.jp euc-jp
 recode README.ko euc-kr
-recode README.tw big5
+# TODO iconv fail on this one
+##recode README.tw big5
 recode pod/perlebcdic.pod
 recode pod/perlhack.pod
 recode pod/perlhist.pod
