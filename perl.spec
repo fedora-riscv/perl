@@ -46,6 +46,7 @@ Source3:        macros.perl
 Source4:        perl.stp
 Source5:        perl-example.stp
 
+Patch0:         porting-podcheck-regen.patch
 # Removes date check, Fedora/RHEL specific
 Patch1:         perl-perlbug-tag.patch
 
@@ -1262,6 +1263,7 @@ tarball from perl.org.
 
 %prep
 %setup -q -n perl-%{perl_version}-RC2
+%patch0 -p1
 %patch1 -p1
 %ifarch %{multilib_64_archs}
 %patch3 -p1
@@ -2456,6 +2458,8 @@ sed \
 %changelog
 * Wed May 16 2012 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.16.0-RC2-217
 - clean patches, not needed with new version
+- regen by podcheck list of failed pods. cn, jp, ko pods failed. I can't decide
+  whether it's a real problem or false positives.
 
 * Mon Apr 30 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-216
 - Enable usesitecustomize
