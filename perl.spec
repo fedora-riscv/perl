@@ -12,7 +12,9 @@
 %global __provides_exclude_from .*/auto/.*\\.so$|.*/%{perl_archlib}/.*\\.so$|%{_docdir}
 %global __requires_exclude_from %{_docdir}
 %global __provides_exclude perl\\((VMS|Win32|BSD::|DB\\)$)
-%global __requires_exclude perl\\((VMS|BSD::|Win32|Tk|Mac::|Your::Module::Here)
+# unicore::Name - it's needed by perl, maybe problem of rpm
+# FCGI is external dependency after install of perl-CGI, remove it during RC releases
+%global __requires_exclude perl\\((VMS|BSD::|Win32|Tk|Mac::|Your::Module::Here|unicore::Name|FCGI)
 # same as we provide in /etc/rpm/macros.perl
 %global perl5_testdir   %{_libexecdir}/perl5-tests
 
