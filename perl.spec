@@ -1808,14 +1808,12 @@ sed \
 # Locale::Codes
 %exclude %{privlib}/Locale/Codes
 %exclude %{privlib}/Locale/Codes.*
-%exclude %{privlib}/Locale/Constants.*
 %exclude %{privlib}/Locale/Country.*
 %exclude %{privlib}/Locale/Currency.*
 %exclude %{privlib}/Locale/Language.*
 %exclude %{privlib}/Locale/Script.*
 %exclude %{_mandir}/man3/Locale::Codes::*
 %exclude %{_mandir}/man3/Locale::Codes.*
-%exclude %{_mandir}/man3/Locale::Constants.*
 %exclude %{_mandir}/man3/Locale::Country.*
 %exclude %{_mandir}/man3/Locale::Currency.*
 %exclude %{_mandir}/man3/Locale::Language.*
@@ -2259,14 +2257,12 @@ sed \
 %files Locale-Codes
 %{privlib}/Locale/Codes
 %{privlib}/Locale/Codes.*
-%{privlib}/Locale/Constants.*
 %{privlib}/Locale/Country.*
 %{privlib}/Locale/Currency.*
 %{privlib}/Locale/Language.*
 %{privlib}/Locale/Script.*
 %{_mandir}/man3/Locale::Codes::*
 %{_mandir}/man3/Locale::Codes.*
-%{_mandir}/man3/Locale::Constants.*
 %{_mandir}/man3/Locale::Country.*
 %{_mandir}/man3/Locale::Currency.*
 %{_mandir}/man3/Locale::Language.*
