@@ -38,7 +38,7 @@ Group:          Development/Languages
 # Copyright Only: for example ext/Text-Soundex/Soundex.xs 
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and MIT and Public Domain and UCD
 Url:            http://www.perl.org/
-Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}-RC2.tar.gz
+Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.gz
 Source2:        perl-5.8.0-libnet.cfg
 Source3:        macros.perl
 #Systemtap tapset and example that make use of systemtap-sdt-devel
@@ -1262,7 +1262,7 @@ A metapackage which requires all of the perl bits and modules in the upstream
 tarball from perl.org.
 
 %prep
-%setup -q -n perl-%{perl_version}-RC2
+%setup -q -n perl-%{perl_version}
 %patch0 -p1
 %patch1 -p1
 %ifarch %{multilib_64_archs}
@@ -2453,6 +2453,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri May 25 2012 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.16.0-217
+- upload the stable 5.16.0
+
 * Wed May 16 2012 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.16.0-RC2-217
 - clean patches, not needed with new version
 - regen by podcheck list of failed pods. cn, jp, ko pods failed. I can't decide
