@@ -231,7 +231,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.48
+Version:        0.58
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -244,7 +244,7 @@ Summary:        A module for Perl manipulation of .tar files
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.76 
+Version:        1.82 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Compress::Zlib), perl(IO::Zlib)
 BuildArch:      noarch
@@ -260,7 +260,7 @@ gzipped tar files.
 %package Carp
 Summary:        Alternative warn and die for modules
 Epoch:          0
-Version:        1.20
+Version:        1.26
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -285,7 +285,7 @@ Summary:        Handle Common Gateway Interface requests and responses
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        3.52
+Version:        3.59
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Provides:       perl(CGI) = %{version}
 BuildArch:      noarch
@@ -313,7 +313,7 @@ Summary:        Low-Level Interface to bzip2 compression library
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.033
+Version:        2.048
 Requires:       perl(Exporter), perl(File::Temp)
 
 %description Compress-Raw-Bzip2
@@ -326,7 +326,7 @@ Summary:        Low-Level Interface to the zlib compression library
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.033
+Version:        2.048
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Compress-Raw-Zlib
@@ -339,7 +339,7 @@ Summary:        Query, download and build perl modules from CPAN sites
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.9600.01
+Version:        1.9800
 # CPAN encourages Digest::SHA strongly because of integrity checks
 Requires:       perl(Digest::SHA)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -352,7 +352,7 @@ Query, download and build perl modules from CPAN sites.
 %package CPAN-Meta
 Summary:        Distribution metadata for a CPAN dist
 Epoch:          0
-Version:        2.110440
+Version:        2.120630
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -367,7 +367,7 @@ in CPAN::Meta::Spec.
 
 
 %package CPAN-Meta-YAML
-Version:        0.003
+Version:        0.007
 Epoch:          0
 Summary:        Read and write a subset of YAML for CPAN Meta files
 License:        GPL+ or Artistic
@@ -386,8 +386,8 @@ Summary:        API & CLI access to the CPAN mirrors
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-# real version 0.9103
-Version:        0.91.3
+# real version 0.9121
+Version:        0.91.21
 # CPANPLUS encourages Digest::SHA strongly because of integrity checks
 Requires:       perl(Digest::SHA)
 Requires:       perl(Module::Pluggable) >= 2.4
@@ -407,7 +407,7 @@ Summary:        Stringify perl data structures, suitable for printing and eval
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.130.02
+Version:        2.135.06
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Scalar::Util)
 Requires:       perl(XSLoader)
@@ -425,7 +425,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          0
-Version:        1.16
+Version:        1.17
 BuildArch:      noarch
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(MIME::Base64)
@@ -462,7 +462,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        5.61
+Version:        5.71
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 # Recommended
 Requires:       perl(Digest::base)
@@ -481,8 +481,8 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-# real version 0.280203 https://fedoraproject.org/wiki/Perl/Tips#Dot_approach
-Version:        0.28.2.3
+# real version 0.280206 https://fedoraproject.org/wiki/Perl/Tips#Dot_approach
+Version:        0.28.2.6
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -512,7 +512,7 @@ Summary:        Install files from here to there
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.56
+Version:        1.58
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -527,7 +527,7 @@ Summary:        Create a module Makefile
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        6.57.5
+Version:        6.63.2
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(ExtUtils::Install)
@@ -549,7 +549,7 @@ Summary:        Utilities to write and check a MANIFEST file
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.58
+Version:        1.61
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -564,7 +564,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        2.2210
+Version:        3.16
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -590,7 +590,7 @@ BuildArch:      noarch
 %description File-Fetch
 File::Fetch is a generic file fetching mechanism.
 
-
+# FIXME Filter-Simple? version?
 %package Filter
 Summary:        Perl source filters
 Group:          Development/Libraries
@@ -610,7 +610,7 @@ Summary:        IO::Compress wrapper for modules
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.033
+Version:        2.048
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Obsoletes:      perl-Compress-Zlib <= 2.020
 Provides:       perl(IO::Uncompress::Bunzip2)
@@ -645,7 +645,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.70
+Version:        0.76
 Requires:       perl(ExtUtils::MakeMaker)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -660,7 +660,7 @@ Summary:        A small, simple, correct HTTP/1.1 client
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.012
+Version:        0.017
 Requires:       perl(Carp)
 Requires:       perl(IO::Socket)
 BuildArch:      noarch
@@ -678,7 +678,7 @@ Summary:        JSON::XS compatible pure-Perl module
 Epoch:          0
 # 2.27150 version is a typo but we cannot fix it because it would break
 # monotony
-Version:        2.27150
+Version:        2.27200
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 BuildArch:      noarch
@@ -694,7 +694,7 @@ JSON::PP is a pure-Perl module and is compatible with JSON::XS.
 %package Locale-Codes
 Summary:        Distribution of modules to handle locale codes
 Epoch:          0
-Version:        3.16
+Version:        3.21
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -767,7 +767,8 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.3800 
+# real version 0.39_01
+Version:        0.3901 
 Requires:       perl(Archive::Tar) >= 1.08
 Requires:       perl(CPAN::Meta) >= 2.110420
 Requires:       perl(ExtUtils::CBuilder) >= 0.15
@@ -793,7 +794,7 @@ Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        2.49 
+Version:        2.66 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(version)
 BuildArch:      noarch
@@ -810,7 +811,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.18
+Version:        0.22
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -824,7 +825,7 @@ Summary:        Looking up module information / loading at runtime
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.44
+Version:        0.46
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -839,7 +840,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.06
+Version:        0.08
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -854,7 +855,7 @@ offers you a very simple way to mark modules as loaded and/or unloaded.
 %package Module-Metadata
 Summary:        Gather package and POD information from perl module files
 Epoch:          0
-Version:        1.000004
+Version:        1.000009
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 BuildArch:      noarch
@@ -870,7 +871,7 @@ License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
 # Keep two digit decimal part
-Version:        3.90 
+Version:        4.00 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -885,7 +886,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.38
+Version:        0.42
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -916,7 +917,7 @@ Summary:        PathTools Perl module (Cwd, File::Spec)
 Group:          Development/Libraries
 License:        (GPL+ or Artistic) and BSD
 Epoch:          0
-Version:        3.33
+Version:        3.39.2
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description PathTools
@@ -929,7 +930,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.28
+Version:        0.32
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -943,7 +944,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        1.4401
+Version:        1.4402
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 Requires:       perl(CPAN::Meta::YAML) >= 0.002
@@ -995,7 +996,7 @@ Summary:        Look up Perl documentation in Pod format
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        3.15.04
+Version:        3.17.00
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -1012,7 +1013,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        3.16
+Version:        3.20
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -1041,7 +1042,7 @@ Summary:        Term::ReadLine UI made easy
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.26
+Version:        0.30
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Log::Message::Simple)
 BuildArch:      noarch
@@ -1143,7 +1144,7 @@ Summary:        C socket.h defines and structure manipulators
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.94
+Version:        2.001
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Socket
@@ -1159,7 +1160,7 @@ Summary:        Perl interpreter-based threads
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.83
+Version:        1.86
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description threads
@@ -1180,7 +1181,7 @@ Summary:        Perl extension for sharing data structures between threads
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.37
+Version:        1.40
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description threads-shared
@@ -1198,7 +1199,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          3
-Version:        0.88
+Version:        0.99
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -1210,7 +1211,7 @@ Perl extension for Version Objects
 Summary:        Set of version requirements for a CPAN dist
 License:        GPL+ or Artistic
 Group:          Development/Libraries
-Version:        0.101020
+Version:        0.101022
 Epoch:          0
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
