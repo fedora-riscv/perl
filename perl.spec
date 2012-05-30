@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        211%{?dist}
+Release:        212%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -94,6 +94,9 @@ Patch14:        perl-5.14.2-Signal-handlers-must-run-before-sigsuspend-returns.p
 
 # Stop !$^V from leaking, rhbz#787613, RT#109762, fixed after 5.15.7.
 Patch15:        perl-5.14.2-Stop-V-from-leaking.patch
+
+# Fix find2perl to translate ? glob properly, rhbz#825701, RT#113054
+Patch16:        perl-5.14.2-find2perl-transtate-question-mark-properly.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1262,6 +1265,7 @@ tarball from perl.org.
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1467,6 +1471,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch13: Fix searching for Unicode::Collate::Locale data' \
     'Fedora Patch14: Run signal handlers before returning from sigsuspend' \
     'Fedora Patch15: Stop !$^V from leaking' \
+    'Fedora Patch16: Fix find2perl to translate ? glob properly (RT#113054)' \
     %{nil}
 
 rm patchlevel.bak
@@ -2414,6 +2419,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue May 29 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.14.2-212
+- Fix find2perl to translate ? glob properly (bug #825701)
+
 * Mon Feb 06 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-211
 - Fix searching for Unicode::Collate::Locale data (bug #756118)
 - Run safe signal handlers before returning from sigsuspend() and pause()
