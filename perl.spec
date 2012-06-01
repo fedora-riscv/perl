@@ -26,7 +26,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        217%{?dist}
+Release:        218%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -767,10 +767,10 @@ Log::Message module.
 Summary:        Perl module for building and installing Perl modules
 Group:          Development/Libraries
 License:        GPL+ or Artistic
-# Epoch bump for clean upgrade over old standalone package
-Epoch:          1
+# Check epoch with standalone package
+Epoch:          2
 # real version 0.39_01
-Version:        0.3901 
+Version:        0.39.01 
 Requires:       perl(Archive::Tar) >= 1.08
 Requires:       perl(CPAN::Meta) >= 2.110420
 Requires:       perl(ExtUtils::CBuilder) >= 0.15
@@ -2451,8 +2451,11 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Fri Jun  1 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.16.0-217
+* Fri Jun  1 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.16.0-218
 - Fix find2perl to translate ? glob properly (bug #825701)
+
+* Thu May 31 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.0-218
+- Shorten perl-Module-Build version to 2 digits to follow upstream
 
 * Fri May 25 2012 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.16.0-217
 - upload the stable 5.16.0
