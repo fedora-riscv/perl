@@ -26,7 +26,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        218%{?dist}
+Release:        219%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1740,7 +1740,10 @@ sed \
 %exclude %{_mandir}/man3/Filter::Util::*
 
 # IO::Compress
-
+%exclude %{_bindir}/zipdetails
+%exclude %{privlib}/IO/Compress/FAQ.pod
+%exclude %{_mandir}/man1/zipdetails.*
+%exclude %{_mandir}/man3/IO::Compress::FAQ.*
 # Compress::Zlib
 %exclude %{privlib}/Compress/Zlib.pm
 %exclude %{_mandir}/man3/Compress::Zlib*
@@ -2189,6 +2192,11 @@ sed \
 %{_mandir}/man3/Filter::Util::*
 
 %files IO-Compress
+# IO-Compress
+%{_bindir}/zipdetails
+%{privlib}/IO/Compress/FAQ.pod
+%{_mandir}/man1/zipdetails.*
+%{_mandir}/man3/IO::Compress::FAQ.*
 # Compress-Zlib
 %{privlib}/Compress/Zlib.pm
 %{_mandir}/man3/Compress::Zlib*
@@ -2451,6 +2459,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jun 01 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.0-219
+- Own zipdetails and IO::Compress::FAQ by perl-IO-Compress
+
 * Fri Jun  1 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.16.0-218
 - Fix find2perl to translate ? glob properly (bug #825701)
 
