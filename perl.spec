@@ -73,6 +73,8 @@ Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
 # switch off test, which is failing only on koji (fork)
 Patch8:         perl-5.14.1-offtest.patch
 
+# Fix find2perl to translate ? glob properly, rhbz#825701, RT#113054
+Patch9:        perl-5.14.2-find2perl-transtate-question-mark-properly.patch
 # Fix searching for Unicode::Collate::Locale data, rhbz#756118, CPANRT#72666,
 # fixed in Unicode-Collate-0.87.
 # TODO Looks like it was fixed differently?
@@ -1274,6 +1276,7 @@ tarball from perl.org.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1474,13 +1477,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch5: USE_MM_LD_RUN_PATH' \
     'Fedora Patch6: Skip hostname tests, due to builders not being network capable' \
     'Fedora Patch7: Dont run one io test due to random builder failures' \
-    'Fedora Patch9: Fix code injection in Digest->new()' \
-    'Fedora Patch10: Change Perl_repeatcpy() to allow count above 2^31' \
-    'Fedora Patch11: Fix leak with non-matching named captures' \
-    'Fedora Patch12: Fix interrupted reading' \
-    'Fedora Patch13: Fix searching for Unicode::Collate::Locale data' \
-    'Fedora Patch14: Run signal handlers before returning from sigsuspend' \
-    'Fedora Patch15: Stop !$^V from leaking' \
+    'Fedora Patch9: Fix find2perl to translate ? glob properly (RT#113054)' \
     %{nil}
 
 rm patchlevel.bak
@@ -2454,6 +2451,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jun  1 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.16.0-217
+- Fix find2perl to translate ? glob properly (bug #825701)
+
 * Fri May 25 2012 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.16.0-217
 - upload the stable 5.16.0
 
