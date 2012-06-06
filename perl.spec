@@ -1,4 +1,4 @@
-%global perl_version    5.14.2
+%global perl_version    5.16.0
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -12,7 +12,9 @@
 %global __provides_exclude_from .*/auto/.*\\.so$|.*/%{perl_archlib}/.*\\.so$|%{_docdir}
 %global __requires_exclude_from %{_docdir}
 %global __provides_exclude perl\\((VMS|Win32|BSD::|DB\\)$)
-%global __requires_exclude perl\\((VMS|BSD::|Win32|Tk|Mac::|Your::Module::Here)
+# unicore::Name - it's needed by perl, maybe problem of rpm
+# FCGI is external dependency after install of perl-CGI, remove it during RC releases
+%global __requires_exclude perl\\((VMS|BSD::|Win32|Tk|Mac::|Your::Module::Here|unicore::Name|FCGI)
 # same as we provide in /etc/rpm/macros.perl
 %global perl5_testdir   %{_libexecdir}/perl5-tests
 
@@ -24,7 +26,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        217%{?dist}
+Release:        220%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -36,7 +38,7 @@ Group:          Development/Languages
 # Copyright Only: for example ext/Text-Soundex/Soundex.xs 
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and MIT and Public Domain and UCD
 Url:            http://www.perl.org/
-Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
+Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.gz
 Source2:        perl-5.8.0-libnet.cfg
 Source3:        macros.perl
 #Systemtap tapset and example that make use of systemtap-sdt-devel
@@ -44,6 +46,7 @@ Source3:        macros.perl
 Source4:        perl.stp
 Source5:        perl-example.stp
 
+Patch0:         porting-podcheck-regen.patch
 # Removes date check, Fedora/RHEL specific
 Patch1:         perl-perlbug-tag.patch
 
@@ -70,33 +73,12 @@ Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
 # switch off test, which is failing only on koji (fork)
 Patch8:         perl-5.14.1-offtest.patch
 
-# Fix code injection in Digest, rhbz #743010, RT#71390, fixed in Digest-1.17.
-Patch9:         perl-5.14.2-digest_eval.patch
-
-# Change Perl_repeatcpy() prototype to allow repeat count above 2^31
-# rhbz #720610, Perl RT#94560, accepted as v5.15.4-24-g26e1303.
-Patch10:        perl-5.14.2-large-repeat-heap-abuse.patch
-
-# Fix leak with non-matching named captures. rhbz#767597, RT#78266, fixed
-# after 5.14.2.
-Patch11:        perl-5.14.2-Don-t-leak-memory-when-accessing-named-capt.patch
-
-# Fix interrupted reading, rhbz#767931, fixed after 5.15.3.
-Patch12:        perl-5.14.2-add-a-couple-missing-LEAVEs-in-perlio_async_run.patch
-
+# Fix find2perl to translate ? glob properly, rhbz#825701, RT#113054
+Patch9:        perl-5.14.2-find2perl-transtate-question-mark-properly.patch
 # Fix searching for Unicode::Collate::Locale data, rhbz#756118, CPANRT#72666,
 # fixed in Unicode-Collate-0.87.
-Patch13:        perl-5.14.2-locale-search-inc.patch
-
-# Run safe signal handlers before returning from sigsuspend() and pause(),
-# rhbz#771228, RT#107216, fixed after 5.15.6.
-Patch14:        perl-5.14.2-Signal-handlers-must-run-before-sigsuspend-returns.patch
-
-# Stop !$^V from leaking, rhbz#787613, RT#109762, fixed after 5.15.7.
-Patch15:        perl-5.14.2-Stop-V-from-leaking.patch
-
-# Fix find2perl to translate ? glob properly, rhbz#825701, RT#113054
-Patch16:        perl-5.14.2-find2perl-transtate-question-mark-properly.patch
+# TODO Looks like it was fixed differently?
+#Patch13:        perl-5.14.2-locale-search-inc.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -113,6 +95,7 @@ BuildRequires:  procps, rsyslog
 # The long line of Perl provides.
 
 # Compat provides
+Provides: perl(:MODULE_COMPAT_5.16.0)
 Provides: perl(:MODULE_COMPAT_5.14.2)
 Provides: perl(:MODULE_COMPAT_5.14.1)
 Provides: perl(:MODULE_COMPAT_5.14.0)
@@ -250,7 +233,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.48
+Version:        0.58
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -263,7 +246,7 @@ Summary:        A module for Perl manipulation of .tar files
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.76 
+Version:        1.82 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Compress::Zlib), perl(IO::Zlib)
 BuildArch:      noarch
@@ -279,7 +262,7 @@ gzipped tar files.
 %package Carp
 Summary:        Alternative warn and die for modules
 Epoch:          0
-Version:        1.20
+Version:        1.26
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -304,7 +287,7 @@ Summary:        Handle Common Gateway Interface requests and responses
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        3.52
+Version:        3.59
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Provides:       perl(CGI) = %{version}
 BuildArch:      noarch
@@ -332,7 +315,7 @@ Summary:        Low-Level Interface to bzip2 compression library
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.033
+Version:        2.048
 Requires:       perl(Exporter), perl(File::Temp)
 
 %description Compress-Raw-Bzip2
@@ -345,7 +328,7 @@ Summary:        Low-Level Interface to the zlib compression library
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.033
+Version:        2.048
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Compress-Raw-Zlib
@@ -358,7 +341,7 @@ Summary:        Query, download and build perl modules from CPAN sites
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.9600.01
+Version:        1.9800
 # CPAN encourages Digest::SHA strongly because of integrity checks
 Requires:       perl(Digest::SHA)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -371,7 +354,7 @@ Query, download and build perl modules from CPAN sites.
 %package CPAN-Meta
 Summary:        Distribution metadata for a CPAN dist
 Epoch:          0
-Version:        2.110440
+Version:        2.120630
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -386,7 +369,7 @@ in CPAN::Meta::Spec.
 
 
 %package CPAN-Meta-YAML
-Version:        0.003
+Version:        0.007
 Epoch:          0
 Summary:        Read and write a subset of YAML for CPAN Meta files
 License:        GPL+ or Artistic
@@ -405,8 +388,8 @@ Summary:        API & CLI access to the CPAN mirrors
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-# real version 0.9103
-Version:        0.91.3
+# real version 0.9121
+Version:        0.91.21
 # CPANPLUS encourages Digest::SHA strongly because of integrity checks
 Requires:       perl(Digest::SHA)
 Requires:       perl(Module::Pluggable) >= 2.4
@@ -426,7 +409,7 @@ Summary:        Stringify perl data structures, suitable for printing and eval
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.130.02
+Version:        2.135.06
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Scalar::Util)
 Requires:       perl(XSLoader)
@@ -444,7 +427,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          0
-Version:        1.16
+Version:        1.17
 BuildArch:      noarch
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(MIME::Base64)
@@ -481,7 +464,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        5.61
+Version:        5.71
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 # Recommended
 Requires:       perl(Digest::base)
@@ -500,8 +483,8 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-# real version 0.280203 https://fedoraproject.org/wiki/Perl/Tips#Dot_approach
-Version:        0.28.2.3
+# real version 0.280206 https://fedoraproject.org/wiki/Perl/Tips#Dot_approach
+Version:        0.28.2.6
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -531,7 +514,7 @@ Summary:        Install files from here to there
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.56
+Version:        1.58
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -546,7 +529,7 @@ Summary:        Create a module Makefile
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        6.57.5
+Version:        6.63.2
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(ExtUtils::Install)
@@ -568,7 +551,7 @@ Summary:        Utilities to write and check a MANIFEST file
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.58
+Version:        1.61
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -583,7 +566,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        2.2210
+Version:        3.16
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -609,7 +592,7 @@ BuildArch:      noarch
 %description File-Fetch
 File::Fetch is a generic file fetching mechanism.
 
-
+# FIXME Filter-Simple? version?
 %package Filter
 Summary:        Perl source filters
 Group:          Development/Libraries
@@ -629,7 +612,7 @@ Summary:        IO::Compress wrapper for modules
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.033
+Version:        2.048
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Obsoletes:      perl-Compress-Zlib <= 2.020
 Provides:       perl(IO::Uncompress::Bunzip2)
@@ -664,7 +647,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.70
+Version:        0.76
 Requires:       perl(ExtUtils::MakeMaker)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -679,7 +662,7 @@ Summary:        A small, simple, correct HTTP/1.1 client
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.012
+Version:        0.017
 Requires:       perl(Carp)
 Requires:       perl(IO::Socket)
 BuildArch:      noarch
@@ -697,7 +680,7 @@ Summary:        JSON::XS compatible pure-Perl module
 Epoch:          0
 # 2.27150 version is a typo but we cannot fix it because it would break
 # monotony
-Version:        2.27150
+Version:        2.27200
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 BuildArch:      noarch
@@ -713,7 +696,7 @@ JSON::PP is a pure-Perl module and is compatible with JSON::XS.
 %package Locale-Codes
 Summary:        Distribution of modules to handle locale codes
 Epoch:          0
-Version:        3.16
+Version:        3.21
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -784,9 +767,10 @@ Log::Message module.
 Summary:        Perl module for building and installing Perl modules
 Group:          Development/Libraries
 License:        GPL+ or Artistic
-# Epoch bump for clean upgrade over old standalone package
-Epoch:          1
-Version:        0.3800 
+# Check epoch with standalone package
+Epoch:          2
+# real version 0.39_01
+Version:        0.39.01 
 Requires:       perl(Archive::Tar) >= 1.08
 Requires:       perl(CPAN::Meta) >= 2.110420
 Requires:       perl(ExtUtils::CBuilder) >= 0.15
@@ -812,7 +796,7 @@ Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        2.49 
+Version:        2.66 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(version)
 BuildArch:      noarch
@@ -829,7 +813,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.18
+Version:        0.22
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -843,7 +827,7 @@ Summary:        Looking up module information / loading at runtime
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.44
+Version:        0.46
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -858,7 +842,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.06
+Version:        0.08
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -873,7 +857,7 @@ offers you a very simple way to mark modules as loaded and/or unloaded.
 %package Module-Metadata
 Summary:        Gather package and POD information from perl module files
 Epoch:          0
-Version:        1.000004
+Version:        1.000009
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 BuildArch:      noarch
@@ -889,7 +873,7 @@ License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
 # Keep two digit decimal part
-Version:        3.90 
+Version:        4.00 
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -904,7 +888,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.38
+Version:        0.42
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -935,7 +919,7 @@ Summary:        PathTools Perl module (Cwd, File::Spec)
 Group:          Development/Libraries
 License:        (GPL+ or Artistic) and BSD
 Epoch:          0
-Version:        3.33
+Version:        3.39.2
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description PathTools
@@ -948,7 +932,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.28
+Version:        0.32
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -962,7 +946,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        1.4401
+Version:        1.4402
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 Requires:       perl(CPAN::Meta::YAML) >= 0.002
@@ -1014,7 +998,7 @@ Summary:        Look up Perl documentation in Pod format
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        3.15.04
+Version:        3.17.00
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -1031,7 +1015,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        3.16
+Version:        3.20
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -1060,7 +1044,7 @@ Summary:        Term::ReadLine UI made easy
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.26
+Version:        0.30
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Log::Message::Simple)
 BuildArch:      noarch
@@ -1162,7 +1146,7 @@ Summary:        C socket.h defines and structure manipulators
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.94
+Version:        2.001
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Socket
@@ -1178,7 +1162,7 @@ Summary:        Perl interpreter-based threads
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.83
+Version:        1.86
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description threads
@@ -1199,7 +1183,7 @@ Summary:        Perl extension for sharing data structures between threads
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.37
+Version:        1.40
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description threads-shared
@@ -1217,7 +1201,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          3
-Version:        0.88
+Version:        0.99
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -1229,7 +1213,7 @@ Perl extension for Version Objects
 Summary:        Set of version requirements for a CPAN dist
 License:        GPL+ or Artistic
 Group:          Development/Libraries
-Version:        0.101020
+Version:        0.101022
 Epoch:          0
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
@@ -1282,6 +1266,7 @@ tarball from perl.org.
 
 %prep
 %setup -q -n perl-%{perl_version}
+%patch0 -p1
 %patch1 -p1
 %ifarch %{multilib_64_archs}
 %patch3 -p1
@@ -1292,13 +1277,6 @@ tarball from perl.org.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
-%patch15 -p1
-%patch16 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1315,7 +1293,8 @@ recode()
 recode README.cn euc-cn
 recode README.jp euc-jp
 recode README.ko euc-kr
-recode README.tw big5
+# TODO iconv fail on this one
+##recode README.tw big5
 recode pod/perlebcdic.pod
 recode pod/perlhack.pod
 recode pod/perlhist.pod
@@ -1498,14 +1477,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch5: USE_MM_LD_RUN_PATH' \
     'Fedora Patch6: Skip hostname tests, due to builders not being network capable' \
     'Fedora Patch7: Dont run one io test due to random builder failures' \
-    'Fedora Patch9: Fix code injection in Digest->new()' \
-    'Fedora Patch10: Change Perl_repeatcpy() to allow count above 2^31' \
-    'Fedora Patch11: Fix leak with non-matching named captures' \
-    'Fedora Patch12: Fix interrupted reading' \
-    'Fedora Patch13: Fix searching for Unicode::Collate::Locale data' \
-    'Fedora Patch14: Run signal handlers before returning from sigsuspend' \
-    'Fedora Patch15: Stop !$^V from leaking' \
-    'Fedora Patch16: Fix find2perl to translate ? glob properly (RT#113054)' \
+    'Fedora Patch9: Fix find2perl to translate ? glob properly (RT#113054)' \
     %{nil}
 
 rm patchlevel.bak
@@ -1768,7 +1740,10 @@ sed \
 %exclude %{_mandir}/man3/Filter::Util::*
 
 # IO::Compress
-
+%exclude %{_bindir}/zipdetails
+%exclude %{privlib}/IO/Compress/FAQ.pod
+%exclude %{_mandir}/man1/zipdetails.*
+%exclude %{_mandir}/man3/IO::Compress::FAQ.*
 # Compress::Zlib
 %exclude %{privlib}/Compress/Zlib.pm
 %exclude %{_mandir}/man3/Compress::Zlib*
@@ -1834,14 +1809,12 @@ sed \
 # Locale::Codes
 %exclude %{privlib}/Locale/Codes
 %exclude %{privlib}/Locale/Codes.*
-%exclude %{privlib}/Locale/Constants.*
 %exclude %{privlib}/Locale/Country.*
 %exclude %{privlib}/Locale/Currency.*
 %exclude %{privlib}/Locale/Language.*
 %exclude %{privlib}/Locale/Script.*
 %exclude %{_mandir}/man3/Locale::Codes::*
 %exclude %{_mandir}/man3/Locale::Codes.*
-%exclude %{_mandir}/man3/Locale::Constants.*
 %exclude %{_mandir}/man3/Locale::Country.*
 %exclude %{_mandir}/man3/Locale::Currency.*
 %exclude %{_mandir}/man3/Locale::Language.*
@@ -2219,6 +2192,11 @@ sed \
 %{_mandir}/man3/Filter::Util::*
 
 %files IO-Compress
+# IO-Compress
+%{_bindir}/zipdetails
+%{privlib}/IO/Compress/FAQ.pod
+%{_mandir}/man1/zipdetails.*
+%{_mandir}/man3/IO::Compress::FAQ.*
 # Compress-Zlib
 %{privlib}/Compress/Zlib.pm
 %{_mandir}/man3/Compress::Zlib*
@@ -2285,14 +2263,12 @@ sed \
 %files Locale-Codes
 %{privlib}/Locale/Codes
 %{privlib}/Locale/Codes.*
-%{privlib}/Locale/Constants.*
 %{privlib}/Locale/Country.*
 %{privlib}/Locale/Currency.*
 %{privlib}/Locale/Language.*
 %{privlib}/Locale/Script.*
 %{_mandir}/man3/Locale::Codes::*
 %{_mandir}/man3/Locale::Codes.*
-%{_mandir}/man3/Locale::Constants.*
 %{_mandir}/man3/Locale::Country.*
 %{_mandir}/man3/Locale::Currency.*
 %{_mandir}/man3/Locale::Language.*
@@ -2483,8 +2459,25 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Tue May 29 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.14.2-217
+* Wed Jun 06 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.0-220
+- perl_bootstrap macro is distributed in perl-srpm-macros now
+
+* Fri Jun 01 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.0-219
+- Own zipdetails and IO::Compress::FAQ by perl-IO-Compress
+
+* Fri Jun  1 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.16.0-218
 - Fix find2perl to translate ? glob properly (bug #825701)
+
+* Thu May 31 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.0-218
+- Shorten perl-Module-Build version to 2 digits to follow upstream
+
+* Fri May 25 2012 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.16.0-217
+- upload the stable 5.16.0
+
+* Wed May 16 2012 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.16.0-RC2-217
+- clean patches, not needed with new version
+- regen by podcheck list of failed pods. cn, jp, ko pods failed. I can't decide
+  whether it's a real problem or false positives.
 
 * Mon Apr 30 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-216
 - Enable usesitecustomize
