@@ -26,7 +26,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        219%{?dist}
+Release:        220%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2459,6 +2459,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jun 06 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.0-220
+- perl_bootstrap macro is distributed in perl-srpm-macros now
+
 * Fri Jun 01 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.0-219
 - Own zipdetails and IO::Compress::FAQ by perl-IO-Compress
 
