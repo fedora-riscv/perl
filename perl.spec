@@ -26,7 +26,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        221%{?dist}
+Release:        222%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -96,9 +96,6 @@ BuildRequires:  procps, rsyslog
 
 # Compat provides
 Provides: perl(:MODULE_COMPAT_5.16.0)
-Provides: perl(:MODULE_COMPAT_5.14.2)
-Provides: perl(:MODULE_COMPAT_5.14.1)
-Provides: perl(:MODULE_COMPAT_5.14.0)
 
 # Threading provides
 Provides: perl(:WITH_ITHREADS)
@@ -2459,6 +2456,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jun 07 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.0-222
+- Remove MODULE_COMPAT_5.14.* Provides
+
 * Wed Jun 06 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.0-221
 - Perl 5.16 rebuild
 
