@@ -990,6 +990,23 @@ This module provides things that are useful in decoding Pod E<...> sequences.
 Presumably, it should be used only by Pod parsers and/or formatters.
 
 
+%package Pod-Parser
+Summary:        Basic perl modules for handling Plain Old Documentation (POD)
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.51
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+# Pod::Usage executes perldoc from perl-Pod-Perldoc by default
+Requires:       perl-Pod-Perldoc
+BuildArch:      noarch
+
+%description Pod-Parser
+This software distribution contains the packages for using Perl5 POD (Plain
+Old Documentation). See the "perlpod" and "perlsyn" manual pages from your
+Perl5 distribution for more information about POD.
+
+
 %package Pod-Perldoc
 Summary:        Look up Perl documentation in Pod format
 Group:          Development/Libraries
@@ -1253,7 +1270,8 @@ Requires:       perl-Module-CoreList, perl-Module-Load
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Metadata
 Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Constants, perl-PathTools
 Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
-Requires:       perl-Pod-Escapes, perl-Pod-Perldoc, perl-Pod-Simple
+Requires:       perl-Pod-Escapes, perl-Pod-Parser, perl-Pod-Perldoc
+Requires:       perl-Pod-Simple
 Requires:       perl-Socket, perl-Term-UI, perl-Test-Harness, perl-Test-Simple
 Requires:       perl-Time-Piece, perl-Version-Requirements, perl-version
 Requires:       perl-threads, perl-threads-shared, perl-parent
@@ -1905,6 +1923,30 @@ sed \
 %exclude %{privlib}/Pod/Escapes.pm
 %exclude %{_mandir}/man3/Pod::Escapes.*
 
+# Pod-Parser
+%exclude %{_bindir}/pod2usage
+%exclude %{_bindir}/podchecker
+%exclude %{_bindir}/podselect
+%exclude %{privlib}/Pod/Checker.pm
+%exclude %{privlib}/Pod/Find.pm
+%exclude %{privlib}/Pod/InputObjects.pm
+%exclude %{privlib}/Pod/ParseUtils.pm
+%exclude %{privlib}/Pod/Parser.pm
+%exclude %{privlib}/Pod/PlainText.pm
+%exclude %{privlib}/Pod/Select.pm
+%exclude %{privlib}/Pod/Usage.pm
+%exclude %{_mandir}/man1/pod2usage.1*
+%exclude %{_mandir}/man1/podchecker.1*
+%exclude %{_mandir}/man1/podselect.1*
+%exclude %{_mandir}/man3/Pod::Checker.*
+%exclude %{_mandir}/man3/Pod::Find.*
+%exclude %{_mandir}/man3/Pod::InputObjects.*
+%exclude %{_mandir}/man3/Pod::ParseUtil.*
+%exclude %{_mandir}/man3/Pod::Parser.*
+%exclude %{_mandir}/man3/Pod::PlainText.*
+%exclude %{_mandir}/man3/Pod::Select.*
+%exclude %{_mandir}/man3/Pod::Usage.*
+
 # Pod-Perldoc
 %exclude %{_bindir}/perldoc
 %exclude %{privlib}/pod/perldoc.pod
@@ -2366,6 +2408,30 @@ sed \
 %{privlib}/Pod/Escapes.pm
 %{_mandir}/man3/Pod::Escapes.*
 
+%files Pod-Parser
+%{_bindir}/pod2usage
+%{_bindir}/podchecker
+%{_bindir}/podselect
+%{privlib}/Pod/Checker.pm
+%{privlib}/Pod/Find.pm
+%{privlib}/Pod/InputObjects.pm
+%{privlib}/Pod/ParseUtils.pm
+%{privlib}/Pod/Parser.pm
+%{privlib}/Pod/PlainText.pm
+%{privlib}/Pod/Select.pm
+%{privlib}/Pod/Usage.pm
+%{_mandir}/man1/pod2usage.1*
+%{_mandir}/man1/podchecker.1*
+%{_mandir}/man1/podselect.1*
+%{_mandir}/man3/Pod::Checker.*
+%{_mandir}/man3/Pod::Find.*
+%{_mandir}/man3/Pod::InputObjects.*
+%{_mandir}/man3/Pod::ParseUtil.*
+%{_mandir}/man3/Pod::Parser.*
+%{_mandir}/man3/Pod::PlainText.*
+%{_mandir}/man3/Pod::Select.*
+%{_mandir}/man3/Pod::Usage.*
+
 %files Pod-Perldoc
 %{_bindir}/perldoc
 %{privlib}/pod/perldoc.pod
@@ -2459,6 +2525,7 @@ sed \
 %changelog
 * Mon Jun 25 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.0-223
 - Test::Build requires Data::Dumper
+- Sub-package perl-Pod-Parser
 
 * Thu Jun 07 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.0-222
 - Remove MODULE_COMPAT_5.14.* Provides
