@@ -26,7 +26,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        222%{?dist}
+Release:        223%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1077,6 +1077,7 @@ Epoch:          0
 Version:        0.98
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl(Data::Dumper)
 BuildArch:      noarch
 
 %description Test-Simple
@@ -2456,6 +2457,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jun 25 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.0-223
+- Test::Build requires Data::Dumper
+
 * Thu Jun 07 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.0-222
 - Remove MODULE_COMPAT_5.14.* Provides
 
