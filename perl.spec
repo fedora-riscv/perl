@@ -1941,7 +1941,7 @@ sed \
 %exclude %{_mandir}/man3/Pod::Checker.*
 %exclude %{_mandir}/man3/Pod::Find.*
 %exclude %{_mandir}/man3/Pod::InputObjects.*
-%exclude %{_mandir}/man3/Pod::ParseUtil.*
+%exclude %{_mandir}/man3/Pod::ParseUtils.*
 %exclude %{_mandir}/man3/Pod::Parser.*
 %exclude %{_mandir}/man3/Pod::PlainText.*
 %exclude %{_mandir}/man3/Pod::Select.*
@@ -2426,7 +2426,7 @@ sed \
 %{_mandir}/man3/Pod::Checker.*
 %{_mandir}/man3/Pod::Find.*
 %{_mandir}/man3/Pod::InputObjects.*
-%{_mandir}/man3/Pod::ParseUtil.*
+%{_mandir}/man3/Pod::ParseUtils.*
 %{_mandir}/man3/Pod::Parser.*
 %{_mandir}/man3/Pod::PlainText.*
 %{_mandir}/man3/Pod::Select.*
