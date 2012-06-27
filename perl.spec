@@ -26,7 +26,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        223%{?dist}
+Release:        224%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1013,6 +1013,8 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        3.17.00
+# Pod::Perldoc::ToMan executes roff
+Requires:       groff-base
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -2523,6 +2525,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jun 27 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.0-224
+- perl-Pod-Perldoc must require groff-base because Pod::Perldoc::ToMan executes
+  roff
+
 * Mon Jun 25 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.0-223
 - Test::Build requires Data::Dumper
 - Sub-package perl-Pod-Parser
