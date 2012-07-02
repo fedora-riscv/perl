@@ -26,7 +26,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        224%{?dist}
+Release:        225%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -74,11 +74,17 @@ Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
 Patch8:         perl-5.14.1-offtest.patch
 
 # Fix find2perl to translate ? glob properly, rhbz#825701, RT#113054
-Patch9:        perl-5.14.2-find2perl-transtate-question-mark-properly.patch
+Patch9:         perl-5.14.2-find2perl-transtate-question-mark-properly.patch
+
+# Fix broken atof, rhbz#835452, RT#109318
+Patch10:        perl-5.16.0-fix-broken-atof.patch
+
 # Fix searching for Unicode::Collate::Locale data, rhbz#756118, CPANRT#72666,
 # fixed in Unicode-Collate-0.87.
 # TODO Looks like it was fixed differently?
 #Patch13:        perl-5.14.2-locale-search-inc.patch
+
+
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1295,6 +1301,7 @@ tarball from perl.org.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -2525,6 +2532,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jul 02 2012 Jitka Plesnikova <jplesnik@redhat.com> 4:5.16.0-225
+- Fix broken atof (bug #835452)
+
 * Wed Jun 27 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.0-224
 - perl-Pod-Perldoc must require groff-base because Pod::Perldoc::ToMan executes
   roff
