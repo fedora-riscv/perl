@@ -1503,6 +1503,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch6: Skip hostname tests, due to builders not being network capable' \
     'Fedora Patch7: Dont run one io test due to random builder failures' \
     'Fedora Patch9: Fix find2perl to translate ? glob properly (RT#113054)' \
+    'Fedora Patch10: Fix broken atof (RT#109318)' \
     %{nil}
 
 rm patchlevel.bak
