@@ -26,7 +26,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        225%{?dist}
+Release:        226%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1748,11 +1748,29 @@ sed \
 %exclude %{_mandir}/man3/ExtUtils::testlib.3*
 
 # ExtUtils::ParseXS
+%exclude %dir %{privlib}/ExtUtils/ParseXS/
+%exclude %dir %{privlib}/ExtUtils/Typemaps/
 %exclude %{privlib}/ExtUtils/ParseXS.pm
+%exclude %{privlib}/ExtUtils/ParseXS.pod
+%exclude %{privlib}/ExtUtils/ParseXS/Constants.pm
+%exclude %{privlib}/ExtUtils/ParseXS/CountLines.pm
+%exclude %{privlib}/ExtUtils/ParseXS/Utilities.pm
+%exclude %{privlib}/ExtUtils/Typemaps.pm
+%exclude %{privlib}/ExtUtils/Typemaps/Cmd.pm
+%exclude %{privlib}/ExtUtils/Typemaps/InputMap.pm
+%exclude %{privlib}/ExtUtils/Typemaps/OutputMap.pm
+%exclude %{privlib}/ExtUtils/Typemaps/Type.pm
 %exclude %{privlib}/ExtUtils/xsubpp
 %exclude %{_bindir}/xsubpp
 %exclude %{_mandir}/man1/xsubpp*
 %exclude %{_mandir}/man3/ExtUtils::ParseXS.3*
+%exclude %{_mandir}/man3/ExtUtils::ParseXS::Constants.3*
+%exclude %{_mandir}/man3/ExtUtils::ParseXS::Utilities.3*
+%exclude %{_mandir}/man3/ExtUtils::Typemaps.3*
+%exclude %{_mandir}/man3/ExtUtils::Typemaps::Cmd.3*
+%exclude %{_mandir}/man3/ExtUtils::Typemaps::InputMap.3*
+%exclude %{_mandir}/man3/ExtUtils::Typemaps::OutputMap.3*
+%exclude %{_mandir}/man3/ExtUtils::Typemaps::Type.3*
 
 # File::Fetch
 %exclude %{privlib}/File/Fetch.pm
@@ -2224,11 +2242,29 @@ sed \
 %{_mandir}/man3/ExtUtils::testlib.3*
 
 %files ExtUtils-ParseXS
+%dir %{privlib}/ExtUtils/ParseXS/
+%dir %{privlib}/ExtUtils/Typemaps/
 %{privlib}/ExtUtils/ParseXS.pm
+%{privlib}/ExtUtils/ParseXS.pod
+%{privlib}/ExtUtils/ParseXS/Constants.pm
+%{privlib}/ExtUtils/ParseXS/CountLines.pm
+%{privlib}/ExtUtils/ParseXS/Utilities.pm
+%{privlib}/ExtUtils/Typemaps.pm
+%{privlib}/ExtUtils/Typemaps/Cmd.pm
+%{privlib}/ExtUtils/Typemaps/InputMap.pm
+%{privlib}/ExtUtils/Typemaps/OutputMap.pm
+%{privlib}/ExtUtils/Typemaps/Type.pm
 %{privlib}/ExtUtils/xsubpp
 %{_bindir}/xsubpp
 %{_mandir}/man1/xsubpp*
 %{_mandir}/man3/ExtUtils::ParseXS.3*
+%{_mandir}/man3/ExtUtils::ParseXS::Constants.3*
+%{_mandir}/man3/ExtUtils::ParseXS::Utilities.3*
+%{_mandir}/man3/ExtUtils::Typemaps.3*
+%{_mandir}/man3/ExtUtils::Typemaps::Cmd.3*
+%{_mandir}/man3/ExtUtils::Typemaps::InputMap.3*
+%{_mandir}/man3/ExtUtils::Typemaps::OutputMap.3*
+%{_mandir}/man3/ExtUtils::Typemaps::Type.3*
 
 %files File-Fetch
 %{privlib}/File/Fetch.pm
@@ -2533,6 +2569,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jul 13 2012 Paul Howarth <paul@city-fan.org> 4:5.16.0-226
+- Move the rest of ExtUtils-ParseXS into its sub-package, so that the main
+  perl package doesn't need to pull in perl-devel (bug #839953)
+
 * Mon Jul 02 2012 Jitka Plesnikova <jplesnik@redhat.com> 4:5.16.0-225
 - Fix broken atof (bug #835452)
 
