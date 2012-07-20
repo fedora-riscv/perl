@@ -26,7 +26,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        226%{?dist}
+Release:        227%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2569,6 +2569,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jul 20 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:5.16.0-227
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
 * Fri Jul 13 2012 Paul Howarth <paul@city-fan.org> 4:5.16.0-226
 - Move the rest of ExtUtils-ParseXS into its sub-package, so that the main
   perl package doesn't need to pull in perl-devel (bug #839953)
