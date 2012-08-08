@@ -7,8 +7,8 @@
 %global parallel_tests 1
 %global tapsetdir   %{_datadir}/systemtap/tapset
 
-# This set overrides filters from build root (/etc/rpm/macros.perl)
-# intentionally (e.g. the perl(DB))
+# This overrides filters from build root (/etc/rpm/macros.perl)
+# intentionally (unversioned perl(DB) is removed and versioned one is kept)
 %global __provides_exclude_from .*/auto/.*\\.so$|.*/%{perl_archlib}/.*\\.so$|%{_docdir}
 %global __requires_exclude_from %{_docdir}
 %global __provides_exclude perl\\((VMS|Win32|BSD::|DB\\)$)
