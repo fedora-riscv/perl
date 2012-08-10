@@ -801,7 +801,6 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          1
 Version:        2.70
-
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(version)
 BuildArch:      noarch
