@@ -7,6 +7,9 @@
 %global parallel_tests 1
 %global tapsetdir   %{_datadir}/systemtap/tapset
 
+%global dual_life 0
+%global rebuild_from_scratch 0
+
 # This overrides filters from build root (/etc/rpm/macros.perl)
 # intentionally (unversioned perl(DB) is removed and versioned one is kept)
 %global __provides_exclude_from .*/auto/.*\\.so$|.*/%{perl_archlib}/.*\\.so$|%{_docdir}
@@ -262,7 +265,7 @@ for the creation of tar file objects for custom manipulation.  If you have the
 IO::Zlib module installed, Archive::Tar will also support compressed or
 gzipped tar files.
 
-
+%if %{dual_life}
 %package Carp
 Summary:        Alternative warn and die for modules
 Epoch:          0
@@ -284,8 +287,9 @@ context is a summary of every call in the call-stack. For a shorter message
 you can use carp or croak which report the error as being from where your
 module was called. There is no guarantee that that is where the error was,
 but it is a good educated guess.
+%endif
 
-
+%if %{dual_life}
 %package CGI
 Summary:        Handle Common Gateway Interface requests and responses
 Group:          Development/Libraries
@@ -312,8 +316,9 @@ generation utilities are included as well.
 
 CGI.pm performs very well in in a vanilla CGI.pm environment and also comes
 with built-in support for mod_perl and mod_perl2 as well as FastCGI.
+%endif
 
-
+%if %{dual_life}
 %package Compress-Raw-Bzip2
 Summary:        Low-Level Interface to bzip2 compression library
 Group:          Development/Libraries
@@ -325,7 +330,7 @@ Requires:       perl(Exporter), perl(File::Temp)
 %description Compress-Raw-Bzip2
 This module provides a Perl interface to the bzip2 compression library.
 It is used by IO::Compress::Bzip2.
-
+%endif
 
 %package Compress-Raw-Zlib
 Summary:        Low-Level Interface to the zlib compression library
@@ -355,6 +360,7 @@ BuildArch:      noarch
 %description CPAN
 Query, download and build perl modules from CPAN sites.
 
+%if %{dual_life}
 %package CPAN-Meta
 Summary:        Distribution metadata for a CPAN dist
 Epoch:          0
@@ -370,7 +376,7 @@ older distributions, META.yml, which describes the distribution, its
 contents, and the requirements for building and installing the
 distribution. The data structure stored in the META.json file is described
 in CPAN::Meta::Spec.
-
+%endif
 
 %package CPAN-Meta-YAML
 Version:        0.007
@@ -407,7 +413,7 @@ BuildArch:      noarch
 The CPANPLUS library is an API to the CPAN mirrors and a collection of
 interactive shells, commandline programs, etc, that use this API.
 
-
+%if %{dual_life}
 %package Data-Dumper
 Summary:        Stringify perl data structures, suitable for printing and eval
 Group:          Development/Libraries
@@ -423,8 +429,9 @@ Given a list of scalars or reference variables, writes out their contents
 in perl syntax. The references can also be objects. The content of each
 variable is output in a single Perl statement. Handles self-referential
 structures correctly.
+%endif
 
-
+%if %{dual_life}
 %package Digest
 Summary:        Modules that calculate message digests
 Group:          Development/Libraries
@@ -442,7 +449,7 @@ The Digest:: modules calculate digests, also called "fingerprints" or
 some small/fixed size string. The actual size of the digest depend of
 the algorithm used. The message is simply a sequence of arbitrary
 bytes or bits.
-
+%endif
 
 %package Digest-MD5
 Summary:        Perl interface to the MD5 Algorithm
@@ -461,7 +468,7 @@ Message Digest algorithm from within Perl programs. The algorithm takes as
 input a message of arbitrary length and produces as output a 128-bit
 "fingerprint" or "message digest" of the input.
 
-
+%if %{dual_life}
 %package Digest-SHA
 Summary:        Perl extension for SHA-1/224/256/384/512
 Group:          Development/Libraries
@@ -479,7 +486,7 @@ Digest::SHA is a complete implementation of the NIST Secure Hash
 Standard.  It gives Perl programmers a convenient way to calculate
 SHA-1, SHA-224, SHA-256, SHA-384, and SHA-512 message digests.  The
 module can handle all types of input, including partial-byte data.
-
+%endif
 
 %package ExtUtils-CBuilder
 Summary:        Compile and link C code for Perl modules
@@ -527,7 +534,7 @@ BuildArch:      noarch
 Handles the installing and uninstalling of perl modules, scripts, man
 pages, etc.
 
-
+%if %{dual_life}
 %package ExtUtils-MakeMaker
 Summary:        Create a module Makefile
 Group:          Development/Languages
@@ -548,8 +555,9 @@ BuildArch:      noarch
 
 %description ExtUtils-MakeMaker
 Create a module Makefile.
+%endif
 
-
+%if %{dual_life}
 %package ExtUtils-Manifest
 Summary:        Utilities to write and check a MANIFEST file
 Group:          Development/Languages
@@ -562,7 +570,7 @@ BuildArch:      noarch
 
 %description ExtUtils-Manifest
 %{summary}.
-
+%endif
 
 %package ExtUtils-ParseXS
 Summary:        Module and a script for converting Perl XS code into C code
@@ -610,7 +618,7 @@ Source filters alter the program text of a module before Perl sees it, much as
 a C preprocessor alters the source text of a C program before the compiler
 sees it.
 
-
+%if %{dual_life}
 %package IO-Compress
 Summary:        IO::Compress wrapper for modules
 Group:          Development/Libraries
@@ -625,7 +633,7 @@ Provides:       perl(IO::Uncompress::Bunzip2)
 This module is the base class for all IO::Compress and IO::Uncompress modules.
 This module is not intended for direct use in application code. Its sole
 purpose is to to be sub-classed by IO::Compress modules.
-
+%endif
 
 %package IO-Zlib
 Summary:        Perl IO:: style interface to Compress::Zlib
@@ -678,7 +686,7 @@ It is more correct and more complete than HTTP::Lite. It supports proxies
 (currently only non-authenticating ones) and redirection. It also correctly 
 resumes after EINTR.
 
-
+%if %{dual_life}
 %package JSON-PP
 Summary:        JSON::XS compatible pure-Perl module
 Epoch:          0
@@ -695,8 +703,9 @@ Conflicts:      perl-JSON < 2.50
 JSON::XS is the fastest and most proper JSON module on CPAN. It is written by
 Marc Lehmann in C, so must be compiled and installed in the used environment.
 JSON::PP is a pure-Perl module and is compatible with JSON::XS.
+%endif
 
-
+%if %{dual_life}
 %package Locale-Codes
 Summary:        Distribution of modules to handle locale codes
 Epoch:          0
@@ -715,7 +724,7 @@ BuildArch:      noarch
 Locale-Codes is a distribution containing a set of modules. The modules
 each deal with different types of codes which identify parts of the locale
 including languages, countries, currency, etc.
-
+%endif
 
 %package Locale-Maketext-Simple
 Summary:        Simple interface to Locale::Maketext::Lexicon
@@ -766,7 +775,7 @@ BuildArch:      noarch
 This module provides standardized logging facilities using the
 Log::Message module.
 
-
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Module-Build
 Summary:        Perl module for building and installing Perl modules
 Group:          Development/Libraries
@@ -793,7 +802,7 @@ way. In fact, you don't even need a shell, so even platforms like MacOS
 (traditional) can use it fairly easily. Its only prerequisites are modules that
 are included with perl 5.6.0, and it works fine on perl 5.005 if you can
 install a few additional modules.
-
+%endif
 
 %package Module-CoreList
 Summary:        Perl core modules indexed by perl versions
@@ -916,7 +925,7 @@ Package::Constants lists all the constants defined in a certain package.  This
 can be useful for, among others, setting up an autogenerated @EXPORT/@EXPORT_OK
 for a Constants.pm file.
 
-
+%if %{dual_life}
 %package PathTools
 Summary:        PathTools Perl module (Cwd, File::Spec)
 # PathTools aka File::Spec
@@ -928,7 +937,7 @@ Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description PathTools
 PathTools Perl module (Cwd, File::Spec).
-
+%endif
 
 %package Params-Check
 Summary:        Generic input parsing/checking mechanism
@@ -943,7 +952,7 @@ BuildArch:      noarch
 %description Params-Check
 Params::Check is a generic input parsing/checking mechanism.
 
-
+%if %{dual_life}
 %package Parse-CPAN-Meta
 Summary:        Parse META.yml and other similar CPAN metadata files
 Group:          Development/Libraries
@@ -961,8 +970,9 @@ Obsoletes:      perl-Parse-CPAN-Meta < 1.40
 %description Parse-CPAN-Meta 
 Parse::CPAN::Meta is a parser for META.yml files, based on the parser half of
 YAML::Tiny.
+%endif
 
-
+%if %{dual_life}
 %package Perl-OSType
 Summary:        Map Perl operating system names to generic types
 Version:        1.002
@@ -980,7 +990,7 @@ This module provides a mapping between an operating system name as given by $^O
 and a more generic type. The initial version is based on the OS type mappings
 provided in Module::Build and ExtUtils::CBuilder (thus, Microsoft operating
 systems are given the type 'Windows' rather than 'Win32').
-
+%endif
 
 %package Pod-Escapes
 Summary:        Perl module for resolving POD escape sequences
@@ -1013,7 +1023,7 @@ This software distribution contains the packages for using Perl5 POD (Plain
 Old Documentation). See the "perlpod" and "perlsyn" manual pages from your
 Perl5 distribution for more information about POD.
 
-
+%if %{dual_life}
 %package Pod-Perldoc
 Summary:        Look up Perl documentation in Pod format
 Group:          Development/Libraries
@@ -1030,7 +1040,7 @@ perldoc looks up a piece of documentation in .pod format that is embedded
 in the perl installation tree or in a perl script, and displays it via
 "groff -man | $PAGER". This is primarily used for the documentation for
 the perl library modules.
-
+%endif
 
 %package Pod-Simple
 Summary:        Framework for parsing POD documentation
@@ -1047,6 +1057,7 @@ Pod::Simple is a Perl library for parsing text in the Pod ("plain old
 documentation") markup language that is typically used for writing
 documentation for Perl and for Perl modules.
 
+%if %{dual_life}
 %package Scalar-List-Utils
 Summary:        A selection of general-utility scalar and list subroutines
 Group:          Development/Libraries
@@ -1060,7 +1071,7 @@ Scalar::Util and List::Util contain a selection of subroutines that people have
 expressed would be nice to have in the perl core, but the usage would not
 really be high enough to warrant the use of a keyword, and the size so small
 such that being individual extensions would be wasteful.
-
+%endif
 
 %package Term-UI
 Summary:        Term::ReadLine UI made easy
@@ -1095,6 +1106,7 @@ Obsoletes:      perl-TAP-Harness < 3.10
 Run Perl standard test scripts with statistics.
 Use TAP::Parser, Test::Harness package was whole rewritten.
 
+%if %{dual_life}
 %package Test-Simple
 Summary:        Basic utilities for writing tests
 Group:          Development/Languages
@@ -1123,7 +1135,7 @@ BuildArch:      noarch
 
 %description Test-Simple-tests
 This package provides the test suite for package perl-Test-Simple.
-
+%endif
 
 %package Time-Piece
 Summary:        Time objects from localtime and gmtime
@@ -1140,7 +1152,7 @@ with implementations that return objects.  It does so in a backwards compatible
 manner, so that using localtime or gmtime as documented in perlfunc still
 behave as expected.
 
-
+%if %{dual_life}
 %package parent
 Summary:        Establish an ISA relationship with base classes at compile time
 Group:          Development/Libraries
@@ -1163,8 +1175,9 @@ inheritance from those modules at the same time. Mostly similar in effect to:
         
         push @ISA, qw(Foo Bar); 
     }
+%endif
 
-
+%if %{dual_life}
 %package Socket
 Summary:        C socket.h defines and structure manipulators
 Group:          Development/Libraries
@@ -1179,8 +1192,9 @@ mechanism of requiring a translated socket.ph file, this uses the h2xs program
 (see the Perl source distribution) and your native C compiler.  This means
 that it has a far more likely chance of getting the numbers right.  This
 includes all of the commonly used pound-defines like AF_INET, SOCK_STREAM, etc.
+%endif
 
-
+%if %{dual_life}
 %package threads
 Summary:        Perl interpreter-based threads
 Group:          Development/Libraries
@@ -1200,8 +1214,9 @@ threading model has been deprecated, and was removed as of Perl 5.10.0.)
 
 As just mentioned, all variables are, by default, thread local. To use shared
 variables, you need to also load threads::shared.
+%endif
 
-
+%if %{dual_life}
 %package threads-shared
 Summary:        Perl extension for sharing data structures between threads
 Group:          Development/Libraries
@@ -1217,8 +1232,9 @@ variables across different threads (and pseudo-forks on Win32). It is used
 together with the threads module.  This module supports the sharing of the
 following data types only: scalars and scalar refs, arrays and array refs, and
 hashes and hash refs.
+%endif
 
-
+%if %{dual_life}
 %package version
 Summary:        Perl extension for Version Objects
 Group:          Development/Libraries
@@ -1231,8 +1247,9 @@ BuildArch:      noarch
 
 %description version
 Perl extension for Version Objects
+%endif
 
-
+%if %{dual_life}
 %package Version-Requirements
 Summary:        Set of version requirements for a CPAN dist
 License:        GPL+ or Artistic
@@ -1247,7 +1264,7 @@ A Version::Requirements object models a set of version constraints like
 those specified in the META.yml or META.json files in CPAN distributions.
 It can be built up by adding more and more constraints, and it will reduce
 them to the simplest representation.
-
+%endif
 
 %package core
 Summary:        Base perl metapackage
@@ -2102,6 +2119,7 @@ sed \
 %{_mandir}/man1/ptargrep.1*
 %{_mandir}/man3/Archive::Tar* 
 
+%if %{dual_life}
 %files Carp
 %{privlib}/Carp
 %{privlib}/Carp.*
@@ -2121,6 +2139,7 @@ sed \
 %dir %{archlib}/auto/Compress/Raw/
 %{archlib}/auto/Compress/Raw/Bzip2/
 %{_mandir}/man3/Compress::Raw::Bzip2*
+%endif
 
 %files Compress-Raw-Zlib
 %dir %{archlib}/Compress
@@ -2142,6 +2161,7 @@ sed \
 %exclude %{privlib}/CPAN/Meta.pm
 %exclude %{_mandir}/man3/CPAN::Meta*
 
+%if %{dual_life}
 %files CPAN-Meta
 %dir %{privlib}/CPAN/Meta
 %{privlib}/CPAN/Meta.pm
@@ -2153,6 +2173,7 @@ sed \
 %{privlib}/CPAN/Meta/Validator.pm
 %{_mandir}/man3/CPAN::Meta*
 %exclude %{_mandir}/man3/CPAN::Meta::YAML*
+%endif
 
 %files CPAN-Meta-YAML
 %{privlib}/CPAN/Meta/YAML.pm
@@ -2168,6 +2189,7 @@ sed \
 %{_mandir}/man1/cpanp.1*
 %{_mandir}/man3/CPANPLUS*
 
+%if %{dual_life}
 %files Data-Dumper
 %dir %{archlib}/auto/Data
 %dir %{archlib}/auto/Data/Dumper
@@ -2184,12 +2206,14 @@ sed \
 %{_mandir}/man3/Digest.3*
 %{_mandir}/man3/Digest::base.3*
 %{_mandir}/man3/Digest::file.3*
+%endif
 
 %files Digest-MD5
 %{archlib}/Digest/MD5.pm
 %{archlib}/auto/Digest/MD5/
 %{_mandir}/man3/Digest::MD5.3*
 
+%if %{dual_life}
 %files Digest-SHA
 %{_bindir}/shasum
 %dir %{archlib}/Digest/
@@ -2197,6 +2221,7 @@ sed \
 %{archlib}/auto/Digest/SHA/
 %{_mandir}/man1/shasum.1*
 %{_mandir}/man3/Digest::SHA.3*
+%endif
 
 %files ExtUtils-CBuilder
 %{privlib}/ExtUtils/CBuilder/
@@ -2215,6 +2240,7 @@ sed \
 %{_mandir}/man3/ExtUtils::Installed.3*
 %{_mandir}/man3/ExtUtils::Packlist.3*
 
+%if %{dual_life}
 %files ExtUtils-Manifest
 %{privlib}/ExtUtils/Manifest.pm
 %{privlib}/ExtUtils/MANIFEST.SKIP
@@ -2241,6 +2267,7 @@ sed \
 %{_mandir}/man3/ExtUtils::Mkbootstrap.3*
 %{_mandir}/man3/ExtUtils::Mksymlists.3*
 %{_mandir}/man3/ExtUtils::testlib.3*
+%endif
 
 %files ExtUtils-ParseXS
 %dir %{privlib}/ExtUtils/ParseXS/
@@ -2278,6 +2305,7 @@ sed \
 %{_mandir}/man1/perlfilter.*
 %{_mandir}/man3/Filter::Util::*
 
+%if %{dual_life}
 %files IO-Compress
 # IO-Compress
 %{_bindir}/zipdetails
@@ -2326,6 +2354,7 @@ sed \
 %{_mandir}/man3/IO::Uncompress::Inflate*
 %{_mandir}/man3/IO::Uncompress::RawInflate*
 %{_mandir}/man3/IO::Uncompress::Unzip*
+%endif
 
 %files IO-Zlib
 %{privlib}/IO/Zlib.pm
@@ -2339,6 +2368,7 @@ sed \
 %{privlib}/IPC/Cmd.pm
 %{_mandir}/man3/IPC::Cmd.3*
 
+%if %{dual_life}
 %files JSON-PP
 %{_bindir}/json_pp
 %{privlib}/JSON/PP
@@ -2346,7 +2376,9 @@ sed \
 %{_mandir}/man1/json_pp.1*
 %{_mandir}/man3/JSON::PP.3*
 %{_mandir}/man3/JSON::PP::Boolean.3pm*
+%endif
 
+%if %{dual_life}
 %files Locale-Codes
 %{privlib}/Locale/Codes
 %{privlib}/Locale/Codes.*
@@ -2360,6 +2392,7 @@ sed \
 %{_mandir}/man3/Locale::Currency.*
 %{_mandir}/man3/Locale::Language.*
 %{_mandir}/man3/Locale::Script.*
+%endif
 
 %files Locale-Maketext-Simple
 %{privlib}/Locale/Maketext/Simple.pm
@@ -2379,6 +2412,7 @@ sed \
 %{privlib}/Log/Message/Simple.pm
 %{_mandir}/man3/Log::Message::Simple.3*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Module-Build
 %{_bindir}/config_data
 %{privlib}/inc/
@@ -2387,6 +2421,7 @@ sed \
 %{_mandir}/man1/config_data.1*
 %{_mandir}/man3/Module::Build*
 %{_mandir}/man3/inc::latest.3*
+%endif
 
 %files Module-CoreList
 %{_bindir}/corelist
@@ -2426,30 +2461,38 @@ sed \
 %{privlib}/Package/
 %{_mandir}/man3/Package::Constants*
 
+%if %{dual_life}
 %files PathTools
 %{archlib}/Cwd.pm
 %{archlib}/File/Spec*
 %{archlib}/auto/Cwd/
 %{_mandir}/man3/Cwd*
 %{_mandir}/man3/File::Spec*
+%endif
 
 %files Params-Check
 %{privlib}/Params/
 %{_mandir}/man3/Params::Check*
 
+%if %{dual_life}
 %files Parse-CPAN-Meta
 %dir %{privlib}/Parse/
 %dir %{privlib}/Parse/CPAN/
 %{privlib}/Parse/CPAN/Meta.pm
 %{_mandir}/man3/Parse::CPAN::Meta.3*
+%endif
 
+%if %{dual_life}
 %files parent
 %{privlib}/parent.pm
 %{_mandir}/man3/parent.3*
+%endif
 
+%if %{dual_life}
 %files Perl-OSType
 %{privlib}/Perl/OSType.pm
 %{_mandir}/man3/Perl::OSType.3pm*
+%endif
 
 %files Pod-Escapes
 %{privlib}/Pod/Escapes.pm
@@ -2479,6 +2522,7 @@ sed \
 %{_mandir}/man3/Pod::Select.*
 %{_mandir}/man3/Pod::Usage.*
 
+%if %{dual_life}
 %files Pod-Perldoc
 %{_bindir}/perldoc
 %{privlib}/pod/perldoc.pod
@@ -2486,6 +2530,7 @@ sed \
 %{privlib}/Pod/Perldoc/
 %{_mandir}/man1/perldoc.1*
 %{_mandir}/man3/Pod::Perldoc*
+%endif
 
 %files Pod-Simple
 %{privlib}/Pod/Simple/ 
@@ -2493,18 +2538,22 @@ sed \
 %{privlib}/Pod/Simple.pod
 %{_mandir}/man3/Pod::Simple*
 
+%if %{dual_life}
 %files Scalar-List-Utils
 %{archlib}/List/
 %{archlib}/Scalar/
 %{archlib}/auto/List/
 %{_mandir}/man3/List::Util*
 %{_mandir}/man3/Scalar::Util*
+%endif
 
+%if %{dual_life}
 %files Socket
 %dir %{archlib}/auto/Socket
 %{archlib}/auto/Socket/Socket.*
 %{archlib}/Socket.pm
 %{_mandir}/man3/Socket.3*
+%endif
 
 %files Term-UI
 %{privlib}/Term/UI/
@@ -2521,6 +2570,7 @@ sed \
 %{_mandir}/man3/TAP*
 %{_mandir}/man3/Test::Harness*
 
+%if %{dual_life}
 %files Test-Simple
 %{privlib}/Test/More*
 %{privlib}/Test/Builder*
@@ -2534,6 +2584,7 @@ sed \
 %files Test-Simple-tests
 %dir %{perl5_testdir}
 %{perl5_testdir}/Test-Simple
+%endif
 
 %files Time-Piece
 %{archlib}/Time/Piece.pm 
@@ -2542,34 +2593,45 @@ sed \
 %{_mandir}/man3/Time::Piece.3*
 %{_mandir}/man3/Time::Seconds.3*
 
+%if %{dual_life}
 %files Version-Requirements
 %{privlib}/Version/Requirements.pm
 %{_mandir}/man3/Version::Requirements*
+%endif
 
+%if %{dual_life}
 %files threads
 %dir %{archlib}/auto/threads
 %{archlib}/auto/threads/threads*
 %{archlib}/threads.pm
 %{_mandir}/man3/threads.3*
+%endif
 
+%if %{dual_life}
 %files threads-shared
 %{archlib}/auto/threads/shared*
 %dir %{archlib}/threads
 %{archlib}/threads/shared*
 %{_mandir}/man3/threads::shared*
+%endif
 
+%if %{dual_life}
 %files version
 %{privlib}/version.pm
 %{privlib}/version.pod
 %{privlib}/version/
 %{_mandir}/man3/version.3*
 %{_mandir}/man3/version::Internals.3*
+%endif
 
 %files core
 # Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Aug  9 2012 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.16.0-228
+- apply conditionals for dual life patches
+
 * Thu Aug 09 2012 Jitka Plesnikova <jplesnik@redhat.com> 4:5.16.1-228
 - 5.16.1 bump (see
   http://search.cpan.org/dist/perl-5.16.1/pod/perldelta.pod for release
