@@ -1,4 +1,4 @@
-%global perl_version    5.16.0
+%global perl_version    5.16.1
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -26,7 +26,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        227%{?dist}
+Release:        228%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -101,6 +101,7 @@ BuildRequires:  procps, rsyslog
 # The long line of Perl provides.
 
 # Compat provides
+Provides: perl(:MODULE_COMPAT_5.16.1)
 Provides: perl(:MODULE_COMPAT_5.16.0)
 
 # Threading provides
@@ -601,7 +602,7 @@ Summary:        Perl source filters
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.37
+Version:        1.40
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Filter
@@ -799,7 +800,7 @@ Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        2.66 
+Version:        2.70
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(version)
 BuildArch:      noarch
@@ -1051,7 +1052,7 @@ Summary:        A selection of general-utility scalar and list subroutines
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.23
+Version:        1.25
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 
 %description Scalar-List-Utils
@@ -2569,6 +2570,14 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Aug 09 2012 Jitka Plesnikova <jplesnik@redhat.com> 4:5.16.1-228
+- 5.16.1 bump (see
+  http://search.cpan.org/dist/perl-5.16.1/pod/perldelta.pod for release
+  notes)
+- Fixed reopening by scalar handle (bug #834221)
+- Fixed tr/// multiple transliteration (bug #831679)
+- Fixed heap-overflow in gv_stashpv (bug #826516)
+
 * Fri Jul 20 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:5.16.0-227
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
