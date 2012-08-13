@@ -560,7 +560,6 @@ BuildArch:      noarch
 Create a module Makefile.
 %endif
 
-%if %{dual_life} || %{rebuild_from_scratch}
 %package ExtUtils-Manifest
 Summary:        Utilities to write and check a MANIFEST file
 Group:          Development/Languages
@@ -573,7 +572,6 @@ BuildArch:      noarch
 
 %description ExtUtils-Manifest
 %{summary}.
-%endif
 
 %package ExtUtils-ParseXS
 Summary:        Module and a script for converting Perl XS code into C code
@@ -2241,12 +2239,12 @@ sed \
 %{_mandir}/man3/ExtUtils::Installed.3*
 %{_mandir}/man3/ExtUtils::Packlist.3*
 
-%if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-Manifest
 %{privlib}/ExtUtils/Manifest.pm
 %{privlib}/ExtUtils/MANIFEST.SKIP
 %{_mandir}/man3/ExtUtils::Manifest.3*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-MakeMaker
 %{_bindir}/instmodsh
 %{privlib}/ExtUtils/Command/
