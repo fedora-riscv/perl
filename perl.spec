@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        212%{?dist}
+Release:        213%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1045,7 +1045,6 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        3.23
-Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 # Use rewritten module perl-Test-Harness
@@ -1062,7 +1061,6 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.98
-Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
 
@@ -2419,6 +2417,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Sep 05 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-213
+- Remove perl-devel dependency from perl-Test-Harness and perl-Test-Simple
+
 * Tue May 29 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.14.2-212
 - Fix find2perl to translate ? glob properly (bug #825701)
 
