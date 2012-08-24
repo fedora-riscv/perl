@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        230%{?dist}
+Release:        231%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1097,7 +1097,6 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        3.23
-Requires:       perl-devel
 Requires:       %perl_compat
 BuildArch:      noarch
 # Use rewritten module perl-Test-Harness
@@ -1114,7 +1113,6 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.98
-Requires:       perl-devel
 Requires:       %perl_compat
 Requires:       perl(Data::Dumper)
 BuildArch:      noarch
@@ -2629,6 +2627,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Aug 24 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-231
+- Remove perl-devel dependency from perl-Test-Harness and perl-Test-Simple
+
 * Mon Aug 13 2012 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.16.0-230
 - define perl_compat by macro for rebuilds
 - sub-packages depend on compat rather than on nvr
