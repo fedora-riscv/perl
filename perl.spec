@@ -358,6 +358,7 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.9600.01
+Requires:       perl(Data::Dumper)
 # CPAN encourages Digest::SHA strongly because of integrity checks
 Requires:       perl(Digest::SHA)
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
@@ -1592,9 +1593,11 @@ sed \
 
 # CPAN
 %exclude %{_bindir}/cpan
+%exclude %{privlib}/App/Cpan.pm
 %exclude %{privlib}/CPAN/
 %exclude %{privlib}/CPAN.pm
 %exclude %{_mandir}/man1/cpan.1*
+%exclude %{_mandir}/man3/App::Cpan.*
 %exclude %{_mandir}/man3/CPAN.*
 %exclude %{_mandir}/man3/CPAN:*
 
@@ -1911,7 +1914,7 @@ sed \
 
 # Test::Harness
 %exclude %{_bindir}/prove
-%exclude %{privlib}/App*
+%exclude %{privlib}/App/Prove*
 %exclude %{privlib}/TAP*
 %exclude %{privlib}/Test/Harness*
 %exclude %{_mandir}/man1/prove.1*
@@ -2040,9 +2043,11 @@ sed \
 
 %files CPAN
 %{_bindir}/cpan
+%{privlib}/App/Cpan.pm
 %{privlib}/CPAN/
 %{privlib}/CPAN.pm
 %{_mandir}/man1/cpan.1*
+%{_mandir}/man3/App::Cpan.*
 %{_mandir}/man3/CPAN.*
 %{_mandir}/man3/CPAN:*
 %exclude %{privlib}/CPAN/Meta/
@@ -2360,7 +2365,7 @@ sed \
 
 %files Test-Harness
 %{_bindir}/prove
-%{privlib}/App*
+%{privlib}/App/Prove*
 %{privlib}/TAP*
 %{privlib}/Test/Harness*
 %{_mandir}/man1/prove.1*
@@ -2419,6 +2424,7 @@ sed \
 %changelog
 * Wed Sep 05 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-213
 - Remove perl-devel dependency from perl-Test-Harness and perl-Test-Simple
+- Move App::Cpan from perl-Test-Harness to perl-CPAN (bug #854577)
 
 * Tue May 29 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.14.2-212
 - Fix find2perl to translate ? glob properly (bug #825701)
