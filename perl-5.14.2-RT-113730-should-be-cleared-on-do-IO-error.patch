@@ -1,0 +1,52 @@
+From c972fa9ce0ad91f72c8f5650ce1e3aae4a3b571a Mon Sep 17 00:00:00 2001
+From: Eric Brine <ikegami@adaelis.com>
+Date: Mon, 18 Jun 2012 14:56:32 -0400
+Subject: [PATCH] RT#113730 - $@ should be cleared on "do" IO error.
+
+Petr Pisar: Ported to 5.14.2:
+
+From a3ff80c12c16886edf9acdd3d172798e50defdb3 Mon Sep 17 00:00:00 2001
+From: Eric Brine <ikegami@adaelis.com>
+Date: Mon, 18 Jun 2012 14:56:32 -0400
+Subject: [PATCH] RT#113730 - $@ should be cleared on "do" IO error.
+---
+ pp_ctl.c  |  1 +
+ t/op/do.t | 12 ++++++++++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/pp_ctl.c b/pp_ctl.c
+index 60bc30d..3f2e6f5 100644
+--- a/pp_ctl.c
++++ b/pp_ctl.c
+@@ -3842,6 +3842,7 @@ PP(pp_require)
+ 	    DIE(aTHX_ "Can't locate %s", name);
+ 	}
+ 
++	CLEAR_ERRSV();
+ 	RETPUSHUNDEF;
+     }
+     else
+diff --git a/t/op/do.t b/t/op/do.t
+index 787d632..4c9f0ef 100644
+--- a/t/op/do.t
++++ b/t/op/do.t
+@@ -197,4 +197,16 @@ is($x, 4, 'if (0){} else { ...; @a } receives caller scalar context');
+ @x = sub { if (0){} else { 0; @a } }->();
+ is("@x", "24 25 26 27", 'if (0){} else { ...; @a } receives caller list context');
+ 
++# RT#113730 - $@ should be cleared on IO error.
++{
++    $@ = "should not see";
++    $! = 0;
++    my $rv = do("some nonexistent file");
++    my $saved_error = $@;
++    my $saved_errno = $!;
++    ok(!$rv,          "do returns false on io errror");
++    ok(!$saved_error, "\$\@ not set on io error");
++    ok($saved_errno,  "\$! set on io error");
++}
++
+ done_testing();
+-- 
+1.7.11.4
+
