@@ -85,11 +85,6 @@ Patch11:        perl-5.16.1-perl-111610-Trouble-with-XS-APItest-t-clone-with-sta
 # Match non-breakable space with /[\h]/ in ASCII mode, rhbz#844919, RT#114220
 Patch12:        perl-5.16.1-PATCH-perl-114220-h-not-equiv-to-h.patch
 
-# Fix searching for Unicode::Collate::Locale data, rhbz#756118, CPANRT#72666,
-# fixed in Unicode-Collate-0.87.
-# TODO Looks like it was fixed differently?
-#Patch13:        perl-5.14.2-locale-search-inc.patch
-
 # Clear $@ before `do' I/O error, rhbz#834226, RT#113730
 Patch13:        perl-5.16.1-RT-113730-should-be-cleared-on-do-IO-error.patch
 
