@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        213%{?dist}
+Release:        214%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -97,6 +97,9 @@ Patch15:        perl-5.14.2-Stop-V-from-leaking.patch
 
 # Fix find2perl to translate ? glob properly, rhbz#825701, RT#113054
 Patch16:        perl-5.14.2-find2perl-transtate-question-mark-properly.patch
+
+# Clear $@ before `do' I/O error, rhbz#834226, RT#113730
+Patch17:        perl-5.14.2-RT-113730-should-be-cleared-on-do-IO-error.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1265,6 +1268,7 @@ tarball from perl.org.
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1471,6 +1475,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch14: Run signal handlers before returning from sigsuspend' \
     'Fedora Patch15: Stop !$^V from leaking' \
     'Fedora Patch16: Fix find2perl to translate ? glob properly (RT#113054)' \
+    'Fedora Patch17: Clear $@ before "do" I/O error (RT#113730)' \
     %{nil}
 
 rm patchlevel.bak
@@ -2422,6 +2427,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Sep 11 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-214
+- Clear $@ before `do' I/O error (bug #834226)
+
 * Wed Sep 05 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-213
 - Remove perl-devel dependency from perl-Test-Harness and perl-Test-Simple
 - Move App::Cpan from perl-Test-Harness to perl-CPAN (bug #854577)
