@@ -1,0 +1,170 @@
+From 9eee62a53e8ec6881d4e6943be983b6486c78ce7 Mon Sep 17 00:00:00 2001
+From: Father Chrysostomos <sprout@cpan.org>
+Date: Sat, 31 Dec 2011 18:54:14 -0800
+Subject: [PATCH] Free hash entries before values on delete
+
+Petr Pisar: Ported for 5.14.2:
+
+From 3b2cd8095a6fc52afccf519205a3c5a92669b0c3 Mon Sep 17 00:00:00 2001
+From: Father Chrysostomos <sprout@cpan.org>
+Date: Sat, 31 Dec 2011 18:54:14 -0800
+Subject: [PATCH] [perl #100340] Free hash entries before values on delete
+
+When a hash element is deleted in void context, if the value is freed
+before the hash entry, it is possible for a destructor to see the hash
+in an inconsistent state--inconsistent in that it contains entries
+that are about to be freed, with nothing to indicate that.  So the
+destructor itself could free the very same hash entry (e.g., by
+freeing the hash), resulting in a double free, panic, or other
+unpleasantness.
+
+Petr Pisar: A few lines borrowed from:
+
+commit f50383f58716bc0faa50de094d47cad8ad3fcbdb
+Author: Ton Hospel <me-02@ton.iguana.be>
+Date:   Thu May 19 17:05:16 2011 -0700
+
+    [perl #85026] Deleting the current iterator in void context
+
+and
+
+commit 705822126c5e218f2fe40097f9f1a204474e864b
+Author: Father Chrysostomos <sprout@cpan.org>
+Date:   Wed Sep 21 00:59:02 2011 -0700
+
+    [perl #99660] Remove elems from hashes before freeing them
+
+and
+
+commit 5743f2a37eb9fda061f42b2df6b4c8119b14eaf1
+Author: Father Chrysostomos <sprout@cpan.org>
+Date:   Sat Dec 31 18:18:57 2011 -0800
+
+    Update method caches for non-void stash elem deletions
+---
+ hv.c          | 19 +++++++++++++++----
+ t/op/hash.t   | 30 +++++++++++++++++++++++++++++-
+ t/op/method.t |  7 ++++++-
+ 3 files changed, 50 insertions(+), 6 deletions(-)
+
+diff --git a/hv.c b/hv.c
+index 2be1feb..8731dbd 100644
+--- a/hv.c
++++ b/hv.c
+@@ -1050,12 +1050,20 @@ S_hv_delete_common(pTHX_ HV *hv, SV *keysv, const char *key, STRLEN klen,
+ 		    mro_changes = 1;
+ 	}
+ 
+-	if (d_flags & G_DISCARD)
+-	    sv = NULL;
++	if (d_flags & G_DISCARD) {
++	    sv = HeVAL(entry);
++	    HeVAL(entry) = &PL_sv_placeholder;
++	}
+ 	else {
+ 	    sv = sv_2mortal(HeVAL(entry));
+ 	    HeVAL(entry) = &PL_sv_placeholder;
+ 	}
++	if (sv) {
++	    /* deletion of method from stash */
++	    if (isGV(sv) && isGV_with_GP(sv) && GvCVu(sv)
++	     && HvENAME_get(hv))
++		mro_method_changed_in(hv);
++	}
+ 
+ 	/*
+ 	 * If a restricted hash, rather than really deleting the entry, put
+@@ -1064,8 +1072,6 @@ S_hv_delete_common(pTHX_ HV *hv, SV *keysv, const char *key, STRLEN klen,
+ 	 * an error.
+ 	 */
+ 	if (SvREADONLY(hv)) {
+-	    SvREFCNT_dec(HeVAL(entry));
+-	    HeVAL(entry) = &PL_sv_placeholder;
+ 	    /* We'll be saving this slot, so the number of allocated keys
+ 	     * doesn't go down, but the number placeholders goes up */
+ 	    HvPLACEHOLDERS(hv)++;
+@@ -1084,6 +1090,11 @@ S_hv_delete_common(pTHX_ HV *hv, SV *keysv, const char *key, STRLEN klen,
+ 	        HvHASKFLAGS_off(hv);
+ 	}
+ 
++	if (d_flags & G_DISCARD) {
++	    SvREFCNT_dec(sv);
++	    sv = NULL;
++	}
++
+ 	if (mro_changes == 1) mro_isa_changed_in(hv);
+ 	else if (mro_changes == 2)
+ 	    mro_package_moved(NULL, stash, gv, 1);
+diff --git a/t/op/hash.t b/t/op/hash.t
+index 278bea7..cb2667b 100644
+--- a/t/op/hash.t
++++ b/t/op/hash.t
+@@ -8,7 +8,7 @@ BEGIN {
+ 
+ use strict;
+ 
+-plan tests => 8;
++plan tests => 10;
+ 
+ my %h;
+ 
+@@ -146,3 +146,31 @@ is($destroyed, 1, 'Timely hash destruction with lvalue keys');
+     is ref $key, SCALAR =>
+      'hash keys are not stringified during compilation';
+ }
++
++# [perl #100340] Similar bug: freeing a hash elem during a delete
++sub guard::DESTROY {
++   ${$_[0]}->();
++};
++*guard = sub (&) {
++   my $callback = shift;
++   return bless \$callback, "guard"
++};
++{
++  my $ok;
++  my %t; %t = (
++    stash => {
++        guard => guard(sub{
++            $ok++;
++            delete $t{stash};
++        }),
++        foo => "bar",
++        bar => "baz",
++    },
++  );
++  ok eval { delete $t{stash}{guard}; # must be in void context
++            1 },
++    'freeing a hash elem from destructor called by delete does not die';
++  diag $@ if $@; # panic: free from wrong pool
++  is $ok, 1, 'the destructor was called';
++}
++
+diff --git a/t/op/method.t b/t/op/method.t
+index 3c00542..22ff53b 100644
+--- a/t/op/method.t
++++ b/t/op/method.t
+@@ -13,7 +13,7 @@ BEGIN {
+ use strict;
+ no warnings 'once';
+ 
+-plan(tests => 79);
++plan(tests => 80);
+ 
+ @A::ISA = 'B';
+ @B::ISA = 'C';
+@@ -85,6 +85,11 @@ is(A->d, "B::d2");		# Update hash table;
+ 
+ undef &B::d;
+ delete $B::{d};
++is(A->d, "C::d");
++
++eval 'sub B::d {"B::d2.5"}';
++A->d;                          # Update hash table;
++my $glob = \delete $B::{d};    # non-void context; hang on to the glob
+ is(A->d, "C::d");		# Update hash table;
+ 
+ eval 'sub B::d {"B::d3"}';	# Import now.
+-- 
+1.7.11.4
+
