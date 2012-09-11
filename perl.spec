@@ -93,6 +93,9 @@ Patch12:        perl-5.16.1-PATCH-perl-114220-h-not-equiv-to-h.patch
 # Clear $@ before `do' I/O error, rhbz#834226, RT#113730
 Patch13:        perl-5.16.1-RT-113730-should-be-cleared-on-do-IO-error.patch
 
+# Do not truncate syscall() return value to 32 bits, rhbz#838551, RT#113980
+Patch14:        perl-5.16.1-perl-113980-pp_syscall-I32-retval-truncates-the-retu.patch
+
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1313,6 +1316,7 @@ tarball from perl.org.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1518,6 +1522,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch11: Do not access freed memory when cloning thread (RT#111610)' \
     'Fedora Patch12: Match non-breakable space with /[\h]/ in ASCII mode (RT#114220)' \
     'Fedora Patch13: Clear $@ before "do" I/O error (RT#113730)' \
+    'Fedora Patch14: Do not truncate syscall() return value to 32 bits (RT#113980)' \
     %{nil}
 
 rm patchlevel.bak
@@ -2591,6 +2596,7 @@ sed \
 - Do not access freed memory when cloning thread (bug #825749)
 - Match non-breakable space with /[\h]/ in ASCII mode (bug #844919)
 - Clear $@ before `do' I/O error (bug #834226)
+- Do not truncate syscall() return value to 32 bits (bug #838551)
 
 * Wed Sep 05 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-229
 - Remove perl-devel dependency from perl-Test-Harness and perl-Test-Simple
