@@ -1,0 +1,83 @@
+From 4cf15b2d9def61a3bb49ac9b8729179fb6ce17c6 Mon Sep 17 00:00:00 2001
+From: Karl Williamson <public@khwilliamson.com>
+Date: Tue, 1 Nov 2011 17:57:15 -0600
+Subject: [PATCH] PATCH: [perl #101710] Regression with /i, latin1 chars.
+
+Petr Pisar: Ported to 5.14.2:
+
+From bbdd8bad57f8d77a4e6c3725a49d4d3589efedd7 Mon Sep 17 00:00:00 2001
+From: Karl Williamson <public@khwilliamson.com>
+Date: Tue, 1 Nov 2011 17:57:15 -0600
+Subject: [PATCH] PATCH: [perl #101710] Regression with /i, latin1 chars.
+
+The root cause of this bug is that it was assuming that a string was in
+utf8 when it wasn't, and so was thinking that a byte was a starter byte
+that wasn't, so was skipping ahead based on that starter byte.
+---
+ pod/perldelta.pod | 8 ++++++++
+ regexec.c         | 2 +-
+ t/re/pat.t        | 9 ++++++++-
+ 3 files changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/pod/perldelta.pod b/pod/perldelta.pod
+index 425708f..55e6e27 100644
+--- a/pod/perldelta.pod
++++ b/pod/perldelta.pod
+@@ -168,6 +168,14 @@ A panic involving the combination of the regular expression modifiers
+ C</aa> introduced in 5.14.0 and the C<\b> escape sequence has been
+ fixed [perl #95964].
+ 
++=item *
++
++A regression has been fixed that was introduced in 5.14, in C</i>
++regular expression matching, in which a match improperly fails if the
++pattern is in UTF-8, the target string is not, and a Latin-1 character
++precedes a character in the string that should match the pattern.  [perl
++#101710]
++
+ =back
+ 
+ =head1 Known Problems
+diff --git a/regexec.c b/regexec.c
+index 0dc093f..2354be1 100644
+--- a/regexec.c
++++ b/regexec.c
+@@ -1521,7 +1521,7 @@ S_find_byclass(pTHX_ regexp * prog, const regnode *c, char *s,
+ 		{
+ 		    goto got_it;
+ 		}
+-		s += UTF8SKIP(s);
++		s += (utf8_target) ? UTF8SKIP(s) : 1;
+ 	    }
+ 	    break;
+ 	case BOUNDL:
+diff --git a/t/re/pat.t b/t/re/pat.t
+index 4ef9663..4eb05c6 100644
+--- a/t/re/pat.t
++++ b/t/re/pat.t
+@@ -21,7 +21,7 @@ BEGIN {
+     require './test.pl';
+ }
+ 
+-plan tests => 451;  # Update this when adding/deleting tests.
++plan tests => 452;  # Update this when adding/deleting tests.
+ 
+ run_tests() unless caller;
+ 
+@@ -1167,6 +1167,13 @@ sub run_tests {
+         is($got,$want,'RT #84294: check that "ab" =~ /((\w+)(?{ push @got, $2 })){2}/ leaves @got in the correct state');
+     }
+ 
++
++    { # [perl #101710]
++        my $pat = "b";
++        utf8::upgrade($pat);
++        like("\xffb", qr/$pat/i, "/i: utf8 pattern, non-utf8 string, latin1-char preceding matching char in string");
++    }
++
+ } # End of sub run_tests
+ 
+ 1;
+-- 
+1.7.11.4
+
