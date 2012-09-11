@@ -85,6 +85,9 @@ Patch10:        perl-5.16.0-fix-broken-atof.patch
 # Do not access freed memory when cloning thread, rhbz#825749, RT#111610
 Patch11:        perl-5.16.1-perl-111610-Trouble-with-XS-APItest-t-clone-with-sta.patch
 
+# Match non-breakable space with /[\h]/ in ASCII mode, rhbz#844919, RT#114220
+Patch12:        perl-5.16.1-PATCH-perl-114220-h-not-equiv-to-h.patch
+
 # Fix searching for Unicode::Collate::Locale data, rhbz#756118, CPANRT#72666,
 # fixed in Unicode-Collate-0.87.
 # TODO Looks like it was fixed differently?
@@ -1323,6 +1326,7 @@ tarball from perl.org.
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1526,6 +1530,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch9: Fix find2perl to translate ? glob properly (RT#113054)' \
     'Fedora Patch10: Fix broken atof (RT#109318)' \
     'Fedora Patch11: Do not access freed memory when cloning thread (RT#111610)' \
+    'Fedora Patch12: Match non-breakable space with /[\h]/ in ASCII mode (RT#114220)' \
     %{nil}
 
 rm patchlevel.bak
@@ -2639,6 +2644,7 @@ sed \
 %changelog
 * Tue Sep 11 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-233
 - Do not access freed memory when cloning thread (bug #825749)
+- Match non-breakable space with /[\h]/ in ASCII mode (bug #844919)
 
 * Wed Sep 05 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-232
 - Move App::Cpan from perl-Test-Harness to perl-CPAN (bug #854577)
