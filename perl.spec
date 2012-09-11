@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        232%{?dist}
+Release:        233%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -81,6 +81,9 @@ Patch9:         perl-5.14.2-find2perl-transtate-question-mark-properly.patch
 
 # Fix broken atof, rhbz#835452, RT#109318
 Patch10:        perl-5.16.0-fix-broken-atof.patch
+
+# Do not access freed memory when cloning thread, rhbz#825749, RT#111610
+Patch11:        perl-5.16.1-perl-111610-Trouble-with-XS-APItest-t-clone-with-sta.patch
 
 # Fix searching for Unicode::Collate::Locale data, rhbz#756118, CPANRT#72666,
 # fixed in Unicode-Collate-0.87.
@@ -1319,6 +1322,7 @@ tarball from perl.org.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1521,6 +1525,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch7: Dont run one io test due to random builder failures' \
     'Fedora Patch9: Fix find2perl to translate ? glob properly (RT#113054)' \
     'Fedora Patch10: Fix broken atof (RT#109318)' \
+    'Fedora Patch11: Do not access freed memory when cloning thread (RT#111610)' \
     %{nil}
 
 rm patchlevel.bak
@@ -2632,6 +2637,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Sep 11 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-233
+- Do not access freed memory when cloning thread (bug #825749)
+
 * Wed Sep 05 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-232
 - Move App::Cpan from perl-Test-Harness to perl-CPAN (bug #854577)
 
