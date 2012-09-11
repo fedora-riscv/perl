@@ -99,6 +99,9 @@ Patch16:        perl-5.14.2-find2perl-transtate-question-mark-properly.patch
 # Clear $@ before `do' I/O error, rhbz#834226, RT#113730
 Patch17:        perl-5.14.2-RT-113730-should-be-cleared-on-do-IO-error.patch
 
+# Do not truncate syscall() return value to 32 bits, rhbz#838551, RT#113980
+Patch18:        perl-5.16.1-perl-113980-pp_syscall-I32-retval-truncates-the-retu.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -1148,6 +1151,7 @@ tarball from perl.org.
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
+%patch18 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1346,6 +1350,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch15: Stop !$^V from leaking' \
     'Fedora Patch16: Fix find2perl to translate ? glob properly (RT#113054)' \
     'Fedora Patch17: Clear $@ before "do" I/O error (RT#113730)' \
+    'Fedora Patch18: Do not truncate syscall() return value to 32 bits (RT#113980)' \
     %{nil}
 
 rm patchlevel.bak
@@ -2237,6 +2242,7 @@ sed \
 %changelog
 * Tue Sep 11 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-200
 - Clear $@ before `do' I/O error (bug #834226)
+- Do not truncate syscall() return value to 32 bits (bug #838551)
 
 * Wed Sep 05 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-199
 - Remove perl-devel dependency from perl-Test-Harness and perl-Test-Simple
