@@ -107,6 +107,9 @@ Patch18:        perl-5.16.1-perl-113980-pp_syscall-I32-retval-truncates-the-retu
 # Match starting byte in non-UTF-8 mode, rhbz#801739, RT#101710
 Patch19:        perl-5.14.2-PATCH-perl-101710-Regression-with-i-latin1-chars.patch
 
+# Free hash entries before values on delete, rhbz#771303, RT#100340
+Patch20:        perl-5.14.2-perl-100340-Free-hash-entries-before-values-on-delet.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -1277,6 +1280,7 @@ tarball from perl.org.
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
+%patch20 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1486,6 +1490,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch17: Clear $@ before "do" I/O error (RT#113730)' \
     'Fedora Patch18: Do not truncate syscall() return value to 32 bits (RT#113980)' \
     'Fedora Patch19: Match starting byte in non-UTF-8 mode (RT#101710)' \
+    'Fedora Patch20: Free hash entries before values on delete (RT#100340)' \
     %{nil}
 
 rm patchlevel.bak
@@ -2441,6 +2446,7 @@ sed \
 - Clear $@ before `do' I/O error (bug #834226)
 - Do not truncate syscall() return value to 32 bits (bug #838551)
 - Match starting byte in non-UTF-8 mode (bug #801739)
+- Free hash entries before values on delete (bug #771303)
 
 * Wed Sep 05 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-213
 - Remove perl-devel dependency from perl-Test-Harness and perl-Test-Simple
