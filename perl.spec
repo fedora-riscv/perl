@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        233%{?dist}
+Release:        234%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1066,6 +1066,27 @@ Pod::Simple is a Perl library for parsing text in the Pod ("plain old
 documentation") markup language that is typically used for writing
 documentation for Perl and for Perl modules.
 
+# TODO: Conditionalize once standalone package gets into distribution (#856516)
+%package podlators
+Summary:        Format POD source into various output formats
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.4.0
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(File::Spec) >= 0.8
+Requires:       perl(Pod::Simple) >= 3.06
+Requires:       perl(Pod::Text::Color)
+Requires:       perl(Pod::Text::Overstrike)
+Requires:       perl(Pod::Text::Termcap)
+
+%description podlators
+This package contains Pod::Man and Pod::Text modules which convert POD input
+to *roff source output, suitable for man pages, or plain text.  It also
+includes several sub-classes of Pod::Text for formatted output to terminals
+with various capabilities.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Scalar-List-Utils
 Summary:        A selection of general-utility scalar and list subroutines
@@ -2016,6 +2037,21 @@ sed \
 %exclude %{_mandir}/man1/perldoc.1*
 %exclude %{_mandir}/man3/Pod::Perldoc*
 
+# podlators
+%exclude %{_bindir}/pod2man
+%exclude %{_bindir}/pod2text
+%exclude %{privlib}/pod/perlpodstyle.pod
+%exclude %{privlib}/Pod/Man.pm
+%exclude %{privlib}/Pod/ParseLink.pm
+%exclude %{privlib}/Pod/Text
+%exclude %{privlib}/Pod/Text.pm
+%exclude %{_mandir}/man1/pod2man.1*
+%exclude %{_mandir}/man1/pod2text.1*
+%exclude %{_mandir}/man1/perlpodstyle.1*
+%exclude %{_mandir}/man3/Pod::Man*
+%exclude %{_mandir}/man3/Pod::ParseLink*
+%exclude %{_mandir}/man3/Pod::Text*
+
 # Pod-Simple
 %exclude %{privlib}/Pod/Simple/
 %exclude %{privlib}/Pod/Simple.pm
@@ -2549,6 +2585,22 @@ sed \
 %{_mandir}/man3/Pod::Perldoc*
 %endif
 
+# TODO: Conditionalize once standalone package gets into distribution (#856516)
+%files podlators
+%{_bindir}/pod2man
+%{_bindir}/pod2text
+%{privlib}/pod/perlpodstyle.pod
+%{privlib}/Pod/Man.pm
+%{privlib}/Pod/ParseLink.pm
+%{privlib}/Pod/Text
+%{privlib}/Pod/Text.pm
+%{_mandir}/man1/pod2man.1*
+%{_mandir}/man1/pod2text.1*
+%{_mandir}/man1/perlpodstyle.1*
+%{_mandir}/man3/Pod::Man*
+%{_mandir}/man3/Pod::ParseLink*
+%{_mandir}/man3/Pod::Text*
+
 %files Pod-Simple
 %{privlib}/Pod/Simple/ 
 %{privlib}/Pod/Simple.pm
@@ -2646,6 +2698,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Sep 12 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-234
+- Sub-package perl-podlators (bug #856516)
+
 * Tue Sep 11 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-233
 - Do not access freed memory when cloning thread (bug #825749)
 - Match non-breakable space with /[\h]/ in ASCII mode (bug #844919)
