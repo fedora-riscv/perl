@@ -26,7 +26,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        230%{?dist}
+Release:        231%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -90,6 +90,10 @@ Patch13:        perl-5.16.1-RT-113730-should-be-cleared-on-do-IO-error.patch
 
 # Do not truncate syscall() return value to 32 bits, rhbz#838551, RT#113980
 Patch14:        perl-5.16.1-perl-113980-pp_syscall-I32-retval-truncates-the-retu.patch
+
+# Override the Pod::Simple::parse_file, rhbz#826872, CPANRT#77530, in
+# podlators-2.4.1
+Patch15:        perl-5.14.2-Override-the-Pod-Simple-parse_file.patch
 
 
 # Update some of the bundled modules
@@ -1312,6 +1316,7 @@ tarball from perl.org.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1518,6 +1523,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch12: Match non-breakable space with /[\h]/ in ASCII mode (RT#114220)' \
     'Fedora Patch13: Clear $@ before "do" I/O error (RT#113730)' \
     'Fedora Patch14: Do not truncate syscall() return value to 32 bits (RT#113980)' \
+    'Fedora Patch15: Override the Pod::Simple::parse_file (CPANRT#77530)' \
     %{nil}
 
 rm patchlevel.bak
@@ -2587,6 +2593,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Sep 14 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-231
+- Override the Pod::Simple::parse_file to set output to STDOUT by default
+  (bug #826872)
+
 * Tue Sep 11 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-230
 - Do not access freed memory when cloning thread (bug #825749)
 - Match non-breakable space with /[\h]/ in ASCII mode (bug #844919)
