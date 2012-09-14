@@ -22,7 +22,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        200%{?dist}
+Release:        201%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -107,6 +107,10 @@ Patch19:        perl-5.14.2-PATCH-perl-101710-Regression-with-i-latin1-chars.pat
 
 # Free hash entries before values on delete, rhbz#771303, RT#100340
 Patch20:        perl-5.14.2-perl-100340-Free-hash-entries-before-values-on-delet.patch
+
+# Override the Pod::Simple::parse_file, rhbz#826872, CPANRT#77530, in
+# podlators-2.4.1
+Patch21:        perl-5.14.2-Override-the-Pod-Simple-parse_file.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1160,6 +1164,7 @@ tarball from perl.org.
 %patch18 -p1
 %patch19 -p1
 %patch20 -p1
+%patch21 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1361,6 +1366,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch18: Do not truncate syscall() return value to 32 bits (RT#113980)' \
     'Fedora Patch19: Match starting byte in non-UTF-8 mode (RT#101710)' \
     'Fedora Patch20: Free hash entries before values on delete (RT#100340)' \
+    'Fedora Patch21: Override the Pod::Simple::parse_file (CPANRT#77530)' \
     %{nil}
 
 rm patchlevel.bak
@@ -2250,6 +2256,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Sep 14 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-201
+- Override the Pod::Simple::parse_file to set output to STDOUT by default
+  (bug #826872)
+
 * Tue Sep 11 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-200
 - Clear $@ before `do' I/O error (bug #834226)
 - Do not truncate syscall() return value to 32 bits (bug #838551)
