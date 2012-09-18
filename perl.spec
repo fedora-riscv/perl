@@ -944,12 +944,12 @@ for a Constants.pm file.
 # this version wasn't released on cpan, cant put it into separated git
 %package PathTools
 Summary:        PathTools Perl module (Cwd, File::Spec)
-# PathTools aka File::Spec
 Group:          Development/Libraries
 License:        (GPL+ or Artistic) and BSD
 Epoch:          0
 Version:        3.39.2
 Requires:       %perl_compat
+Requires:       perl(Carp)
 
 %description PathTools
 PathTools Perl module (Cwd, File::Spec).
@@ -2711,6 +2711,7 @@ sed \
 %changelog
 * Tue Sep 18 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-236
 - Remove bundled perl-ExtUtils-Manifest
+- perl-PathTools uses Carp
 
 * Fri Sep 14 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-235
 - Override the Pod::Simple::parse_file to set output to STDOUT by default
