@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        235%{?dist}
+Release:        236%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -571,6 +571,7 @@ BuildArch:      noarch
 Create a module Makefile.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package ExtUtils-Manifest
 Summary:        Utilities to write and check a MANIFEST file
 Group:          Development/Languages
@@ -579,10 +580,12 @@ Epoch:          0
 Version:        1.61
 Requires:       perl-devel
 Requires:       %perl_compat
+Requires:       perl(File::Path)
 BuildArch:      noarch
 
 %description ExtUtils-Manifest
 %{summary}.
+%endif
 
 %package ExtUtils-ParseXS
 Summary:        Module and a script for converting Perl XS code into C code
@@ -2299,10 +2302,12 @@ sed \
 %{_mandir}/man3/ExtUtils::Installed.3*
 %{_mandir}/man3/ExtUtils::Packlist.3*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-Manifest
 %{privlib}/ExtUtils/Manifest.pm
 %{privlib}/ExtUtils/MANIFEST.SKIP
 %{_mandir}/man3/ExtUtils::Manifest.3*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-MakeMaker
@@ -2704,7 +2709,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Fri Sep 14 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-231
+* Tue Sep 18 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-236
+- Remove bundled perl-ExtUtils-Manifest
+
+* Fri Sep 14 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-235
 - Override the Pod::Simple::parse_file to set output to STDOUT by default
   (bug #826872)
 
