@@ -26,7 +26,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        231%{?dist}
+Release:        232%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -930,12 +930,12 @@ for a Constants.pm file.
 
 %package PathTools
 Summary:        PathTools Perl module (Cwd, File::Spec)
-# PathTools aka File::Spec
 Group:          Development/Libraries
 License:        (GPL+ or Artistic) and BSD
 Epoch:          0
 Version:        3.39.2
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl(Carp)
 
 %description PathTools
 PathTools Perl module (Cwd, File::Spec).
@@ -2593,6 +2593,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Sep 21 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-232
+- perl-PathTools uses Carp
+
 * Fri Sep 14 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-231
 - Override the Pod::Simple::parse_file to set output to STDOUT by default
   (bug #826872)
