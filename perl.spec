@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        236%{?dist}
+Release:        237%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1330,7 +1330,7 @@ Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Me
 Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Constants, perl-PathTools
 Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
 Requires:       perl-Pod-Escapes, perl-Pod-Parser, perl-Pod-Perldoc
-Requires:       perl-Pod-Simple
+Requires:       perl-podlators, perl-Pod-Simple
 Requires:       perl-Socket, perl-Term-UI, perl-Test-Harness, perl-Test-Simple
 Requires:       perl-Time-Piece, perl-Version-Requirements, perl-version
 Requires:       perl-threads, perl-threads-shared, perl-parent
@@ -2709,6 +2709,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Sep 20 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-237
+- Put perl-podlators into perl-core list (bug #856516)
+
 * Tue Sep 18 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-236
 - Remove bundled perl-ExtUtils-Manifest
 - perl-PathTools uses Carp
