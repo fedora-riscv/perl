@@ -1592,7 +1592,8 @@ sed \
 #%%fix_shbang_line $T_FILES
 #%%{__chmod} +x $T_FILES
 #%%{_fixperms} %%{buildroot}%%{perl5_testdir}
-
+#
+# lib/perl5db.t will fail if Term::ReadLine::Gnu is available
 %check
 %if %{with test}
 %if %{parallel_tests}
