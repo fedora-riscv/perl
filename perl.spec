@@ -103,6 +103,9 @@ Patch16:        perl-5.16.1-perl-114764-Stop-my-vars-with-attrs-from-leaking.pat
 # fixed after 5.17.4
 Patch17:        perl-5.16.1-perl-105924-require-1-2.patch
 
+# Extend stack in File::Glob::glob, rhbz#859332, RT#114984, fixed after 5.17.4
+Patch18:        perl-5.16.1-perl-114984-Glob.xs-Extend-stack-when-returning.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -1326,6 +1329,7 @@ tarball from perl.org.
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
+%patch18 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1535,6 +1539,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch15: Override the Pod::Simple::parse_file (CPANRT#77530)' \
     'Fedora Patch16: Do not leak with attribute on my variable (RT#114764)' \
     'Fedora Patch17: Allow operator after numeric keyword argument (RT#105924)' \
+    'Fedora Patch18: Extend stack in File::Glob::glob, (RT#114984)' \
     %{nil}
 
 rm patchlevel.bak
@@ -2608,6 +2613,7 @@ sed \
 - perl-PathTools uses Carp
 - Do not leak with attribute on my variable (bug #858966)
 - Allow operator after numeric keyword argument (bug #859328)
+- Extend stack in File::Glob::glob (bug #859332)
 
 * Fri Sep 14 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-231
 - Override the Pod::Simple::parse_file to set output to STDOUT by default
