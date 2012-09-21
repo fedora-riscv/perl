@@ -102,6 +102,10 @@ Patch15:        perl-5.14.2-Override-the-Pod-Simple-parse_file.patch
 # fixed after 5.17.4
 Patch16:        perl-5.16.1-perl-114764-Stop-my-vars-with-attrs-from-leaking.patch
 
+# Allow operator after numeric keyword argument, rhbz#859328, RT#105924,
+# fixed after 5.17.4
+Patch17:        perl-5.16.1-perl-105924-require-1-2.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -1362,6 +1366,7 @@ tarball from perl.org.
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1570,6 +1575,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch14: Do not truncate syscall() return value to 32 bits (RT#113980)' \
     'Fedora Patch15: Override the Pod::Simple::parse_file (CPANRT#77530)' \
     'Fedora Patch16: Do not leak with attribute on my variable (RT#114764)' \
+    'Fedora Patch17: Allow operator after numeric keyword argument (RT#105924)' \
     %{nil}
 
 rm patchlevel.bak
@@ -2716,6 +2722,7 @@ sed \
 %changelog
 * Fri Sep 21 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-238
 - Do not leak with attribute on my variable (bug #858966)
+- Allow operator after numeric keyword argument (bug #859328)
 
 * Thu Sep 20 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-237
 - Put perl-podlators into perl-core list (bug #856516)
