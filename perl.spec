@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        238%{?dist}
+Release:        239%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1097,6 +1097,7 @@ Requires:       perl(Pod::Simple) >= 3.06
 Requires:       perl(Pod::Text::Color)
 Requires:       perl(Pod::Text::Overstrike)
 Requires:       perl(Pod::Text::Termcap)
+Conflicts:      perl < 4:5.16.1-234
 
 %description podlators
 This package contains Pod::Man and Pod::Text modules which convert POD input
@@ -2726,6 +2727,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Sep 24 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-239
+- Conflict perl-podlators with perl before sub-packaging (bug #856516)
+
 * Fri Sep 21 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-238
 - Do not leak with attribute on my variable (bug #858966)
 - Allow operator after numeric keyword argument (bug #859328)
