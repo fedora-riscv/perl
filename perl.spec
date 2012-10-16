@@ -1,4 +1,4 @@
-%global perl_version    5.14.2
+%global perl_version    5.14.3
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        215%{?dist}
+Release:        216%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -70,9 +70,6 @@ Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
 # switch off test, which is failing only on koji (fork)
 Patch8:         perl-5.14.1-offtest.patch
 
-# Fix code injection in Digest, rhbz #743010, RT#71390, fixed in Digest-1.17.
-Patch9:         perl-5.14.2-digest_eval.patch
-
 # Change Perl_repeatcpy() prototype to allow repeat count above 2^31
 # rhbz #720610, Perl RT#94560, accepted as v5.15.4-24-g26e1303.
 Patch10:        perl-5.14.2-large-repeat-heap-abuse.patch
@@ -104,9 +101,6 @@ Patch17:        perl-5.14.2-RT-113730-should-be-cleared-on-do-IO-error.patch
 # Do not truncate syscall() return value to 32 bits, rhbz#838551, RT#113980
 Patch18:        perl-5.16.1-perl-113980-pp_syscall-I32-retval-truncates-the-retu.patch
 
-# Match starting byte in non-UTF-8 mode, rhbz#801739, RT#101710
-Patch19:        perl-5.14.2-PATCH-perl-101710-Regression-with-i-latin1-chars.patch
-
 # Free hash entries before values on delete, rhbz#771303, RT#100340
 Patch20:        perl-5.14.2-perl-100340-Free-hash-entries-before-values-on-delet.patch
 
@@ -128,6 +122,7 @@ BuildRequires:  procps, rsyslog
 # The long line of Perl provides.
 
 # Compat provides
+Provides: perl(:MODULE_COMPAT_5.14.3)
 Provides: perl(:MODULE_COMPAT_5.14.2)
 Provides: perl(:MODULE_COMPAT_5.14.1)
 Provides: perl(:MODULE_COMPAT_5.14.0)
@@ -1273,7 +1268,6 @@ tarball from perl.org.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
-%patch9 -p1
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
@@ -1283,7 +1277,6 @@ tarball from perl.org.
 %patch16 -p1
 %patch17 -p1
 %patch18 -p1
-%patch19 -p1
 %patch20 -p1
 %patch21 -p1
 
@@ -1484,7 +1477,6 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch5: USE_MM_LD_RUN_PATH' \
     'Fedora Patch6: Skip hostname tests, due to builders not being network capable' \
     'Fedora Patch7: Dont run one io test due to random builder failures' \
-    'Fedora Patch9: Fix code injection in Digest->new()' \
     'Fedora Patch10: Change Perl_repeatcpy() to allow count above 2^31' \
     'Fedora Patch11: Fix leak with non-matching named captures' \
     'Fedora Patch12: Fix interrupted reading' \
@@ -1494,7 +1486,6 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch16: Fix find2perl to translate ? glob properly (RT#113054)' \
     'Fedora Patch17: Clear $@ before "do" I/O error (RT#113730)' \
     'Fedora Patch18: Do not truncate syscall() return value to 32 bits (RT#113980)' \
-    'Fedora Patch19: Match starting byte in non-UTF-8 mode (RT#101710)' \
     'Fedora Patch20: Free hash entries before values on delete (RT#100340)' \
     'Fedora Patch21: Override the Pod::Simple::parse_file (CPANRT#77530)' \
     %{nil}
@@ -2448,6 +2439,11 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Oct 15 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.14.3-216
+- 5.14.3 bump (see
+  https://metacpan.org/module/DOM/perl-5.14.3/pod/perldelta.pod for release
+  notes).
+
 * Fri Sep 14 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.2-215
 - Override the Pod::Simple::parse_file to set output to STDOUT by default
   (bug #826872)
