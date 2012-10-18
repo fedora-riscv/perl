@@ -1,0 +1,51 @@
+diff --git a/gv.c b/gv.c
+index f352452..cf02ca4 100644
+--- a/gv.c
++++ b/gv.c
+@@ -1504,10 +1504,6 @@ Perl_gv_fetchpvn_flags(pTHX_ const char
+ 		Perl_ck_warner_d(aTHX_ packWARN2(WARN_DEPRECATED, WARN_SYNTAX),
+ 				 "$%c is no longer supported", *name);
+ 	    break;
+-	case '|':		/* $| */
+-	    sv_setiv(GvSVn(gv), (IV)(IoFLAGS(GvIOp(PL_defoutgv)) & IOf_FLUSH) != 0);
+-	    goto magicalize;
+-
+ 	case '\010':	/* $^H */
+ 	    {
+ 		HV *const hv = GvHVn(gv);
+@@ -1540,6 +1536,7 @@ Perl_gv_fetchpvn_flags(pTHX_ const char
+ 	case '>':		/* $> */
+ 	case '\\':		/* $\ */
+ 	case '/':		/* $/ */
++	case '|':		/* $| */
+ 	case '\001':	/* $^A */
+ 	case '\003':	/* $^C */
+ 	case '\004':	/* $^D */
+diff --git a/t/op/magic.t b/t/op/magic.t
+index 3fb1ea1..1bcfbd9 100644
+--- a/t/op/magic.t
++++ b/t/op/magic.t
+@@ -12,7 +12,7 @@ BEGIN {
+ use warnings;
+ use Config;
+ 
+-plan (tests => 87);
++plan (tests => 88);
+ 
+ $Is_MSWin32  = $^O eq 'MSWin32';
+ $Is_NetWare  = $^O eq 'NetWare';
+@@ -471,6 +471,11 @@ foreach my $sig (qw(__DIE__ _BOGUS_HOOK
+ 
+ }
+ 
++# $|
++fresh_perl_is
++ 'select f; undef *f; ${q/|/}; print STDOUT qq|ok\n|', "ok\n", {}, 
++ '[perl #115206] no crash when vivifying $| while *{+select}{IO} is undef';
++
+ # ^^^^^^^^^ New tests go here ^^^^^^^^^
+ 
+ SKIP: {
+-- 
+1.7.7.6
+

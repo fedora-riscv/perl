@@ -24,7 +24,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        216%{?dist}
+Release:        217%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -100,6 +100,9 @@ Patch17:        perl-5.14.2-RT-113730-should-be-cleared-on-do-IO-error.patch
 
 # Do not truncate syscall() return value to 32 bits, rhbz#838551, RT#113980
 Patch18:        perl-5.16.1-perl-113980-pp_syscall-I32-retval-truncates-the-retu.patch
+
+# Do not crash when vivifying $|, rhbz#865296, RT#115206
+Patch19:        perl-5.16.1-perl-115206-Don-t-crash-when-vivifying.patch
 
 # Free hash entries before values on delete, rhbz#771303, RT#100340
 Patch20:        perl-5.14.2-perl-100340-Free-hash-entries-before-values-on-delet.patch
@@ -1277,6 +1280,7 @@ tarball from perl.org.
 %patch16 -p1
 %patch17 -p1
 %patch18 -p1
+%patch19 -p1
 %patch20 -p1
 %patch21 -p1
 
@@ -1486,6 +1490,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch16: Fix find2perl to translate ? glob properly (RT#113054)' \
     'Fedora Patch17: Clear $@ before "do" I/O error (RT#113730)' \
     'Fedora Patch18: Do not truncate syscall() return value to 32 bits (RT#113980)' \
+    'Fedora Patch19: Do not crash when vivifying $|' \
     'Fedora Patch20: Free hash entries before values on delete (RT#100340)' \
     'Fedora Patch21: Override the Pod::Simple::parse_file (CPANRT#77530)' \
     %{nil}
@@ -2439,6 +2444,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Oct 17 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.14.3-217
+- Do not crash when vivifying $| (bug #865296)
+
 * Mon Oct 15 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.14.3-216
 - 5.14.3 bump (see
   https://metacpan.org/module/DOM/perl-5.14.3/pod/perldelta.pod for release
