@@ -26,7 +26,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        232%{?dist}
+Release:        233%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -105,6 +105,9 @@ Patch17:        perl-5.16.1-perl-105924-require-1-2.patch
 
 # Extend stack in File::Glob::glob, rhbz#859332, RT#114984, fixed after 5.17.4
 Patch18:        perl-5.16.1-perl-114984-Glob.xs-Extend-stack-when-returning.patch
+
+# Do not crash when vivifying $|, rhbz#865296, RT#115206
+Patch19:        perl-5.16.1-perl-115206-Don-t-crash-when-vivifying.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1330,6 +1333,7 @@ tarball from perl.org.
 %patch16 -p1
 %patch17 -p1
 %patch18 -p1
+%patch19 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1540,6 +1544,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch16: Do not leak with attribute on my variable (RT#114764)' \
     'Fedora Patch17: Allow operator after numeric keyword argument (RT#105924)' \
     'Fedora Patch18: Extend stack in File::Glob::glob, (RT#114984)' \
+    'Fedora Patch19: Do not crash when vivifying $|' \
     %{nil}
 
 rm patchlevel.bak
@@ -2610,6 +2615,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Oct 17 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.16.1-233
+- Do not crash when vivifying $| (bug #865296)
+
 * Fri Sep 21 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-232
 - perl-PathTools uses Carp
 - Do not leak with attribute on my variable (bug #858966)
