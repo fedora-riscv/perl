@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        240%{?dist}
+Release:        241%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1086,7 +1086,7 @@ Pod::Simple is a Perl library for parsing text in the Pod ("plain old
 documentation") markup language that is typically used for writing
 documentation for Perl and for Perl modules.
 
-# TODO: Conditionalize once standalone package gets into distribution (#856516)
+%if %{dual_life} || %{rebuild_from_scratch}
 %package podlators
 Summary:        Format POD source into various output formats
 Group:          Development/Libraries
@@ -1107,6 +1107,7 @@ This package contains Pod::Man and Pod::Text modules which convert POD input
 to *roff source output, suitable for man pages, or plain text.  It also
 includes several sub-classes of Pod::Text for formatted output to terminals
 with various capabilities.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Scalar-List-Utils
@@ -2619,7 +2620,7 @@ sed \
 %{_mandir}/man3/Pod::Perldoc*
 %endif
 
-# TODO: Conditionalize once standalone package gets into distribution (#856516)
+%if %{dual_life} || %{rebuild_from_scratch}
 %files podlators
 %{_bindir}/pod2man
 %{_bindir}/pod2text
@@ -2634,6 +2635,7 @@ sed \
 %{_mandir}/man3/Pod::Man*
 %{_mandir}/man3/Pod::ParseLink*
 %{_mandir}/man3/Pod::Text*
+%endif
 
 %files Pod-Simple
 %{privlib}/Pod/Simple/ 
@@ -2732,6 +2734,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Oct 31 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.1-241
+- Remove bundled podlators (bug #856516)
+
 * Wed Oct 17 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.16.1-240
 - Do not crash when vivifying $| (bug #865296)
 
