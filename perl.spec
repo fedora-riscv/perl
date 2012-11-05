@@ -125,10 +125,11 @@ BuildRequires:  procps, rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.16.1)
+%global perl_compat perl(:MODULE_COMPAT_5.16.2)
 
 # Compat provides
 Provides: %perl_compat
+Provides: perl(:MODULE_COMPAT_5.16.1)
 Provides: perl(:MODULE_COMPAT_5.16.0)
 
 # Threading provides
