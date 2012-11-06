@@ -1,4 +1,4 @@
-%global perl_version    5.16.1
+%global perl_version    5.16.2
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -26,7 +26,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        233%{?dist}
+Release:        234%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -82,9 +82,6 @@ Patch10:        perl-5.16.0-fix-broken-atof.patch
 # Do not access freed memory when cloning thread, rhbz#825749, RT#111610
 Patch11:        perl-5.16.1-perl-111610-Trouble-with-XS-APItest-t-clone-with-sta.patch
 
-# Match non-breakable space with /[\h]/ in ASCII mode, rhbz#844919, RT#114220
-Patch12:        perl-5.16.1-PATCH-perl-114220-h-not-equiv-to-h.patch
-
 # Clear $@ before `do' I/O error, rhbz#834226, RT#113730
 Patch13:        perl-5.16.1-RT-113730-should-be-cleared-on-do-IO-error.patch
 
@@ -124,6 +121,7 @@ BuildRequires:  procps, rsyslog
 # The long line of Perl provides.
 
 # Compat provides
+Provides: perl(:MODULE_COMPAT_5.16.2)
 Provides: perl(:MODULE_COMPAT_5.16.1)
 Provides: perl(:MODULE_COMPAT_5.16.0)
 
@@ -1326,7 +1324,6 @@ tarball from perl.org.
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
-%patch12 -p1
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
@@ -1537,7 +1534,6 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch9: Fix find2perl to translate ? glob properly (RT#113054)' \
     'Fedora Patch10: Fix broken atof (RT#109318)' \
     'Fedora Patch11: Do not access freed memory when cloning thread (RT#111610)' \
-    'Fedora Patch12: Match non-breakable space with /[\h]/ in ASCII mode (RT#114220)' \
     'Fedora Patch13: Clear $@ before "do" I/O error (RT#113730)' \
     'Fedora Patch14: Do not truncate syscall() return value to 32 bits (RT#113980)' \
     'Fedora Patch15: Override the Pod::Simple::parse_file (CPANRT#77530)' \
@@ -2615,6 +2611,11 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Nov 06 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.16.2-234
+- 5.16.2 bump (see
+  http://search.cpan.org/dist/perl-5.16.2/pod/perldelta.pod for release
+  notes)
+
 * Wed Oct 17 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.16.1-233
 - Do not crash when vivifying $| (bug #865296)
 
