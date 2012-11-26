@@ -7,6 +7,9 @@
 %global parallel_tests 1
 %global tapsetdir   %{_datadir}/systemtap/tapset
 
+%global dual_life 0
+%global rebuild_from_scratch 0
+
 # This set overrides filters from build root (/etc/rpm/macros.perl)
 # intentionally (e.g. the perl(DB))
 %global __provides_exclude_from .*/auto/.*\\.so$|.*/%{perl_archlib}/.*\\.so$|%{_docdir}
@@ -22,7 +25,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        202%{?dist}
+Release:        203%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -281,6 +284,7 @@ IO::Zlib module installed, Archive::Tar will also support compressed or
 gzipped tar files.
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package CGI
 Summary:        Handle Common Gateway Interface requests and responses
 Group:          Development/Libraries
@@ -307,6 +311,7 @@ generation utilities are included as well.
 
 CGI.pm performs very well in in a vanilla CGI.pm environment and also comes
 with built-in support for mod_perl and mod_perl2 as well as FastCGI.
+%endif
 
 
 %package Compress-Raw-Bzip2
@@ -1868,11 +1873,13 @@ sed \
 %{_mandir}/man1/ptargrep.1*
 %{_mandir}/man3/Archive::Tar* 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files CGI
 %{privlib}/CGI/
 %{privlib}/CGI.pm
 %{_mandir}/man3/CGI.3*
 %{_mandir}/man3/CGI::*.3*
+%endif
 
 %files Compress-Raw-Bzip2
 %dir %{archlib}/Compress
@@ -2247,6 +2254,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Nov 26 2012 Petr Pisar <ppisar@redhat.com> - 4:5.14.3-203
+- Remove perl-CGI sub-package to favour standalone one (bug #876974)
+
 * Tue Oct 16 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.14.3-202
 - 5.14.3 bump (see
   https://metacpan.org/module/DOM/perl-5.14.3/pod/perldelta.pod for release
