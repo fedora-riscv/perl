@@ -7,6 +7,9 @@
 %global parallel_tests 1
 %global tapsetdir   %{_datadir}/systemtap/tapset
 
+%global dual_life 0
+%global rebuild_from_scratch 0
+
 # This set overrides filters from build root (/etc/rpm/macros.perl)
 # intentionally (e.g. the perl(DB))
 %global __provides_exclude_from .*/auto/.*\\.so$|.*/%{perl_archlib}/.*\\.so$|%{_docdir}
@@ -26,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        234%{?dist}
+Release:        235%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -307,6 +310,7 @@ module was called. There is no guarantee that that is where the error was,
 but it is a good educated guess.
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package CGI
 Summary:        Handle Common Gateway Interface requests and responses
 Group:          Development/Libraries
@@ -333,6 +337,7 @@ generation utilities are included as well.
 
 CGI.pm performs very well in in a vanilla CGI.pm environment and also comes
 with built-in support for mod_perl and mod_perl2 as well as FastCGI.
+%endif
 
 
 %package Compress-Raw-Bzip2
@@ -2146,11 +2151,13 @@ sed \
 %{privlib}/Carp.*
 %{_mandir}/man3/Carp.*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files CGI
 %{privlib}/CGI/
 %{privlib}/CGI.pm
 %{_mandir}/man3/CGI.3*
 %{_mandir}/man3/CGI::*.3*
+%endif
 
 %files Compress-Raw-Bzip2
 %dir %{archlib}/Compress
@@ -2611,6 +2618,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Nov 26 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-235
+- Remove perl-CGI sub-package to favour standalone one (bug #876974)
+
 * Tue Nov 06 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.16.2-234
 - 5.16.2 bump (see
   http://search.cpan.org/dist/perl-5.16.2/pod/perldelta.pod for release
