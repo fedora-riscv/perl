@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        242%{?dist}
+Release:        243%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -630,6 +630,7 @@ BuildArch:      noarch
 %description File-Fetch
 File::Fetch is a generic file fetching mechanism.
 
+%if %{dual_life} || %{rebuild_from_scratch}
 # FIXME Filter-Simple? version?
 %package Filter
 Summary:        Perl source filters
@@ -643,6 +644,7 @@ Requires:       %perl_compat
 Source filters alter the program text of a module before Perl sees it, much as
 a C preprocessor alters the source text of a C program before the compiler
 sees it.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package IO-Compress
@@ -2382,12 +2384,14 @@ sed \
 %{privlib}/File/Fetch.pm
 %{_mandir}/man3/File::Fetch.3*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Filter
 %{archlib}/auto/Filter/Util
 %{archlib}/Filter/Util
 %{privlib}/pod/perlfilter.pod
 %{_mandir}/man1/perlfilter.*
 %{_mandir}/man3/Filter::Util::*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files IO-Compress
@@ -2730,6 +2734,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Dec 18 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-243
+- Remove bundled Filter modules
+
 * Mon Nov 05 2012 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.16.2-242
 - 5.16.2 bump (see
   http://search.cpan.org/dist/perl-5.16.1/pod/perldelta.pod for release
