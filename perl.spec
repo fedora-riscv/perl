@@ -405,6 +405,7 @@ distribution. The data structure stored in the META.json file is described
 in CPAN::Meta::Spec.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package CPAN-Meta-YAML
 Version:        0.007
 Epoch:          0
@@ -418,7 +419,7 @@ Requires:       %perl_compat
 This module implements a subset of the YAML specification for use in reading
 and writing CPAN metadata files like META.yml and MYMETA.yml. It should not be
 used for any other general YAML parsing or generation task.
-
+%endif
 
 %package CPANPLUS
 Summary:        API & CLI access to the CPAN mirrors
@@ -2263,9 +2264,11 @@ sed \
 %exclude %{_mandir}/man3/CPAN::Meta::YAML*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files CPAN-Meta-YAML
 %{privlib}/CPAN/Meta/YAML.pm
 %{_mandir}/man3/CPAN::Meta::YAML*
+%endif
 
 %files CPANPLUS
 %{_bindir}/cpan2dist
@@ -2740,6 +2743,7 @@ sed \
 %changelog
 * Tue Dec 18 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-244
 - Remove bundled Archive-Tar
+- Remove bundled CPAN-Meta-YAML
 
 * Tue Dec 18 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-243
 - Remove bundled Filter modules
