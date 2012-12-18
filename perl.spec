@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        243%{?dist}
+Release:        244%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -273,6 +273,7 @@ BuildArch:      noarch
 Archive::Extract is a generic archive extraction mechanism.
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Archive-Tar
 Summary:        A module for Perl manipulation of .tar files
 Group:          Development/Libraries
@@ -289,6 +290,7 @@ provides class methods for quick and easy files handling while also allowing
 for the creation of tar file objects for custom manipulation.  If you have the
 IO::Zlib module installed, Archive::Tar will also support compressed or
 gzipped tar files.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Carp
@@ -2190,6 +2192,7 @@ sed \
 %{privlib}/Archive/Extract.pm
 %{_mandir}/man3/Archive::Extract.3*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Archive-Tar
 %{_bindir}/ptar
 %{_bindir}/ptardiff
@@ -2200,6 +2203,7 @@ sed \
 %{_mandir}/man1/ptardiff.1*
 %{_mandir}/man1/ptargrep.1*
 %{_mandir}/man3/Archive::Tar* 
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Carp
@@ -2734,6 +2738,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Dec 18 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-244
+- Remove bundled Archive-Tar
+
 * Tue Dec 18 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-243
 - Remove bundled Filter modules
 
