@@ -898,6 +898,7 @@ modules as loaded, so they are not attempted to be loaded by perl, this module
 offers you a very simple way to mark modules as loaded and/or unloaded.
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Module-Metadata
 Summary:        Gather package and POD information from perl module files
 Epoch:          0
@@ -909,6 +910,7 @@ Requires:       %perl_compat
 
 %description Module-Metadata
 Gather package and POD information from perl module files
+%endif
 
 %package Module-Pluggable
 Summary:        Automatically give your module the ability to have plugins
@@ -2537,9 +2539,11 @@ sed \
 %{privlib}/Module/Loaded.pm
 %{_mandir}/man3/Module::Loaded*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Module-Metadata
 %{privlib}/Module/Metadata.pm
 %{_mandir}/man3/Module::Metadata.3pm*
+%endif
 
 %files Module-Pluggable
 %{privlib}/Devel/InnerPackage.pm
@@ -2744,6 +2748,7 @@ sed \
 * Tue Dec 18 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-244
 - Remove bundled Archive-Tar
 - Remove bundled CPAN-Meta-YAML
+- Remove bundled Module-Metadata
 
 * Tue Dec 18 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-243
 - Remove bundled Filter modules
