@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        244%{?dist}
+Release:        245%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2106,13 +2106,13 @@ sed \
 %exclude %{privlib}/Term/UI/
 %exclude %{_mandir}/man3/Term::UI*
 
-# Test::Harness
+# Test-Harness
 %exclude %{_bindir}/prove
 %exclude %{privlib}/App/Prove*
 %exclude %{privlib}/TAP*
 %exclude %{privlib}/Test/Harness*
 %exclude %{_mandir}/man1/prove.1*
-%exclude %{_mandir}/man3/App*
+%exclude %{_mandir}/man3/App::Prove*
 %exclude %{_mandir}/man3/TAP*
 %exclude %{_mandir}/man3/Test::Harness*
 
@@ -2682,7 +2682,7 @@ sed \
 %{privlib}/TAP*
 %{privlib}/Test/Harness*
 %{_mandir}/man1/prove.1*
-%{_mandir}/man3/App*
+%{_mandir}/man3/App::Prove*
 %{_mandir}/man3/TAP*
 %{_mandir}/man3/Test::Harness*
 
@@ -2745,6 +2745,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jan 10 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-245
+- Do not package App::Cpan(3pm) to perl-Test-Harness (bug #893768)
+
 * Tue Dec 18 2012 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-244
 - Remove bundled Archive-Tar
 - Remove bundled CPAN-Meta-YAML
