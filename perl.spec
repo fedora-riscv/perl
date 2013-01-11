@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        245%{?dist}
+Release:        246%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -108,6 +108,9 @@ Patch18:        perl-5.16.1-perl-114984-Glob.xs-Extend-stack-when-returning.patc
 
 # Do not crash when vivifying $|, rhbz#865296, RT#115206
 Patch19:        perl-5.16.1-perl-115206-Don-t-crash-when-vivifying.patch
+
+# Fix CVE-2012-6329, rhbz#884354
+Patch20:        perl-5.17.6-Fix-misparsing-of-maketext-strings.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1381,6 +1384,7 @@ tarball from perl.org.
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
+%patch20 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1591,6 +1595,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch17: Allow operator after numeric keyword argument (RT#105924)' \
     'Fedora Patch18: Extend stack in File::Glob::glob, (RT#114984)' \
     'Fedora Patch19: Do not crash when vivifying $|' \
+    'Fedora Patch20: Fix misparsing of maketext strings (CVE-2012-6329)' \
     %{nil}
 
 rm patchlevel.bak
@@ -2745,6 +2750,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jan 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-246
+- Fix CVE-2012-6329 (misparsing of maketext strings) (bug #884354)
+
 * Thu Jan 10 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-245
 - Do not package App::Cpan(3pm) to perl-Test-Harness (bug #893768)
 
