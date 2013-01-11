@@ -27,7 +27,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        219%{?dist}
+Release:        220%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -113,6 +113,9 @@ Patch20:        perl-5.14.2-perl-100340-Free-hash-entries-before-values-on-delet
 # Override the Pod::Simple::parse_file, rhbz#826872, CPANRT#77530, in
 # podlators-2.4.1
 Patch21:        perl-5.14.2-Override-the-Pod-Simple-parse_file.patch
+
+# Fix CVE-2012-6329, rhbz#884354
+Patch22:        perl-5.17.6-Fix-misparsing-of-maketext-strings.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1288,6 +1291,7 @@ tarball from perl.org.
 %patch19 -p1
 %patch20 -p1
 %patch21 -p1
+%patch22 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1498,6 +1502,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch19: Do not crash when vivifying $|' \
     'Fedora Patch20: Free hash entries before values on delete (RT#100340)' \
     'Fedora Patch21: Override the Pod::Simple::parse_file (CPANRT#77530)' \
+    'Fedora Patch22: Fix misparsing of maketext strings (CVE-2012-6329)' \
     %{nil}
 
 rm patchlevel.bak
@@ -2451,6 +2456,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jan 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.14.3-220
+- Fix CVE-2012-6329 (misparsing of maketext strings) (bug #884354)
+
 * Thu Jan 10 2013 Petr Pisar <ppisar@redhat.com> - 4:5.14.3-219
 - Do not package App::Cpan(3pm) to perl-Test-Harness (bug #893768)
 
