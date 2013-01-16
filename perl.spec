@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        246%{?dist}
+Release:        247%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1044,6 +1044,7 @@ This module provides things that are useful in decoding Pod E<...> sequences.
 Presumably, it should be used only by Pod parsers and/or formatters.
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-Parser
 Summary:        Basic perl modules for handling Plain Old Documentation (POD)
 Group:          Development/Libraries
@@ -1059,6 +1060,7 @@ BuildArch:      noarch
 This software distribution contains the packages for using Perl5 POD (Plain
 Old Documentation). See the "perlpod" and "perlsyn" manual pages from your
 Perl5 distribution for more information about POD.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-Perldoc
@@ -2602,6 +2604,7 @@ sed \
 %{privlib}/Pod/Escapes.pm
 %{_mandir}/man3/Pod::Escapes.*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Pod-Parser
 %{_bindir}/pod2usage
 %{_bindir}/podchecker
@@ -2625,6 +2628,7 @@ sed \
 %{_mandir}/man3/Pod::PlainText.*
 %{_mandir}/man3/Pod::Select.*
 %{_mandir}/man3/Pod::Usage.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Pod-Perldoc
@@ -2750,6 +2754,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jan 16 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-247
+- Remove bundled Pod-Parser
+
 * Fri Jan 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-246
 - Fix CVE-2012-6329 (misparsing of maketext strings) (bug #884354)
 
