@@ -1367,8 +1367,8 @@ Requires:       perl-Module-CoreList, perl-Module-Load
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Metadata
 Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Constants, perl-PathTools
 Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
-Requires:       perl-Pod-Escapes, perl-Pod-Parser, perl-Pod-Perldoc
-Requires:       perl-podlators, perl-Pod-Simple
+Requires:       perl-Pod-Escapes, perl-Pod-LaTeX, perl-Pod-Parser,
+Requires:       perl-Pod-Perldoc, perl-podlators, perl-Pod-Simple
 Requires:       perl-Socket, perl-Term-UI, perl-Test-Harness, perl-Test-Simple
 Requires:       perl-Time-Piece, perl-Version-Requirements, perl-version
 Requires:       perl-threads, perl-threads-shared, perl-parent
