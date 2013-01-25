@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        247%{?dist}
+Release:        248%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1043,6 +1043,19 @@ BuildArch:      noarch
 This module provides things that are useful in decoding Pod E<...> sequences.
 Presumably, it should be used only by Pod parsers and/or formatters.
 
+%package Pod-LaTeX
+Summary:        Convert POD data to formatted LaTeX
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.60
+Requires:       %perl_compat
+BuildArch:      noarch
+Conflicts:      perl < 4:5.16.1-248
+
+%description Pod-LaTeX
+Pod::LaTeX is a module to convert documentation in the POD format into
+LaTeX. A pod2latex replacement command is provided.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-Parser
@@ -2048,6 +2061,12 @@ sed \
 %exclude %{privlib}/Pod/Escapes.pm
 %exclude %{_mandir}/man3/Pod::Escapes.*
 
+# Pod-LaTeX
+%exclude %{_bindir}/pod2latex
+%exclude %{privlib}/Pod/LaTeX.pm
+%exclude %{_mandir}/man1/pod2latex.1*
+%exclude %{_mandir}/man3/Pod::LaTeX.*
+
 # Pod-Parser
 %exclude %{_bindir}/pod2usage
 %exclude %{_bindir}/podchecker
@@ -2604,6 +2623,12 @@ sed \
 %{privlib}/Pod/Escapes.pm
 %{_mandir}/man3/Pod::Escapes.*
 
+%files Pod-LaTeX
+%{_bindir}/pod2latex
+%{privlib}/Pod/LaTeX.pm
+%{_mandir}/man1/pod2latex.1*
+%{_mandir}/man3/Pod::LaTeX.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Pod-Parser
 %{_bindir}/pod2usage
@@ -2754,6 +2779,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jan 25 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-248
+- Sub-package Pod-LaTeX (bug #904085)
+
 * Wed Jan 16 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-247
 - Remove bundled Pod-Parser
 
