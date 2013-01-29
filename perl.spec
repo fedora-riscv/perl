@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        248%{?dist}
+Release:        249%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -577,6 +577,8 @@ Requires:       %perl_compat
 Requires:       perl(ExtUtils::Install)
 Requires:       perl(ExtUtils::Manifest)
 Requires:       perl(Test::Harness)
+# Optional run-time needed for generating documentation from POD:
+Requires:       perl(Pod::Man)
 BuildArch:      noarch
 
 # Filter false DynaLoader provides. Versioned perl(DynaLoader) keeps
@@ -824,6 +826,10 @@ Requires:       perl(ExtUtils::CBuilder) >= 0.15
 Requires:       perl(ExtUtils::ParseXS) >= 1.02
 Requires:       perl-devel
 Requires:       %perl_compat
+# Optional run-time needed for generating documentation from POD:
+Requires:       perl(Pod::Html)
+Requires:       perl(Pod::Man)
+Requires:       perl(Pod::Text)
 BuildArch:      noarch
 
 %description Module-Build
@@ -2779,6 +2785,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jan 29 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-249
+- Run-require POD convertors by Module-Build and ExtUtils-MakeMaker to
+  generate documentation when building other packages
+
 * Fri Jan 25 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-248
 - Sub-package Pod-LaTeX (bug #904085)
 
