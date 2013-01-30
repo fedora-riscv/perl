@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        250%{?dist}
+Release:        251%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -294,6 +294,22 @@ for the creation of tar file objects for custom manipulation.  If you have the
 IO::Zlib module installed, Archive::Tar will also support compressed or
 gzipped tar files.
 %endif
+
+%package B-Lint
+Summary:        Perl lint
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.14
+Requires:       %perl_compat
+Requires:       perl(constant)
+BuildArch:      noarch
+Conflicts:      perl < 4:5.16.2-251
+
+%description B-Lint
+The B::Lint module is equivalent to an extended version of the -w option of
+perl. It is named after the program lint which carries out a similar process
+for C programs.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Carp
@@ -1377,7 +1393,8 @@ Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-macros
 
-Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-Compress-Raw-Bzip2
+Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-B-Lint,
+Requires:       perl-Compress-Raw-Bzip2,
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-CPAN,
 Requires:       perl-CPAN-Meta, perl-CPAN-Meta-YAML, perl-CPANPLUS,
 Requires:       perl-Data-Dumper, perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
@@ -1746,6 +1763,10 @@ sed \
 %exclude %{_mandir}/man1/ptardiff.1*
 %exclude %{_mandir}/man1/ptargrep.1*
 %exclude %{_mandir}/man3/Archive::Tar*
+
+# B-Lint
+%exclude %{privlib}/B/Lint*
+%exclude %{_mandir}/man3/B::Lint*
 
 # Carp
 %exclude %{privlib}/Carp
@@ -2264,6 +2285,10 @@ sed \
 %{_mandir}/man1/ptargrep.1*
 %{_mandir}/man3/Archive::Tar* 
 %endif
+
+%files B-Lint
+%{privlib}/B/Lint*
+%{_mandir}/man3/B::Lint*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Carp
@@ -2817,6 +2842,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jan 30 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-251
+- Sub-package B-Lint (bug #906015)
+
 * Wed Jan 30 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-250
 - Sub-package Text-Soundex (bug #905889)
 - Fix conflict declaration at perl-Pod-LaTeX (bug #904085)
