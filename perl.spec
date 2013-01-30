@@ -1057,7 +1057,7 @@ Epoch:          0
 Version:        0.60
 Requires:       %perl_compat
 BuildArch:      noarch
-Conflicts:      perl < 4:5.16.1-248
+Conflicts:      perl < 4:5.16.2-248
 
 %description Pod-LaTeX
 Pod::LaTeX is a module to convert documentation in the POD format into
@@ -2815,6 +2815,7 @@ sed \
 %changelog
 * Wed Jan 30 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-250
 - Sub-package Text-Soundex (bug #905889)
+- Fix conflict declaration at perl-Pod-LaTeX (bug #904085)
 
 * Tue Jan 29 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-249
 - Run-require POD convertors by Module-Build and ExtUtils-MakeMaker to
