@@ -921,6 +921,7 @@ Requires:       %perl_compat
 Gather package and POD information from perl module files
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Module-Pluggable
 Summary:        Automatically give your module the ability to have plugins
 Group:          Development/Libraries
@@ -935,6 +936,7 @@ BuildArch:      noarch
 %description Module-Pluggable
 Provides a simple but, hopefully, extensible way of having 'plugins' for your
 module.
+%endif
 
 
 %package Object-Accessor
@@ -2600,12 +2602,14 @@ sed \
 %{_mandir}/man3/Module::Metadata.3pm*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Module-Pluggable
 %{privlib}/Devel/InnerPackage.pm
 %{privlib}/Module/Pluggable/
 %{privlib}/Module/Pluggable.pm
 %{_mandir}/man3/Devel::InnerPackage*
 %{_mandir}/man3/Module::Pluggable*
+%endif
 
 %files Object-Accessor
 %{privlib}/Object/
@@ -2816,6 +2820,7 @@ sed \
 * Wed Jan 30 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-250
 - Sub-package Text-Soundex (bug #905889)
 - Fix conflict declaration at perl-Pod-LaTeX (bug #904085)
+- Remove bundled Module-Pluggable (bug #903624)
 
 * Tue Jan 29 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-249
 - Run-require POD convertors by Module-Build and ExtUtils-MakeMaker to
