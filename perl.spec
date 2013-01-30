@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        249%{?dist}
+Release:        250%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1214,6 +1214,24 @@ BuildArch:      noarch
 %description Test-Simple-tests
 This package provides the test suite for package perl-Test-Simple.
 
+%package Text-Soundex
+Summary:        Implementation of the soundex algorithm
+Group:          Development/Libraries
+License:        Copyright only
+Epoch:          0
+# perl's 3.03_1 copy is identical to CPAN 3.03
+Version:        3.03
+Requires:       %perl_compat
+Requires:       perl(Carp)
+Requires:       perl(Text::Unidecode)
+Conflicts:      perl < 4:5.16.2-250
+
+%description Text-Soundex
+Soundex is a phonetic algorithm for indexing names by sound, as pronounced in
+English. This module implements the original soundex algorithm developed by
+Robert Russell and Margaret Odell, as well as a variation called "American
+Soundex".
+
 %package Time-Piece
 Summary:        Time objects from localtime and gmtime
 Group:          Development/Libraries
@@ -1376,8 +1394,8 @@ Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
 Requires:       perl-Pod-Escapes, perl-Pod-LaTeX, perl-Pod-Parser,
 Requires:       perl-Pod-Perldoc, perl-podlators, perl-Pod-Simple
 Requires:       perl-Socket, perl-Term-UI, perl-Test-Harness, perl-Test-Simple
-Requires:       perl-Time-Piece, perl-Version-Requirements, perl-version
-Requires:       perl-threads, perl-threads-shared, perl-parent
+Requires:       perl-Text-Soundex, perl-Time-Piece, perl-Version-Requirements,
+Requires:       perl-version, perl-threads, perl-threads-shared, perl-parent
 
 %description core
 A metapackage which requires all of the perl bits and modules in the upstream
@@ -2158,6 +2176,11 @@ sed \
 %exclude %{_mandir}/man3/Test::Simple*
 %exclude %{_mandir}/man3/Test::Tutorial*
 
+# Text-Soundex
+%exclude %{archlib}/auto/Text/Soundex/
+%exclude %{archlib}/Text/Soundex.pm
+%exclude %{_mandir}/man3/Text::Soundex.*
+
 # Time::Piece
 %exclude %{archlib}/Time/Piece.pm
 %exclude %{archlib}/Time/Seconds.pm
@@ -2742,6 +2765,11 @@ sed \
 %{perl5_testdir}/Test-Simple
 %endif
 
+%files Text-Soundex
+%{archlib}/auto/Text/Soundex/
+%{archlib}/Text/Soundex.pm
+%{_mandir}/man3/Text::Soundex.*
+
 %files Time-Piece
 %{archlib}/Time/Piece.pm 
 %{archlib}/Time/Seconds.pm
@@ -2785,6 +2813,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jan 30 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-250
+- Sub-package Text-Soundex (bug #905889)
+
 * Tue Jan 29 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-249
 - Run-require POD convertors by Module-Build and ExtUtils-MakeMaker to
   generate documentation when building other packages
