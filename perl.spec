@@ -650,6 +650,7 @@ Version:        2.048
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Obsoletes:      perl-Compress-Zlib <= 2.020
 Provides:       perl(IO::Uncompress::Bunzip2)
+BuildArch:      noarch
 
 %description IO-Compress
 This module is the base class for all IO::Compress and IO::Uncompress modules.
