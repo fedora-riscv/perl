@@ -27,7 +27,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        220%{?dist}
+Release:        221%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -116,6 +116,9 @@ Patch21:        perl-5.14.2-Override-the-Pod-Simple-parse_file.patch
 
 # Fix CVE-2012-6329, rhbz#884354
 Patch22:        perl-5.17.6-Fix-misparsing-of-maketext-strings.patch
+
+# Fix double-free when loading Digest::SHA object, rhbz#895543, RT#82655
+Patch23:        perl-5.14.3-RT-82655-fix-double-free-when-loading-object.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1293,6 +1296,7 @@ tarball from perl.org.
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
+%patch23 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1504,6 +1508,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch20: Free hash entries before values on delete (RT#100340)' \
     'Fedora Patch21: Override the Pod::Simple::parse_file (CPANRT#77530)' \
     'Fedora Patch22: Fix misparsing of maketext strings (CVE-2012-6329)' \
+    'Fedora Patch23: Fix double-free when loading Digest::SHA object' \
     %{nil}
 
 rm patchlevel.bak
@@ -2457,6 +2462,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jan 30 2013 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.14.3-221
+- Fix RT#82655- Double-free when loading Digest::SHA object
+
 * Fri Jan 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.14.3-220
 - Fix CVE-2012-6329 (misparsing of maketext strings) (bug #884354)
 

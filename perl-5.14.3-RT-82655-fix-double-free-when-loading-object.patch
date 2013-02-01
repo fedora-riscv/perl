@@ -1,0 +1,46 @@
+--- perl-5.14.3/cpan/Digest-SHA/lib/Digest/SHA.pm.orig	2013-01-15 16:42:52.009444910 +0100
++++ perl-5.14.3/cpan/Digest-SHA/lib/Digest/SHA.pm	2013-01-15 16:59:34.273586286 +0100
+@@ -54,6 +54,7 @@
+ 		}
+ 		shaclose($$class) if $$class;
+ 		$$class = shaopen($alg) || return;
++		return unless $$class = shaopen($alg);
+ 		return($class);
+ 	}
+ 	$alg = 1 unless defined $alg;
+@@ -153,18 +154,21 @@
+ 
+ sub dump {
+ 	my $self = shift;
+-	my $file = shift || "";
++	my $file = shift;
+ 
++	$file = "" unless defined $file;;
+ 	shadump($file, $$self) || return;
+ 	return($self);
+ }
+ 
+ sub load {
+ 	my $class = shift;
+-	my $file = shift || "";
++	my $file = shift;
++
++	$file = "" unless defined $file;;
+ 	if (ref($class)) {	# instance method
+ 		shaclose($$class) if $$class;
+-		$$class = shaload($file) || return;
++		return unless $$class = shaload($file);
+ 		return($class);
+ 	}
+ 	my $state = shaload($file) || return;
+--- perl-5.14.3/cpan/Digest-SHA/src/sha.c.orig	2013-01-15 17:05:04.679958221 +0100
++++ perl-5.14.3/cpan/Digest-SHA/src/sha.c	2013-01-15 17:03:20.337216113 +0100
+@@ -272,7 +272,7 @@
+ /* shaopen: creates a new digest object */
+ SHA *shaopen(int alg)
+ {
+-	SHA *s;
++	SHA *s = NULL;
+ 
+ 	if (alg != SHA1 && alg != SHA224 && alg != SHA256 &&
+ 		alg != SHA384    && alg != SHA512 &&
