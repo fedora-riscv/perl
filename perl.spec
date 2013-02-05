@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        252%{?dist}
+Release:        253%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1053,6 +1053,20 @@ provided in Module::Build and ExtUtils::CBuilder (thus, Microsoft operating
 systems are given the type 'Windows' rather than 'Win32').
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
+%package Pod-Checker
+Summary:        Check POD documents for syntax errors
+License:        GPL+ or Artistic
+Group:          Development/Libraries
+Requires:       %perl_compat
+$version))
+BuildArch:      noarch
+
+%description Pod-Checker
+Module and tools to verify POD documentation contents for compliance with the
+Plain Old Documentation format specifications.
+%endif
+
 %package Pod-Escapes
 Summary:        Perl module for resolving POD escape sequences
 Group:          Development/Libraries
@@ -1089,8 +1103,6 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.51
 Requires:       %perl_compat
-# Pod::Usage executes perldoc from perl-Pod-Perldoc by default
-Requires:       perl-Pod-Perldoc
 BuildArch:      noarch
 
 %description Pod-Parser
@@ -1132,6 +1144,29 @@ BuildArch:      noarch
 Pod::Simple is a Perl library for parsing text in the Pod ("plain old
 documentation") markup language that is typically used for writing
 documentation for Perl and for Perl modules.
+
+%if %{dual_life} || %{rebuild_from_scratch}
+%package Pod-Usage
+Summary:        Print a usage message from embedded pod documentation
+License:        GPL+ or Artistic
+Group:          Development/Libraries
+# Pod::Usage execute perldoc from perl-Pod-Perldoc by default
+BuildRequires:  perl-Pod-Perldoc
+Requires:       %perl_compat
+# Pod::Usage executes perldoc from perl-Pod-Perldoc by default
+Requires:       perl-Pod-Perldoc
+Requires:       perl(Pod::Text)
+BuildArch:      noarch
+
+%description Pod-Usage
+pod2usage will print a usage message for the invoking script (using its
+embedded POD documentation) and then exit the script with the desired exit
+status. The usage message printed may have any one of three levels of
+"verboseness": If the verbose level is 0, then only a synopsis is printed.
+If the verbose level is 1, then the synopsis is printed along with a
+description (if present) of the command line options and arguments. If the
+verbose level is 2, then the entire manual page is printed.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package podlators
@@ -1410,8 +1445,9 @@ Requires:       perl-Module-CoreList, perl-Module-Load
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Metadata
 Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Constants, perl-PathTools
 Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
-Requires:       perl-Pod-Escapes, perl-Pod-LaTeX, perl-Pod-Parser,
-Requires:       perl-Pod-Perldoc, perl-podlators, perl-Pod-Simple
+Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-LaTeX
+Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
+Requires:       perl-podlators, perl-Pod-Simple
 Requires:       perl-Socket, perl-Term-UI, perl-Test-Harness, perl-Test-Simple
 Requires:       perl-Text-Soundex, perl-Time-Piece, perl-Version-Requirements,
 Requires:       perl-version, perl-threads, perl-threads-shared, perl-parent
@@ -2104,6 +2140,12 @@ sed \
 %exclude %{privlib}/parent.pm
 %exclude %{_mandir}/man3/parent.3*
 
+# Pod-Checker
+%exclude %{_bindir}/podchecker
+%exclude %{privlib}/Pod/Checker.pm
+%exclude %{_mandir}/man1/podchecker.*
+%exclude %{_mandir}/man3/Pod::Checker.*
+
 # Pod-Escapes
 %exclude %{privlib}/Pod/Escapes.pm
 %exclude %{_mandir}/man3/Pod::Escapes.*
@@ -2115,28 +2157,20 @@ sed \
 %exclude %{_mandir}/man3/Pod::LaTeX.*
 
 # Pod-Parser
-%exclude %{_bindir}/pod2usage
-%exclude %{_bindir}/podchecker
 %exclude %{_bindir}/podselect
-%exclude %{privlib}/Pod/Checker.pm
 %exclude %{privlib}/Pod/Find.pm
 %exclude %{privlib}/Pod/InputObjects.pm
 %exclude %{privlib}/Pod/ParseUtils.pm
 %exclude %{privlib}/Pod/Parser.pm
 %exclude %{privlib}/Pod/PlainText.pm
 %exclude %{privlib}/Pod/Select.pm
-%exclude %{privlib}/Pod/Usage.pm
-%exclude %{_mandir}/man1/pod2usage.1*
-%exclude %{_mandir}/man1/podchecker.1*
 %exclude %{_mandir}/man1/podselect.1*
-%exclude %{_mandir}/man3/Pod::Checker.*
 %exclude %{_mandir}/man3/Pod::Find.*
 %exclude %{_mandir}/man3/Pod::InputObjects.*
 %exclude %{_mandir}/man3/Pod::ParseUtils.*
 %exclude %{_mandir}/man3/Pod::Parser.*
 %exclude %{_mandir}/man3/Pod::PlainText.*
 %exclude %{_mandir}/man3/Pod::Select.*
-%exclude %{_mandir}/man3/Pod::Usage.*
 
 # Pod-Perldoc
 %exclude %{_bindir}/perldoc
@@ -2145,6 +2179,12 @@ sed \
 %exclude %{privlib}/Pod/Perldoc/
 %exclude %{_mandir}/man1/perldoc.1*
 %exclude %{_mandir}/man3/Pod::Perldoc*
+
+# Pod-Usage
+%exclude %{_bindir}/pod2usage
+%exclude %{privlib}/Pod/Usage.pm
+%exclude %{_mandir}/man1/pod2usage.*
+%exclude %{_mandir}/man3/Pod::Usage.*
 
 # podlators
 %exclude %{_bindir}/pod2man
@@ -2677,6 +2717,14 @@ sed \
 %{_mandir}/man3/Perl::OSType.3pm*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
+%files Pod-Checker
+%{_bindir}/podchecker
+%{privlib}/Pod/Checker.pm
+%{_mandir}/man1/podchecker.*
+%{_mandir}/man3/Pod::Checker.*
+%endif
+
 %files Pod-Escapes
 %{privlib}/Pod/Escapes.pm
 %{_mandir}/man3/Pod::Escapes.*
@@ -2721,6 +2769,14 @@ sed \
 %{privlib}/Pod/Perldoc/
 %{_mandir}/man1/perldoc.1*
 %{_mandir}/man3/Pod::Perldoc*
+%endif
+
+%if %{dual_life} || %{rebuild_from_scratch}
+%files Pod-Usage
+%{_bindir}/pod2usage
+%{privlib}/Pod/Usage.pm
+%{_mandir}/man1/pod2usage.*
+%{_mandir}/man3/Pod::Usage.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -2842,6 +2898,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Feb 05 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-253
+- Sub-package Pod-Checker and Pod-Usage (bugs #907546, #907550)
+
 * Mon Feb 04 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-252
 - Remove bundled PathTools
 
