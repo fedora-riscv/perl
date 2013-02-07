@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        237%{?dist}
+Release:        238%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -604,6 +604,7 @@ Version:        3.16
 Requires:       perl-devel
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 BuildArch:      noarch
+Obsoletes:      perl-ExtUtils-Typemaps
 
 %description ExtUtils-ParseXS
 ExtUtils::ParseXS will compile XS code into C code by embedding the constructs
@@ -2624,6 +2625,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Feb 07 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-238
+- Obsolete perl-ExtUtils-Typemaps by perl-ExtUtils-ParseXS (bug #891952)
+
 * Fri Jan 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-237
 - Fix CVE-2012-6329 (misparsing of maketext strings) (bug #884354)
 
