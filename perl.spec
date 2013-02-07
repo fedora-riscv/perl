@@ -632,6 +632,7 @@ Version:        3.16
 Requires:       perl-devel
 Requires:       %perl_compat
 BuildArch:      noarch
+Obsoletes:      perl-ExtUtils-Typemaps
 
 %description ExtUtils-ParseXS
 ExtUtils::ParseXS will compile XS code into C code by embedding the constructs
@@ -2897,6 +2898,7 @@ sed \
 %changelog
 * Thu Feb 07 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-254
 - Correct perl-podlators dependencies
+- Obsolete perl-ExtUtils-Typemaps by perl-ExtUtils-ParseXS (bug #891952)
 
 * Tue Feb 05 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-253
 - Sub-package Pod-Checker and Pod-Usage (bugs #907546, #907550)
