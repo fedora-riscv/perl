@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        253%{?dist}
+Release:        254%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1179,9 +1179,6 @@ BuildArch:      noarch
 Requires:       %perl_compat
 Requires:       perl(File::Spec) >= 0.8
 Requires:       perl(Pod::Simple) >= 3.06
-Requires:       perl(Pod::Text::Color)
-Requires:       perl(Pod::Text::Overstrike)
-Requires:       perl(Pod::Text::Termcap)
 Conflicts:      perl < 4:5.16.1-234
 
 %description podlators
@@ -2898,6 +2895,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Feb 07 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-254
+- Correct perl-podlators dependencies
+
 * Tue Feb 05 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-253
 - Sub-package Pod-Checker and Pod-Usage (bugs #907546, #907550)
 
