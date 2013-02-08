@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        254%{?dist}
+Release:        255%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -795,6 +795,7 @@ This module is a simple wrapper around Locale::Maketext::Lexicon, designed
 to alleviate the need of creating Language Classes for module authors.
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Log-Message
 Summary:        Generic message storage mechanism
 Group:          Development/Libraries
@@ -814,6 +815,7 @@ Some meta-data will automatically be added for you, like a timestamp and a
 stack trace, but some can be filled in by the user, like a tag by which to
 identify it or group it, and a level at which to handle the message (for
 example, log it, or die with it).
+%endif
 
 
 %package Log-Message-Simple
@@ -2615,6 +2617,7 @@ sed \
 %{privlib}/Locale/Maketext/Simple.pm
 %{_mandir}/man3/Locale::Maketext::Simple.*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Log-Message
 %{privlib}/Log/Message.pm
 %{privlib}/Log/Message/Config.pm
@@ -2624,6 +2627,7 @@ sed \
 %{_mandir}/man3/Log::Message::Config.3*
 %{_mandir}/man3/Log::Message::Handlers.3*
 %{_mandir}/man3/Log::Message::Item.3*
+%endif
 
 %files Log-Message-Simple
 %{privlib}/Log/Message/Simple.pm
@@ -2896,6 +2900,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Feb 08 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-255
+- Remove bundled Log-Message
+
 * Thu Feb 07 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-254
 - Correct perl-podlators dependencies
 - Obsolete perl-ExtUtils-Typemaps by perl-ExtUtils-ParseXS (bug #891952)
