@@ -1207,6 +1207,7 @@ really be high enough to warrant the use of a keyword, and the size so small
 such that being individual extensions would be wasteful.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Term-UI
 Summary:        Term::ReadLine UI made easy
 Group:          Development/Libraries
@@ -1221,7 +1222,7 @@ BuildArch:      noarch
 Term::UI is a transparent way of eliminating the overhead of having to format
 a question and then validate the reply, informing the user if the answer was not
 proper and re-issuing the question.
-
+%endif
 
 %package Test-Harness
 Summary:        Run Perl standard test scripts with statistics
@@ -2821,10 +2822,12 @@ sed \
 %{_mandir}/man3/Socket.3*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Term-UI
 %{privlib}/Term/UI/
 %{privlib}/Term/UI.pm
 %{_mandir}/man3/Term::UI*
+%endif
 
 %files Test-Harness
 %{_bindir}/prove
@@ -2902,6 +2905,7 @@ sed \
 %changelog
 * Fri Feb 08 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-255
 - Remove bundled Log-Message
+- Remove bundled Term-UI
 
 * Thu Feb 07 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-254
 - Correct perl-podlators dependencies
