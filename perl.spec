@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        255%{?dist}
+Release:        256%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -639,6 +639,25 @@ ExtUtils::ParseXS will compile XS code into C code by embedding the constructs
 necessary to let C functions manipulate Perl values and creates the glue
 necessary to let Perl access those functions.
 
+%package File-CheckTree
+Summary:        Run many file-test checks on a tree
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        4.41
+Requires:       %perl_compat
+BuildArch:      noarch
+
+%description File-CheckTree
+File::CheckTree::validate() routine takes a single multi-line string
+consisting of directives, each containing a file name plus a file test to try
+on it. (The file test may also be a "cd", causing subsequent relative file
+names to be interpreted relative to that directory.) After the file test you
+may put || die to make it a fatal error if the file test fails. The default is
+|| warn.  The file test may optionally have a "!' prepended to test for the
+opposite condition. If you do a cd and then list some relative file names, you
+may want to indent them slightly for readability. If you supply your own die()
+or warn() message, you can use $file to interpolate the file name.
 
 %package File-Fetch
 Summary:        Generic file fetching mechanism
@@ -1437,8 +1456,8 @@ Requires:       perl-Data-Dumper, perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Embed,
 Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
 Requires:       perl-ExtUtils-Manifest
-Requires:       perl-ExtUtils-ParseXS, perl-File-Fetch, perl-Filter,
-Requires:       perl-HTTP-Tiny
+Requires:       perl-ExtUtils-ParseXS, perl-File-CheckTree, perl-File-Fetch
+Requires:       perl-Filter, perl-HTTP-Tiny
 Requires:       perl-IO-Compress, perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
 Requires:       perl-Locale-Codes, perl-Locale-Maketext-Simple
 Requires:       perl-Log-Message, perl-Log-Message-Simple, perl-Module-Build
@@ -1965,6 +1984,10 @@ sed \
 %exclude %{_mandir}/man3/ExtUtils::Typemaps::InputMap.3*
 %exclude %{_mandir}/man3/ExtUtils::Typemaps::OutputMap.3*
 %exclude %{_mandir}/man3/ExtUtils::Typemaps::Type.3*
+
+# File-CheckTree
+%exclude %{privlib}/File/CheckTree.pm
+%exclude %{_mandir}/man3/File::CheckTree.3*
 
 # File::Fetch
 %exclude %{privlib}/File/Fetch.pm
@@ -2512,6 +2535,10 @@ sed \
 %{_mandir}/man3/ExtUtils::Typemaps::OutputMap.3*
 %{_mandir}/man3/ExtUtils::Typemaps::Type.3*
 
+%files File-CheckTree
+%{privlib}/File/CheckTree.pm
+%{_mandir}/man3/File::CheckTree.3*
+
 %files File-Fetch
 %{privlib}/File/Fetch.pm
 %{_mandir}/man3/File::Fetch.3*
@@ -2903,6 +2930,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Feb 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-256
+- Sub-package File-CheckTree (bug #909144)
+
 * Fri Feb 08 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-255
 - Remove bundled Log-Message
 - Remove bundled Term-UI
