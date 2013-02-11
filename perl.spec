@@ -1081,7 +1081,6 @@ Summary:        Check POD documents for syntax errors
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       %perl_compat
-$version))
 BuildArch:      noarch
 
 %description Pod-Checker
