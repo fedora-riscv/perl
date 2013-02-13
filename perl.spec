@@ -535,6 +535,34 @@ SHA-1, SHA-224, SHA-256, SHA-384, and SHA-512 message digests.  The
 module can handle all types of input, including partial-byte data.
 %endif
 
+%package Encode
+Summary:        Character encodings in Perl
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.44
+Requires:       %perl_compat
+
+%description Encode
+The Encode module provides the interface between Perl strings and the rest
+of the system. Perl strings are sequences of characters.
+
+%package Encode-devel
+Summary:        Character encodings in Perl
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.44
+Requires:       %perl_compat
+Requires:       %{name} = %{epoch}:%{version}-%{release}
+Requires:       perl-devel
+BuildArch:      noarch
+
+%description Encode-devel
+enc2xs builds a Perl extension for use by Encode from either Unicode Character
+Mapping files (.ucm) or Tcl Encoding Files (.enc). You can use enc2xs to add
+your own encoding to perl. No knowledge of XS is necessary.
+
 %package ExtUtils-CBuilder
 Summary:        Compile and link C code for Perl modules
 Group:          Development/Libraries
@@ -1463,7 +1491,7 @@ Requires:       perl-macros
 Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-B-Lint,
 Requires:       perl-Compress-Raw-Bzip2,
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-CPAN,
-Requires:       perl-CPAN-Meta, perl-CPAN-Meta-YAML, perl-CPANPLUS,
+Requires:       perl-CPAN-Meta, perl-CPAN-Meta-YAML, perl-CPANPLUS, perl-Encode
 Requires:       perl-Data-Dumper, perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Embed,
 Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
@@ -1806,9 +1834,6 @@ sed \
 %exclude %{perl_vendorarch}
 
 # devel
-%exclude %{_bindir}/enc2xs
-%exclude %{_mandir}/man1/enc2xs*
-%exclude %{privlib}/Encode/
 %exclude %{_bindir}/h2xs
 %exclude %{_mandir}/man1/h2xs*
 %exclude %{_bindir}/libnetcfg
@@ -1928,6 +1953,21 @@ sed \
 %exclude %{archlib}/auto/Digest/SHA/
 %exclude %{_mandir}/man1/shasum.1*
 %exclude %{_mandir}/man3/Digest::SHA.3*
+
+# Encode
+%exclude %{_bindir}/piconv
+%exclude %{archlib}/encoding.pm
+%exclude %{archlib}/Encode*
+%exclude %{archlib}/auto/Encode*
+%exclude %{_mandir}/man1/piconv.1*
+%exclude %{_mandir}/man3/encoding.3*
+%exclude %{_mandir}/man3/Encode*.3*
+
+# Encode-devel
+%exclude %{_bindir}/enc2xs
+%exclude %{privlib}/Encode/*.e2x
+%exclude %{privlib}/Encode/encode.h
+%exclude %{_mandir}/man1/enc2xs.1*
 
 # ExtUtils::CBuilder
 %exclude %{privlib}/ExtUtils/CBuilder/
@@ -2329,9 +2369,6 @@ sed \
 %dir %{perl_vendorarch}/auto
 
 %files devel
-%{_bindir}/enc2xs
-%{_mandir}/man1/enc2xs*
-%{privlib}/Encode/
 %{_bindir}/h2xs
 %{_mandir}/man1/h2xs*
 %{_bindir}/libnetcfg
@@ -2478,6 +2515,24 @@ sed \
 %{_mandir}/man1/shasum.1*
 %{_mandir}/man3/Digest::SHA.3*
 %endif
+
+%files Encode
+%{_bindir}/piconv
+%{archlib}/encoding.pm
+%{archlib}/Encode*
+%{archlib}/auto/Encode*
+%{privlib}/Encode
+%exclude %{privlib}/Encode/*.e2x
+%exclude %{privlib}/Encode/encode.h
+%{_mandir}/man1/piconv.1*
+%{_mandir}/man3/encoding.3*
+%{_mandir}/man3/Encode*.3*
+
+%files Encode-devel
+%{_bindir}/enc2xs
+%{privlib}/Encode/*.e2x
+%{privlib}/Encode/encode.h
+%{_mandir}/man1/enc2xs.1*
 
 %files ExtUtils-CBuilder
 %{privlib}/ExtUtils/CBuilder/
@@ -2954,6 +3009,7 @@ sed \
 * Wed Feb 13 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-256
 - Sub-package File-CheckTree (bug #909144)
 - Sub-package Text-ParseWords
+- Sub-package Encode (bug #859149)
 
 * Fri Feb 08 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-255
 - Remove bundled Log-Message
