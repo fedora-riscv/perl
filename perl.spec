@@ -3217,7 +3217,7 @@ sed \
 - Increase epoch of perl-Module-CoreList to overcome version regression in
   upstream (bug #754641)
 
-* Thu Nov  2 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.2-200
+* Thu Nov  3 2011 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.14.2-200
 - perl(DBIx::Simple) is not needed in spec requirement in CPANPLUS. It's generated
   automatically.
 
@@ -3444,7 +3444,7 @@ sed \
 * Thu Sep 30 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-135
 - sub-package threads
 
-* Fri Sep 23 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-134
+* Thu Sep 23 2010 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.12.2-134
 - add vendor path, clean paths in Configure in spec file
 - create sub-package threads-shared
 
@@ -3548,10 +3548,10 @@ sed \
 * Mon Dec 21 2009 Chris Weyl <cweyl@alumni.drew.edu> - 4:5.10.1-107
 - subpackage parent and Parse-CPAN-Meta; add them to core's dep list
 
-* Fri Dec 19 2009 Ralf Corsépius <corsepiu@fedoraproject.org> - 4:5.10.1-106
+* Fri Dec 18 2009 Ralf Corsépius <corsepiu@fedoraproject.org> - 4:5.10.1-106
 - exclude "parent".
 
-* Fri Dec 19 2009 Ralf Corsépius <corsepiu@fedoraproject.org> - 4:5.10.1-105
+* Fri Dec 18 2009 Ralf Corsépius <corsepiu@fedoraproject.org> - 4:5.10.1-105
 - exclude Parse-CPAN-Meta.
 
 * Mon Dec  7 2009 Stepan Kasal <skasal@redhat.com> - 4:5.10.1-104
@@ -3712,7 +3712,7 @@ sed \
 * Mon Dec 22 2008 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-53
 - add missing XHTML.pm into Pod::Simple
 
-* Thu Dec 12 2008 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-52
+* Fri Dec 12 2008 Marcela Mašláňová <mmaslano@redhat.com> - 4:5.10.0-52
 - 295021 CVE-2007-4829 perl-Archive-Tar directory traversal flaws
 - add another source for binary files, which test untaring links
 
@@ -3799,7 +3799,7 @@ related to tests!
 - use perl_archname consistently
 - cleanup of usage of *_lib macros in %%install
 
-* Mon Jun  6 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-25
+* Fri Jun  6 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-25
 - 449577 rebuild for FTBFS
 
 * Mon May 26 2008 Marcela Maslanova <mmaslano@redhat.com> 4:5.10.0-24
