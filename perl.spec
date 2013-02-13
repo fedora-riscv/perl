@@ -1286,6 +1286,19 @@ BuildArch:      noarch
 %description Test-Simple-tests
 This package provides the test suite for package perl-Test-Simple.
 
+%package Text-ParseWords
+Summary:        Parse text into an array of tokens or array of arrays
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        3.27
+Requires:       %perl_compat
+Requires:       perl(Carp)
+BuildArch:      noarch
+
+%description Text-ParseWords
+Parse text into an array of tokens or array of arrays.
+
 %package Text-Soundex
 Summary:        Implementation of the soundex algorithm
 Group:          Development/Libraries
@@ -1468,6 +1481,7 @@ Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-LaTeX
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
 Requires:       perl-podlators, perl-Pod-Simple
 Requires:       perl-Socket, perl-Term-UI, perl-Test-Harness, perl-Test-Simple
+Requires:       perl-Text-ParseWords
 Requires:       perl-Text-Soundex, perl-Time-Piece, perl-Version-Requirements,
 Requires:       perl-version, perl-threads, perl-threads-shared, perl-parent
 
@@ -2262,6 +2276,10 @@ sed \
 %exclude %{_mandir}/man3/Test::Simple*
 %exclude %{_mandir}/man3/Test::Tutorial*
 
+# Text-ParseWords
+%exclude %{privlib}/Text/ParseWords.pm
+%exclude %{_mandir}/man3/Text::ParseWords.*
+
 # Text-Soundex
 %exclude %{archlib}/auto/Text/Soundex/
 %exclude %{archlib}/Text/Soundex.pm
@@ -2881,6 +2899,10 @@ sed \
 %{perl5_testdir}/Test-Simple
 %endif
 
+%files Text-ParseWords
+%{privlib}/Text/ParseWords.pm
+%{_mandir}/man3/Text::ParseWords.*
+
 %files Text-Soundex
 %{archlib}/auto/Text/Soundex/
 %{archlib}/Text/Soundex.pm
@@ -2929,8 +2951,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Mon Feb 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-256
+* Wed Feb 13 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-256
 - Sub-package File-CheckTree (bug #909144)
+- Sub-package Text-ParseWords
 
 * Fri Feb 08 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-255
 - Remove bundled Log-Message
