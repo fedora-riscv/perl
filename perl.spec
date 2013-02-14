@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        256%{?dist}
+Release:        257%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1345,6 +1345,21 @@ English. This module implements the original soundex algorithm developed by
 Robert Russell and Margaret Odell, as well as a variation called "American
 Soundex".
 
+%package Thread-Queue
+Summary:        Thread-safe queues
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.12
+Requires:       %perl_compat
+Requires:       perl(Carp)
+BuildArch:      noarch
+Conflicts:      perl < 4:5.16.2-257
+
+%description Thread-Queue
+This module provides thread-safe FIFO queues that can be accessed safely by
+any number of threads.
+
 %package Time-Piece
 Summary:        Time objects from localtime and gmtime
 Group:          Development/Libraries
@@ -1509,8 +1524,8 @@ Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-LaTeX
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
 Requires:       perl-podlators, perl-Pod-Simple
 Requires:       perl-Socket, perl-Term-UI, perl-Test-Harness, perl-Test-Simple
-Requires:       perl-Text-ParseWords
-Requires:       perl-Text-Soundex, perl-Time-Piece, perl-Version-Requirements,
+Requires:       perl-Text-ParseWords, perl-Text-Soundex, perl-Thread-Queue
+Requires:       perl-Time-Piece, perl-Version-Requirements,
 Requires:       perl-version, perl-threads, perl-threads-shared, perl-parent
 
 %description core
@@ -2325,6 +2340,10 @@ sed \
 %exclude %{archlib}/Text/Soundex.pm
 %exclude %{_mandir}/man3/Text::Soundex.*
 
+# Thread-Queue
+%exclude %{privlib}/Thread/Queue.pm
+%exclude %{_mandir}/man3/Thread::Queue.*
+
 # Time::Piece
 %exclude %{archlib}/Time/Piece.pm
 %exclude %{archlib}/Time/Seconds.pm
@@ -2963,6 +2982,10 @@ sed \
 %{archlib}/Text/Soundex.pm
 %{_mandir}/man3/Text::Soundex.*
 
+%files Thread-Queue
+%{privlib}/Thread/Queue.pm
+%{_mandir}/man3/Thread::Queue.*
+
 %files Time-Piece
 %{archlib}/Time/Piece.pm 
 %{archlib}/Time/Seconds.pm
@@ -3006,6 +3029,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Feb 14 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-257
+- Sub-package Thread-Queue (bug #911062)
+
 * Wed Feb 13 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-256
 - Sub-package File-CheckTree (bug #909144)
 - Sub-package Text-ParseWords
