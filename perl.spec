@@ -542,6 +542,7 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.44
 Requires:       %perl_compat
+Conflicts:      perl < 4:5.16.2-256
 
 %description Encode
 The Encode module provides the interface between Perl strings and the rest
@@ -675,6 +676,7 @@ Epoch:          0
 Version:        4.41
 Requires:       %perl_compat
 BuildArch:      noarch
+Conflicts:      perl < 4:5.16.2-256
 
 %description File-CheckTree
 File::CheckTree::validate() routine takes a single multi-line string
@@ -1323,6 +1325,7 @@ Version:        3.27
 Requires:       %perl_compat
 Requires:       perl(Carp)
 BuildArch:      noarch
+Conflicts:      perl < 4:5.16.2-256
 
 %description Text-ParseWords
 Parse text into an array of tokens or array of arrays.
