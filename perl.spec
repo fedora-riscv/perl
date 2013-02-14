@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        257%{?dist}
+Release:        258%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -555,7 +555,7 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.44
 Requires:       %perl_compat
-Requires:       %{name} = %{epoch}:%{version}-%{release}
+Requires:       %{name}-Encode = %{epoch}:%{version}-%{release}
 Requires:       perl-devel
 BuildArch:      noarch
 
@@ -3032,6 +3032,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Feb 14 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-258
+- Fix perl-Encode-devel dependency declaration
+
 * Thu Feb 14 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-257
 - Sub-package Thread-Queue (bug #911062)
 
