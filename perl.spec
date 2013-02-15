@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        258%{?dist}
+Release:        259%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -294,6 +294,27 @@ for the creation of tar file objects for custom manipulation.  If you have the
 IO::Zlib module installed, Archive::Tar will also support compressed or
 gzipped tar files.
 %endif
+
+%package autodie
+Summary:        Replace functions with ones that succeed or die
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.10
+Requires:       %perl_compat
+BuildArch:      noarch
+Requires:       perl(B)
+Requires:       perl(Fcntl)
+Requires:       perl(overload)
+Requires:       perl(POSIX)
+
+%description autodie
+The "autodie" and "Fatal" pragma provides a convenient way to replace
+functions that normally return false on failure with equivalents that throw an
+exception on failure.
+
+However "Fatal" has been obsoleted by the new autodie pragma. Please use
+autodie in preference to "Fatal".
 
 %package B-Lint
 Summary:        Perl lint
@@ -1506,8 +1527,8 @@ Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-macros
 
-Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-B-Lint,
-Requires:       perl-Compress-Raw-Bzip2,
+Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-autodie
+Requires:       perl-B-Lint, perl-Compress-Raw-Bzip2,
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-CPAN,
 Requires:       perl-CPAN-Meta, perl-CPAN-Meta-YAML, perl-CPANPLUS, perl-Encode
 Requires:       perl-Data-Dumper, perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
@@ -1875,6 +1896,14 @@ sed \
 %exclude %{_mandir}/man1/ptardiff.1*
 %exclude %{_mandir}/man1/ptargrep.1*
 %exclude %{_mandir}/man3/Archive::Tar*
+
+# autodie
+%exclude %{privlib}/autodie/
+%exclude %{privlib}/autodie.pm
+%exclude %{privlib}/Fatal.pm
+%exclude %{_mandir}/man3/autodie.3*
+%exclude %{_mandir}/man3/autodie::*
+%exclude %{_mandir}/man3/Fatal.3*
 
 # B-Lint
 %exclude %{privlib}/B/Lint*
@@ -2425,6 +2454,14 @@ sed \
 %{_mandir}/man1/ptargrep.1*
 %{_mandir}/man3/Archive::Tar* 
 %endif
+
+%files autodie
+%{privlib}/autodie/
+%{privlib}/autodie.pm
+%{privlib}/Fatal.pm
+%{_mandir}/man3/autodie.3*
+%{_mandir}/man3/autodie::*
+%{_mandir}/man3/Fatal.3*
 
 %files B-Lint
 %{privlib}/B/Lint*
@@ -3032,6 +3069,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Feb 15 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-259
+- Sub-package autodie (bug #911226)
+
 * Thu Feb 14 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-258
 - Fix perl-Encode-devel dependency declaration
 
