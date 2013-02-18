@@ -112,6 +112,9 @@ Patch19:        perl-5.16.1-perl-115206-Don-t-crash-when-vivifying.patch
 # Fix CVE-2012-6329, rhbz#884354
 Patch20:        perl-5.17.6-Fix-misparsing-of-maketext-strings.patch
 
+# Add NAME heading into CPAN PODs, rhbz#908113, CPANRT#73396
+Patch21:        perl-5.16.2-cpan-CPAN-add-NAME-headings-in-modules-with-POD.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -1579,6 +1582,7 @@ tarball from perl.org.
 %patch18 -p1
 %patch19 -p1
 %patch20 -p1
+%patch21 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1790,6 +1794,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch18: Extend stack in File::Glob::glob, (RT#114984)' \
     'Fedora Patch19: Do not crash when vivifying $|' \
     'Fedora Patch20: Fix misparsing of maketext strings (CVE-2012-6329)' \
+    'Fedora Patch21: Add NAME headings to CPAN modules (CPANRT#73396)' \
     %{nil}
 
 rm patchlevel.bak
@@ -3069,8 +3074,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Fri Feb 15 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-259
+* Mon Feb 18 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-259
 - Sub-package autodie (bug #911226)
+- Add NAME headings to CPAN modules (bug #908113)
 
 * Thu Feb 14 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-258
 - Fix perl-Encode-devel dependency declaration
