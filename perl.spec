@@ -27,7 +27,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        222%{?dist}
+Release:        223%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -122,6 +122,9 @@ Patch23:        perl-5.14.3-RT-82655-fix-double-free-when-loading-object.patch
 
 # Add NAME heading into CPAN PODs, rhbz#908113, CPANRT#73396
 Patch24:        perl-5.16.2-cpan-CPAN-add-NAME-headings-in-modules-with-POD.patch
+
+# Fix CVE-2013-1667, rhbz#918008
+Patch25:        perl-5.14.3-CVE-2013-1667.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1301,6 +1304,7 @@ tarball from perl.org.
 %patch22 -p1
 %patch23 -p1
 %patch24 -p1
+%patch25 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1514,6 +1518,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch22: Fix misparsing of maketext strings (CVE-2012-6329)' \
     'Fedora Patch23: Fix double-free when loading Digest::SHA object' \
     'Fedora Patch24: Add NAME headings to CPAN modules (CPANRT#73396)' \
+    'Fedora Patch25: Fix DoS in rehashing code (CVE-2013-1667)' \
     %{nil}
 
 rm patchlevel.bak
@@ -2467,6 +2472,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Mar 05 2013 Petr Pisar <ppisar@redhat.com> - 4:5.14.3-223
+- Fix CVE-2013-1667 (DoS in rehashing code) (bug #918008)
+
 * Mon Feb 18 2013 Petr Pisar <ppisar@redhat.com> - 4:5.14.3-222
 - Add NAME headings to CPAN modules (bug #908113)
 
