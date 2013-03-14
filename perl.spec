@@ -1,4 +1,4 @@
-%global perl_version    5.16.2
+%global perl_version    5.16.3
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        240%{?dist}
+Release:        241%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -41,7 +41,7 @@ Group:          Development/Languages
 # Copyright Only: for example ext/Text-Soundex/Soundex.xs 
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and MIT and Public Domain and UCD
 Url:            http://www.perl.org/
-Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.gz
+Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
 Source2:        perl-5.8.0-libnet.cfg
 Source3:        macros.perl
 #Systemtap tapset and example that make use of systemtap-sdt-devel
@@ -82,9 +82,6 @@ Patch9:         perl-5.14.2-find2perl-transtate-question-mark-properly.patch
 # Fix broken atof, rhbz#835452, RT#109318
 Patch10:        perl-5.16.0-fix-broken-atof.patch
 
-# Do not access freed memory when cloning thread, rhbz#825749, RT#111610
-Patch11:        perl-5.16.1-perl-111610-Trouble-with-XS-APItest-t-clone-with-sta.patch
-
 # Clear $@ before `do' I/O error, rhbz#834226, RT#113730
 Patch13:        perl-5.16.1-RT-113730-should-be-cleared-on-do-IO-error.patch
 
@@ -115,9 +112,6 @@ Patch20:        perl-5.17.6-Fix-misparsing-of-maketext-strings.patch
 # Add NAME heading into CPAN PODs, rhbz#908113, CPANRT#73396
 Patch21:        perl-5.16.2-cpan-CPAN-add-NAME-headings-in-modules-with-POD.patch
 
-# Fix CVE-2013-1667, rhbz#918008
-Patch22:        perl-5.16.2-CVE-2013-1667.patch
-
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -133,6 +127,7 @@ BuildRequires:  procps, rsyslog
 # The long line of Perl provides.
 
 # Compat provides
+Provides: perl(:MODULE_COMPAT_5.16.3)
 Provides: perl(:MODULE_COMPAT_5.16.2)
 Provides: perl(:MODULE_COMPAT_5.16.1)
 Provides: perl(:MODULE_COMPAT_5.16.0)
@@ -838,7 +833,7 @@ Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        2.70
+Version:        2.76.02
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(version)
 BuildArch:      noarch
@@ -1339,7 +1334,6 @@ tarball from perl.org.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
-%patch11 -p1
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
@@ -1349,7 +1343,6 @@ tarball from perl.org.
 %patch19 -p1
 %patch20 -p1
 %patch21 -p1
-%patch22 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1552,7 +1545,6 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch7: Dont run one io test due to random builder failures' \
     'Fedora Patch9: Fix find2perl to translate ? glob properly (RT#113054)' \
     'Fedora Patch10: Fix broken atof (RT#109318)' \
-    'Fedora Patch11: Do not access freed memory when cloning thread (RT#111610)' \
     'Fedora Patch13: Clear $@ before "do" I/O error (RT#113730)' \
     'Fedora Patch14: Do not truncate syscall() return value to 32 bits (RT#113980)' \
     'Fedora Patch15: Override the Pod::Simple::parse_file (CPANRT#77530)' \
@@ -1562,7 +1554,6 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch19: Do not crash when vivifying $|' \
     'Fedora Patch20: Fix misparsing of maketext strings (CVE-2012-6329)' \
     'Fedora Patch21: Add NAME headings to CPAN modules (CPANRT#73396)' \
-    'Fedora Patch22: Fix DoS in rehashing code (CVE-2013-1667)' \
     %{nil}
 
 rm patchlevel.bak
@@ -2635,6 +2626,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Mar 27 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-241
+- 5.16.3 bump (see <http://search.cpan.org/dist/perl-5.16.3/pod/perldelta.pod>
+  for release notes)
+
 * Tue Mar 05 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-240
 - Fix CVE-2013-1667 (DoS in rehashing code) (bug #918008)
 
