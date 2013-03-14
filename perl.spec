@@ -296,6 +296,7 @@ IO::Zlib module installed, Archive::Tar will also support compressed or
 gzipped tar files.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package autodie
 Summary:        Replace functions with ones that succeed or die
 Group:          Development/Libraries
@@ -316,7 +317,9 @@ exception on failure.
 
 However "Fatal" has been obsoleted by the new autodie pragma. Please use
 autodie in preference to "Fatal".
+%endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package B-Lint
 Summary:        Perl lint
 Group:          Development/Libraries
@@ -332,6 +335,7 @@ Conflicts:      perl < 4:5.16.2-251
 The B::Lint module is equivalent to an extended version of the -w option of
 perl. It is named after the program lint which carries out a similar process
 for C programs.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Carp
@@ -462,6 +466,7 @@ and writing CPAN metadata files like META.yml and MYMETA.yml. It should not be
 used for any other general YAML parsing or generation task.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package CPANPLUS
 Summary:        API & CLI access to the CPAN mirrors
 Group:          Development/Libraries
@@ -481,6 +486,7 @@ BuildArch:      noarch
 %description CPANPLUS
 The CPANPLUS library is an API to the CPAN mirrors and a collection of
 interactive shells, commandline programs, etc, that use this API.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Data-Dumper
@@ -557,6 +563,7 @@ SHA-1, SHA-224, SHA-256, SHA-384, and SHA-512 message digests.  The
 module can handle all types of input, including partial-byte data.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Encode
 Summary:        Character encodings in Perl
 Group:          Development/Libraries
@@ -585,6 +592,7 @@ BuildArch:      noarch
 enc2xs builds a Perl extension for use by Encode from either Unicode Character
 Mapping files (.ucm) or Tcl Encoding Files (.enc). You can use enc2xs to add
 your own encoding to perl. No knowledge of XS is necessary.
+%endif
 
 %package ExtUtils-CBuilder
 Summary:        Compile and link C code for Perl modules
@@ -690,6 +698,7 @@ ExtUtils::ParseXS will compile XS code into C code by embedding the constructs
 necessary to let C functions manipulate Perl values and creates the glue
 necessary to let Perl access those functions.
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package File-CheckTree
 Summary:        Run many file-test checks on a tree
 Group:          Development/Libraries
@@ -710,6 +719,7 @@ may put || die to make it a fatal error if the file test fails. The default is
 opposite condition. If you do a cd and then list some relative file names, you
 may want to indent them slightly for readability. If you supply your own die()
 or warn() message, you can use $file to interpolate the file name.
+%endif
 
 %package File-Fetch
 Summary:        Generic file fetching mechanism
@@ -778,6 +788,7 @@ as an IO::File object so you can have common code that doesn't know which sort
 of file it is using.
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package IPC-Cmd
 Summary:        Finding and running system commands made easy
 Group:          Development/Libraries
@@ -792,6 +803,7 @@ BuildArch:      noarch
 %description IPC-Cmd
 IPC::Cmd allows you to run commands, interactively if desired, in a platform
 independent way, but have them still work.
+%endif
 
 
 %package HTTP-Tiny
@@ -1074,6 +1086,7 @@ Requires:       perl(Carp)
 PathTools Perl module (Cwd, File::Spec).
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Params-Check
 Summary:        Generic input parsing/checking mechanism
 Group:          Development/Libraries
@@ -1086,6 +1099,7 @@ BuildArch:      noarch
 
 %description Params-Check
 Params::Check is a generic input parsing/checking mechanism.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Parse-CPAN-Meta
@@ -1352,6 +1366,7 @@ Conflicts:      perl < 4:5.16.2-256
 %description Text-ParseWords
 Parse text into an array of tokens or array of arrays.
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Text-Soundex
 Summary:        Implementation of the soundex algorithm
 Group:          Development/Libraries
@@ -1369,7 +1384,9 @@ Soundex is a phonetic algorithm for indexing names by sound, as pronounced in
 English. This module implements the original soundex algorithm developed by
 Robert Russell and Margaret Odell, as well as a variation called "American
 Soundex".
+%endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Thread-Queue
 Summary:        Thread-safe queues
 Group:          Development/Libraries
@@ -1384,6 +1401,7 @@ Conflicts:      perl < 4:5.16.2-257
 %description Thread-Queue
 This module provides thread-safe FIFO queues that can be accessed safely by
 any number of threads.
+%endif
 
 %package Time-Piece
 Summary:        Time objects from localtime and gmtime
@@ -2456,6 +2474,7 @@ sed \
 %{_mandir}/man3/Archive::Tar* 
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files autodie
 %{privlib}/autodie/
 %{privlib}/autodie.pm
@@ -2463,10 +2482,13 @@ sed \
 %{_mandir}/man3/autodie.3*
 %{_mandir}/man3/autodie::*
 %{_mandir}/man3/Fatal.3*
+%endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files B-Lint
 %{privlib}/B/Lint*
 %{_mandir}/man3/B::Lint*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Carp
@@ -2532,6 +2554,7 @@ sed \
 %{_mandir}/man3/CPAN::Meta::YAML*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files CPANPLUS
 %{_bindir}/cpan2dist
 %{_bindir}/cpanp
@@ -2541,6 +2564,7 @@ sed \
 %{_mandir}/man1/cpan2dist.1*
 %{_mandir}/man1/cpanp.1*
 %{_mandir}/man3/CPANPLUS*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Data-Dumper
@@ -2576,6 +2600,7 @@ sed \
 %{_mandir}/man3/Digest::SHA.3*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Encode
 %{_bindir}/piconv
 %{archlib}/encoding.pm
@@ -2593,6 +2618,7 @@ sed \
 %{privlib}/Encode/*.e2x
 %{privlib}/Encode/encode.h
 %{_mandir}/man1/enc2xs.1*
+%endif
 
 %files ExtUtils-CBuilder
 %{privlib}/ExtUtils/CBuilder/
@@ -2667,9 +2693,11 @@ sed \
 %{_mandir}/man3/ExtUtils::Typemaps::OutputMap.3*
 %{_mandir}/man3/ExtUtils::Typemaps::Type.3*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files File-CheckTree
 %{privlib}/File/CheckTree.pm
 %{_mandir}/man3/File::CheckTree.3*
+%endif
 
 %files File-Fetch
 %{privlib}/File/Fetch.pm
@@ -2743,9 +2771,11 @@ sed \
 %{privlib}/HTTP/Tiny.pm
 %{_mandir}/man3/HTTP::Tiny*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files IPC-Cmd
 %{privlib}/IPC/Cmd.pm
 %{_mandir}/man3/IPC::Cmd.3*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files JSON-PP
@@ -2855,9 +2885,11 @@ sed \
 %{_mandir}/man3/File::Spec*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Params-Check
 %{privlib}/Params/
 %{_mandir}/man3/Params::Check*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Parse-CPAN-Meta
@@ -3018,14 +3050,18 @@ sed \
 %{privlib}/Text/ParseWords.pm
 %{_mandir}/man3/Text::ParseWords.*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Text-Soundex
 %{archlib}/auto/Text/Soundex/
 %{archlib}/Text/Soundex.pm
 %{_mandir}/man3/Text::Soundex.*
+%endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Thread-Queue
 %{privlib}/Thread/Queue.pm
 %{_mandir}/man3/Thread::Queue.*
+%endif
 
 %files Time-Piece
 %{archlib}/Time/Piece.pm 
@@ -3073,6 +3109,8 @@ sed \
 * Thu Mar 14 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-261
 - 5.16.3 bump (see <http://search.cpan.org/dist/perl-5.16.3/pod/perldelta.pod>
   for release notes)
+- Remove bundled autodie, B-Lint, CPANPLUS, Encode, File-CheckTree, IPC-Cmd,
+  Params-Check, Text-Soundex, Thread-Queue
 
 * Tue Mar 05 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.2-260
 - Fix CVE-2013-1667 (DoS in rehashing code) (bug #918008)
