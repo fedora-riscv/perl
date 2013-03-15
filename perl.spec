@@ -2003,14 +2003,14 @@ sed \
 %exclude %{archlib}/Compress/Raw/Bzip2.pm
 %exclude %{_mandir}/man3/Compress::Raw::Bzip2*
 
-# Compress::Raw::Zlib
+# Compress-Raw-Zlib
 %exclude %{archlib}/Compress/Raw/
 %exclude %{archlib}/auto/Compress
 %exclude %{archlib}/auto/Compress/Raw/
 %exclude %{archlib}/auto/Compress/Raw/Zlib/
 %exclude %{_mandir}/man3/Compress::Raw::Zlib*
 
-# Data::Dumper
+# Data-Dumper
 %exclude %dir %{archlib}/auto/Data
 %exclude %dir %{archlib}/auto/Data/Dumper
 %exclude %{archlib}/auto/Data/Dumper/Dumper.so
@@ -2027,12 +2027,12 @@ sed \
 %exclude %{_mandir}/man3/Digest::base.3*
 %exclude %{_mandir}/man3/Digest::file.3*
 
-# Digest::MD5
+# Digest-MD5
 %exclude %{archlib}/Digest/MD5.pm
 %exclude %{archlib}/auto/Digest/MD5/
 %exclude %{_mandir}/man3/Digest::MD5.3*
 
-# Digest::SHA
+# Digest-SHA
 %exclude %{_bindir}/shasum
 %exclude %{archlib}/Digest/SHA.pm
 %exclude %{archlib}/auto/Digest/SHA/
@@ -2054,16 +2054,16 @@ sed \
 %exclude %{privlib}/Encode/encode.h
 %exclude %{_mandir}/man1/enc2xs.1*
 
-# ExtUtils::CBuilder
+# ExtUtils-CBuilder
 %exclude %{privlib}/ExtUtils/CBuilder/
 %exclude %{privlib}/ExtUtils/CBuilder.pm
 %exclude %{_mandir}/man3/ExtUtils::CBuilder*
 
-# ExtUtils::Embed
+# ExtUtils-Embed
 %exclude %{privlib}/ExtUtils/Embed.pm
 %exclude %{_mandir}/man3/ExtUtils::Embed*
 
-# ExtUtils::Install
+# ExtUtils-Install
 %exclude %{privlib}/ExtUtils/Install.pm
 %exclude %{privlib}/ExtUtils/Installed.pm
 %exclude %{privlib}/ExtUtils/Packlist.pm
@@ -2071,12 +2071,12 @@ sed \
 %exclude %{_mandir}/man3/ExtUtils::Installed.3*
 %exclude %{_mandir}/man3/ExtUtils::Packlist.3*
 
-# ExtUtils::Manifest
+# ExtUtils-Manifest
 %exclude %{privlib}/ExtUtils/Manifest.pm
 %exclude %{privlib}/ExtUtils/MANIFEST.SKIP
 %exclude %{_mandir}/man3/ExtUtils::Manifest.3*
 
-# ExtUtils::MakeMaker
+# ExtUtils-MakeMaker
 %exclude %{_bindir}/instmodsh
 %exclude %{privlib}/ExtUtils/Command/
 %exclude %{privlib}/ExtUtils/Liblist/
@@ -2098,7 +2098,7 @@ sed \
 %exclude %{_mandir}/man3/ExtUtils::Mksymlists.3*
 %exclude %{_mandir}/man3/ExtUtils::testlib.3*
 
-# ExtUtils::ParseXS
+# ExtUtils-ParseXS
 %exclude %dir %{privlib}/ExtUtils/ParseXS/
 %exclude %dir %{privlib}/ExtUtils/Typemaps/
 %exclude %{privlib}/ExtUtils/ParseXS.pm
@@ -2127,7 +2127,7 @@ sed \
 %exclude %{privlib}/File/CheckTree.pm
 %exclude %{_mandir}/man3/File::CheckTree.3*
 
-# File::Fetch
+# File-Fetch
 %exclude %{privlib}/File/Fetch.pm
 %exclude %{_mandir}/man3/File::Fetch.3*
 
@@ -2138,15 +2138,15 @@ sed \
 %exclude %{_mandir}/man1/perlfilter.*
 %exclude %{_mandir}/man3/Filter::Util::*
 
-# IO::Compress
+# IO-Compress
 %exclude %{_bindir}/zipdetails
 %exclude %{privlib}/IO/Compress/FAQ.pod
 %exclude %{_mandir}/man1/zipdetails.*
 %exclude %{_mandir}/man3/IO::Compress::FAQ.*
-# Compress::Zlib
+# Compress-Zlib
 %exclude %{privlib}/Compress/Zlib.pm
 %exclude %{_mandir}/man3/Compress::Zlib*
-# IO::Compress::Base
+# IO-Compress-Base
 %exclude %{privlib}/File/GlobMapper.pm
 %exclude %{privlib}/IO/Compress/Base/
 %exclude %{privlib}/IO/Compress/Base.pm
@@ -2156,7 +2156,7 @@ sed \
 %exclude %{_mandir}/man3/IO::Compress::Base.*
 %exclude %{_mandir}/man3/IO::Uncompress::AnyUncompress.*
 %exclude %{_mandir}/man3/IO::Uncompress::Base.*
-# IO::Compress::Zlib
+# IO-Compress-Zlib
 %exclude %{privlib}/IO/Compress/Adapter/
 %exclude %{privlib}/IO/Compress/Deflate.pm
 %exclude %{privlib}/IO/Compress/Gzip/
@@ -2185,19 +2185,19 @@ sed \
 %exclude %{_mandir}/man3/IO::Uncompress::RawInflate*
 %exclude %{_mandir}/man3/IO::Uncompress::Unzip*
 
-# IO::Zlib
+# IO-Zlib
 %exclude %{privlib}/IO/Zlib.pm
 %exclude %{_mandir}/man3/IO::Zlib.*
 
-# HTTP::Tiny
+# HTTP-Tiny
 %exclude %{privlib}/HTTP/Tiny.pm
 %exclude %{_mandir}/man3/HTTP::Tiny*
 
-# IPC::Cmd
+# IPC-Cmd
 %exclude %{privlib}/IPC/Cmd.pm
 %exclude %{_mandir}/man3/IPC::Cmd.3*
 
-# JSON::PP
+# JSON-PP
 %exclude %{_bindir}/json_pp
 %exclude %{privlib}/JSON/PP
 %exclude %{privlib}/JSON/PP.pm
@@ -2205,7 +2205,7 @@ sed \
 %exclude %{_mandir}/man3/JSON::PP.3*
 %exclude %{_mandir}/man3/JSON::PP::Boolean.3pm*
 
-# Locale::Codes
+# Locale-Codes
 %exclude %{privlib}/Locale/Codes
 %exclude %{privlib}/Locale/Codes.*
 %exclude %{privlib}/Locale/Country.*
@@ -2219,11 +2219,11 @@ sed \
 %exclude %{_mandir}/man3/Locale::Language.*
 %exclude %{_mandir}/man3/Locale::Script.*
 
-# Locale::Maketext::Simple
+# Locale-Maketext-Simple
 %exclude %{privlib}/Locale/Maketext/Simple.pm
 %exclude %{_mandir}/man3/Locale::Maketext::Simple.*
 
-# Log::Message
+# Log-Message
 %exclude %{privlib}/Log/Message.pm
 %exclude %{privlib}/Log/Message/Config.pm
 %exclude %{privlib}/Log/Message/Handlers.pm
@@ -2233,11 +2233,11 @@ sed \
 %exclude %{_mandir}/man3/Log::Message::Handlers.3*
 %exclude %{_mandir}/man3/Log::Message::Item.3*
 
-# Log::Message::Simple
+# Log-Message-Simple
 %exclude %{privlib}/Log/Message/Simple.pm
 %exclude %{_mandir}/man3/Log::Message::Simple.3*
 
-# Module::Build
+# Module-Build
 %exclude %{_bindir}/config_data
 %exclude %{privlib}/inc/
 %exclude %{privlib}/Module/Build/
@@ -2391,7 +2391,7 @@ sed \
 %exclude %{_mandir}/man3/TAP*
 %exclude %{_mandir}/man3/Test::Harness*
 
-# Test::Simple
+# Test-Simple
 %exclude %{privlib}/Test/More*
 %exclude %{privlib}/Test/Builder*
 %exclude %{privlib}/Test/Simple*
@@ -2418,7 +2418,7 @@ sed \
 %exclude %{privlib}/Time/Local.pm
 %exclude %{_mandir}/man3/Time::Local.*
 
-# Time::Piece
+# Time-Piece
 %exclude %{archlib}/Time/Piece.pm
 %exclude %{archlib}/Time/Seconds.pm
 %exclude %{archlib}/auto/Time/Piece/
