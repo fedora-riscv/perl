@@ -1405,6 +1405,23 @@ This module provides thread-safe FIFO queues that can be accessed safely by
 any number of threads.
 %endif
 
+%package Time-Local
+Summary:        Efficiently compute time from local and GMT time
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.2000
+BuildArch:      noarch
+Conflicts:      perl < 4:5.16.3-262
+
+%description Time-Local
+This module provides functions that are the inverse of built-in perl functions
+localtime() and gmtime(). They accept a date as a six-element array, and
+return the corresponding time(2) value in seconds since the system epoch
+(Midnight, January 1, 1970 GMT on Unix, for example). This value can be
+positive or negative, though POSIX only requires support for positive values,
+so dates before the system's epoch may not work on all operating systems.
+
 %package Time-Piece
 Summary:        Time objects from localtime and gmtime
 Group:          Development/Libraries
@@ -1570,7 +1587,7 @@ Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
 Requires:       perl-podlators, perl-Pod-Simple
 Requires:       perl-Socket, perl-Term-UI, perl-Test-Harness, perl-Test-Simple
 Requires:       perl-Text-ParseWords, perl-Text-Soundex, perl-Thread-Queue
-Requires:       perl-Time-Piece, perl-Version-Requirements,
+Requires:       perl-Time-Local, perl-Time-Piece, perl-Version-Requirements,
 Requires:       perl-version, perl-threads, perl-threads-shared, perl-parent
 
 %description core
@@ -2397,6 +2414,10 @@ sed \
 %exclude %{privlib}/Thread/Queue.pm
 %exclude %{_mandir}/man3/Thread::Queue.*
 
+# Time-Local
+%exclude %{privlib}/Time/Local.pm
+%exclude %{_mandir}/man3/Time::Local.*
+
 # Time::Piece
 %exclude %{archlib}/Time/Piece.pm
 %exclude %{archlib}/Time/Seconds.pm
@@ -3065,6 +3086,10 @@ sed \
 %{_mandir}/man3/Thread::Queue.*
 %endif
 
+%files Time-Local
+%{privlib}/Time/Local.pm
+%{_mandir}/man3/Time::Local.*
+
 %files Time-Piece
 %{archlib}/Time/Piece.pm 
 %{archlib}/Time/Seconds.pm
@@ -3110,6 +3135,7 @@ sed \
 %changelog
 * Fri Mar 15 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-262
 - Correct dependencies of perl-HTTP-Tiny
+- Sub-package Time-Local (bug #922054)
 
 * Thu Mar 14 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-261
 - 5.16.3 bump (see <http://search.cpan.org/dist/perl-5.16.3/pod/perldelta.pod>
