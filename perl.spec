@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        261%{?dist}
+Release:        262%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -812,8 +812,10 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.017
+Requires:       perl(bytes)
 Requires:       perl(Carp)
 Requires:       perl(IO::Socket)
+Requires:       perl(Time::Local)
 BuildArch:      noarch
 
 %description HTTP-Tiny
@@ -3106,6 +3108,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Apr 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-262
+- Correct dependencies of perl-HTTP-Tiny
+
 * Thu Mar 14 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-261
 - 5.16.3 bump (see <http://search.cpan.org/dist/perl-5.16.3/pod/perldelta.pod>
   for release notes)
