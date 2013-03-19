@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        262%{?dist}
+Release:        263%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -534,6 +534,7 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.51
 Requires:       %perl_compat
+Requires:       perl(XSLoader)
 # Recommended
 Requires:       perl(Digest::base) >= 1.00
 
@@ -3133,6 +3134,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Mar 19 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-263
+- Correct perl-Digest-MD5 dependencies
+
 * Fri Mar 15 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-262
 - Correct dependencies of perl-HTTP-Tiny
 - Sub-package Time-Local (bug #922054)
