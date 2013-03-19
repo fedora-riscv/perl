@@ -263,6 +263,7 @@ Install this if you want to test your Perl installation (binary and core
 modules).
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Archive-Extract
 Summary:        Generic archive extracting mechanism
 Group:          Development/Libraries
@@ -275,6 +276,7 @@ BuildArch:      noarch
 
 %description Archive-Extract
 Archive::Extract is a generic archive extraction mechanism.
+%endif
 
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -722,6 +724,7 @@ may want to indent them slightly for readability. If you supply your own die()
 or warn() message, you can use $file to interpolate the file name.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package File-Fetch
 Summary:        Generic file fetching mechanism
 Group:          Development/Libraries
@@ -736,6 +739,7 @@ BuildArch:      noarch
 
 %description File-Fetch
 File::Fetch is a generic file fetching mechanism.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 # FIXME Filter-Simple? version?
@@ -807,6 +811,7 @@ independent way, but have them still work.
 %endif
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package HTTP-Tiny
 Summary:        A small, simple, correct HTTP/1.1 client
 Group:          Development/Libraries
@@ -825,6 +830,7 @@ requests without the overhead of a large framework like LWP::UserAgent.
 It is more correct and more complete than HTTP::Lite. It supports proxies 
 (currently only non-authenticating ones) and redirection. It also correctly 
 resumes after EINTR.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package JSON-PP
@@ -981,6 +987,7 @@ Module::Load eliminates the need to know whether you are trying to require
 either a file or a module.
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Module-Load-Conditional
 Summary:        Looking up module information / loading at runtime
 Group:          Development/Libraries
@@ -993,6 +1000,7 @@ BuildArch:      noarch
 %description Module-Load-Conditional
 Module::Load::Conditional provides simple ways to query and possibly load any
 of the modules you have installed on your system during runtime.
+%endif
 
 
 %package Module-Loaded
@@ -1171,6 +1179,7 @@ BuildArch:      noarch
 This module provides things that are useful in decoding Pod E<...> sequences.
 Presumably, it should be used only by Pod parsers and/or formatters.
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-LaTeX
 Summary:        Convert POD data to formatted LaTeX
 Group:          Development/Libraries
@@ -1184,6 +1193,7 @@ Conflicts:      perl < 4:5.16.2-248
 %description Pod-LaTeX
 Pod::LaTeX is a module to convert documentation in the POD format into
 LaTeX. A pod2latex replacement command is provided.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-Parser
@@ -1406,6 +1416,7 @@ This module provides thread-safe FIFO queues that can be accessed safely by
 any number of threads.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Time-Local
 Summary:        Efficiently compute time from local and GMT time
 Group:          Development/Libraries
@@ -1422,6 +1433,7 @@ return the corresponding time(2) value in seconds since the system epoch
 (Midnight, January 1, 1970 GMT on Unix, for example). This value can be
 positive or negative, though POSIX only requires support for positive values,
 so dates before the system's epoch may not work on all operating systems.
+%endif
 
 %package Time-Piece
 Summary:        Time objects from localtime and gmtime
@@ -2481,9 +2493,11 @@ sed \
 %{perl5_testdir}/
 %exclude %{perl5_testdir}/Test-Simple
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Archive-Extract
 %{privlib}/Archive/Extract.pm
 %{_mandir}/man3/Archive::Extract.3*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Archive-Tar
@@ -2723,9 +2737,11 @@ sed \
 %{_mandir}/man3/File::CheckTree.3*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files File-Fetch
 %{privlib}/File/Fetch.pm
 %{_mandir}/man3/File::Fetch.3*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Filter
@@ -2791,9 +2807,11 @@ sed \
 %{privlib}/IO/Zlib.pm
 %{_mandir}/man3/IO::Zlib.*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files HTTP-Tiny
 %{privlib}/HTTP/Tiny.pm
 %{_mandir}/man3/HTTP::Tiny*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files IPC-Cmd
@@ -2868,9 +2886,11 @@ sed \
 %{privlib}/Module/Load.pm
 %{_mandir}/man3/Module::Load.*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Module-Load-Conditional
 %{privlib}/Module/Load/
 %{_mandir}/man3/Module::Load::Conditional* 
+%endif
 
 %files Module-Loaded
 %dir %{privlib}/Module/
@@ -2947,11 +2967,13 @@ sed \
 %{privlib}/Pod/Escapes.pm
 %{_mandir}/man3/Pod::Escapes.*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Pod-LaTeX
 %{_bindir}/pod2latex
 %{privlib}/Pod/LaTeX.pm
 %{_mandir}/man1/pod2latex.1*
 %{_mandir}/man3/Pod::LaTeX.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Pod-Parser
@@ -3087,9 +3109,11 @@ sed \
 %{_mandir}/man3/Thread::Queue.*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Time-Local
 %{privlib}/Time/Local.pm
 %{_mandir}/man3/Time::Local.*
+%endif
 
 %files Time-Piece
 %{archlib}/Time/Piece.pm 
@@ -3136,6 +3160,8 @@ sed \
 %changelog
 * Tue Mar 19 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-263
 - Correct perl-Digest-MD5 dependencies
+- Remove bundled Archive-Extract, File-Fetch, HTTP-Tiny,
+  Module-Load-Conditional, Time-Local
 
 * Fri Mar 15 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-262
 - Correct dependencies of perl-HTTP-Tiny
