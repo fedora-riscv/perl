@@ -534,6 +534,7 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.51
 Requires:       %perl_compat
+Requires:       perl(XSLoader)
 # Recommended
 Requires:       perl(Digest::base) >= 1.00
 
@@ -3110,6 +3111,7 @@ sed \
 %changelog
 * Thu Apr 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-262
 - Correct dependencies of perl-HTTP-Tiny
+- Correct perl-Digest-MD5 dependencies
 
 * Thu Mar 14 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-261
 - 5.16.3 bump (see <http://search.cpan.org/dist/perl-5.16.3/pod/perldelta.pod>
