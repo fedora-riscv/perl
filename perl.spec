@@ -477,6 +477,7 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.51
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl(XSLoader)
 # Recommended
 Requires:       perl(Digest::base) >= 1.00
 
@@ -2471,6 +2472,7 @@ sed \
 %changelog
 * Thu Apr 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.14.4-225
 - Correct dependencies of perl-HTTP-Tiny
+- Correct perl-Digest-MD5 dependencies
 
 * Thu Mar 07 2013 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.14.4-224
 - 5.14.4 bump (see
