@@ -263,6 +263,7 @@ Install this if you want to test your Perl installation (binary and core
 modules).
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Archive-Extract
 Summary:        Generic archive extracting mechanism
 Group:          Development/Libraries
@@ -275,6 +276,7 @@ BuildArch:      noarch
 
 %description Archive-Extract
 Archive::Extract is a generic archive extraction mechanism.
+%endif
 
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -981,6 +983,7 @@ Module::Load eliminates the need to know whether you are trying to require
 either a file or a module.
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Module-Load-Conditional
 Summary:        Looking up module information / loading at runtime
 Group:          Development/Libraries
@@ -993,6 +996,7 @@ BuildArch:      noarch
 %description Module-Load-Conditional
 Module::Load::Conditional provides simple ways to query and possibly load any
 of the modules you have installed on your system during runtime.
+%endif
 
 
 %package Module-Loaded
@@ -1171,6 +1175,7 @@ BuildArch:      noarch
 This module provides things that are useful in decoding Pod E<...> sequences.
 Presumably, it should be used only by Pod parsers and/or formatters.
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-LaTeX
 Summary:        Convert POD data to formatted LaTeX
 Group:          Development/Libraries
@@ -1184,6 +1189,7 @@ Conflicts:      perl < 4:5.16.2-248
 %description Pod-LaTeX
 Pod::LaTeX is a module to convert documentation in the POD format into
 LaTeX. A pod2latex replacement command is provided.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-Parser
@@ -2460,9 +2466,11 @@ sed \
 %{perl5_testdir}/
 %exclude %{perl5_testdir}/Test-Simple
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Archive-Extract
 %{privlib}/Archive/Extract.pm
 %{_mandir}/man3/Archive::Extract.3*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Archive-Tar
@@ -2847,9 +2855,11 @@ sed \
 %{privlib}/Module/Load.pm
 %{_mandir}/man3/Module::Load.*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Module-Load-Conditional
 %{privlib}/Module/Load/
 %{_mandir}/man3/Module::Load::Conditional* 
+%endif
 
 %files Module-Loaded
 %dir %{privlib}/Module/
@@ -2926,11 +2936,13 @@ sed \
 %{privlib}/Pod/Escapes.pm
 %{_mandir}/man3/Pod::Escapes.*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Pod-LaTeX
 %{_bindir}/pod2latex
 %{privlib}/Pod/LaTeX.pm
 %{_mandir}/man1/pod2latex.1*
 %{_mandir}/man3/Pod::LaTeX.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Pod-Parser
@@ -3112,6 +3124,7 @@ sed \
 * Thu Apr 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-262
 - Correct dependencies of perl-HTTP-Tiny
 - Correct perl-Digest-MD5 dependencies
+- Remove bundled Archive-Extract, Module-Load-Conditional, Pod-LaTeX
 
 * Thu Mar 14 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-261
 - 5.16.3 bump (see <http://search.cpan.org/dist/perl-5.16.3/pod/perldelta.pod>
