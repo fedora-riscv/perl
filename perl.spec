@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        263%{?dist}
+Release:        264%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -417,6 +417,34 @@ Requires:       %perl_compat
 This module provides a Perl interface to the zlib compression library.
 It is used by IO::Compress::Zlib.
 %endif
+
+%package constant
+Summary:        Perl pragma to declare constants
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.23
+Requires:       %perl_compat
+Requires:       perl(Carp)
+BuildArch:      noarch
+Conflicts:      perl < 4:5.16.3-264
+
+%description constant
+This pragma allows you to declare constants at compile-time:
+
+use constant PI => 4 * atan2(1, 1);
+
+When you declare a constant such as "PI" using the method shown above,
+each machine your script runs upon can have as many digits of accuracy
+as it can use. Also, your program will be easier to read, more likely
+to be maintained (and maintained correctly), and far less likely to
+send a space probe to the wrong planet because nobody noticed the one
+equation in which you wrote 3.14195.
+
+When a constant is used in an expression, Perl replaces it with its
+value at compile time, and may then optimize the expression further.
+In particular, any code in an "if (CONSTANT)" block will be optimized
+away if the constant is false.
 
 %package CPAN
 Summary:        Query, download and build perl modules from CPAN sites
@@ -1580,7 +1608,8 @@ Requires:       perl-macros
 
 Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-autodie
 Requires:       perl-B-Lint, perl-Compress-Raw-Bzip2,
-Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-CPAN,
+Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-constant,
+Requires:       perl-CPAN,
 Requires:       perl-CPAN-Meta, perl-CPAN-Meta-YAML, perl-CPANPLUS, perl-Encode
 Requires:       perl-Data-Dumper, perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Embed,
@@ -1970,6 +1999,10 @@ sed \
 %exclude %{privlib}/CGI.pm
 %exclude %{_mandir}/man3/CGI.3*
 %exclude %{_mandir}/man3/CGI::*.3*
+
+# constant
+%exclude %{privlib}/constant.pm
+%exclude %{_mandir}/man3/constant.3*
 
 # CPAN
 %exclude %{_bindir}/cpan
@@ -2558,6 +2591,10 @@ sed \
 %{archlib}/auto/Compress/Raw/Zlib/
 %{_mandir}/man3/Compress::Raw::Zlib*
 %endif
+
+%files constant
+%{privlib}/constant.pm
+%{_mandir}/man3/constant.3*
 
 %files CPAN
 %{_bindir}/cpan
@@ -3158,6 +3195,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Mar 21 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-264
+- Sub-package constant (bug #924169)
+
 * Tue Mar 19 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-263
 - Correct perl-Digest-MD5 dependencies
 - Remove bundled Archive-Extract, File-Fetch, HTTP-Tiny,
