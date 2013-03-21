@@ -536,6 +536,23 @@ variable is output in a single Perl statement. Handles self-referential
 structures correctly.
 %endif
 
+%package DB_File
+Summary:        Perl5 access to Berkeley DB version 1.x
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.826
+Requires:       %perl_compat
+Requires:       perl(Fcntl)
+Requires:       perl(XSLoader)
+Conflicts:      perl < 4:5.16.3-264
+
+%description DB_File
+DB_File is a module which allows Perl programs to make use of the facilities
+provided by Berkeley DB version 1.x (if you have a newer version of DB, you
+will be limited to functionality provided by interface of version 1.x). The
+interface defined here mirrors the Berkeley DB interface closely.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Digest
 Summary:        Modules that calculate message digests
@@ -1611,7 +1628,8 @@ Requires:       perl-B-Lint, perl-Compress-Raw-Bzip2,
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-constant,
 Requires:       perl-CPAN,
 Requires:       perl-CPAN-Meta, perl-CPAN-Meta-YAML, perl-CPANPLUS, perl-Encode
-Requires:       perl-Data-Dumper, perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
+Requires:       perl-Data-Dumper, perl-DB_File, perl-Digest, perl-Digest-MD5,
+Requires:       perl-Digest-SHA,
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Embed,
 Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
 Requires:       perl-ExtUtils-Manifest
@@ -2063,6 +2081,12 @@ sed \
 %exclude %dir %{archlib}/Data
 %exclude %{archlib}/Data/Dumper.pm
 %exclude %{_mandir}/man3/Data::Dumper.3*
+
+# DB_File
+%exclude %{archlib}/DB_File.pm
+%exclude %dir %{archlib}/auto/DB_File
+%exclude %{archlib}/auto/DB_File/DB_File.so
+%exclude %{_mandir}/man3/DB_File*
 
 # Digest
 %exclude %{privlib}/Digest.pm
@@ -2649,7 +2673,15 @@ sed \
 %dir %{archlib}/Data
 %{archlib}/Data/Dumper.pm
 %{_mandir}/man3/Data::Dumper.3*
+%endif
 
+%files DB_File
+%{archlib}/DB_File.pm
+%dir %{archlib}/auto/DB_File
+%{archlib}/auto/DB_File/DB_File.so
+%{_mandir}/man3/DB_File*
+
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Digest
 %{privlib}/Digest.pm
 %dir %{privlib}/Digest
@@ -3197,6 +3229,7 @@ sed \
 %changelog
 * Thu Mar 21 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-264
 - Sub-package constant (bug #924169)
+- Sub-package DB_File (bug #924351)
 
 * Tue Mar 19 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-263
 - Correct perl-Digest-MD5 dependencies
