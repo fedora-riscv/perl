@@ -658,6 +658,24 @@ Perl maintains environment variables in a special hash named %%ENV. For when
 this access method is inconvenient, the Perl module Env allows environment
 variables to be treated as scalar or array variables.
 
+%package Exporter
+Summary:        Implements default import method for modules
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        5.66
+Requires:       %perl_compat
+Requires:       perl(Carp) >= 1.05
+BuildArch:      noarch
+Conflicts:      perl < 4:5.16.2-265
+
+%description Exporter
+The Exporter module implements an import method which allows a module to
+export functions and variables to its users' name spaces. Many modules use
+Exporter rather than implementing their own import method because Exporter
+provides a highly flexible interface, with an implementation optimized for
+the common case.
+
 %package ExtUtils-CBuilder
 Summary:        Compile and link C code for Perl modules
 Group:          Development/Libraries
@@ -1645,7 +1663,7 @@ Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-constant,
 Requires:       perl-CPAN,
 Requires:       perl-CPAN-Meta, perl-CPAN-Meta-YAML, perl-CPANPLUS, perl-Encode
 Requires:       perl-Data-Dumper, perl-DB_File, perl-Digest, perl-Digest-MD5,
-Requires:       perl-Digest-SHA, perl-Env
+Requires:       perl-Digest-SHA, perl-Env, perl-Exporter
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Embed,
 Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
 Requires:       perl-ExtUtils-Manifest
@@ -2143,6 +2161,10 @@ sed \
 # Env
 %exclude %{privlib}/Env.pm
 %exclude %{_mandir}/man3/Env.3*
+
+# Exporter
+%exclude %{privlib}/Exporter*
+%exclude %{_mandir}/man3/Exporter*
 
 # ExtUtils-CBuilder
 %exclude %{privlib}/ExtUtils/CBuilder/
@@ -2751,6 +2773,10 @@ sed \
 %{privlib}/Env.pm
 %{_mandir}/man3/Env.3*
 
+%files Exporter
+%{privlib}/Exporter*
+%{_mandir}/man3/Exporter*
+
 %files ExtUtils-CBuilder
 %{privlib}/ExtUtils/CBuilder/
 %{privlib}/ExtUtils/CBuilder.pm
@@ -3254,6 +3280,7 @@ sed \
 * Fri Mar 22 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-265
 - Conflict perl-autodie with older perl (bug #911226)
 - Sub-package Env (bug #924619)
+- Sub-package Exporter (bug #924645)
 
 * Thu Mar 21 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-264
 - Sub-package constant (bug #924169)
