@@ -643,6 +643,21 @@ Mapping files (.ucm) or Tcl Encoding Files (.enc). You can use enc2xs to add
 your own encoding to perl. No knowledge of XS is necessary.
 %endif
 
+%package Env
+Summary:        Perl module that imports environment variables as scalars or arrays
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.03
+Requires:       %perl_compat
+BuildArch:      noarch
+Conflicts:      perl < 4:5.16.2-265
+
+%description Env
+Perl maintains environment variables in a special hash named %%ENV. For when
+this access method is inconvenient, the Perl module Env allows environment
+variables to be treated as scalar or array variables.
+
 %package ExtUtils-CBuilder
 Summary:        Compile and link C code for Perl modules
 Group:          Development/Libraries
@@ -1630,7 +1645,7 @@ Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-constant,
 Requires:       perl-CPAN,
 Requires:       perl-CPAN-Meta, perl-CPAN-Meta-YAML, perl-CPANPLUS, perl-Encode
 Requires:       perl-Data-Dumper, perl-DB_File, perl-Digest, perl-Digest-MD5,
-Requires:       perl-Digest-SHA,
+Requires:       perl-Digest-SHA, perl-Env
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Embed,
 Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
 Requires:       perl-ExtUtils-Manifest
@@ -2124,6 +2139,10 @@ sed \
 %exclude %{privlib}/Encode/*.e2x
 %exclude %{privlib}/Encode/encode.h
 %exclude %{_mandir}/man1/enc2xs.1*
+
+# Env
+%exclude %{privlib}/Env.pm
+%exclude %{_mandir}/man3/Env.3*
 
 # ExtUtils-CBuilder
 %exclude %{privlib}/ExtUtils/CBuilder/
@@ -2728,6 +2747,10 @@ sed \
 %{_mandir}/man1/enc2xs.1*
 %endif
 
+%files Env
+%{privlib}/Env.pm
+%{_mandir}/man3/Env.3*
+
 %files ExtUtils-CBuilder
 %{privlib}/ExtUtils/CBuilder/
 %{privlib}/ExtUtils/CBuilder.pm
@@ -3230,6 +3253,7 @@ sed \
 %changelog
 * Fri Mar 22 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-265
 - Conflict perl-autodie with older perl (bug #911226)
+- Sub-package Env (bug #924619)
 
 * Thu Mar 21 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-264
 - Sub-package constant (bug #924169)
