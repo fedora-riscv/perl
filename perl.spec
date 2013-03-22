@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        264%{?dist}
+Release:        265%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -311,6 +311,7 @@ Requires:       perl(B)
 Requires:       perl(Fcntl)
 Requires:       perl(overload)
 Requires:       perl(POSIX)
+Conflicts:      perl < 4:5.16.2-259
 
 %description autodie
 The "autodie" and "Fatal" pragma provides a convenient way to replace
@@ -3227,6 +3228,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Mar 22 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-265
+- Conflict perl-autodie with older perl (bug #911226)
+
 * Thu Mar 21 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-264
 - Sub-package constant (bug #924169)
 - Sub-package DB_File (bug #924351)
