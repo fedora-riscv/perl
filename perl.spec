@@ -311,6 +311,7 @@ Requires:       perl(B)
 Requires:       perl(Fcntl)
 Requires:       perl(overload)
 Requires:       perl(POSIX)
+Conflicts:      perl < 4:5.16.2-259
 
 %description autodie
 The "autodie" and "Fatal" pragma provides a convenient way to replace
@@ -3125,6 +3126,7 @@ sed \
 - Correct dependencies of perl-HTTP-Tiny
 - Correct perl-Digest-MD5 dependencies
 - Remove bundled Archive-Extract, Module-Load-Conditional, Pod-LaTeX
+- Conflict perl-autodie with older perl (bug #911226)
 
 * Thu Mar 14 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-261
 - 5.16.3 bump (see <http://search.cpan.org/dist/perl-5.16.3/pod/perldelta.pod>
