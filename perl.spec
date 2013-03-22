@@ -835,6 +835,25 @@ Conflicts:      perl < 4:5.16.2-265
 This module provides a convenient way to create directories of arbitrary
 depth and to delete an entire directory subtree from the file system.
 
+%package File-Temp
+Summary:        Return name and handle of a temporary file safely
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.22
+Requires:       %perl_compat
+BuildArch:      noarch
+Requires:       perl(File::Path) >= 2.06
+Requires:       perl(POSIX)
+Conflicts:      perl < 4:5.16.2-265
+
+%description File-Temp
+File::Temp can be used to create and open temporary files in a safe way.
+There is both a function interface and an object-oriented interface. The
+File::Temp constructor or the tempfile() function can be used to return the
+name and the open file handle of a temporary file. The tempdir() function
+can be used to create a temporary directory.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 # FIXME Filter-Simple? version?
 %package Filter
@@ -1683,7 +1702,7 @@ Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Embed,
 Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
 Requires:       perl-ExtUtils-Manifest
 Requires:       perl-ExtUtils-ParseXS, perl-File-CheckTree, perl-File-Fetch
-Requires:       perl-File-Path, perl-Filter, perl-HTTP-Tiny
+Requires:       perl-File-Path, perl-File-Temp, perl-Filter, perl-HTTP-Tiny
 Requires:       perl-IO-Compress, perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
 Requires:       perl-Locale-Codes, perl-Locale-Maketext-Simple
 Requires:       perl-Log-Message, perl-Log-Message-Simple, perl-Module-Build
@@ -2261,6 +2280,10 @@ sed \
 # File-Path
 %exclude %{privlib}/File/Path.pm
 %exclude %{_mandir}/man3/File::Path.3*
+
+# File-Temp
+%exclude %{privlib}/File/Temp.pm
+%exclude %{_mandir}/man3/File::Temp.3*
 
 # Filter
 %exclude %{archlib}/auto/Filter/Util
@@ -2885,6 +2908,10 @@ sed \
 %{privlib}/File/Path.pm
 %{_mandir}/man3/File::Path.3*
 
+%files File-Temp
+%{privlib}/File/Temp.pm
+%{_mandir}/man3/File::Temp.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Filter
 %{archlib}/auto/Filter/Util
@@ -3305,6 +3332,7 @@ sed \
 - Sub-package Env (bug #924619)
 - Sub-package Exporter (bug #924645)
 - Sub-package File-Path (bug #924782)
+- Sub-package File-Temp (bug #924822)
 
 * Thu Mar 21 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-264
 - Sub-package constant (bug #924169)
