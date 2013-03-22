@@ -820,6 +820,21 @@ BuildArch:      noarch
 File::Fetch is a generic file fetching mechanism.
 %endif
 
+%package File-Path
+Summary:        Create or remove directory trees
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.08.01
+Requires:       %perl_compat
+Requires:       perl(Carp)
+BuildArch:      noarch
+Conflicts:      perl < 4:5.16.2-265
+
+%description File-Path
+This module provides a convenient way to create directories of arbitrary
+depth and to delete an entire directory subtree from the file system.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 # FIXME Filter-Simple? version?
 %package Filter
@@ -1668,7 +1683,7 @@ Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Embed,
 Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
 Requires:       perl-ExtUtils-Manifest
 Requires:       perl-ExtUtils-ParseXS, perl-File-CheckTree, perl-File-Fetch
-Requires:       perl-Filter, perl-HTTP-Tiny
+Requires:       perl-File-Path, perl-Filter, perl-HTTP-Tiny
 Requires:       perl-IO-Compress, perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
 Requires:       perl-Locale-Codes, perl-Locale-Maketext-Simple
 Requires:       perl-Log-Message, perl-Log-Message-Simple, perl-Module-Build
@@ -2242,6 +2257,10 @@ sed \
 # File-Fetch
 %exclude %{privlib}/File/Fetch.pm
 %exclude %{_mandir}/man3/File::Fetch.3*
+
+# File-Path
+%exclude %{privlib}/File/Path.pm
+%exclude %{_mandir}/man3/File::Path.3*
 
 # Filter
 %exclude %{archlib}/auto/Filter/Util
@@ -2862,6 +2881,10 @@ sed \
 %{_mandir}/man3/File::Fetch.3*
 %endif
 
+%files File-Path
+%{privlib}/File/Path.pm
+%{_mandir}/man3/File::Path.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Filter
 %{archlib}/auto/Filter/Util
@@ -3281,6 +3304,7 @@ sed \
 - Conflict perl-autodie with older perl (bug #911226)
 - Sub-package Env (bug #924619)
 - Sub-package Exporter (bug #924645)
+- Sub-package File-Path (bug #924782)
 
 * Thu Mar 21 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-264
 - Sub-package constant (bug #924169)
