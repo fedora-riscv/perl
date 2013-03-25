@@ -10,9 +10,11 @@
 %global dual_life 0
 %global rebuild_from_scratch 0
 
-# This set overrides filters from build root (/etc/rpm/macros.perl)
-# intentionally (e.g. the perl(DB))
-%global __provides_exclude_from .*/auto/.*\\.so$|.*/%{perl_archlib}/.*\\.so$|%{_docdir}
+# This overrides filters from build root (/etc/rpm/macros.perl)
+# intentionally (unversioned perl(DB) is removed and versioned one is kept)
+# Filter provides from *.pl files, bug #924938
+# Filter *.so file from auto subdir only to keep providing libperl.so
+%global __provides_exclude_from .*/auto/.*\\.so$|.*%{_docdir}|.*%{perl_archlib}/.*\\.pl$|.*%{perl_privlib}/.*\\.pl$
 %global __requires_exclude_from %{_docdir}
 %global __provides_exclude perl\\((VMS|Win32|BSD::|DB\\)$)
 %global __requires_exclude perl\\((VMS|BSD::|Win32|Tk|Mac::|Your::Module::Here)
@@ -2473,6 +2475,7 @@ sed \
 * Thu Apr 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.14.4-225
 - Correct dependencies of perl-HTTP-Tiny
 - Correct perl-Digest-MD5 dependencies
+- Filter provides from *.pl files (bug #924938)
 
 * Thu Mar 07 2013 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.14.4-224
 - 5.14.4 bump (see
