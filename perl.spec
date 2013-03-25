@@ -12,7 +12,9 @@
 
 # This overrides filters from build root (/etc/rpm/macros.perl)
 # intentionally (unversioned perl(DB) is removed and versioned one is kept)
-%global __provides_exclude_from .*/auto/.*\\.so$|.*/%{perl_archlib}/.*\\.so$|%{_docdir}
+# Filter provides from *.pl files, bug #924938
+# Filter *.so file from auto subdir only to keep providing libperl.so
+%global __provides_exclude_from .*/auto/.*\\.so$|.*%{_docdir}|.*%{perl_archlib}/.*\\.pl$|.*%{perl_privlib}/.*\\.pl$
 %global __requires_exclude_from %{_docdir}
 %global __provides_exclude perl\\((VMS|Win32|BSD::|DB\\)$)
 # unicore::Name - it's needed by perl, maybe problem of rpm
@@ -3127,6 +3129,7 @@ sed \
 - Correct perl-Digest-MD5 dependencies
 - Remove bundled Archive-Extract, Module-Load-Conditional, Pod-LaTeX
 - Conflict perl-autodie with older perl (bug #911226)
+- Filter provides from *.pl files (bug #924938)
 
 * Thu Mar 14 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-261
 - 5.16.3 bump (see <http://search.cpan.org/dist/perl-5.16.3/pod/perldelta.pod>
