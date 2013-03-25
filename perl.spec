@@ -12,7 +12,9 @@
 
 # This overrides filters from build root (/etc/rpm/macros.perl)
 # intentionally (unversioned perl(DB) is removed and versioned one is kept)
-%global __provides_exclude_from .*/auto/.*\\.so$|.*/%{perl_archlib}/.*\\.so$|%{_docdir}
+# Filter provides from *.pl files, bug #924938
+# Filter *.so file from auto subdir only to keep providing libperl.so
+%global __provides_exclude_from .*/auto/.*\\.so$|.*%{_docdir}|.*%{perl_archlib}/.*\\.pl$|.*%{perl_privlib}/.*\\.pl$
 %global __requires_exclude_from %{_docdir}
 %global __provides_exclude perl\\((VMS|Win32|BSD::|DB\\)$)
 # unicore::Name - it's needed by perl, maybe problem of rpm
@@ -29,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        265%{?dist}
+Release:        266%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -3327,6 +3329,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Mar 25 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-266
+- Filter provides from *.pl files (bug #924938)
+
 * Fri Mar 22 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-265
 - Conflict perl-autodie with older perl (bug #911226)
 - Sub-package Env (bug #924619)
