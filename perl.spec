@@ -1538,6 +1538,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.2000
+Requires:       %perl_compat
 BuildArch:      noarch
 Conflicts:      perl < 4:5.16.3-262
 
