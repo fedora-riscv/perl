@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        267%{?dist}
+Release:        268%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -882,6 +882,29 @@ a C preprocessor alters the source text of a C program before the compiler
 sees it.
 %endif
 
+%package Getopt-Long
+Summary:        Extended processing of command line options
+Group:          Development/Libraries
+License:        GPLv2+ or Artistic
+Epoch:          0
+Version:        2.38
+Requires:       %perl_compat
+Requires:       perl(overload)
+Requires:       perl(Text::ParseWords)
+# Recommended:
+Requires:       perl(Pod::Usage) >= 1.14
+BuildArch:      noarch
+
+%description Getopt-Long
+The Getopt::Long module implements an extended getopt function called
+GetOptions(). It parses the command line from @ARGV, recognizing and removing
+specified options and their possible values.  It adheres to the POSIX syntax
+for command line options, with GNU extensions. In general, this means that
+options have long names instead of single letters, and are introduced with
+a double dash "--". Support for bundling of command line options, as was the
+case with the more traditional single-letter approach, is provided but not
+enabled by default.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package IO-Compress
 Summary:        IO::Compress wrapper for modules
@@ -1722,7 +1745,8 @@ Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Embed,
 Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
 Requires:       perl-ExtUtils-Manifest
 Requires:       perl-ExtUtils-ParseXS, perl-File-CheckTree, perl-File-Fetch
-Requires:       perl-File-Path, perl-File-Temp, perl-Filter, perl-HTTP-Tiny
+Requires:       perl-File-Path, perl-File-Temp, perl-Filter, perl-Getopt-Long
+Requires:       perl-HTTP-Tiny
 Requires:       perl-IO-Compress, perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
 Requires:       perl-Locale-Codes, perl-Locale-Maketext-Simple
 Requires:       perl-Log-Message, perl-Log-Message-Simple, perl-Module-Build
@@ -2311,6 +2335,10 @@ sed \
 %exclude %{privlib}/pod/perlfilter.pod
 %exclude %{_mandir}/man1/perlfilter.*
 %exclude %{_mandir}/man3/Filter::Util::*
+
+# Getopt-Long
+%exclude %{privlib}/Getopt/Long.pm
+%exclude %{_mandir}/man3/Getopt::Long.3*
 
 # IO-Compress
 %exclude %{_bindir}/zipdetails
@@ -2955,6 +2983,10 @@ sed \
 %{_mandir}/man3/Filter::Util::*
 %endif
 
+%files Getopt-Long
+%{privlib}/Getopt/Long.pm
+%{_mandir}/man3/Getopt::Long.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files IO-Compress
 # IO-Compress
@@ -3371,6 +3403,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Apr 05 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-268
+- Sub-package Getopt-Long (bug #948855)
+
 * Fri Apr 05 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-267
 - Remove bundled constant, DB_File, Digest-MD5, Env, Exporter, File-Path,
   File-Temp, Module-Load, Log-Message-Simple, Pod-Simple, Test-Harness,
