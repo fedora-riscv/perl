@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        266%{?dist}
+Release:        267%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -182,10 +182,6 @@ Provides: perl(termcap.pl)
 Provides: perl(timelocal.pl)
 Provides: perl(utf8_heavy.pl)
 Provides: perl(validate.pl)
-
-# Long history in 3rd-party repositories:
-Provides: perl-File-Temp = 0.22 
-Obsoletes: perl-File-Temp < 0.20
 
 # suidperl isn't created by upstream since 5.12.0
 Obsoletes: perl-suidperl <= 4:5.12.2
@@ -421,6 +417,7 @@ This module provides a Perl interface to the zlib compression library.
 It is used by IO::Compress::Zlib.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package constant
 Summary:        Perl pragma to declare constants
 Group:          Development/Libraries
@@ -448,6 +445,7 @@ When a constant is used in an expression, Perl replaces it with its
 value at compile time, and may then optimize the expression further.
 In particular, any code in an "if (CONSTANT)" block will be optimized
 away if the constant is false.
+%endif
 
 %package CPAN
 Summary:        Query, download and build perl modules from CPAN sites
@@ -539,6 +537,7 @@ variable is output in a single Perl statement. Handles self-referential
 structures correctly.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package DB_File
 Summary:        Perl5 access to Berkeley DB version 1.x
 Group:          Development/Libraries
@@ -555,6 +554,7 @@ DB_File is a module which allows Perl programs to make use of the facilities
 provided by Berkeley DB version 1.x (if you have a newer version of DB, you
 will be limited to functionality provided by interface of version 1.x). The
 interface defined here mirrors the Berkeley DB interface closely.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Digest
@@ -576,6 +576,7 @@ the algorithm used. The message is simply a sequence of arbitrary
 bytes or bits.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Digest-MD5
 Summary:        Perl interface to the MD5 Algorithm
 Group:          Development/Libraries
@@ -593,6 +594,7 @@ The Digest::MD5 module allows you to use the RSA Data Security Inc. MD5
 Message Digest algorithm from within Perl programs. The algorithm takes as
 input a message of arbitrary length and produces as output a 128-bit
 "fingerprint" or "message digest" of the input.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Digest-SHA
@@ -645,6 +647,7 @@ Mapping files (.ucm) or Tcl Encoding Files (.enc). You can use enc2xs to add
 your own encoding to perl. No knowledge of XS is necessary.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Env
 Summary:        Perl module that imports environment variables as scalars or arrays
 Group:          Development/Libraries
@@ -659,7 +662,9 @@ Conflicts:      perl < 4:5.16.2-265
 Perl maintains environment variables in a special hash named %%ENV. For when
 this access method is inconvenient, the Perl module Env allows environment
 variables to be treated as scalar or array variables.
+%endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Exporter
 Summary:        Implements default import method for modules
 Group:          Development/Libraries
@@ -677,6 +682,7 @@ export functions and variables to its users' name spaces. Many modules use
 Exporter rather than implementing their own import method because Exporter
 provides a highly flexible interface, with an implementation optimized for
 the common case.
+%endif
 
 %package ExtUtils-CBuilder
 Summary:        Compile and link C code for Perl modules
@@ -822,6 +828,7 @@ BuildArch:      noarch
 File::Fetch is a generic file fetching mechanism.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package File-Path
 Summary:        Create or remove directory trees
 Group:          Development/Libraries
@@ -836,7 +843,9 @@ Conflicts:      perl < 4:5.16.2-265
 %description File-Path
 This module provides a convenient way to create directories of arbitrary
 depth and to delete an entire directory subtree from the file system.
+%endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package File-Temp
 Summary:        Return name and handle of a temporary file safely
 Group:          Development/Libraries
@@ -855,6 +864,7 @@ There is both a function interface and an object-oriented interface. The
 File::Temp constructor or the tempfile() function can be used to return the
 name and the open file handle of a temporary file. The tempdir() function
 can be used to create a temporary directory.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 # FIXME Filter-Simple? version?
@@ -1025,6 +1035,7 @@ example, log it, or die with it).
 %endif
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Log-Message-Simple
 Summary:        Simplified frontend to Log::Message
 Group:          Development/Libraries
@@ -1037,6 +1048,7 @@ BuildArch:      noarch
 %description Log-Message-Simple
 This module provides standardized logging facilities using the
 Log::Message module.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Module-Build
@@ -1087,6 +1099,7 @@ is keyed on perl version as indicated in $].  The second level hash is module
 => version pairs.
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Module-Load
 Summary:        Runtime require of both modules and files
 Group:          Development/Libraries
@@ -1100,6 +1113,7 @@ BuildArch:      noarch
 %description Module-Load
 Module::Load eliminates the need to know whether you are trying to require
 either a file or a module.
+%endif
 
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -1345,6 +1359,7 @@ in the perl installation tree or in a perl script, and displays it via
 the perl library modules.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-Simple
 Summary:        Framework for parsing POD documentation
 Group:          Development/Libraries
@@ -1359,6 +1374,7 @@ BuildArch:      noarch
 Pod::Simple is a Perl library for parsing text in the Pod ("plain old
 documentation") markup language that is typically used for writing
 documentation for Perl and for Perl modules.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-Usage
@@ -1436,6 +1452,7 @@ a question and then validate the reply, informing the user if the answer was not
 proper and re-issuing the question.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Test-Harness
 Summary:        Run Perl standard test scripts with statistics
 Group:          Development/Languages
@@ -1444,13 +1461,11 @@ Epoch:          0
 Version:        3.23
 Requires:       %perl_compat
 BuildArch:      noarch
-# Use rewritten module perl-Test-Harness
-Provides:       perl-TAP-Harness = 3.17
-Obsoletes:      perl-TAP-Harness < 3.10
 
 %description Test-Harness
 Run Perl standard test scripts with statistics.
 Use TAP::Parser, Test::Harness package was whole rewritten.
+%endif
 
 %package Test-Simple
 Summary:        Basic utilities for writing tests
@@ -1480,6 +1495,7 @@ BuildArch:      noarch
 %description Test-Simple-tests
 This package provides the test suite for package perl-Test-Simple.
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Text-ParseWords
 Summary:        Parse text into an array of tokens or array of arrays
 Group:          Development/Libraries
@@ -1493,6 +1509,7 @@ Conflicts:      perl < 4:5.16.2-256
 
 %description Text-ParseWords
 Parse text into an array of tokens or array of arrays.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Text-Soundex
@@ -2703,9 +2720,11 @@ sed \
 %{_mandir}/man3/Compress::Raw::Zlib*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files constant
 %{privlib}/constant.pm
 %{_mandir}/man3/constant.3*
+%endif
 
 %files CPAN
 %{_bindir}/cpan
@@ -2762,11 +2781,13 @@ sed \
 %{_mandir}/man3/Data::Dumper.3*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files DB_File
 %{archlib}/DB_File.pm
 %dir %{archlib}/auto/DB_File
 %{archlib}/auto/DB_File/DB_File.so
 %{_mandir}/man3/DB_File*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Digest
@@ -2779,10 +2800,12 @@ sed \
 %{_mandir}/man3/Digest::file.3*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Digest-MD5
 %{archlib}/Digest/MD5.pm
 %{archlib}/auto/Digest/MD5/
 %{_mandir}/man3/Digest::MD5.3*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Digest-SHA
@@ -2814,13 +2837,17 @@ sed \
 %{_mandir}/man1/enc2xs.1*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Env
 %{privlib}/Env.pm
 %{_mandir}/man3/Env.3*
+%endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Exporter
 %{privlib}/Exporter*
 %{_mandir}/man3/Exporter*
+%endif
 
 %files ExtUtils-CBuilder
 %{privlib}/ExtUtils/CBuilder/
@@ -2907,13 +2934,17 @@ sed \
 %{_mandir}/man3/File::Fetch.3*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files File-Path
 %{privlib}/File/Path.pm
 %{_mandir}/man3/File::Path.3*
+%endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files File-Temp
 %{privlib}/File/Temp.pm
 %{_mandir}/man3/File::Temp.3*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Filter
@@ -3033,9 +3064,11 @@ sed \
 %{_mandir}/man3/Log::Message::Item.3*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Log-Message-Simple
 %{privlib}/Log/Message/Simple.pm
 %{_mandir}/man3/Log::Message::Simple.3*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Module-Build
@@ -3054,9 +3087,11 @@ sed \
 %{_mandir}/man1/corelist*
 %{_mandir}/man3/Module::CoreList*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Module-Load
 %{privlib}/Module/Load.pm
 %{_mandir}/man3/Module::Load.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Module-Load-Conditional
@@ -3208,11 +3243,13 @@ sed \
 %{_mandir}/man3/Pod::Text*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Pod-Simple
 %{privlib}/Pod/Simple/ 
 %{privlib}/Pod/Simple.pm
 %{privlib}/Pod/Simple.pod
 %{_mandir}/man3/Pod::Simple*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Scalar-List-Utils
@@ -3238,6 +3275,7 @@ sed \
 %{_mandir}/man3/Term::UI*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Test-Harness
 %{_bindir}/prove
 %{privlib}/App/Prove*
@@ -3247,6 +3285,7 @@ sed \
 %{_mandir}/man3/App::Prove*
 %{_mandir}/man3/TAP*
 %{_mandir}/man3/Test::Harness*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Test-Simple
@@ -3264,9 +3303,11 @@ sed \
 %{perl5_testdir}/Test-Simple
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Text-ParseWords
 %{privlib}/Text/ParseWords.pm
 %{_mandir}/man3/Text::ParseWords.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Text-Soundex
@@ -3330,6 +3371,11 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Apr 05 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-267
+- Remove bundled constant, DB_File, Digest-MD5, Env, Exporter, File-Path,
+  File-Temp, Module-Load, Log-Message-Simple, Pod-Simple, Test-Harness,
+  Text-ParseWords
+
 * Mon Mar 25 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-266
 - Filter provides from *.pl files (bug #924938)
 
