@@ -1020,6 +1020,24 @@ each deal with different types of codes which identify parts of the locale
 including languages, countries, currency, etc.
 %endif
 
+%package Locale-Maketext
+Summary:        Framework for localization
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.22
+Requires:       %perl_compat
+BuildArch:      noarch
+
+%description Locale-Maketext
+It is a common feature of applications (whether run directly, or via the Web)
+for them to be "localized" -- i.e., for them to present an English interface
+to an English-speaker, a German interface to a German-speaker, and so on for
+all languages it's programmed with. Locale::Maketext is a framework for
+software localization; it provides you with the tools for organizing and
+accessing the bits of text and text-processing code that you need for
+producing localized applications.
+
 %package Locale-Maketext-Simple
 Summary:        Simple interface to Locale::Maketext::Lexicon
 Group:          Development/Libraries
@@ -1748,7 +1766,8 @@ Requires:       perl-ExtUtils-ParseXS, perl-File-CheckTree, perl-File-Fetch
 Requires:       perl-File-Path, perl-File-Temp, perl-Filter, perl-Getopt-Long
 Requires:       perl-HTTP-Tiny
 Requires:       perl-IO-Compress, perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
-Requires:       perl-Locale-Codes, perl-Locale-Maketext-Simple
+Requires:       perl-Locale-Codes, perl-Locale-Maketext,
+Requires:       perl-Locale-Maketext-Simple
 Requires:       perl-Log-Message, perl-Log-Message-Simple, perl-Module-Build
 Requires:       perl-Module-CoreList, perl-Module-Load
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Metadata
@@ -2421,6 +2440,19 @@ sed \
 %exclude %{_mandir}/man3/Locale::Language.*
 %exclude %{_mandir}/man3/Locale::Script.*
 
+# Locale-Maketext
+%exclude %dir %{privlib}/Locale/Maketext
+%exclude %{privlib}/Locale/Maketext.*
+%exclude %{privlib}/Locale/Maketext/Cookbook.*
+%exclude %{privlib}/Locale/Maketext/Guts.*
+%exclude %{privlib}/Locale/Maketext/GutsLoader.*
+%exclude %{privlib}/Locale/Maketext/TPJ13.*
+%exclude %{_mandir}/man3/Locale::Maketext.*
+%exclude %{_mandir}/man3/Locale::Maketext::Cookbook.*
+%exclude %{_mandir}/man3/Locale::Maketext::Guts.*
+%exclude %{_mandir}/man3/Locale::Maketext::GutsLoader.*
+%exclude %{_mandir}/man3/Locale::Maketext::TPJ13.*
+
 # Locale-Maketext-Simple
 %exclude %{privlib}/Locale/Maketext/Simple.pm
 %exclude %{_mandir}/man3/Locale::Maketext::Simple.*
@@ -3080,6 +3112,19 @@ sed \
 %{_mandir}/man3/Locale::Script.*
 %endif
 
+%files Locale-Maketext
+%dir %{privlib}/Locale/Maketext
+%{privlib}/Locale/Maketext.*
+%{privlib}/Locale/Maketext/Cookbook.*
+%{privlib}/Locale/Maketext/Guts.*
+%{privlib}/Locale/Maketext/GutsLoader.*
+%{privlib}/Locale/Maketext/TPJ13.*
+%{_mandir}/man3/Locale::Maketext.*
+%{_mandir}/man3/Locale::Maketext::Cookbook.*
+%{_mandir}/man3/Locale::Maketext::Guts.*
+%{_mandir}/man3/Locale::Maketext::GutsLoader.*
+%{_mandir}/man3/Locale::Maketext::TPJ13.*
+
 %files Locale-Maketext-Simple
 %{privlib}/Locale/Maketext/Simple.pm
 %{_mandir}/man3/Locale::Maketext::Simple.*
@@ -3405,6 +3450,7 @@ sed \
 %changelog
 * Fri Apr 05 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-268
 - Sub-package Getopt-Long (bug #948855)
+- Sub-package Locale-Maketext (bug #948974)
 
 * Fri Apr 05 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-267
 - Remove bundled constant, DB_File, Digest-MD5, Env, Exporter, File-Path,
