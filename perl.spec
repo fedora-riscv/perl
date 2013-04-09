@@ -1303,6 +1303,19 @@ really be high enough to warrant the use of a keyword, and the size so small
 such that being individual extensions would be wasteful.
 %endif
 
+%package Sys-Syslog
+Summary:        Perl interface to the UNIX syslog(3) calls
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.29
+Requires:       %perl_compat
+Requires:       perl(XSLoader)
+
+%description Sys-Syslog
+Sys::Syslog is an interface to the UNIX syslog(3) function. Call syslog() with
+a string priority and a list of printf() arguments just like at syslog(3).
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Term-UI
 Summary:        Term::ReadLine UI made easy
@@ -1578,7 +1591,8 @@ Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
 Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-LaTeX
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
 Requires:       perl-podlators, perl-Pod-Simple
-Requires:       perl-Socket, perl-Term-UI, perl-Test-Harness, perl-Test-Simple
+Requires:       perl-Socket, perl-Sys-Syslog, perl-Term-UI, perl-Test-Harness,
+Requires:       perl-Test-Simple
 Requires:       perl-Text-ParseWords, perl-Text-Soundex, perl-Thread-Queue
 Requires:       perl-Time-Piece, perl-Version-Requirements,
 Requires:       perl-version, perl-threads, perl-threads-shared, perl-parent
@@ -2369,6 +2383,11 @@ sed \
 %exclude %{_mandir}/man3/List::Util*
 %exclude %{_mandir}/man3/Scalar::Util*
 
+# Sys-Syslog
+%exclude %{archlib}/Sys/Syslog.pm
+%exclude %{archlib}/auto/Sys/Syslog/
+%exclude %{_mandir}/man3/Sys::Syslog.*
+
 # Term-UI
 %exclude %{privlib}/Term/UI.pm
 %exclude %{privlib}/Term/UI/
@@ -3023,6 +3042,11 @@ sed \
 %{_mandir}/man3/Scalar::Util*
 %endif
 
+%files Sys-Syslog
+%{archlib}/Sys/Syslog.pm
+%{archlib}/auto/Sys/Syslog/
+%{_mandir}/man3/Sys::Syslog.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Socket
 %dir %{archlib}/auto/Socket
@@ -3130,6 +3154,7 @@ sed \
 - Remove bundled Archive-Extract, Module-Load-Conditional, Pod-LaTeX
 - Conflict perl-autodie with older perl (bug #911226)
 - Filter provides from *.pl files (bug #924938)
+- Sub-package Sys-Syslog (bug #950057)
 
 * Thu Mar 14 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-261
 - 5.16.3 bump (see <http://search.cpan.org/dist/perl-5.16.3/pod/perldelta.pod>
