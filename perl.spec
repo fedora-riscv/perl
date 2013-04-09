@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        268%{?dist}
+Release:        269%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1476,6 +1476,19 @@ really be high enough to warrant the use of a keyword, and the size so small
 such that being individual extensions would be wasteful.
 %endif
 
+%package Sys-Syslog
+Summary:        Perl interface to the UNIX syslog(3) calls
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.29
+Requires:       %perl_compat
+Requires:       perl(XSLoader)
+
+%description Sys-Syslog
+Sys::Syslog is an interface to the UNIX syslog(3) function. Call syslog() with
+a string priority and a list of printf() arguments just like at syslog(3).
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Term-UI
 Summary:        Term::ReadLine UI made easy
@@ -1776,7 +1789,8 @@ Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
 Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-LaTeX
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
 Requires:       perl-podlators, perl-Pod-Simple
-Requires:       perl-Socket, perl-Term-UI, perl-Test-Harness, perl-Test-Simple
+Requires:       perl-Socket, perl-Sys-Syslog, perl-Term-UI, perl-Test-Harness,
+Requires:       perl-Test-Simple
 Requires:       perl-Text-ParseWords, perl-Text-Soundex, perl-Thread-Queue
 Requires:       perl-Time-Local, perl-Time-Piece, perl-Version-Requirements,
 Requires:       perl-version, perl-threads, perl-threads-shared, perl-parent
@@ -2610,6 +2624,11 @@ sed \
 %exclude %{_mandir}/man3/List::Util*
 %exclude %{_mandir}/man3/Scalar::Util*
 
+# Sys-Syslog
+%exclude %{archlib}/Sys/Syslog.pm
+%exclude %{archlib}/auto/Sys/Syslog/
+%exclude %{_mandir}/man3/Sys::Syslog.*
+
 # Term-UI
 %exclude %{privlib}/Term/UI.pm
 %exclude %{privlib}/Term/UI/
@@ -3337,6 +3356,11 @@ sed \
 %{_mandir}/man3/Scalar::Util*
 %endif
 
+%files Sys-Syslog
+%{archlib}/Sys/Syslog.pm
+%{archlib}/auto/Sys/Syslog/
+%{_mandir}/man3/Sys::Syslog.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Socket
 %dir %{archlib}/auto/Socket
@@ -3448,6 +3472,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Apr 09 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-269
+- Sub-package Sys-Syslog (bug #950057)
+
 * Fri Apr 05 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-268
 - Sub-package Getopt-Long (bug #948855)
 - Sub-package Locale-Maketext (bug #948974)
