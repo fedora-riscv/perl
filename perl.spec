@@ -1099,6 +1099,18 @@ expressed would be nice to have in the perl core, but the usage would not
 really be high enough to warrant the use of a keyword, and the size so small
 such that being individual extensions would be wasteful.
 
+%package Sys-Syslog
+Summary:        Perl interface to the UNIX syslog(3) calls
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.29
+Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl(XSLoader)
+
+%description Sys-Syslog
+Sys::Syslog is an interface to the UNIX syslog(3) function. Call syslog() with
+a string priority and a list of printf() arguments just like at syslog(3).
 
 %package Term-UI
 Summary:        Term::ReadLine UI made easy
@@ -1317,7 +1329,8 @@ Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Consta
 Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
 Requires:       perl-Pod-Escapes, perl-Pod-Parser, perl-Pod-Perldoc
 Requires:       perl-Pod-Simple
-Requires:       perl-Socket, perl-Term-UI, perl-Test-Harness, perl-Test-Simple
+Requires:       perl-Socket, perl-Sys-Syslog, perl-Term-UI, perl-Test-Harness,
+Requires:       perl-Test-Simple
 Requires:       perl-Time-Piece, perl-Version-Requirements, perl-version
 Requires:       perl-threads, perl-threads-shared, perl-parent
 
@@ -2054,6 +2067,11 @@ sed \
 %exclude %{_mandir}/man3/List::Util*
 %exclude %{_mandir}/man3/Scalar::Util*
 
+# Sys-Syslog
+%exclude %{archlib}/Sys/Syslog.pm
+%exclude %{archlib}/auto/Sys/Syslog/
+%exclude %{_mandir}/man3/Sys::Syslog.*
+
 # Term-UI
 %exclude %{privlib}/Term/UI.pm
 %exclude %{privlib}/Term/UI/
@@ -2561,6 +2579,11 @@ sed \
 %{_mandir}/man3/List::Util*
 %{_mandir}/man3/Scalar::Util*
 
+%files Sys-Syslog
+%{archlib}/Sys/Syslog.pm
+%{archlib}/auto/Sys/Syslog/
+%{_mandir}/man3/Sys::Syslog.*
+
 %files Socket
 %dir %{archlib}/auto/Socket
 %{archlib}/auto/Socket/Socket.*
@@ -2635,6 +2658,7 @@ sed \
 - Correct dependencies of perl-HTTP-Tiny
 - Correct perl-Digest-MD5 dependencies
 - Filter provides from *.pl files (bug #924938)
+- Sub-package Sys-Syslog (bug #950057)
 
 * Wed Mar 27 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-241
 - 5.16.3 bump (see <http://search.cpan.org/dist/perl-5.16.3/pod/perldelta.pod>
