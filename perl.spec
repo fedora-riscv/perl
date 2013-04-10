@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        269%{?dist}
+Release:        270%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -113,6 +113,11 @@ Patch20:        perl-5.17.6-Fix-misparsing-of-maketext-strings.patch
 
 # Add NAME heading into CPAN PODs, rhbz#908113, CPANRT#73396
 Patch21:        perl-5.16.2-cpan-CPAN-add-NAME-headings-in-modules-with-POD.patch
+
+# Fix leaking tied hashes, rhbz#859910, RT#107000, fixed after 5.17.4
+Patch22:        perl-5.16.3-Don-t-leak-deleted-iterator-when-tying-hash.patch
+Patch23:        perl-5.16.3-Free-iterator-when-freeing-tied-hash.patch
+Patch24:        perl-5.16.3-Don-t-leak-if-hh-copying-dies.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1822,6 +1827,9 @@ tarball from perl.org.
 %patch19 -p1
 %patch20 -p1
 %patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -2033,6 +2041,9 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch19: Do not crash when vivifying $|' \
     'Fedora Patch20: Fix misparsing of maketext strings (CVE-2012-6329)' \
     'Fedora Patch21: Add NAME headings to CPAN modules (CPANRT#73396)' \
+    'Fedora Patch22: Fix leaking tied hashes (RT#107000) [1]' \
+    'Fedora Patch23: Fix leaking tied hashes (RT#107000) [2]' \
+    'Fedora Patch24: Fix leaking tied hashes (RT#107000) [3]' \
     %{nil}
 
 rm patchlevel.bak
@@ -3472,6 +3483,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Apr 10 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-270
+- Fix leaking tied hashes (bug #859910)
+
 * Tue Apr 09 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-269
 - Sub-package Sys-Syslog (bug #950057)
 
