@@ -119,6 +119,9 @@ Patch22:        perl-5.16.3-Don-t-leak-deleted-iterator-when-tying-hash.patch
 Patch23:        perl-5.16.3-Free-iterator-when-freeing-tied-hash.patch
 Patch24:        perl-5.16.3-Don-t-leak-if-hh-copying-dies.patch
 
+# Fix dead lock in PerlIO after fork from thread, rhbz#947444, RT#106212
+Patch25:        perl-5.17.9-106212-Add-PL_perlio_mutex-to-atfork_lock.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -1632,6 +1635,7 @@ tarball from perl.org.
 %patch22 -p1
 %patch23 -p1
 %patch24 -p1
+%patch25 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1846,6 +1850,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch22: Fix leaking tied hashes (RT#107000) [1]' \
     'Fedora Patch23: Fix leaking tied hashes (RT#107000) [2]' \
     'Fedora Patch24: Fix leaking tied hashes (RT#107000) [3]' \
+    'Fedora Patch25: Fix dead lock in PerlIO after fork from thread (RT106212)' \
     %{nil}
 
 rm patchlevel.bak
@@ -3167,6 +3172,7 @@ sed \
 - Filter provides from *.pl files (bug #924938)
 - Sub-package Sys-Syslog (bug #950057)
 - Fix leaking tied hashes (bug #859910)
+- Fix dead lock in PerlIO after fork from thread (bug #947444)
 
 * Thu Mar 14 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-261
 - 5.16.3 bump (see <http://search.cpan.org/dist/perl-5.16.3/pod/perldelta.pod>
