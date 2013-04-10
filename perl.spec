@@ -1115,6 +1115,7 @@ Epoch:          0
 Version:        0.29
 Requires:       perl = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(XSLoader)
+Conflicts:      perl < 4:5.16.3-242
 
 %description Sys-Syslog
 Sys::Syslog is an interface to the UNIX syslog(3) function. Call syslog() with
@@ -2677,6 +2678,7 @@ sed \
 - Sub-package Sys-Syslog (bug #950057)
 - Fix leaking tied hashes (bug #859910)
 - Fix dead lock in PerlIO after fork from thread (bug #947444)
+- Add proper conflicts to perl-Sys-Syslog
 
 * Wed Mar 27 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-241
 - 5.16.3 bump (see <http://search.cpan.org/dist/perl-5.16.3/pod/perldelta.pod>
