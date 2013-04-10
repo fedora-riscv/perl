@@ -902,6 +902,7 @@ Requires:       perl(Text::ParseWords)
 # Recommended:
 Requires:       perl(Pod::Usage) >= 1.14
 BuildArch:      noarch
+Conflicts:      perl < 4:5.16.3-268
 
 %description Getopt-Long
 The Getopt::Long module implements an extended getopt function called
@@ -1036,6 +1037,7 @@ Epoch:          0
 Version:        1.22
 Requires:       %perl_compat
 BuildArch:      noarch
+Conflicts:      perl < 4:5.16.3-268
 
 %description Locale-Maketext
 It is a common feature of applications (whether run directly, or via the Web)
@@ -1492,6 +1494,7 @@ Epoch:          0
 Version:        0.29
 Requires:       %perl_compat
 Requires:       perl(XSLoader)
+Conflicts:      perl < 4:5.16.3-269
 
 %description Sys-Syslog
 Sys::Syslog is an interface to the UNIX syslog(3) function. Call syslog() with
@@ -3491,6 +3494,8 @@ sed \
 * Wed Apr 10 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-270
 - Fix leaking tied hashes (bug #859910)
 - Fix dead lock in PerlIO after fork from thread (bug #947444)
+- Add proper conflicts to perl-Getopt-Long, perl-Locale-Maketext, and
+  perl-Sys-Syslog
 
 * Tue Apr 09 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-269
 - Sub-package Sys-Syslog (bug #950057)
