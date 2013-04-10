@@ -125,6 +125,9 @@ Patch23:        perl-5.14.3-RT-82655-fix-double-free-when-loading-object.patch
 # Add NAME heading into CPAN PODs, rhbz#908113, CPANRT#73396
 Patch24:        perl-5.16.2-cpan-CPAN-add-NAME-headings-in-modules-with-POD.patch
 
+# Fix dead lock in PerlIO after fork from thread, rhbz#947444, RT#106212
+Patch25:        perl-5.17.9-106212-Add-PL_perlio_mutex-to-atfork_lock.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -1306,6 +1309,7 @@ tarball from perl.org.
 %patch22 -p1
 %patch23 -p1
 %patch24 -p1
+%patch25 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1519,6 +1523,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch22: Fix misparsing of maketext strings (CVE-2012-6329)' \
     'Fedora Patch23: Fix double-free when loading Digest::SHA object' \
     'Fedora Patch24: Add NAME headings to CPAN modules (CPANRT#73396)' \
+    'Fedora Patch25: Fix dead lock in PerlIO after fork from thread (RT106212)' \
     %{nil}
 
 rm patchlevel.bak
@@ -2476,6 +2481,7 @@ sed \
 - Correct dependencies of perl-HTTP-Tiny
 - Correct perl-Digest-MD5 dependencies
 - Filter provides from *.pl files (bug #924938)
+- Fix dead lock in PerlIO after fork from thread (bug #947444)
 
 * Thu Mar 07 2013 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.14.4-224
 - 5.14.4 bump (see
