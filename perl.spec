@@ -890,6 +890,7 @@ a C preprocessor alters the source text of a C program before the compiler
 sees it.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Getopt-Long
 Summary:        Extended processing of command line options
 Group:          Development/Libraries
@@ -913,6 +914,7 @@ options have long names instead of single letters, and are introduced with
 a double dash "--". Support for bundling of command line options, as was the
 case with the more traditional single-letter approach, is provided but not
 enabled by default.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package IO-Compress
@@ -1029,6 +1031,7 @@ each deal with different types of codes which identify parts of the locale
 including languages, countries, currency, etc.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Locale-Maketext
 Summary:        Framework for localization
 Group:          Development/Libraries
@@ -1047,6 +1050,7 @@ all languages it's programmed with. Locale::Maketext is a framework for
 software localization; it provides you with the tools for organizing and
 accessing the bits of text and text-processing code that you need for
 producing localized applications.
+%endif
 
 %package Locale-Maketext-Simple
 Summary:        Simple interface to Locale::Maketext::Lexicon
@@ -1486,6 +1490,7 @@ really be high enough to warrant the use of a keyword, and the size so small
 such that being individual extensions would be wasteful.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Sys-Syslog
 Summary:        Perl interface to the UNIX syslog(3) calls
 Group:          Development/Libraries
@@ -1499,6 +1504,7 @@ Conflicts:      perl < 4:5.16.3-269
 %description Sys-Syslog
 Sys::Syslog is an interface to the UNIX syslog(3) function. Call syslog() with
 a string priority and a list of printf() arguments just like at syslog(3).
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Term-UI
@@ -3074,9 +3080,11 @@ sed \
 %{_mandir}/man3/Filter::Util::*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Getopt-Long
 %{privlib}/Getopt/Long.pm
 %{_mandir}/man3/Getopt::Long.3*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files IO-Compress
@@ -3171,6 +3179,7 @@ sed \
 %{_mandir}/man3/Locale::Script.*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Locale-Maketext
 %dir %{privlib}/Locale/Maketext
 %{privlib}/Locale/Maketext.*
@@ -3183,6 +3192,7 @@ sed \
 %{_mandir}/man3/Locale::Maketext::Guts.*
 %{_mandir}/man3/Locale::Maketext::GutsLoader.*
 %{_mandir}/man3/Locale::Maketext::TPJ13.*
+%endif
 
 %files Locale-Maketext-Simple
 %{privlib}/Locale/Maketext/Simple.pm
@@ -3396,10 +3406,12 @@ sed \
 %{_mandir}/man3/Scalar::Util*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Sys-Syslog
 %{archlib}/Sys/Syslog.pm
 %{archlib}/auto/Sys/Syslog/
 %{_mandir}/man3/Sys::Syslog.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Socket
@@ -3519,6 +3531,7 @@ sed \
 %changelog
 * Fri Apr 26 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-271
 - Sub-package Time-HiRes (bug #957048)
+- Remove bundled Getopt-Long, Locale-Maketext, and Sys-Syslog
 
 * Wed Apr 10 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-270
 - Fix leaking tied hashes (bug #859910)
