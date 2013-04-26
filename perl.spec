@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        270%{?dist}
+Release:        271%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1613,6 +1613,21 @@ This module provides thread-safe FIFO queues that can be accessed safely by
 any number of threads.
 %endif
 
+%package Time-HiRes
+Summary:        High resolution alarm, sleep, gettimeofday, interval timers
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.9725
+Requires:       %perl_compat
+Requires:       perl(Carp)
+Conflicts:      perl < 4:5.16.3-271
+
+%description Time-HiRes
+The Time::HiRes module implements a Perl interface to the usleep, nanosleep,
+ualarm, gettimeofday, and setitimer/getitimer system calls, in other words,
+high resolution time and timers.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Time-Local
 Summary:        Efficiently compute time from local and GMT time
@@ -1803,6 +1818,7 @@ Requires:       perl-podlators, perl-Pod-Simple
 Requires:       perl-Socket, perl-Sys-Syslog, perl-Term-UI, perl-Test-Harness,
 Requires:       perl-Test-Simple
 Requires:       perl-Text-ParseWords, perl-Text-Soundex, perl-Thread-Queue
+Requires:       perl-Time-HiRes
 Requires:       perl-Time-Local, perl-Time-Piece, perl-Version-Requirements,
 Requires:       perl-version, perl-threads, perl-threads-shared, perl-parent
 
@@ -2686,6 +2702,11 @@ sed \
 %exclude %{privlib}/Thread/Queue.pm
 %exclude %{_mandir}/man3/Thread::Queue.*
 
+# Time-HiRes
+%exclude %{archlib}/Time/HiRes.pm
+%exclude %{archlib}/auto/Time/HiRes/
+%exclude %{_mandir}/man3/Time::HiRes.*
+
 # Time-Local
 %exclude %{privlib}/Time/Local.pm
 %exclude %{_mandir}/man3/Time::Local.*
@@ -3442,6 +3463,11 @@ sed \
 %{_mandir}/man3/Thread::Queue.*
 %endif
 
+%files Time-HiRes
+%{archlib}/Time/HiRes.pm
+%{archlib}/auto/Time/HiRes/
+%{_mandir}/man3/Time::HiRes.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Time-Local
 %{privlib}/Time/Local.pm
@@ -3491,6 +3517,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Apr 26 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-271
+- Sub-package Time-HiRes (bug #957048)
+
 * Wed Apr 10 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-270
 - Fix leaking tied hashes (bug #859910)
 - Fix dead lock in PerlIO after fork from thread (bug #947444)
