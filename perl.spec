@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        242%{?dist}
+Release:        243%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -301,6 +301,7 @@ IO::Zlib module installed, Archive::Tar will also support compressed or
 gzipped tar files.
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Carp
 Summary:        Alternative warn and die for modules
 Epoch:          0
@@ -322,6 +323,7 @@ context is a summary of every call in the call-stack. For a shorter message
 you can use carp or croak which report the error as being from where your
 module was called. There is no guarantee that that is where the error was,
 but it is a good educated guess.
+%endif
 
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -592,6 +594,7 @@ BuildArch:      noarch
 Create a module Makefile.
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package ExtUtils-Manifest
 Summary:        Utilities to write and check a MANIFEST file
 Group:          Development/Languages
@@ -604,6 +607,7 @@ BuildArch:      noarch
 
 %description ExtUtils-Manifest
 %{summary}.
+%endif
 
 
 %package ExtUtils-ParseXS
@@ -1153,6 +1157,7 @@ Obsoletes:      perl-TAP-Harness < 3.10
 Run Perl standard test scripts with statistics.
 Use TAP::Parser, Test::Harness package was whole rewritten.
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Test-Simple
 Summary:        Basic utilities for writing tests
 Group:          Development/Languages
@@ -1180,6 +1185,7 @@ BuildArch:      noarch
 
 %description Test-Simple-tests
 This package provides the test suite for package perl-Test-Simple.
+%endif
 
 
 %package Time-Piece
@@ -1198,6 +1204,7 @@ manner, so that using localtime or gmtime as documented in perlfunc still
 behave as expected.
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package parent
 Summary:        Establish an ISA relationship with base classes at compile time
 Group:          Development/Libraries
@@ -1220,6 +1227,7 @@ inheritance from those modules at the same time. Mostly similar in effect to:
         
         push @ISA, qw(Foo Bar); 
     }
+%endif
 
 
 %package Socket
@@ -1238,6 +1246,7 @@ that it has a far more likely chance of getting the numbers right.  This
 includes all of the commonly used pound-defines like AF_INET, SOCK_STREAM, etc.
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package threads
 Summary:        Perl interpreter-based threads
 Group:          Development/Libraries
@@ -1257,6 +1266,7 @@ threading model has been deprecated, and was removed as of Perl 5.10.0.)
 
 As just mentioned, all variables are, by default, thread local. To use shared
 variables, you need to also load threads::shared.
+%endif
 
 
 %package threads-shared
@@ -1290,6 +1300,7 @@ BuildArch:      noarch
 Perl extension for Version Objects
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Version-Requirements
 Summary:        Set of version requirements for a CPAN dist
 License:        GPL+ or Artistic
@@ -1304,6 +1315,7 @@ A Version::Requirements object models a set of version constraints like
 those specified in the META.yml or META.json files in CPAN distributions.
 It can be built up by adding more and more constraints, and it will reduce
 them to the simplest representation.
+%endif
 
 
 %package core
@@ -2194,10 +2206,12 @@ sed \
 %{_mandir}/man1/ptargrep.1*
 %{_mandir}/man3/Archive::Tar* 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Carp
 %{privlib}/Carp
 %{privlib}/Carp.*
 %{_mandir}/man3/Carp.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files CGI
@@ -2311,10 +2325,12 @@ sed \
 %{_mandir}/man3/ExtUtils::Installed.3*
 %{_mandir}/man3/ExtUtils::Packlist.3*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-Manifest
 %{privlib}/ExtUtils/Manifest.pm
 %{privlib}/ExtUtils/MANIFEST.SKIP
 %{_mandir}/man3/ExtUtils::Manifest.3*
+%endif
 
 %files ExtUtils-MakeMaker
 %{_bindir}/instmodsh
@@ -2539,9 +2555,11 @@ sed \
 %{privlib}/Parse/CPAN/Meta.pm
 %{_mandir}/man3/Parse::CPAN::Meta.3*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files parent
 %{privlib}/parent.pm
 %{_mandir}/man3/parent.3*
+%endif
 
 %files Perl-OSType
 %{privlib}/Perl/OSType.pm
@@ -2622,6 +2640,7 @@ sed \
 %{_mandir}/man3/TAP*
 %{_mandir}/man3/Test::Harness*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Test-Simple
 %{privlib}/Test/More*
 %{privlib}/Test/Builder*
@@ -2635,6 +2654,7 @@ sed \
 %files Test-Simple-tests
 %dir %{perl5_testdir}
 %{perl5_testdir}/Test-Simple
+%endif
 
 %files Time-Piece
 %{archlib}/Time/Piece.pm 
@@ -2643,15 +2663,19 @@ sed \
 %{_mandir}/man3/Time::Piece.3*
 %{_mandir}/man3/Time::Seconds.3*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Version-Requirements
 %{privlib}/Version/Requirements.pm
 %{_mandir}/man3/Version::Requirements*
+%endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files threads
 %dir %{archlib}/auto/threads
 %{archlib}/auto/threads/threads*
 %{archlib}/threads.pm
 %{_mandir}/man3/threads.3*
+%endif
 
 %files threads-shared
 %{archlib}/auto/threads/shared*
@@ -2671,6 +2695,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu May 02 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-243
+- Remove bundled Carp, ExtUtils-Manifest, parent, Test-Simple,
+  Version-Requirements, threads (bug #957931)
+
 * Thu Apr 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-242
 - Correct dependencies of perl-HTTP-Tiny
 - Correct perl-Digest-MD5 dependencies
