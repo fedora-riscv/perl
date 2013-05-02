@@ -1538,6 +1538,7 @@ Run Perl standard test scripts with statistics.
 Use TAP::Parser, Test::Harness package was whole rewritten.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Test-Simple
 Summary:        Basic utilities for writing tests
 Group:          Development/Languages
@@ -1550,7 +1551,6 @@ BuildArch:      noarch
 
 %description Test-Simple
 Basic utilities for writing tests.
-
 
 %package Test-Simple-tests
 Summary:        Test suite for package perl-Test-Simple
@@ -1565,6 +1565,7 @@ BuildArch:      noarch
 
 %description Test-Simple-tests
 This package provides the test suite for package perl-Test-Simple.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Text-ParseWords
