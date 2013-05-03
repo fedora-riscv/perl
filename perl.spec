@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        243%{?dist}
+Release:        244%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -468,6 +468,7 @@ variable is output in a single Perl statement. Handles self-referential
 structures correctly.
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Digest
 Summary:        Modules that calculate message digests
 Group:          Development/Libraries
@@ -485,6 +486,7 @@ The Digest:: modules calculate digests, also called "fingerprints" or
 some small/fixed size string. The actual size of the digest depend of
 the algorithm used. The message is simply a sequence of arbitrary
 bytes or bits.
+%endif
 
 
 %package Digest-MD5
@@ -2286,6 +2288,7 @@ sed \
 %{archlib}/Data/Dumper.pm
 %{_mandir}/man3/Data::Dumper.3*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Digest
 %{privlib}/Digest.pm
 %dir %{privlib}/Digest
@@ -2294,6 +2297,7 @@ sed \
 %{_mandir}/man3/Digest.3*
 %{_mandir}/man3/Digest::base.3*
 %{_mandir}/man3/Digest::file.3*
+%endif
 
 %files Digest-MD5
 %{archlib}/Digest/MD5.pm
@@ -2695,6 +2699,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri May 03 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-244
+- Remove bundled Digest (bug #957931)
+
 * Thu May 02 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-243
 - Remove bundled Carp, ExtUtils-Manifest, parent, Test-Simple,
   Version-Requirements, threads (bug #957931)
