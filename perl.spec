@@ -783,6 +783,7 @@ BuildArch:      noarch
 %{summary}.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package ExtUtils-ParseXS
 Summary:        Module and a script for converting Perl XS code into C code
 Group:          Development/Libraries
@@ -799,6 +800,7 @@ Obsoletes:      perl-ExtUtils-Typemaps
 ExtUtils::ParseXS will compile XS code into C code by embedding the constructs
 necessary to let C functions manipulate Perl values and creates the glue
 necessary to let Perl access those functions.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package File-CheckTree
@@ -1624,6 +1626,7 @@ This module provides thread-safe FIFO queues that can be accessed safely by
 any number of threads.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Time-HiRes
 Summary:        High resolution alarm, sleep, gettimeofday, interval timers
 Group:          Development/Libraries
@@ -1638,6 +1641,7 @@ Conflicts:      perl < 4:5.16.3-271
 The Time::HiRes module implements a Perl interface to the usleep, nanosleep,
 ualarm, gettimeofday, and setitimer/getitimer system calls, in other words,
 high resolution time and timers.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Time-Local
@@ -3029,6 +3033,7 @@ sed \
 %{_mandir}/man3/ExtUtils::testlib.3*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-ParseXS
 %dir %{privlib}/ExtUtils/ParseXS/
 %dir %{privlib}/ExtUtils/Typemaps/
@@ -3053,6 +3058,7 @@ sed \
 %{_mandir}/man3/ExtUtils::Typemaps::InputMap.3*
 %{_mandir}/man3/ExtUtils::Typemaps::OutputMap.3*
 %{_mandir}/man3/ExtUtils::Typemaps::Type.3*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files File-CheckTree
@@ -3482,10 +3488,12 @@ sed \
 %{_mandir}/man3/Thread::Queue.*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Time-HiRes
 %{archlib}/Time/HiRes.pm
 %{archlib}/auto/Time/HiRes/
 %{_mandir}/man3/Time::HiRes.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Time-Local
@@ -3538,6 +3546,7 @@ sed \
 %changelog
 * Fri May 10 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-272
 - Make regular expression engine safe in a signal handler (bug #849703)
+- Remove bundled ExtUtils-ParseXS, and Time-HiRes
 
 * Fri Apr 26 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-271
 - Sub-package Time-HiRes (bug #957048)
