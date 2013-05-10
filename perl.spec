@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        262%{?dist}
+Release:        263%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -121,6 +121,10 @@ Patch24:        perl-5.16.3-Don-t-leak-if-hh-copying-dies.patch
 
 # Fix dead lock in PerlIO after fork from thread, rhbz#947444, RT#106212
 Patch25:        perl-5.17.9-106212-Add-PL_perlio_mutex-to-atfork_lock.patch
+
+# Make regular expression engine safe in a signal handler, rhbz#849703,
+# RT#114878, fixed after 5.17.11
+Patch26:        perl-5.16.3-Remove-PERL_ASYNC_CHECK-from-Perl_leave_scope.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1638,6 +1642,7 @@ tarball from perl.org.
 %patch23 -p1
 %patch24 -p1
 %patch25 -p1
+%patch26 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1853,6 +1858,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch23: Fix leaking tied hashes (RT#107000) [2]' \
     'Fedora Patch24: Fix leaking tied hashes (RT#107000) [3]' \
     'Fedora Patch25: Fix dead lock in PerlIO after fork from thread (RT106212)' \
+    'Fedora Patch26: Make regexp safe in a signal handler (RT#114878)' \
     %{nil}
 
 rm patchlevel.bak
@@ -3166,6 +3172,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri May 10 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-263
+- Make regular expression engine safe in a signal handler (bug #849703)
+
 * Thu Apr 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-262
 - Correct dependencies of perl-HTTP-Tiny
 - Correct perl-Digest-MD5 dependencies
