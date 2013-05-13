@@ -3,7 +3,7 @@
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
 
-%global multilib_64_archs x86_64 s390x ppc64 sparc64
+%global multilib_64_archs aarch64 ppc64 s390x sparc64 x86_64 
 %global parallel_tests 1
 %global tapsetdir   %{_datadir}/systemtap/tapset
 
@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        263%{?dist}
+Release:        264%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -3172,6 +3172,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon May 13 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-264
+- Use lib64 directories on aarch64 architecture (bug #961900)
+
 * Fri May 10 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-263
 - Make regular expression engine safe in a signal handler (bug #849703)
 
