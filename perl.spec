@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        273%{?dist}
+Release:        274%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1496,6 +1496,26 @@ really be high enough to warrant the use of a keyword, and the size so small
 such that being individual extensions would be wasteful.
 %endif
 
+%package Storable
+Summary:        Persistence for Perl data structures
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.34
+Requires:       %perl_compat
+# Carp substitutes missing Log::Agent
+Requires:       perl(Carp)
+Requires:       perl(Config)
+# Fcntl is optional, but locking is good
+Requires:       perl(Fcntl)
+Requires:       perl(IO::File)
+Conflicts:      perl < 4:5.16.3-274
+
+%description Storable
+The Storable package brings persistence to your Perl data structures
+containing scalar, array, hash or reference objects, i.e. anything that
+can be conveniently stored to disk and retrieved at a later time.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Sys-Syslog
 Summary:        Perl interface to the UNIX syslog(3) calls
@@ -1830,7 +1850,8 @@ Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
 Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-LaTeX
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
 Requires:       perl-podlators, perl-Pod-Simple
-Requires:       perl-Socket, perl-Sys-Syslog, perl-Term-UI, perl-Test-Harness,
+Requires:       perl-Socket, perl-Storable, perl-Sys-Syslog,
+Requires:       perl-Term-UI, perl-Test-Harness,
 Requires:       perl-Test-Simple
 Requires:       perl-Text-ParseWords, perl-Text-Soundex, perl-Thread-Queue
 Requires:       perl-Time-HiRes
@@ -2676,6 +2697,11 @@ sed \
 %exclude %{_mandir}/man3/List::Util*
 %exclude %{_mandir}/man3/Scalar::Util*
 
+# Storable
+%exclude %{archlib}/Storabe.pm
+%exclude %{archlib}/auto/Storable/
+%exclude %{_mandir}/man3/Storable.*
+
 # Sys-Syslog
 %exclude %{archlib}/Sys/Syslog.pm
 %exclude %{archlib}/auto/Sys/Syslog/
@@ -3434,6 +3460,11 @@ sed \
 %{_mandir}/man3/Socket.3*
 %endif
 
+%files Storable
+%{archlib}/Storable.pm
+%{archlib}/auto/Storable/
+%{_mandir}/man3/Storable.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Term-UI
 %{privlib}/Term/UI/
@@ -3544,6 +3575,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed May 29 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-274
+- Sub-package Storable (bug #966865)
+
 * Mon May 13 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-273
 - Use lib64 directories on aarch64 architecture (bug #961900)
 
