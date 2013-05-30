@@ -1496,6 +1496,7 @@ really be high enough to warrant the use of a keyword, and the size so small
 such that being individual extensions would be wasteful.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Storable
 Summary:        Persistence for Perl data structures
 Group:          Development/Libraries
@@ -1515,6 +1516,7 @@ Conflicts:      perl < 4:5.16.3-274
 The Storable package brings persistence to your Perl data structures
 containing scalar, array, hash or reference objects, i.e. anything that
 can be conveniently stored to disk and retrieved at a later time.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Sys-Syslog
@@ -3460,10 +3462,12 @@ sed \
 %{_mandir}/man3/Socket.3*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Storable
 %{archlib}/Storable.pm
 %{archlib}/auto/Storable/
 %{_mandir}/man3/Storable.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Term-UI
@@ -3577,6 +3581,7 @@ sed \
 %changelog
 * Thu May 30 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-275
 - Correct typo in perl-Storable file list (bug #966865)
+- Remove bundled Storable (bug #966865)
 
 * Wed May 29 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-274
 - Sub-package Storable (bug #966865)
