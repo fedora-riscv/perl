@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        274%{?dist}
+Release:        275%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2698,7 +2698,7 @@ sed \
 %exclude %{_mandir}/man3/Scalar::Util*
 
 # Storable
-%exclude %{archlib}/Storabe.pm
+%exclude %{archlib}/Storable.pm
 %exclude %{archlib}/auto/Storable/
 %exclude %{_mandir}/man3/Storable.*
 
@@ -3575,6 +3575,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu May 30 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-275
+- Correct typo in perl-Storable file list (bug #966865)
+
 * Wed May 29 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-274
 - Sub-package Storable (bug #966865)
 
