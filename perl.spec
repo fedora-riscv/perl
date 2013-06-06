@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        275%{?dist}
+Release:        276%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -235,6 +235,12 @@ The libraries for the perl runtime
 Summary:        Header #files for use in perl development
 Group:          Development/Languages
 License:        GPL+ or Artistic
+# Require $Config{libs} providers, bug #905482
+Requires:       libdb-devel
+%if %{with gdbm}
+Requires:       gdbm-devel
+%endif
+Requires:       glibc-devel
 Requires:       systemtap-sdt-devel
 Requires:       perl(ExtUtils::ParseXS)
 Requires:       %perl_compat
@@ -3579,6 +3585,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jun 06 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-276
+- Require $Config{libs} providers (bug #905482)
+
 * Thu May 30 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-275
 - Correct typo in perl-Storable file list (bug #966865)
 - Remove bundled Storable (bug #966865)
