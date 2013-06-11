@@ -1889,7 +1889,7 @@ Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Consta
 Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
 Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-LaTeX
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
-Requires:       perl-podlators, perl-Pod-Simple
+Requires:       perl-podlators, perl-Pod-Simple, perl-Scalar-List-Utils
 Requires:       perl-Socket, perl-Storable, perl-Sys-Syslog,
 Requires:       perl-Term-UI, perl-Test-Harness,
 Requires:       perl-Test-Simple
@@ -3638,6 +3638,7 @@ sed \
 * Tue Jun 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-277
 - Move CPANPLUS-Dist-Build files from perl-CPANPLUS
 - Move CPAN-Meta-Requirements files from CPAN-Meta
+- Add perl-Scalar-List-Utils to perl-core dependencies
 
 * Thu Jun 06 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-276
 - Require $Config{libs} providers (bug #905482)
