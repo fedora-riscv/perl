@@ -500,6 +500,23 @@ in CPAN::Meta::Spec.
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
+%package CPAN-Meta-Requirements
+Summary:        Set of version requirements for a CPAN dist
+Epoch:          0
+Version:        2.120.630
+License:        GPL+ or Artistic
+Group:          Development/Libraries
+Requires:       %perl_compat
+BuildArch:      noarch
+
+%description CPAN-Meta-Requirements
+A CPAN::Meta::Requirements object models a set of version constraints like
+those specified in the META.yml or META.json files in CPAN distributions.
+It can be built up by adding more and more constraints, and it will reduce
+them to the simplest representation.
+%endif
+
+%if %{dual_life} || %{rebuild_from_scratch}
 %package CPAN-Meta-YAML
 Version:        0.007
 Epoch:          0
@@ -1851,7 +1868,8 @@ Requires:       perl-macros
 Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-autodie
 Requires:       perl-B-Lint, perl-Compress-Raw-Bzip2,
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-constant,
-Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-YAML, perl-CPANPLUS,
+Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
+Requires:       perl-CPAN-Meta-YAML, perl-CPANPLUS,
 Requires:       perl-CPANPLUS-Dist-Build, perl-Encode
 Requires:       perl-Data-Dumper, perl-DB_File, perl-Digest, perl-Digest-MD5,
 Requires:       perl-Digest-SHA, perl-Env, perl-Exporter
@@ -2281,6 +2299,10 @@ sed \
 %exclude %{privlib}/CPAN/Meta/Spec.pm
 %exclude %{privlib}/CPAN/Meta/Validator.pm
 %exclude %{_mandir}/man3/CPAN::Meta*
+
+# CPAN-Meta-Requirements
+%exclude %{privlib}/CPAN/Meta/Requirements.pm
+%exclude %{_mandir}/man3/CPAN::Meta::Requirements.3*
 
 # CPAN-Meta-YAML
 %exclude %{privlib}/CPAN/Meta/YAML.pm
@@ -2936,6 +2958,12 @@ sed \
 %{privlib}/CPAN/Meta/Validator.pm
 %{_mandir}/man3/CPAN::Meta*
 %exclude %{_mandir}/man3/CPAN::Meta::YAML*
+%endif
+
+%if %{dual_life} || %{rebuild_from_scratch}
+%files CPAN-Meta-Requirements
+%{privlib}/CPAN/Meta/Requirements.pm
+%{_mandir}/man3/CPAN::Meta::Requirements.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -3609,6 +3637,7 @@ sed \
 %changelog
 * Tue Jun 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-277
 - Move CPANPLUS-Dist-Build files from perl-CPANPLUS
+- Move CPAN-Meta-Requirements files from CPAN-Meta
 
 * Thu Jun 06 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-276
 - Require $Config{libs} providers (bug #905482)
