@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        276%{?dist}
+Release:        277%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -528,14 +528,28 @@ Requires:       perl(Digest::SHA)
 Requires:       perl(Module::Pluggable) >= 2.4
 Requires:       perl(Module::CoreList)
 Requires:       %perl_compat
-Provides:       perl-CPANPLUS-Dist-Build = 0.54
-Obsoletes:      perl-CPANPLUS-Dist-Build <= 0.05
 BuildArch:      noarch
 
 %description CPANPLUS
 The CPANPLUS library is an API to the CPAN mirrors and a collection of
 interactive shells, commandline programs, etc, that use this API.
 %endif
+
+%package CPANPLUS-Dist-Build
+Summary:        Module::Build extension for CPANPLUS
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.62
+Requires:       %perl_compat
+# This is a plug-in for CPANPLUS, specify reverse dependency here
+Requires:       perl(CPANPLUS)
+BuildArch:      noarch
+
+%description CPANPLUS-Dist-Build
+CPANPLUS::Dist::Build is a distribution class for Module::Build related
+modules. With this package, you can create, install and uninstall
+Module::Build-based perl modules by calling CPANPLUS::Dist methods.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Data-Dumper
@@ -1837,8 +1851,8 @@ Requires:       perl-macros
 Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-autodie
 Requires:       perl-B-Lint, perl-Compress-Raw-Bzip2,
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-constant,
-Requires:       perl-CPAN,
-Requires:       perl-CPAN-Meta, perl-CPAN-Meta-YAML, perl-CPANPLUS, perl-Encode
+Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-YAML, perl-CPANPLUS,
+Requires:       perl-CPANPLUS-Dist-Build, perl-Encode
 Requires:       perl-Data-Dumper, perl-DB_File, perl-Digest, perl-Digest-MD5,
 Requires:       perl-Digest-SHA, perl-Env, perl-Exporter
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Embed,
@@ -2279,6 +2293,7 @@ sed \
 %exclude %{_mandir}/man3/Parse::CPAN::Meta.3*
 
 # CPANPLUS
+# CPANPLUS-Dist-Build
 %exclude %{_bindir}/cpan2dist
 %exclude %{_bindir}/cpanp
 %exclude %{_bindir}/cpanp-run-perl
@@ -2936,10 +2951,17 @@ sed \
 %{_bindir}/cpanp-run-perl
 %{privlib}/CPANPLUS/
 %{privlib}/CPANPLUS.pm
+%exclude %{privlib}/CPANPLUS/Dist/Build/
 %{_mandir}/man1/cpan2dist.1*
 %{_mandir}/man1/cpanp.1*
 %{_mandir}/man3/CPANPLUS*
 %endif
+
+%files CPANPLUS-Dist-Build
+%{privlib}/CPANPLUS/Dist/Build/
+%{privlib}/CPANPLUS/Dist/Build.pm
+%{_mandir}/man3/CPANPLUS::Dist::Build.3*
+%{_mandir}/man3/CPANPLUS::Dist::Build::*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Data-Dumper
@@ -3585,6 +3607,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jun 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-277
+- Move CPANPLUS-Dist-Build files from perl-CPANPLUS
+
 * Thu Jun 06 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-276
 - Require $Config{libs} providers (bug #905482)
 
