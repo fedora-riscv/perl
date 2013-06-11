@@ -1637,7 +1637,7 @@ Requires:       perl-Module-Pluggable, perl-Object-Accessor, perl-Package-Consta
 Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
 Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-LaTeX
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
-Requires:       perl-podlators, perl-Pod-Simple
+Requires:       perl-podlators, perl-Pod-Simple, perl-Scalar-List-Utils
 Requires:       perl-Socket, perl-Sys-Syslog, perl-Term-UI, perl-Test-Harness,
 Requires:       perl-Test-Simple
 Requires:       perl-Text-ParseWords, perl-Text-Soundex, perl-Thread-Queue
@@ -3226,6 +3226,7 @@ sed \
 * Tue Jun 18 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-265
 - Move CPANPLUS-Dist-Build files from perl-CPANPLUS
 - Move CPAN-Meta-Requirements files from CPAN-Meta
+- Add perl-Scalar-List-Utils to perl-core dependencies
 
 * Mon May 13 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-264
 - Use lib64 directories on aarch64 architecture (bug #961900)
