@@ -2230,7 +2230,7 @@ sed \
 %{_mandir}/man3/*.3*
 %{_bindir}/*
 %{privlib}
-%{archlib}
+%{archlib}/*
 %{perl_vendorlib}
 
 
@@ -3650,6 +3650,7 @@ sed \
   arguments (bug #971094)
 - Update h2ph(1) documentation (bug #948538)
 - Update pod2html(1) documentation (bug #948538)
+- Do not double-own archlib directory (bug #894195)
 
 * Tue Jun 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-277
 - Move CPANPLUS-Dist-Build files from perl-CPANPLUS
