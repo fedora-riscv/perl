@@ -129,6 +129,9 @@ Patch26:        perl-5.16.3-Remove-PERL_ASYNC_CHECK-from-Perl_leave_scope.patch
 # Update h2ph(1) documentation, rhbz#948538, RT#117647
 Patch27:        perl-5.19.0-Synchronize-h2ph-POD-text-with-usage-output.patch
 
+# Update pod2html(1) documentation, rhbz#948538, RT#117623
+Patch28:        perl-5.16.3-Synchronize-pod2html-usage-output-and-its-POD-text.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -1934,6 +1937,7 @@ tarball from perl.org.
 %patch25 -p1
 %patch26 -p1
 %patch27 -p1
+%patch28 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -2151,6 +2155,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch25: Fix dead lock in PerlIO after fork from thread (RT106212)' \
     'Fedora Patch26: Make regexp safe in a signal handler (RT#114878)' \
     'Fedora Patch27: Update h2ph(1) documentation (RT#117647)' \
+    'Fedora Patch28: Update pod2html(1) documentation (RT#117623)' \
     %{nil}
 
 rm patchlevel.bak
@@ -3644,6 +3649,7 @@ sed \
 - Update SystemTap scripts to recognize new phase__change marker and new probe
   arguments (bug #971094)
 - Update h2ph(1) documentation (bug #948538)
+- Update pod2html(1) documentation (bug #948538)
 
 * Tue Jun 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-277
 - Move CPANPLUS-Dist-Build files from perl-CPANPLUS
