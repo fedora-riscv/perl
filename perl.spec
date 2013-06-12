@@ -126,6 +126,9 @@ Patch25:        perl-5.17.9-106212-Add-PL_perlio_mutex-to-atfork_lock.patch
 # RT#114878, fixed after 5.17.11
 Patch26:        perl-5.16.3-Remove-PERL_ASYNC_CHECK-from-Perl_leave_scope.patch
 
+# Update h2ph(1) documentation, rhbz#948538, RT#117647
+Patch27:        perl-5.19.0-Synchronize-h2ph-POD-text-with-usage-output.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -1930,6 +1933,7 @@ tarball from perl.org.
 %patch24 -p1
 %patch25 -p1
 %patch26 -p1
+%patch27 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -2146,6 +2150,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch24: Fix leaking tied hashes (RT#107000) [3]' \
     'Fedora Patch25: Fix dead lock in PerlIO after fork from thread (RT106212)' \
     'Fedora Patch26: Make regexp safe in a signal handler (RT#114878)' \
+    'Fedora Patch27: Update h2ph(1) documentation (RT#117647)' \
     %{nil}
 
 rm patchlevel.bak
@@ -3638,6 +3643,7 @@ sed \
 * Wed Jun 12 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-278
 - Update SystemTap scripts to recognize new phase__change marker and new probe
   arguments (bug #971094)
+- Update h2ph(1) documentation (bug #948538)
 
 * Tue Jun 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-277
 - Move CPANPLUS-Dist-Build files from perl-CPANPLUS
