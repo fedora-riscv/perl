@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        277%{?dist}
+Release:        278%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -3635,6 +3635,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jun 12 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-278
+- Update SystemTap scripts to recognize new phase__change marker and new probe
+  arguments (bug #971094)
+
 * Tue Jun 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-277
 - Move CPANPLUS-Dist-Build files from perl-CPANPLUS
 - Move CPAN-Meta-Requirements files from CPAN-Meta
