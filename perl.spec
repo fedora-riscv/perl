@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        278%{?dist}
+Release:        279%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2117,6 +2117,11 @@ ln -s ../../../bin/xsubpp %{build_privlib}/ExtUtils/
 # Don't need the .packlist
 rm %{build_archlib}/.packlist
 
+# Do not distribute File::Spec::VMS as it works on VMS only (bug #973713)
+# We cannot remove it in %%prep because dist/Cwd/t/Spec.t test needs it.
+rm %{build_archlib}/File/Spec/VMS.pm
+rm $RPM_BUILD_ROOT%{_mandir}/man3/File::Spec::VMS.3*
+
 # Fix some manpages to be UTF-8
 mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1/
 pushd $RPM_BUILD_ROOT%{_mandir}/man1/
@@ -3645,6 +3650,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jun 14 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-279
+- Do not distribute File::Spec::VMS (bug #973713)
+
 * Wed Jun 12 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-278
 - Update SystemTap scripts to recognize new phase__change marker and new probe
   arguments (bug #971094)
