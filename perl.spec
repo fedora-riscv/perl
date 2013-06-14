@@ -1855,6 +1855,11 @@ ln -s ../../../bin/xsubpp %{build_privlib}/ExtUtils/
 # Don't need the .packlist
 rm %{build_archlib}/.packlist
 
+# Do not distribute File::Spec::VMS as it works on VMS only (bug #973713)
+# We cannot remove it in %%prep because dist/Cwd/t/Spec.t test needs it.
+rm %{build_archlib}/File/Spec/VMS.pm
+rm $RPM_BUILD_ROOT%{_mandir}/man3/File::Spec::VMS.3*
+
 # Fix some manpages to be UTF-8
 mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1/
 pushd $RPM_BUILD_ROOT%{_mandir}/man1/
@@ -3227,6 +3232,7 @@ sed \
 - Move CPANPLUS-Dist-Build files from perl-CPANPLUS
 - Move CPAN-Meta-Requirements files from CPAN-Meta
 - Add perl-Scalar-List-Utils to perl-core dependencies
+- Do not distribute File::Spec::VMS (bug #973713)
 
 * Mon May 13 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-264
 - Use lib64 directories on aarch64 architecture (bug #961900)
