@@ -558,6 +558,7 @@ The CPANPLUS library is an API to the CPAN mirrors and a collection of
 interactive shells, commandline programs, etc, that use this API.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package CPANPLUS-Dist-Build
 Summary:        Module::Build extension for CPANPLUS
 Group:          Development/Libraries
@@ -573,6 +574,7 @@ BuildArch:      noarch
 CPANPLUS::Dist::Build is a distribution class for Module::Build related
 modules. With this package, you can create, install and uninstall
 Module::Build-based perl modules by calling CPANPLUS::Dist methods.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Data-Dumper
@@ -3000,11 +3002,13 @@ sed \
 %{_mandir}/man3/CPANPLUS*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files CPANPLUS-Dist-Build
 %{privlib}/CPANPLUS/Dist/Build/
 %{privlib}/CPANPLUS/Dist/Build.pm
 %{_mandir}/man3/CPANPLUS::Dist::Build.3*
 %{_mandir}/man3/CPANPLUS::Dist::Build::*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Data-Dumper
@@ -3652,6 +3656,7 @@ sed \
 %changelog
 * Fri Jun 14 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-279
 - Do not distribute File::Spec::VMS (bug #973713)
+- Remove bundled CPANPLUS-Dist-Build (bug #973041)
 
 * Wed Jun 12 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-278
 - Update SystemTap scripts to recognize new phase__change marker and new probe
