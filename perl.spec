@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        282%{?dist}
+Release:        283%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -95,6 +95,9 @@ Patch13:        perl-5.18.0-Fix-regmatch-pointer-32-bit-wraparound-regression.pa
 # Prevent from loading system Term::ReadLine::Gnu while running tests,
 # RT#118821
 Patch14:        perl-5.18.0-Suppress-system-Term-ReadLine-Gnu.patch
+
+# Define SONAME for libperl.so
+Patch15:        perl-5.16.3-create_libperl_soname.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1876,6 +1879,7 @@ tarball from perl.org.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
 
 %if !%{defined perl_bootstrap}
 # Local patch tracking
@@ -1894,6 +1898,7 @@ perl -x patchlevel.h \
     'Fedora Patch12: Disable ornaments on perl5db AutoTrace tests (RT#118817)' \
     'Fedora Patch13: Fix regmatch pointer 32-bit wraparound regression (RT#118175)' \
     'Fedora Patch14: Do not use system Term::ReadLine::Gnu in tests (RT#118821)' \
+    'Fedora Patch15: Define SONAME for libperl.so' \
     %{nil}
 %endif
 
@@ -2032,6 +2037,16 @@ make install DESTDIR=$RPM_BUILD_ROOT
     PERL5LIB="%{build_archlib}:%{build_privlib}" \\\
     %{build_bindir}/perl
 
+# Make proper DSO names, move libperl to standard path.
+%global soname libperl.so.%(echo '%{version}' | sed 's/^\\([^.]*\\.[^.]*\\).*/\\1/')
+mv "%{build_archlib}/CORE/libperl.so" \
+    "$RPM_BUILD_ROOT%{_libdir}/libperl.so.%{version}"
+ln -s "libperl.so.%{version}" "$RPM_BUILD_ROOT%{_libdir}/%{soname}"
+ln -s "libperl.so.%{version}" "$RPM_BUILD_ROOT%{_libdir}/libperl.so"
+# XXX: Keep symlink from original location because various code glues
+# $archlib/CORE/$libperl to get the DSO.
+ln -s "../../libperl.so.%{version}" "%{build_archlib}/CORE/libperl.so"
+
 install -p -m 755 utils/pl2pm %{build_bindir}/pl2pm
 
 for i in asm/termios.h syscall.h syslimits.h syslog.h \
@@ -2122,7 +2137,7 @@ mkdir -p %{buildroot}%{tapsetdir}
 %endif
 
 sed \
-  -e "s|LIBRARY_PATH|%{archlib}/CORE/libperl.so|" \
+  -e "s|LIBRARY_PATH|%{_libdir}/%{soname}|" \
   %{SOURCE4} \
   > %{buildroot}%{tapsetdir}/%{libperl_stp}
 
@@ -2162,6 +2177,7 @@ sed \
 
 # libs
 %exclude %{archlib}/CORE/libperl.so
+%exclude %{_libdir}/libperl.so.*
 %exclude %{perl_vendorarch}
 
 # devel
@@ -2172,6 +2188,7 @@ sed \
 %exclude %{_bindir}/perlivp
 %exclude %{_mandir}/man1/perlivp*
 %exclude %{archlib}/CORE/*.h
+%exclude %{_libdir}/libperl.so
 %exclude %{_mandir}/man1/perlxs*
 
 # Archive-Extract
@@ -2770,6 +2787,7 @@ sed \
 %files libs
 %defattr(-,root,root)
 %{archlib}/CORE/libperl.so
+%{_libdir}/libperl.so.*
 %dir %{archlib}
 %dir %{perl_vendorarch}
 %dir %{perl_vendorarch}/auto
@@ -2782,6 +2800,7 @@ sed \
 %{_bindir}/perlivp
 %{_mandir}/man1/perlivp*
 %{archlib}/CORE/*.h
+%{_libdir}/libperl.so
 %{_mandir}/man1/perlxs*
 %{tapsetdir}/%{libperl_stp}
 %doc perl-example.stp
@@ -3563,6 +3582,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jul 09 2013 Petr Pisar <ppisar@redhat.com> - 4:5.18.0-283
+- Define SONAME for libperl.so and move the libary into standard path
+
 * Mon Jul 08 2013 Petr Pisar <ppisar@redhat.com> - 4:5.18.0-282
 - Do not load system Term::ReadLine::Gnu while running tests
 - Disable ornaments on perl5db AutoTrace tests
