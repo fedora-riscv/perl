@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        279%{?dist}
+Release:        280%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1941,6 +1941,38 @@ tarball from perl.org.
 %patch27 -p1
 %patch28 -p1
 
+%if !%{defined perl_bootstrap}
+# Local patch tracking
+perl -x patchlevel.h \
+    'Fedora Patch1: Removes date check, Fedora/RHEL specific' \
+%ifarch %{multilib_64_archs} \
+    'Fedora Patch3: support for libdir64' \
+%endif \
+    'Fedora Patch4: use libresolv instead of libbind' \
+    'Fedora Patch5: USE_MM_LD_RUN_PATH' \
+    'Fedora Patch6: Skip hostname tests, due to builders not being network capable' \
+    'Fedora Patch7: Dont run one io test due to random builder failures' \
+    'Fedora Patch9: Fix find2perl to translate ? glob properly (RT#113054)' \
+    'Fedora Patch10: Fix broken atof (RT#109318)' \
+    'Fedora Patch13: Clear $@ before "do" I/O error (RT#113730)' \
+    'Fedora Patch14: Do not truncate syscall() return value to 32 bits (RT#113980)' \
+    'Fedora Patch15: Override the Pod::Simple::parse_file (CPANRT#77530)' \
+    'Fedora Patch16: Do not leak with attribute on my variable (RT#114764)' \
+    'Fedora Patch17: Allow operator after numeric keyword argument (RT#105924)' \
+    'Fedora Patch18: Extend stack in File::Glob::glob, (RT#114984)' \
+    'Fedora Patch19: Do not crash when vivifying $|' \
+    'Fedora Patch20: Fix misparsing of maketext strings (CVE-2012-6329)' \
+    'Fedora Patch21: Add NAME headings to CPAN modules (CPANRT#73396)' \
+    'Fedora Patch22: Fix leaking tied hashes (RT#107000) [1]' \
+    'Fedora Patch23: Fix leaking tied hashes (RT#107000) [2]' \
+    'Fedora Patch24: Fix leaking tied hashes (RT#107000) [3]' \
+    'Fedora Patch25: Fix dead lock in PerlIO after fork from thread (RT106212)' \
+    'Fedora Patch26: Make regexp safe in a signal handler (RT#114878)' \
+    'Fedora Patch27: Update h2ph(1) documentation (RT#117647)' \
+    'Fedora Patch28: Update pod2html(1) documentation (RT#117623)' \
+    %{nil}
+%endif
+
 #copy the example script
 cp -a %{SOURCE5} .
 
@@ -2132,40 +2164,6 @@ pushd $RPM_BUILD_ROOT%{_mandir}/man1/
     rm $i
     mv new-$i $i
   done
-popd
-
-# Local patch tracking
-pushd %{build_archlib}/CORE/
-%{new_perl} -x patchlevel.h \
-    'Fedora Patch1: Removes date check, Fedora/RHEL specific' \
-%ifarch %{multilib_64_archs} \
-    'Fedora Patch3: support for libdir64' \
-%endif \
-    'Fedora Patch4: use libresolv instead of libbind' \
-    'Fedora Patch5: USE_MM_LD_RUN_PATH' \
-    'Fedora Patch6: Skip hostname tests, due to builders not being network capable' \
-    'Fedora Patch7: Dont run one io test due to random builder failures' \
-    'Fedora Patch9: Fix find2perl to translate ? glob properly (RT#113054)' \
-    'Fedora Patch10: Fix broken atof (RT#109318)' \
-    'Fedora Patch13: Clear $@ before "do" I/O error (RT#113730)' \
-    'Fedora Patch14: Do not truncate syscall() return value to 32 bits (RT#113980)' \
-    'Fedora Patch15: Override the Pod::Simple::parse_file (CPANRT#77530)' \
-    'Fedora Patch16: Do not leak with attribute on my variable (RT#114764)' \
-    'Fedora Patch17: Allow operator after numeric keyword argument (RT#105924)' \
-    'Fedora Patch18: Extend stack in File::Glob::glob, (RT#114984)' \
-    'Fedora Patch19: Do not crash when vivifying $|' \
-    'Fedora Patch20: Fix misparsing of maketext strings (CVE-2012-6329)' \
-    'Fedora Patch21: Add NAME headings to CPAN modules (CPANRT#73396)' \
-    'Fedora Patch22: Fix leaking tied hashes (RT#107000) [1]' \
-    'Fedora Patch23: Fix leaking tied hashes (RT#107000) [2]' \
-    'Fedora Patch24: Fix leaking tied hashes (RT#107000) [3]' \
-    'Fedora Patch25: Fix dead lock in PerlIO after fork from thread (RT106212)' \
-    'Fedora Patch26: Make regexp safe in a signal handler (RT#114878)' \
-    'Fedora Patch27: Update h2ph(1) documentation (RT#117647)' \
-    'Fedora Patch28: Update pod2html(1) documentation (RT#117623)' \
-    %{nil}
-
-rm patchlevel.bak
 popd
 
 # for now, remove Bzip2:
@@ -3654,6 +3652,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jun 26 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-280
+- Edit local patch level before compilation
+
 * Fri Jun 14 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-279
 - Do not distribute File::Spec::VMS (bug #973713)
 - Remove bundled CPANPLUS-Dist-Build (bug #973041)
