@@ -1966,7 +1966,7 @@ perl -x patchlevel.h \
     'Fedora Patch22: Fix leaking tied hashes (RT#107000) [1]' \
     'Fedora Patch23: Fix leaking tied hashes (RT#107000) [2]' \
     'Fedora Patch24: Fix leaking tied hashes (RT#107000) [3]' \
-    'Fedora Patch25: Fix dead lock in PerlIO after fork from thread (RT106212)' \
+    'Fedora Patch25: Fix dead lock in PerlIO after fork from thread (RT#106212)' \
     'Fedora Patch26: Make regexp safe in a signal handler (RT#114878)' \
     'Fedora Patch27: Update h2ph(1) documentation (RT#117647)' \
     'Fedora Patch28: Update pod2html(1) documentation (RT#117623)' \
