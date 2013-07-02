@@ -99,6 +99,9 @@ Patch14:        perl-5.18.0-Suppress-system-Term-ReadLine-Gnu.patch
 # Define SONAME for libperl.so
 Patch15:        perl-5.16.3-create_libperl_soname.patch
 
+# Install libperl.so to -Dshrpdir value
+Patch16:        perl-5.16.3-Install-libperl.so-to-shrpdir-on-Linux.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -1880,6 +1883,7 @@ tarball from perl.org.
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
 
 %if !%{defined perl_bootstrap}
 # Local patch tracking
@@ -1899,6 +1903,7 @@ perl -x patchlevel.h \
     'Fedora Patch13: Fix regmatch pointer 32-bit wraparound regression (RT#118175)' \
     'Fedora Patch14: Do not use system Term::ReadLine::Gnu in tests (RT#118821)' \
     'Fedora Patch15: Define SONAME for libperl.so' \
+    'Fedora Patch16: Install libperl.so to -Dshrpdir value' \
     %{nil}
 %endif
 
@@ -1967,6 +1972,7 @@ perl regen.pl -v
 /bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
         -Dccdlflags="-Wl,--enable-new-dtags" \
         -Dlddlflags="-shared $RPM_OPT_FLAGS $RPM_LD_FLAGS" \
+        -Dshrpdir="%{_libdir}" \
         -DDEBUGGING=-g \
         -Dversion=%{perl_version} \
         -Dmyhostname=localhost \
