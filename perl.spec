@@ -102,6 +102,9 @@ Patch15:        perl-5.16.3-create_libperl_soname.patch
 # Install libperl.so to -Dshrpdir value
 Patch16:        perl-5.16.3-Install-libperl.so-to-shrpdir-on-Linux.patch
 
+# Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
+Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -1884,6 +1887,7 @@ tarball from perl.org.
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch200 -p1
 
 %if !%{defined perl_bootstrap}
 # Local patch tracking
@@ -1904,6 +1908,7 @@ perl -x patchlevel.h \
     'Fedora Patch14: Do not use system Term::ReadLine::Gnu in tests (RT#118821)' \
     'Fedora Patch15: Define SONAME for libperl.so' \
     'Fedora Patch16: Install libperl.so to -Dshrpdir value' \
+    'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     %{nil}
 %endif
 
@@ -3590,6 +3595,7 @@ sed \
 %changelog
 * Tue Jul 09 2013 Petr Pisar <ppisar@redhat.com> - 4:5.18.0-283
 - Define SONAME for libperl.so and move the libary into standard path
+- Link XS modules to libperl.so on Linux (bug #960048)
 
 * Mon Jul 08 2013 Petr Pisar <ppisar@redhat.com> - 4:5.18.0-282
 - Do not load system Term::ReadLine::Gnu while running tests
