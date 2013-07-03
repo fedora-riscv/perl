@@ -105,6 +105,9 @@ Patch16:        perl-5.16.3-Install-libperl.so-to-shrpdir-on-Linux.patch
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
+# Link XS modules to libperl.so with EU::MM on Linux, bug #960048
+Patch201:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-MM-on-Linux.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -1888,6 +1891,7 @@ tarball from perl.org.
 %patch15 -p1
 %patch16 -p1
 %patch200 -p1
+%patch201 -p1
 
 %if !%{defined perl_bootstrap}
 # Local patch tracking
@@ -1909,6 +1913,7 @@ perl -x patchlevel.h \
     'Fedora Patch15: Define SONAME for libperl.so' \
     'Fedora Patch16: Install libperl.so to -Dshrpdir value' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
+    'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
 %endif
 
