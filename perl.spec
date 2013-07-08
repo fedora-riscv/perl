@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        281%{?dist}
+Release:        282%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -91,6 +91,10 @@ Patch12:        perl-5.18.0-Fix-perl5db-test.patch
 
 # Fix regmatch pointer 32-bit wraparound regression, RT#118175
 Patch13:        perl-5.18.0-Fix-regmatch-pointer-32-bit-wraparound-regression.patch
+
+# Prevent from loading system Term::ReadLine::Gnu while running tests,
+# RT#118821
+Patch14:        perl-5.18.0-Suppress-system-Term-ReadLine-Gnu.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1871,6 +1875,7 @@ tarball from perl.org.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
 
 %if !%{defined perl_bootstrap}
 # Local patch tracking
@@ -1887,6 +1892,7 @@ perl -x patchlevel.h \
     'Fedora Patch10: Update h2ph(1) documentation (RT#117647)' \
     'Fedora Patch11: Update pod2html(1) documentation (RT#117623)' \
     'Fedora Patch13: Fix regmatch pointer 32-bit wraparound regression (RT#118175)' \
+    'Fedora Patch14: Do not use system Term::ReadLine::Gnu in tests (RT#118821)' \
     %{nil}
 %endif
 
@@ -3556,6 +3562,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jul 08 2013 Petr Pisar <ppisar@redhat.com> - 4:5.18.0-282
+- Do not load system Term::ReadLine::Gnu while running tests
+
 * Thu Jul 04 2013 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.0-281
 - Update to Perl 5.18.0
 - Clean patches, not needed with new version
