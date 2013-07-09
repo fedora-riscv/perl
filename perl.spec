@@ -86,8 +86,8 @@ Patch10:        perl-5.19.0-Synchronize-h2ph-POD-text-with-usage-output.patch
 # Update pod2html(1) documentation, rhbz#948538, RT#117623
 Patch11:        perl-5.16.3-Synchronize-pod2html-usage-output-and-its-POD-text.patch
 
-# Fix a test failure in perl5db.t when Term::ReadLine::Gnu is installed
-Patch12:        perl-5.18.0-Fix-perl5db-test.patch
+# Fix a test failure in perl5db.t when TERM=vt100, RT#118817
+Patch12:        perl-5.18.0-Disable-ornaments-on-perl5db-AutoTrace-tests.patch
 
 # Fix regmatch pointer 32-bit wraparound regression, RT#118175
 Patch13:        perl-5.18.0-Fix-regmatch-pointer-32-bit-wraparound-regression.patch
@@ -1891,6 +1891,7 @@ perl -x patchlevel.h \
     'Fedora Patch9: Fix find2perl to translate ? glob properly (RT#113054)' \
     'Fedora Patch10: Update h2ph(1) documentation (RT#117647)' \
     'Fedora Patch11: Update pod2html(1) documentation (RT#117623)' \
+    'Fedora Patch12: Disable ornaments on perl5db AutoTrace tests (RT#118817)' \
     'Fedora Patch13: Fix regmatch pointer 32-bit wraparound regression (RT#118175)' \
     'Fedora Patch14: Do not use system Term::ReadLine::Gnu in tests (RT#118821)' \
     %{nil}
@@ -3564,6 +3565,7 @@ sed \
 %changelog
 * Mon Jul 08 2013 Petr Pisar <ppisar@redhat.com> - 4:5.18.0-282
 - Do not load system Term::ReadLine::Gnu while running tests
+- Disable ornaments on perl5db AutoTrace tests
 
 * Thu Jul 04 2013 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.0-281
 - Update to Perl 5.18.0
