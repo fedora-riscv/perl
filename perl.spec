@@ -655,7 +655,7 @@ module can handle all types of input, including partial-byte data.
 Summary:        Character encodings in Perl
 Group:          Development/Libraries
 License:        GPL+ or Artistic
-Epoch:          0
+Epoch:          1
 Version:        2.49
 Requires:       %perl_compat
 Conflicts:      perl < 4:5.16.2-256
@@ -908,7 +908,7 @@ can be used to create a temporary directory.
 Summary:        Perl source filters
 Group:          Development/Libraries
 License:        GPL+ or Artistic
-Epoch:          0
+Epoch:          1
 Version:        1.45
 Requires:       %perl_compat
 
@@ -1752,7 +1752,7 @@ inheritance from those modules at the same time. Mostly similar in effect to:
 Summary:        C socket.h defines and structure manipulators
 Group:          Development/Libraries
 License:        GPL+ or Artistic
-Epoch:          0
+Epoch:          1
 Version:        2.009
 Requires:       %perl_compat
 
@@ -1769,7 +1769,7 @@ includes all of the commonly used pound-defines like AF_INET, SOCK_STREAM, etc.
 Summary:        Perl interpreter-based threads
 Group:          Development/Libraries
 License:        GPL+ or Artistic
-Epoch:          0
+Epoch:          1
 Version:        1.86
 Requires:       perl = %{perl_epoch}:%{perl_version}
 
