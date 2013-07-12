@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        283%{?dist}
+Release:        284%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -3598,6 +3598,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jul 12 2013 Petr Pisar <ppisar@redhat.com> - 4:5.18.0-284
+- Perl 5.18 rebuild
+
 * Tue Jul 09 2013 Petr Pisar <ppisar@redhat.com> - 4:5.18.0-283
 - Define SONAME for libperl.so and move the libary into standard path
 - Link XS modules to libperl.so on Linux (bug #960048)
