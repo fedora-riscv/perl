@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        285%{?dist}
+Release:        286%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -3594,6 +3594,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:5.18.0-286
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
 * Mon Jul 15 2013 Petr Pisar <ppisar@redhat.com> - 4:5.18.0-285
 - Stop providing old perl(MODULE_COMPAT_5.16.*)
 
