@@ -1,4 +1,4 @@
-%global perl_version    5.18.0
+%global perl_version    5.18.1
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -8,7 +8,7 @@
 %global tapsetdir   %{_datadir}/systemtap/tapset
 
 %global dual_life 0
-%global rebuild_from_scratch 1
+%global rebuild_from_scratch 0
 
 # This overrides filters from build root (/etc/rpm/macros.perl)
 # intentionally (unversioned perl(DB) is removed and versioned one is kept)
@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        286%{?dist}
+Release:        287%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -89,9 +89,6 @@ Patch11:        perl-5.16.3-Synchronize-pod2html-usage-output-and-its-POD-text.p
 # Fix a test failure in perl5db.t when TERM=vt100, RT#118817
 Patch12:        perl-5.18.0-Disable-ornaments-on-perl5db-AutoTrace-tests.patch
 
-# Fix regmatch pointer 32-bit wraparound regression, RT#118175
-Patch13:        perl-5.18.0-Fix-regmatch-pointer-32-bit-wraparound-regression.patch
-
 # Prevent from loading system Term::ReadLine::Gnu while running tests,
 # RT#118821
 Patch14:        perl-5.18.0-Suppress-system-Term-ReadLine-Gnu.patch
@@ -124,10 +121,11 @@ BuildRequires:  procps, rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.18.0)
+%global perl_compat perl(:MODULE_COMPAT_5.18.1)
 
 # Compat provides
 Provides: %perl_compat
+Provides: perl(:MODULE_COMPAT_5.18.0)
 
 # Threading provides
 Provides: perl(:WITH_ITHREADS)
@@ -633,7 +631,8 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        5.84
+# real version 5.84_01
+Version:        5.84.1
 Requires:       %perl_compat
 # Recommended
 Requires:       perl(Digest::base)
@@ -664,7 +663,7 @@ of the system. Perl strings are sequences of characters.
 Summary:        Character encodings in Perl
 Group:          Development/Libraries
 License:        GPL+ or Artistic
-Epoch:          0
+Epoch:          1
 Version:        2.49
 Requires:       %perl_compat
 Requires:       %{name}-Encode = %{epoch}:%{version}-%{release}
@@ -1165,7 +1164,7 @@ Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        2.90
+Version:        2.96
 Requires:       %perl_compat
 Requires:       perl(version)
 BuildArch:      noarch
@@ -1882,7 +1881,6 @@ tarball from perl.org.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
-%patch13 -p1
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
@@ -1904,7 +1902,6 @@ perl -x patchlevel.h \
     'Fedora Patch10: Update h2ph(1) documentation (RT#117647)' \
     'Fedora Patch11: Update pod2html(1) documentation (RT#117623)' \
     'Fedora Patch12: Disable ornaments on perl5db AutoTrace tests (RT#118817)' \
-    'Fedora Patch13: Fix regmatch pointer 32-bit wraparound regression (RT#118175)' \
     'Fedora Patch14: Do not use system Term::ReadLine::Gnu in tests (RT#118821)' \
     'Fedora Patch15: Define SONAME for libperl.so' \
     'Fedora Patch16: Install libperl.so to -Dshrpdir value' \
@@ -3594,6 +3591,16 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Aug 13 2013 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.1-287
+- 5.18.1 bump (see <http://search.cpan.org/dist/perl-5.18.1/pod/perldelta.pod>
+  for release notes)
+- Disable macro %%{rebuild_from_scratch}
+- Fix regex seqfault 5.18 regression (bug #989921)
+- Fixed interpolating downgraded variables into upgraded (bug #970913)
+- SvTRUE returns correct value (bug #967463)
+- Fixed doc command in perl debugger (bug #967461)
+- Fixed unaligned access in slab allocator (bug #964950)
+
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:5.18.0-286
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
