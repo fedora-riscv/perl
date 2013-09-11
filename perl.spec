@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        287%{?dist}
+Release:        288%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -98,6 +98,25 @@ Patch15:        perl-5.16.3-create_libperl_soname.patch
 
 # Install libperl.so to -Dshrpdir value
 Patch16:        perl-5.16.3-Install-libperl.so-to-shrpdir-on-Linux.patch
+
+# Fix rules for parsing numeric escapes in regexes, BZ#978233
+# Update the upstream patch to work for Perl 5.18.1
+Patch17:        perl-5.19.2-Fix-rules-for-parsing-numeric-escapes-in-regexes.patch
+
+# Fix crash with \&$glob_copy, rhbz#989486, RT#119051
+# Update the upstream patch to work for Perl 5.18.1
+Patch18:        perl-5.19.2-Fix-crash-with-glob_copy.patch
+
+# Fix coreamp.t's rand test, rhbz#970567, RT#118237
+Patch19:        perl-5.19.2-Fix-coreamp.t-s-rand-test.patch
+
+# Reap child in case where exception has been thrown, rhbz#988805, RT#114722
+Patch20:        perl-5.19.3-Reap-child-in-case-where-exception-has-been-thrown.patch
+
+# Fix using regular expressions containing multiple code blocks,
+# rhbz#982131, RT#117917
+# Update the upstream patch to work for Perl 5.18.1
+Patch21:        perl-5.19.2-Fix-using-regexes-with-multiple-code-blocks.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -1884,6 +1903,11 @@ tarball from perl.org.
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -1905,6 +1929,11 @@ perl -x patchlevel.h \
     'Fedora Patch14: Do not use system Term::ReadLine::Gnu in tests (RT#118821)' \
     'Fedora Patch15: Define SONAME for libperl.so' \
     'Fedora Patch16: Install libperl.so to -Dshrpdir value' \
+    'Fedora Patch17: Fix rules for parsing numeric escapes in regexes' \
+    'Fedora Patch18: Fix crash with \&$glob_copy (RT#119051)' \
+    'Fedora Patch19: Fix coreamp.t rand test (RT#118237)' \
+    'Fedora Patch20: Reap child in case where exception has been thrown (RT#114722)' \
+    'Fedora Patch21: Fix using regular expressions containing multiple code blocks (RT#117917)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3591,6 +3620,13 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Sep 09 2013 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.1-288
+- Fix rules for parsing numeric escapes in regexes (bug #978233)
+- Fix crash with \&$glob_copy (bug #989486)
+- Fix coreamp.t's rand test (bug #970567)
+- Reap child in case where exception has been thrown (bug #988805)
+- Fix using regexes with multiple code blocks (bug #982131)
+
 * Tue Aug 13 2013 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.1-287
 - 5.18.1 bump (see <http://search.cpan.org/dist/perl-5.18.1/pod/perldelta.pod>
   for release notes)
