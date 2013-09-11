@@ -1,0 +1,184 @@
+From f1e1b256c5c1773d90e828cca6323c53fa23391b Mon Sep 17 00:00:00 2001
+From: Yves Orton <demerphq@gmail.com>
+Date: Tue, 25 Jun 2013 21:01:27 +0200
+Subject: [PATCH] Fix rules for parsing numeric escapes in regexes
+
+Commit 726ee55d introduced better handling of things like \87 in a
+regex, but as an unfortunate side effect broke latex2html.
+
+The rules for handling backslashes in regexen are a bit arcane.
+
+Anything starting with \0 is octal.
+
+The sequences \1 through \9 are always backrefs.
+
+Any other sequence is interpreted as a decimal, and if there
+are that many capture buffers defined in the pattern at that point
+then the sequence is a backreference. If however it is larger
+than the number of buffers the sequence is treated as an octal digit.
+
+A consequence of this is that \118 could be a backreference to
+the 118th capture buffer, or it could be the string "\11" . "8". In
+other words depending on the context we might even use a different
+number of digits for the escape!
+
+This also left an awkward edge case, of multi digit sequences
+starting with 8 or 9 like m/\87/ which would result in us parsing
+as though we had seen /87/ (iow a null byte at the start) or worse
+like /\x{00}87/ which is clearly wrong.
+
+This patches fixes the cases where the capture buffers are defined,
+and causes things like the \87 or \97 to throw the same error that
+/\8/ would. One might argue we should complain about an illegal
+octal sequence, but this seems more consistent with an error like
+/\9/ and IMO will be less surprising in an error message.
+
+This patch includes exhaustive tests of patterns of the form
+/(a)\1/, /((a))\2/ etc, so that we dont break this again if we
+change the logic more.
+---
+ regcomp.c       | 31 ++++++++++++++++++++++---------
+ t/re/pat.t      | 19 ++++++++++++++++++-
+ t/re/re_tests   |  7 +++----
+ t/re/reg_mesg.t |  6 +++---
+ 4 files changed, 46 insertions(+), 17 deletions(-)
+
+diff --git a/regcomp.c b/regcomp.c
+index c7f8885..d01f62a 100644
+--- a/regcomp.c
++++ b/regcomp.c
+@@ -10706,7 +10706,7 @@ tryagain:
+                     if (num < 1)
+                         vFAIL("Reference to nonexistent or unclosed group");
+                 }
+-		if (!isg && num > 9 && num >= RExC_npar)
++                if (!isg && num > 9 && num >= RExC_npar && *RExC_parse != '8' && *RExC_parse != '9')
+                     /* Probably a character specified in octal, e.g. \35 */
+ 		    goto defchar;
+ 		else {
+@@ -10983,10 +10983,28 @@ tryagain:
+ 			p++;
+ 			ender = grok_bslash_c(*p++, UTF, SIZE_ONLY);
+ 			break;
+-		    case '0': case '1': case '2': case '3':case '4':
++                    case '8': case '9': /* must be a backreference */
++                        --p;
++                        goto loopdone;
++                    case '1': case '2': case '3':case '4':
+ 		    case '5': case '6': case '7':
+-			if (*p == '0' ||
+-			    (isDIGIT(p[1]) && atoi(p) >= RExC_npar))
++                        /* When we parse backslash escapes there is ambiguity between
++                         * backreferences and octal escapes. Any escape from \1 - \9 is
++                         * a backreference, any multi-digit escape which does not start with
++                         * 0 and which when evaluated as decimal could refer to an already
++                         * parsed capture buffer is a backslash. Anything else is octal.
++                         *
++                         * Note this implies that \118 could be interpreted as 118 OR as
++                         * "\11" . "8" depending on whether there were 118 capture buffers
++                         * defined already in the pattern.
++                         */
++                        if ( !isDIGIT(p[1]) || atoi(p) <= RExC_npar )
++                        {  /* Not to be treated as an octal constant, go
++                                   find backref */
++                            --p;
++                            goto loopdone;
++                        }
++                    case '0':
+ 			{
+ 			    I32 flags = PERL_SCAN_SILENT_ILLDIGIT;
+ 			    STRLEN numlen = 3;
+@@ -11005,11 +11023,6 @@ tryagain:
+                                          form_short_octal_warning(p, numlen));
+                             }
+ 			}
+-                        else {  /* Not to be treated as an octal constant, go
+-                                   find backref */
+-			    --p;
+-			    goto loopdone;
+-			}
+ 			if (PL_encoding && ender < 0x100)
+ 			    goto recode_encoding;
+ 			break;
+diff --git a/t/re/pat.t b/t/re/pat.t
+index bdfea87..99d719d 100644
+--- a/t/re/pat.t
++++ b/t/re/pat.t
+@@ -20,7 +20,7 @@ BEGIN {
+     require './test.pl';
+ }
+ 
+-plan tests => 472;  # Update this when adding/deleting tests.
++plan tests => 572;  # Update this when adding/deleting tests.
+ 
+ run_tests() unless caller;
+ 
+@@ -1363,6 +1363,23 @@ EOP
+	is ($s, 'XXcdXXX&', 'RT #119125 with /x');
+     }
+ 
++    {
++        # if we have 87 capture buffers defined then \87 should refer to the 87th.
++        # test that this is true for 1..100
++        my $str= "aa";
++        for my $i (1..100) {
++            my $pat= "a";
++            $pat= "($pat)" for 1 .. $i;
++            $pat.="\\$i";
++            eval {
++                ok($str=~/$pat/,"\\$i works with $i buffers");
++                1;
++            } or do {
++                ok(0,"\\$i works with $i buffers");
++            };
++        }
++    }
++
+ } # End of sub run_tests
+ 
+ 1;
+diff --git a/t/re/re_tests b/t/re/re_tests
+index b3231c2..9a24360 100644
+--- a/t/re/re_tests
++++ b/t/re/re_tests
+@@ -1487,10 +1487,9 @@ abc\N{def	-	c	-	\\N{NAME} must be resolved by the lexer
+ [a\o{1000}]	\x{200}	y	$&	\x{200}
+ 
+ # The below were inserting a NULL
+-\87	87	y	$&	87
+-a\87	a87	y	$&	a87
+-a\97	a97	y	$&	a97
+-
++\87	87	c	-	Reference to nonexistent group in regex
++a\87	a87	c	-	Reference to nonexistent group in regex
++a\97	a97	c	-	Reference to nonexistent group in regex
+ 
+ # The below was inserting a NULL into the character class.
+ [\8\9]	\000	Sn	-	-
+diff --git a/t/re/reg_mesg.t b/t/re/reg_mesg.t
+index b8098fd..56c7b55 100644
+--- a/t/re/reg_mesg.t
++++ b/t/re/reg_mesg.t
+@@ -177,6 +177,9 @@ my @death =
+  'm/[\o]/' => 'Missing braces on \o{} {#} m/[\o{#}]/',
+  'm/[\o{}]/' => 'Number with no digits {#} m/[\o{}{#}]/',
+  'm/(?^-i:foo)/' => 'Sequence (?^-...) not recognized {#} m/(?^-{#}i:foo)/',
++ 'm/\87/' => 'Reference to nonexistent group {#} m/\87{#}/',
++ 'm/a\87/' => 'Reference to nonexistent group {#} m/a\87{#}/',
++ 'm/a\97/' => 'Reference to nonexistent group {#} m/a\97{#}/',
+ );
+ # Tests involving a user-defined charnames translator are in pat_advanced.t
+ 
+@@ -203,9 +206,6 @@ my @warning = (
+     '/\018/' => '\'\018\' resolved to \'\o{1}8\' {#} m/\018{#}/',
+     '/[\08]/' => '\'\08\' resolved to \'\o{0}8\' {#} m/[\08{#}]/',
+     '/[\018]/' => '\'\018\' resolved to \'\o{1}8\' {#} m/[\018{#}]/',
+-    '/\87/' => 'Unrecognized escape \8 passed through {#} m/\8{#}7/',
+-    '/a\87/' => 'Unrecognized escape \8 passed through {#} m/a\8{#}7/',
+-    '/a\97/' => 'Unrecognized escape \9 passed through {#} m/a\9{#}7/',
+     '/(?=a)*/' => '(?=a)* matches null string many times {#} m/(?=a)*{#}/',
+     'my $x = \'\m\'; qr/a$x/' => 'Unrecognized escape \m passed through {#} m/a\m{#}/',
+     '/\q/' => 'Unrecognized escape \q passed through {#} m/\q{#}/',
+-- 
+1.8.3.1
+
