@@ -787,11 +787,17 @@ Epoch:          0
 Version:        6.66
 Requires:       perl-devel
 Requires:       %perl_compat
+Requires:       perl(Data::Dumper)
+Requires:       perl(DynaLoader)
+Requires:       perl(ExtUtils::Command)
 Requires:       perl(ExtUtils::Install)
 Requires:       perl(ExtUtils::Manifest)
-Requires:       perl(Test::Harness)
-# Optional run-time needed for generating documentation from POD:
+Requires:       perl(File::Find)
+Requires:       perl(Getopt::Long)
+# Optional Pod::Man is needed for generating manual pages from POD
 Requires:       perl(Pod::Man)
+Requires:       perl(POSIX)
+Requires:       perl(Test::Harness)
 BuildArch:      noarch
 
 # Filter false DynaLoader provides. Versioned perl(DynaLoader) keeps
