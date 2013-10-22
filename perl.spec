@@ -13,8 +13,7 @@
 # This overrides filters from build root (/etc/rpm/macros.perl)
 # intentionally (unversioned perl(DB) is removed and versioned one is kept)
 # Filter provides from *.pl files, bug #924938
-# Filter *.so file from auto subdir only to keep providing libperl.so
-%global __provides_exclude_from .*/auto/.*\\.so$|.*%{_docdir}|.*%{perl_archlib}/.*\\.pl$|.*%{perl_privlib}/.*\\.pl$
+%global __provides_exclude_from .*%{_docdir}|.*%{perl_archlib}/.*\\.pl$|.*%{perl_privlib}/.*\\.pl$
 %global __requires_exclude_from %{_docdir}
 %global __provides_exclude perl\\((VMS|Win32|BSD::|DB\\)$)
 # unicore::Name - it's needed by perl, maybe problem of rpm
@@ -31,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        288%{?dist}
+Release:        289%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -3626,6 +3625,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Oct 22 2013 Petr Pisar <ppisar@redhat.com> - 4:5.18.1-289
+- perl_default_filter macro does not need to filter private libraries from
+  provides (bug #1020809)
+
 * Mon Sep 09 2013 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.1-288
 - Fix rules for parsing numeric escapes in regexes (bug #978233)
 - Fix crash with \&$glob_copy (bug #989486)
