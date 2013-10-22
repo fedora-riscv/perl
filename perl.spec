@@ -3628,6 +3628,8 @@ sed \
 * Tue Oct 22 2013 Petr Pisar <ppisar@redhat.com> - 4:5.18.1-289
 - perl_default_filter macro does not need to filter private libraries from
   provides (bug #1020809)
+- perl_default_filter anchors the filter regular expressions
+- perl_default_filter appends the filters instead of redefining them
 
 * Mon Sep 09 2013 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.1-288
 - Fix rules for parsing numeric escapes in regexes (bug #978233)

@@ -44,10 +44,10 @@ export PERL_MM_USE_DEFAULT=1
 # "%{?perl_default_filter}", before any %description block.
 
 %perl_default_filter %{expand: \
-%global __provides_exclude_from %{_docdir}
-%global __requires_exclude_from %{_docdir}
-%global __provides_exclude perl\\\\(VMS|perl\\\\(Win32|perl\\\\(DB\\\\)|perl\\\\(UNIVERSAL\\\\)
-%global __requires_exclude perl\\\\(VMS|perl\\\\(Win32
+%global __provides_exclude_from %{?__provides_exclude_from:%__provides_exclude_from|}^%{_docdir}
+%global __requires_exclude_from %{?__requires_exclude_from:%__requires_exclude_from|}^%{_docdir}
+%global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\\\(VMS|^perl\\\\(Win32|^perl\\\\(DB\\\\)|^perl\\\\(UNIVERSAL\\\\)
+%global __requires_exclude %{?__requires_exclude:%__requires_exclude|}^perl\\\\(VMS|^perl\\\\(Win32
 }
 
 #############################################################################
