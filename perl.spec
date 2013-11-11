@@ -126,7 +126,7 @@ Patch25:        perl-5.17.9-106212-Add-PL_perlio_mutex-to-atfork_lock.patch
 # RT#114878, fixed after 5.17.11
 Patch26:        perl-5.16.3-Remove-PERL_ASYNC_CHECK-from-Perl_leave_scope.patch
 
-# Fix escaping backslashes, bug #1028949, RT#120457
+# Fix escaping backslashes in Locale::Maketext, bug #1028949, RT#120457
 Patch27:        perl-5.16.3-Commit-1735f6f53ca19f99c6e9e39496c486af323ba6a8-star.patch
 
 # Update some of the bundled modules
@@ -2712,7 +2712,7 @@ sed \
 %changelog
 * Mon Nov 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-245
 - Make regular expression engine safe in a signal handler (bug #849703)
-- Fix escaping backslashes (bug #1028949)
+- Fix escaping backslashes in Locale::Maketext (bug #1028949)
 
 * Fri May 03 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-244
 - Remove bundled Digest (bug #957931)
