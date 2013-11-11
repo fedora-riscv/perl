@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        265%{?dist}
+Release:        266%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -125,6 +125,9 @@ Patch25:        perl-5.17.9-106212-Add-PL_perlio_mutex-to-atfork_lock.patch
 # Make regular expression engine safe in a signal handler, rhbz#849703,
 # RT#114878, fixed after 5.17.11
 Patch26:        perl-5.16.3-Remove-PERL_ASYNC_CHECK-from-Perl_leave_scope.patch
+
+# Fix escaping backslashes, bug #1028949, RT#120457
+Patch27:        perl-5.16.3-Commit-1735f6f53ca19f99c6e9e39496c486af323ba6a8-star.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -1678,6 +1681,7 @@ tarball from perl.org.
 %patch24 -p1
 %patch25 -p1
 %patch26 -p1
+%patch27 -p1
 
 #copy the example script
 cp -a %{SOURCE5} .
@@ -1899,6 +1903,7 @@ pushd %{build_archlib}/CORE/
     'Fedora Patch24: Fix leaking tied hashes (RT#107000) [3]' \
     'Fedora Patch25: Fix dead lock in PerlIO after fork from thread (RT106212)' \
     'Fedora Patch26: Make regexp safe in a signal handler (RT#114878)' \
+    'Fedora Patch27: Fix escaping backslashes (RT#120457)' \
     %{nil}
 
 rm patchlevel.bak
@@ -3232,6 +3237,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Nov 11 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-266
+- Fix escaping backslashes (bug #1028949)
+
 * Tue Jun 18 2013 Petr Pisar <ppisar@redhat.com> - 4:5.16.3-265
 - Move CPANPLUS-Dist-Build files from perl-CPANPLUS
 - Move CPAN-Meta-Requirements files from CPAN-Meta
