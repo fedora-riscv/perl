@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        289%{?dist}
+Release:        290%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -116,6 +116,10 @@ Patch20:        perl-5.19.3-Reap-child-in-case-where-exception-has-been-thrown.p
 # rhbz#982131, RT#117917
 # Update the upstream patch to work for Perl 5.18.1
 Patch21:        perl-5.19.2-Fix-using-regexes-with-multiple-code-blocks.patch
+
+# Document Math::BigInt::CalcEmu requires Math::BigInt, rhbz#959096,
+# CPAN RT#85015
+Patch22:        perl-5.18.1-Document-Math-BigInt-CalcEmu-requires-Math-BigInt.patch 
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -1913,6 +1917,7 @@ tarball from perl.org.
 %patch19 -p1
 %patch20 -p1
 %patch21 -p1
+%patch22 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -1939,6 +1944,7 @@ perl -x patchlevel.h \
     'Fedora Patch19: Fix coreamp.t rand test (RT#118237)' \
     'Fedora Patch20: Reap child in case where exception has been thrown (RT#114722)' \
     'Fedora Patch21: Fix using regular expressions containing multiple code blocks (RT#117917)' \
+    'Fedora Patch22: Document Math::BigInt::CalcEmu requires Math::BigInt (CPAN RT#85015)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3625,6 +3631,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Dec 02 2013 Petr Pisar <ppisar@redhat.com> - 4:5.18.1-290
+- Document Math::BigInt::CalcEmu requires Math::BigInt (bug #959096)
+
 * Tue Oct 22 2013 Petr Pisar <ppisar@redhat.com> - 4:5.18.1-289
 - perl_default_filter macro does not need to filter private libraries from
   provides (bug #1020809)
