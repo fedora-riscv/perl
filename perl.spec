@@ -1,4 +1,4 @@
-%global perl_version    5.18.1
+%global perl_version    5.18.2
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        290%{?dist}
+Release:        291%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -98,10 +98,6 @@ Patch15:        perl-5.16.3-create_libperl_soname.patch
 # Install libperl.so to -Dshrpdir value
 Patch16:        perl-5.16.3-Install-libperl.so-to-shrpdir-on-Linux.patch
 
-# Fix rules for parsing numeric escapes in regexes, BZ#978233
-# Update the upstream patch to work for Perl 5.18.1
-Patch17:        perl-5.19.2-Fix-rules-for-parsing-numeric-escapes-in-regexes.patch
-
 # Fix crash with \&$glob_copy, rhbz#989486, RT#119051
 # Update the upstream patch to work for Perl 5.18.1
 Patch18:        perl-5.19.2-Fix-crash-with-glob_copy.patch
@@ -143,10 +139,11 @@ BuildRequires:  procps, rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.18.1)
+%global perl_compat perl(:MODULE_COMPAT_5.18.2)
 
 # Compat provides
 Provides: %perl_compat
+Provides: perl(:MODULE_COMPAT_5.18.1)
 Provides: perl(:MODULE_COMPAT_5.18.0)
 
 # Threading provides
@@ -1192,7 +1189,7 @@ Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        2.96
+Version:        3.03
 Requires:       %perl_compat
 Requires:       perl(version)
 BuildArch:      noarch
@@ -1912,7 +1909,6 @@ tarball from perl.org.
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
-%patch17 -p1
 %patch18 -p1
 %patch19 -p1
 %patch20 -p1
@@ -1939,7 +1935,6 @@ perl -x patchlevel.h \
     'Fedora Patch14: Do not use system Term::ReadLine::Gnu in tests (RT#118821)' \
     'Fedora Patch15: Define SONAME for libperl.so' \
     'Fedora Patch16: Install libperl.so to -Dshrpdir value' \
-    'Fedora Patch17: Fix rules for parsing numeric escapes in regexes' \
     'Fedora Patch18: Fix crash with \&$glob_copy (RT#119051)' \
     'Fedora Patch19: Fix coreamp.t rand test (RT#118237)' \
     'Fedora Patch20: Reap child in case where exception has been thrown (RT#114722)' \
@@ -3631,6 +3626,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Dec 10 2013 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.2-291
+- 5.18.2 bump (see <http://search.cpan.org/dist/perl-5.18.2/pod/perldelta.pod>
+  for release notes)
+
 * Mon Dec 02 2013 Petr Pisar <ppisar@redhat.com> - 4:5.18.1-290
 - Document Math::BigInt::CalcEmu requires Math::BigInt (bug #959096)
 
