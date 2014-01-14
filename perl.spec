@@ -3,7 +3,7 @@
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
 
-%global multilib_64_archs aarch64 ppc64 s390x sparc64 x86_64 
+%global multilib_64_archs aarch64 %{power64} s390x sparc64 x86_64 
 %global parallel_tests 1
 %global tapsetdir   %{_datadir}/systemtap/tapset
 
@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        292%{?dist}
+Release:        293%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -3627,6 +3627,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jan 14 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-293
+- Use a macro to cover all 64-bit PowerPC architectures (bug #1052709)
+
 * Tue Jan 14 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-292
 - Use upstream patch to fix a test failure in perl5db.t when TERM=vt100
 
