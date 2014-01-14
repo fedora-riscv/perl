@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        291%{?dist}
+Release:        292%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -85,8 +85,9 @@ Patch10:        perl-5.19.0-Synchronize-h2ph-POD-text-with-usage-output.patch
 # Update pod2html(1) documentation, rhbz#948538, RT#117623
 Patch11:        perl-5.16.3-Synchronize-pod2html-usage-output-and-its-POD-text.patch
 
-# Fix a test failure in perl5db.t when TERM=vt100, RT#118817
-Patch12:        perl-5.18.0-Disable-ornaments-on-perl5db-AutoTrace-tests.patch
+# Fix a test failure in perl5db.t when TERM=vt100, RT#118817,
+# in upstream after 5.19.7
+Patch12:        perl-5.19.7-avoid-using-2-handles-to-write-to-the-de.patch
 
 # Prevent from loading system Term::ReadLine::Gnu while running tests,
 # RT#118821
@@ -3626,6 +3627,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jan 14 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-292
+- Use upstream patch to fix a test failure in perl5db.t when TERM=vt100
+
 * Tue Dec 10 2013 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.2-291
 - 5.18.2 bump (see <http://search.cpan.org/dist/perl-5.18.2/pod/perldelta.pod>
   for release notes)
