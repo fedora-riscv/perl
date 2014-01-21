@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        293%{?dist}
+Release:        294%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1622,20 +1622,6 @@ BuildArch:      noarch
 
 %description Test-Simple
 Basic utilities for writing tests.
-
-%package Test-Simple-tests
-Summary:        Test suite for package perl-Test-Simple
-Group:          Development/Debug
-License:        GPL+ or Artistic
-Epoch:          0
-Version:        0.98
-Requires:       perl-Test-Simple = %{epoch}:%{version}-%{release}
-Requires:       /usr/bin/prove
-AutoReqProv:    0
-BuildArch:      noarch
-
-%description Test-Simple-tests
-This package provides the test suite for package perl-Test-Simple.
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -2163,15 +2149,6 @@ for dir in `find ext/ -type d -name t -maxdepth 2` ; do
 
     tar -cf - $dir | ( cd %{buildroot}%{perl5_testdir}/perl-tests/t && tar -xf - )
 done
-
-# Selected "Dual-lifed cpan" packages
-pushd cpan
-for package in Test-Simple; do
-    for dir in `find ${package} -type d -name t -maxdepth 2` ; do
-        tar -cf - $dir | ( cd %{buildroot}%{perl5_testdir} && tar -xf - )
-    done
-done
-popd
 
 # Systemtap tapset install
 mkdir -p %{buildroot}%{tapsetdir}
@@ -2855,7 +2832,6 @@ sed \
 
 %files tests
 %{perl5_testdir}/
-%exclude %{perl5_testdir}/Test-Simple
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Archive-Extract
@@ -3552,10 +3528,6 @@ sed \
 %{_mandir}/man3/Test::Builder*
 %{_mandir}/man3/Test::Simple*
 %{_mandir}/man3/Test::Tutorial*
-
-%files Test-Simple-tests
-%dir %{perl5_testdir}
-%{perl5_testdir}/Test-Simple
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -3627,6 +3599,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jan 21 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-294
+- Drop perl-Test-Simple-tests package is it is not delivered by dual-lived
+  version
+
 * Tue Jan 14 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-293
 - Use a macro to cover all 64-bit PowerPC architectures (bug #1052709)
 
