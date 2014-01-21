@@ -1283,7 +1283,7 @@ Provides a simple but, hopefully, extensible way of having 'plugins' for your
 module.
 %endif
 
-
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Object-Accessor
 Summary:        Perl module that allows per object accessors
 Group:          Development/Libraries
@@ -1297,7 +1297,7 @@ BuildArch:      noarch
 %description Object-Accessor
 Object::Accessor provides an interface to create per object accessors (as
 opposed to per Class accessors, as, for example, Class::Accessor provides).
-
+%endif
 
 %package Package-Constants
 Summary:        List all constants declared in a package
@@ -3336,9 +3336,11 @@ sed \
 %{_mandir}/man3/Module::Pluggable*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Object-Accessor
 %{privlib}/Object/
 %{_mandir}/man3/Object::Accessor*
+%endif
 
 %files Package-Constants
 %{privlib}/Package/
@@ -3602,6 +3604,7 @@ sed \
 * Tue Jan 21 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-294
 - Drop perl-Test-Simple-tests package is it is not delivered by dual-lived
   version
+- Hide dual-lived perl-Object-Accessor
 
 * Tue Jan 14 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-293
 - Use a macro to cover all 64-bit PowerPC architectures (bug #1052709)
