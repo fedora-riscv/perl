@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        294%{?dist}
+Release:        295%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -505,6 +505,9 @@ License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       %perl_compat
 BuildArch:      noarch
+# CPAN-Meta-Requirements used to have six decimal places
+%global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\(CPAN::Meta::Requirements\\)
+Provides:       perl(CPAN::Meta::Requirements) = %{version}000
 
 %description CPAN-Meta-Requirements
 A CPAN::Meta::Requirements object models a set of version constraints like
@@ -3601,6 +3604,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jan 29 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-295
+- Provide perl(CPAN::Meta::Requirements) with six decimal places
+
 * Tue Jan 21 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-294
 - Drop perl-Test-Simple-tests package is it is not delivered by dual-lived
   version
