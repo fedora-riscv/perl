@@ -10,8 +10,8 @@
 %global dual_life 0
 %global rebuild_from_scratch 0
 
-# This overrides filters from build root (/etc/rpm/macros.perl)
-# intentionally (unversioned perl(DB) is removed and versioned one is kept)
+# This overrides filters from build root (/usr/lib/rpm/macros.d/macros.perl)
+# intentionally (unversioned perl(DB) is removed and versioned one is kept).
 # Filter provides from *.pl files, bug #924938
 %global __provides_exclude_from .*%{_docdir}|.*%{perl_archlib}/.*\\.pl$|.*%{perl_privlib}/.*\\.pl$
 %global __requires_exclude_from %{_docdir}
@@ -19,7 +19,7 @@
 # unicore::Name - it's needed by perl, maybe problem of rpm
 # FCGI is external dependency after install of perl-CGI, remove it during RC releases
 %global __requires_exclude perl\\((VMS|BSD::|Win32|Tk|Mac::|Your::Module::Here|unicore::Name|FCGI)
-# same as we provide in /etc/rpm/macros.perl
+# same as we provide in /usr/lib/rpm/macros.d/macros.perl
 %global perl5_testdir   %{_libexecdir}/perl5-tests
 
 # We can bootstrap without gdbm
@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        295%{?dist}
+Release:        296%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2104,8 +2104,8 @@ install -p -m 644 %{SOURCE2} %{build_privlib}/Net/libnet.cfg
 #
 # perl RPM macros
 #
-mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/rpm
-install -p -m 644 %{SOURCE3} ${RPM_BUILD_ROOT}%{_sysconfdir}/rpm/
+mkdir -p ${RPM_BUILD_ROOT}%{_rpmconfigdir}/macros.d
+install -p -m 644 %{SOURCE3} ${RPM_BUILD_ROOT}%{_rpmconfigdir}/macros.d/
 
 #
 # Core modules removal
@@ -2831,7 +2831,7 @@ sed \
 %doc perl-example.stp
 
 %files macros
-%attr(0644,root,root) %{_sysconfdir}/rpm/macros.perl
+%{_rpmconfigdir}/macros.d/macros.perl
 
 %files tests
 %{perl5_testdir}/
@@ -3604,6 +3604,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Feb 03 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-296
+- Move macro files into %%{_rpmconfigdir}/macros.d
+
 * Wed Jan 29 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-295
 - Provide perl(CPAN::Meta::Requirements) with six decimal places
 
