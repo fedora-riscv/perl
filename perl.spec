@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        297%{?dist}
+Release:        298%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -121,6 +121,10 @@ Patch22:        perl-5.18.1-Document-Math-BigInt-CalcEmu-requires-Math-BigInt.pa
 # Fix t/comp/parser.t not to load system modules, bug #1084399, RT#121579,
 # in upstream after 5.19.1
 Patch23:        perl-5.18.2-Make-t-comp-parser.t-get-the-correct-libraries.patch
+
+# Pass -fwrapv to stricter GCC 4.9, bug #1082957, RT#121505,
+# in upstream after 5.19.10
+Patch24:        perl-5.18.2-Pass-fwrapv-to-stricter-GCC-4.9.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -1909,6 +1913,7 @@ tarball from perl.org.
 %patch21 -p1
 %patch22 -p1
 %patch23 -p1
+%patch24 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -1936,6 +1941,7 @@ perl -x patchlevel.h \
     'Fedora Patch21: Fix using regular expressions containing multiple code blocks (RT#117917)' \
     'Fedora Patch22: Document Math::BigInt::CalcEmu requires Math::BigInt (CPAN RT#85015)' \
     'Fedora Patch23: Fix t/comp/parser.t not to load system modules (RT#121579)' \
+    'Fedora Patch24: Pass -fwrapv to stricter GCC 4.9 (RT#121505)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3610,6 +3616,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Apr 10 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-298
+- Pass -fwrapv to stricter GCC 4.9 (bug #1082957)
+
 * Fri Apr 04 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-297
 - Fix t/comp/parser.t not to load system modules (bug #1084399)
 
