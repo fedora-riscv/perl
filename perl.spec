@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        298%{?dist}
+Release:        299%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -3616,6 +3616,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:5.18.2-299
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
 * Thu Apr 10 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-298
 - Pass -fwrapv to stricter GCC 4.9 (bug #1082957)
 
