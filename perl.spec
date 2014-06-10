@@ -130,6 +130,9 @@ Patch24:        perl-5.18.2-Pass-fwrapv-to-stricter-GCC-4.9.patch
 # RT#121591
 Patch25:        perl-5.18.2-t-op-crypt.t-Perform-SHA-256-algorithm-if-default-on.patch
 
+# Make *DBM_File desctructors thread-safe, bug #1107543, RT#61912
+Patch26:        perl-5.18.2-Destroy-GDBM-NDBM-ODBM-SDBM-_File-objects-only-from-.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -1989,6 +1992,7 @@ tarball from perl.org.
 %patch23 -p1
 %patch24 -p1
 %patch25 -p1
+%patch26 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2018,6 +2022,7 @@ perl -x patchlevel.h \
     'Fedora Patch23: Fix t/comp/parser.t not to load system modules (RT#121579)' \
     'Fedora Patch24: Pass -fwrapv to stricter GCC 4.9 (RT#121505)' \
     'Fedora Patch25: Use stronger algorithm needed for FIPS in t/op/crypt.t (RT#121591)' \
+    'Fedora Patch26: Make *DBM_File desctructors thread-safe (RT#61912)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3743,6 +3748,7 @@ sed \
 * Fri Aug 08 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-303
 - Declare dependencies for cpan tool (bug #1122498)
 - Use stronger algorithm needed for FIPS in t/op/crypt.t (bug #1128032)
+- Make *DBM_File desctructors thread-safe (bug #1107543)
 
 * Tue Jul 29 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.2-302
 - Sub-package perl-Term-ANSIColor and remove it (bug #1121924)
