@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        299%{?dist}
+Release:        300%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -282,6 +282,21 @@ This package contains the test suite included with Perl %{perl_version}.
 
 Install this if you want to test your Perl installation (binary and core
 modules).
+
+
+%package App-find2perl
+Summary:        Translate find command lines to Perl code
+Group:          Development/Tools
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.001
+BuildArch:      noarch
+Requires:       %perl_compat
+Conflicts:      perl < 4:5.18.2-300
+
+%description App-find2perl
+This package delivers find2perl tool which is a little translator to convert
+find command lines to equivalent Perl code.
 
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -1852,6 +1867,7 @@ Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-macros
 
+Requires:       perl-App-find2perl
 Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-autodie
 Requires:       perl-B-Lint, perl-Compress-Raw-Bzip2,
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-constant,
@@ -2227,6 +2243,10 @@ sed \
 %exclude %{archlib}/CORE/*.h
 %exclude %{_libdir}/libperl.so
 %exclude %{_mandir}/man1/perlxs*
+
+# App-find2perl
+%exclude %{_bindir}/find2perl
+%exclude %{_mandir}/man1/find2perl.1*
 
 # Archive-Extract
 %exclude %{privlib}/Archive/Extract.pm
@@ -2847,6 +2867,10 @@ sed \
 
 %files tests
 %{perl5_testdir}/
+
+%files App-find2perl
+%{_bindir}/find2perl
+%{_mandir}/man1/find2perl.1*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Archive-Extract
@@ -3616,6 +3640,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jun 19 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-300
+- Sub-package perl-App-find2perl (bug #1111196)
+
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:5.18.2-299
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
