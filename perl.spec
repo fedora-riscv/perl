@@ -312,6 +312,19 @@ This package delivers find2perl tool which is a little translator to convert
 find command lines to equivalent Perl code.
 
 
+%package App-s2p
+Summary:        Convert sed script to Perl program
+Group:          Development/Tools
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.000
+BuildArch:      noarch
+Conflicts:      perl < 4:5.18.2-300
+
+%description App-s2p
+This package delivers s2p tool which converts sed scripts to Perl programs.
+
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Archive-Extract
 Summary:        Generic archive extracting mechanism
@@ -1880,7 +1893,7 @@ Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-macros
 
-Requires:       perl-App-a2p, perl-App-find2perl
+Requires:       perl-App-a2p, perl-App-find2perl, perl-App-s2p
 Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-autodie
 Requires:       perl-B-Lint, perl-Compress-Raw-Bzip2,
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-constant,
@@ -2265,6 +2278,12 @@ sed \
 # App-find2perl
 %exclude %{_bindir}/find2perl
 %exclude %{_mandir}/man1/find2perl.1*
+
+# App-s2p
+%exclude %{_bindir}/psed
+%exclude %{_bindir}/s2p
+%exclude %{_mandir}/man1/psed.1*
+%exclude %{_mandir}/man1/s2p.1*
 
 # Archive-Extract
 %exclude %{privlib}/Archive/Extract.pm
@@ -2894,6 +2913,12 @@ sed \
 %files App-find2perl
 %{_bindir}/find2perl
 %{_mandir}/man1/find2perl.1*
+
+%files App-s2p
+%{_bindir}/psed
+%{_bindir}/s2p
+%{_mandir}/man1/psed.1*
+%{_mandir}/man1/s2p.1*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Archive-Extract
@@ -3666,6 +3691,7 @@ sed \
 * Thu Jun 19 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-300
 - Sub-package perl-App-find2perl (bug #1111196)
 - Sub-package perl-App-a2p (bug #1111232)
+- Sub-package perl-App-s2p (bug #1111242)
 
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:5.18.2-299
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
