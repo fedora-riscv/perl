@@ -284,6 +284,19 @@ Install this if you want to test your Perl installation (binary and core
 modules).
 
 
+%package App-a2p
+Summary:        Awk to Perl translator
+Group:          Development/Tools
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.000
+Conflicts:      perl < 4:5.18.2-300
+
+%description App-a2p
+This package delivers a2p tool which takes an awk script specified on the
+command line and produces a comparable Perl script.
+
+
 %package App-find2perl
 Summary:        Translate find command lines to Perl code
 Group:          Development/Tools
@@ -1867,7 +1880,7 @@ Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-macros
 
-Requires:       perl-App-find2perl
+Requires:       perl-App-a2p, perl-App-find2perl
 Requires:       perl-Archive-Extract, perl-Archive-Tar, perl-autodie
 Requires:       perl-B-Lint, perl-Compress-Raw-Bzip2,
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-constant,
@@ -2243,6 +2256,11 @@ sed \
 %exclude %{archlib}/CORE/*.h
 %exclude %{_libdir}/libperl.so
 %exclude %{_mandir}/man1/perlxs*
+
+# App-a2p
+%exclude %{_bindir}/a2p
+%exclude %{privlib}/pod/a2p.pod
+%exclude %{_mandir}/man1/a2p.1*
 
 # App-find2perl
 %exclude %{_bindir}/find2perl
@@ -2867,6 +2885,11 @@ sed \
 
 %files tests
 %{perl5_testdir}/
+
+%files App-a2p
+%{_bindir}/a2p
+%{privlib}/pod/a2p.pod
+%{_mandir}/man1/a2p.1*
 
 %files App-find2perl
 %{_bindir}/find2perl
@@ -3642,6 +3665,7 @@ sed \
 %changelog
 * Thu Jun 19 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-300
 - Sub-package perl-App-find2perl (bug #1111196)
+- Sub-package perl-App-a2p (bug #1111232)
 
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:5.18.2-299
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
