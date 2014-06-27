@@ -320,7 +320,7 @@ find command lines to equivalent Perl code.
 %package App-s2p
 Summary:        Convert sed script to Perl program
 Group:          Development/Tools
-License:        GPL+ or Artistic
+License:        (GPL+ or Artistic) and App-s2p
 Epoch:          0
 Version:        1.000
 BuildArch:      noarch
@@ -3707,6 +3707,7 @@ sed \
 * Fri Jun 27 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-301
 - Remove bundled perl-App-a2p, perl-App-find2perl, perl-App-s2p, and
   perl-Package-Constants
+- Correct perl-App-s2p license to ((GPL+ or Artistic) and App-s2p)
 
 * Thu Jun 19 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-300
 - Sub-package perl-App-find2perl (bug #1111196)
