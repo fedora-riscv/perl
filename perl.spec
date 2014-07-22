@@ -1,4 +1,4 @@
-%global perl_version    5.18.2
+%global perl_version    5.20.0
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -8,7 +8,7 @@
 %global tapsetdir   %{_datadir}/systemtap/tapset
 
 %global dual_life 0
-%global rebuild_from_scratch 0
+%global rebuild_from_scratch 1
 
 # This overrides filters from build root (/usr/lib/rpm/macros.d/macros.perl)
 # intentionally (unversioned perl(DB) is removed and versioned one is kept).
@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        301%{?dist}
+Release:        302%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -76,55 +76,15 @@ Patch7:         perl-5.10.0-x86_64-io-test-failure.patch
 # switch off test, which is failing only on koji (fork)
 Patch8:         perl-5.14.1-offtest.patch
 
-# Fix find2perl to translate ? glob properly, rhbz#825701, RT#113054
-Patch9:         perl-5.14.2-find2perl-transtate-question-mark-properly.patch
-
-# Update h2ph(1) documentation, rhbz#948538, RT#117647
-Patch10:        perl-5.19.0-Synchronize-h2ph-POD-text-with-usage-output.patch
-
-# Update pod2html(1) documentation, rhbz#948538, RT#117623
-Patch11:        perl-5.16.3-Synchronize-pod2html-usage-output-and-its-POD-text.patch
-
-# Fix a test failure in perl5db.t when TERM=vt100, RT#118817,
-# in upstream after 5.19.7
-Patch12:        perl-5.19.7-avoid-using-2-handles-to-write-to-the-de.patch
-
-# Prevent from loading system Term::ReadLine::Gnu while running tests,
-# RT#118821
-Patch14:        perl-5.18.0-Suppress-system-Term-ReadLine-Gnu.patch
-
 # Define SONAME for libperl.so
 Patch15:        perl-5.16.3-create_libperl_soname.patch
 
 # Install libperl.so to -Dshrpdir value
 Patch16:        perl-5.16.3-Install-libperl.so-to-shrpdir-on-Linux.patch
 
-# Fix crash with \&$glob_copy, rhbz#989486, RT#119051
-# Update the upstream patch to work for Perl 5.18.1
-Patch18:        perl-5.19.2-Fix-crash-with-glob_copy.patch
-
-# Fix coreamp.t's rand test, rhbz#970567, RT#118237
-Patch19:        perl-5.19.2-Fix-coreamp.t-s-rand-test.patch
-
-# Reap child in case where exception has been thrown, rhbz#988805, RT#114722
-Patch20:        perl-5.19.3-Reap-child-in-case-where-exception-has-been-thrown.patch
-
-# Fix using regular expressions containing multiple code blocks,
-# rhbz#982131, RT#117917
-# Update the upstream patch to work for Perl 5.18.1
-Patch21:        perl-5.19.2-Fix-using-regexes-with-multiple-code-blocks.patch
-
 # Document Math::BigInt::CalcEmu requires Math::BigInt, rhbz#959096,
 # CPAN RT#85015
 Patch22:        perl-5.18.1-Document-Math-BigInt-CalcEmu-requires-Math-BigInt.patch 
-
-# Fix t/comp/parser.t not to load system modules, bug #1084399, RT#121579,
-# in upstream after 5.19.1
-Patch23:        perl-5.18.2-Make-t-comp-parser.t-get-the-correct-libraries.patch
-
-# Pass -fwrapv to stricter GCC 4.9, bug #1082957, RT#121505,
-# in upstream after 5.19.10
-Patch24:        perl-5.18.2-Pass-fwrapv-to-stricter-GCC-4.9.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -148,10 +108,11 @@ BuildRequires:  procps, rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.18.2)
+%global perl_compat perl(:MODULE_COMPAT_5.20.0)
 
 # Compat provides
 Provides: %perl_compat
+Provides: perl(:MODULE_COMPAT_5.18.2)
 Provides: perl(:MODULE_COMPAT_5.18.1)
 Provides: perl(:MODULE_COMPAT_5.18.0)
 
@@ -1950,20 +1911,9 @@ tarball from perl.org.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch14 -p1
 %patch15 -p1
 %patch16 -p1
-%patch18 -p1
-%patch19 -p1
-%patch20 -p1
-%patch21 -p1
 %patch22 -p1
-%patch23 -p1
-%patch24 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -1978,20 +1928,9 @@ perl -x patchlevel.h \
     'Fedora Patch5: USE_MM_LD_RUN_PATH' \
     'Fedora Patch6: Skip hostname tests, due to builders not being network capable' \
     'Fedora Patch7: Dont run one io test due to random builder failures' \
-    'Fedora Patch9: Fix find2perl to translate ? glob properly (RT#113054)' \
-    'Fedora Patch10: Update h2ph(1) documentation (RT#117647)' \
-    'Fedora Patch11: Update pod2html(1) documentation (RT#117623)' \
-    'Fedora Patch12: Disable ornaments on perl5db AutoTrace tests (RT#118817)' \
-    'Fedora Patch14: Do not use system Term::ReadLine::Gnu in tests (RT#118821)' \
     'Fedora Patch15: Define SONAME for libperl.so' \
     'Fedora Patch16: Install libperl.so to -Dshrpdir value' \
-    'Fedora Patch18: Fix crash with \&$glob_copy (RT#119051)' \
-    'Fedora Patch19: Fix coreamp.t rand test (RT#118237)' \
-    'Fedora Patch20: Reap child in case where exception has been thrown (RT#114722)' \
-    'Fedora Patch21: Fix using regular expressions containing multiple code blocks (RT#117917)' \
     'Fedora Patch22: Document Math::BigInt::CalcEmu requires Math::BigInt (CPAN RT#85015)' \
-    'Fedora Patch23: Fix t/comp/parser.t not to load system modules (RT#121579)' \
-    'Fedora Patch24: Pass -fwrapv to stricter GCC 4.9 (RT#121505)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3704,6 +3643,11 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jul 22 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.0-302
+- Update to Perl 5.20.0
+- Clean patches, not needed with new version
+- Update patches to work with new version
+
 * Fri Jun 27 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-301
 - Remove bundled perl-App-a2p, perl-App-find2perl, perl-App-s2p, and
   perl-Package-Constants
