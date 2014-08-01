@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        302%{?dist}
+Release:        303%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1462,6 +1462,23 @@ Sys::Syslog is an interface to the UNIX syslog(3) function. Call syslog() with
 a string priority and a list of printf() arguments just like at syslog(3).
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
+%package Term-ANSIColor
+Summary:        Color screen output using ANSI escape sequences
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        4.02
+Requires:       %perl_compat
+BuildArch:      noarch
+Conflicts:      perl < 4:5.18.2-302
+
+%description Term-ANSIColor
+This module has two interfaces, one through color() and colored() and the
+other through constants. It also offers the utility functions uncolor(),
+colorstrip(), colorvalid(), and coloralias(), which have to be explicitly
+imported to be used.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Test-Harness
@@ -1714,7 +1731,7 @@ Requires:       perl-Pod-Checker, perl-Pod-Escapes
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
 Requires:       perl-podlators, perl-Pod-Simple, perl-Scalar-List-Utils
 Requires:       perl-Socket, perl-Storable, perl-Sys-Syslog,
-Requires:       perl-Test-Harness, perl-Test-Simple
+Requires:       perl-Term-ANSIColor, perl-Test-Harness, perl-Test-Simple
 Requires:       perl-Text-ParseWords, perl-Thread-Queue
 Requires:       perl-Time-HiRes
 Requires:       perl-Time-Local, perl-Time-Piece
@@ -2533,6 +2550,9 @@ sed \
 %exclude %{archlib}/auto/Sys/Syslog/
 %exclude %{_mandir}/man3/Sys::Syslog.*
 
+# Term-ANSIColor
+%exclude %{privlib}/Term/ANSIColor.pm
+%exclude %{_mandir}/man3/Term::ANSIColor*
 
 # Test-Harness
 %exclude %{_bindir}/prove
@@ -3264,6 +3284,11 @@ sed \
 %{_mandir}/man3/Storable.*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
+%files Term-ANSIColor
+%{privlib}/Term/ANSIColor.pm
+%{_mandir}/man3/Term::ANSIColor*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Test-Harness
@@ -3352,12 +3377,15 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Tue Jul 22 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.0-302
+* Fri Aug  1 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.0-303
 - Update to Perl 5.20.0
 - Clean patches, not needed with new version
 - Update patches to work with new version
 - Update version of sub-packages, remove the deleted sub-packages
 - Sub-package perl-IO-Socket-IP, perl-experimental
+
+* Tue Jul 29 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.2-302
+- Sub-package perl-Term-ANSIColor and remove it (bug #1121924)
 
 * Fri Jun 27 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-301
 - Remove bundled perl-App-a2p, perl-App-find2perl, perl-App-s2p, and
