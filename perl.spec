@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        302%{?dist}
+Release:        303%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -526,6 +526,8 @@ Version:        2.00
 Requires:       perl(Data::Dumper)
 # CPAN encourages Digest::SHA strongly because of integrity checks
 Requires:       perl(Digest::SHA)
+# local::lib recommended by CPAN::FirstTime default choice, bug #1122498
+Requires:       perl(local::lib)
 Requires:       %perl_compat
 Provides:       cpan = %{version}
 BuildArch:      noarch
@@ -3732,6 +3734,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Aug 08 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-303
+- Declare dependencies for cpan tool (bug #1122498)
+
 * Tue Jul 29 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.2-302
 - Sub-package perl-Term-ANSIColor and remove it (bug #1121924)
 
