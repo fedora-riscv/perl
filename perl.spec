@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        303%{?dist}
+Release:        304%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -3745,6 +3745,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sun Aug 17 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:5.18.2-304
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
 * Fri Aug 08 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-303
 - Declare dependencies for cpan tool (bug #1122498)
 - Use stronger algorithm needed for FIPS in t/op/crypt.t (bug #1128032)
