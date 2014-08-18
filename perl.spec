@@ -464,8 +464,11 @@ Version:        2.05
 Requires:       perl(Data::Dumper)
 # CPAN encourages Digest::SHA strongly because of integrity checks
 Requires:       perl(Digest::SHA)
+# Avoid circular deps local::lib -> Module::Install -> CPAN when bootstraping
+%if ! %{defined perl_bootstrap}
 # local::lib recommended by CPAN::FirstTime default choice, bug #1122498
 Requires:       perl(local::lib)
+%endif
 Requires:       %perl_compat
 Provides:       cpan = %{version}
 BuildArch:      noarch
@@ -3396,6 +3399,7 @@ sed \
 - Update patches to work with new version
 - Update version of sub-packages, remove the deleted sub-packages
 - Sub-package perl-IO-Socket-IP, perl-experimental
+- Disable BR perl(local::lib) for cpan tool when bootstraping
 
 * Fri Aug 08 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-303
 - Declare dependencies for cpan tool (bug #1122498)
