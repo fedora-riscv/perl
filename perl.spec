@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        304%{?dist}
+Release:        305%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -3393,13 +3393,16 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Mon Aug 11 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.0-303
+* Mon Aug 18 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.0-305
 - Update to Perl 5.20.0
 - Clean patches, not needed with new version
 - Update patches to work with new version
 - Update version of sub-packages, remove the deleted sub-packages
 - Sub-package perl-IO-Socket-IP, perl-experimental
 - Disable BR perl(local::lib) for cpan tool when bootstraping
+
+* Sun Aug 17 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:5.18.2-304
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
 * Fri Aug 08 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.2-303
 - Declare dependencies for cpan tool (bug #1122498)
