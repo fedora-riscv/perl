@@ -1695,7 +1695,7 @@ Summary:        Perl extension for Version Objects
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
-Epoch:          3
+Epoch:          4
 # real version 0.9908
 Version:        0.99.08
 Requires:       %perl_compat
