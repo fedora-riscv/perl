@@ -8,7 +8,7 @@
 %global tapsetdir   %{_datadir}/systemtap/tapset
 
 %global dual_life 0
-%global rebuild_from_scratch 1
+%global rebuild_from_scratch 0
 
 # This overrides filters from build root (/usr/lib/rpm/macros.d/macros.perl)
 # intentionally (unversioned perl(DB) is removed and versioned one is kept).
@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        305%{?dist}
+Release:        306%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -119,9 +119,6 @@ BuildRequires:  procps, rsyslog
 
 # Compat provides
 Provides: %perl_compat
-Provides: perl(:MODULE_COMPAT_5.18.2)
-Provides: perl(:MODULE_COMPAT_5.18.1)
-Provides: perl(:MODULE_COMPAT_5.18.0)
 
 # Threading provides
 Provides: perl(:WITH_ITHREADS)
@@ -3393,6 +3390,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sun Sep 07 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.0-306
+- Stop providing old perl(MODULE_COMPAT_5.18.*)
+
 * Mon Aug 18 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.0-305
 - Update to Perl 5.20.0
 - Clean patches, not needed with new version
