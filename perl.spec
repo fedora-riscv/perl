@@ -452,6 +452,7 @@ In particular, any code in an "if (CONSTANT)" block will be optimized
 away if the constant is false.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package CPAN
 Summary:        Query, download and build perl modules from CPAN sites
 Group:          Development/Languages
@@ -506,7 +507,11 @@ Provides:       cpan = %{version}
 BuildArch:      noarch
 
 %description CPAN
-Query, download and build perl modules from CPAN sites.
+The CPAN module automates or at least simplifies the make and install of
+perl modules and extensions. It includes some primitive searching
+capabilities and knows how to use LWP, HTTP::Tiny, Net::FTP and certain
+external download clients to fetch distributions from the net.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package CPAN-Meta
@@ -2782,6 +2787,7 @@ sed \
 %{_mandir}/man3/constant.3*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files CPAN
 %{_bindir}/cpan
 %{privlib}/App/Cpan.pm
@@ -2794,6 +2800,7 @@ sed \
 %exclude %{privlib}/CPAN/Meta/
 %exclude %{privlib}/CPAN/Meta.pm
 %exclude %{_mandir}/man3/CPAN::Meta*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files CPAN-Meta
@@ -3428,6 +3435,7 @@ sed \
 * Wed Sep 10 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.0-307
 - Specify all dependencies for perl-CPAN (bug #1090112)
 - Disable non-core modules at perl-CPAN when bootstrapping
+- Remove bundled perl-CPAN (bug #1090112)
 
 * Sun Sep 07 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.0-306
 - Stop providing old perl(MODULE_COMPAT_5.18.*)
