@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        306%{?dist}
+Release:        307%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -458,13 +458,48 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.05
+# Prefer Archive::Tar and Compress::Zlib over tar and gzip
+Requires:       perl(Archive::Tar) >= 1.50
+Requires:       perl(base)
 Requires:       perl(Data::Dumper)
+%if !%{defined perl_bootstrap}
+Requires:       perl(Devel::Size)
+%endif
+Requires:       perl(ExtUtils::Manifest)
+%if !%{defined perl_bootstrap}
+Requires:       perl(File::HomeDir) >= 0.65
+%endif
+Requires:       perl(File::Temp) >= 0.16
+Requires:       perl(lib)
+Requires:       perl(Net::Config)
+Requires:       perl(Net::FTP)
+Requires:       perl(POSIX)
+Requires:       perl(Term::ReadLine)
+%if !%{defined perl_bootstrap}
+Requires:       perl(URI)
+Requires:       perl(URI::Escape)
+%endif
+Requires:       perl(User::pwent)
+# Optional but higly recommended:
+%if !%{defined perl_bootstrap}
+Requires:       perl(Archive::Zip)
+Requires:       perl(Compress::Bzip2)
+Requires:       perl(CPAN::Meta) >= 2.110350
+%endif
+Requires:       perl(Compress::Zlib)
+Requires:       perl(Digest::MD5)
 # CPAN encourages Digest::SHA strongly because of integrity checks
 Requires:       perl(Digest::SHA)
-# Avoid circular deps local::lib -> Module::Install -> CPAN when bootstraping
+Requires:       perl(Dumpvalue)
+Requires:       perl(ExtUtils::CBuilder)
 %if ! %{defined perl_bootstrap}
+# Avoid circular deps local::lib -> Module::Install -> CPAN when bootstraping
 # local::lib recommended by CPAN::FirstTime default choice, bug #1122498
 Requires:       perl(local::lib)
+%endif
+Requires:       perl(Module::Build)
+%if ! %{defined perl_bootstrap}
+Requires:       perl(Text::Glob)
 %endif
 Requires:       %perl_compat
 Provides:       cpan = %{version}
@@ -3390,6 +3425,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Sep 10 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.0-307
+- Specify all dependencies for perl-CPAN (bug #1090112)
+- Disable non-core modules at perl-CPAN when bootstrapping
+
 * Sun Sep 07 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.0-306
 - Stop providing old perl(MODULE_COMPAT_5.18.*)
 
