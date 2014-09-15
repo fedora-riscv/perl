@@ -1,4 +1,4 @@
-%global perl_version    5.20.0
+%global perl_version    5.20.1
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        307%{?dist}
+Release:        308%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -735,7 +735,7 @@ Summary:        Implements default import method for modules
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        5.70
+Version:        5.71
 Requires:       %perl_compat
 Requires:       perl(Carp) >= 1.05
 BuildArch:      noarch
@@ -755,8 +755,8 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-# real version 0.280216 https://fedoraproject.org/wiki/Perl/Tips#Dot_approach
-Version:        0.28.2.16
+# real version 0.280217 https://fedoraproject.org/wiki/Perl/Tips#Dot_approach
+Version:        0.28.2.17
 Requires:       perl-devel
 Requires:       %perl_compat
 BuildArch:      noarch
@@ -841,6 +841,26 @@ BuildArch:      noarch
 %description ExtUtils-Manifest
 %{summary}.
 %endif
+
+%package ExtUtils-Miniperl
+Summary:        Write the C code for perlmain.c
+Group:          Development/Languages
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.01
+Requires:       perl-devel
+Requires:       %perl_compat
+BuildArch:      noarch
+
+%description ExtUtils-Miniperl
+writemain() takes an argument list of directories containing archive libraries
+that relate to perl modules and should be linked into a new perl binary. It
+writes a corresponding perlmain.c file that is a plain C file containing all
+the bootstrap code to make the If the first argument to writemain() is a
+reference to a scalar it is used as the filename to open for ouput. Any other
+reference is used as the filehandle to write to. Otherwise output defaults to
+STDOUT.
+
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package ExtUtils-ParseXS
@@ -1169,7 +1189,7 @@ Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        3.11
+Version:        5.020001
 Requires:       %perl_compat
 Requires:       perl(version)
 BuildArch:      noarch
@@ -1269,7 +1289,7 @@ Summary:        PathTools Perl module (Cwd, File::Spec)
 Group:          Development/Libraries
 License:        (GPL+ or Artistic) and BSD
 Epoch:          0
-Version:        3.47
+Version:        3.48
 Requires:       %perl_compat
 Requires:       perl(Carp)
 
@@ -1733,8 +1753,8 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          4
-# real version 0.9908
-Version:        0.99.08
+# real version 0.9909
+Version:        0.99.09
 Requires:       %perl_compat
 BuildArch:      noarch
 
@@ -1765,7 +1785,7 @@ Requires:       perl-Data-Dumper, perl-DB_File, perl-Digest, perl-Digest-MD5,
 Requires:       perl-Digest-SHA, perl-Env, perl-Exporter, perl-experimental
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Embed,
 Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
-Requires:       perl-ExtUtils-Manifest
+Requires:       perl-ExtUtils-Manifest, perl-ExtUtils-Miniperl
 Requires:       perl-ExtUtils-ParseXS, perl-File-Fetch
 Requires:       perl-File-Path, perl-File-Temp, perl-Filter, perl-Getopt-Long
 Requires:       perl-HTTP-Tiny, perl-IO-Compress, perl-IO-Socket-IP
@@ -2314,6 +2334,10 @@ sed \
 %exclude %{_mandir}/man3/ExtUtils::Mkbootstrap.3*
 %exclude %{_mandir}/man3/ExtUtils::Mksymlists.3*
 %exclude %{_mandir}/man3/ExtUtils::testlib.3*
+
+# ExtUtils-Miniperl
+%exclude %{privlib}/ExtUtils/Miniperl.pm
+%exclude %{_mandir}/man3/ExtUtils::Miniperl.3*
 
 # ExtUtils-ParseXS
 %exclude %dir %{privlib}/ExtUtils/ParseXS/
@@ -2962,6 +2986,10 @@ sed \
 %{_mandir}/man3/ExtUtils::testlib.3*
 %endif
 
+%files ExtUtils-Miniperl
+%{privlib}/ExtUtils/Miniperl.pm
+%{_mandir}/man3/ExtUtils::Miniperl.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-ParseXS
 %dir %{privlib}/ExtUtils/ParseXS/
@@ -3432,6 +3460,11 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Sep 15 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.1-308
+- 5.20.1 bump (see <http://search.cpan.org/dist/perl-5.20.1/pod/perldelta.pod>
+  for release notes)
+- Sub-package perl-ExtUtils-Miniperl (bug #1141222)
+
 * Wed Sep 10 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.0-307
 - Specify all dependencies for perl-CPAN (bug #1090112)
 - Disable non-core modules at perl-CPAN when bootstrapping
