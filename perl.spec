@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        308%{?dist}
+Release:        309%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -115,10 +115,11 @@ BuildRequires:  procps, rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.20.0)
+%global perl_compat perl(:MODULE_COMPAT_5.20.1)
 
 # Compat provides
 Provides: %perl_compat
+Provides: perl(:MODULE_COMPAT_5.20.0)
 
 # Threading provides
 Provides: perl(:WITH_ITHREADS)
@@ -3460,6 +3461,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Sep 16 2014 Petr Šabata <contyk@redhat.com> - 4:5.20.1-309
+- Provide 5.20.0 MODULE_COMPAT
+
 * Mon Sep 15 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.1-308
 - 5.20.1 bump (see <http://search.cpan.org/dist/perl-5.20.1/pod/perldelta.pod>
   for release notes)
