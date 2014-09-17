@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        309%{?dist}
+Release:        310%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1190,20 +1190,43 @@ are included with perl 5.6.0, and it works fine on perl 5.005 if you can
 install a few additional modules.
 %endif
 
+
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Module-CoreList
-Summary:        Perl core modules indexed by perl versions
-Group:          Development/Languages
+Summary:        What modules are shipped with versions of perl
+Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          1
 Version:        5.020001
 Requires:       %perl_compat
-Requires:       perl(version)
+Requires:       perl(List::Util)
+Requires:       perl(version) >= 0.88
 BuildArch:      noarch
 
 %description Module-CoreList
-Module::CoreList contains the hash of hashes %%Module::CoreList::version, this
-is keyed on perl version as indicated in $].  The second level hash is module
-=> version pairs.
+Module::CoreList provides information on which core and dual-life modules
+are shipped with each version of perl.
+
+
+%package Module-CoreList-tools
+Summary:        Tool for listing modules shipped with perl
+Group:          Development/Tools
+License:        GPL+ or Artistic
+Epoch:          1
+Version:        5.020001
+Requires:       %perl_compat
+Requires:       perl(feature)
+Requires:       perl(version) >= 0.88
+Requires:       perl-Module-CoreList = %{epoch}:%{version}-%{release}
+# The files were distributed with perl.spec's subpackage
+# perl-Module-CoreList <= 1:5.020001-309
+Conflicts:      perl-Module-CoreList < 1:5.020001-310
+BuildArch:      noarch
+
+%description Module-CoreList-tools
+This package provides a corelist(1) tool which can be used to query what
+modules were shipped with given perl version.
+%endif
 
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -1798,7 +1821,8 @@ Requires:       perl-HTTP-Tiny, perl-IO-Compress, perl-IO-Socket-IP
 Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
 Requires:       perl-Locale-Codes, perl-Locale-Maketext,
 Requires:       perl-Locale-Maketext-Simple
-Requires:       perl-Module-Build, perl-Module-CoreList, perl-Module-Load
+Requires:       perl-Module-Build, perl-Module-CoreList,
+Requires:       perl-Module-CoreList-tools, perl-Module-Load
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Metadata
 Requires:       perl-Package-Constants, perl-PathTools
 Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
@@ -2509,10 +2533,14 @@ sed \
 %exclude %{_mandir}/man3/inc::latest.3*
 
 # Module-CoreList
-%exclude %{_bindir}/corelist
+%exclude %{privlib}/Module/CoreList
 %exclude %{privlib}/Module/CoreList.pm
-%exclude %{_mandir}/man1/corelist*
+%exclude %{privlib}/Module/CoreList.pod
 %exclude %{_mandir}/man3/Module::CoreList*
+
+# Module-CoreList-tools
+%exclude %{_bindir}/corelist
+%exclude %{_mandir}/man1/corelist*
 
 # Module-Load
 %exclude %{privlib}/Module/Load.pm
@@ -3189,11 +3217,17 @@ sed \
 %{_mandir}/man3/inc::latest.3*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Module-CoreList
-%{_bindir}/corelist
+%{privlib}/Module/CoreList
 %{privlib}/Module/CoreList.pm
-%{_mandir}/man1/corelist*
+%{privlib}/Module/CoreList.pod
 %{_mandir}/man3/Module::CoreList*
+
+%files Module-CoreList-tools
+%{_bindir}/corelist
+%{_mandir}/man1/corelist*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Module-Load
@@ -3466,6 +3500,12 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Oct 23 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-310
+- Move all Module-CoreList files into perl-Module-CoreList
+- Sub-package corelist(1) into perl-Module-CoreList-tools (bug #1142757)
+- Remove bundled perl-Module-CoreList, and perl-Module-CoreList-tools
+  (bug #1142757)
+
 * Tue Sep 16 2014 Petr Šabata <contyk@redhat.com> - 4:5.20.1-309
 - Provide 5.20.0 MODULE_COMPAT
 
