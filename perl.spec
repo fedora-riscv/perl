@@ -1,4 +1,4 @@
-%global perl_version    5.18.2
+%global perl_version    5.18.4
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        302%{?dist}
+Release:        303%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -148,10 +148,11 @@ BuildRequires:  procps, rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.18.2)
+%global perl_compat perl(:MODULE_COMPAT_5.18.4)
 
 # Compat provides
 Provides: %perl_compat
+Provides: perl(:MODULE_COMPAT_5.18.2)
 Provides: perl(:MODULE_COMPAT_5.18.1)
 Provides: perl(:MODULE_COMPAT_5.18.0)
 
@@ -709,8 +710,8 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-# real version 5.84_01
-Version:        5.84.1
+# real version 5.84_02
+Version:        5.84.2
 Requires:       %perl_compat
 # Recommended
 Requires:       perl(Digest::base)
@@ -1248,7 +1249,7 @@ Summary:        Perl core modules indexed by perl versions
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        3.03
+Version:        3.13
 Requires:       %perl_compat
 Requires:       perl(version)
 BuildArch:      noarch
@@ -3732,6 +3733,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Sep 29 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.4-303
+- 5.18.4 bump (see <http://search.cpan.org/dist/perl-5.18.4/pod/perldelta.pod>
+  for release notes)
+
 * Tue Jul 29 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.2-302
 - Sub-package perl-Term-ANSIColor and remove it (bug #1121924)
 
