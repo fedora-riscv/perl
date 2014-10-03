@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        303%{?dist}
+Release:        304%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -3733,9 +3733,12 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Mon Sep 29 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.4-303
+* Fri Oct 03 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.4-304
 - 5.18.4 bump (see <http://search.cpan.org/dist/perl-5.18.4/pod/perldelta.pod>
   for release notes)
+
+* Sun Aug 17 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:5.18.2-303
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
 * Tue Jul 29 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.2-302
 - Sub-package perl-Term-ANSIColor and remove it (bug #1121924)
