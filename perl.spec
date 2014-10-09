@@ -87,7 +87,7 @@ Patch16:        perl-5.16.3-Install-libperl.so-to-shrpdir-on-Linux.patch
 Patch22:        perl-5.18.1-Document-Math-BigInt-CalcEmu-requires-Math-BigInt.patch 
 
 # Use stronger algorithm needed for FIPS in t/op/crypt.t, bug #1128032,
-# RT#121591
+# RT#121591, accepted after 5.21.4
 Patch25:        perl-5.18.2-t-op-crypt.t-Perform-SHA-256-algorithm-if-default-on.patch
 
 # Make *DBM_File desctructors thread-safe, bug #1107543, RT#61912
