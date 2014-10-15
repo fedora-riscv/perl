@@ -1167,6 +1167,11 @@ Requires:       perl(ExtUtils::CBuilder) >= 0.15
 Requires:       perl(ExtUtils::ParseXS) >= 1.02
 Requires:       perl-devel
 Requires:       %perl_compat
+%if !%{defined perl_bootstrap}
+# Optional run-time needed for Software::License license identifier,
+# bug #1152319
+Requires:       perl(Software::License)
+%endif
 # Optional run-time needed for generating documentation from POD:
 Requires:       perl(Pod::Html)
 Requires:       perl(Pod::Man)
