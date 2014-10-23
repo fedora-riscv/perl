@@ -817,13 +817,14 @@ Utilities for embedding Perl in C/C++ applications.
 
 %package ExtUtils-Install
 Summary:        Install files from here to there
-Group:          Development/Languages
+Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.67
+BuildArch:      noarch
 Requires:       perl-devel
 Requires:       %perl_compat
-BuildArch:      noarch
+Requires:       perl(Data::Dumper)
 
 %description ExtUtils-Install
 Handles the installing and uninstalling of perl modules, scripts, man
@@ -3561,6 +3562,7 @@ sed \
 - Sub-package Devel-PPPort (bug #1143999)
 - Sub-package B-Debug (bug #1142952)
 - Use native version for perl-ExtUtils-CBuilder
+- Specify all dependencies for perl-ExtUtils-Install (bug #1144068)
 
 * Tue Sep 16 2014 Petr Šabata <contyk@redhat.com> - 4:5.20.1-309
 - Provide 5.20.0 MODULE_COMPAT
