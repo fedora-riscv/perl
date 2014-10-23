@@ -786,11 +786,14 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-# real version 0.280217 https://fedoraproject.org/wiki/Perl/Tips#Dot_approach
-Version:        0.28.2.17
+Version:        0.280217
+BuildArch:      noarch
 Requires:       perl-devel
 Requires:       %perl_compat
-BuildArch:      noarch
+Requires:       perl(DynaLoader)
+Requires:       perl(ExtUtils::Mksymlists)
+Requires:       perl(File::Spec) >= 3.13
+Requires:       perl(Perl::OSType) >= 1
 
 %description ExtUtils-CBuilder
 This module can build the C portions of Perl modules by invoking the
@@ -3557,6 +3560,7 @@ sed \
   (bug #1142757)
 - Sub-package Devel-PPPort (bug #1143999)
 - Sub-package B-Debug (bug #1142952)
+- Use native version for perl-ExtUtils-CBuilder
 
 * Tue Sep 16 2014 Petr Šabata <contyk@redhat.com> - 4:5.20.1-309
 - Provide 5.20.0 MODULE_COMPAT
