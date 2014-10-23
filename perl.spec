@@ -342,6 +342,19 @@ However "Fatal" has been obsoleted by the new autodie pragma. Please use
 autodie in preference to "Fatal".
 %endif
 
+%package B-Debug
+Summary:        Walk Perl syntax tree, print debug information about op-codes
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.19
+Requires:       %perl_compat
+BuildArch:      noarch
+Conflicts:      perl < 4:5.20.1-310
+
+%description B-Debug
+Walk Perl syntax tree and print debug information about op-codes. See
+B::Concise and B::Terse for other details.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Carp
@@ -1823,7 +1836,8 @@ Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-macros
 
 Requires:       perl-App-a2p, perl-App-find2perl, perl-App-s2p
-Requires:       perl-Archive-Tar, perl-autodie, perl-Compress-Raw-Bzip2,
+Requires:       perl-Archive-Tar, perl-autodie, perl-B-Debug,
+Requires:       perl-Compress-Raw-Bzip2,
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-constant,
 Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
 Requires:       perl-CPAN-Meta-YAML, perl-Encode
@@ -2214,6 +2228,9 @@ sed \
 %exclude %{_mandir}/man3/autodie::*
 %exclude %{_mandir}/man3/Fatal.3*
 
+# B-Debug
+%exclude %{privlib}/B/Debug.pm
+%exclude %{_mandir}/man3/B::Debug.3*
 
 # Carp
 %exclude %{privlib}/Carp
@@ -2831,6 +2848,9 @@ sed \
 %{_mandir}/man3/Fatal.3*
 %endif
 
+%files B-Debug
+%{privlib}/B/Debug.pm
+%{_mandir}/man3/B::Debug.3*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Carp
@@ -3536,6 +3556,7 @@ sed \
 - Remove bundled perl-Module-CoreList, and perl-Module-CoreList-tools
   (bug #1142757)
 - Sub-package Devel-PPPort (bug #1143999)
+- Sub-package B-Debug (bug #1142952)
 
 * Tue Sep 16 2014 Petr Šabata <contyk@redhat.com> - 4:5.20.1-309
 - Provide 5.20.0 MODULE_COMPAT
