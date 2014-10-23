@@ -606,6 +606,23 @@ will be limited to functionality provided by interface of version 1.x). The
 interface defined here mirrors the Berkeley DB interface closely.
 %endif
 
+%package Devel-PPPort
+Summary:        Perl Pollution Portability header generator
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        3.21
+Requires:       %perl_compat
+Conflicts:      perl < 4:5.20.1-310
+
+%description Devel-PPPort
+Perl's API has changed over time, gaining new features, new functions,
+increasing its flexibility, and reducing the impact on the C name space
+environment (reduced pollution). The header file written by this module,
+typically ppport.h, attempts to bring some of the newer Perl API features
+to older versions of Perl, so that you can worry less about keeping track
+of old releases, but users can still reap the benefit.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Digest
 Summary:        Modules that calculate message digests
@@ -1810,7 +1827,8 @@ Requires:       perl-Archive-Tar, perl-autodie, perl-Compress-Raw-Bzip2,
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-constant,
 Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
 Requires:       perl-CPAN-Meta-YAML, perl-Encode
-Requires:       perl-Data-Dumper, perl-DB_File, perl-Digest, perl-Digest-MD5,
+Requires:       perl-Data-Dumper, perl-DB_File, perl-Devel-PPPort,
+Requires:       perl-Digest, perl-Digest-MD5,
 Requires:       perl-Digest-SHA, perl-Env, perl-Exporter, perl-experimental
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Embed,
 Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
@@ -2272,6 +2290,12 @@ sed \
 %exclude %dir %{archlib}/auto/DB_File
 %exclude %{archlib}/auto/DB_File/DB_File.so
 %exclude %{_mandir}/man3/DB_File*
+
+# Devel-PPPort
+%exclude %{archlib}/Devel/PPPort.pm
+%exclude %dir %{archlib}/auto/Devel/PPPort
+%exclude %{archlib}/auto/Devel/PPPort/PPPort.so
+%exclude %{_mandir}/man3/Devel::PPPort.3*
 
 # Digest
 %exclude %{privlib}/Digest.pm
@@ -2906,6 +2930,12 @@ sed \
 %{_mandir}/man3/DB_File*
 %endif
 
+%files Devel-PPPort
+%{archlib}/Devel/PPPort.pm
+%dir %{archlib}/auto/Devel/PPPort
+%{archlib}/auto/Devel/PPPort/PPPort.so
+%{_mandir}/man3/Devel::PPPort.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Digest
 %{privlib}/Digest.pm
@@ -3505,6 +3535,7 @@ sed \
 - Sub-package corelist(1) into perl-Module-CoreList-tools (bug #1142757)
 - Remove bundled perl-Module-CoreList, and perl-Module-CoreList-tools
   (bug #1142757)
+- Sub-package Devel-PPPort (bug #1143999)
 
 * Tue Sep 16 2014 Petr Šabata <contyk@redhat.com> - 4:5.20.1-309
 - Provide 5.20.0 MODULE_COMPAT
