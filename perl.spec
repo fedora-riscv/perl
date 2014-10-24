@@ -850,6 +850,8 @@ Requires:       perl(Getopt::Long)
 Requires:       perl(Pod::Man)
 Requires:       perl(POSIX)
 Requires:       perl(Test::Harness)
+# If an XS module is compiled, xsubpp(1) is needed
+Requires:       perl-ExtUtils-ParseXS
 BuildArch:      noarch
 
 # Filter false DynaLoader provides. Versioned perl(DynaLoader) keeps
@@ -3563,6 +3565,7 @@ sed \
 - Sub-package B-Debug (bug #1142952)
 - Use native version for perl-ExtUtils-CBuilder
 - Specify all dependencies for perl-ExtUtils-Install (bug #1144068)
+- Require perl-ExtUtils-ParseXS by perl-ExtUtils-MakeMaker because of xsubpp
 
 * Tue Sep 16 2014 Petr Šabata <contyk@redhat.com> - 4:5.20.1-309
 - Provide 5.20.0 MODULE_COMPAT
