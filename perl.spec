@@ -784,6 +784,7 @@ provides a highly flexible interface, with an implementation optimized for
 the common case.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package ExtUtils-CBuilder
 Summary:        Compile and link C code for Perl modules
 Group:          Development/Libraries
@@ -803,6 +804,7 @@ Requires:       perl(Perl::OSType) >= 1
 This module can build the C portions of Perl modules by invoking the
 appropriate compilers and linkers in a cross-platform manner. It was motivated
 by the Module::Build project, but may be useful for other purposes as well.
+%endif
 
 
 %package ExtUtils-Embed
@@ -3036,10 +3038,12 @@ sed \
 %{_mandir}/man3/experimental*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-CBuilder
 %{privlib}/ExtUtils/CBuilder/
 %{privlib}/ExtUtils/CBuilder.pm
 %{_mandir}/man3/ExtUtils::CBuilder*
+%endif
 
 %files ExtUtils-Embed
 %{privlib}/ExtUtils/Embed.pm
@@ -3567,6 +3571,7 @@ sed \
 * Wed Oct 29 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-311
 - Remove bundled perl-Devel-PPPort (bug #1143999)
 - Remove bundled perl-B-Debug (bug #1142952)
+- Remove bundled perl-ExtUtils-CBuilder (bug #1144033)
 
 * Thu Oct 23 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-310
 - Move all Module-CoreList files into perl-Module-CoreList
