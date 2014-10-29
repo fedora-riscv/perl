@@ -342,6 +342,7 @@ However "Fatal" has been obsoleted by the new autodie pragma. Please use
 autodie in preference to "Fatal".
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package B-Debug
 Summary:        Walk Perl syntax tree, print debug information about op-codes
 Group:          Development/Libraries
@@ -355,6 +356,7 @@ Conflicts:      perl < 4:5.20.1-310
 %description B-Debug
 Walk Perl syntax tree and print debug information about op-codes. See
 B::Concise and B::Terse for other details.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Carp
@@ -2856,9 +2858,11 @@ sed \
 %{_mandir}/man3/Fatal.3*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files B-Debug
 %{privlib}/B/Debug.pm
 %{_mandir}/man3/B::Debug.3*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Carp
@@ -3562,6 +3566,7 @@ sed \
 %changelog
 * Wed Oct 29 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-311
 - Remove bundled perl-Devel-PPPort (bug #1143999)
+- Remove bundled perl-B-Debug (bug #1142952)
 
 * Thu Oct 23 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-310
 - Move all Module-CoreList files into perl-Module-CoreList
