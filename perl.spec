@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        310%{?dist}
+Release:        311%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -619,6 +619,7 @@ will be limited to functionality provided by interface of version 1.x). The
 interface defined here mirrors the Berkeley DB interface closely.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Devel-PPPort
 Summary:        Perl Pollution Portability header generator
 Group:          Development/Libraries
@@ -635,6 +636,7 @@ environment (reduced pollution). The header file written by this module,
 typically ppport.h, attempts to bring some of the newer Perl API features
 to older versions of Perl, so that you can worry less about keeping track
 of old releases, but users can still reap the benefit.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Digest
@@ -2956,11 +2958,13 @@ sed \
 %{_mandir}/man3/DB_File*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Devel-PPPort
 %{archlib}/Devel/PPPort.pm
 %dir %{archlib}/auto/Devel/PPPort
 %{archlib}/auto/Devel/PPPort/PPPort.so
 %{_mandir}/man3/Devel::PPPort.3*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Digest
@@ -3556,6 +3560,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Oct 29 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-311
+- Remove bundled perl-Devel-PPPort (bug #1143999)
+
 * Thu Oct 23 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-310
 - Move all Module-CoreList files into perl-Module-CoreList
 - Sub-package corelist(1) into perl-Module-CoreList-tools (bug #1142757)
