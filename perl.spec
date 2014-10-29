@@ -821,6 +821,7 @@ BuildArch:      noarch
 Utilities for embedding Perl in C/C++ applications.
 
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package ExtUtils-Install
 Summary:        Install files from here to there
 Group:          Development/Libraries
@@ -835,6 +836,7 @@ Requires:       perl(Data::Dumper)
 %description ExtUtils-Install
 Handles the installing and uninstalling of perl modules, scripts, man
 pages, etc.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package ExtUtils-MakeMaker
@@ -3049,6 +3051,7 @@ sed \
 %{privlib}/ExtUtils/Embed.pm
 %{_mandir}/man3/ExtUtils::Embed*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-Install
 %{privlib}/ExtUtils/Install.pm
 %{privlib}/ExtUtils/Installed.pm
@@ -3056,6 +3059,7 @@ sed \
 %{_mandir}/man3/ExtUtils::Install.3*
 %{_mandir}/man3/ExtUtils::Installed.3*
 %{_mandir}/man3/ExtUtils::Packlist.3*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-Manifest
@@ -3572,6 +3576,7 @@ sed \
 - Remove bundled perl-Devel-PPPort (bug #1143999)
 - Remove bundled perl-B-Debug (bug #1142952)
 - Remove bundled perl-ExtUtils-CBuilder (bug #1144033)
+- Remove bundled perl-ExtUtils-Install (bug #1144068)
 
 * Thu Oct 23 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-310
 - Move all Module-CoreList files into perl-Module-CoreList
