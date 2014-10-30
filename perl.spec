@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        290%{?dist}
+Release:        291%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -113,6 +113,9 @@ Patch20:        perl-5.19.3-Reap-child-in-case-where-exception-has-been-thrown.p
 # rhbz#982131, RT#117917
 # Update the upstream patch to work for Perl 5.18.1
 Patch21:        perl-5.19.2-Fix-using-regexes-with-multiple-code-blocks.patch
+
+# Create site paths by cpan for the first time, bug #1132321, CPAN RT#99905
+Patch22:        perl-5.18.4-CPAN-Attemp-to-create-site-library-directories-on-first-t.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -1905,6 +1908,7 @@ tarball from perl.org.
 %patch19 -p1
 %patch20 -p1
 %patch21 -p1
+%patch22 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -1930,6 +1934,7 @@ perl -x patchlevel.h \
     'Fedora Patch19: Fix coreamp.t rand test (RT#118237)' \
     'Fedora Patch20: Reap child in case where exception has been thrown (RT#114722)' \
     'Fedora Patch21: Fix using regular expressions containing multiple code blocks (RT#117917)' \
+    'Fedora Patch22: Create site paths by cpan for the first time (CPAN RT#99905)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3616,6 +3621,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Oct 30 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.4-291
+- Create site paths by cpan for the first time (bug #1132321)
+
 * Fri Oct 03 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.4-290
 - 5.18.4 bump (see <http://search.cpan.org/dist/perl-5.18.4/pod/perldelta.pod>
   for release notes)
