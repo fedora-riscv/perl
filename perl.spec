@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        304%{?dist}
+Release:        305%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -125,6 +125,9 @@ Patch23:        perl-5.18.2-Make-t-comp-parser.t-get-the-correct-libraries.patch
 # Pass -fwrapv to stricter GCC 4.9, bug #1082957, RT#121505,
 # in upstream after 5.19.10
 Patch24:        perl-5.18.2-Pass-fwrapv-to-stricter-GCC-4.9.patch
+
+# Create site paths by cpan for the first time, bug #1132321, CPAN RT#99905
+Patch25:        perl-5.18.4-CPAN-Attemp-to-create-site-library-directories-on-first-t.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -1983,6 +1986,7 @@ tarball from perl.org.
 %patch22 -p1
 %patch23 -p1
 %patch24 -p1
+%patch25 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2011,6 +2015,7 @@ perl -x patchlevel.h \
     'Fedora Patch22: Document Math::BigInt::CalcEmu requires Math::BigInt (CPAN RT#85015)' \
     'Fedora Patch23: Fix t/comp/parser.t not to load system modules (RT#121579)' \
     'Fedora Patch24: Pass -fwrapv to stricter GCC 4.9 (RT#121505)' \
+    'Fedora Patch25: Create site paths by cpan for the first time (CPAN RT#99905)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3733,6 +3738,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Oct 30 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.4-305
+- Create site paths by cpan for the first time (bug #1132321)
+
 * Fri Oct 03 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.4-304
 - 5.18.4 bump (see <http://search.cpan.org/dist/perl-5.18.4/pod/perldelta.pod>
   for release notes)
