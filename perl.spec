@@ -1014,6 +1014,22 @@ a C preprocessor alters the source text of a C program before the compiler
 sees it.
 %endif
 
+%package Filter-Simple
+Summary:        Simplified Perl source filtering
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.91
+BuildArch:      noarch
+Requires:       %perl_compat
+Conflicts:      perl < 4:5.20.1-312
+Requires:       perl(Text::Balanced) >= 1.97
+Requires:       perl(warnings)
+
+%description Filter-Simple
+The Filter::Simple Perl module provides a simplified interface to
+Filter::Util::Call; one that is sufficient for most common cases.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Getopt-Long
 Summary:        Extended processing of command line options
@@ -1878,7 +1894,8 @@ Requires:       perl-ExtUtils-Embed,
 Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
 Requires:       perl-ExtUtils-Manifest, perl-ExtUtils-Miniperl
 Requires:       perl-ExtUtils-ParseXS, perl-File-Fetch
-Requires:       perl-File-Path, perl-File-Temp, perl-Filter, perl-Getopt-Long
+Requires:       perl-File-Path, perl-File-Temp, perl-Filter,
+Requires:       perl-Filter-Simple, perl-Getopt-Long
 Requires:       perl-HTTP-Tiny, perl-IO-Compress, perl-IO-Socket-IP
 Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
 Requires:       perl-Locale-Codes, perl-Locale-Maketext,
@@ -2490,6 +2507,10 @@ sed \
 %exclude %{privlib}/pod/perlfilter.pod
 %exclude %{_mandir}/man1/perlfilter.*
 %exclude %{_mandir}/man3/Filter::Util::*
+
+# Filter-Simple
+%exclude %{privlib}/Filter/Simple.pm
+%exclude %{_mandir}/man3/Filter::Simple.3*
 
 # Getopt-Long
 %exclude %{privlib}/Getopt/Long.pm
@@ -3177,6 +3198,10 @@ sed \
 %{_mandir}/man3/Filter::Util::*
 %endif
 
+%files Filter-Simple
+%{privlib}/Filter/Simple.pm
+%{_mandir}/man3/Filter::Simple.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Getopt-Long
 %{privlib}/Getopt/Long.pm
@@ -3592,6 +3617,7 @@ sed \
 - Do not double-own perl-Pod-Usage' and perl-Pod-Checker' files by
   perl-Pod-Parser on bootstrap
 - Sub-package ExtUtils-Command (bug #1158536)
+- Sub-package Filter-Simple (bug #1158542)
 
 * Wed Oct 29 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-311
 - Remove bundled perl-Devel-PPPort (bug #1143999)
