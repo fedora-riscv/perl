@@ -806,6 +806,21 @@ appropriate compilers and linkers in a cross-platform manner. It was motivated
 by the Module::Build project, but may be useful for other purposes as well.
 %endif
 
+%package ExtUtils-Command
+Summary:        Perl routines to replace common UNIX commands in Makefiles
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.18
+BuildArch:      noarch
+Requires:       %perl_compat
+Conflicts:      perl < 4:5.20.1-312
+Requires:       perl(File::Find)
+
+%description ExtUtils-Command
+This Perl module is used to replace common UNIX commands. In all cases the
+functions work with @ARGV rather than taking arguments. This makes them
+easier to deal with in Makefiles.
 
 %package ExtUtils-Embed
 Summary:        Utilities for embedding Perl in C/C++ applications
@@ -1858,7 +1873,8 @@ Requires:       perl-CPAN-Meta-YAML, perl-Encode
 Requires:       perl-Data-Dumper, perl-DB_File, perl-Devel-PPPort,
 Requires:       perl-Digest, perl-Digest-MD5,
 Requires:       perl-Digest-SHA, perl-Env, perl-Exporter, perl-experimental
-Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Embed,
+Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Command,
+Requires:       perl-ExtUtils-Embed,
 Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
 Requires:       perl-ExtUtils-Manifest, perl-ExtUtils-Miniperl
 Requires:       perl-ExtUtils-ParseXS, perl-File-Fetch
@@ -2380,6 +2396,10 @@ sed \
 %exclude %{privlib}/ExtUtils/CBuilder/
 %exclude %{privlib}/ExtUtils/CBuilder.pm
 %exclude %{_mandir}/man3/ExtUtils::CBuilder*
+
+# ExtUtils-Command
+%exclude %{privlib}/ExtUtils/Command.pm
+%exclude %{_mandir}/man3/ExtUtils::Command.*
 
 # ExtUtils-Embed
 %exclude %{privlib}/ExtUtils/Embed.pm
@@ -3047,6 +3067,10 @@ sed \
 %{_mandir}/man3/ExtUtils::CBuilder*
 %endif
 
+%files ExtUtils-Command
+%{privlib}/ExtUtils/Command.pm
+%{_mandir}/man3/ExtUtils::Command.*
+
 %files ExtUtils-Embed
 %{privlib}/ExtUtils/Embed.pm
 %{_mandir}/man3/ExtUtils::Embed*
@@ -3567,6 +3591,7 @@ sed \
 * Wed Nov 12 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-312
 - Do not double-own perl-Pod-Usage' and perl-Pod-Checker' files by
   perl-Pod-Parser on bootstrap
+- Sub-package ExtUtils-Command (bug #1158536)
 
 * Wed Oct 29 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-311
 - Remove bundled perl-Devel-PPPort (bug #1143999)
