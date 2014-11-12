@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        311%{?dist}
+Release:        312%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -3381,28 +3381,20 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Pod-Parser
-%{_bindir}/pod2usage
-%{_bindir}/podchecker
 %{_bindir}/podselect
-%{privlib}/Pod/Checker.pm
 %{privlib}/Pod/Find.pm
 %{privlib}/Pod/InputObjects.pm
 %{privlib}/Pod/ParseUtils.pm
 %{privlib}/Pod/Parser.pm
 %{privlib}/Pod/PlainText.pm
 %{privlib}/Pod/Select.pm
-%{privlib}/Pod/Usage.pm
-%{_mandir}/man1/pod2usage.1*
-%{_mandir}/man1/podchecker.1*
 %{_mandir}/man1/podselect.1*
-%{_mandir}/man3/Pod::Checker.*
 %{_mandir}/man3/Pod::Find.*
 %{_mandir}/man3/Pod::InputObjects.*
 %{_mandir}/man3/Pod::ParseUtils.*
 %{_mandir}/man3/Pod::Parser.*
 %{_mandir}/man3/Pod::PlainText.*
 %{_mandir}/man3/Pod::Select.*
-%{_mandir}/man3/Pod::Usage.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -3572,6 +3564,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Nov 12 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-312
+- Do not double-own perl-Pod-Usage' and perl-Pod-Checker' files by
+  perl-Pod-Parser on bootstrap
+
 * Wed Oct 29 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-311
 - Remove bundled perl-Devel-PPPort (bug #1143999)
 - Remove bundled perl-B-Debug (bug #1142952)
