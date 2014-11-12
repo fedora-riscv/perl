@@ -102,7 +102,9 @@ Patch201:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-MM-on-Linux.pa
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
-BuildRequires:  groff, libdb-devel, tcsh, zlib-devel, bzip2-devel
+# Build-require groff tools for populating %Config correctly, bug #135101
+BuildRequires:  groff-base
+BuildRequires:  libdb-devel, tcsh, zlib-devel, bzip2-devel
 BuildRequires:  systemtap-sdt-devel
 %if %{with gdbm}
 BuildRequires: gdbm-devel
@@ -3618,6 +3620,7 @@ sed \
   perl-Pod-Parser on bootstrap
 - Sub-package ExtUtils-Command (bug #1158536)
 - Sub-package Filter-Simple (bug #1158542)
+- Build-require groff-base instead of big groff
 
 * Wed Oct 29 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-311
 - Remove bundled perl-Devel-PPPort (bug #1143999)
