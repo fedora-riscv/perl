@@ -808,6 +808,7 @@ appropriate compilers and linkers in a cross-platform manner. It was motivated
 by the Module::Build project, but may be useful for other purposes as well.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package ExtUtils-Command
 Summary:        Perl routines to replace common UNIX commands in Makefiles
 Group:          Development/Libraries
@@ -823,6 +824,7 @@ Requires:       perl(File::Find)
 This Perl module is used to replace common UNIX commands. In all cases the
 functions work with @ARGV rather than taking arguments. This makes them
 easier to deal with in Makefiles.
+%endif
 
 %package ExtUtils-Embed
 Summary:        Utilities for embedding Perl in C/C++ applications
@@ -1016,6 +1018,7 @@ a C preprocessor alters the source text of a C program before the compiler
 sees it.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Filter-Simple
 Summary:        Simplified Perl source filtering
 Group:          Development/Libraries
@@ -1031,6 +1034,7 @@ Requires:       perl(warnings)
 %description Filter-Simple
 The Filter::Simple Perl module provides a simplified interface to
 Filter::Util::Call; one that is sufficient for most common cases.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Getopt-Long
@@ -3092,9 +3096,11 @@ sed \
 %{_mandir}/man3/ExtUtils::CBuilder*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-Command
 %{privlib}/ExtUtils/Command.pm
 %{_mandir}/man3/ExtUtils::Command.*
+%endif
 
 %files ExtUtils-Embed
 %{privlib}/ExtUtils/Embed.pm
@@ -3202,9 +3208,11 @@ sed \
 %{_mandir}/man3/Filter::Util::*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Filter-Simple
 %{privlib}/Filter/Simple.pm
 %{_mandir}/man3/Filter::Simple.3*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Getopt-Long
@@ -3619,6 +3627,8 @@ sed \
 %changelog
 * Thu Nov 13 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-313
 - Freeze epoch at perl-Pod-Checker and perl-Pod-Usage (bug #1163490)
+- Remove bundled perl-ExtUtils-Command (bug #1158536)
+- Remove bundled perl-Filter-Simple (bug #1158542)
 
 * Wed Nov 12 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-312
 - Do not double-own perl-Pod-Usage' and perl-Pod-Checker' files by
