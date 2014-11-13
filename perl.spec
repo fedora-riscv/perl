@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        312%{?dist}
+Release:        313%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1461,6 +1461,7 @@ systems are given the type 'Windows' rather than 'Win32').
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-Checker
 Summary:        Check POD documents for syntax errors
+Epoch:          4
 Version:        1.60
 License:        GPL+ or Artistic
 Group:          Development/Libraries
@@ -1544,6 +1545,7 @@ documentation for Perl and for Perl modules.
 Summary:        Print a usage message from embedded pod documentation
 License:        GPL+ or Artistic
 Group:          Development/Libraries
+Epoch:          4
 Version:        1.63
 # Pod::Usage execute perldoc from perl-Pod-Perldoc by default
 BuildRequires:  perl-Pod-Perldoc
@@ -3615,6 +3617,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Nov 13 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-313
+- Freeze epoch at perl-Pod-Checker and perl-Pod-Usage (bug #1163490)
+
 * Wed Nov 12 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-312
 - Do not double-own perl-Pod-Usage' and perl-Pod-Checker' files by
   perl-Pod-Parser on bootstrap
