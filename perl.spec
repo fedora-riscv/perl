@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        313%{?dist}
+Release:        314%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -715,6 +715,35 @@ Conflicts:      perl < 4:5.16.2-256
 %description Encode
 The Encode module provides the interface between Perl strings and the rest
 of the system. Perl strings are sequences of characters.
+
+%package -n perl-encoding
+Summary:        Write your Perl script in non-ASCII or non-UTF-8
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          2
+Version:        2.60
+# Keeping this sub-package arch-specific because it installs files into
+# arch-specific directories.
+Requires:       %perl_compat
+Requires:       perl(Carp)
+# Config not needed on perl ≥ 5.008
+# Consider Filter::Util::Call as mandatory, bug #1165183, CPAN RT#100427
+Requires:       perl(Filter::Util::Call)
+# I18N::Langinfo is optional
+# PerlIO::encoding is optional
+Requires:       perl(utf8)
+Conflicts:      perl-Encode < 2:2.60-314
+
+%description -n perl-encoding
+With the encoding pragma, you can write your Perl script in any encoding you
+like (so long as the Encode module supports it) and still enjoy Unicode
+support.
+
+However, this encoding module is deprecated under perl 5.18. It uses
+a mechanism provided by perl that is deprecated under 5.18 and higher, and may
+be removed in a future version.
+
+The easiest and the best alternative is to write your script in UTF-8.
 
 %package Encode-devel
 Summary:        Character encodings in Perl
@@ -1893,7 +1922,7 @@ Requires:       perl-Archive-Tar, perl-autodie, perl-B-Debug,
 Requires:       perl-Compress-Raw-Bzip2,
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-constant,
 Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
-Requires:       perl-CPAN-Meta-YAML, perl-Encode
+Requires:       perl-CPAN-Meta-YAML, perl-Encode, perl-encoding
 Requires:       perl-Data-Dumper, perl-DB_File, perl-Devel-PPPort,
 Requires:       perl-Digest, perl-Digest-MD5,
 Requires:       perl-Digest-SHA, perl-Env, perl-Exporter, perl-experimental
@@ -2392,12 +2421,14 @@ sed \
 
 # Encode
 %exclude %{_bindir}/piconv
-%exclude %{archlib}/encoding.pm
 %exclude %{archlib}/Encode*
 %exclude %{archlib}/auto/Encode*
 %exclude %{_mandir}/man1/piconv.1*
-%exclude %{_mandir}/man3/encoding.3*
 %exclude %{_mandir}/man3/Encode*.3*
+
+# encoding
+%exclude %{archlib}/encoding.pm
+%exclude %{_mandir}/man3/encoding.3*
 
 # Encode-devel
 %exclude %{_bindir}/enc2xs
@@ -3054,15 +3085,17 @@ sed \
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Encode
 %{_bindir}/piconv
-%{archlib}/encoding.pm
 %{archlib}/Encode*
 %{archlib}/auto/Encode*
 %{privlib}/Encode
 %exclude %{privlib}/Encode/*.e2x
 %exclude %{privlib}/Encode/encode.h
 %{_mandir}/man1/piconv.1*
-%{_mandir}/man3/encoding.3*
 %{_mandir}/man3/Encode*.3*
+
+%files encoding
+%{archlib}/encoding.pm
+%{_mandir}/man3/encoding.3*
 
 %files Encode-devel
 %{_bindir}/enc2xs
@@ -3625,6 +3658,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Nov 19 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-314
+- Consider Filter::Util::Call dependency as mandatory (bug #1165183)
+- Sub-package encoding module
+
 * Thu Nov 13 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-313
 - Freeze epoch at perl-Pod-Checker and perl-Pod-Usage (bug #1163490)
 - Remove bundled perl-ExtUtils-Command (bug #1158536)
