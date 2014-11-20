@@ -2262,6 +2262,7 @@ sed \
 
 
 # libs
+%exclude %dir %{archlib}/CORE
 %exclude %{archlib}/CORE/libperl.so
 %exclude %{_libdir}/libperl.so.*
 %exclude %{perl_vendorarch}
@@ -2292,12 +2293,12 @@ sed \
 %exclude %{_mandir}/man1/psed.1*
 %exclude %{_mandir}/man1/s2p.1*
 
-
 # Archive-Tar
 %exclude %{_bindir}/ptar
 %exclude %{_bindir}/ptardiff
 %exclude %{_bindir}/ptargrep
-%exclude %{privlib}/Archive/Tar/
+%exclude %dir %{privlib}/Archive
+%exclude %{privlib}/Archive/Tar
 %exclude %{privlib}/Archive/Tar.pm
 %exclude %{_mandir}/man1/ptar.1*
 %exclude %{_mandir}/man1/ptardiff.1*
@@ -2322,7 +2323,7 @@ sed \
 %exclude %{_mandir}/man3/Carp.*
 
 # CGI
-%exclude %{privlib}/CGI/
+%exclude %{privlib}/CGI
 %exclude %{privlib}/CGI.pm
 %exclude %{_mandir}/man3/CGI.3*
 %exclude %{_mandir}/man3/CGI::*.3*
@@ -2333,8 +2334,9 @@ sed \
 
 # CPAN
 %exclude %{_bindir}/cpan
+%exclude %dir %{privlib}/App
 %exclude %{privlib}/App/Cpan.pm
-%exclude %{privlib}/CPAN/
+%exclude %{privlib}/CPAN
 %exclude %{privlib}/CPAN.pm
 %exclude %{_mandir}/man1/cpan.1*
 %exclude %{_mandir}/man3/App::Cpan.*
@@ -2342,7 +2344,9 @@ sed \
 %exclude %{_mandir}/man3/CPAN:*
 
 # CPAN-Meta
+%exclude %dir %{privlib}/CPAN
 %exclude %{privlib}/CPAN/Meta.pm
+%exclude %dir %{privlib}/CPAN/Meta
 %exclude %{privlib}/CPAN/Meta/Converter.pm
 %exclude %{privlib}/CPAN/Meta/Feature.pm
 %exclude %{privlib}/CPAN/Meta/History.pm
@@ -2352,30 +2356,39 @@ sed \
 %exclude %{_mandir}/man3/CPAN::Meta*
 
 # CPAN-Meta-Requirements
+%exclude %dir %{privlib}/CPAN
+%exclude %dir %{privlib}/CPAN/Meta
 %exclude %{privlib}/CPAN/Meta/Requirements.pm
 %exclude %{_mandir}/man3/CPAN::Meta::Requirements.3*
 
 # CPAN-Meta-YAML
+%exclude %dir %{privlib}/CPAN
+%exclude %dir %{privlib}/CPAN/Meta
 %exclude %{privlib}/CPAN/Meta/YAML.pm
 %exclude %{_mandir}/man3/CPAN::Meta::YAML*
 
 # Parse-CPAN-Meta
-%exclude %dir %{privlib}/Parse/
-%exclude %dir %{privlib}/Parse/CPAN/
+%exclude %dir %{privlib}/Parse
+%exclude %dir %{privlib}/Parse/CPAN
 %exclude %{privlib}/Parse/CPAN/Meta.pm
 %exclude %{_mandir}/man3/Parse::CPAN::Meta.3*
 
-
 # Compress-Raw-Bzip2
 %exclude %dir %{archlib}/Compress
+%exclude %dir %{archlib}/Compress/Raw
 %exclude %{archlib}/Compress/Raw/Bzip2.pm
+%exclude %dir %{archlib}/auto/Compress
+%exclude %dir %{archlib}/auto/Compress/Raw
+%exclude %{archlib}/auto/Compress/Raw/Bzip2
 %exclude %{_mandir}/man3/Compress::Raw::Bzip2*
 
 # Compress-Raw-Zlib
-%exclude %{archlib}/Compress/Raw/
-%exclude %{archlib}/auto/Compress
-%exclude %{archlib}/auto/Compress/Raw/
-%exclude %{archlib}/auto/Compress/Raw/Zlib/
+%exclude %dir %{archlib}/Compress
+%exclude %dir %{archlib}/Compress/Raw
+%exclude %{archlib}/Compress/Raw/Zlib.pm
+%exclude %dir %{archlib}/auto/Compress
+%exclude %dir %{archlib}/auto/Compress/Raw
+%exclude %{archlib}/auto/Compress/Raw/Zlib
 %exclude %{_mandir}/man3/Compress::Raw::Zlib*
 
 # Data-Dumper
@@ -2408,14 +2421,18 @@ sed \
 %exclude %{_mandir}/man3/Digest::file.3*
 
 # Digest-MD5
+%exclude %dir %{archlib}/Digest
 %exclude %{archlib}/Digest/MD5.pm
-%exclude %{archlib}/auto/Digest/MD5/
+%exclude %dir %{archlib}/auto/Digest
+%exclude %{archlib}/auto/Digest/MD5
 %exclude %{_mandir}/man3/Digest::MD5.3*
 
 # Digest-SHA
 %exclude %{_bindir}/shasum
+%exclude %dir %{archlib}/Digest
 %exclude %{archlib}/Digest/SHA.pm
-%exclude %{archlib}/auto/Digest/SHA/
+%exclude %dir %{archlib}/auto/Digest
+%exclude %{archlib}/auto/Digest/SHA
 %exclude %{_mandir}/man1/shasum.1*
 %exclude %{_mandir}/man3/Digest::SHA.3*
 
@@ -2423,6 +2440,7 @@ sed \
 %exclude %{_bindir}/piconv
 %exclude %{archlib}/Encode*
 %exclude %{archlib}/auto/Encode*
+%exclude %{privlib}/Encode
 %exclude %{_mandir}/man1/piconv.1*
 %exclude %{_mandir}/man3/Encode*.3*
 
@@ -2432,6 +2450,7 @@ sed \
 
 # Encode-devel
 %exclude %{_bindir}/enc2xs
+%exclude %dir %{privlib}/Encode
 %exclude %{privlib}/Encode/*.e2x
 %exclude %{privlib}/Encode/encode.h
 %exclude %{_mandir}/man1/enc2xs.1*
@@ -2449,7 +2468,7 @@ sed \
 %exclude %{_mandir}/man3/experimental*
 
 # ExtUtils-CBuilder
-%exclude %{privlib}/ExtUtils/CBuilder/
+%exclude %{privlib}/ExtUtils/CBuilder
 %exclude %{privlib}/ExtUtils/CBuilder.pm
 %exclude %{_mandir}/man3/ExtUtils::CBuilder*
 
@@ -2476,10 +2495,10 @@ sed \
 
 # ExtUtils-MakeMaker
 %exclude %{_bindir}/instmodsh
-%exclude %{privlib}/ExtUtils/Command/
-%exclude %{privlib}/ExtUtils/Liblist/
+%exclude %{privlib}/ExtUtils/Command
+%exclude %{privlib}/ExtUtils/Liblist
 %exclude %{privlib}/ExtUtils/Liblist.pm
-%exclude %{privlib}/ExtUtils/MakeMaker/
+%exclude %{privlib}/ExtUtils/MakeMaker
 %exclude %{privlib}/ExtUtils/MakeMaker.pm
 %exclude %{privlib}/ExtUtils/MM*.pm
 %exclude %{privlib}/ExtUtils/MY.pm
@@ -2501,14 +2520,14 @@ sed \
 %exclude %{_mandir}/man3/ExtUtils::Miniperl.3*
 
 # ExtUtils-ParseXS
-%exclude %dir %{privlib}/ExtUtils/ParseXS/
-%exclude %dir %{privlib}/ExtUtils/Typemaps/
+%exclude %dir %{privlib}/ExtUtils/ParseXS
 %exclude %{privlib}/ExtUtils/ParseXS.pm
 %exclude %{privlib}/ExtUtils/ParseXS.pod
 %exclude %{privlib}/ExtUtils/ParseXS/Constants.pm
 %exclude %{privlib}/ExtUtils/ParseXS/CountLines.pm
 %exclude %{privlib}/ExtUtils/ParseXS/Eval.pm
 %exclude %{privlib}/ExtUtils/ParseXS/Utilities.pm
+%exclude %dir %{privlib}/ExtUtils/Typemaps
 %exclude %{privlib}/ExtUtils/Typemaps.pm
 %exclude %{privlib}/ExtUtils/Typemaps/Cmd.pm
 %exclude %{privlib}/ExtUtils/Typemaps/InputMap.pm
@@ -2527,7 +2546,6 @@ sed \
 %exclude %{_mandir}/man3/ExtUtils::Typemaps::OutputMap.3*
 %exclude %{_mandir}/man3/ExtUtils::Typemaps::Type.3*
 
-
 # File-Fetch
 %exclude %{privlib}/File/Fetch.pm
 %exclude %{_mandir}/man3/File::Fetch.3*
@@ -2541,13 +2559,16 @@ sed \
 %exclude %{_mandir}/man3/File::Temp.3*
 
 # Filter
+%exclude %dir %{archlib}/auto/Filter
 %exclude %{archlib}/auto/Filter/Util
+%exclude %dir %{archlib}/Filter
 %exclude %{archlib}/Filter/Util
 %exclude %{privlib}/pod/perlfilter.pod
 %exclude %{_mandir}/man1/perlfilter.*
 %exclude %{_mandir}/man3/Filter::Util::*
 
 # Filter-Simple
+%exclude %dir %{privlib}/Filter
 %exclude %{privlib}/Filter/Simple.pm
 %exclude %{_mandir}/man3/Filter::Simple.3*
 
@@ -2557,16 +2578,22 @@ sed \
 
 # IO-Compress
 %exclude %{_bindir}/zipdetails
+%exclude %dir %{privlib}/IO
+%exclude %dir %{privlib}/IO/Compress
 %exclude %{privlib}/IO/Compress/FAQ.pod
 %exclude %{_mandir}/man1/zipdetails.*
 %exclude %{_mandir}/man3/IO::Compress::FAQ.*
 # Compress-Zlib
+%exclude %dir %{privlib}/Compress
 %exclude %{privlib}/Compress/Zlib.pm
 %exclude %{_mandir}/man3/Compress::Zlib*
 # IO-Compress-Base
 %exclude %{privlib}/File/GlobMapper.pm
-%exclude %{privlib}/IO/Compress/Base/
+%exclude %dir %{privlib}/IO
+%exclude %dir %{privlib}/IO/Compress
+%exclude %{privlib}/IO/Compress/Base
 %exclude %{privlib}/IO/Compress/Base.pm
+%exclude %dir %{privlib}/IO/Uncompress
 %exclude %{privlib}/IO/Uncompress/AnyUncompress.pm
 %exclude %{privlib}/IO/Uncompress/Base.pm
 %exclude %{_mandir}/man3/File::GlobMapper.*
@@ -2574,16 +2601,19 @@ sed \
 %exclude %{_mandir}/man3/IO::Uncompress::AnyUncompress.*
 %exclude %{_mandir}/man3/IO::Uncompress::Base.*
 # IO-Compress-Zlib
-%exclude %{privlib}/IO/Compress/Adapter/
+%exclude %dir %{privlib}/IO
+%exclude %dir %{privlib}/IO/Compress
+%exclude %{privlib}/IO/Compress/Adapter
 %exclude %{privlib}/IO/Compress/Deflate.pm
-%exclude %{privlib}/IO/Compress/Gzip/
+%exclude %{privlib}/IO/Compress/Gzip
 %exclude %{privlib}/IO/Compress/Gzip.pm
 %exclude %{privlib}/IO/Compress/RawDeflate.pm
 %exclude %{privlib}/IO/Compress/Bzip2.pm
-%exclude %{privlib}/IO/Compress/Zip/
+%exclude %{privlib}/IO/Compress/Zip
 %exclude %{privlib}/IO/Compress/Zip.pm
-%exclude %{privlib}/IO/Compress/Zlib/
-%exclude %{privlib}/IO/Uncompress/Adapter/
+%exclude %{privlib}/IO/Compress/Zlib
+%exclude %dir %{privlib}/IO/Uncompress
+%exclude %{privlib}/IO/Uncompress/Adapter
 %exclude %{privlib}/IO/Uncompress/AnyInflate.pm
 %exclude %{privlib}/IO/Uncompress/Bunzip2.pm
 %exclude %{privlib}/IO/Uncompress/Gunzip.pm
@@ -2603,14 +2633,18 @@ sed \
 %exclude %{_mandir}/man3/IO::Uncompress::Unzip*
 
 # IO-Socket-IP
+%exclude %dir %{privlib}/IO
+%exclude %dir %{privlib}/IO/Socket
 %exclude %{privlib}/IO/Socket/IP.pm
 %exclude %{_mandir}/man3/IO::Socket::IP.*
 
 # IO-Zlib
+%exclude %dir %{privlib}/IO
 %exclude %{privlib}/IO/Zlib.pm
 %exclude %{_mandir}/man3/IO::Zlib.*
 
 # HTTP-Tiny
+%exclude %dir %{privlib}/HTTP
 %exclude %{privlib}/HTTP/Tiny.pm
 %exclude %{_mandir}/man3/HTTP::Tiny*
 
@@ -2620,6 +2654,7 @@ sed \
 
 # JSON-PP
 %exclude %{_bindir}/json_pp
+%exclude %dir %{privlib}/JSON
 %exclude %{privlib}/JSON/PP
 %exclude %{privlib}/JSON/PP.pm
 %exclude %{_mandir}/man1/json_pp.1*
@@ -2627,6 +2662,7 @@ sed \
 %exclude %{_mandir}/man3/JSON::PP::Boolean.3pm*
 
 # Locale-Codes
+%exclude %dir %{privlib}/Locale
 %exclude %{privlib}/Locale/Codes
 %exclude %{privlib}/Locale/Codes.*
 %exclude %{privlib}/Locale/Country.*
@@ -2641,6 +2677,7 @@ sed \
 %exclude %{_mandir}/man3/Locale::Script.*
 
 # Locale-Maketext
+%exclude %dir %{privlib}/Locale
 %exclude %dir %{privlib}/Locale/Maketext
 %exclude %{privlib}/Locale/Maketext.*
 %exclude %{privlib}/Locale/Maketext/Cookbook.*
@@ -2654,20 +2691,24 @@ sed \
 %exclude %{_mandir}/man3/Locale::Maketext::TPJ13.*
 
 # Locale-Maketext-Simple
+%exclude %dir %{privlib}/Locale
+%exclude %dir %{privlib}/Locale/Maketext
 %exclude %{privlib}/Locale/Maketext/Simple.pm
 %exclude %{_mandir}/man3/Locale::Maketext::Simple.*
 
 
 # Module-Build
 %exclude %{_bindir}/config_data
-%exclude %{privlib}/inc/
-%exclude %{privlib}/Module/Build/
+%exclude %{privlib}/inc
+%exclude %dir %{privlib}/Module
+%exclude %{privlib}/Module/Build
 %exclude %{privlib}/Module/Build.pm
 %exclude %{_mandir}/man1/config_data.1*
 %exclude %{_mandir}/man3/Module::Build*
 %exclude %{_mandir}/man3/inc::latest.3*
 
 # Module-CoreList
+%exclude %dir %{privlib}/Module
 %exclude %{privlib}/Module/CoreList
 %exclude %{privlib}/Module/CoreList.pm
 %exclude %{privlib}/Module/CoreList.pod
@@ -2678,18 +2719,22 @@ sed \
 %exclude %{_mandir}/man1/corelist*
 
 # Module-Load
+%exclude %dir %{privlib}/Module
 %exclude %{privlib}/Module/Load.pm
 %exclude %{_mandir}/man3/Module::Load.*
 
 # Module-Load-Conditional
-%exclude %{privlib}/Module/Load/
+%exclude %dir %{privlib}/Module
+%exclude %{privlib}/Module/Load
 %exclude %{_mandir}/man3/Module::Load::Conditional*
 
 # Module-Loaded
+%exclude %dir %{privlib}/Module
 %exclude %{privlib}/Module/Loaded.pm
 %exclude %{_mandir}/man3/Module::Loaded*
 
 # Module-Metadata
+%exclude %dir %{privlib}/Module
 %exclude %{privlib}/Module/Metadata.pm
 %exclude %{_mandir}/man3/Module::Metadata.3pm*
 
@@ -2710,6 +2755,7 @@ sed \
 %exclude %{_mandir}/man3/Params::Check*
 
 # Perl-OSType
+%exclude %dir %{privlib}/Perl
 %exclude %{privlib}/Perl/OSType.pm
 %exclude %{_mandir}/man3/Perl::OSType.3pm*
 
@@ -2802,8 +2848,10 @@ sed \
 
 # Test-Harness
 %exclude %{_bindir}/prove
+%exclude %dir %{privlib}/App
 %exclude %{privlib}/App/Prove*
 %exclude %{privlib}/TAP*
+%exclude %dir %{privlib}/Test
 %exclude %{privlib}/Test/Harness*
 %exclude %{_mandir}/man1/prove.1*
 %exclude %{_mandir}/man3/App::Prove*
@@ -2811,6 +2859,7 @@ sed \
 %exclude %{_mandir}/man3/Test::Harness*
 
 # Test-Simple
+%exclude %dir %{privlib}/Test
 %exclude %{privlib}/Test/More*
 %exclude %{privlib}/Test/Builder*
 %exclude %{privlib}/Test/Simple*
@@ -2830,8 +2879,10 @@ sed \
 %exclude %{_mandir}/man3/Thread::Queue.*
 
 # Time-HiRes
+%exclude %dir %{archlib}/Time
 %exclude %{archlib}/Time/HiRes.pm
-%exclude %{archlib}/auto/Time/HiRes/
+%exclude %dir %{archlib}/auto/Time
+%exclude %{archlib}/auto/Time/HiRes
 %exclude %{_mandir}/man3/Time::HiRes.*
 
 # Time-Local
@@ -2839,9 +2890,11 @@ sed \
 %exclude %{_mandir}/man3/Time::Local.*
 
 # Time-Piece
+%exclude %dir %{archlib}/Time
 %exclude %{archlib}/Time/Piece.pm
 %exclude %{archlib}/Time/Seconds.pm
-%exclude %{archlib}/auto/Time/Piece/
+%exclude %dir %{archlib}/auto/Time
+%exclude %{archlib}/auto/Time/Piece
 %exclude %{_mandir}/man3/Time::Piece.3*
 %exclude %{_mandir}/man3/Time::Seconds.3*
 
@@ -2872,6 +2925,7 @@ sed \
 
 %files libs
 %defattr(-,root,root)
+%dir %{archlib}/CORE
 %{archlib}/CORE/libperl.so
 %{_libdir}/libperl.so.*
 %dir %{archlib}
@@ -2924,7 +2978,8 @@ sed \
 %{_bindir}/ptar
 %{_bindir}/ptardiff
 %{_bindir}/ptargrep
-%{privlib}/Archive/Tar/ 
+%dir %{privlib}/Archive
+%{privlib}/Archive/Tar 
 %{privlib}/Archive/Tar.pm
 %{_mandir}/man1/ptar.1*
 %{_mandir}/man1/ptardiff.1*
@@ -2944,6 +2999,7 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files B-Debug
+%dir %{privlib}/B
 %{privlib}/B/Debug.pm
 %{_mandir}/man3/B::Debug.3*
 %endif
@@ -2964,18 +3020,18 @@ sed \
 %dir %{archlib}/Compress
 %dir %{archlib}/Compress/Raw
 %{archlib}/Compress/Raw/Bzip2.pm
-%dir %{archlib}/auto/Compress/
-%dir %{archlib}/auto/Compress/Raw/
-%{archlib}/auto/Compress/Raw/Bzip2/
+%dir %{archlib}/auto/Compress
+%dir %{archlib}/auto/Compress/Raw
+%{archlib}/auto/Compress/Raw/Bzip2
 %{_mandir}/man3/Compress::Raw::Bzip2*
 
 %files Compress-Raw-Zlib
 %dir %{archlib}/Compress
 %dir %{archlib}/Compress/Raw
 %{archlib}/Compress/Raw/Zlib.pm
-%dir %{archlib}/auto/Compress/
-%dir %{archlib}/auto/Compress/Raw/
-%{archlib}/auto/Compress/Raw/Zlib/
+%dir %{archlib}/auto/Compress
+%dir %{archlib}/auto/Compress/Raw
+%{archlib}/auto/Compress/Raw/Zlib
 %{_mandir}/man3/Compress::Raw::Zlib*
 %endif
 
@@ -2988,8 +3044,9 @@ sed \
 %if %{dual_life} || %{rebuild_from_scratch}
 %files CPAN
 %{_bindir}/cpan
+%dir %{privlib}/App
 %{privlib}/App/Cpan.pm
-%{privlib}/CPAN/
+%{privlib}/CPAN
 %{privlib}/CPAN.pm
 %{_mandir}/man1/cpan.1*
 %{_mandir}/man3/App::Cpan.*
@@ -3017,16 +3074,19 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files CPAN-Meta-Requirements
+%dir %{privlib}/CPAN
+%dir %{privlib}/CPAN/Meta
 %{privlib}/CPAN/Meta/Requirements.pm
 %{_mandir}/man3/CPAN::Meta::Requirements.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files CPAN-Meta-YAML
+%dir %{privlib}/CPAN
+%dir %{privlib}/CPAN/Meta
 %{privlib}/CPAN/Meta/YAML.pm
 %{_mandir}/man3/CPAN::Meta::YAML*
 %endif
-
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Data-Dumper
@@ -3048,7 +3108,9 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Devel-PPPort
+%dir %{archlib}/Devel
 %{archlib}/Devel/PPPort.pm
+%dir %{archlib}/auto/Devel
 %dir %{archlib}/auto/Devel/PPPort
 %{archlib}/auto/Devel/PPPort/PPPort.so
 %{_mandir}/man3/Devel::PPPort.3*
@@ -3067,17 +3129,20 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Digest-MD5
+%dir %{archlib}/Digest
 %{archlib}/Digest/MD5.pm
-%{archlib}/auto/Digest/MD5/
+%dir %{archlib}/auto/Digest
+%{archlib}/auto/Digest/MD5
 %{_mandir}/man3/Digest::MD5.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Digest-SHA
 %{_bindir}/shasum
-%dir %{archlib}/Digest/
+%dir %{archlib}/Digest
 %{archlib}/Digest/SHA.pm
-%{archlib}/auto/Digest/SHA/
+%dir %{archlib}/auto/Digest
+%{archlib}/auto/Digest/SHA
 %{_mandir}/man1/shasum.1*
 %{_mandir}/man3/Digest::SHA.3*
 %endif
@@ -3099,6 +3164,7 @@ sed \
 
 %files Encode-devel
 %{_bindir}/enc2xs
+%dir %{privlib}/Encode
 %{privlib}/Encode/*.e2x
 %{privlib}/Encode/encode.h
 %{_mandir}/man1/enc2xs.1*
@@ -3124,23 +3190,27 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-CBuilder
-%{privlib}/ExtUtils/CBuilder/
+%dir %{privlib}/ExtUtils
+%{privlib}/ExtUtils/CBuilder
 %{privlib}/ExtUtils/CBuilder.pm
 %{_mandir}/man3/ExtUtils::CBuilder*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-Command
+%dir %{privlib}/ExtUtils
 %{privlib}/ExtUtils/Command.pm
 %{_mandir}/man3/ExtUtils::Command.*
 %endif
 
 %files ExtUtils-Embed
+%dir %{privlib}/ExtUtils
 %{privlib}/ExtUtils/Embed.pm
 %{_mandir}/man3/ExtUtils::Embed*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-Install
+%dir %{privlib}/ExtUtils
 %{privlib}/ExtUtils/Install.pm
 %{privlib}/ExtUtils/Installed.pm
 %{privlib}/ExtUtils/Packlist.pm
@@ -3151,6 +3221,7 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-Manifest
+%dir %{privlib}/ExtUtils
 %{privlib}/ExtUtils/Manifest.pm
 %{privlib}/ExtUtils/MANIFEST.SKIP
 %{_mandir}/man3/ExtUtils::Manifest.3*
@@ -3159,10 +3230,11 @@ sed \
 %if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-MakeMaker
 %{_bindir}/instmodsh
+%dir %{privlib}/ExtUtils
 %{privlib}/ExtUtils/Command/
-%{privlib}/ExtUtils/Liblist/
+%{privlib}/ExtUtils/Liblist
 %{privlib}/ExtUtils/Liblist.pm
-%{privlib}/ExtUtils/MakeMaker/
+%{privlib}/ExtUtils/MakeMaker
 %{privlib}/ExtUtils/MakeMaker.pm
 %{privlib}/ExtUtils/MM*.pm
 %{privlib}/ExtUtils/MY.pm
@@ -3181,19 +3253,21 @@ sed \
 %endif
 
 %files ExtUtils-Miniperl
+%dir %{privlib}/ExtUtils
 %{privlib}/ExtUtils/Miniperl.pm
 %{_mandir}/man3/ExtUtils::Miniperl.3*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-ParseXS
-%dir %{privlib}/ExtUtils/ParseXS/
-%dir %{privlib}/ExtUtils/Typemaps/
+%dir %{privlib}/ExtUtils
+%dir %{privlib}/ExtUtils/ParseXS
 %{privlib}/ExtUtils/ParseXS.pm
 %{privlib}/ExtUtils/ParseXS.pod
 %{privlib}/ExtUtils/ParseXS/Constants.pm
 %{privlib}/ExtUtils/ParseXS/CountLines.pm
 %{privlib}/ExtUtils/ParseXS/Eval.pm
 %{privlib}/ExtUtils/ParseXS/Utilities.pm
+%dir %{privlib}/ExtUtils/Typemaps
 %{privlib}/ExtUtils/Typemaps.pm
 %{privlib}/ExtUtils/Typemaps/Cmd.pm
 %{privlib}/ExtUtils/Typemaps/InputMap.pm
@@ -3213,28 +3287,32 @@ sed \
 %{_mandir}/man3/ExtUtils::Typemaps::Type.3*
 %endif
 
-
 %if %{dual_life} || %{rebuild_from_scratch}
 %files File-Fetch
+%dir %{privlib}/File
 %{privlib}/File/Fetch.pm
 %{_mandir}/man3/File::Fetch.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files File-Path
+%dir %{privlib}/File
 %{privlib}/File/Path.pm
 %{_mandir}/man3/File::Path.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files File-Temp
+%dir %{privlib}/File
 %{privlib}/File/Temp.pm
 %{_mandir}/man3/File::Temp.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Filter
+%dir %{archlib}/auto/Filter
 %{archlib}/auto/Filter/Util
+%dir %{archlib}/Filter
 %{archlib}/Filter/Util
 %{privlib}/pod/perlfilter.pod
 %{_mandir}/man1/perlfilter.*
@@ -3243,12 +3321,14 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Filter-Simple
+%dir %{privlib}/Filter
 %{privlib}/Filter/Simple.pm
 %{_mandir}/man3/Filter::Simple.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Getopt-Long
+%dir %{privlib}/Getopt
 %{privlib}/Getopt/Long.pm
 %{_mandir}/man3/Getopt::Long.3*
 %endif
@@ -3257,33 +3337,42 @@ sed \
 %files IO-Compress
 # IO-Compress
 %{_bindir}/zipdetails
+%dir %{privlib}/IO
+%dir %{privlib}/IO/Compress
 %{privlib}/IO/Compress/FAQ.pod
 %{_mandir}/man1/zipdetails.*
 %{_mandir}/man3/IO::Compress::FAQ.*
 # Compress-Zlib
+%dir %{privlib}/Compress
 %{privlib}/Compress/Zlib.pm
 %{_mandir}/man3/Compress::Zlib*
 #IO-Compress-Base
+%dir %{privlib}/File
 %{privlib}/File/GlobMapper.pm
-%{privlib}/IO/Compress/Base/
+%dir %{privlib}/IO
+%dir %{privlib}/IO/Compress
+%{privlib}/IO/Compress/Base
 %{privlib}/IO/Compress/Base.pm
+%dir %{privlib}/IO/Uncompress
 %{privlib}/IO/Uncompress/AnyUncompress.pm
 %{privlib}/IO/Uncompress/Base.pm
 %{_mandir}/man3/File::GlobMapper.*
 %{_mandir}/man3/IO::Compress::Base.*
 %{_mandir}/man3/IO::Uncompress::AnyUncompress.*
 %{_mandir}/man3/IO::Uncompress::Base.*
-
 # IO-Compress-Zlib
-%{privlib}/IO/Compress/Adapter/
+%dir %{privlib}/IO
+%dir %{privlib}/IO/Compress
+%{privlib}/IO/Compress/Adapter
 %{privlib}/IO/Compress/Deflate.pm
 %{privlib}/IO/Compress/Bzip2.pm
-%{privlib}/IO/Compress/Gzip/
+%{privlib}/IO/Compress/Gzip
 %{privlib}/IO/Compress/Gzip.pm
 %{privlib}/IO/Compress/RawDeflate.pm
-%{privlib}/IO/Compress/Zip/
+%{privlib}/IO/Compress/Zip
 %{privlib}/IO/Compress/Zip.pm
-%{privlib}/IO/Compress/Zlib/
+%{privlib}/IO/Compress/Zlib
+%dir %{privlib}/IO/Uncompress
 %{privlib}/IO/Uncompress/Adapter/
 %{privlib}/IO/Uncompress/AnyInflate.pm
 %{privlib}/IO/Uncompress/Bunzip2.pm
@@ -3306,22 +3395,27 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files IO-Socket-IP
+%dir %{privlib}/IO
+%dir %{privlib}/IO/Socket
 %{privlib}/IO/Socket/IP.pm
 %{_mandir}/man3/IO::Socket::IP.*
 %endif
 
 %files IO-Zlib
+%dir %{privlib}/IO
 %{privlib}/IO/Zlib.pm
 %{_mandir}/man3/IO::Zlib.*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files HTTP-Tiny
+%dir %{privlib}/HTTP
 %{privlib}/HTTP/Tiny.pm
 %{_mandir}/man3/HTTP::Tiny*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files IPC-Cmd
+%dir %{privlib}/IPC
 %{privlib}/IPC/Cmd.pm
 %{_mandir}/man3/IPC::Cmd.3*
 %endif
@@ -3329,6 +3423,7 @@ sed \
 %if %{dual_life} || %{rebuild_from_scratch}
 %files JSON-PP
 %{_bindir}/json_pp
+%dir %{privlib}/JSON
 %{privlib}/JSON/PP
 %{privlib}/JSON/PP.pm
 %{_mandir}/man1/json_pp.1*
@@ -3338,6 +3433,7 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Locale-Codes
+%dir %{privlib}/Locale
 %{privlib}/Locale/Codes
 %{privlib}/Locale/Codes.*
 %{privlib}/Locale/Country.*
@@ -3354,6 +3450,7 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Locale-Maketext
+%dir %{privlib}/Locale
 %dir %{privlib}/Locale/Maketext
 %{privlib}/Locale/Maketext.*
 %{privlib}/Locale/Maketext/Cookbook.*
@@ -3368,15 +3465,17 @@ sed \
 %endif
 
 %files Locale-Maketext-Simple
+%dir %{privlib}/Locale
+%dir %{privlib}/Locale/Maketext
 %{privlib}/Locale/Maketext/Simple.pm
 %{_mandir}/man3/Locale::Maketext::Simple.*
-
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Module-Build
 %{_bindir}/config_data
-%{privlib}/inc/
-%{privlib}/Module/Build/
+%{privlib}/inc
+%dir %{privlib}/Module
+%{privlib}/Module/Build
 %{privlib}/Module/Build.pm
 %{_mandir}/man1/config_data.1*
 %{_mandir}/man3/Module::Build*
@@ -3385,6 +3484,7 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Module-CoreList
+%dir %{privlib}/Module
 %{privlib}/Module/CoreList
 %{privlib}/Module/CoreList.pm
 %{privlib}/Module/CoreList.pod
@@ -3397,27 +3497,29 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Module-Load
+%dir %{privlib}/Module
 %{privlib}/Module/Load.pm
 %{_mandir}/man3/Module::Load.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Module-Load-Conditional
-%{privlib}/Module/Load/
+%dir %{privlib}/Module
+%{privlib}/Module/Load
 %{_mandir}/man3/Module::Load::Conditional* 
 %endif
 
 %files Module-Loaded
-%dir %{privlib}/Module/
+%dir %{privlib}/Module
 %{privlib}/Module/Loaded.pm
 %{_mandir}/man3/Module::Loaded*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Module-Metadata
+%dir %{privlib}/Module
 %{privlib}/Module/Metadata.pm
 %{_mandir}/man3/Module::Metadata.3pm*
 %endif
-
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Package-Constants
@@ -3428,8 +3530,9 @@ sed \
 %if %{dual_life} || %{rebuild_from_scratch}
 %files PathTools
 %{archlib}/Cwd.pm
+%dir %{archlib}/File
 %{archlib}/File/Spec*
-%{archlib}/auto/Cwd/
+%{archlib}/auto/Cwd
 %{_mandir}/man3/Cwd*
 %{_mandir}/man3/File::Spec*
 %endif
@@ -3456,6 +3559,7 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Perl-OSType
+%dir %{privlib}/Perl
 %{privlib}/Perl/OSType.pm
 %{_mandir}/man3/Perl::OSType.3pm*
 %endif
@@ -3463,19 +3567,21 @@ sed \
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Pod-Checker
 %{_bindir}/podchecker
+%dir %{privlib}/Pod
 %{privlib}/Pod/Checker.pm
 %{_mandir}/man1/podchecker.*
 %{_mandir}/man3/Pod::Checker.*
 %endif
 
 %files Pod-Escapes
+%dir %{privlib}/Pod
 %{privlib}/Pod/Escapes.pm
 %{_mandir}/man3/Pod::Escapes.*
-
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Pod-Parser
 %{_bindir}/podselect
+%dir %{privlib}/Pod
 %{privlib}/Pod/Find.pm
 %{privlib}/Pod/InputObjects.pm
 %{privlib}/Pod/ParseUtils.pm
@@ -3495,8 +3601,9 @@ sed \
 %files Pod-Perldoc
 %{_bindir}/perldoc
 %{privlib}/pod/perldoc.pod
+%dir %{privlib}/Pod
+%{privlib}/Pod/Perldoc
 %{privlib}/Pod/Perldoc.pm
-%{privlib}/Pod/Perldoc/
 %{_mandir}/man1/perldoc.1*
 %{_mandir}/man3/Pod::Perldoc*
 %endif
@@ -3504,6 +3611,7 @@ sed \
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Pod-Usage
 %{_bindir}/pod2usage
+%dir %{privlib}/Pod
 %{privlib}/Pod/Usage.pm
 %{_mandir}/man1/pod2usage.*
 %{_mandir}/man3/Pod::Usage.*
@@ -3514,6 +3622,7 @@ sed \
 %{_bindir}/pod2man
 %{_bindir}/pod2text
 %{privlib}/pod/perlpodstyle.pod
+%dir %{privlib}/Pod
 %{privlib}/Pod/Man.pm
 %{privlib}/Pod/ParseLink.pm
 %{privlib}/Pod/Text
@@ -3528,7 +3637,8 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Pod-Simple
-%{privlib}/Pod/Simple/ 
+%dir %{privlib}/Pod
+%{privlib}/Pod/Simple
 %{privlib}/Pod/Simple.pm
 %{privlib}/Pod/Simple.pod
 %{_mandir}/man3/Pod::Simple*
@@ -3536,17 +3646,19 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Scalar-List-Utils
-%{archlib}/List/
-%{archlib}/Scalar/
-%{archlib}/auto/List/
+%{archlib}/List
+%{archlib}/Scalar
+%{archlib}/auto/List
 %{_mandir}/man3/List::Util*
 %{_mandir}/man3/Scalar::Util*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Sys-Syslog
+%dir %{archlib}/Sys
 %{archlib}/Sys/Syslog.pm
-%{archlib}/auto/Sys/Syslog/
+%dir %{archlib}/auto/Sys
+%{archlib}/auto/Sys/Syslog
 %{_mandir}/man3/Sys::Syslog.*
 %endif
 
@@ -3561,12 +3673,13 @@ sed \
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Storable
 %{archlib}/Storable.pm
-%{archlib}/auto/Storable/
+%{archlib}/auto/Storable
 %{_mandir}/man3/Storable.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Term-ANSIColor
+%dir %{privlib}/Term
 %{privlib}/Term/ANSIColor.pm
 %{_mandir}/man3/Term::ANSIColor*
 %endif
@@ -3574,8 +3687,10 @@ sed \
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Test-Harness
 %{_bindir}/prove
+%dir %{privlib}/App
 %{privlib}/App/Prove*
 %{privlib}/TAP*
+%dir %{privlib}/Test
 %{privlib}/Test/Harness*
 %{_mandir}/man1/prove.1*
 %{_mandir}/man3/App::Prove*
@@ -3585,6 +3700,7 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Test-Simple
+%dir %{privlib}/Test
 %{privlib}/Test/More*
 %{privlib}/Test/Builder*
 %{privlib}/Test/Simple*
@@ -3597,34 +3713,40 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Text-ParseWords
+%dir %{privlib}/Text
 %{privlib}/Text/ParseWords.pm
 %{_mandir}/man3/Text::ParseWords.*
 %endif
 
-
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Thread-Queue
+%dir %{privlib}/Thread
 %{privlib}/Thread/Queue.pm
 %{_mandir}/man3/Thread::Queue.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Time-HiRes
+%dir %{archlib}/Time
 %{archlib}/Time/HiRes.pm
-%{archlib}/auto/Time/HiRes/
+%dir %{archlib}/auto/Time
+%{archlib}/auto/Time/HiRes
 %{_mandir}/man3/Time::HiRes.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Time-Local
+%dir %{privlib}/Time
 %{privlib}/Time/Local.pm
 %{_mandir}/man3/Time::Local.*
 %endif
 
 %files Time-Piece
+%dir %{archlib}/Time
 %{archlib}/Time/Piece.pm 
 %{archlib}/Time/Seconds.pm
-%{archlib}/auto/Time/Piece/        
+%dir %{archlib}/auto/Time
+%{archlib}/auto/Time/Piece
 %{_mandir}/man3/Time::Piece.3*
 %{_mandir}/man3/Time::Seconds.3*
 
@@ -3638,6 +3760,7 @@ sed \
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files threads-shared
+%dir %{archlib}/auto/threads
 %{archlib}/auto/threads/shared*
 %dir %{archlib}/threads
 %{archlib}/threads/shared*
@@ -3661,6 +3784,8 @@ sed \
 * Wed Nov 19 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-314
 - Consider Filter::Util::Call dependency as mandatory (bug #1165183)
 - Sub-package encoding module
+- Own upper directories by each package that installs a file there and
+  remove empty directories (bug #1165013)
 
 * Thu Nov 13 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-313
 - Freeze epoch at perl-Pod-Checker and perl-Pod-Usage (bug #1163490)
