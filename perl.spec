@@ -97,6 +97,10 @@ Patch26:        perl-5.18.2-Destroy-GDBM-NDBM-ODBM-SDBM-_File-objects-only-from-
 # in upstream after 5.21.6
 Patch27:        perl-5.21.6-Report-inaccesible-file-on-failed-require.patch
 
+# Use stronger algorithm needed for FIPS in t/op/taint.t, bug #1128032,
+# RT#123338
+Patch28:        perl-5.21.6-t-op-taint.t-Perform-SHA-256-algorithm-by-crypt-if-d.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -1977,6 +1981,7 @@ tarball from perl.org.
 %patch25 -p1
 %patch26 -p1
 %patch27 -p1
+%patch28 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -1997,6 +2002,7 @@ perl -x patchlevel.h \
     'Fedora Patch25: Use stronger algorithm needed for FIPS in t/op/crypt.t (RT#121591)' \
     'Fedora Patch26: Make *DBM_File desctructors thread-safe (RT#61912)' \
     'Fedora Patch27: Report inaccesible file on failed require (RT#123270)' \
+    'Fedora Patch28: Use stronger algorithm needed for FIPS in t/op/taint.t (RT#123338)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3789,6 +3795,7 @@ sed \
 %changelog
 * Mon Dec 01 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-315
 - Report inaccesible file on failed require (bug #1166504)
+- Use stronger algorithm needed for FIPS in t/op/taint.t (bug #1128032)
 
 * Wed Nov 19 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-314
 - Consider Filter::Util::Call dependency as mandatory (bug #1165183)
