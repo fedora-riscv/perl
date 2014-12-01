@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        314%{?dist}
+Release:        315%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -92,6 +92,10 @@ Patch25:        perl-5.18.2-t-op-crypt.t-Perform-SHA-256-algorithm-if-default-on
 
 # Make *DBM_File desctructors thread-safe, bug #1107543, RT#61912
 Patch26:        perl-5.18.2-Destroy-GDBM-NDBM-ODBM-SDBM-_File-objects-only-from-.patch
+
+# Report inaccesible file on failed require, bug #1166504, RT#123270,
+# in upstream after 5.21.6
+Patch27:        perl-5.21.6-Report-inaccesible-file-on-failed-require.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -1972,6 +1976,7 @@ tarball from perl.org.
 %patch22 -p1
 %patch25 -p1
 %patch26 -p1
+%patch27 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -1991,6 +1996,7 @@ perl -x patchlevel.h \
     'Fedora Patch22: Document Math::BigInt::CalcEmu requires Math::BigInt (CPAN RT#85015)' \
     'Fedora Patch25: Use stronger algorithm needed for FIPS in t/op/crypt.t (RT#121591)' \
     'Fedora Patch26: Make *DBM_File desctructors thread-safe (RT#61912)' \
+    'Fedora Patch27: Report inaccesible file on failed require (RT#123270)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3781,6 +3787,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Dec 01 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-315
+- Report inaccesible file on failed require (bug #1166504)
+
 * Wed Nov 19 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-314
 - Consider Filter::Util::Call dependency as mandatory (bug #1165183)
 - Sub-package encoding module
