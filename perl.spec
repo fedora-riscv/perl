@@ -98,7 +98,7 @@ Patch26:        perl-5.18.2-Destroy-GDBM-NDBM-ODBM-SDBM-_File-objects-only-from-
 Patch27:        perl-5.21.6-Report-inaccesible-file-on-failed-require.patch
 
 # Use stronger algorithm needed for FIPS in t/op/taint.t, bug #1128032,
-# RT#123338
+# RT#123338, in upstream after 5.21.6
 Patch28:        perl-5.21.6-t-op-taint.t-Perform-SHA-256-algorithm-by-crypt-if-d.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
