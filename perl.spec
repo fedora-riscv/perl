@@ -316,9 +316,17 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.96
-Requires:       %perl_compat
-Requires:       perl(Compress::Zlib), perl(IO::Zlib)
 BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(IO::Zlib) >= 1.01
+# Optional run-time:
+Requires:       perl(IO::Compress:::Bzip2) >= 2.015
+# IO::String not used if perl supports useperlio which is true
+# Use Compress::Zlib's version for IO::Uncompress::Bunzip2
+Requires:       perl(IO::Uncompress::Bunzip2) >= 2.015
+%if !%{defined perl_bootstrap}
+Requires:       perl(Text::Diff)
+%endif
 
 %description Archive-Tar
 Archive::Tar provides an object oriented mechanism for handling tar files.  It
