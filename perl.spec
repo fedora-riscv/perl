@@ -732,7 +732,7 @@ Conflicts:      perl < 4:5.16.2-256
 The Encode module provides the interface between Perl strings and the rest
 of the system. Perl strings are sequences of characters.
 
-%package -n perl-encoding
+%package encoding
 Summary:        Write your Perl script in non-ASCII or non-UTF-8
 Group:          Development/Libraries
 License:        GPL+ or Artistic
@@ -750,7 +750,7 @@ Requires:       perl(Filter::Util::Call)
 Requires:       perl(utf8)
 Conflicts:      perl-Encode < 2:2.60-314
 
-%description -n perl-encoding
+%description encoding
 With the encoding pragma, you can write your Perl script in any encoding you
 like (so long as the Encode module supports it) and still enjoy Unicode
 support.
