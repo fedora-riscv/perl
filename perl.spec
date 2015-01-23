@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        315%{?dist}
+Release:        316%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2191,8 +2191,14 @@ install -p -m 644 %{SOURCE3} ${RPM_BUILD_ROOT}%{_rpmconfigdir}/macros.d/
 #
 # Core modules removal
 #
-find $RPM_BUILD_ROOT -type f -name '*.bs' -empty | xargs rm -f 
+# Dual-living binaries clashes on debuginfo files between perl and standalone
+# packages. Excluding is not enough, we need to remove them. This is
+# a work-around for rpmbuild bug #878863.
+%if !%{dual_life} && !%{rebuild_from_scratch}
+rm ${RPM_BUILD_ROOT}%{_bindir}/a2p
+%endif
 
+find $RPM_BUILD_ROOT -type f -name '*.bs' -empty | xargs rm -f
 chmod -R u+w $RPM_BUILD_ROOT/*
 
 # miniperl? As an interpreter? How odd. Anyway, a symlink does it:
@@ -2299,7 +2305,9 @@ sed \
 %exclude %{_mandir}/man1/perlxs*
 
 # App-a2p
+%if %{dual_life} || %{rebuild_from_scratch}
 %exclude %{_bindir}/a2p
+%endif
 %exclude %{privlib}/pod/a2p.pod
 %exclude %{_mandir}/man1/a2p.1*
 
@@ -3801,6 +3809,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jan 23 2015 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-316
+- Delete dual-living programs clashing on debuginfo files (bug #878863)
+
 * Mon Dec 01 2014 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-315
 - Report inaccesible file on failed require (bug #1166504)
 - Use stronger algorithm needed for FIPS in t/op/taint.t (bug #1128032)
