@@ -1213,7 +1213,7 @@ Requires:       perl(Carp)
 Requires:       perl(ExtUtils::Installed)
 Requires:       perl(ExtUtils::MakeMaker)
 BuildArch:      noarch
-Conflicts:      perl < 2:0.42.10-4
+Conflicts:      perl-Module-Build < 2:0.42.05-317
 
 %description inc-latest
 The C<inc::latest> module helps bootstrap configure-time dependencies for
