@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        316%{?dist}
+Release:        317%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1200,6 +1200,28 @@ resumes after EINTR.
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
+%package inc-latest
+Summary:        Use modules bundled in inc/ if they are newer than installed ones
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+# Check epoch with standalone package
+Epoch:          2
+# real version 0.4205
+Version:        0.42.05
+Requires:       %perl_compat
+Requires:       perl(Carp)
+Requires:       perl(ExtUtils::Installed)
+Requires:       perl(ExtUtils::MakeMaker)
+BuildArch:      noarch
+Conflicts:      perl < 2:0.42.10-4
+
+%description inc-latest
+The C<inc::latest> module helps bootstrap configure-time dependencies for
+CPAN distributions.  These dependencies get bundled into the C<inc>
+directory within a distribution and are used by Build.PL (or Makefile.PL).
+%endif
+
+%if %{dual_life} || %{rebuild_from_scratch}
 %package JSON-PP
 Summary:        JSON::XS compatible pure-Perl module
 Epoch:          0
@@ -1286,11 +1308,12 @@ License:        GPL+ or Artistic
 # Check epoch with standalone package
 Epoch:          2
 # real version 0.4205
-Version:        0.42.05 
+Version:        0.42.05
 Requires:       perl(Archive::Tar) >= 1.08
 Requires:       perl(CPAN::Meta) >= 2.110420
 Requires:       perl(ExtUtils::CBuilder) >= 0.15
 Requires:       perl(ExtUtils::ParseXS) >= 1.02
+Requires:       perl(inc::latest)
 Requires:       perl-devel
 Requires:       %perl_compat
 %if !%{defined perl_bootstrap}
@@ -1949,7 +1972,7 @@ Requires:       perl-ExtUtils-Manifest, perl-ExtUtils-Miniperl
 Requires:       perl-ExtUtils-ParseXS, perl-File-Fetch
 Requires:       perl-File-Path, perl-File-Temp, perl-Filter,
 Requires:       perl-Filter-Simple, perl-Getopt-Long
-Requires:       perl-HTTP-Tiny, perl-IO-Compress, perl-IO-Socket-IP
+Requires:       perl-HTTP-Tiny, perl-inc-latest, perl-IO-Compress, perl-IO-Socket-IP
 Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
 Requires:       perl-Locale-Codes, perl-Locale-Maketext,
 Requires:       perl-Locale-Maketext-Simple
@@ -2676,6 +2699,10 @@ sed \
 %exclude %{privlib}/HTTP/Tiny.pm
 %exclude %{_mandir}/man3/HTTP::Tiny*
 
+# inc-latest
+%exclude %{privlib}/inc
+%exclude %{_mandir}/man3/inc::latest.3*
+
 # IPC-Cmd
 %exclude %{privlib}/IPC/Cmd.pm
 %exclude %{_mandir}/man3/IPC::Cmd.3*
@@ -2727,13 +2754,11 @@ sed \
 
 # Module-Build
 %exclude %{_bindir}/config_data
-%exclude %{privlib}/inc
 %exclude %dir %{privlib}/Module
 %exclude %{privlib}/Module/Build
 %exclude %{privlib}/Module/Build.pm
 %exclude %{_mandir}/man1/config_data.1*
 %exclude %{_mandir}/man3/Module::Build*
-%exclude %{_mandir}/man3/inc::latest.3*
 
 # Module-CoreList
 %exclude %dir %{privlib}/Module
@@ -3442,6 +3467,12 @@ sed \
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
+%files inc-latest
+%{privlib}/inc
+%{_mandir}/man3/inc::latest.3*
+%endif
+
+%if %{dual_life} || %{rebuild_from_scratch}
 %files IPC-Cmd
 %dir %{privlib}/IPC
 %{privlib}/IPC/Cmd.pm
@@ -3501,13 +3532,11 @@ sed \
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Module-Build
 %{_bindir}/config_data
-%{privlib}/inc
 %dir %{privlib}/Module
 %{privlib}/Module/Build
 %{privlib}/Module/Build.pm
 %{_mandir}/man1/config_data.1*
 %{_mandir}/man3/Module::Build*
-%{_mandir}/man3/inc::latest.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -3809,6 +3838,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Feb 03 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.1-317
+- Sub-package inc-latest module
+
 * Fri Jan 23 2015 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-316
 - Delete dual-living programs clashing on debuginfo files (bug #878863)
 
