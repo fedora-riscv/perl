@@ -1,0 +1,47 @@
+From 6b8383472e2f75b4bbbfe8d80f036c8a3ee6b439 Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Thu, 12 Feb 2015 14:10:36 +1100
+Subject: [PATCH 2/2] h2ph: correct handling of hex constants for the preamble
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ utils/h2ph.PL | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/utils/h2ph.PL b/utils/h2ph.PL
+index 9a8b14d..c46d423 100644
+--- a/utils/h2ph.PL
++++ b/utils/h2ph.PL
+@@ -769,7 +769,7 @@ sub inc_dirs
+ sub build_preamble_if_necessary
+ {
+     # Increment $VERSION every time this function is modified:
+-    my $VERSION     = 3;
++    my $VERSION     = 4;
+     my $preamble    = "$Dest_dir/_h2ph_pre.ph";
+ 
+     # Can we skip building the preamble file?
+@@ -788,6 +788,8 @@ sub build_preamble_if_necessary
+ 
+     open  PREAMBLE, ">$preamble" or die "Cannot open $preamble:  $!";
+ 	print PREAMBLE "# This file was created by h2ph version $VERSION\n";
++        # prevent large hex constants from warning
++        print PREAMBLE "no warnings qw(portable);\n";
+ 
+ 	foreach (sort keys %define) {
+ 	    if ($opt_D) {
+@@ -810,7 +812,7 @@ DEFINE
+ 		# float:
+ 		print PREAMBLE
+ 		    "unless (defined &$_) { sub $_() { $1 } }\n\n";
+-	    } elsif ($define{$_} =~ /^([+-]?\d+)U?L{0,2}$/i) {
++	    } elsif ($define{$_} =~ /^([+-]?\d+|0x[\da-f]+)U?L{0,2}$/i) {
+ 		# integer:
+ 		print PREAMBLE
+ 		    "unless (defined &$_) { sub $_() { $1 } }\n\n";
+-- 
+1.9.3
+

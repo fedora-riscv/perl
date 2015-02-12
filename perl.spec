@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        317%{?dist}
+Release:        318%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -100,6 +100,12 @@ Patch27:        perl-5.21.6-Report-inaccesible-file-on-failed-require.patch
 # Use stronger algorithm needed for FIPS in t/op/taint.t, bug #1128032,
 # RT#123338, in upstream after 5.21.6
 Patch28:        perl-5.21.6-t-op-taint.t-Perform-SHA-256-algorithm-by-crypt-if-d.patch
+
+# Fix Errno.pm generation for GCC 5.0, RT#123784
+Patch29:        perl-5.20.1-Fix-Errno.pm-generation-for-gcc-5.0.patch
+
+# Handle hexadecimal constants by h2ph, RT#123784
+Patch30:        perl-5.21.8-h2ph-correct-handling-of-hex-constants-for-the-pream.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2013,6 +2019,8 @@ tarball from perl.org.
 %patch26 -p1
 %patch27 -p1
 %patch28 -p1
+%patch29 -p1
+%patch30 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2034,6 +2042,8 @@ perl -x patchlevel.h \
     'Fedora Patch26: Make *DBM_File desctructors thread-safe (RT#61912)' \
     'Fedora Patch27: Report inaccesible file on failed require (RT#123270)' \
     'Fedora Patch28: Use stronger algorithm needed for FIPS in t/op/taint.t (RT#123338)' \
+    'Fedora Patch29: Fix Errno.pm generation for GCC 5.0 (RT#123784)' \
+    'Fedora Patch30: Handle hexadecimal constants by h2ph (RT#123784)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3838,6 +3848,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Feb 12 2015 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-318
+- Fix regressions with GCC 5.0
+
 * Tue Feb 03 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.1-317
 - Sub-package inc-latest module
 
