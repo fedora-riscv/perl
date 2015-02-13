@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        291%{?dist}
+Release:        292%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -131,6 +131,9 @@ BuildRequires:  systemtap-sdt-devel
 %if %{with gdbm}
 BuildRequires: gdbm-devel
 %endif
+
+# Regenerate a2p.c bug #1177672
+BuildRequires:  byacc
 
 # For tests
 BuildRequires:  procps, rsyslog
@@ -1979,6 +1982,12 @@ rm -rf 'cpan/Memoize/Memoize/NDBM_File.pm'
 sed -i '\|cpan/Memoize/Memoize/NDBM_File.pm|d' MANIFEST
 %endif
 
+# Regenerate a2p.c bug #1177672
+pushd x2p
+yacc a2p.y
+mv -f y.tab.c a2p.c
+popd
+
 %build
 echo "RPM Build arch: %{_arch}"
 
@@ -3621,6 +3630,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Feb 13 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.1-292
+- Regenerate a2p.c (BZ#1177672)
+
 * Thu Oct 30 2014 Petr Pisar <ppisar@redhat.com> - 4:5.18.4-291
 - Create site paths by cpan for the first time (bug #1132321)
 
