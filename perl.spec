@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        318%{?dist}
+Release:        319%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -101,11 +101,14 @@ Patch27:        perl-5.21.6-Report-inaccesible-file-on-failed-require.patch
 # RT#123338, in upstream after 5.21.6
 Patch28:        perl-5.21.6-t-op-taint.t-Perform-SHA-256-algorithm-by-crypt-if-d.patch
 
-# Fix Errno.pm generation for GCC 5.0, RT#123784
+# Fix Errno.pm generation for GCC 5.0, RT#123784, in upstream after 5.21.8
 Patch29:        perl-5.20.1-Fix-Errno.pm-generation-for-gcc-5.0.patch
 
-# Handle hexadecimal constants by h2ph, RT#123784
+# Handle hexadecimal constants by h2ph, RT#123784, in upstream after 5.21.8
 Patch30:        perl-5.21.8-h2ph-correct-handling-of-hex-constants-for-the-pream.patch
+
+# Do not use -_h2ph_pre.ph from system at tests, RT#123784
+Patch31:        perl-5.21.8-lib-h2ph.t-to-test-generated-t-_h2ph_pre.ph-instead-.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2021,6 +2024,7 @@ tarball from perl.org.
 %patch28 -p1
 %patch29 -p1
 %patch30 -p1
+%patch31 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2044,6 +2048,7 @@ perl -x patchlevel.h \
     'Fedora Patch28: Use stronger algorithm needed for FIPS in t/op/taint.t (RT#123338)' \
     'Fedora Patch29: Fix Errno.pm generation for GCC 5.0 (RT#123784)' \
     'Fedora Patch30: Handle hexadecimal constants by h2ph (RT#123784)' \
+    'Fedora Patch31: Do not use -_h2ph_pre.ph from system at tests (RT#123784)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3848,6 +3853,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Feb 16 2015 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-319
+- Improve h2ph fix for GCC 5.0
+
 * Thu Feb 12 2015 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-318
 - Fix regressions with GCC 5.0
 
