@@ -29,15 +29,6 @@ diff --git a/ext/Errno/Errno_pm.PL b/ext/Errno/Errno_pm.PL
 index 55ad01a..63b5916 100644
 --- a/ext/Errno/Errno_pm.PL
 +++ b/ext/Errno/Errno_pm.PL
-@@ -2,7 +2,7 @@ use ExtUtils::MakeMaker;
- use Config;
- use strict;
- 
--our $VERSION = "1.20_03";
-+our $VERSION = "1.20_04";
- 
- my %err = ();
- 
 @@ -225,20 +225,31 @@ sub write_errno_pm {
      {	# BeOS (support now removed) did not enter this block
      # invoke CPP and read the output
