@@ -1,4 +1,4 @@
-%global perl_version    5.20.1
+%global perl_version    5.20.2
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        319%{?dist}
+Release:        320%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -124,8 +124,11 @@ BuildRequires:  groff-base
 BuildRequires:  libdb-devel, tcsh, zlib-devel, bzip2-devel
 BuildRequires:  systemtap-sdt-devel
 %if %{with gdbm}
-BuildRequires: gdbm-devel
+BuildRequires:  gdbm-devel
 %endif
+
+# Regenerate a2p.c bug #1177672
+BuildRequires:  byacc
 
 # For tests
 BuildRequires:  procps, rsyslog
@@ -1355,7 +1358,7 @@ Summary:        What modules are shipped with versions of perl
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.020001
+Version:        5.20150214
 Requires:       %perl_compat
 Requires:       perl(List::Util)
 Requires:       perl(version) >= 0.88
@@ -2092,6 +2095,12 @@ sed -i '/\(bzip2\|zlib\)-src/d' MANIFEST
 rm -rf 'cpan/Memoize/Memoize/NDBM_File.pm'
 sed -i '\|cpan/Memoize/Memoize/NDBM_File.pm|d' MANIFEST
 %endif
+
+# Regenerate a2p.c bug #1177672
+pushd x2p
+yacc a2p.y
+mv -f y.tab.c a2p.c
+popd
 
 %build
 echo "RPM Build arch: %{_arch}"
@@ -3853,6 +3862,11 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Feb 17 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.2-320
+- 5.20.2 bump (see <http://search.cpan.org/dist/perl-5.20.2/pod/perldelta.pod>
+  for release notes)
+- Regenerate a2p.c (BZ#1177672)
+
 * Mon Feb 16 2015 Petr Pisar <ppisar@redhat.com> - 4:5.20.1-319
 - Improve h2ph fix for GCC 5.0
 
