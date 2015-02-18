@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        320%{?dist}
+Release:        321%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -80,7 +80,7 @@ Patch8:         perl-5.14.1-offtest.patch
 Patch15:        perl-5.16.3-create_libperl_soname.patch
 
 # Install libperl.so to -Dshrpdir value
-Patch16:        perl-5.16.3-Install-libperl.so-to-shrpdir-on-Linux.patch
+Patch16:        perl-5.20.2-Install-libperl.so-to-shrpdir-on-Linux.patch
 
 # Document Math::BigInt::CalcEmu requires Math::BigInt, rhbz#959096,
 # CPAN RT#85015
@@ -102,7 +102,7 @@ Patch27:        perl-5.21.6-Report-inaccesible-file-on-failed-require.patch
 Patch28:        perl-5.21.6-t-op-taint.t-Perform-SHA-256-algorithm-by-crypt-if-d.patch
 
 # Fix Errno.pm generation for GCC 5.0, RT#123784, in upstream after 5.21.8
-Patch29:        perl-5.20.1-Fix-Errno.pm-generation-for-gcc-5.0.patch
+Patch29:        perl-5.20.2-Fix-Errno.pm-generation-for-gcc-5.0.patch
 
 # Handle hexadecimal constants by h2ph, RT#123784, in upstream after 5.21.8
 Patch30:        perl-5.21.8-h2ph-correct-handling-of-hex-constants-for-the-pream.patch
@@ -137,10 +137,11 @@ BuildRequires:  procps, rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.20.1)
+%global perl_compat perl(:MODULE_COMPAT_5.20.2)
 
 # Compat provides
 Provides: %perl_compat
+Provides: perl(:MODULE_COMPAT_5.20.1)
 Provides: perl(:MODULE_COMPAT_5.20.0)
 
 # Threading provides
@@ -151,42 +152,10 @@ Provides: perl(:WITH_LARGEFILES)
 # PerlIO provides
 Provides: perl(:WITH_PERLIO)
 # File provides
-Provides: perl(abbrev.pl)
-Provides: perl(assert.pl)
-Provides: perl(bigfloat.pl)
-Provides: perl(bigint.pl)
-Provides: perl(bigrat.pl)
 Provides: perl(bytes_heavy.pl)
-Provides: perl(cacheout.pl)
-Provides: perl(complete.pl)
-Provides: perl(ctime.pl)
-Provides: perl(dotsh.pl)
 Provides: perl(dumpvar.pl)
-Provides: perl(exceptions.pl)
-Provides: perl(fastcwd.pl)
-Provides: perl(find.pl)
-Provides: perl(finddepth.pl)
-Provides: perl(flush.pl)
-Provides: perl(ftp.pl)
-Provides: perl(getcwd.pl)
-Provides: perl(getopt.pl)
-Provides: perl(getopts.pl)
-Provides: perl(hostname.pl)
-Provides: perl(importenv.pl)
-Provides: perl(look.pl)
-Provides: perl(newgetopt.pl)
-Provides: perl(open2.pl)
-Provides: perl(open3.pl)
 Provides: perl(perl5db.pl)
-Provides: perl(pwd.pl)
-Provides: perl(shellwords.pl)
-Provides: perl(stat.pl)
-Provides: perl(syslog.pl)
-Provides: perl(tainted.pl)
-Provides: perl(termcap.pl)
-Provides: perl(timelocal.pl)
 Provides: perl(utf8_heavy.pl)
-Provides: perl(validate.pl)
 
 # suidperl isn't created by upstream since 5.12.0
 Obsoletes: perl-suidperl <= 4:5.12.2
@@ -3862,6 +3831,11 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Feb 18 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.2-321
+- Provide 5.20.2 MODULE_COMPAT
+- Clean list of provided files
+- Update names of changed patches
+
 * Tue Feb 17 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.2-320
 - 5.20.2 bump (see <http://search.cpan.org/dist/perl-5.20.2/pod/perldelta.pod>
   for release notes)
