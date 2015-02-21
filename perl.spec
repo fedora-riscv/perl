@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        321%{?dist}
+Release:        322%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -3831,6 +3831,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sat Feb 21 2015 Till Maas <opensource@till.name> - 4:5.20.2-322
+- Rebuilt for Fedora 23 Change
+  https://fedoraproject.org/wiki/Changes/Harden_all_packages_with_position-independent_code
+
 * Wed Feb 18 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.2-321
 - Provide 5.20.2 MODULE_COMPAT
 - Clean list of provided files
