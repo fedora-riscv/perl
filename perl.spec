@@ -107,7 +107,8 @@ Patch29:        perl-5.20.2-Fix-Errno.pm-generation-for-gcc-5.0.patch
 # Handle hexadecimal constants by h2ph, RT#123784, in upstream after 5.21.8
 Patch30:        perl-5.21.8-h2ph-correct-handling-of-hex-constants-for-the-pream.patch
 
-# Do not use -_h2ph_pre.ph from system at tests, RT#123784
+# Do not use _h2ph_pre.ph from system at tests, RT#123784,
+# in upstream after 5.21.9
 Patch31:        perl-5.21.8-lib-h2ph.t-to-test-generated-t-_h2ph_pre.ph-instead-.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
@@ -2020,7 +2021,7 @@ perl -x patchlevel.h \
     'Fedora Patch28: Use stronger algorithm needed for FIPS in t/op/taint.t (RT#123338)' \
     'Fedora Patch29: Fix Errno.pm generation for GCC 5.0 (RT#123784)' \
     'Fedora Patch30: Handle hexadecimal constants by h2ph (RT#123784)' \
-    'Fedora Patch31: Do not use -_h2ph_pre.ph from system at tests (RT#123784)' \
+    'Fedora Patch31: Do not use _h2ph_pre.ph from system at tests (RT#123784)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
