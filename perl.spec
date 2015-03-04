@@ -704,7 +704,7 @@ module can handle all types of input, including partial-byte data.
 %package Encode
 Summary:        Character encodings in Perl
 Group:          Development/Libraries
-License:        GPL+ or Artistic
+License:        (GPL+ or Artistic) and UCD
 Epoch:          2
 Version:        2.60
 Requires:       %perl_compat
@@ -746,7 +746,7 @@ The easiest and the best alternative is to write your script in UTF-8.
 %package Encode-devel
 Summary:        Character encodings in Perl
 Group:          Development/Libraries
-License:        GPL+ or Artistic
+License:        (GPL+ or Artistic) and UCD
 Epoch:          2
 Version:        2.60
 Requires:       %perl_compat
