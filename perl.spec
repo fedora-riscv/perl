@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        322%{?dist}
+Release:        323%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -140,18 +140,6 @@ BuildRequires:  procps, rsyslog
 # compat macro needed for rebuild
 %global perl_compat perl(:MODULE_COMPAT_5.20.2)
 
-# Compat provides
-Provides: %perl_compat
-Provides: perl(:MODULE_COMPAT_5.20.1)
-Provides: perl(:MODULE_COMPAT_5.20.0)
-
-# Threading provides
-Provides: perl(:WITH_ITHREADS)
-Provides: perl(:WITH_THREADS)
-# Largefile provides
-Provides: perl(:WITH_LARGEFILES)
-# PerlIO provides
-Provides: perl(:WITH_PERLIO)
 # File provides
 Provides: perl(bytes_heavy.pl)
 Provides: perl(dumpvar.pl)
@@ -162,6 +150,8 @@ Provides: perl(utf8_heavy.pl)
 Obsoletes: perl-suidperl <= 4:5.12.2
 
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
+# Require this till perl sub-package requires any modules
+Requires: %perl_compat
 
 # We need this to break the dependency loop, and ensure that perl-libs 
 # gets installed before perl.
@@ -185,13 +175,24 @@ Install this package if you want to program in Perl or enable your system to
 handle Perl scripts.
 
 %package libs
-Summary:        The libraries for the perl runtime
+Summary:        The libraries for the perl run-time
 Group:          Development/Languages
 License:        GPL+ or Artistic
-Requires:       %perl_compat
+# Compat provides
+Provides:       %perl_compat
+Provides:       perl(:MODULE_COMPAT_5.20.1)
+Provides:       perl(:MODULE_COMPAT_5.20.0)
+# Threading provides
+Provides:       perl(:WITH_ITHREADS)
+Provides:       perl(:WITH_THREADS)
+# Largefile provides
+Provides:       perl(:WITH_LARGEFILES)
+# PerlIO provides
+Provides:       perl(:WITH_PERLIO)
 
 %description libs
-The libraries for the perl runtime
+The is a perl run-time (interpreter as a shared library and include
+directories).
 
 
 %package devel
@@ -2295,20 +2296,23 @@ sed \
 %postun libs -p /sbin/ldconfig
 
 %files
-%doc Artistic AUTHORS Copying README Changes
 %{_mandir}/man1/*.1*
 %{_mandir}/man3/*.3*
 %{_bindir}/*
-%{privlib}
 %{archlib}/*
-%{perl_vendorlib}
+%{privlib}/*
 
 
 # libs
+%exclude %dir %{archlib}
+%exclude %dir %{archlib}/auto
 %exclude %dir %{archlib}/CORE
 %exclude %{archlib}/CORE/libperl.so
 %exclude %{_libdir}/libperl.so.*
-%exclude %{perl_vendorarch}
+%exclude %dir %{perl_vendorarch}
+%exclude %dir %{perl_vendorarch}/auto
+%exclude %dir %{privlib}
+%exclude %dir %{perl_vendorlib}
 
 # devel
 %exclude %{_bindir}/h2xs
@@ -2972,12 +2976,17 @@ sed \
 
 %files libs
 %defattr(-,root,root)
+%license Artistic Copying
+%doc AUTHORS README Changes
+%dir %{archlib}
+%dir %{archlib}/auto
 %dir %{archlib}/CORE
 %{archlib}/CORE/libperl.so
 %{_libdir}/libperl.so.*
-%dir %{archlib}
 %dir %{perl_vendorarch}
 %dir %{perl_vendorarch}/auto
+%dir %{privlib}
+%dir %{perl_vendorlib}
 
 %files devel
 %{_bindir}/h2xs
@@ -3832,6 +3841,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Mar 16 2015 Petr Pisar <ppisar@redhat.com> - 4:5.20.2-323
+- Move perl(:MODULE_COMPAT_*) symbol and include directories to perl-libs
+  package (bug #1174951)
+
 * Sat Feb 21 2015 Till Maas <opensource@till.name> - 4:5.20.2-322
 - Rebuilt for Fedora 23 Change
   https://fedoraproject.org/wiki/Changes/Harden_all_packages_with_position-independent_code
