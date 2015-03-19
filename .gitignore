@@ -1,10 +1,6 @@
 perl-5.12.1.tar.gz
-perl-5.8.0-libdir64.patch
-filter-requires.sh
 /perl-5.12.2.tar.gz
 /perl-5.12.3.tar.gz
-/perl.stp
-/perl-example.stp
 /perl-5.14.0-RC2.tar.bz2
 /perl-5.14.0.tar.bz2
 /perl-5.14.0.tar.gz
