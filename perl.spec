@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        321%{?dist}
+Release:        322%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -3831,6 +3831,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Mar 19 2015 Lubomir Rintel <lkundrak@v3.sk> - 4:5.20.2-322
+- Add systemtap probes for new dtrace markers
+
 * Wed Feb 18 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.2-321
 - Provide 5.20.2 MODULE_COMPAT
 - Clean list of provided files
