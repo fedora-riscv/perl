@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        323%{?dist}
+Release:        324%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -3841,6 +3841,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Mar 19 2015 Lubomir Rintel <lkundrak@v3.sk> - 4:5.20.2-324
+- Add systemtap probes for new dtrace markers
+
 * Mon Mar 16 2015 Petr Pisar <ppisar@redhat.com> - 4:5.20.2-323
 - Move perl(:MODULE_COMPAT_*) symbol and include directories to perl-libs
   package (bug #1174951)
