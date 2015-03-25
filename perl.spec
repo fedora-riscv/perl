@@ -243,6 +243,60 @@ Install this if you want to test your Perl installation (binary and core
 modules).
 
 
+%package core
+Summary:        Base perl metapackage
+Group:          Development/Languages
+# This rpm doesn't contain any copyrightable material.
+# Nevertheless, it needs a License tag, so we'll use the generic
+# "perl" license.
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        %{perl_version}
+Requires:       %perl_compat
+Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl-macros
+
+Requires:       perl-App-a2p, perl-App-find2perl, perl-App-s2p
+Requires:       perl-Archive-Tar, perl-autodie, perl-B-Debug,
+Requires:       perl-Compress-Raw-Bzip2,
+Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-constant,
+Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
+Requires:       perl-CPAN-Meta-YAML, perl-Encode, perl-encoding
+Requires:       perl-Data-Dumper, perl-DB_File, perl-Devel-PPPort,
+Requires:       perl-Digest, perl-Digest-MD5,
+Requires:       perl-Digest-SHA, perl-Env, perl-Exporter, perl-experimental
+Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Command,
+Requires:       perl-ExtUtils-Embed,
+Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
+Requires:       perl-ExtUtils-Manifest, perl-ExtUtils-Miniperl
+Requires:       perl-ExtUtils-ParseXS, perl-File-Fetch
+Requires:       perl-File-Path, perl-File-Temp, perl-Filter,
+Requires:       perl-Filter-Simple, perl-Getopt-Long
+Requires:       perl-HTTP-Tiny, perl-inc-latest, perl-IO-Compress, perl-IO-Socket-IP
+Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
+Requires:       perl-Locale-Codes, perl-Locale-Maketext,
+Requires:       perl-Locale-Maketext-Simple
+Requires:       perl-Module-Build, perl-Module-CoreList,
+Requires:       perl-Module-CoreList-tools, perl-Module-Load
+Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Metadata
+Requires:       perl-Package-Constants, perl-PathTools
+Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
+Requires:       perl-Pod-Checker, perl-Pod-Escapes
+Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
+Requires:       perl-podlators, perl-Pod-Simple, perl-Scalar-List-Utils
+Requires:       perl-Socket, perl-Storable, perl-Sys-Syslog,
+Requires:       perl-Term-ANSIColor, perl-Test-Harness, perl-Test-Simple
+Requires:       perl-Text-ParseWords, perl-Text-Tabs+Wrap, perl-Thread-Queue
+Requires:       perl-Time-HiRes
+Requires:       perl-Time-Local, perl-Time-Piece
+Requires:       perl-version, perl-threads, perl-threads-shared, perl-parent
+
+%description core
+A metapackage which requires all of the perl bits and modules in the upstream
+tarball from perl.org.
+
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package App-a2p
 Summary:        Awk to Perl translator
@@ -1445,17 +1499,28 @@ for a Constants.pm file.
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
-%package PathTools
-Summary:        PathTools Perl module (Cwd, File::Spec)
+%package parent
+Summary:        Establish an ISA relationship with base classes at compile time
 Group:          Development/Libraries
-License:        (GPL+ or Artistic) and BSD
-Epoch:          0
-Version:        3.48
+License:        GPL+ or Artistic
+# Epoch bump for clean upgrade over old standalone package
+Epoch:          1
+Version:        0.228
 Requires:       %perl_compat
-Requires:       perl(Carp)
+BuildArch:      noarch
 
-%description PathTools
-PathTools Perl module (Cwd, File::Spec).
+%description parent
+parent allows you to both load one or more modules, while setting up
+inheritance from those modules at the same time. Mostly similar in effect to:
+
+    package Baz;
+
+    BEGIN {
+        require Foo;
+        require Bar;
+
+        push @ISA, qw(Foo Bar);
+    }
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -1491,6 +1556,20 @@ Obsoletes:      perl-Parse-CPAN-Meta < 1.40
 %description Parse-CPAN-Meta 
 Parse::CPAN::Meta is a parser for META.yml files, based on the parser half of
 YAML::Tiny.
+%endif
+
+%if %{dual_life} || %{rebuild_from_scratch}
+%package PathTools
+Summary:        PathTools Perl module (Cwd, File::Spec)
+Group:          Development/Libraries
+License:        (GPL+ or Artistic) and BSD
+Epoch:          0
+Version:        3.48
+Requires:       %perl_compat
+Requires:       perl(Carp)
+
+%description PathTools
+PathTools Perl module (Cwd, File::Spec).
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -1654,6 +1733,23 @@ Scalar::Util and List::Util contain a selection of subroutines that people have
 expressed would be nice to have in the perl core, but the usage would not
 really be high enough to warrant the use of a keyword, and the size so small
 such that being individual extensions would be wasteful.
+%endif
+
+%if %{dual_life} || %{rebuild_from_scratch}
+%package Socket
+Summary:        C socket.h defines and structure manipulators
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          2
+Version:        2.013
+Requires:       %perl_compat
+
+%description Socket
+This module is just a translation of the C socket.h file.  Unlike the old
+mechanism of requiring a translated socket.ph file, this uses the h2xs program
+(see the Perl source distribution) and your native C compiler.  This means
+that it has a far more likely chance of getting the numbers right.  This
+includes all of the commonly used pound-defines like AF_INET, SOCK_STREAM, etc.
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -1844,48 +1940,6 @@ manner, so that using localtime or gmtime as documented in perlfunc still
 behave as expected.
 
 %if %{dual_life} || %{rebuild_from_scratch}
-%package parent
-Summary:        Establish an ISA relationship with base classes at compile time
-Group:          Development/Libraries
-License:        GPL+ or Artistic
-# Epoch bump for clean upgrade over old standalone package
-Epoch:          1
-Version:        0.228
-Requires:       %perl_compat
-BuildArch:      noarch
-
-%description parent
-parent allows you to both load one or more modules, while setting up
-inheritance from those modules at the same time. Mostly similar in effect to:
-
-    package Baz;
-
-    BEGIN {
-        require Foo;
-        require Bar; 
-        
-        push @ISA, qw(Foo Bar); 
-    }
-%endif
-
-%if %{dual_life} || %{rebuild_from_scratch}
-%package Socket
-Summary:        C socket.h defines and structure manipulators
-Group:          Development/Libraries
-License:        GPL+ or Artistic
-Epoch:          2
-Version:        2.013
-Requires:       %perl_compat
-
-%description Socket
-This module is just a translation of the C socket.h file.  Unlike the old
-mechanism of requiring a translated socket.ph file, this uses the h2xs program
-(see the Perl source distribution) and your native C compiler.  This means
-that it has a far more likely chance of getting the numbers right.  This
-includes all of the commonly used pound-defines like AF_INET, SOCK_STREAM, etc.
-%endif
-
-%if %{dual_life} || %{rebuild_from_scratch}
 %package threads
 Summary:        Perl interpreter-based threads
 Group:          Development/Libraries
@@ -1940,59 +1994,6 @@ BuildArch:      noarch
 %description version
 Perl extension for Version Objects
 %endif
-
-%package core
-Summary:        Base perl metapackage
-Group:          Development/Languages
-# This rpm doesn't contain any copyrightable material.
-# Nevertheless, it needs a License tag, so we'll use the generic
-# "perl" license.
-License:        GPL+ or Artistic
-Epoch:          0
-Version:        %{perl_version}
-Requires:       %perl_compat
-Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
-Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
-Requires:       perl-macros
-
-Requires:       perl-App-a2p, perl-App-find2perl, perl-App-s2p
-Requires:       perl-Archive-Tar, perl-autodie, perl-B-Debug,
-Requires:       perl-Compress-Raw-Bzip2,
-Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-constant,
-Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
-Requires:       perl-CPAN-Meta-YAML, perl-Encode, perl-encoding
-Requires:       perl-Data-Dumper, perl-DB_File, perl-Devel-PPPort,
-Requires:       perl-Digest, perl-Digest-MD5,
-Requires:       perl-Digest-SHA, perl-Env, perl-Exporter, perl-experimental
-Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Command,
-Requires:       perl-ExtUtils-Embed,
-Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
-Requires:       perl-ExtUtils-Manifest, perl-ExtUtils-Miniperl
-Requires:       perl-ExtUtils-ParseXS, perl-File-Fetch
-Requires:       perl-File-Path, perl-File-Temp, perl-Filter,
-Requires:       perl-Filter-Simple, perl-Getopt-Long
-Requires:       perl-HTTP-Tiny, perl-inc-latest, perl-IO-Compress, perl-IO-Socket-IP
-Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
-Requires:       perl-Locale-Codes, perl-Locale-Maketext,
-Requires:       perl-Locale-Maketext-Simple
-Requires:       perl-Module-Build, perl-Module-CoreList,
-Requires:       perl-Module-CoreList-tools, perl-Module-Load
-Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Metadata
-Requires:       perl-Package-Constants, perl-PathTools
-Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
-Requires:       perl-Pod-Checker, perl-Pod-Escapes
-Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
-Requires:       perl-podlators, perl-Pod-Simple, perl-Scalar-List-Utils
-Requires:       perl-Socket, perl-Storable, perl-Sys-Syslog,
-Requires:       perl-Term-ANSIColor, perl-Test-Harness, perl-Test-Simple
-Requires:       perl-Text-ParseWords, perl-Text-Tabs+Wrap, perl-Thread-Queue
-Requires:       perl-Time-HiRes
-Requires:       perl-Time-Local, perl-Time-Piece
-Requires:       perl-version, perl-threads, perl-threads-shared, perl-parent
-
-%description core
-A metapackage which requires all of the perl bits and modules in the upstream
-tarball from perl.org.
 
 %prep
 %setup -q -n perl-%{perl_version}
