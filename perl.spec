@@ -2188,14 +2188,14 @@ make install DESTDIR=$RPM_BUILD_ROOT
     %{build_bindir}/perl
 
 # Make proper DSO names, move libperl to standard path.
-%global soname libperl.so.%(echo '%{version}' | sed 's/^\\([^.]*\\.[^.]*\\).*/\\1/')
+%global soname libperl.so.%(echo '%{perl_version}' | sed 's/^\\([^.]*\\.[^.]*\\).*/\\1/')
 mv "%{build_archlib}/CORE/libperl.so" \
-    "$RPM_BUILD_ROOT%{_libdir}/libperl.so.%{version}"
-ln -s "libperl.so.%{version}" "$RPM_BUILD_ROOT%{_libdir}/%{soname}"
-ln -s "libperl.so.%{version}" "$RPM_BUILD_ROOT%{_libdir}/libperl.so"
+    "$RPM_BUILD_ROOT%{_libdir}/libperl.so.%{perl_version}"
+ln -s "libperl.so.%{perl_version}" "$RPM_BUILD_ROOT%{_libdir}/%{soname}"
+ln -s "libperl.so.%{perl_version}" "$RPM_BUILD_ROOT%{_libdir}/libperl.so"
 # XXX: Keep symlink from original location because various code glues
 # $archlib/CORE/$libperl to get the DSO.
-ln -s "../../libperl.so.%{version}" "%{build_archlib}/CORE/libperl.so"
+ln -s "../../libperl.so.%{perl_version}" "%{build_archlib}/CORE/libperl.so"
 
 install -p -m 755 utils/pl2pm %{build_bindir}/pl2pm
 
