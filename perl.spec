@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        324%{?dist}
+Release:        325%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1758,6 +1758,22 @@ Conflicts:      perl < 4:5.16.2-256
 Parse text into an array of tokens or array of arrays.
 %endif
 
+%package Text-Tabs+Wrap
+Summary:        Expand tabs and do simple line wrapping
+Group:          Development/Libraries
+License:        TTWL
+Epoch:          0
+Version:        2013.0523
+Requires:       %perl_compat
+BuildArch:      noarch
+Conflicts:      perl < 4:5.20.2-325
+
+%description Text-Tabs+Wrap
+Text::Tabs performs the same job that the UNIX expand(1) and unexpand(1)
+commands do: adding or removing tabs from a document.
+
+Text::Wrap::wrap() will reformat lines into paragraphs. All it does is break
+up long lines, it will not join short lines together.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Thread-Queue
@@ -1969,7 +1985,7 @@ Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
 Requires:       perl-podlators, perl-Pod-Simple, perl-Scalar-List-Utils
 Requires:       perl-Socket, perl-Storable, perl-Sys-Syslog,
 Requires:       perl-Term-ANSIColor, perl-Test-Harness, perl-Test-Simple
-Requires:       perl-Text-ParseWords, perl-Thread-Queue
+Requires:       perl-Text-ParseWords, perl-Text-Tabs+Wrap, perl-Thread-Queue
 Requires:       perl-Time-HiRes
 Requires:       perl-Time-Local, perl-Time-Piece
 Requires:       perl-version, perl-threads, perl-threads-shared, perl-parent
@@ -2924,6 +2940,11 @@ sed \
 %exclude %{privlib}/Text/ParseWords.pm
 %exclude %{_mandir}/man3/Text::ParseWords.*
 
+# Text-Tabs+Wrap
+%exclude %{privlib}/Text/Tabs.pm
+%exclude %{privlib}/Text/Wrap.pm
+%exclude %{_mandir}/man3/Text::Tabs.*
+%exclude %{_mandir}/man3/Text::Wrap.*
 
 # Thread-Queue
 %exclude %{privlib}/Thread/Queue.pm
@@ -3778,6 +3799,13 @@ sed \
 %{_mandir}/man3/Text::ParseWords.*
 %endif
 
+%files Text-Tabs+Wrap
+%dir %{privlib}/Text
+%{privlib}/Text/Tabs.pm
+%{privlib}/Text/Wrap.pm
+%{_mandir}/man3/Text::Tabs.*
+%{_mandir}/man3/Text::Wrap.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Thread-Queue
 %dir %{privlib}/Thread
@@ -3841,6 +3869,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Mar 25 2015 Petr Pisar <ppisar@redhat.com> - 4:5.20.2-325
+- Sub-package Text-Tabs+Wrap (bug #910798)
+
 * Thu Mar 19 2015 Lubomir Rintel <lkundrak@v3.sk> - 4:5.20.2-324
 - Add systemtap probes for new dtrace markers
 
