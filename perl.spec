@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        323%{?dist}
+Release:        324%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -42,7 +42,7 @@ Group:          Development/Languages
 # Copyright Only: for example ext/Text-Soundex/Soundex.xs
 # HSRL; regexec.c
 # TTWL: Text-Tabs+Wrap
-License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and HSPL and MIT and Public Domain and TTWL and UCD
+License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and HSRL and MIT and Public Domain and TTWL and UCD
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
 Source2:        perl-5.8.0-libnet.cfg
@@ -3838,6 +3838,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Apr 02 2015 Petr Šabata <contyk@redhat.com> - 4:5.20.2-324
+- Correct a typo in the license tag
+
 * Thu Apr 02 2015 Petr Šabata <contyk@redhat.com> - 4:5.20.2-323
 - Correct license tags of the main package, CGI, Compress-Raw-Zlib,
   Digest-MD5, Test-Simple and Time-Piece
