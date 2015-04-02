@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        325%{?dist}
+Release:        326%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -40,7 +40,8 @@ Group:          Development/Languages
 # Public domain: ext/SDBM_File/sdbm/*, ext/Compress-Raw-Bzip2/bzip2-src/dlltest.c 
 # MIT: ext/MIME-Base64/Base64.xs 
 # Copyright Only: for example ext/Text-Soundex/Soundex.xs 
-License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and MIT and Public Domain and UCD
+# HSRL; regexec.c
+License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and HSRL and MIT and Public Domain and UCD
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
 Source2:        perl-5.8.0-libnet.cfg
@@ -49,6 +50,8 @@ Source3:        macros.perl
 # build requirement. Written by lberk; Not yet upstream.
 Source4:        perl.stp
 Source5:        perl-example.stp
+# Tom Christiansen confirms Pod::Html uses the same license as perl
+Source6:        Pod-Html-license-clarification
 
 # Removes date check, Fedora/RHEL specific
 Patch1:         perl-perlbug-tag.patch
@@ -442,7 +445,7 @@ but it is a good educated guess.
 %package CGI
 Summary:        Handle Common Gateway Interface requests and responses
 Group:          Development/Libraries
-License:        GPL+ or Artistic
+License:        (GPL+ or Artistic) and Artistic 2.0
 Epoch:          0
 Version:        3.63
 Requires:       %perl_compat
@@ -483,7 +486,7 @@ It is used by IO::Compress::Bzip2.
 %package Compress-Raw-Zlib
 Summary:        Low-Level Interface to the zlib compression library
 Group:          Development/Libraries
-License:        GPL+ or Artistic
+License:        (GPL+ or Artistic) and zlib
 Epoch:          0
 Version:        2.065
 Requires:       %perl_compat
@@ -719,7 +722,7 @@ bytes or bits.
 %package Digest-MD5
 Summary:        Perl interface to the MD5 Algorithm
 Group:          Development/Libraries
-License:        GPL+ or Artistic
+License:        (GPL+ or Artistic) and BSD
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          0
 Version:        2.53
@@ -1827,7 +1830,8 @@ Use TAP::Parser, Test::Harness package was whole rewritten.
 %package Test-Simple
 Summary:        Basic utilities for writing tests
 Group:          Development/Languages
-License:        GPL+ or Artistic
+# NOTE: For future reference, 1.001010+ also uses the `CC0' license
+License:        (GPL+ or Artistic) and Public Domain
 Epoch:          0
 Version:        1.001002
 Requires:       %perl_compat
@@ -1928,7 +1932,7 @@ so dates before the system's epoch may not work on all operating systems.
 %package Time-Piece
 Summary:        Time objects from localtime and gmtime
 Group:          Development/Libraries
-License:        GPL+ or Artistic
+License:        (GPL+ or Artistic) and BSD
 Epoch:          0
 Version:        1.27
 Requires:       %perl_compat
@@ -2047,6 +2051,9 @@ perl -x patchlevel.h \
 
 #copy the example script
 cp -a %{SOURCE5} .
+
+#copy Pod-Html license clarification
+cp %{SOURCE6} .
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -2313,6 +2320,7 @@ sed \
 %postun libs -p /sbin/ldconfig
 
 %files
+%license Pod-Html-license-clarification
 %{_mandir}/man1/*.1*
 %{_mandir}/man3/*.3*
 %{_bindir}/*
@@ -3870,6 +3878,11 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Apr 02 2015 Petr Šabata <contyk@redhat.com> - 4:5.20.2-326
+- Correct license tags of the main package, CGI, Compress-Raw-Zlib,
+  Digest-MD5, Test-Simple and Time-Piece
+- Package a Pod-Html license clarification email
+
 * Wed Mar 25 2015 Petr Pisar <ppisar@redhat.com> - 4:5.20.2-325
 - Sub-package Text-Tabs+Wrap (bug #910798)
 
