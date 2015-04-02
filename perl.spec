@@ -31,7 +31,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        292%{?dist}
+Release:        293%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -40,8 +40,10 @@ Group:          Development/Languages
 # under UCD are unicode tables
 # Public domain: ext/SDBM_File/sdbm/*, ext/Compress-Raw-Bzip2/bzip2-src/dlltest.c 
 # MIT: ext/MIME-Base64/Base64.xs 
-# Copyright Only: for example ext/Text-Soundex/Soundex.xs 
-License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and MIT and Public Domain and UCD
+# Copyright Only: for example ext/Text-Soundex/Soundex.xs
+# HSRL; regexec.c
+# TTWL: Text-Tabs+Wrap
+License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and HSRL and MIT and Public Domain and TTWL and UCD
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
 Source2:        perl-5.8.0-libnet.cfg
@@ -50,6 +52,8 @@ Source3:        macros.perl
 # build requirement. Written by lberk; Not yet upstream.
 Source4:        perl.stp
 Source5:        perl-example.stp
+# Tom Christiansen confirms Pod::Html uses the same license as perl
+Source6:        Pod-Html-license-clarification
 
 # Removes date check, Fedora/RHEL specific
 Patch1:         perl-perlbug-tag.patch
@@ -384,7 +388,7 @@ but it is a good educated guess.
 %package CGI
 Summary:        Handle Common Gateway Interface requests and responses
 Group:          Development/Libraries
-License:        GPL+ or Artistic
+License:        (GPL+ or Artistic) and Artistic 2.0
 Epoch:          0
 Version:        3.63
 Requires:       %perl_compat
@@ -413,7 +417,7 @@ with built-in support for mod_perl and mod_perl2 as well as FastCGI.
 %package Compress-Raw-Bzip2
 Summary:        Low-Level Interface to bzip2 compression library
 Group:          Development/Libraries
-License:        GPL+ or Artistic
+License:        (GPL+ or Artistic) and zlib
 Epoch:          0
 Version:        2.060
 Requires:       perl(Exporter), perl(File::Temp)
@@ -631,7 +635,7 @@ bytes or bits.
 %package Digest-MD5
 Summary:        Perl interface to the MD5 Algorithm
 Group:          Development/Libraries
-License:        GPL+ or Artistic
+License:        (GPL+ or Artistic) and BSD
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          0
 Version:        2.52
@@ -1610,7 +1614,7 @@ Use TAP::Parser, Test::Harness package was whole rewritten.
 %package Test-Simple
 Summary:        Basic utilities for writing tests
 Group:          Development/Languages
-License:        GPL+ or Artistic
+License:        (GPL+ or Artistic) and Public Domain
 Epoch:          0
 Version:        0.98
 Requires:       %perl_compat
@@ -1728,7 +1732,7 @@ so dates before the system's epoch may not work on all operating systems.
 %package Time-Piece
 Summary:        Time objects from localtime and gmtime
 Group:          Development/Libraries
-License:        GPL+ or Artistic
+License:        (GPL+ or Artistic) and BSD
 Epoch:          0
 # real 1.20_01
 Version:        1.20.1
@@ -1945,6 +1949,9 @@ perl -x patchlevel.h \
 
 #copy the example script
 cp -a %{SOURCE5} .
+
+#copy Pod-Html license clarification
+cp %{SOURCE6} .
 
 #
 # Candidates for doc recoding (need case by case review):
@@ -2214,7 +2221,7 @@ sed \
 %postun libs -p /sbin/ldconfig
 
 %files
-%doc Artistic AUTHORS Copying README Changes
+%doc Artistic AUTHORS Copying README Changes Pod-Html-license-clarification
 %{_mandir}/man1/*.1*
 %{_mandir}/man3/*.3*
 %{_bindir}/*
@@ -3630,6 +3637,11 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Apr 02 2015 Petr Šabata <contyk@redhat.com> - 4:5.18.1-293
+- Correct license tags of the main package, CGI, Compress-Raw-Zlib,
+  Digest-MD5, Test-Simple and Time-Piece
+- Package a Pod-Html license clarification email
+
 * Fri Feb 13 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.1-292
 - Regenerate a2p.c (BZ#1177672)
 
