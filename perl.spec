@@ -1858,6 +1858,7 @@ Conflicts:      perl < 4:5.16.2-256
 Parse text into an array of tokens or array of arrays.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Text-Tabs+Wrap
 Summary:        Expand tabs and do simple line wrapping
 Group:          Development/Libraries
@@ -1874,6 +1875,7 @@ commands do: adding or removing tabs from a document.
 
 Text::Wrap::wrap() will reformat lines into paragraphs. All it does is break
 up long lines, it will not join short lines together.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Thread-Queue
@@ -3808,12 +3810,14 @@ sed \
 %{_mandir}/man3/Text::ParseWords.*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Text-Tabs+Wrap
 %dir %{privlib}/Text
 %{privlib}/Text/Tabs.pm
 %{privlib}/Text/Wrap.pm
 %{_mandir}/man3/Text::Tabs.*
 %{_mandir}/man3/Text::Wrap.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Thread-Queue
