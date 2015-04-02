@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        326%{?dist}
+Release:        327%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -3882,6 +3882,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Apr 02 2015 Petr Šabata <contyk@redhat.com> - 4:5.20.2-327
+- Bump to make koji happy
+
 * Thu Apr 02 2015 Petr Šabata <contyk@redhat.com> - 4:5.20.2-326
 - Correct license tags of the main package, CGI, Compress-Raw-Zlib,
   Digest-MD5, Test-Simple and Time-Piece
