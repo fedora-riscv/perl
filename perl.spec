@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        324%{?dist}
+Release:        325%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -414,6 +414,26 @@ generation utilities are included as well.
 CGI.pm performs very well in in a vanilla CGI.pm environment and also comes
 with built-in support for mod_perl and mod_perl2 as well as FastCGI.
 %endif
+
+%if %{dual_life} || %{rebuild_from_scratch}
+%package CGI-Fast
+Summary:        CGI Interface for Fast CGI
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.10
+Requires:       %perl_compat
+BuildArch:      noarch
+
+%description CGI-Fast
+CGI::Fast is a subclass of the CGI object created by CGI.pm. It is
+specialized to work well FCGI module, which greatly speeds up CGI scripts
+by turning them into persistently running server processes. Scripts that
+perform time-consuming initialization processes, such as loading large
+modules or opening persistent database connections, will see large
+performance improvements.
+%endif
+
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Compress-Raw-Bzip2
@@ -1324,6 +1344,22 @@ are included with perl 5.6.0, and it works fine on perl 5.005 if you can
 install a few additional modules.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
+%package Module-Build-Deprecated
+Summary:        Collection of modules removed from Module-Build
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Version:        0.4205
+Requires:       %perl_compat
+Conflicts:      perl-Module-Build < 0.42.05
+
+%description Module-Build-Deprecated
+This module contains a number of module that have been removed from
+Module-Build:
+Module::Build::ModuleInfo - This has been superseded by Module::Metadata
+Module::Build::Version - This has been replaced by version
+Module::Build::YAML - This has been replaced by CPAN::Meta::YAML
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Module-CoreList
@@ -1944,7 +1980,8 @@ Requires:       perl-macros
 Requires:       perl-App-a2p, perl-App-find2perl, perl-App-s2p
 Requires:       perl-Archive-Tar, perl-autodie, perl-B-Debug,
 Requires:       perl-Compress-Raw-Bzip2,
-Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI, perl-constant,
+Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-CGI,
+Requires:       perl-CGI-Fast, perl-constant,
 Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
 Requires:       perl-CPAN-Meta-YAML, perl-Encode, perl-encoding
 Requires:       perl-Data-Dumper, perl-DB_File, perl-Devel-PPPort,
@@ -1961,7 +1998,7 @@ Requires:       perl-HTTP-Tiny, perl-inc-latest, perl-IO-Compress, perl-IO-Socke
 Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
 Requires:       perl-Locale-Codes, perl-Locale-Maketext,
 Requires:       perl-Locale-Maketext-Simple
-Requires:       perl-Module-Build, perl-Module-CoreList,
+Requires:       perl-Module-Build, perl-Module-Build-Deprecated, perl-Module-CoreList,
 Requires:       perl-Module-CoreList-tools, perl-Module-Load
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Metadata
 Requires:       perl-Package-Constants, perl-PathTools
@@ -2379,6 +2416,10 @@ sed \
 %exclude %{_mandir}/man3/CGI.3*
 %exclude %{_mandir}/man3/CGI::*.3*
 
+# CGI-Fast
+%exclude %{privlib}/CGI/Fast.pm
+%exclude %{_mandir}/man3/CGI::Fast.3*
+
 # constant
 %exclude %{privlib}/constant.pm
 %exclude %{_mandir}/man3/constant.3*
@@ -2760,6 +2801,14 @@ sed \
 %exclude %{_mandir}/man1/config_data.1*
 %exclude %{_mandir}/man3/Module::Build*
 
+# Module-Build-Deprecated
+%exclude %{privlib}/Module/Build/ModuleInfo.pm
+%exclude %{privlib}/Module/Build/Version.pm
+%exclude %{privlib}/Module/Build/YAML.pm
+%exclude %{_mandir}/man3/Module::Build::ModuleInfo.3*
+%exclude %{_mandir}/man3/Module::Build::Version.3*
+%exclude %{_mandir}/man3/Module::Build::YAML.3*
+
 # Module-CoreList
 %exclude %dir %{privlib}/Module
 %exclude %{privlib}/Module/CoreList
@@ -3066,8 +3115,14 @@ sed \
 %files CGI
 %{privlib}/CGI/
 %{privlib}/CGI.pm
+%exclude %{privlib}/CGI/Fast.pm
 %{_mandir}/man3/CGI.3*
 %{_mandir}/man3/CGI::*.3*
+%exclude %{_mandir}/man3/CGI::Fast.3*
+
+%files CGI-Fast
+%{privlib}/CGI/Fast.pm
+%{_mandir}/man3/CGI::Fast.3*
 
 %files Compress-Raw-Bzip2
 %dir %{archlib}/Compress
@@ -3535,8 +3590,22 @@ sed \
 %dir %{privlib}/Module
 %{privlib}/Module/Build
 %{privlib}/Module/Build.pm
+%exclude %{privlib}/Module/Build/ModuleInfo.pm
+%exclude %{privlib}/Module/Build/Version.pm
+%exclude %{privlib}/Module/Build/YAML.pm
 %{_mandir}/man1/config_data.1*
 %{_mandir}/man3/Module::Build*
+%exclude %{_mandir}/man3/Module::Build::ModuleInfo.3*
+%exclude %{_mandir}/man3/Module::Build::Version.3*
+%exclude %{_mandir}/man3/Module::Build::YAML.3*
+
+%files Module-Build-Deprecated
+%{privlib}/Module/Build/ModuleInfo.pm
+%{privlib}/Module/Build/Version.pm
+%{privlib}/Module/Build/YAML.pm
+%{_mandir}/man3/Module::Build::ModuleInfo.3*
+%{_mandir}/man3/Module::Build::Version.3*
+%{_mandir}/man3/Module::Build::YAML.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -3838,6 +3907,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Apr 15 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.2-325
+- Sub-package perl-CGI-Fast and perl-Module-Build-Deprecated
+- Add missing dual-life modules to perl-core
+
 * Thu Apr 02 2015 Petr Šabata <contyk@redhat.com> - 4:5.20.2-324
 - Correct a typo in the license tag
 
