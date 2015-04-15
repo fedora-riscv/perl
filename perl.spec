@@ -3625,8 +3625,22 @@ sed \
 %dir %{privlib}/Module
 %{privlib}/Module/Build
 %{privlib}/Module/Build.pm
+%exclude %{privlib}/Module/Build/ModuleInfo.pm
+%exclude %{privlib}/Module/Build/Version.pm
+%exclude %{privlib}/Module/Build/YAML.pm
 %{_mandir}/man1/config_data.1*
 %{_mandir}/man3/Module::Build*
+%exclude %{_mandir}/man3/Module::Build::ModuleInfo.3*
+%exclude %{_mandir}/man3/Module::Build::Version.3*
+%exclude %{_mandir}/man3/Module::Build::YAML.3*
+
+%files Module-Build-Deprecated
+%{privlib}/Module/Build/ModuleInfo.pm
+%{privlib}/Module/Build/Version.pm
+%{privlib}/Module/Build/YAML.pm
+%{_mandir}/man3/Module::Build::ModuleInfo.3*
+%{_mandir}/man3/Module::Build::Version.3*
+%{_mandir}/man3/Module::Build::YAML.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
