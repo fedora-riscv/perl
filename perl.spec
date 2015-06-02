@@ -83,36 +83,15 @@ Patch8:         perl-5.14.1-offtest.patch
 Patch15:        perl-5.16.3-create_libperl_soname.patch
 
 # Install libperl.so to -Dshrpdir value
-Patch16:        perl-5.20.2-Install-libperl.so-to-shrpdir-on-Linux.patch
+Patch16:        perl-5.22.0-Install-libperl.so-to-shrpdir-on-Linux.patch
 
 # Document Math::BigInt::CalcEmu requires Math::BigInt, rhbz#959096,
 # CPAN RT#85015
 Patch22:        perl-5.18.1-Document-Math-BigInt-CalcEmu-requires-Math-BigInt.patch 
 
-# Use stronger algorithm needed for FIPS in t/op/crypt.t, bug #1128032,
-# RT#121591, accepted after 5.21.4
-Patch25:        perl-5.18.2-t-op-crypt.t-Perform-SHA-256-algorithm-if-default-on.patch
-
 # Make *DBM_File desctructors thread-safe, bug #1107543, RT#61912
 Patch26:        perl-5.18.2-Destroy-GDBM-NDBM-ODBM-SDBM-_File-objects-only-from-.patch
 
-# Report inaccesible file on failed require, bug #1166504, RT#123270,
-# in upstream after 5.21.6
-Patch27:        perl-5.21.6-Report-inaccesible-file-on-failed-require.patch
-
-# Use stronger algorithm needed for FIPS in t/op/taint.t, bug #1128032,
-# RT#123338, in upstream after 5.21.6
-Patch28:        perl-5.21.6-t-op-taint.t-Perform-SHA-256-algorithm-by-crypt-if-d.patch
-
-# Fix Errno.pm generation for GCC 5.0, RT#123784, in upstream after 5.21.8
-Patch29:        perl-5.20.2-Fix-Errno.pm-generation-for-gcc-5.0.patch
-
-# Handle hexadecimal constants by h2ph, RT#123784, in upstream after 5.21.8
-Patch30:        perl-5.21.8-h2ph-correct-handling-of-hex-constants-for-the-pream.patch
-
-# Do not use _h2ph_pre.ph from system at tests, RT#123784,
-# in upstream after 5.21.9
-Patch31:        perl-5.21.8-lib-h2ph.t-to-test-generated-t-_h2ph_pre.ph-instead-.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -1853,13 +1832,7 @@ Perl extension for Version Objects
 %patch15 -p1
 %patch16 -p1
 %patch22 -p1
-%patch25 -p1
 %patch26 -p1
-%patch27 -p1
-%patch28 -p1
-%patch29 -p1
-%patch30 -p1
-%patch31 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -1877,13 +1850,7 @@ perl -x patchlevel.h \
     'Fedora Patch15: Define SONAME for libperl.so' \
     'Fedora Patch16: Install libperl.so to -Dshrpdir value' \
     'Fedora Patch22: Document Math::BigInt::CalcEmu requires Math::BigInt (CPAN RT#85015)' \
-    'Fedora Patch25: Use stronger algorithm needed for FIPS in t/op/crypt.t (RT#121591)' \
     'Fedora Patch26: Make *DBM_File desctructors thread-safe (RT#61912)' \
-    'Fedora Patch27: Report inaccesible file on failed require (RT#123270)' \
-    'Fedora Patch28: Use stronger algorithm needed for FIPS in t/op/taint.t (RT#123338)' \
-    'Fedora Patch29: Fix Errno.pm generation for GCC 5.0 (RT#123784)' \
-    'Fedora Patch30: Handle hexadecimal constants by h2ph (RT#123784)' \
-    'Fedora Patch31: Do not use _h2ph_pre.ph from system at tests (RT#123784)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3637,7 +3604,10 @@ popd
 * Mon Jun 01 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.0-241
 - 5.22.0 bump (see <http://search.cpan.org/dist/perl-5.22.0/pod/perldelta.pod>
   for release notes)
-- Updated sub-packages and erased the removed modules from the core
+- Update sub-packages and erase the removed modules from the core
+- Clean patches, not needed with new version
+- Update patches to work with new version
+
  
 * Wed Apr 15 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.2-328
 - Sub-package perl-CGI-Fast and perl-Module-Build-Deprecated
