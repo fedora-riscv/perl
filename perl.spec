@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        341%{?dist}
+Release:        342%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2291,10 +2291,12 @@ popd
 %exclude %{_mandir}/man3/Digest::SHA.3*
 
 # Encode
+%exclude %{_bindir}/encguess
 %exclude %{_bindir}/piconv
 %exclude %{archlib}/Encode*
 %exclude %{archlib}/auto/Encode*
 %exclude %{privlib}/Encode
+%exclude %{_mandir}/man1/encguess.1*
 %exclude %{_mandir}/man1/piconv.1*
 %exclude %{_mandir}/man3/Encode*.3*
 
@@ -2974,12 +2976,14 @@ popd
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Encode
+%{_bindir}/encguess
 %{_bindir}/piconv
 %{archlib}/Encode*
 %{archlib}/auto/Encode*
 %{privlib}/Encode
 %exclude %{privlib}/Encode/*.e2x
 %exclude %{privlib}/Encode/encode.h
+%{_mandir}/man1/encguess.1*
 %{_mandir}/man1/piconv.1*
 %{_mandir}/man3/Encode*.3*
 
@@ -3601,6 +3605,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jun 03 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.0-242
+- Move bin/encguess to perl-Encode
+
 * Mon Jun 01 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.0-241
 - 5.22.0 bump (see <http://search.cpan.org/dist/perl-5.22.0/pod/perldelta.pod>
   for release notes)
