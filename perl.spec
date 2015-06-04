@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        342%{?dist}
+Release:        343%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2700,17 +2700,21 @@ popd
 %exclude %{_mandir}/man3/Test::Harness*
 
 # Test-Simple
+%exclude %{privlib}/ok*
 %exclude %dir %{privlib}/Test
 %exclude %{privlib}/Test/More*
 %exclude %{privlib}/Test/Builder*
 %exclude %{privlib}/Test/Tester*
 %exclude %{privlib}/Test/Simple*
 %exclude %{privlib}/Test/Tutorial*
+%exclude %{privlib}/Test/use/ok*
+%exclude %{_mandir}/man3/ok*
 %exclude %{_mandir}/man3/Test::More*
 %exclude %{_mandir}/man3/Test::Builder*
 %exclude %{_mandir}/man3/Test::Tester*
 %exclude %{_mandir}/man3/Test::Simple*
 %exclude %{_mandir}/man3/Test::Tutorial*
+%exclude %{_mandir}/man3/Test::use::ok*
 
 # Text-ParseWords
 %exclude %{privlib}/Text/ParseWords.pm
@@ -3513,17 +3517,21 @@ popd
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Test-Simple
+%{privlib}/ok*
 %dir %{privlib}/Test
 %{privlib}/Test/More*
 %{privlib}/Test/Builder*
 %{privlib}/Test/Tester*
 %{privlib}/Test/Simple*
 %{privlib}/Test/Tutorial*
+%{privlib}/Test/use/ok*
+%{_mandir}/man3/ok*
 %{_mandir}/man3/Test::More*
 %{_mandir}/man3/Test::Builder*
 %{_mandir}/man3/Test::Tester*
 %{_mandir}/man3/Test::Simple*
 %{_mandir}/man3/Test::Tutorial*
+%{_mandir}/man3/Test::use::ok*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -3605,6 +3613,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jun 04 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.0-243
+- Move ok and Test::Use::ok to perl-Test-Simple
+
 * Wed Jun 03 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.0-242
 - Move bin/encguess to perl-Encode
 
