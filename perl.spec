@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        325%{?dist}
+Release:        326%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1464,6 +1464,22 @@ Requires:       %perl_compat
 Gather package and POD information from perl module files
 %endif
 
+%package open
+Summary:        Perl pragma to set default PerlIO layers for input and output
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.10
+Requires:       %perl_compat
+Requires:       perl(Carp)
+Requires:       perl(Encode)
+Requires:       perl(encoding)
+Conflicts:      perl < 4:5.20.2-326
+BuildArch:      noarch
+
+%description open
+The "open" pragma serves as one of the interfaces to declare default "layers"
+(also known as "disciplines") for all I/O.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Package-Constants
@@ -2001,7 +2017,7 @@ Requires:       perl-Locale-Maketext-Simple
 Requires:       perl-Module-Build, perl-Module-Build-Deprecated, perl-Module-CoreList,
 Requires:       perl-Module-CoreList-tools, perl-Module-Load
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Metadata
-Requires:       perl-Package-Constants, perl-PathTools
+Requires:       perl-open, perl-Package-Constants, perl-PathTools
 Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
 Requires:       perl-Pod-Checker, perl-Pod-Escapes
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
@@ -2861,6 +2877,10 @@ sed \
 %exclude %{privlib}/Perl/OSType.pm
 %exclude %{_mandir}/man3/Perl::OSType.3pm*
 
+# open
+%exclude %{privlib}/open.pm
+%exclude %{_mandir}/man3/open.3*
+
 # parent
 %exclude %{privlib}/parent.pm
 %exclude %{_mandir}/man3/parent.3*
@@ -3677,6 +3697,10 @@ sed \
 %{_mandir}/man3/Parse::CPAN::Meta.3*
 %endif
 
+%files open
+%{privlib}/open.pm
+%{_mandir}/man3/open.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files parent
 %{privlib}/parent.pm
@@ -3907,6 +3931,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jun 05 2015 Petr Pisar <ppisar@redhat.com> - 4:5.20.2-326
+- Subpackage "open" module in order to keep deprecated "encoding" module
+  optional (bug #1228378)
+
 * Wed Apr 15 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.2-325
 - Sub-package perl-CGI-Fast and perl-Module-Build-Deprecated
 - Add missing dual-life modules to perl-core
