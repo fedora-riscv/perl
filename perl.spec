@@ -152,13 +152,23 @@ Perl is a high-level programming language with roots in C, sed, awk and shell
 scripting.  Perl is good at handling processes and files, and is especially
 good at handling text.  Perl's hallmarks are practicality and efficiency.
 While it is used to do a lot of different things, Perl's most common
-applications are system administration utilities and web programming.  A large
-proportion of the CGI scripts on the web are written in Perl.  You need the
-perl package installed on your system so that your system can handle Perl
-scripts.
+applications are system administration utilities and web programming.
 
 Install this package if you want to program in Perl or enable your system to
-handle Perl scripts.
+handle Perl scripts with %{_bindir}/perl interpreter.
+
+If your script requires some Perl modules, you can install them with
+"perl(MODULE)" where "MODULE" is a name of required module. E.g. install
+"perl(Test::More)" to make Test::More Perl module available.
+
+If you need all the Perl modules that come with upstream Perl sources, so
+called core modules, install perl-core package.
+
+If you only need perl run-time as a shared library, i.e. Perl interpreter
+embedded into another application, the only essential package is perl-libs.
+
+Perl header files can be found in perl-devel package.
+
 
 %package libs
 Summary:        The libraries for the perl run-time
@@ -3652,6 +3662,7 @@ popd
 - Control building dual-lived sub-packages by perl_bootstrap macro
 - Make PadlistNAMES() lvalue again (bug #1231165)
 - Make magic vtable writable as a work-around for Coro (bug #1231165)
+- Explain file break-down into RPM packages in perl package description
 
 * Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:5.22.0-345
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
