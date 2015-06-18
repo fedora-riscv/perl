@@ -8,7 +8,7 @@
 %global tapsetdir   %{_datadir}/systemtap/tapset
 
 %global dual_life 0
-%global rebuild_from_scratch 0
+%global rebuild_from_scratch %{defined perl_bootstrap}
 
 # This overrides filters from build root (/usr/lib/rpm/macros.d/macros.perl)
 # intentionally (unversioned perl(DB) is removed and versioned one is kept).
@@ -3638,6 +3638,7 @@ popd
 * Thu Jun 18 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-346
 - Subpackage "open" module in order to keep deprecated "encoding" module
   optional (bug #1228378)
+- Control building dual-lived sub-packages by perl_bootstrap macro
 
 * Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:5.22.0-345
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
