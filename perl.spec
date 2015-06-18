@@ -92,6 +92,10 @@ Patch22:        perl-5.18.1-Document-Math-BigInt-CalcEmu-requires-Math-BigInt.pa
 # Make *DBM_File desctructors thread-safe, bug #1107543, RT#61912
 Patch26:        perl-5.18.2-Destroy-GDBM-NDBM-ODBM-SDBM-_File-objects-only-from-.patch
 
+# Make PadlistNAMES() lvalue again, bug #1231165, CPAN RT#101063,
+# in upstream after 5.22.0
+Patch27:        perl-5.22.0-make-PadlistNAMES-lvalue-again.patch
+
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -1847,6 +1851,7 @@ Perl extension for Version Objects
 %patch16 -p1
 %patch22 -p1
 %patch26 -p1
+%patch27 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -1865,6 +1870,7 @@ perl -x patchlevel.h \
     'Fedora Patch16: Install libperl.so to -Dshrpdir value' \
     'Fedora Patch22: Document Math::BigInt::CalcEmu requires Math::BigInt (CPAN RT#85015)' \
     'Fedora Patch26: Make *DBM_File desctructors thread-safe (RT#61912)' \
+    'Fedora Patch27: Make PadlistNAMES() lvalue again (CPAN RT#101063)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3639,6 +3645,7 @@ popd
 - Subpackage "open" module in order to keep deprecated "encoding" module
   optional (bug #1228378)
 - Control building dual-lived sub-packages by perl_bootstrap macro
+- Make PadlistNAMES() lvalue again (bug #1231165)
 
 * Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4:5.22.0-345
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
