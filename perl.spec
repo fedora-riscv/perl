@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        346%{?dist}
+Release:        347%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1957,9 +1957,16 @@ echo "RPM Build arch: %{_arch}"
 # For perl-5.14.2-large-repeat-heap-abuse.patch 
 perl regen.pl -v
 
-/bin/sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
-        -Dccdlflags="-Wl,--enable-new-dtags" \
-        -Dlddlflags="-shared $RPM_OPT_FLAGS $RPM_LD_FLAGS" \
+# ldflags is not used when linking XS modules.
+# Only ldflags is used when linking miniperl.
+# Only ccflags and ldflags are used for Configure's compiler checks.
+# Set optimize=none to prevent from injecting upstream's value.
+/bin/sh Configure -des \
+        -Doptimize="none" \
+        -Dccflags="$RPM_OPT_FLAGS" \
+        -Dldflags="$RPM_LD_FLAGS" \
+        -Dccdlflags="-Wl,--enable-new-dtags $RPM_LD_FLAGS" \
+        -Dlddlflags="-shared $RPM_LD_FLAGS" \
         -Dshrpdir="%{_libdir}" \
         -DDEBUGGING=-g \
         -Dversion=%{perl_version} \
@@ -3656,6 +3663,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jul 08 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-347
+- Store distribution's linker and compiler flags to more Config's options
+  in order to apply them when linking executable programs (bug #1238804)
+
 * Thu Jun 18 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-346
 - Subpackage "open" module in order to keep deprecated "encoding" module
   optional (bug #1228378)
