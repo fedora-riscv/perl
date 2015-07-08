@@ -268,6 +268,7 @@ Requires:       perl-File-Path, perl-File-Temp, perl-Filter,
 Requires:       perl-Filter-Simple, perl-Getopt-Long
 Requires:       perl-HTTP-Tiny, perl-IO-Compress, perl-IO-Socket-IP
 Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
+Requires:       perl-libnet,
 Requires:       perl-Locale-Codes, perl-Locale-Maketext,
 Requires:       perl-Locale-Maketext-Simple
 Requires:       perl-MIME-Base64,
@@ -1188,6 +1189,28 @@ JSON::XS is the fastest and most proper JSON module on CPAN. It is written by
 Marc Lehmann in C, so must be compiled and installed in the used environment.
 JSON::PP is a pure-Perl module and is compatible with JSON::XS.
 %endif
+
+%package libnet
+Summary:        Perl clients for various network protocols
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        3.05
+Requires:       %perl_compat
+Requires:       perl(File::Basename)
+Requires:       perl(IO::Socket) >= 1.05
+# Prefer IO::Socket::IP over IO::Socket::INET6 and IO::Socket::INET
+Requires:       perl(IO::Socket::IP) >= 0.20
+Requires:       perl(POSIX)
+Requires:       perl(Socket) >= 2.016
+Requires:       perl(utf8)
+BuildArch:      noarch
+Conflicts:      perl < 4:5.22.0-347
+
+%description libnet
+This is a collection of Perl modules which provides a simple and
+consistent programming interface (API) to the client side of various
+protocols used in the internet community.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Locale-Codes
@@ -2644,6 +2667,30 @@ popd
 %exclude %{_mandir}/man3/JSON::PP.3*
 %exclude %{_mandir}/man3/JSON::PP::Boolean.3pm*
 
+# libnet
+%exclude %{privlib}/Net/Cmd.pm
+%exclude %{privlib}/Net/Config.pm
+%exclude %{privlib}/Net/Domain.pm
+%exclude %{privlib}/Net/FTP
+%exclude %{privlib}/Net/FTP.pm
+%exclude %{privlib}/Net/libnet.cfg
+%exclude %{privlib}/Net/libnetFAQ.pod
+%exclude %{privlib}/Net/NNTP.pm
+%exclude %{privlib}/Net/Netrc.pm
+%exclude %{privlib}/Net/POP3.pm
+%exclude %{privlib}/Net/SMTP.pm
+%exclude %{privlib}/Net/Time.pm
+%exclude %{_mandir}/man3/Net::Cmd.*
+%exclude %{_mandir}/man3/Net::Config.*
+%exclude %{_mandir}/man3/Net::Domain.*
+%exclude %{_mandir}/man3/Net::FTP.*
+%exclude %{_mandir}/man3/Net::libnetFAQ.*
+%exclude %{_mandir}/man3/Net::NNTP.*
+%exclude %{_mandir}/man3/Net::Netrc.*
+%exclude %{_mandir}/man3/Net::POP3.*
+%exclude %{_mandir}/man3/Net::SMTP.*
+%exclude %{_mandir}/man3/Net::Time.*
+
 # Locale-Codes
 %exclude %dir %{privlib}/Locale
 %exclude %{privlib}/Locale/Codes
@@ -3417,6 +3464,31 @@ popd
 %{_mandir}/man3/JSON::PP::Boolean.3pm*
 %endif
 
+%files libnet
+%dir %{privlib}/Net
+%{privlib}/Net/Cmd.pm
+%{privlib}/Net/Config.pm
+%{privlib}/Net/Domain.pm
+%{privlib}/Net/FTP
+%{privlib}/Net/FTP.pm
+%{privlib}/Net/libnet.cfg
+%{privlib}/Net/libnetFAQ.pod
+%{privlib}/Net/NNTP.pm
+%{privlib}/Net/Netrc.pm
+%{privlib}/Net/POP3.pm
+%{privlib}/Net/SMTP.pm
+%{privlib}/Net/Time.pm
+%{_mandir}/man3/Net::Cmd.*
+%{_mandir}/man3/Net::Config.*
+%{_mandir}/man3/Net::Domain.*
+%{_mandir}/man3/Net::FTP.*
+%{_mandir}/man3/Net::libnetFAQ.*
+%{_mandir}/man3/Net::NNTP.*
+%{_mandir}/man3/Net::Netrc.*
+%{_mandir}/man3/Net::POP3.*
+%{_mandir}/man3/Net::SMTP.*
+%{_mandir}/man3/Net::Time.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Locale-Codes
 %dir %{privlib}/Locale
@@ -3798,6 +3870,7 @@ popd
 - Update Pod-Escapes metadata (bug #1238237)
 - Sub-package Term-Cap (bug #1238248)
 - Sub-package Text-Balanced (bug #1238269)
+- Sub-package libnet (bug #1238689)
 
 * Thu Jun 18 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-346
 - Subpackage "open" module in order to keep deprecated "encoding" module
