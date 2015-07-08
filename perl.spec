@@ -283,7 +283,8 @@ Requires:       perl-podlators, perl-Pod-Simple, perl-Scalar-List-Utils
 Requires:       perl-Socket, perl-Storable, perl-Sys-Syslog,
 Requires:       perl-Term-ANSIColor, perl-Term-Cap,
 Requires:       perl-Test-Harness, perl-Test-Simple
-Requires:       perl-Text-ParseWords, perl-Text-Tabs+Wrap, perl-Thread-Queue
+Requires:       perl-Text-Balanced, perl-Text-ParseWords, perl-Text-Tabs+Wrap,
+Requires:       perl-Thread-Queue
 Requires:       perl-Time-HiRes
 Requires:       perl-Time-Local, perl-Time-Piece
 Requires:       perl-version, perl-threads, perl-threads-shared, perl-parent
@@ -1756,6 +1757,20 @@ BuildArch:      noarch
 Basic utilities for writing tests.
 %endif
 
+%package Text-Balanced
+Summary:        Extract delimited text sequences from strings
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.03
+Requires:       %perl_compat
+BuildArch:      noarch
+Conflicts:      perl < 4:5.22.0-347
+
+%description Text-Balanced
+These Perl subroutines may be used to extract a delimited substring, possibly
+after skipping a specified prefix string.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Text-ParseWords
 Summary:        Parse text into an array of tokens or array of arrays
@@ -2845,6 +2860,10 @@ popd
 %exclude %{_mandir}/man3/Test::Tutorial*
 %exclude %{_mandir}/man3/Test::use::ok*
 
+# Text-Balanced
+%exclude %{privlib}/Text/Balanced.pm
+%exclude %{_mandir}/man3/Text::Balanced.*
+
 # Text-ParseWords
 %exclude %{privlib}/Text/ParseWords.pm
 %exclude %{_mandir}/man3/Text::ParseWords.*
@@ -3686,6 +3705,11 @@ popd
 %{_mandir}/man3/Test::use::ok*
 %endif
 
+%files Text-Balanced
+%dir %{privlib}/Text
+%{privlib}/Text/Balanced.pm
+%{_mandir}/man3/Text::Balanced.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Text-ParseWords
 %dir %{privlib}/Text
@@ -3773,6 +3797,7 @@ popd
 - Sub-package PerlIO-via-QuotedPrint (bug #1238229)
 - Update Pod-Escapes metadata (bug #1238237)
 - Sub-package Term-Cap (bug #1238248)
+- Sub-package Text-Balanced (bug #1238269)
 
 * Thu Jun 18 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-346
 - Subpackage "open" module in order to keep deprecated "encoding" module
