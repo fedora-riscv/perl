@@ -38,10 +38,9 @@ Group:          Development/Languages
 # we have to reflect that in the sub-package containing them.
 # under UCD are unicode tables
 # Public domain: ext/SDBM_File/sdbm/*, ext/Compress-Raw-Bzip2/bzip2-src/dlltest.c 
-# MIT: ext/MIME-Base64/Base64.xs 
 # Copyright Only: for example ext/Text-Soundex/Soundex.xs 
 # HSRL; regexec.c
-License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and HSRL and MIT and Public Domain and UCD
+License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and HSRL and Public Domain and UCD
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
 Source2:        perl-5.8.0-libnet.cfg
@@ -271,6 +270,7 @@ Requires:       perl-HTTP-Tiny, perl-IO-Compress, perl-IO-Socket-IP
 Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
 Requires:       perl-Locale-Codes, perl-Locale-Maketext,
 Requires:       perl-Locale-Maketext-Simple
+Requires:       perl-MIME-Base64,
 Requires:       perl-Module-CoreList,
 Requires:       perl-Module-CoreList-tools, perl-Module-Load
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Metadata
@@ -1245,6 +1245,22 @@ BuildArch:      noarch
 %description Locale-Maketext-Simple
 This module is a simple wrapper around Locale::Maketext::Lexicon, designed
 to alleviate the need of creating Language Classes for module authors.
+
+%package MIME-Base64
+Summary:        Encoding and decoding of Base64 and quoted-printable strings
+Group:          Development/Libraries
+# cpan/MIME-Base64/Base64.xs:   (GPL+ or Artistic) and MIT (Bellcore's part)
+# Other files:                  GPL+ or Artistic
+License:        (GPL+ or Artistic) and MIT
+Epoch:          0
+Version:        3.15
+Requires:       %perl_compat
+Conflicts:      perl < 4:5.22.0-347
+
+%description MIME-Base64
+This package contains a Base64 encoder/decoder and a quoted-printable
+encoder/decoder. These encoding methods are specified in RFC 2045 - MIME
+(Multipurpose Internet Mail Extensions).
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Module-CoreList
@@ -2615,6 +2631,11 @@ popd
 %exclude %{privlib}/Locale/Maketext/Simple.pm
 %exclude %{_mandir}/man3/Locale::Maketext::Simple.*
 
+# MIME-Base64
+%exclude %{archlib}/auto/MIME
+%exclude %{archlib}/MIME
+%exclude %{_mandir}/man3/MIME::*
+
 # Module-CoreList
 %exclude %dir %{privlib}/Module
 %exclude %{privlib}/Module/CoreList
@@ -3375,6 +3396,11 @@ popd
 %{privlib}/Locale/Maketext/Simple.pm
 %{_mandir}/man3/Locale::Maketext::Simple.*
 
+%files MIME-Base64
+%{archlib}/auto/MIME
+%{archlib}/MIME
+%{_mandir}/man3/MIME::*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Module-CoreList
 %dir %{privlib}/Module
@@ -3693,6 +3719,7 @@ popd
 - Store distribution's linker and compiler flags to more Config's options
   in order to apply them when linking executable programs (bug #1238804)
 - Sub-package Config-Perl-V (bug #1238203)
+- Sub-package MIME-Base64 (bug #1238222)
 
 * Thu Jun 18 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-346
 - Subpackage "open" module in order to keep deprecated "encoding" module
