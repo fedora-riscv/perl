@@ -281,7 +281,8 @@ Requires:       perl-Pod-Checker, perl-Pod-Escapes
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
 Requires:       perl-podlators, perl-Pod-Simple, perl-Scalar-List-Utils
 Requires:       perl-Socket, perl-Storable, perl-Sys-Syslog,
-Requires:       perl-Term-ANSIColor, perl-Test-Harness, perl-Test-Simple
+Requires:       perl-Term-ANSIColor, perl-Term-Cap,
+Requires:       perl-Test-Harness, perl-Test-Simple
 Requires:       perl-Text-ParseWords, perl-Text-Tabs+Wrap, perl-Thread-Queue
 Requires:       perl-Time-HiRes
 Requires:       perl-Time-Local, perl-Time-Piece
@@ -1707,6 +1708,23 @@ colorstrip(), colorvalid(), and coloralias(), which have to be explicitly
 imported to be used.
 %endif
 
+%package Term-Cap
+Summary:        Perl termcap interface
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.15
+Requires:       %perl_compat
+# ncurses for infocmp tool
+Requires:       ncurses
+Requires:       perl(Carp)
+BuildArch:      noarch
+Conflicts:      perl < 4:5.22.0-347
+
+%description Term-Cap
+These are low-level functions to extract and use capabilities from a terminal
+capability (termcap) database.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Test-Harness
 Summary:        Run Perl standard test scripts with statistics
@@ -2794,6 +2812,10 @@ popd
 %exclude %{privlib}/Term/ANSIColor.pm
 %exclude %{_mandir}/man3/Term::ANSIColor*
 
+# Term-Cap
+%exclude %{privlib}/Term/Cap.pm
+%exclude %{_mandir}/man3/Term::Cap.*
+
 # Test-Harness
 %exclude %{_bindir}/prove
 %exclude %dir %{privlib}/App
@@ -3626,6 +3648,11 @@ popd
 %{_mandir}/man3/Term::ANSIColor*
 %endif
 
+%files Term-Cap
+%dir %{privlib}/Term
+%{privlib}/Term/Cap.pm
+%{_mandir}/man3/Term::Cap.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Test-Harness
 %{_bindir}/prove
@@ -3745,6 +3772,7 @@ popd
 - Sub-package MIME-Base64 (bug #1238222)
 - Sub-package PerlIO-via-QuotedPrint (bug #1238229)
 - Update Pod-Escapes metadata (bug #1238237)
+- Sub-package Term-Cap (bug #1238248)
 
 * Thu Jun 18 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-346
 - Subpackage "open" module in order to keep deprecated "encoding" module
