@@ -271,6 +271,7 @@ Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
 Requires:       perl-libnet,
 Requires:       perl-Locale-Codes, perl-Locale-Maketext,
 Requires:       perl-Locale-Maketext-Simple
+Requires:       perl-Math-BigInt,
 Requires:       perl-MIME-Base64,
 Requires:       perl-Module-CoreList,
 Requires:       perl-Module-CoreList-tools, perl-Module-Load
@@ -1273,6 +1274,24 @@ BuildArch:      noarch
 %description Locale-Maketext-Simple
 This module is a simple wrapper around Locale::Maketext::Lexicon, designed
 to alleviate the need of creating Language Classes for module authors.
+
+%package Math-BigInt
+Summary:        Arbitrary-size integer and float mathematics
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.9997
+Requires:       %perl_compat
+Requires:       perl(Carp)
+# File::Spec not used on recent perl
+BuildArch:      noarch
+Conflicts:      perl < 4:5.22.0-347
+
+# Do not export unversioned module
+%global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\(Math::BigInt\\)\\s*$
+
+%description Math-BigInt
+This provides Perl modules for arbitrary-size integer and float mathematics.
 
 %package MIME-Base64
 Summary:        Encoding and decoding of Base64 and quoted-printable strings
@@ -2773,6 +2792,16 @@ popd
 %exclude %{privlib}/Locale/Maketext/Simple.pm
 %exclude %{_mandir}/man3/Locale::Maketext::Simple.*
 
+# Math-BigInt
+%exclude %{privlib}/Math/BigFloat.pm
+%exclude %{privlib}/Math/BigInt.pm
+%exclude %{privlib}/Math/BigInt/Calc.pm
+%exclude %{privlib}/Math/BigInt/CalcEmu.pm
+%exclude %{_mandir}/man3/Math::BigFloat.*
+%exclude %{_mandir}/man3/Math::BigInt.*
+%exclude %{_mandir}/man3/Math::BigInt::Calc.*
+%exclude %{_mandir}/man3/Math::BigInt::CalcEmu.*
+
 # MIME-Base64
 %exclude %{archlib}/auto/MIME
 %exclude %{archlib}/MIME
@@ -3596,6 +3625,18 @@ popd
 %{privlib}/Locale/Maketext/Simple.pm
 %{_mandir}/man3/Locale::Maketext::Simple.*
 
+%files Math-BigInt
+%dir %{privlib}/Math
+%{privlib}/Math/BigFloat.pm
+%{privlib}/Math/BigInt.pm
+%dir %{privlib}/Math/BigInt
+%{privlib}/Math/BigInt/Calc.pm
+%{privlib}/Math/BigInt/CalcEmu.pm
+%{_mandir}/man3/Math::BigFloat.*
+%{_mandir}/man3/Math::BigInt.*
+%{_mandir}/man3/Math::BigInt::Calc.*
+%{_mandir}/man3/Math::BigInt::CalcEmu.*
+
 %files MIME-Base64
 %{archlib}/auto/MIME
 %{archlib}/MIME
@@ -3966,6 +4007,7 @@ popd
 - Sub-package perlfaq (bug #1238703)
 - Sub-package Unicode-Normalize (bug #1238730)
 - Sub-package Unicode-Collate (bug #1238760)
+- Sub-package Math-BigInt
 
 * Thu Jun 18 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-346
 - Subpackage "open" module in order to keep deprecated "encoding" module
