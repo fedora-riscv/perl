@@ -277,6 +277,7 @@ Requires:       perl-Module-CoreList-tools, perl-Module-Load
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Metadata
 Requires:       perl-open, perl-PathTools
 Requires:       perl-Params-Check, perl-Parse-CPAN-Meta,
+Requires:       perl-perlfaq,
 Requires:       perl-PerlIO-via-QuotedPrint, perl-Perl-OSType
 Requires:       perl-Pod-Checker, perl-Pod-Escapes
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
@@ -1481,6 +1482,21 @@ Requires:       perl(Carp)
 %description PathTools
 PathTools Perl module (Cwd, File::Spec).
 %endif
+
+%package perlfaq
+Summary:        Frequently asked questions about Perl
+Group:          Development/Libraries
+# Code examples are Public Domain
+License:        (GPL+ or Artistic) and Public Domain
+Epoch:          0
+Version:        5.021009
+Requires:       %perl_compat
+BuildArch:      noarch
+Conflicts:      perl < 4:5.22.0-347
+
+%description perlfaq
+The perlfaq comprises several documents that answer the most commonly asked
+questions about Perl and Perl programming.
 
 %package PerlIO-via-QuotedPrint
 Summary:        PerlIO layer for quoted-printable strings
@@ -2773,6 +2789,13 @@ popd
 %exclude %{privlib}/Params/
 %exclude %{_mandir}/man3/Params::Check*
 
+# perlfaq
+%exclude %{privlib}/perlfaq.pm
+%exclude %{privlib}/pod/perlfaq*
+%exclude %{privlib}/pod/perlglossary.pod
+%exclude %{_mandir}/man1/perlfaq*
+%exclude %{_mandir}/man1/perlglossary.*
+
 # PerlIO-via-QuotedPrint
 %exclude %{privlib}/PerlIO
 %exclude %{_mandir}/man3/PerlIO::via::QuotedPrint.*
@@ -3606,6 +3629,14 @@ popd
 %{_mandir}/man3/parent.3*
 %endif
 
+%files perlfaq
+%{privlib}/perlfaq.pm
+%dir %{privlib}/pod
+%{privlib}/pod/perlfaq*
+%{privlib}/pod/perlglossary.pod
+%{_mandir}/man1/perlfaq*
+%{_mandir}/man1/perlglossary.*
+
 %files PerlIO-via-QuotedPrint
 %{privlib}/PerlIO
 %{_mandir}/man3/PerlIO::via::QuotedPrint.*
@@ -3871,6 +3902,7 @@ popd
 - Sub-package Term-Cap (bug #1238248)
 - Sub-package Text-Balanced (bug #1238269)
 - Sub-package libnet (bug #1238689)
+- Sub-package perlfaq (bug #1238703)
 
 * Thu Jun 18 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-346
 - Subpackage "open" module in order to keep deprecated "encoding" module
