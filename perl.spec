@@ -289,6 +289,7 @@ Requires:       perl-Text-Balanced, perl-Text-ParseWords, perl-Text-Tabs+Wrap,
 Requires:       perl-Thread-Queue
 Requires:       perl-Time-HiRes
 Requires:       perl-Time-Local, perl-Time-Piece
+Requires:       perl-Unicode-Normalize,
 Requires:       perl-version, perl-threads, perl-threads-shared, perl-parent
 
 %description core
@@ -1953,6 +1954,22 @@ following data types only: scalars and scalar refs, arrays and array refs, and
 hashes and hash refs.
 %endif
 
+%package Unicode-Normalize
+Summary:        Unicode Normalization Forms
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.18
+Requires:       %perl_compat
+# unicore/CombiningClass.pl and unicore/Decomposition.pl from perl, perl is
+# auto-detected.
+BuildArch:      noarch
+Conflicts:      perl < 4:5.22.0-347
+
+%description Unicode-Normalize
+This package provides Perl functions that can convert strings into various
+Unicode normalization forms as defined in Unicode Standard Annex #15.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package version
 Summary:        Perl extension for Version Objects
@@ -2986,6 +3003,10 @@ popd
 %exclude %{archlib}/threads/shared*
 %exclude %{_mandir}/man3/threads::shared*
 
+# Unicode-Normalize
+%exclude %{privlib}/Unicode/Normalize.pm
+%exclude %{_mandir}/man3/Unicode::Normalize.*
+
 # version
 %exclude %{privlib}/version.pm
 %exclude %{privlib}/version.pod
@@ -3878,6 +3899,11 @@ popd
 %{_mandir}/man3/threads::shared*
 %endif
 
+%files Unicode-Normalize
+%dir %{privlib}/Unicode
+%{privlib}/Unicode/Normalize.pm
+%{_mandir}/man3/Unicode::Normalize.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files version
 %{privlib}/version.pm
@@ -3903,6 +3929,7 @@ popd
 - Sub-package Text-Balanced (bug #1238269)
 - Sub-package libnet (bug #1238689)
 - Sub-package perlfaq (bug #1238703)
+- Sub-package Unicode-Normalize (bug #1238730)
 
 * Thu Jun 18 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-346
 - Subpackage "open" module in order to keep deprecated "encoding" module
