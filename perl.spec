@@ -275,7 +275,8 @@ Requires:       perl-Module-CoreList,
 Requires:       perl-Module-CoreList-tools, perl-Module-Load
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Metadata
 Requires:       perl-open, perl-PathTools
-Requires:       perl-Params-Check, perl-Parse-CPAN-Meta, perl-Perl-OSType
+Requires:       perl-Params-Check, perl-Parse-CPAN-Meta,
+Requires:       perl-PerlIO-via-QuotedPrint, perl-Perl-OSType
 Requires:       perl-Pod-Checker, perl-Pod-Escapes
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
 Requires:       perl-podlators, perl-Pod-Simple, perl-Scalar-List-Utils
@@ -1455,6 +1456,22 @@ Requires:       perl(Carp)
 %description PathTools
 PathTools Perl module (Cwd, File::Spec).
 %endif
+
+%package PerlIO-via-QuotedPrint
+Summary:        PerlIO layer for quoted-printable strings
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.08
+Requires:       %perl_compat
+BuildArch:      noarch
+Conflicts:      perl < 4:5.22.0-347
+
+%description PerlIO-via-QuotedPrint
+This module implements a PerlIO layer that works on files encoded in the
+quoted-printable format. It will decode from quoted-printable while
+reading from a handle, and it will encode as quoted-printable while
+writing to a handle.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Perl-OSType
@@ -2678,6 +2695,10 @@ popd
 %exclude %{privlib}/Params/
 %exclude %{_mandir}/man3/Params::Check*
 
+# PerlIO-via-QuotedPrint
+%exclude %{privlib}/PerlIO
+%exclude %{_mandir}/man3/PerlIO::via::QuotedPrint.*
+
 # Perl-OSType
 %exclude %dir %{privlib}/Perl
 %exclude %{privlib}/Perl/OSType.pm
@@ -3474,6 +3495,10 @@ popd
 %{_mandir}/man3/parent.3*
 %endif
 
+%files PerlIO-via-QuotedPrint
+%{privlib}/PerlIO
+%{_mandir}/man3/PerlIO::via::QuotedPrint.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Perl-OSType
 %dir %{privlib}/Perl
@@ -3720,6 +3745,7 @@ popd
   in order to apply them when linking executable programs (bug #1238804)
 - Sub-package Config-Perl-V (bug #1238203)
 - Sub-package MIME-Base64 (bug #1238222)
+- Sub-package PerlIO-via-QuotedPrint (bug #1238229)
 
 * Thu Jun 18 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-346
 - Subpackage "open" module in order to keep deprecated "encoding" module
