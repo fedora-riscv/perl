@@ -289,7 +289,7 @@ Requires:       perl-Text-Balanced, perl-Text-ParseWords, perl-Text-Tabs+Wrap,
 Requires:       perl-Thread-Queue
 Requires:       perl-Time-HiRes
 Requires:       perl-Time-Local, perl-Time-Piece
-Requires:       perl-Unicode-Normalize,
+Requires:       perl-Unicode-Collate, perl-Unicode-Normalize,
 Requires:       perl-version, perl-threads, perl-threads-shared, perl-parent
 
 %description core
@@ -1954,6 +1954,20 @@ following data types only: scalars and scalar refs, arrays and array refs, and
 hashes and hash refs.
 %endif
 
+%package Unicode-Collate
+Summary:        Unicode Collation Algorithm
+Group:          Development/Libraries
+License:        (GPL+ or Artistic) and UCD
+Epoch:          0
+Version:        1.12
+Requires:       %perl_compat
+Requires:       perl(Unicode::Normalize)
+Conflicts:      perl < 4:5.22.0-347
+
+%description Unicode-Collate
+This package is Perl implementation of Unicode Technical Standard #10 (Unicode
+Collation Algorithm).
+
 %package Unicode-Normalize
 Summary:        Unicode Normalization Forms
 Group:          Development/Libraries
@@ -3003,6 +3017,16 @@ popd
 %exclude %{archlib}/threads/shared*
 %exclude %{_mandir}/man3/threads::shared*
 
+# Unicode-Collate
+%dir %exclude %{archlib}/auto/Unicode
+%exclude %{archlib}/auto/Unicode/Collate
+%dir %exclude %{archlib}/Unicode
+%exclude %{archlib}/Unicode/Collate
+%exclude %{archlib}/Unicode/Collate.pm
+%exclude %{privlib}/Unicode/Collate
+%exclude %{_mandir}/man3/Unicode::Collate.*
+%exclude %{_mandir}/man3/Unicode::Collate::*
+
 # Unicode-Normalize
 %exclude %{privlib}/Unicode/Normalize.pm
 %exclude %{_mandir}/man3/Unicode::Normalize.*
@@ -3899,6 +3923,17 @@ popd
 %{_mandir}/man3/threads::shared*
 %endif
 
+%files Unicode-Collate
+%dir %{archlib}/auto/Unicode
+%{archlib}/auto/Unicode/Collate
+%dir %{archlib}/Unicode
+%{archlib}/Unicode/Collate
+%{archlib}/Unicode/Collate.pm
+%dir %{privlib}/Unicode
+%{privlib}/Unicode/Collate
+%{_mandir}/man3/Unicode::Collate.*
+%{_mandir}/man3/Unicode::Collate::*
+
 %files Unicode-Normalize
 %dir %{privlib}/Unicode
 %{privlib}/Unicode/Normalize.pm
@@ -3930,6 +3965,7 @@ popd
 - Sub-package libnet (bug #1238689)
 - Sub-package perlfaq (bug #1238703)
 - Sub-package Unicode-Normalize (bug #1238730)
+- Sub-package Unicode-Collate (bug #1238760)
 
 * Thu Jun 18 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-346
 - Subpackage "open" module in order to keep deprecated "encoding" module
