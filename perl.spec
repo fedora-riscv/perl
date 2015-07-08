@@ -1509,7 +1509,7 @@ Plain Old Documentation format specifications.
 %endif
 
 %package Pod-Escapes
-Summary:        Perl module for resolving POD escape sequences
+Summary:        Resolve POD escape sequences
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
@@ -1520,8 +1520,6 @@ BuildArch:      noarch
 
 %description Pod-Escapes
 This module provides things that are useful in decoding Pod E<...> sequences.
-Presumably, it should be used only by Pod parsers and/or formatters.
-
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-Parser
@@ -3746,6 +3744,7 @@ popd
 - Sub-package Config-Perl-V (bug #1238203)
 - Sub-package MIME-Base64 (bug #1238222)
 - Sub-package PerlIO-via-QuotedPrint (bug #1238229)
+- Update Pod-Escapes metadata (bug #1238237)
 
 * Thu Jun 18 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-346
 - Subpackage "open" module in order to keep deprecated "encoding" module
