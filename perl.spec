@@ -253,7 +253,8 @@ Requires:       perl-macros
 
 Requires:       perl-Archive-Tar, perl-autodie, perl-B-Debug,
 Requires:       perl-Compress-Raw-Bzip2,
-Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-constant,
+Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-Config-Perl-V,
+Requires:       perl-constant,
 Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
 Requires:       perl-CPAN-Meta-YAML, perl-Encode, perl-encoding
 Requires:       perl-Data-Dumper, perl-DB_File, perl-Devel-PPPort,
@@ -407,6 +408,22 @@ Requires:       %perl_compat
 This module provides a Perl interface to the zlib compression library.
 It is used by IO::Compress::Zlib.
 %endif
+
+%package Config-Perl-V
+Summary:        Structured data retrieval of perl -V output
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.24
+Requires:       %perl_compat
+BuildArch:      noarch
+Conflicts:      perl < 4:5.22.0-347
+
+%description Config-Perl-V
+The command "perl -V" will return you an excerpt from the %%Config::Config
+hash combined with the output of "perl -V" that is not stored inside the hash,
+but only available to the perl binary itself. This package provides Perl
+module that will return you the output of "perl -V" in a structure.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package constant
@@ -2222,6 +2239,10 @@ popd
 %exclude %{privlib}/Carp.*
 %exclude %{_mandir}/man3/Carp.*
 
+# Config-Perl-V
+%exclude %{privlib}/Config/Perl
+%exclude %{_mandir}/man3/Config::Perl::V.*
+
 # constant
 %exclude %{privlib}/constant.pm
 %exclude %{_mandir}/man3/constant.3*
@@ -2909,6 +2930,11 @@ popd
 %{archlib}/auto/Compress/Raw/Zlib
 %{_mandir}/man3/Compress::Raw::Zlib*
 %endif
+
+%files Config-Perl-V
+%dir %{privlib}/Config
+%{privlib}/Config/Perl
+%{_mandir}/man3/Config::Perl::V.*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files constant
@@ -3666,6 +3692,7 @@ popd
 * Wed Jul 08 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-347
 - Store distribution's linker and compiler flags to more Config's options
   in order to apply them when linking executable programs (bug #1238804)
+- Sub-package Config-Perl-V (bug #1238203)
 
 * Thu Jun 18 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-346
 - Subpackage "open" module in order to keep deprecated "encoding" module
