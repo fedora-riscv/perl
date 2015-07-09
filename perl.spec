@@ -2983,14 +2983,14 @@ popd
 %exclude %{privlib}/Test/Tester*
 %exclude %{privlib}/Test/Simple*
 %exclude %{privlib}/Test/Tutorial*
-%exclude %{privlib}/Test/use/ok*
+%exclude %{privlib}/Test/use
 %exclude %{_mandir}/man3/ok*
 %exclude %{_mandir}/man3/Test::More*
 %exclude %{_mandir}/man3/Test::Builder*
 %exclude %{_mandir}/man3/Test::Tester*
 %exclude %{_mandir}/man3/Test::Simple*
 %exclude %{_mandir}/man3/Test::Tutorial*
-%exclude %{_mandir}/man3/Test::use::ok*
+%exclude %{_mandir}/man3/Test::use::*
 
 # Text-Balanced
 %exclude %{privlib}/Text/Balanced.pm
@@ -3887,14 +3887,14 @@ popd
 %{privlib}/Test/Tester*
 %{privlib}/Test/Simple*
 %{privlib}/Test/Tutorial*
-%{privlib}/Test/use/ok*
+%{privlib}/Test/use
 %{_mandir}/man3/ok*
 %{_mandir}/man3/Test::More*
 %{_mandir}/man3/Test::Builder*
 %{_mandir}/man3/Test::Tester*
 %{_mandir}/man3/Test::Simple*
 %{_mandir}/man3/Test::Tutorial*
-%{_mandir}/man3/Test::use::ok*
+%{_mandir}/man3/Test::use::*
 %endif
 
 %files Text-Balanced
