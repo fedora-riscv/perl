@@ -64,11 +64,6 @@ Patch4:         perl-5.10.0-libresolv.patch
 # patches ExtUtils-MakeMaker
 Patch5:         perl-USE_MM_LD_RUN_PATH.patch
 
-# Skip hostname tests, since hostname lookup isn't available in Fedora
-# buildroots by design.
-# patches Net::Config from libnet
-Patch6:         perl-disable_test_hosts.patch
-
 # The Fedora builders started randomly failing this futime test
 # only on x86_64, so we just don't run it. Works fine on normal
 # systems.
@@ -2026,7 +2021,6 @@ Perl extension for Version Objects
 %endif
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
 %patch7 -p1
 %patch8 -p1
 %patch15 -p1
@@ -4001,6 +3995,7 @@ popd
 - Sub-package Unicode-Collate (bug #1238760)
 - Sub-package Math-BigInt
 - Do not provide Net/libnet.cfg (bug #1238689)
+- Revert downstream change in Net::Config default configuration
 
 * Thu Jun 18 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-346
 - Subpackage "open" module in order to keep deprecated "encoding" module
