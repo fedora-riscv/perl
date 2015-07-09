@@ -43,7 +43,6 @@ Group:          Development/Languages
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and HSRL and Public Domain and UCD
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
-Source2:        perl-5.8.0-libnet.cfg
 Source3:        macros.perl
 #Systemtap tapset and example that make use of systemtap-sdt-devel
 # build requirement. Written by lberk; Not yet upstream.
@@ -2234,11 +2233,6 @@ mkdir -p $RPM_BUILD_ROOT%{perl_vendorarch}/auto
 mkdir -p $RPM_BUILD_ROOT%{perl_vendorlib}
 
 #
-# libnet configuration file
-#
-install -p -m 644 %{SOURCE2} %{build_privlib}/Net/libnet.cfg
-
-#
 # perl RPM macros
 #
 mkdir -p ${RPM_BUILD_ROOT}%{_rpmconfigdir}/macros.d
@@ -2739,7 +2733,6 @@ popd
 %exclude %{privlib}/Net/Domain.pm
 %exclude %{privlib}/Net/FTP
 %exclude %{privlib}/Net/FTP.pm
-%exclude %{privlib}/Net/libnet.cfg
 %exclude %{privlib}/Net/libnetFAQ.pod
 %exclude %{privlib}/Net/NNTP.pm
 %exclude %{privlib}/Net/Netrc.pm
@@ -3568,7 +3561,6 @@ popd
 %{privlib}/Net/Domain.pm
 %{privlib}/Net/FTP
 %{privlib}/Net/FTP.pm
-%{privlib}/Net/libnet.cfg
 %{privlib}/Net/libnetFAQ.pod
 %{privlib}/Net/NNTP.pm
 %{privlib}/Net/Netrc.pm
@@ -4008,6 +4000,7 @@ popd
 - Sub-package Unicode-Normalize (bug #1238730)
 - Sub-package Unicode-Collate (bug #1238760)
 - Sub-package Math-BigInt
+- Do not provide Net/libnet.cfg (bug #1238689)
 
 * Thu Jun 18 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-346
 - Subpackage "open" module in order to keep deprecated "encoding" module
