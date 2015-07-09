@@ -262,7 +262,7 @@ Requires:       perl-File-Path, perl-File-Temp, perl-Filter,
 Requires:       perl-Filter-Simple, perl-Getopt-Long
 Requires:       perl-HTTP-Tiny, perl-IO-Compress, perl-IO-Socket-IP
 Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
-Requires:       perl-libnet,
+Requires:       perl-libnet, perl-libnetcfg,
 Requires:       perl-Locale-Codes, perl-Locale-Maketext,
 Requires:       perl-Locale-Maketext-Simple
 Requires:       perl-Math-BigInt,
@@ -1208,6 +1208,19 @@ Conflicts:      perl < 4:5.22.0-347
 This is a collection of Perl modules which provides a simple and
 consistent programming interface (API) to the client side of various
 protocols used in the internet community.
+
+%package libnetcfg
+Summary:        Configure libnet
+Group:          Development/Tools
+License:        GPL+ or Artistic
+Epoch:          %perl_epoch
+Version:        %perl_version
+# Net::Config is optional
+BuildArch:      noarch
+Conflicts:      perl-devel < 4:5.22.0-347
+
+%description libnetcfg
+The libnetcfg utility can be used to configure the libnet.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Locale-Codes
@@ -2343,8 +2356,6 @@ popd
 # devel
 %exclude %{_bindir}/h2xs
 %exclude %{_mandir}/man1/h2xs*
-%exclude %{_bindir}/libnetcfg
-%exclude %{_mandir}/man1/libnetcfg*
 %exclude %{_bindir}/perlivp
 %exclude %{_mandir}/man1/perlivp*
 %exclude %{archlib}/CORE/*.h
@@ -2744,6 +2755,10 @@ popd
 %exclude %{_mandir}/man3/Net::SMTP.*
 %exclude %{_mandir}/man3/Net::Time.*
 
+# libnetcfg
+%exclude %{_bindir}/libnetcfg
+%exclude %{_mandir}/man1/libnetcfg*
+
 # Locale-Codes
 %exclude %dir %{privlib}/Locale
 %exclude %{privlib}/Locale/Codes
@@ -3071,8 +3086,6 @@ popd
 %files devel
 %{_bindir}/h2xs
 %{_mandir}/man1/h2xs*
-%{_bindir}/libnetcfg
-%{_mandir}/man1/libnetcfg*
 %{_bindir}/perlivp
 %{_mandir}/man1/perlivp*
 %{archlib}/CORE/*.h
@@ -3572,6 +3585,10 @@ popd
 %{_mandir}/man3/Net::SMTP.*
 %{_mandir}/man3/Net::Time.*
 
+%files libnetcfg
+%{_bindir}/libnetcfg
+%{_mandir}/man1/libnetcfg*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Locale-Codes
 %dir %{privlib}/Locale
@@ -3996,6 +4013,7 @@ popd
 - Sub-package Math-BigInt
 - Do not provide Net/libnet.cfg (bug #1238689)
 - Revert downstream change in Net::Config default configuration
+- Move libnetcfg tool from perl-devel into perl-libnetcfg sub-package
 
 * Thu Jun 18 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-346
 - Subpackage "open" module in order to keep deprecated "encoding" module
