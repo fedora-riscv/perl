@@ -265,7 +265,8 @@ Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
 Requires:       perl-libnet, perl-libnetcfg,
 Requires:       perl-Locale-Codes, perl-Locale-Maketext,
 Requires:       perl-Locale-Maketext-Simple
-Requires:       perl-Math-BigInt, perl-Math-BigInt-FastCalc, perl-Math-BigRat
+Requires:       perl-Math-BigInt, perl-Math-BigInt-FastCalc, perl-Math-BigRat,
+Requires:       perl-Math-Complex,
 Requires:       perl-MIME-Base64,
 Requires:       perl-Module-CoreList,
 Requires:       perl-Module-CoreList-tools, perl-Module-Load
@@ -1344,6 +1345,22 @@ Conflicts:      perl < 4:5.22.0-348
 %description Math-BigRat
 Math::BigRat complements Math::BigInt and Math::BigFloat by providing support
 for arbitrary big rational numbers.
+
+%package Math-Complex
+Summary:        Complex numbers and trigonometric functions
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.59
+Requires:       %perl_compat
+BuildArch:      noarch
+Conflicts:      perl < 4:5.22.0-348
+
+%description Math-Complex
+This package lets you create and manipulate complex numbers. By default, Perl
+limits itself to real numbers, but an extra "use" statement brings full
+complex support, along with a full set of mathematical functions typically
+associated with and/or extended to complex numbers.
 
 %package MIME-Base64
 Summary:        Encoding and decoding of Base64 and quoted-printable strings
@@ -2869,6 +2886,13 @@ popd
 %exclude %{privlib}/Math/BigRat.pm
 %exclude %{_mandir}/man3/Math::BigRat.*
 
+# Math-Complex
+%dir %exclude %{privlib}/Math
+%exclude %{privlib}/Math/Complex.pm
+%exclude %{privlib}/Math/Trig.pm
+%exclude %{_mandir}/man3/Math::Complex.*
+%exclude %{_mandir}/man3/Math::Trig.*
+
 # MIME-Base64
 %exclude %{archlib}/auto/MIME
 %exclude %{archlib}/MIME
@@ -3727,6 +3751,13 @@ popd
 %{privlib}/Math/BigRat.pm
 %{_mandir}/man3/Math::BigRat.*
 
+%files Math-Complex
+%dir %{privlib}/Math
+%{privlib}/Math/Complex.pm
+%{privlib}/Math/Trig.pm
+%{_mandir}/man3/Math::Complex.*
+%{_mandir}/man3/Math::Trig.*
+
 %files MIME-Base64
 %{archlib}/auto/MIME
 %{archlib}/MIME
@@ -4088,6 +4119,7 @@ popd
 - Sub-package bignum
 - Sub-package Math-BigRat
 - Sub-package Math-BigInt-FastCalc
+- Sub-package Math-Complex
 
 * Wed Jul 08 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-347
 - Store distribution's linker and compiler flags to more Config's options
