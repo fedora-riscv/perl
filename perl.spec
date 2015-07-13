@@ -265,7 +265,7 @@ Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
 Requires:       perl-libnet, perl-libnetcfg,
 Requires:       perl-Locale-Codes, perl-Locale-Maketext,
 Requires:       perl-Locale-Maketext-Simple
-Requires:       perl-Math-BigInt, perl-Math-BigRat
+Requires:       perl-Math-BigInt, perl-Math-BigInt-FastCalc, perl-Math-BigRat
 Requires:       perl-MIME-Base64,
 Requires:       perl-Module-CoreList,
 Requires:       perl-Module-CoreList-tools, perl-Module-Load
@@ -1317,6 +1317,18 @@ Conflicts:      perl < 4:5.22.0-347
 
 %description Math-BigInt
 This provides Perl modules for arbitrary-size integer and float mathematics.
+
+%package Math-BigInt-FastCalc
+Summary:        Math::BigInt::Calc XS implementation
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.31
+Requires:       %perl_compat
+Conflicts:      perl < 4:5.22.0-348
+
+%description Math-BigInt-FastCalc
+This package provides support for faster big integer calculations.
 
 %package Math-BigRat
 Summary:        Arbitrary big rational numbers
@@ -2848,6 +2860,11 @@ popd
 %exclude %{_mandir}/man3/Math::BigInt::Calc.*
 %exclude %{_mandir}/man3/Math::BigInt::CalcEmu.*
 
+# Math-BigInt-FastCalc
+%exclude %{archlib}/Math
+%exclude %{archlib}/auto/Math
+%exclude %{_mandir}/man3/Math::BigInt::FastCalc.*
+
 # Math-BigRat
 %exclude %{privlib}/Math/BigRat.pm
 %exclude %{_mandir}/man3/Math::BigRat.*
@@ -3700,6 +3717,11 @@ popd
 %{_mandir}/man3/Math::BigInt::Calc.*
 %{_mandir}/man3/Math::BigInt::CalcEmu.*
 
+%files Math-BigInt-FastCalc
+%{archlib}/Math
+%{archlib}/auto/Math
+%{_mandir}/man3/Math::BigInt::FastCalc.*
+
 %files Math-BigRat
 %dir %{privlib}/Math
 %{privlib}/Math/BigRat.pm
@@ -4065,6 +4087,7 @@ popd
 * Mon Jul 13 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-348
 - Sub-package bignum
 - Sub-package Math-BigRat
+- Sub-package Math-BigInt-FastCalc
 
 * Wed Jul 08 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-347
 - Store distribution's linker and compiler flags to more Config's options
