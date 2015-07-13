@@ -265,7 +265,7 @@ Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
 Requires:       perl-libnet, perl-libnetcfg,
 Requires:       perl-Locale-Codes, perl-Locale-Maketext,
 Requires:       perl-Locale-Maketext-Simple
-Requires:       perl-Math-BigInt,
+Requires:       perl-Math-BigInt, perl-Math-BigRat
 Requires:       perl-MIME-Base64,
 Requires:       perl-Module-CoreList,
 Requires:       perl-Module-CoreList-tools, perl-Module-Load
@@ -1317,6 +1317,21 @@ Conflicts:      perl < 4:5.22.0-347
 
 %description Math-BigInt
 This provides Perl modules for arbitrary-size integer and float mathematics.
+
+%package Math-BigRat
+Summary:        Arbitrary big rational numbers
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.2608
+Requires:       %perl_compat
+Requires:       perl(Math::BigInt)
+BuildArch:      noarch
+Conflicts:      perl < 4:5.22.0-348
+
+%description Math-BigRat
+Math::BigRat complements Math::BigInt and Math::BigFloat by providing support
+for arbitrary big rational numbers.
 
 %package MIME-Base64
 Summary:        Encoding and decoding of Base64 and quoted-printable strings
@@ -2833,6 +2848,10 @@ popd
 %exclude %{_mandir}/man3/Math::BigInt::Calc.*
 %exclude %{_mandir}/man3/Math::BigInt::CalcEmu.*
 
+# Math-BigRat
+%exclude %{privlib}/Math/BigRat.pm
+%exclude %{_mandir}/man3/Math::BigRat.*
+
 # MIME-Base64
 %exclude %{archlib}/auto/MIME
 %exclude %{archlib}/MIME
@@ -3681,6 +3700,11 @@ popd
 %{_mandir}/man3/Math::BigInt::Calc.*
 %{_mandir}/man3/Math::BigInt::CalcEmu.*
 
+%files Math-BigRat
+%dir %{privlib}/Math
+%{privlib}/Math/BigRat.pm
+%{_mandir}/man3/Math::BigRat.*
+
 %files MIME-Base64
 %{archlib}/auto/MIME
 %{archlib}/MIME
@@ -4040,6 +4064,7 @@ popd
 %changelog
 * Mon Jul 13 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-348
 - Sub-package bignum
+- Sub-package Math-BigRat
 
 * Wed Jul 08 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-347
 - Store distribution's linker and compiler flags to more Config's options
