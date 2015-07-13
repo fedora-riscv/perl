@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        347%{?dist}
+Release:        348%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -244,7 +244,7 @@ Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-macros
 
-Requires:       perl-Archive-Tar, perl-autodie, perl-B-Debug,
+Requires:       perl-Archive-Tar, perl-autodie, perl-B-Debug, perl-bignum
 Requires:       perl-Compress-Raw-Bzip2,
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-Config-Perl-V,
 Requires:       perl-constant,
@@ -358,6 +358,24 @@ Conflicts:      perl < 4:5.20.1-310
 Walk Perl syntax tree and print debug information about op-codes. See
 B::Concise and B::Terse for other details.
 %endif
+
+%package bignum
+Summary:        Use BigInts and BigFloats transparently
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.39
+Requires:       %perl_compat
+Requires:       perl(Carp)
+# Math::BigInt::Lite is optional
+Requires:       perl(Math::BigRat)
+Requires:       perl(warnings)
+BuildArch:      noarch
+Conflicts:      perl < 4:5.22.0-348
+
+%description bignum
+This package attempts to make it easier to write scripts that use BigInts and
+BigFloats in a transparent way.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Carp
@@ -2386,6 +2404,16 @@ popd
 %exclude %{privlib}/B/Debug.pm
 %exclude %{_mandir}/man3/B::Debug.3*
 
+# bignum
+%exclude %{privlib}/bigint.pm
+%exclude %{privlib}/bignum.pm
+%exclude %{privlib}/bigrat.pm
+%exclude %{privlib}/Math/BigFloat
+%exclude %{privlib}/Math/BigInt/Trace.pm
+%exclude %{_mandir}/man3/bigint.*
+%exclude %{_mandir}/man3/bignum.*
+%exclude %{_mandir}/man3/bigrat.*
+
 # Carp
 %exclude %{privlib}/Carp
 %exclude %{privlib}/Carp.*
@@ -2797,6 +2825,7 @@ popd
 # Math-BigInt
 %exclude %{privlib}/Math/BigFloat.pm
 %exclude %{privlib}/Math/BigInt.pm
+%exclude %dir %exclude %{privlib}/Math/BigInt
 %exclude %{privlib}/Math/BigInt/Calc.pm
 %exclude %{privlib}/Math/BigInt/CalcEmu.pm
 %exclude %{_mandir}/man3/Math::BigFloat.*
@@ -3130,6 +3159,18 @@ popd
 %{privlib}/B/Debug.pm
 %{_mandir}/man3/B::Debug.3*
 %endif
+
+%files bignum
+%{privlib}/bigint.pm
+%{privlib}/bignum.pm
+%{privlib}/bigrat.pm
+%dir %{privlib}/Math
+%{privlib}/Math/BigFloat
+%dir %{privlib}/Math/BigInt
+%{privlib}/Math/BigInt/Trace.pm
+%{_mandir}/man3/bigint.*
+%{_mandir}/man3/bignum.*
+%{_mandir}/man3/bigrat.*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Carp
@@ -3997,6 +4038,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jul 13 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-348
+- Sub-package bignum
+
 * Wed Jul 08 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-347
 - Store distribution's linker and compiler flags to more Config's options
   in order to apply them when linking executable programs (bug #1238804)
