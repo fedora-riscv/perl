@@ -1364,6 +1364,7 @@ limits itself to real numbers, but an extra "use" statement brings full
 complex support, along with a full set of mathematical functions typically
 associated with and/or extended to complex numbers.
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package MIME-Base64
 Summary:        Encoding and decoding of Base64 and quoted-printable strings
 Group:          Development/Libraries
@@ -1379,6 +1380,7 @@ Conflicts:      perl < 4:5.22.0-347
 This package contains a Base64 encoder/decoder and a quoted-printable
 encoder/decoder. These encoding methods are specified in RFC 2045 - MIME
 (Multipurpose Internet Mail Extensions).
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Module-CoreList
@@ -3762,10 +3764,12 @@ popd
 %{_mandir}/man3/Math::Complex.*
 %{_mandir}/man3/Math::Trig.*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files MIME-Base64
 %{archlib}/auto/MIME
 %{archlib}/MIME
 %{_mandir}/man3/MIME::*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Module-CoreList
@@ -4125,6 +4129,7 @@ popd
 - Sub-package Math-BigInt-FastCalc
 - Sub-package Math-Complex
 - Remove bundled perl-Config-Perl-V (bug #1238203)
+- Remove bundled perl-MIME-Base64 (bug #1238222)
 
 * Wed Jul 08 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-347
 - Store distribution's linker and compiler flags to more Config's options
