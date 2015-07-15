@@ -1845,6 +1845,7 @@ colorstrip(), colorvalid(), and coloralias(), which have to be explicitly
 imported to be used.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Term-Cap
 Summary:        Perl termcap interface
 Group:          Development/Libraries
@@ -1861,6 +1862,7 @@ Conflicts:      perl < 4:5.22.0-347
 %description Term-Cap
 These are low-level functions to extract and use capabilities from a terminal
 capability (termcap) database.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Test-Harness
@@ -3993,10 +3995,12 @@ popd
 %{_mandir}/man3/Term::ANSIColor*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Term-Cap
 %dir %{privlib}/Term
 %{privlib}/Term/Cap.pm
 %{_mandir}/man3/Term::Cap.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Test-Harness
@@ -4140,6 +4144,7 @@ popd
 - Remove bundled perl-MIME-Base64 (bug #1238222)
 - Remove bundled perl-PerlIO-via-QuotedPrint (bug #1238229)
 - Remove bundled perl-Pod-Escapes (bug #1238237)
+- Remove bundled perl-Term-Cap (bug #1238248)
 
 * Wed Jul 08 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-347
 - Store distribution's linker and compiler flags to more Config's options
