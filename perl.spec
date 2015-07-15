@@ -1895,6 +1895,7 @@ BuildArch:      noarch
 Basic utilities for writing tests.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Text-Balanced
 Summary:        Extract delimited text sequences from strings
 Group:          Development/Libraries
@@ -1908,6 +1909,7 @@ Conflicts:      perl < 4:5.22.0-347
 %description Text-Balanced
 These Perl subroutines may be used to extract a delimited substring, possibly
 after skipping a specified prefix string.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Text-ParseWords
@@ -4035,10 +4037,12 @@ popd
 %{_mandir}/man3/Test::use::*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Text-Balanced
 %dir %{privlib}/Text
 %{privlib}/Text/Balanced.pm
 %{_mandir}/man3/Text::Balanced.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Text-ParseWords
@@ -4145,6 +4149,7 @@ popd
 - Remove bundled perl-PerlIO-via-QuotedPrint (bug #1238229)
 - Remove bundled perl-Pod-Escapes (bug #1238237)
 - Remove bundled perl-Term-Cap (bug #1238248)
+- Remove bundled perl-Text-Balanced (bug #1238269)
 
 * Wed Jul 08 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-347
 - Store distribution's linker and compiler flags to more Config's options
