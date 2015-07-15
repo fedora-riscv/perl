@@ -429,6 +429,7 @@ This module provides a Perl interface to the zlib compression library.
 It is used by IO::Compress::Zlib.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Config-Perl-V
 Summary:        Structured data retrieval of perl -V output
 Group:          Development/Libraries
@@ -444,6 +445,7 @@ The command "perl -V" will return you an excerpt from the %%Config::Config
 hash combined with the output of "perl -V" that is not stored inside the hash,
 but only available to the perl binary itself. This package provides Perl
 module that will return you the output of "perl -V" in a structure.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package constant
@@ -3257,10 +3259,12 @@ popd
 %{_mandir}/man3/Compress::Raw::Zlib*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Config-Perl-V
 %dir %{privlib}/Config
 %{privlib}/Config/Perl
 %{_mandir}/man3/Config::Perl::V.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files constant
@@ -4120,6 +4124,7 @@ popd
 - Sub-package Math-BigRat
 - Sub-package Math-BigInt-FastCalc
 - Sub-package Math-Complex
+- Remove bundled perl-Config-Perl-V (bug #1238203)
 
 * Wed Jul 08 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-347
 - Store distribution's linker and compiler flags to more Config's options
