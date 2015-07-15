@@ -1578,6 +1578,7 @@ Requires:       perl(Carp)
 PathTools Perl module (Cwd, File::Spec).
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package perlfaq
 Summary:        Frequently asked questions about Perl
 Group:          Development/Libraries
@@ -1592,6 +1593,7 @@ Conflicts:      perl < 4:5.22.0-347
 %description perlfaq
 The perlfaq comprises several documents that answer the most commonly asked
 questions about Perl and Perl programming.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package PerlIO-via-QuotedPrint
@@ -3856,6 +3858,7 @@ popd
 %{_mandir}/man3/parent.3*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files perlfaq
 %{privlib}/perlfaq.pm
 %dir %{privlib}/pod
@@ -3863,6 +3866,7 @@ popd
 %{privlib}/pod/perlglossary.pod
 %{_mandir}/man1/perlfaq*
 %{_mandir}/man1/perlglossary.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files PerlIO-via-QuotedPrint
@@ -4155,6 +4159,7 @@ popd
 - Remove bundled perl-Term-Cap (bug #1238248)
 - Remove bundled perl-Text-Balanced (bug #1238269)
 - Remove bundled perl-libnet (bug #1238689)
+- Remove bundled perl-perlfaq (bug #1238703)
 
 * Wed Jul 08 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-347
 - Store distribution's linker and compiler flags to more Config's options
