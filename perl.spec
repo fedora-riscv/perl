@@ -1591,6 +1591,7 @@ Conflicts:      perl < 4:5.22.0-347
 The perlfaq comprises several documents that answer the most commonly asked
 questions about Perl and Perl programming.
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package PerlIO-via-QuotedPrint
 Summary:        PerlIO layer for quoted-printable strings
 Group:          Development/Libraries
@@ -1606,6 +1607,7 @@ This module implements a PerlIO layer that works on files encoded in the
 quoted-printable format. It will decode from quoted-printable while
 reading from a handle, and it will encode as quoted-printable while
 writing to a handle.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Perl-OSType
@@ -3852,9 +3854,11 @@ popd
 %{_mandir}/man1/perlfaq*
 %{_mandir}/man1/perlglossary.*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files PerlIO-via-QuotedPrint
 %{privlib}/PerlIO
 %{_mandir}/man3/PerlIO::via::QuotedPrint.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Perl-OSType
@@ -4130,6 +4134,7 @@ popd
 - Sub-package Math-Complex
 - Remove bundled perl-Config-Perl-V (bug #1238203)
 - Remove bundled perl-MIME-Base64 (bug #1238222)
+- Remove bundled perl-PerlIO-via-QuotedPrint (bug #1238229)
 
 * Wed Jul 08 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-347
 - Store distribution's linker and compiler flags to more Config's options
