@@ -2072,6 +2072,7 @@ Conflicts:      perl < 4:5.22.0-347
 This package is Perl implementation of Unicode Technical Standard #10 (Unicode
 Collation Algorithm).
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Unicode-Normalize
 Summary:        Unicode Normalization Forms
 Group:          Development/Libraries
@@ -2087,6 +2088,7 @@ Conflicts:      perl < 4:5.22.0-347
 %description Unicode-Normalize
 This package provides Perl functions that can convert strings into various
 Unicode normalization forms as defined in Unicode Standard Annex #15.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package version
@@ -4128,10 +4130,12 @@ popd
 %{_mandir}/man3/Unicode::Collate.*
 %{_mandir}/man3/Unicode::Collate::*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Unicode-Normalize
 %dir %{privlib}/Unicode
 %{privlib}/Unicode/Normalize.pm
 %{_mandir}/man3/Unicode::Normalize.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files version
@@ -4160,6 +4164,7 @@ popd
 - Remove bundled perl-Text-Balanced (bug #1238269)
 - Remove bundled perl-libnet (bug #1238689)
 - Remove bundled perl-perlfaq (bug #1238703)
+- Remove bundled perl-Unicode-Normalize (bug #1238730)
 
 * Wed Jul 08 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-347
 - Store distribution's linker and compiler flags to more Config's options
