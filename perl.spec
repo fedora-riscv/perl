@@ -1644,6 +1644,7 @@ Module and tools to verify POD documentation contents for compliance with the
 Plain Old Documentation format specifications.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-Escapes
 Summary:        Resolve POD escape sequences
 Group:          Development/Libraries
@@ -1656,6 +1657,7 @@ BuildArch:      noarch
 
 %description Pod-Escapes
 This module provides things that are useful in decoding Pod E<...> sequences.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-Parser
@@ -3876,10 +3878,12 @@ popd
 %{_mandir}/man3/Pod::Checker.*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Pod-Escapes
 %dir %{privlib}/Pod
 %{privlib}/Pod/Escapes.pm
 %{_mandir}/man3/Pod::Escapes.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Pod-Parser
@@ -4135,6 +4139,7 @@ popd
 - Remove bundled perl-Config-Perl-V (bug #1238203)
 - Remove bundled perl-MIME-Base64 (bug #1238222)
 - Remove bundled perl-PerlIO-via-QuotedPrint (bug #1238229)
+- Remove bundled perl-Pod-Escapes (bug #1238237)
 
 * Wed Jul 08 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-347
 - Store distribution's linker and compiler flags to more Config's options
