@@ -2058,6 +2058,7 @@ following data types only: scalars and scalar refs, arrays and array refs, and
 hashes and hash refs.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Unicode-Collate
 Summary:        Unicode Collation Algorithm
 Group:          Development/Libraries
@@ -2071,6 +2072,7 @@ Conflicts:      perl < 4:5.22.0-347
 %description Unicode-Collate
 This package is Perl implementation of Unicode Technical Standard #10 (Unicode
 Collation Algorithm).
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Unicode-Normalize
@@ -4119,6 +4121,7 @@ popd
 %{_mandir}/man3/threads::shared*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Unicode-Collate
 %dir %{archlib}/auto/Unicode
 %{archlib}/auto/Unicode/Collate
@@ -4129,6 +4132,7 @@ popd
 %{privlib}/Unicode/Collate
 %{_mandir}/man3/Unicode::Collate.*
 %{_mandir}/man3/Unicode::Collate::*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Unicode-Normalize
@@ -4165,6 +4169,7 @@ popd
 - Remove bundled perl-libnet (bug #1238689)
 - Remove bundled perl-perlfaq (bug #1238703)
 - Remove bundled perl-Unicode-Normalize (bug #1238730)
+- Remove bundled perl-Unicode-Collate (bug #1238760)
 
 * Wed Jul 08 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-347
 - Store distribution's linker and compiler flags to more Config's options
