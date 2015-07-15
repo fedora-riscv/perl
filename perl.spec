@@ -1208,6 +1208,7 @@ Marc Lehmann in C, so must be compiled and installed in the used environment.
 JSON::PP is a pure-Perl module and is compatible with JSON::XS.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package libnet
 Summary:        Perl clients for various network protocols
 Group:          Development/Libraries
@@ -1229,6 +1230,7 @@ Conflicts:      perl < 4:5.22.0-347
 This is a collection of Perl modules which provides a simple and
 consistent programming interface (API) to the client side of various
 protocols used in the internet community.
+%endif
 
 %package libnetcfg
 Summary:        Configure libnet
@@ -3676,6 +3678,7 @@ popd
 %{_mandir}/man3/JSON::PP::Boolean.3pm*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files libnet
 %dir %{privlib}/Net
 %{privlib}/Net/Cmd.pm
@@ -3699,6 +3702,7 @@ popd
 %{_mandir}/man3/Net::POP3.*
 %{_mandir}/man3/Net::SMTP.*
 %{_mandir}/man3/Net::Time.*
+%endif
 
 %files libnetcfg
 %{_bindir}/libnetcfg
@@ -4150,6 +4154,7 @@ popd
 - Remove bundled perl-Pod-Escapes (bug #1238237)
 - Remove bundled perl-Term-Cap (bug #1238248)
 - Remove bundled perl-Text-Balanced (bug #1238269)
+- Remove bundled perl-libnet (bug #1238689)
 
 * Wed Jul 08 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-347
 - Store distribution's linker and compiler flags to more Config's options
