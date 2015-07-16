@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        348%{?dist}
+Release:        349%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2215,6 +2215,8 @@ echo "RPM Build arch: %{_arch}"
 # For perl-5.14.2-large-repeat-heap-abuse.patch 
 perl regen.pl -v
 
+# Disable hardening due to some run-time failures, bug #1238804
+%undefine _hardened_build
 # ldflags is not used when linking XS modules.
 # Only ldflags is used when linking miniperl.
 # Only ccflags and ldflags are used for Configure's compiler checks.
@@ -4155,6 +4157,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jul 16 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-349
+- Disable hardening due to some run-time failures (bug #1238804)
+
 * Mon Jul 13 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-348
 - Sub-package bignum
 - Sub-package Math-BigRat
