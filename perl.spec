@@ -1200,6 +1200,12 @@ License:        GPL+ or Artistic
 Group:          Development/Libraries
 BuildArch:      noarch
 Requires:       %perl_compat 
+Requires:       perl(Data::Dumper)
+Requires:       perl(Encode)
+Requires:       perl(Math::BigFloat)
+Requires:       perl(Math::BigInt)
+Requires:       perl(Scalar::Util)
+Requires:       perl(subs)
 Conflicts:      perl-JSON < 2.50
 
 %description JSON-PP
