@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        349%{?dist}
+Release:        350%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -266,7 +266,7 @@ Requires:       perl-libnet, perl-libnetcfg,
 Requires:       perl-Locale-Codes, perl-Locale-Maketext,
 Requires:       perl-Locale-Maketext-Simple
 Requires:       perl-Math-BigInt, perl-Math-BigInt-FastCalc, perl-Math-BigRat,
-Requires:       perl-Math-Complex,
+Requires:       perl-Math-Complex, perl-Memoize,
 Requires:       perl-MIME-Base64,
 Requires:       perl-Module-CoreList,
 Requires:       perl-Module-CoreList-tools, perl-Module-Load
@@ -1371,6 +1371,24 @@ This package lets you create and manipulate complex numbers. By default, Perl
 limits itself to real numbers, but an extra "use" statement brings full
 complex support, along with a full set of mathematical functions typically
 associated with and/or extended to complex numbers.
+
+%package Memoize
+Summary:        Transparently speed up functions by caching return values
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.03
+Requires:       %perl_compat
+# Keep Time::HiRes optional
+BuildArch:      noarch
+Conflicts:      perl < 4:5.22.0-350
+
+%description Memoize
+Memoizing a function makes it faster by trading space for time. It does
+this by caching the return values of the function in a table. If you call
+the function again with the same arguments, memoize jumps in and gives
+you the value out of the table, instead of letting the function compute
+the value all over again.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package MIME-Base64
@@ -2921,6 +2939,12 @@ popd
 %exclude %{_mandir}/man3/Math::Complex.*
 %exclude %{_mandir}/man3/Math::Trig.*
 
+# Memoize
+%exclude %{privlib}/Memoize
+%exclude %{privlib}/Memoize.pm
+%exclude %{_mandir}/man3/Memoize::*
+%exclude %{_mandir}/man3/Memoize.*
+
 # MIME-Base64
 %exclude %{archlib}/auto/MIME
 %exclude %{archlib}/MIME
@@ -3790,6 +3814,12 @@ popd
 %{_mandir}/man3/Math::Complex.*
 %{_mandir}/man3/Math::Trig.*
 
+%files Memoize
+%{privlib}/Memoize
+%{privlib}/Memoize.pm
+%{_mandir}/man3/Memoize::*
+%{_mandir}/man3/Memoize.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files MIME-Base64
 %{archlib}/auto/MIME
@@ -4163,6 +4193,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Aug 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-350
+- Sub-package Memoize
+
 * Thu Jul 16 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-349
 - Disable hardening due to some run-time failures (bug #1238804)
 
