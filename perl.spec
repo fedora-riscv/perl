@@ -276,7 +276,7 @@ Requires:       perl-open, perl-PathTools
 Requires:       perl-Params-Check, perl-Parse-CPAN-Meta,
 Requires:       perl-perlfaq,
 Requires:       perl-PerlIO-via-QuotedPrint, perl-Perl-OSType
-Requires:       perl-Pod-Checker, perl-Pod-Escapes
+Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-Html,
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
 Requires:       perl-podlators, perl-Pod-Simple, perl-Scalar-List-Utils
 Requires:       perl-Socket, perl-Storable, perl-Sys-Syslog,
@@ -1703,6 +1703,21 @@ BuildArch:      noarch
 This module provides things that are useful in decoding Pod E<...> sequences.
 %endif
 
+%package Pod-Html
+Summary:        Convert POD files to HTML
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.22
+Requires:       %perl_compat
+BuildArch:      noarch
+Conflicts:      perl < 4:5.22.0-350
+
+%description Pod-Html
+This package converts files from POD format (see perlpod) to HTML format. It
+can automatically generate indexes and cross-references, and it keeps a cache
+of things it knows how to cross-reference.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-Parser
 Summary:        Basic perl modules for handling Plain Old Documentation (POD)
@@ -2458,7 +2473,6 @@ popd
 %postun libs -p /sbin/ldconfig
 
 %files
-%license Pod-Html-license-clarification
 %{_mandir}/man1/*.1*
 %{_mandir}/man3/*.3*
 %{_bindir}/*
@@ -3045,6 +3059,12 @@ popd
 # Pod-Escapes
 %exclude %{privlib}/Pod/Escapes.pm
 %exclude %{_mandir}/man3/Pod::Escapes.*
+
+# Pod-Html
+%exclude %{_bindir}/pod2html
+%exclude %{privlib}/Pod/Html.pm
+%exclude %{_mandir}/man1/pod2html.1*
+%exclude %{_mandir}/man3/Pod::Html.*
 
 # Pod-Parser
 %exclude %{_bindir}/podselect
@@ -3964,6 +3984,14 @@ popd
 %{_mandir}/man3/Pod::Escapes.*
 %endif
 
+%files Pod-Html
+%license Pod-Html-license-clarification
+%dir %{privlib}/Pod
+%{_bindir}/pod2html
+%{privlib}/Pod/Html.pm
+%{_mandir}/man1/pod2html.1*
+%{_mandir}/man3/Pod::Html.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Pod-Parser
 %{_bindir}/podselect
@@ -4221,6 +4249,7 @@ popd
 * Fri Aug 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-350
 - Sub-package Memoize
 - Sub-package Net-Ping
+- Sub-package Pod-Html
 
 * Thu Jul 16 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-349
 - Disable hardening due to some run-time failures (bug #1238804)
