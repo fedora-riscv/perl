@@ -270,7 +270,8 @@ Requires:       perl-Math-Complex, perl-Memoize,
 Requires:       perl-MIME-Base64,
 Requires:       perl-Module-CoreList,
 Requires:       perl-Module-CoreList-tools, perl-Module-Load
-Requires:       perl-Module-Load-Conditional, perl-Module-Loaded, perl-Module-Metadata
+Requires:       perl-Module-Load-Conditional, perl-Module-Loaded,
+Requires:       perl-Module-Metadata, perl-Net-Ping,
 Requires:       perl-open, perl-PathTools
 Requires:       perl-Params-Check, perl-Parse-CPAN-Meta,
 Requires:       perl-perlfaq,
@@ -1510,6 +1511,21 @@ Requires:       %perl_compat
 %description Module-Metadata
 Gather package and POD information from perl module files
 %endif
+
+%package Net-Ping
+Summary:        Check a remote host for reachability
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.43
+Requires:       %perl_compat
+# Keep Net::Ping::External optional
+BuildArch:      noarch
+Conflicts:      perl < 4:5.22.0-350
+
+%description Net-Ping
+Net::Ping module contains methods to test the reachability of remote hosts on
+a network.
 
 %package open
 Summary:        Perl pragma to set default PerlIO layers for input and output
@@ -2981,6 +2997,10 @@ popd
 %exclude %{privlib}/Module/Metadata.pm
 %exclude %{_mandir}/man3/Module::Metadata.3pm*
 
+# Net-Ping
+%exclude %{privlib}/Net/Ping.pm
+%exclude %{_mandir}/man3/Net::Ping.*
+
 # PathTools
 %exclude %{archlib}/Cwd.pm
 %exclude %{archlib}/File/Spec*
@@ -3866,6 +3886,11 @@ popd
 %{_mandir}/man3/Module::Metadata.3pm*
 %endif
 
+%files Net-Ping
+%dir %{privlib}/Net
+%{privlib}/Net/Ping.pm
+%{_mandir}/man3/Net::Ping.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files PathTools
 %{archlib}/Cwd.pm
@@ -4195,6 +4220,7 @@ popd
 %changelog
 * Fri Aug 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-350
 - Sub-package Memoize
+- Sub-package Net-Ping
 
 * Thu Jul 16 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-349
 - Disable hardening due to some run-time failures (bug #1238804)
