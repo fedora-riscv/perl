@@ -262,7 +262,8 @@ Requires:       perl-ExtUtils-Manifest, perl-ExtUtils-Miniperl
 Requires:       perl-ExtUtils-ParseXS, perl-File-Fetch
 Requires:       perl-File-Path, perl-File-Temp, perl-Filter,
 Requires:       perl-Filter-Simple, perl-Getopt-Long
-Requires:       perl-HTTP-Tiny, perl-IO-Compress, perl-IO-Socket-IP
+Requires:       perl-HTTP-Tiny,
+Requires:       perl-IO, perl-IO-Compress, perl-IO-Socket-IP
 Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
 Requires:       perl-libnet, perl-libnetcfg,
 Requires:       perl-Locale-Codes, perl-Locale-Maketext,
@@ -1150,6 +1151,18 @@ a double dash "--". Support for bundling of command line options, as was the
 case with the more traditional single-letter approach, is provided but not
 enabled by default.
 %endif
+
+%package IO
+Summary:        Perl input/output modules
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.35
+Requires:       %perl_compat
+Conflicts:      perl < 4:5.22.0-351
+
+%description IO
+This is a collection of Perl input/output modules.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package IO-Compress
@@ -2878,6 +2891,31 @@ popd
 %exclude %{privlib}/Getopt/Long.pm
 %exclude %{_mandir}/man3/Getopt::Long.3*
 
+# IO
+%exclude %dir %{archlib}/IO
+%exclude %{archlib}/IO.pm
+%exclude %{archlib}/IO/Dir.pm
+%exclude %{archlib}/IO/File.pm
+%exclude %{archlib}/IO/Handle.pm
+%exclude %{archlib}/IO/Pipe.pm
+%exclude %{archlib}/IO/Poll.pm
+%exclude %{archlib}/IO/Seekable.pm
+%exclude %{archlib}/IO/Select.pm
+%exclude %{archlib}/IO/Socket
+%exclude %{archlib}/IO/Socket.pm
+%exclude %dir %{archlib}/auto/IO
+%exclude %{archlib}/auto/IO/IO.so
+%exclude %{_mandir}/man3/IO.*
+%exclude %{_mandir}/man3/IO::Dir.*
+%exclude %{_mandir}/man3/IO::File.*
+%exclude %{_mandir}/man3/IO::Handle.*
+%exclude %{_mandir}/man3/IO::Pipe.*
+%exclude %{_mandir}/man3/IO::Poll.*
+%exclude %{_mandir}/man3/IO::Seekable.*
+%exclude %{_mandir}/man3/IO::Select.*
+%exclude %{_mandir}/man3/IO::Socket::*
+%exclude %{_mandir}/man3/IO::Socket.*
+
 # IO-Compress
 %exclude %{_bindir}/zipdetails
 %exclude %dir %{privlib}/IO
@@ -3761,6 +3799,31 @@ popd
 %{_mandir}/man3/Getopt::Long.3*
 %endif
 
+%files IO
+%dir %{archlib}/IO
+%{archlib}/IO.pm
+%{archlib}/IO/Dir.pm
+%{archlib}/IO/File.pm
+%{archlib}/IO/Handle.pm
+%{archlib}/IO/Pipe.pm
+%{archlib}/IO/Poll.pm
+%{archlib}/IO/Seekable.pm
+%{archlib}/IO/Select.pm
+%{archlib}/IO/Socket
+%{archlib}/IO/Socket.pm
+%dir %{archlib}/auto/IO
+%{archlib}/auto/IO/IO.so
+%{_mandir}/man3/IO.*
+%{_mandir}/man3/IO::Dir.*
+%{_mandir}/man3/IO::File.*
+%{_mandir}/man3/IO::Handle.*
+%{_mandir}/man3/IO::Pipe.*
+%{_mandir}/man3/IO::Poll.*
+%{_mandir}/man3/IO::Seekable.*
+%{_mandir}/man3/IO::Select.*
+%{_mandir}/man3/IO::Socket::*
+%{_mandir}/man3/IO::Socket.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files IO-Compress
 # IO-Compress
@@ -4358,6 +4421,7 @@ popd
 - Sub-package Devel-Peek
 - Sub-package Devel-SelfStubber
 - Sub-package SelfLoader
+- Sub-package IO
 
 * Fri Aug 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-350
 - Sub-package Memoize
