@@ -252,7 +252,7 @@ Requires:       perl-constant,
 Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
 Requires:       perl-CPAN-Meta-YAML, perl-Encode, perl-encoding
 Requires:       perl-Data-Dumper, perl-DB_File,
-Requires:       perl-Devel-Peek, perl-Devel-PPPort,
+Requires:       perl-Devel-Peek, perl-Devel-PPPort, perl-Devel-SelfStubber,
 Requires:       perl-Digest, perl-Digest-MD5,
 Requires:       perl-Digest-SHA, perl-Env, perl-Exporter, perl-experimental
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Command,
@@ -685,6 +685,22 @@ typically ppport.h, attempts to bring some of the newer Perl API features
 to older versions of Perl, so that you can worry less about keeping track
 of old releases, but users can still reap the benefit.
 %endif
+
+%package Devel-SelfStubber
+Summary:        Generate stubs for a SelfLoading module
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.05
+BuildArch:      noarch
+Requires:       %perl_compat
+Conflicts:      perl < 4:5.22.0-351
+
+%description Devel-SelfStubber
+Devel::SelfStubber prints the stubs you need to put in the module before the
+__DATA__ token (or you can get it to print the entire module with stubs
+correctly placed). The stubs ensure that if a method is called, it will get
+loaded. They are needed specifically for inherited autoloaded methods.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Digest
@@ -2674,6 +2690,11 @@ popd
 %exclude %{archlib}/auto/Devel/PPPort/PPPort.so
 %exclude %{_mandir}/man3/Devel::PPPort.3*
 
+# Devel-SelfStubber
+%exclude %dir %{privlib}/Devel
+%exclude %{privlib}/Devel/SelfStubber.pm
+%exclude %{_mandir}/man3/Devel::SelfStubber.*
+
 # Digest
 %exclude %{privlib}/Digest.pm
 %exclude %dir %{privlib}/Digest
@@ -3496,6 +3517,11 @@ popd
 %{_mandir}/man3/Devel::PPPort.3*
 %endif
 
+%files Devel-SelfStubber
+%dir %{privlib}/Devel
+%{privlib}/Devel/SelfStubber.pm
+%{_mandir}/man3/Devel::SelfStubber.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Digest
 %{privlib}/Digest.pm
@@ -4306,6 +4332,7 @@ popd
 * Mon Aug 31 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-351
 - Sub-package Attribute-Handlers
 - Sub-package Devel-Peek
+- Sub-package Devel-SelfStubber
 
 * Fri Aug 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-350
 - Sub-package Memoize
