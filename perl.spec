@@ -281,7 +281,7 @@ Requires:       perl-PerlIO-via-QuotedPrint, perl-Perl-OSType
 Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-Html,
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
 Requires:       perl-podlators, perl-Pod-Simple, perl-Scalar-List-Utils
-Requires:       perl-Socket, perl-Storable, perl-Sys-Syslog,
+Requires:       perl-SelfLoader, perl-Socket, perl-Storable, perl-Sys-Syslog,
 Requires:       perl-Term-ANSIColor, perl-Term-Cap,
 Requires:       perl-Test-Harness, perl-Test-Simple
 Requires:       perl-Text-Balanced, perl-Text-ParseWords, perl-Text-Tabs+Wrap,
@@ -1882,6 +1882,22 @@ really be high enough to warrant the use of a keyword, and the size so small
 such that being individual extensions would be wasteful.
 %endif
 
+%package SelfLoader
+Summary:        Load functions only on demand
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.22
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(Carp)
+Conflicts:      perl < 4:5.22.0-351
+
+%description SelfLoader
+This Perl module tells its users that functions in a package are to be
+autoloaded from after the "__DATA__" token. See also "Autoloading" in
+perlsub.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Socket
 Summary:        C socket.h defines and structure manipulators
@@ -3193,6 +3209,10 @@ popd
 %exclude %{_mandir}/man3/Scalar::Util*
 %exclude %{_mandir}/man3/Sub::Util*
 
+# SelfLoader
+%exclude %{privlib}/SelfLoader.pm
+%exclude %{_mandir}/man3/SelfLoader*
+
 # Storable
 %exclude %{archlib}/Storable.pm
 %exclude %{archlib}/auto/Storable/
@@ -4152,6 +4172,10 @@ popd
 %{_mandir}/man3/Sub::Util*
 %endif
 
+%files SelfLoader
+%{privlib}/SelfLoader.pm
+%{_mandir}/man3/SelfLoader*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Sys-Syslog
 %dir %{archlib}/Sys
@@ -4333,6 +4357,7 @@ popd
 - Sub-package Attribute-Handlers
 - Sub-package Devel-Peek
 - Sub-package Devel-SelfStubber
+- Sub-package SelfLoader
 
 * Fri Aug 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-350
 - Sub-package Memoize
