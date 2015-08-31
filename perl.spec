@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        350%{?dist}
+Release:        351%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -244,7 +244,8 @@ Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-macros
 
-Requires:       perl-Archive-Tar, perl-autodie, perl-B-Debug, perl-bignum
+Requires:       perl-Archive-Tar, perl-Attribute-Handlers, perl-autodie,
+Requires:       perl-B-Debug, perl-bignum
 Requires:       perl-Compress-Raw-Bzip2,
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-Config-Perl-V,
 Requires:       perl-constant,
@@ -320,6 +321,24 @@ for the creation of tar file objects for custom manipulation.  If you have the
 IO::Zlib module installed, Archive::Tar will also support compressed or
 gzipped tar files.
 %endif
+
+%package Attribute-Handlers
+Summary:        Simpler definition of attribute handlers
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.97
+BuildArch:      noarch
+Requires:       %perl_compat
+Conflicts:      perl < 4:5.22.0-351
+
+%description Attribute-Handlers
+This Perl module, when inherited by a package, allows that package's class to
+define attribute handler subroutines for specific attributes. Variables and
+subroutines subsequently defined in that package, or in packages derived from
+that package may be given attributes with the same names as the attribute
+handler subroutines, which will then be called in one of the compilation
+phases (i.e. in a "BEGIN", "CHECK", "INIT", or "END" block).
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package autodie
@@ -2512,6 +2531,10 @@ popd
 %exclude %{_mandir}/man1/ptargrep.1*
 %exclude %{_mandir}/man3/Archive::Tar*
 
+# Attribute-Handlers
+%exclude %{privlib}/Attribute
+%exclude %{_mandir}/man3/Attribute::Handlers.*
+
 # autodie
 %exclude %{privlib}/autodie/
 %exclude %{privlib}/autodie.pm
@@ -3294,6 +3317,10 @@ popd
 %{_mandir}/man1/ptargrep.1*
 %{_mandir}/man3/Archive::Tar* 
 %endif
+
+%files Attribute-Handlers
+%{privlib}/Attribute
+%{_mandir}/man3/Attribute::Handlers.*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files autodie
@@ -4246,6 +4273,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Aug 31 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-351
+- Sub-package Attribute-Handlers
+
 * Fri Aug 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-350
 - Sub-package Memoize
 - Sub-package Net-Ping
