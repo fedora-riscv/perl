@@ -251,7 +251,8 @@ Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-Config-Perl-V,
 Requires:       perl-constant,
 Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
 Requires:       perl-CPAN-Meta-YAML, perl-Encode, perl-encoding
-Requires:       perl-Data-Dumper, perl-DB_File, perl-Devel-PPPort,
+Requires:       perl-Data-Dumper, perl-DB_File,
+Requires:       perl-Devel-Peek, perl-Devel-PPPort,
 Requires:       perl-Digest, perl-Digest-MD5,
 Requires:       perl-Digest-SHA, perl-Env, perl-Exporter, perl-experimental
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Command,
@@ -650,6 +651,21 @@ provided by Berkeley DB version 1.x (if you have a newer version of DB, you
 will be limited to functionality provided by interface of version 1.x). The
 interface defined here mirrors the Berkeley DB interface closely.
 %endif
+
+%package Devel-Peek
+Summary:        A data debugging tool for the XS programmer
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.22
+Requires:       %perl_compat
+Conflicts:      perl < 4:5.22.0-351
+
+%description Devel-Peek
+Devel::Peek contains functions which allows raw Perl datatypes to be
+manipulated from a Perl script. This is used by those who do XS programming to
+check that the data they are sending from C to Perl looks as they think it
+should look.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Devel-PPPort
@@ -2645,6 +2661,13 @@ popd
 %exclude %{archlib}/auto/DB_File/DB_File.so
 %exclude %{_mandir}/man3/DB_File*
 
+# Devel-Peek
+%dir %exclude %{archlib}/Devel
+%exclude %{archlib}/Devel/Peek.pm
+%dir %exclude %{archlib}/auto/Devel
+%exclude %{archlib}/auto/Devel/Peek
+%exclude %{_mandir}/man3/Devel::Peek.*
+
 # Devel-PPPort
 %exclude %{archlib}/Devel/PPPort.pm
 %exclude %dir %{archlib}/auto/Devel/PPPort
@@ -3455,6 +3478,13 @@ popd
 %{archlib}/auto/DB_File/DB_File.so
 %{_mandir}/man3/DB_File*
 %endif
+
+%files Devel-Peek
+%dir %{archlib}/Devel
+%{archlib}/Devel/Peek.pm
+%dir %{archlib}/auto/Devel
+%{archlib}/auto/Devel/Peek
+%{_mandir}/man3/Devel::Peek.*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Devel-PPPort
@@ -4275,6 +4305,7 @@ popd
 %changelog
 * Mon Aug 31 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-351
 - Sub-package Attribute-Handlers
+- Sub-package Devel-Peek
 
 * Fri Aug 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-350
 - Sub-package Memoize
