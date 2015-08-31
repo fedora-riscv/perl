@@ -254,7 +254,8 @@ Requires:       perl-CPAN-Meta-YAML, perl-Encode, perl-encoding
 Requires:       perl-Data-Dumper, perl-DB_File,
 Requires:       perl-Devel-Peek, perl-Devel-PPPort, perl-Devel-SelfStubber,
 Requires:       perl-Digest, perl-Digest-MD5,
-Requires:       perl-Digest-SHA, perl-Env, perl-Exporter, perl-experimental
+Requires:       perl-Digest-SHA,
+Requires:       perl-Env, perl-Errno, perl-Exporter, perl-experimental
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Command,
 Requires:       perl-ExtUtils-Embed,
 Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
@@ -839,6 +840,21 @@ Perl maintains environment variables in a special hash named %%ENV. For when
 this access method is inconvenient, the Perl module Env allows environment
 variables to be treated as scalar or array variables.
 %endif
+
+%package Errno
+Summary:        System errno constants
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.23
+Requires:       %perl_compat
+Requires:       perl(Carp)
+Conflicts:      perl < 4:5.22.0-351
+
+%description Errno
+"Errno" defines and conditionally exports all the error constants defined in
+your system "errno.h" include file. It has a single export tag, ":POSIX",
+which will export all POSIX defined error numbers.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package experimental
@@ -2774,6 +2790,10 @@ popd
 %exclude %{privlib}/Env.pm
 %exclude %{_mandir}/man3/Env.3*
 
+# Errno
+%exclude %{archlib}/Errno.pm
+%exclude %{_mandir}/man3/Errno.*
+
 # Exporter
 %exclude %{privlib}/Exporter*
 %exclude %{_mandir}/man3/Exporter*
@@ -3642,6 +3662,10 @@ popd
 %{_mandir}/man3/Env.3*
 %endif
 
+%files Errno
+%{archlib}/Errno.pm
+%{_mandir}/man3/Errno.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Exporter
 %{privlib}/Exporter*
@@ -4422,6 +4446,7 @@ popd
 - Sub-package Devel-SelfStubber
 - Sub-package SelfLoader
 - Sub-package IO
+- Sub-package Errno
 
 * Fri Aug 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-350
 - Sub-package Memoize
