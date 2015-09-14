@@ -1,4 +1,4 @@
-%global perl_version    5.20.2
+%global perl_version    5.20.3
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        326%{?dist}
+Release:        327%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -105,15 +105,6 @@ Patch27:        perl-5.21.6-Report-inaccesible-file-on-failed-require.patch
 # RT#123338, in upstream after 5.21.6
 Patch28:        perl-5.21.6-t-op-taint.t-Perform-SHA-256-algorithm-by-crypt-if-d.patch
 
-# Fix Errno.pm generation for GCC 5.0, RT#123784, in upstream after 5.21.8
-Patch29:        perl-5.20.2-Fix-Errno.pm-generation-for-gcc-5.0.patch
-
-# Handle hexadecimal constants by h2ph, RT#123784, in upstream after 5.21.8
-Patch30:        perl-5.21.8-h2ph-correct-handling-of-hex-constants-for-the-pream.patch
-
-# Do not use -_h2ph_pre.ph from system at tests, RT#123784
-Patch31:        perl-5.21.8-lib-h2ph.t-to-test-generated-t-_h2ph_pre.ph-instead-.patch
-
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -141,10 +132,11 @@ BuildRequires:  procps, rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.20.2)
+%global perl_compat perl(:MODULE_COMPAT_5.20.3)
 
 # Compat provides
 Provides: %perl_compat
+Provides: perl(:MODULE_COMPAT_5.20.2)
 Provides: perl(:MODULE_COMPAT_5.20.1)
 Provides: perl(:MODULE_COMPAT_5.20.0)
 
@@ -1367,7 +1359,7 @@ Summary:        What modules are shipped with versions of perl
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20150214
+Version:        5.20150822
 Requires:       %perl_compat
 Requires:       perl(List::Util)
 Requires:       perl(version) >= 0.88
@@ -1383,7 +1375,7 @@ Summary:        Tool for listing modules shipped with perl
 Group:          Development/Tools
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.020001
+Version:        5.20150822
 Requires:       %perl_compat
 Requires:       perl(feature)
 Requires:       perl(version) >= 0.88
@@ -2051,9 +2043,6 @@ tarball from perl.org.
 %patch26 -p1
 %patch27 -p1
 %patch28 -p1
-%patch29 -p1
-%patch30 -p1
-%patch31 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2075,9 +2064,6 @@ perl -x patchlevel.h \
     'Fedora Patch26: Make *DBM_File desctructors thread-safe (RT#61912)' \
     'Fedora Patch27: Report inaccesible file on failed require (RT#123270)' \
     'Fedora Patch28: Use stronger algorithm needed for FIPS in t/op/taint.t (RT#123338)' \
-    'Fedora Patch29: Fix Errno.pm generation for GCC 5.0 (RT#123784)' \
-    'Fedora Patch30: Handle hexadecimal constants by h2ph (RT#123784)' \
-    'Fedora Patch31: Do not use -_h2ph_pre.ph from system at tests (RT#123784)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3931,6 +3917,10 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Sep 14 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.3-327
+- 5.20.3 bump (see <http://search.cpan.org/dist/perl-5.20.3/pod/perldelta.pod>
+  for release notes
+
 * Fri Jun 05 2015 Petr Pisar <ppisar@redhat.com> - 4:5.20.2-326
 - Subpackage "open" module in order to keep deprecated "encoding" module
   optional (bug #1228378)
