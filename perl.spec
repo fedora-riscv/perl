@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        308%{?dist}
+Release:        309%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -132,6 +132,9 @@ Patch24:        perl-5.18.2-Pass-fwrapv-to-stricter-GCC-4.9.patch
 
 # Create site paths by cpan for the first time, bug #1132321, CPAN RT#99905
 Patch25:        perl-5.18.4-CPAN-Attemp-to-create-site-library-directories-on-first-t.patch
+
+# Don't leak the temp utf8 copy of namepv, bug #1062576, CPAN RT#123786
+Patch26:        perl-123786-don-t-leak-the-temp-utf8-copy-of-n.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -1994,6 +1997,7 @@ tarball from perl.org.
 %patch23 -p1
 %patch24 -p1
 %patch25 -p1
+%patch26 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2023,6 +2027,7 @@ perl -x patchlevel.h \
     'Fedora Patch23: Fix t/comp/parser.t not to load system modules (RT#121579)' \
     'Fedora Patch24: Pass -fwrapv to stricter GCC 4.9 (RT#121505)' \
     'Fedora Patch25: Create site paths by cpan for the first time (CPAN RT#99905)' \
+    'Fedora Patch26: Do not leak the temp utf8 copy of namepv (CPAN RT#123786)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3754,6 +3759,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Sep 16 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.18.1-309
+- Don't leak the temp utf8 copy of namepv (bug #1062576)
+
 * Thu Apr 02 2015 Petr Šabata <contyk@redhat.com> - 4:5.18.1-308
 - Correct a typo in the license tag
 
