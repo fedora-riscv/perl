@@ -1824,6 +1824,18 @@ Version:        3.25
 # Pod::Perldoc::ToMan executes roff
 Requires:       groff-base
 Requires:       %perl_compat
+Requires:       perl(File::Temp) >= 0.22
+Requires:       perl(HTTP::Tiny)
+Requires:       perl(IO::Handle)
+Requires:       perl(IPC::Open3)
+# POD2::Base is optional
+# Pod::Checker is not needed if Pod::Simple::Checker is available
+Requires:       perl(Pod::Simple::Checker)
+Requires:       perl(Pod::Simple::RTF) >= 3.16
+Requires:       perl(Pod::Simple::XMLOutStream) >= 3.16
+Requires:       perl(Text::ParseWords)
+# Tk is optional
+Requires:       perl(Symbol)
 BuildArch:      noarch
 
 %description Pod-Perldoc
@@ -4448,6 +4460,7 @@ popd
 - Sub-package IO
 - Sub-package Errno
 - Correct perl-Digest-SHA dependencies
+- Correct perl-Pod-Perldoc dependencies
 
 * Fri Aug 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-350
 - Sub-package Memoize
