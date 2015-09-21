@@ -753,9 +753,9 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        5.95
 Requires:       %perl_compat
+Requires:       perl(Carp)
 # Recommended
 Requires:       perl(Digest::base)
-Requires:       perl(MIME::Base64)
 
 %description Digest-SHA
 Digest::SHA is a complete implementation of the NIST Secure Hash
@@ -4440,13 +4440,14 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Mon Aug 31 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-351
+* Mon Sep 21 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-351
 - Sub-package Attribute-Handlers
 - Sub-package Devel-Peek
 - Sub-package Devel-SelfStubber
 - Sub-package SelfLoader
 - Sub-package IO
 - Sub-package Errno
+- Correct perl-Digest-SHA dependencies
 
 * Fri Aug 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-350
 - Sub-package Memoize
