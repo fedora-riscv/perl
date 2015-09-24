@@ -1,0 +1,28 @@
+From 496f5ba57a43840a3c8ee61b21dc60d0c8bb5d52 Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Fri, 15 Aug 2014 10:45:57 +1000
+Subject: [PATCH] fix debugger y command scope level
+
+5c2b78e73d3 moved handling of the y command into its own function,
+but did not adjust the provided scope level to account for the extra
+scope.
+---
+ lib/perl5db.pl | 2 +-
+ 1 file changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/lib/perl5db.pl b/lib/perl5db.pl
+index e3f63b3..e8d7751 100644
+--- a/lib/perl5db.pl
++++ b/lib/perl5db.pl
+@@ -1957,7 +1957,7 @@ sub _DB__handle_y_command {
+         my @vars = split( ' ', $match_vars || '' );
+ 
+         # Find the pad.
+-        my $h = eval { PadWalker::peek_my( ( $match_level || 0 ) + 1 ) };
++        my $h = eval { PadWalker::peek_my( ( $match_level || 0 ) + 2 ) };
+ 
+         # Oops. Can't find it.
+         if (my $Err = $@) {
+-- 
+2.4.3
+
