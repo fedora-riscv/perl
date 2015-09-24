@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        327%{?dist}
+Release:        328%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -104,6 +104,10 @@ Patch27:        perl-5.21.6-Report-inaccesible-file-on-failed-require.patch
 # Use stronger algorithm needed for FIPS in t/op/taint.t, bug #1128032,
 # RT#123338, in upstream after 5.21.6
 Patch28:        perl-5.21.6-t-op-taint.t-Perform-SHA-256-algorithm-by-crypt-if-d.patch
+
+# Fix debugger y command scope level, bug #1129850,
+# riIn upstream after 5.21.3
+Patch29:        perl-5.21.3-fix-debugger-y-command-scope-level.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2043,6 +2047,7 @@ tarball from perl.org.
 %patch26 -p1
 %patch27 -p1
 %patch28 -p1
+%patch29 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2064,6 +2069,7 @@ perl -x patchlevel.h \
     'Fedora Patch26: Make *DBM_File desctructors thread-safe (RT#61912)' \
     'Fedora Patch27: Report inaccesible file on failed require (RT#123270)' \
     'Fedora Patch28: Use stronger algorithm needed for FIPS in t/op/taint.t (RT#123338)' \
+    'Fedora Patch29: Fix debugger y command scope level' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3917,6 +3923,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Sep 24 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.3-328
+- Fix debugger y command scope level (bug #1129850)
+
 * Mon Sep 14 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.3-327
 - 5.20.3 bump (see <http://search.cpan.org/dist/perl-5.20.3/pod/perldelta.pod>
   for release notes
