@@ -208,6 +208,8 @@ Requires:       glibc-devel
 Requires:       systemtap-sdt-devel
 Requires:       perl(ExtUtils::ParseXS)
 Requires:       %perl_compat
+# Match library and header files when downgrading releases
+Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 
 %description devel
 This package contains header files and development modules.
@@ -520,6 +522,7 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.11
+Requires:       make
 # Prefer Archive::Tar and Compress::Zlib over tar and gzip
 Requires:       perl(Archive::Tar) >= 1.50
 Requires:       perl(base)
@@ -4504,6 +4507,7 @@ popd
 - Correct perl-Digest-SHA dependencies
 - Correct perl-Pod-Perldoc dependencies
 - Move utf8 and dependencies to perl-libs
+- Correct perl-devel and perl-CPAN dependencies
 
 * Fri Aug 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-350
 - Sub-package Memoize
