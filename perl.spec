@@ -16,9 +16,8 @@
 %global __provides_exclude_from .*%{_docdir}|.*%{perl_archlib}/.*\\.pl$|.*%{perl_privlib}/.*\\.pl$
 %global __requires_exclude_from %{_docdir}
 %global __provides_exclude perl\\((VMS|Win32|BSD::|DB\\)$)
-# unicore::Name - it's needed by perl, maybe problem of rpm
 # FCGI is external dependency after install of perl-CGI, remove it during RC releases
-%global __requires_exclude perl\\((VMS|BSD::|Win32|Tk|Mac::|Your::Module::Here|unicore::Name|FCGI)
+%global __requires_exclude perl\\((VMS|BSD::|Win32|Tk|Mac::|Your::Module::Here|FCGI)
 # same as we provide in /usr/lib/rpm/macros.d/macros.perl
 %global perl5_testdir   %{_libexecdir}/perl5-tests
 
@@ -123,7 +122,6 @@ BuildRequires:  procps, rsyslog
 Provides: perl(bytes_heavy.pl)
 Provides: perl(dumpvar.pl)
 Provides: perl(perl5db.pl)
-Provides: perl(utf8_heavy.pl)
 
 # suidperl isn't created by upstream since 5.12.0
 Obsoletes: perl-suidperl <= 4:5.12.2
@@ -176,6 +174,21 @@ Provides:       perl(:WITH_THREADS)
 Provides:       perl(:WITH_LARGEFILES)
 # PerlIO provides
 Provides:       perl(:WITH_PERLIO)
+# Loaded by charnames, unicore/Name.pm does not declare unicore::Name module
+Provides:       perl(unicore::Name)
+# Keep utf8 modules in perl-libs because a sole regular expression like /\pN/
+# causes loading utf8 and unicore/Heave.pl and unicore/lib files.
+Provides:       perl(utf8_heavy.pl)
+# utf8 and utf8_heavy.pl require Carp, re, strict, warnings, XSLoader
+Requires:       perl(Carp)
+Requires:       perl(Exporter)
+# Term::Cap is optional
+Requires:       perl(XSLoader)
+
+# Remove private redefinitions
+# XSLoader redefines DynaLoader name space for compatibility, but does not
+# load the DynaLoader.pm (though the DynaLoader.xs is compiled into libperl).
+%global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\((charnames|DynaLoader)\\)$
 
 %description libs
 The is a perl run-time (interpreter as a shared library and include
@@ -2591,13 +2604,28 @@ popd
 # libs
 %exclude %dir %{archlib}
 %exclude %dir %{archlib}/auto
+%exclude %{archlib}/auto/re
 %exclude %dir %{archlib}/CORE
 %exclude %{archlib}/CORE/libperl.so
+%exclude %{archlib}/re.pm
 %exclude %{_libdir}/libperl.so.*
 %exclude %dir %{perl_vendorarch}
 %exclude %dir %{perl_vendorarch}/auto
 %exclude %dir %{privlib}
+%exclude %{privlib}/integer.pm
+%exclude %{privlib}/strict.pm
+%exclude %{privlib}/unicore
+%exclude %{privlib}/utf8.pm
+%exclude %{privlib}/utf8_heavy.pl
+%exclude %{privlib}/warnings.pm
+%exclude %{privlib}/XSLoader.pm
 %exclude %dir %{perl_vendorlib}
+%exclude %{_mandir}/man3/integer.*
+%exclude %{_mandir}/man3/re.*
+%exclude %{_mandir}/man3/strict.*
+%exclude %{_mandir}/man3/utf8.*
+%exclude %{_mandir}/man3/warnings.*
+%exclude %{_mandir}/man3/XSLoader.*
 
 # devel
 %exclude %{_bindir}/h2xs
@@ -3408,18 +3436,32 @@ popd
 %exclude %{_mandir}/man3/version::Internals.3*
 
 %files libs
-%defattr(-,root,root)
 %license Artistic Copying
 %doc AUTHORS README Changes
 %dir %{archlib}
 %dir %{archlib}/auto
+%{archlib}/auto/re
 %dir %{archlib}/CORE
 %{archlib}/CORE/libperl.so
+%{archlib}/re.pm
 %{_libdir}/libperl.so.*
 %dir %{perl_vendorarch}
 %dir %{perl_vendorarch}/auto
 %dir %{privlib}
+%{privlib}/integer.pm
+%{privlib}/strict.pm
+%{privlib}/unicore
+%{privlib}/utf8.pm
+%{privlib}/utf8_heavy.pl
+%{privlib}/warnings.pm
+%{privlib}/XSLoader.pm
 %dir %{perl_vendorlib}
+%{_mandir}/man3/integer.*
+%{_mandir}/man3/re.*
+%{_mandir}/man3/strict.*
+%{_mandir}/man3/utf8.*
+%{_mandir}/man3/warnings.*
+%{_mandir}/man3/XSLoader.*
 
 %files devel
 %{_bindir}/h2xs
@@ -4452,7 +4494,7 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Mon Sep 21 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-351
+* Tue Oct 06 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-351
 - Sub-package Attribute-Handlers
 - Sub-package Devel-Peek
 - Sub-package Devel-SelfStubber
@@ -4461,6 +4503,7 @@ popd
 - Sub-package Errno
 - Correct perl-Digest-SHA dependencies
 - Correct perl-Pod-Perldoc dependencies
+- Move utf8 and dependencies to perl-libs
 
 * Fri Aug 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-350
 - Sub-package Memoize
