@@ -280,7 +280,7 @@ Requires:       perl-File-Path, perl-File-Temp, perl-Filter,
 Requires:       perl-Filter-Simple, perl-Getopt-Long
 Requires:       perl-HTTP-Tiny,
 Requires:       perl-IO, perl-IO-Compress, perl-IO-Socket-IP
-Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-JSON-PP
+Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-IPC-SysV, perl-JSON-PP
 Requires:       perl-libnet, perl-libnetcfg,
 Requires:       perl-Locale-Codes, perl-Locale-Maketext,
 Requires:       perl-Locale-Maketext-Simple
@@ -1266,6 +1266,19 @@ IPC::Cmd allows you to run commands, interactively if desired, in a platform
 independent way, but have them still work.
 %endif
 
+%package IPC-SysV
+Summary:        Object interface to System V IPC
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.04
+Requires:       %perl_compat
+Requires:       perl(DynaLoader)
+Conflicts:      perl < 4:5.22.0-351
+
+%description IPC-SysV
+This is an object inferface for System V messages, semaphores, and
+inter-process calls.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package HTTP-Tiny
@@ -3055,6 +3068,17 @@ popd
 %exclude %{privlib}/IPC/Cmd.pm
 %exclude %{_mandir}/man3/IPC::Cmd.3*
 
+# IPC-SysV
+%exclude %{archlib}/auto/IPC
+%exclude %{archlib}/IPC/Msg.pm
+%exclude %{archlib}/IPC/Semaphore.pm
+%exclude %{archlib}/IPC/SharedMem.pm
+%exclude %{archlib}/IPC/SysV.pm
+%exclude %{_mandir}/man3/IPC::Msg.*
+%exclude %{_mandir}/man3/IPC::Semaphore.*
+%exclude %{_mandir}/man3/IPC::SharedMem.*
+%exclude %{_mandir}/man3/IPC::SysV.*
+
 # JSON-PP
 %exclude %{_bindir}/json_pp
 %exclude %dir %{privlib}/JSON
@@ -3992,6 +4016,18 @@ popd
 %{_mandir}/man3/IPC::Cmd.3*
 %endif
 
+%files IPC-SysV
+%{archlib}/auto/IPC
+%dir %{archlib}/IPC
+%{archlib}/IPC/Msg.pm
+%{archlib}/IPC/Semaphore.pm
+%{archlib}/IPC/SharedMem.pm
+%{archlib}/IPC/SysV.pm
+%{_mandir}/man3/IPC::Msg.*
+%{_mandir}/man3/IPC::Semaphore.*
+%{_mandir}/man3/IPC::SharedMem.*
+%{_mandir}/man3/IPC::SysV.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files JSON-PP
 %{_bindir}/json_pp
@@ -4497,7 +4533,7 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Tue Oct 06 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-351
+* Wed Oct 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-351
 - Sub-package Attribute-Handlers
 - Sub-package Devel-Peek
 - Sub-package Devel-SelfStubber
@@ -4508,6 +4544,7 @@ popd
 - Correct perl-Pod-Perldoc dependencies
 - Move utf8 and dependencies to perl-libs
 - Correct perl-devel and perl-CPAN dependencies
+- Sub-package IPC-SysV
 
 * Fri Aug 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-350
 - Sub-package Memoize
