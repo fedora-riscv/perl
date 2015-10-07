@@ -300,7 +300,7 @@ Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
 Requires:       perl-podlators, perl-Pod-Simple, perl-Scalar-List-Utils
 Requires:       perl-SelfLoader, perl-Socket, perl-Storable, perl-Sys-Syslog,
 Requires:       perl-Term-ANSIColor, perl-Term-Cap,
-Requires:       perl-Test-Harness, perl-Test-Simple
+Requires:       perl-Test, perl-Test-Harness, perl-Test-Simple
 Requires:       perl-Text-Balanced, perl-Text-ParseWords, perl-Text-Tabs+Wrap,
 Requires:       perl-Thread-Queue
 Requires:       perl-Time-HiRes
@@ -2060,6 +2060,22 @@ These are low-level functions to extract and use capabilities from a terminal
 capability (termcap) database.
 %endif
 
+%package Test
+Summary:        Simple framework for writing test scripts
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.26
+Requires:       %perl_compat
+# Algorithm::Diff 1.15 is optional
+Requires:       perl(File::Temp)
+BuildArch:      noarch
+Conflicts:      perl < 4:5.22.0-351
+
+%description Test
+The Test Perl module simplifies the task of writing test files for Perl modules,
+such that their output is in the format that Test::Harness expects to see.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Test-Harness
 Summary:        Run Perl standard test scripts with statistics
@@ -3356,6 +3372,10 @@ popd
 %exclude %{privlib}/Term/Cap.pm
 %exclude %{_mandir}/man3/Term::Cap.*
 
+# Test
+%exclude %{privlib}/Test.pm
+%exclude %{_mandir}/man3/Test.*
+
 # Test-Harness
 %exclude %{_bindir}/prove
 %exclude %dir %{privlib}/App
@@ -4394,6 +4414,10 @@ popd
 %{_mandir}/man3/Term::Cap.*
 %endif
 
+%files Test
+%{privlib}/Test.pm
+%{_mandir}/man3/Test.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Test-Harness
 %{_bindir}/prove
@@ -4545,6 +4569,7 @@ popd
 - Move utf8 and dependencies to perl-libs
 - Correct perl-devel and perl-CPAN dependencies
 - Sub-package IPC-SysV
+- Sub-package Test
 
 * Fri Aug 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-350
 - Sub-package Memoize
