@@ -160,6 +160,8 @@ embedded into another application, the only essential package is perl-libs.
 
 Perl header files can be found in perl-devel package.
 
+Perl utils like "splain" or "perlbug" can be found in perl-utils package.
+
 
 %package libs
 Summary:        The libraries for the perl run-time
@@ -245,6 +247,24 @@ Install this if you want to test your Perl installation (binary and core
 modules).
 
 
+%package utils
+Summary:        Utilities packaged with the Perl distribution
+Group:          Development/Libraries
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        %{perl_version}
+BuildArch:      noarch
+# Match library exactly for splain messages
+Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
+# Keep /usr/sbin/sendmail and Module::CoreList optional for the perlbug tool
+Conflicts:      perl < 4:5.22.0-351
+
+%description utils
+Several utilities which come with Perl distribution like c2ph, h2ph, perlbug,
+perlthanks, pl2pm, pstruct, and splain. Some utilities are provided by more
+specific packages like perldoc by perl-Pod-Perldoc.
+
+
 %package core
 Summary:        Base perl metapackage
 Group:          Development/Languages
@@ -258,6 +278,7 @@ Requires:       %perl_compat
 Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-macros
+Requires:       perl-utils
 
 Requires:       perl-Archive-Tar, perl-Attribute-Handlers, perl-autodie,
 Requires:       perl-B-Debug, perl-bignum
@@ -2668,6 +2689,24 @@ popd
 %exclude %{_libdir}/libperl.so
 %exclude %{_mandir}/man1/perlxs*
 
+# utils
+%exclude %{_bindir}/c2ph
+%exclude %{_bindir}/h2ph
+%exclude %{_bindir}/perlbug
+%exclude %{_bindir}/perlthanks
+%exclude %{_bindir}/pl2pm
+%exclude %{_bindir}/pstruct
+%exclude %{_bindir}/splain
+%exclude %{privlib}/pod/perlutil.pod
+%exclude %{_mandir}/man1/c2ph.*
+%exclude %{_mandir}/man1/h2ph.*
+%exclude %{_mandir}/man1/perlbug.*
+%exclude %{_mandir}/man1/perlthanks.*
+%exclude %{_mandir}/man1/perlutil.*
+%exclude %{_mandir}/man1/pl2pm.*
+%exclude %{_mandir}/man1/pstruct.*
+%exclude %{_mandir}/man1/splain.*
+
 # Archive-Tar
 %exclude %{_bindir}/ptar
 %exclude %{_bindir}/ptardiff
@@ -3526,6 +3565,25 @@ popd
 
 %files tests
 %{perl5_testdir}/
+
+%files utils
+%{_bindir}/c2ph
+%{_bindir}/h2ph
+%{_bindir}/perlbug
+%{_bindir}/perlthanks
+%{_bindir}/pl2pm
+%{_bindir}/pstruct
+%{_bindir}/splain
+%dir %{privlib}/pod
+%{privlib}/pod/perlutil.pod
+%{_mandir}/man1/c2ph.*
+%{_mandir}/man1/h2ph.*
+%{_mandir}/man1/perlbug.*
+%{_mandir}/man1/perlthanks.*
+%{_mandir}/man1/perlutil.*
+%{_mandir}/man1/pl2pm.*
+%{_mandir}/man1/pstruct.*
+%{_mandir}/man1/splain.*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Archive-Tar
@@ -4570,6 +4628,7 @@ popd
 - Correct perl-devel and perl-CPAN dependencies
 - Sub-package IPC-SysV
 - Sub-package Test
+- Sub-package utilities (splain) into perl-utils
 
 * Fri Aug 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-350
 - Sub-package Memoize
