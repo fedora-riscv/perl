@@ -169,6 +169,8 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 # Compat provides
 Provides:       %perl_compat
+# Interpreter version to fulfil required genersted from "require 5.006;"
+Provides:       perl(:VERSION) = %{perl_version}
 # Threading provides
 Provides:       perl(:WITH_ITHREADS)
 Provides:       perl(:WITH_THREADS)
@@ -4615,7 +4617,7 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Wed Oct 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-351
+* Fri Oct 09 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-351
 - Sub-package Attribute-Handlers
 - Sub-package Devel-Peek
 - Sub-package Devel-SelfStubber
@@ -4629,6 +4631,7 @@ popd
 - Sub-package IPC-SysV
 - Sub-package Test
 - Sub-package utilities (splain) into perl-utils
+- Provide perl version in perl(:VERSION) dependency symbol
 
 * Fri Aug 07 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-350
 - Sub-package Memoize
