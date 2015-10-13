@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        351%{?dist}
+Release:        352%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -3034,7 +3034,9 @@ popd
 %exclude %{archlib}/IO/Poll.pm
 %exclude %{archlib}/IO/Seekable.pm
 %exclude %{archlib}/IO/Select.pm
-%exclude %{archlib}/IO/Socket
+%exclude %dir %{archlib}/IO/Socket
+%exclude %{archlib}/IO/Socket/INET.pm
+%exclude %{archlib}/IO/Socket/UNIX.pm
 %exclude %{archlib}/IO/Socket.pm
 %exclude %dir %{archlib}/auto/IO
 %exclude %{archlib}/auto/IO/IO.so
@@ -3046,7 +3048,8 @@ popd
 %exclude %{_mandir}/man3/IO::Poll.*
 %exclude %{_mandir}/man3/IO::Seekable.*
 %exclude %{_mandir}/man3/IO::Select.*
-%exclude %{_mandir}/man3/IO::Socket::*
+%exclude %{_mandir}/man3/IO::Socket::INET.*
+%exclude %{_mandir}/man3/IO::Socket::UNIX.*
 %exclude %{_mandir}/man3/IO::Socket.*
 
 # IO-Compress
@@ -3994,7 +3997,9 @@ popd
 %{archlib}/IO/Poll.pm
 %{archlib}/IO/Seekable.pm
 %{archlib}/IO/Select.pm
-%{archlib}/IO/Socket
+%dir %{archlib}/IO/Socket
+%{archlib}/IO/Socket/INET.pm
+%{archlib}/IO/Socket/UNIX.pm
 %{archlib}/IO/Socket.pm
 %dir %{archlib}/auto/IO
 %{archlib}/auto/IO/IO.so
@@ -4006,7 +4011,8 @@ popd
 %{_mandir}/man3/IO::Poll.*
 %{_mandir}/man3/IO::Seekable.*
 %{_mandir}/man3/IO::Select.*
-%{_mandir}/man3/IO::Socket::*
+%{_mandir}/man3/IO::Socket::INET.*
+%{_mandir}/man3/IO::Socket::UNIX.*
 %{_mandir}/man3/IO::Socket.*
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -4617,6 +4623,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Oct 13 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-352
+- Do not own IO::Socket::IP manual page by perl-IO
+
 * Fri Oct 09 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-351
 - Sub-package Attribute-Handlers
 - Sub-package Devel-Peek
