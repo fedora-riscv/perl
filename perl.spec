@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        352%{?dist}
+Release:        353%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -4623,6 +4623,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Oct 20 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-353
+- Rebuild to utilize perl(:VERSION) dependency symbol
+
 * Tue Oct 13 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-352
 - Do not own IO::Socket::IP manual page by perl-IO
 
