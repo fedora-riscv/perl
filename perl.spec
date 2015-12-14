@@ -1,4 +1,4 @@
-%global perl_version    5.22.0
+%global perl_version    5.22.1
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        349%{?dist}
+Release:        350%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -117,7 +117,7 @@ BuildRequires:  procps, rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.22.0)
+%global perl_compat perl(:MODULE_COMPAT_5.22.1)
 
 # File provides
 Provides: perl(bytes_heavy.pl)
@@ -169,6 +169,9 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 # Compat provides
 Provides:       %perl_compat
+Provides:       perl(:MODULE_COMPAT_5.22.0)
+# Interpreter version to fulfil required genersted from "require 5.006;"
+Provides:       perl(:VERSION) = %{perl_version}
 # Threading provides
 Provides:       perl(:WITH_ITHREADS)
 Provides:       perl(:WITH_THREADS)
@@ -1396,7 +1399,7 @@ Summary:        What modules are shipped with versions of perl
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20150520
+Version:        5.20151213
 Requires:       %perl_compat
 Requires:       perl(List::Util)
 Requires:       perl(version) >= 0.88
@@ -1412,7 +1415,7 @@ Summary:        Tool for listing modules shipped with perl
 Group:          Development/Tools
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20150520
+Version:        5.20151213
 Requires:       %perl_compat
 Requires:       perl(feature)
 Requires:       perl(version) >= 0.88
@@ -4163,6 +4166,11 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Dec 14 2015 Jitka Plesnikova <jplesnik@redhat.com> - 5.22.1-354
+- 5.22.1 bump (see <http://search.cpan.org/dist/perl-5.22.1/pod/perldelta.pod>
+  for release notes)
+- Provide perl version in perl(:VERSION) dependency symbol
+
 * Thu Jul 16 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.0-349
 - Disable hardening due to some run-time failures (bug #1238804)
 
