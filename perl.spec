@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        354%{?dist}
+Release:        355%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1445,6 +1445,7 @@ BuildArch:      noarch
 This module is a simple wrapper around Locale::Maketext::Lexicon, designed
 to alleviate the need of creating Language Classes for module authors.
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Math-BigInt
 Summary:        Arbitrary-size integer and float mathematics
 Group:          Development/Libraries
@@ -1462,6 +1463,7 @@ Conflicts:      perl < 4:5.22.0-347
 
 %description Math-BigInt
 This provides Perl modules for arbitrary-size integer and float mathematics.
+%endif
 
 %package Math-BigInt-FastCalc
 Summary:        Math::BigInt::Calc XS implementation
@@ -4195,6 +4197,7 @@ popd
 %{privlib}/Locale/Maketext/Simple.pm
 %{_mandir}/man3/Locale::Maketext::Simple.*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Math-BigInt
 %dir %{privlib}/Math
 %{privlib}/Math/BigFloat.pm
@@ -4206,6 +4209,7 @@ popd
 %{_mandir}/man3/Math::BigInt.*
 %{_mandir}/man3/Math::BigInt::Calc.*
 %{_mandir}/man3/Math::BigInt::CalcEmu.*
+%endif
 
 %files Math-BigInt-FastCalc
 %{archlib}/Math
@@ -4624,6 +4628,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Dec 15 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.1-355
+- Remove bundled Math-BigInt (bug #1277203)
+
 * Mon Dec 14 2015 Jitka Plesnikova <jplesnik@redhat.com> - 5.22.1-354
 - 5.22.1 bump (see <http://search.cpan.org/dist/perl-5.22.1/pod/perldelta.pod>
   for release notes)
