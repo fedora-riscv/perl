@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        355%{?dist}
+Release:        356%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -4628,6 +4628,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.22.1-356
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
 * Tue Dec 15 2015 Petr Pisar <ppisar@redhat.com> - 4:5.22.1-355
 - Remove bundled Math-BigInt (bug #1277203)
 
