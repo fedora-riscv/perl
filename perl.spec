@@ -1301,7 +1301,7 @@ Requires:       perl(DynaLoader)
 Conflicts:      perl < 4:5.22.0-351
 
 %description IPC-SysV
-This is an object inferface for System V messages, semaphores, and
+This is an object interface for System V messages, semaphores, and
 inter-process calls.
 
 %if %{dual_life} || %{rebuild_from_scratch}
