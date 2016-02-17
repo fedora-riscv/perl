@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        356%{?dist}
+Release:        357%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -90,6 +90,10 @@ Patch27:        perl-5.22.0-make-PadlistNAMES-lvalue-again.patch
 
 # Workaround for Coro, bug #1231165, CPAN RT#101063. To remove in the future.
 Patch28:        perl-5.22.0-Revert-const-the-core-magic-vtables.patch
+
+# Fix CVE-2016-2381 (ambiguous environment variables handling), bug #1313702,
+# in upstream after 5.23.8
+Patch29:        perl-5.23.8-remove-duplicate-environment-variables-from-environ.patch
 
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
@@ -2358,6 +2362,7 @@ Perl extension for Version Objects
 %patch26 -p1
 %patch27 -p1
 %patch28 -p1
+%patch29 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2378,6 +2383,7 @@ perl -x patchlevel.h \
     'Fedora Patch26: Make *DBM_File desctructors thread-safe (RT#61912)' \
     'Fedora Patch27: Make PadlistNAMES() lvalue again (CPAN RT#101063)' \
     'Fedora Patch28: Make magic vtable writable as a work-around for Coro (CPAN RT#101063)' \
+    'Fedora Patch29: Fix CVE-2016-2381 (ambiguous environment variables handling)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4628,6 +4634,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Mar 02 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.1-357
+- Fix CVE-2016-2381 (ambiguous environment variables handling) (bug #1313702)
+
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.22.1-356
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
