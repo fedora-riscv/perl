@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        328%{?dist}
+Release:        329%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -108,6 +108,10 @@ Patch28:        perl-5.21.6-t-op-taint.t-Perform-SHA-256-algorithm-by-crypt-if-d
 # Fix debugger y command scope level, bug #1129850,
 # riIn upstream after 5.21.3
 Patch29:        perl-5.21.3-fix-debugger-y-command-scope-level.patch
+
+# Fix CVE-2016-2381 (ambiguous environment variables handling), bug #1313702,
+# in upstream after 5.23.8
+Patch30:        perl-5.23.8-remove-duplicate-environment-variables-from-environ.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2048,6 +2052,7 @@ tarball from perl.org.
 %patch27 -p1
 %patch28 -p1
 %patch29 -p1
+%patch30 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2070,6 +2075,7 @@ perl -x patchlevel.h \
     'Fedora Patch27: Report inaccesible file on failed require (RT#123270)' \
     'Fedora Patch28: Use stronger algorithm needed for FIPS in t/op/taint.t (RT#123338)' \
     'Fedora Patch29: Fix debugger y command scope level' \
+    'Fedora Patch30: Fix CVE-2016-2381 (ambiguous environment variables handling)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3923,6 +3929,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Mar 02 2016 Petr Pisar <ppisar@redhat.com> - 4:5.20.3-329
+- Fix CVE-2016-2381 (ambiguous environment variables handling) (bug #1313702)
+
 * Thu Sep 24 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.3-328
 - Fix debugger y command scope level (bug #1129850)
 
