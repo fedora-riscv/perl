@@ -4166,7 +4166,7 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Mon Dec 14 2015 Jitka Plesnikova <jplesnik@redhat.com> - 5.22.1-354
+* Mon Dec 14 2015 Jitka Plesnikova <jplesnik@redhat.com> - 5.22.1-350
 - 5.22.1 bump (see <http://search.cpan.org/dist/perl-5.22.1/pod/perldelta.pod>
   for release notes)
 - Provide perl version in perl(:VERSION) dependency symbol
