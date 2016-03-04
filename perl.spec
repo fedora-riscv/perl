@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        357%{?dist}
+Release:        358%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1294,6 +1294,7 @@ IPC::Cmd allows you to run commands, interactively if desired, in a platform
 independent way, but have them still work.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package IPC-SysV
 Summary:        Object interface to System V IPC
 Group:          Development/Libraries
@@ -1307,6 +1308,7 @@ Conflicts:      perl < 4:5.22.0-351
 %description IPC-SysV
 This is an object interface for System V messages, semaphores, and
 inter-process calls.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package HTTP-Tiny
@@ -4111,6 +4113,7 @@ popd
 %{_mandir}/man3/IPC::Cmd.3*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files IPC-SysV
 %{archlib}/auto/IPC
 %dir %{archlib}/IPC
@@ -4122,6 +4125,7 @@ popd
 %{_mandir}/man3/IPC::Semaphore.*
 %{_mandir}/man3/IPC::SharedMem.*
 %{_mandir}/man3/IPC::SysV.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files JSON-PP
@@ -4634,6 +4638,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Mar 04 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.1-358
+- Remove bundled perl-IPC-SysV (bug #1308527)
+
 * Wed Mar 02 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.1-357
 - Fix CVE-2016-2381 (ambiguous environment variables handling) (bug #1313702)
 
