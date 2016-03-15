@@ -16,8 +16,7 @@
 %global __provides_exclude_from .*%{_docdir}|.*%{perl_archlib}/.*\\.pl$|.*%{perl_privlib}/.*\\.pl$
 %global __requires_exclude_from %{_docdir}
 %global __provides_exclude perl\\((VMS|Win32|BSD::|DB\\)$)
-# FCGI is external dependency after install of perl-CGI, remove it during RC releases
-%global __requires_exclude perl\\((VMS|BSD::|Win32|Tk|Mac::|Your::Module::Here|FCGI)
+%global __requires_exclude perl\\((VMS|BSD::|Win32|Tk|Mac::|Your::Module::Here)
 # same as we provide in /usr/lib/rpm/macros.d/macros.perl
 %global perl5_testdir   %{_libexecdir}/perl5-tests
 
@@ -29,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        358%{?dist}
+Release:        359%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -4638,6 +4637,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Mar 15 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.1-359
+- Do not filter FCGI dependency, CGI is non-core now
+
 * Fri Mar 04 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.1-358
 - Remove bundled perl-IPC-SysV (bug #1308527)
 

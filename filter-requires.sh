@@ -3,7 +3,6 @@
 # The original script name has been passed as the first argument:
 "$@" |
   awk '
-	$0 != "perl(FCGI)" &&
 	$0 != "perl(Your::Module::Here)" &&
 	$0 != "perl(Tk)" &&
 	$0 !~ /^perl\(Tk::/ &&
