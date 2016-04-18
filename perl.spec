@@ -62,6 +62,9 @@ Patch4:         perl-5.10.0-libresolv.patch
 # patches ExtUtils-MakeMaker
 Patch5:         perl-USE_MM_LD_RUN_PATH.patch
 
+# Provide maybe_command independently, bug #1129443
+Patch6:         perl-5.22.1-Provide-ExtUtils-MM-methods-as-standalone-ExtUtils-M.patch
+
 # The Fedora builders started randomly failing this futime test
 # only on x86_64, so we just don't run it. Works fine on normal
 # systems.
@@ -1078,6 +1081,20 @@ reference to a scalar it is used as the filename to open for ouput. Any other
 reference is used as the filehandle to write to. Otherwise output defaults to
 STDOUT.
 
+%if %{dual_life} || %{rebuild_from_scratch}
+%package -n perl-ExtUtils-MM-Utils
+Summary:        ExtUtils::MM methods without dependency on ExtUtils::MakeMaker
+License:        GPL+ or Artistic
+Group:          Development/Libraries
+BuildArch:      noarch
+Requires:       %perl_compat
+
+%description -n perl-ExtUtils-MM-Utils
+This is a collection of ExtUtils::MM subroutines that are used by many
+other modules but that do not need full-featured ExtUtils::MakeMaker. The
+issue with ExtUtils::MakeMaker is it pulls in Perl header files and that
+is an overkill for small subroutines.
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package ExtUtils-ParseXS
@@ -2358,6 +2375,7 @@ Perl extension for Version Objects
 %endif
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 %patch7 -p1
 %patch8 -p1
 %patch15 -p1
@@ -2379,7 +2397,7 @@ perl -x patchlevel.h \
 %endif \
     'Fedora Patch4: use libresolv instead of libbind' \
     'Fedora Patch5: USE_MM_LD_RUN_PATH' \
-    'Fedora Patch6: Skip hostname tests, due to builders not being network capable' \
+    'Fedora Patch6: Provide MM::maybe_command independently (bug #1129443)' \
     'Fedora Patch7: Dont run one io test due to random builder failures' \
     'Fedora Patch15: Define SONAME for libperl.so' \
     'Fedora Patch16: Install libperl.so to -Dshrpdir value' \
@@ -2646,6 +2664,7 @@ sed \
 # lib/perl5db.t will fail if Term::ReadLine::Gnu is available
 %check
 %if %{with test}
+%{new_perl} -I/lib regen/lib_cleanup.pl
 pushd t
 %{new_perl} -I../lib porting/customized.t --regen
 popd
@@ -2961,7 +2980,8 @@ popd
 %exclude %{privlib}/ExtUtils/Liblist.pm
 %exclude %{privlib}/ExtUtils/MakeMaker
 %exclude %{privlib}/ExtUtils/MakeMaker.pm
-%exclude %{privlib}/ExtUtils/MM*.pm
+%exclude %{privlib}/ExtUtils/MM.pm
+%exclude %{privlib}/ExtUtils/MM_*.pm
 %exclude %{privlib}/ExtUtils/MY.pm
 %exclude %{privlib}/ExtUtils/Mkbootstrap.pm
 %exclude %{privlib}/ExtUtils/Mksymlists.pm
@@ -2969,7 +2989,8 @@ popd
 %exclude %{_mandir}/man1/instmodsh.1*
 %exclude %{_mandir}/man3/ExtUtils::Command::MM*
 %exclude %{_mandir}/man3/ExtUtils::Liblist.3*
-%exclude %{_mandir}/man3/ExtUtils::MM*
+%exclude %{_mandir}/man3/ExtUtils::MM.3*
+%exclude %{_mandir}/man3/ExtUtils::MM_*
 %exclude %{_mandir}/man3/ExtUtils::MY.3*
 %exclude %{_mandir}/man3/ExtUtils::MakeMaker*
 %exclude %{_mandir}/man3/ExtUtils::Mkbootstrap.3*
@@ -2979,6 +3000,11 @@ popd
 # ExtUtils-Miniperl
 %exclude %{privlib}/ExtUtils/Miniperl.pm
 %exclude %{_mandir}/man3/ExtUtils::Miniperl.3*
+
+# ExtUtils-MM-Utils
+%exclude %dir %{privlib}/ExtUtils/MM
+%exclude %{privlib}/ExtUtils/MM/Utils.pm
+%exclude %{_mandir}/man3/ExtUtils::MM::Utils.*
 
 # ExtUtils-ParseXS
 %exclude %dir %{privlib}/ExtUtils/ParseXS
@@ -3903,7 +3929,8 @@ popd
 %{privlib}/ExtUtils/Liblist.pm
 %{privlib}/ExtUtils/MakeMaker
 %{privlib}/ExtUtils/MakeMaker.pm
-%{privlib}/ExtUtils/MM*.pm
+%{privlib}/ExtUtils/MM.pm
+%{privlib}/ExtUtils/MM_*.pm
 %{privlib}/ExtUtils/MY.pm
 %{privlib}/ExtUtils/Mkbootstrap.pm
 %{privlib}/ExtUtils/Mksymlists.pm
@@ -3911,7 +3938,8 @@ popd
 %{_mandir}/man1/instmodsh.1*
 %{_mandir}/man3/ExtUtils::Command::MM*
 %{_mandir}/man3/ExtUtils::Liblist.3*
-%{_mandir}/man3/ExtUtils::MM*
+%{_mandir}/man3/ExtUtils::MM.3*
+%{_mandir}/man3/ExtUtils::MM_*
 %{_mandir}/man3/ExtUtils::MY.3*
 %{_mandir}/man3/ExtUtils::MakeMaker*
 %{_mandir}/man3/ExtUtils::Mkbootstrap.3*
@@ -3923,6 +3951,14 @@ popd
 %dir %{privlib}/ExtUtils
 %{privlib}/ExtUtils/Miniperl.pm
 %{_mandir}/man3/ExtUtils::Miniperl.3*
+
+%if %{dual_life} || %{rebuild_from_scratch}
+%files ExtUtils-MM-Utils
+%dir %{privlib}/ExtUtils
+%dir %{privlib}/ExtUtils/MM
+%{privlib}/ExtUtils/MM/Utils.pm
+%{_mandir}/man3/ExtUtils::MM::Utils.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-ParseXS
@@ -4645,6 +4681,7 @@ popd
   (bug #1129443)
 - Remove perl-ExtUtils-ParseXS dependency on perl-devel (bug #1129443)
 - Require perl-devel by perl-ExtUtils-MakeMaker
+- Provide MM::maybe_command independently (bug #1129443)
 
 * Tue Mar 15 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.1-359
 - Do not filter FCGI dependency, CGI is non-core now
