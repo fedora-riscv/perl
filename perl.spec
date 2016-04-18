@@ -97,6 +97,9 @@ Patch28:        perl-5.22.0-Revert-const-the-core-magic-vtables.patch
 # in upstream after 5.23.8
 Patch29:        perl-5.23.8-remove-duplicate-environment-variables-from-environ.patch
 
+# Replace ExtUtils::MakeMaker dependency with ExtUtils::MM::Utils.
+# This allows not to require perl-devel. Bug #1129443
+Patch30:        perl-5.22.1-Replace-EU-MM-dependnecy-with-EU-MM-Utils-in-IPC-Cmd.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -1304,7 +1307,7 @@ License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
 Version:        0.92
-Requires:       perl(ExtUtils::MakeMaker)
+Requires:       perl(ExtUtils::MM::Utils)
 Requires:       %perl_compat
 BuildArch:      noarch
 
@@ -2385,6 +2388,7 @@ Perl extension for Version Objects
 %patch27 -p1
 %patch28 -p1
 %patch29 -p1
+%patch30 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2406,6 +2410,7 @@ perl -x patchlevel.h \
     'Fedora Patch27: Make PadlistNAMES() lvalue again (CPAN RT#101063)' \
     'Fedora Patch28: Make magic vtable writable as a work-around for Coro (CPAN RT#101063)' \
     'Fedora Patch29: Fix CVE-2016-2381 (ambiguous environment variables handling)' \
+    'Fedora Patch30: Replace EU::MakeMaker dependency with EU::MM::Utils in IPC::Cmd (bug #1129443)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4682,6 +4687,8 @@ popd
 - Remove perl-ExtUtils-ParseXS dependency on perl-devel (bug #1129443)
 - Require perl-devel by perl-ExtUtils-MakeMaker
 - Provide MM::maybe_command independently (bug #1129443)
+- Replace ExtUtils::MakeMaker dependency with ExtUtils::MM::Utils in IPC::Cmd
+  (bug #1129443)
 
 * Tue Mar 15 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.1-359
 - Do not filter FCGI dependency, CGI is non-core now
