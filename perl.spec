@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        359%{?dist}
+Release:        360%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -858,7 +858,7 @@ Epoch:          3
 Version:        2.72
 Requires:       %perl_compat
 Requires:       %{name}-Encode = %{epoch}:%{version}-%{release}
-Requires:       perl-devel
+Recommends:     perl-devel
 BuildArch:      noarch
 
 %description Encode-devel
@@ -4637,6 +4637,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Apr 18 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.1-360
+- Weak perl-Encode-devel dependency on perl-devel to Recommends level
+  (bug #1129443)
+
 * Tue Mar 15 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.1-359
 - Do not filter FCGI dependency, CGI is non-core now
 
