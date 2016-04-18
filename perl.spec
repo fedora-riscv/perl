@@ -1055,7 +1055,6 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.70
-Requires:       perl-devel
 Requires:       %perl_compat
 Requires:       perl(File::Path)
 BuildArch:      noarch
@@ -4689,6 +4688,7 @@ popd
 - Replace ExtUtils::MakeMaker dependency with ExtUtils::MM::Utils in IPC::Cmd
   (bug #1129443)
 - Remove perl-ExtUtils-Install dependency on perl-devel (bug #1129443)
+- Remove perl-ExtUtils-Manifest dependency on perl-devel (bug #1129443)
 
 * Tue Mar 15 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.1-359
 - Do not filter FCGI dependency, CGI is non-core now
