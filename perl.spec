@@ -1013,6 +1013,10 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        7.04
+# If an XS module is built, code generated from XS will be compiled and it
+# includes Perl header files.
+# TODO: This dependency will be weaken in order to relieve building noarch
+# packages from perl-devel and gcc.
 Requires:       perl-devel
 Requires:       %perl_compat
 Requires:       perl(Data::Dumper)
@@ -1083,7 +1087,6 @@ License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
 Version:        3.28
-Requires:       perl-devel
 Requires:       %perl_compat
 BuildArch:      noarch
 Obsoletes:      perl-ExtUtils-Typemaps
@@ -4640,6 +4643,8 @@ popd
 * Mon Apr 18 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.1-360
 - Weak perl-Encode-devel dependency on perl-devel to Recommends level
   (bug #1129443)
+- Remove perl-ExtUtils-ParseXS dependency on perl-devel (bug #1129443)
+- Require perl-devel by perl-ExtUtils-MakeMaker
 
 * Tue Mar 15 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.1-359
 - Do not filter FCGI dependency, CGI is non-core now
