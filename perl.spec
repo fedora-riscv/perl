@@ -1,4 +1,4 @@
-%global perl_version    5.22.1
+%global perl_version    5.22.2
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        351%{?dist}
+Release:        352%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -92,10 +92,6 @@ Patch27:        perl-5.22.0-make-PadlistNAMES-lvalue-again.patch
 # Workaround for Coro, bug #1231165, CPAN RT#101063. To remove in the future.
 Patch28:        perl-5.22.0-Revert-const-the-core-magic-vtables.patch
 
-# Fix CVE-2016-2381 (ambiguous environment variables handling), bug #1313702,
-# in upstream after 5.23.8
-Patch29:        perl-5.23.8-remove-duplicate-environment-variables-from-environ.patch
-
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -121,7 +117,7 @@ BuildRequires:  procps, rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.22.1)
+%global perl_compat perl(:MODULE_COMPAT_5.22.2)
 
 # File provides
 Provides: perl(bytes_heavy.pl)
@@ -173,6 +169,7 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 # Compat provides
 Provides:       %perl_compat
+Provides:       perl(:MODULE_COMPAT_5.22.1)
 Provides:       perl(:MODULE_COMPAT_5.22.0)
 # Interpreter version to fulfil required genersted from "require 5.006;"
 Provides:       perl(:VERSION) = %{perl_version}
@@ -1403,7 +1400,7 @@ Summary:        What modules are shipped with versions of perl
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20151213
+Version:        5.20160429
 Requires:       %perl_compat
 Requires:       perl(List::Util)
 Requires:       perl(version) >= 0.88
@@ -1419,7 +1416,7 @@ Summary:        Tool for listing modules shipped with perl
 Group:          Development/Tools
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20151213
+Version:        5.20160429
 Requires:       %perl_compat
 Requires:       perl(feature)
 Requires:       perl(version) >= 0.88
@@ -2137,7 +2134,6 @@ Perl extension for Version Objects
 %patch26 -p1
 %patch27 -p1
 %patch28 -p1
-%patch29 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2158,7 +2154,6 @@ perl -x patchlevel.h \
     'Fedora Patch26: Make *DBM_File desctructors thread-safe (RT#61912)' \
     'Fedora Patch27: Make PadlistNAMES() lvalue again (CPAN RT#101063)' \
     'Fedora Patch28: Make magic vtable writable as a work-around for Coro (CPAN RT#101063)' \
-    'Fedora Patch29: Fix CVE-2016-2381 (ambiguous environment variables handling)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4172,6 +4167,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jun 13 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.2-352
+- 5.22.2 bump (see <http://search.cpan.org/dist/perl-5.22.2/pod/perldelta.pod>
+  for release notes)
+
 * Wed Mar 02 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.1-351
 - Fix CVE-2016-2381 (ambiguous environment variables handling) (bug #1313702)
 
