@@ -1,4 +1,4 @@
-%global perl_version    5.22.2
+%global perl_version    5.24.0
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        361%{?dist}
+Release:        362%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -86,10 +86,6 @@ Patch22:        perl-5.18.1-Document-Math-BigInt-CalcEmu-requires-Math-BigInt.pa
 # Make *DBM_File desctructors thread-safe, bug #1107543, RT#61912
 Patch26:        perl-5.18.2-Destroy-GDBM-NDBM-ODBM-SDBM-_File-objects-only-from-.patch
 
-# Make PadlistNAMES() lvalue again, bug #1231165, CPAN RT#101063,
-# in upstream after 5.22.0
-Patch27:        perl-5.22.0-make-PadlistNAMES-lvalue-again.patch
-
 # Workaround for Coro, bug #1231165, CPAN RT#101063. To remove in the future.
 Patch28:        perl-5.22.0-Revert-const-the-core-magic-vtables.patch
 
@@ -113,6 +109,7 @@ BuildRequires:  systemtap-sdt-devel
 %if %{with gdbm}
 BuildRequires:  gdbm-devel
 %endif
+BuildRequires:  perl(Data::Dumper)
 
 # For tests
 BuildRequires:  procps, rsyslog
@@ -121,7 +118,7 @@ BuildRequires:  procps, rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.22.2)
+%global perl_compat perl(:MODULE_COMPAT_5.24.0)
 
 # File provides
 Provides: perl(bytes_heavy.pl)
@@ -174,6 +171,7 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 # Compat provides
 Provides:       %perl_compat
+Provides:       perl(:MODULE_COMPAT_5.22.2)
 Provides:       perl(:MODULE_COMPAT_5.22.1)
 Provides:       perl(:MODULE_COMPAT_5.22.0)
 # Interpreter version to fulfil required genersted from "require 5.006;"
@@ -375,7 +373,7 @@ Summary:        Simpler definition of attribute handlers
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.97
+Version:        0.99
 BuildArch:      noarch
 Requires:       %perl_compat
 Conflicts:      perl < 4:5.22.0-351
@@ -394,7 +392,7 @@ Summary:        Replace functions with ones that succeed or die
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.26
+Version:        2.29
 Requires:       %perl_compat
 BuildArch:      noarch
 Requires:       perl(B)
@@ -433,7 +431,7 @@ Summary:        Use BigInts and BigFloats transparently
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.39
+Version:        0.42
 Requires:       %perl_compat
 Requires:       perl(Carp)
 # Math::BigInt::Lite is optional
@@ -450,8 +448,8 @@ BigFloats in a transparent way.
 %package Carp
 Summary:        Alternative warn and die for modules
 Epoch:          0
-# Real version 1.36
-Version:        1.36
+# Real version 1.40
+Version:        1.40
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       %perl_compat
@@ -477,7 +475,7 @@ Summary:        Low-Level Interface to bzip2 compression library
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.068
+Version:        2.069
 Requires:       perl(Exporter), perl(File::Temp)
 
 %description Compress-Raw-Bzip2
@@ -489,7 +487,7 @@ Summary:        Low-Level Interface to the zlib compression library
 Group:          Development/Libraries
 License:        (GPL+ or Artistic) and zlib
 Epoch:          0
-Version:        2.068
+Version:        2.069
 Requires:       %perl_compat
 
 %description Compress-Raw-Zlib
@@ -503,7 +501,7 @@ Summary:        Structured data retrieval of perl -V output
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.24
+Version:        0.25
 Requires:       %perl_compat
 BuildArch:      noarch
 Conflicts:      perl < 4:5.22.0-347
@@ -611,7 +609,7 @@ external download clients to fetch distributions from the net.
 %package CPAN-Meta
 Summary:        Distribution metadata for a CPAN dist
 Epoch:          0
-Version:        2.150001
+Version:        2.150005
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       %perl_compat
@@ -648,7 +646,7 @@ them to the simplest representation.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package CPAN-Meta-YAML
-Version:        0.012
+Version:        0.018
 Epoch:          0
 Summary:        Read and write a subset of YAML for CPAN Meta files
 License:        GPL+ or Artistic
@@ -669,7 +667,7 @@ Summary:        Stringify perl data structures, suitable for printing and eval
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.158
+Version:        2.160
 Requires:       %perl_compat
 Requires:       perl(Scalar::Util)
 Requires:       perl(XSLoader)
@@ -705,7 +703,7 @@ Summary:        A data debugging tool for the XS programmer
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.22
+Version:        1.23
 Requires:       %perl_compat
 Conflicts:      perl < 4:5.22.0-351
 
@@ -721,7 +719,7 @@ Summary:        Perl Pollution Portability header generator
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        3.31
+Version:        3.32
 Requires:       %perl_compat
 Conflicts:      perl < 4:5.20.1-310
 
@@ -815,8 +813,8 @@ module can handle all types of input, including partial-byte data.
 Summary:        Character encodings in Perl
 Group:          Development/Libraries
 License:        (GPL+ or Artistic) and UCD
-Epoch:          3
-Version:        2.72
+Epoch:          4
+Version:        2.80
 Requires:       %perl_compat
 Conflicts:      perl < 4:5.16.2-256
 
@@ -828,8 +826,8 @@ of the system. Perl strings are sequences of characters.
 Summary:        Write your Perl script in non-ASCII or non-UTF-8
 Group:          Development/Libraries
 License:        GPL+ or Artistic
-Epoch:          3
-Version:        2.14
+Epoch:          4
+Version:        2.17
 # Keeping this sub-package arch-specific because it installs files into
 # arch-specific directories.
 Requires:       %perl_compat
@@ -857,8 +855,8 @@ The easiest and the best alternative is to write your script in UTF-8.
 Summary:        Character encodings in Perl
 Group:          Development/Libraries
 License:        (GPL+ or Artistic) and UCD
-Epoch:          3
-Version:        2.72
+Epoch:          4
+Version:        2.80
 Requires:       %perl_compat
 Requires:       %{name}-Encode = %{epoch}:%{version}-%{release}
 Recommends:     perl-devel
@@ -892,7 +890,7 @@ Summary:        System errno constants
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.23
+Version:        1.25
 Requires:       %perl_compat
 Requires:       perl(Carp)
 Conflicts:      perl < 4:5.22.0-351
@@ -908,7 +906,7 @@ Summary:        Experimental features made easy
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.013
+Version:        0.016
 Requires:       %perl_compat
 BuildArch:      noarch
 Conflicts:      perl < 4:5.20.0-303
@@ -945,7 +943,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.280221
+Version:        0.280225
 BuildArch:      noarch
 Requires:       perl-devel
 Requires:       %perl_compat
@@ -966,7 +964,7 @@ Summary:        Perl routines to replace common UNIX commands in Makefiles
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.20
+Version:        7.10
 BuildArch:      noarch
 Requires:       %perl_compat
 Conflicts:      perl < 4:5.20.1-312
@@ -983,7 +981,7 @@ Summary:        Utilities for embedding Perl in C/C++ applications
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.32
+Version:        1.33
 Requires:       perl-devel
 Requires:       %perl_compat
 BuildArch:      noarch
@@ -1014,7 +1012,7 @@ Summary:        Create a module Makefile
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        7.04
+Version:        7.10
 # If an XS module is built, code generated from XS will be compiled and it
 # includes Perl header files.
 # TODO: This dependency will be weaken in order to relieve building noarch
@@ -1085,7 +1083,7 @@ Summary:        ExtUtils::MM methods without dependency on ExtUtils::MakeMaker
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        7.04
+Version:        7.11
 BuildArch:      noarch
 Requires:       %perl_compat
 
@@ -1103,7 +1101,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        3.28
+Version:        3.31
 Requires:       %perl_compat
 BuildArch:      noarch
 Obsoletes:      perl-ExtUtils-Typemaps
@@ -1138,7 +1136,7 @@ Summary:        Create or remove directory trees
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.09
+Version:        2.12
 Requires:       %perl_compat
 Requires:       perl(Carp)
 BuildArch:      noarch
@@ -1178,7 +1176,7 @@ Summary:        Perl source filters
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          2
-Version:        1.54
+Version:        1.55
 Requires:       %perl_compat
 
 %description Filter
@@ -1211,7 +1209,7 @@ Summary:        Extended processing of command line options
 Group:          Development/Libraries
 License:        GPLv2+ or Artistic
 Epoch:          0
-Version:        2.45
+Version:        2.48
 Requires:       %perl_compat
 Requires:       perl(overload)
 Requires:       perl(Text::ParseWords)
@@ -1236,7 +1234,7 @@ Summary:        Perl input/output modules
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.35
+Version:        1.36
 Requires:       %perl_compat
 Conflicts:      perl < 4:5.22.0-351
 
@@ -1249,7 +1247,7 @@ Summary:        IO::Compress wrapper for modules
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.068
+Version:        2.069
 Requires:       %perl_compat
 Obsoletes:      perl-Compress-Zlib <= 2.020
 Provides:       perl(IO::Uncompress::Bunzip2)
@@ -1319,7 +1317,7 @@ Summary:        Object interface to System V IPC
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.04
+Version:        2.06
 Requires:       %perl_compat
 Requires:       perl(DynaLoader)
 Conflicts:      perl < 4:5.22.0-351
@@ -1335,7 +1333,7 @@ Summary:        A small, simple, correct HTTP/1.1 client
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.054
+Version:        0.056
 Requires:       perl(bytes)
 Requires:       perl(Carp)
 Requires:       perl(IO::Socket)
@@ -1379,7 +1377,7 @@ Summary:        Perl clients for various network protocols
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        3.05
+Version:        3.08
 Requires:       %perl_compat
 Requires:       perl(File::Basename)
 Requires:       perl(IO::Socket) >= 1.05
@@ -1476,7 +1474,8 @@ Summary:        Arbitrary-size integer and float mathematics
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.9997
+# Real version 1.999715
+Version:        1.9997.15
 Requires:       %perl_compat
 Requires:       perl(Carp)
 # File::Spec not used on recent perl
@@ -1495,7 +1494,7 @@ Summary:        Math::BigInt::Calc XS implementation
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.31
+Version:        0.40
 Requires:       %perl_compat
 Conflicts:      perl < 4:5.22.0-348
 
@@ -1507,7 +1506,8 @@ Summary:        Arbitrary big rational numbers
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.2608
+# Real version 0.2608.02
+Version:        0.2608.02
 Requires:       %perl_compat
 Requires:       perl(Math::BigInt)
 BuildArch:      noarch
@@ -1575,7 +1575,7 @@ Summary:        What modules are shipped with versions of perl
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20160429
+Version:        5.20160506
 Requires:       %perl_compat
 Requires:       perl(List::Util)
 Requires:       perl(version) >= 0.88
@@ -1591,7 +1591,7 @@ Summary:        Tool for listing modules shipped with perl
 Group:          Development/Tools
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20160429
+Version:        5.20160506
 Requires:       %perl_compat
 Requires:       perl(feature)
 Requires:       perl(version) >= 0.88
@@ -1662,7 +1662,7 @@ offers you a very simple way to mark modules as loaded and/or unloaded.
 %package Module-Metadata
 Summary:        Gather package and POD information from perl module files
 Epoch:          0
-Version:        1.000026
+Version:        1.000031
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 BuildArch:      noarch
@@ -1711,7 +1711,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.232
+Version:        0.234
 Requires:       %perl_compat
 BuildArch:      noarch
 
@@ -1751,7 +1751,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        1.4414
+Version:        1.4417
 Requires:       %perl_compat
 BuildArch:      noarch
 Requires:       perl(CPAN::Meta::YAML) >= 0.002
@@ -1770,7 +1770,7 @@ Summary:        PathTools Perl module (Cwd, File::Spec)
 Group:          Development/Libraries
 License:        (GPL+ or Artistic) and BSD
 Epoch:          0
-Version:        3.56
+Version:        3.63
 Requires:       %perl_compat
 Requires:       perl(Carp)
 
@@ -1785,7 +1785,7 @@ Group:          Development/Libraries
 # Code examples are Public Domain
 License:        (GPL+ or Artistic) and Public Domain
 Epoch:          0
-Version:        5.021009
+Version:        5.021010
 Requires:       %perl_compat
 BuildArch:      noarch
 Conflicts:      perl < 4:5.22.0-347
@@ -1816,7 +1816,7 @@ writing to a handle.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Perl-OSType
 Summary:        Map Perl operating system names to generic types
-Version:        1.008
+Version:        1.009
 Epoch:          0
 License:        GPL+ or Artistic
 Group:          Development/Libraries
@@ -1932,7 +1932,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        3.29
+Version:        3.32
 Requires:       %perl_compat
 BuildArch:      noarch
 
@@ -1948,7 +1948,7 @@ Summary:        Print a usage message from embedded pod documentation
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 Epoch:          4
-Version:        1.64
+Version:        1.68
 # Pod::Usage execute perldoc from perl-Pod-Perldoc by default
 BuildRequires:  perl-Pod-Perldoc
 Requires:       %perl_compat
@@ -1973,7 +1973,7 @@ Summary:        Format POD source into various output formats
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.5.3
+Version:        4.07
 BuildArch:      noarch
 Requires:       %perl_compat
 Requires:       perl(File::Spec) >= 0.8
@@ -1992,8 +1992,9 @@ with various capabilities.
 Summary:        A selection of general-utility scalar and list subroutines
 Group:          Development/Libraries
 License:        GPL+ or Artistic
-Epoch:          2
-Version:        1.41
+Epoch:          3
+# Real version 1.42_02
+Version:        1.42
 Requires:       %perl_compat
 
 %description Scalar-List-Utils
@@ -2008,7 +2009,7 @@ Summary:        Load functions only on demand
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.22
+Version:        1.23
 BuildArch:      noarch
 Requires:       %perl_compat
 Requires:       perl(Carp)
@@ -2024,8 +2025,8 @@ perlsub.
 Summary:        C socket.h defines and structure manipulators
 Group:          Development/Libraries
 License:        GPL+ or Artistic
-Epoch:          3
-Version:        2.018
+Epoch:          4
+Version:        2.020
 Requires:       %perl_compat
 
 %description Socket
@@ -2042,7 +2043,7 @@ Summary:        Persistence for Perl data structures
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        2.53
+Version:        2.56
 Requires:       %perl_compat
 # Carp substitutes missing Log::Agent
 Requires:       perl(Carp)
@@ -2080,7 +2081,7 @@ Summary:        Color screen output using ANSI escape sequences
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        4.03
+Version:        4.04
 Requires:       %perl_compat
 BuildArch:      noarch
 Conflicts:      perl < 4:5.18.2-302
@@ -2098,7 +2099,7 @@ Summary:        Perl termcap interface
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.15
+Version:        1.17
 Requires:       %perl_compat
 # ncurses for infocmp tool
 Requires:       ncurses
@@ -2116,7 +2117,7 @@ Summary:        Simple framework for writing test scripts
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.26
+Version:        1.28
 Requires:       %perl_compat
 # Algorithm::Diff 1.15 is optional
 Requires:       perl(File::Temp)
@@ -2133,7 +2134,7 @@ Summary:        Run Perl standard test scripts with statistics
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        3.35
+Version:        3.36
 Requires:       %perl_compat
 BuildArch:      noarch
 
@@ -2215,7 +2216,7 @@ Summary:        Thread-safe queues
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        3.05
+Version:        3.09
 Requires:       %perl_compat
 Requires:       perl(Carp)
 BuildArch:      noarch
@@ -2232,7 +2233,7 @@ Summary:        High resolution alarm, sleep, gettimeofday, interval timers
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.9726
+Version:        1.9733
 Requires:       %perl_compat
 Requires:       perl(Carp)
 Conflicts:      perl < 4:5.16.3-271
@@ -2268,7 +2269,7 @@ Summary:        Time objects from localtime and gmtime
 Group:          Development/Libraries
 License:        (GPL+ or Artistic) and BSD
 Epoch:          0
-Version:        1.29
+Version:        1.31
 Requires:       %perl_compat
 
 %description Time-Piece
@@ -2283,7 +2284,7 @@ Summary:        Perl interpreter-based threads
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        2.01
+Version:        2.07
 Requires:       perl = %{perl_epoch}:%{perl_version}
 
 %description threads
@@ -2305,7 +2306,7 @@ Summary:        Perl extension for sharing data structures between threads
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.48
+Version:        1.51
 Requires:       %perl_compat
 
 %description threads-shared
@@ -2323,7 +2324,7 @@ Summary:        Unicode Collation Algorithm
 Group:          Development/Libraries
 License:        (GPL+ or Artistic) and UCD
 Epoch:          0
-Version:        1.12
+Version:        1.14
 Requires:       %perl_compat
 Requires:       perl(Unicode::Normalize)
 Conflicts:      perl < 4:5.22.0-347
@@ -2339,11 +2340,10 @@ Summary:        Unicode Normalization Forms
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.18
+Version:        1.25
 Requires:       %perl_compat
 # unicore/CombiningClass.pl and unicore/Decomposition.pl from perl, perl is
 # auto-detected.
-BuildArch:      noarch
 Conflicts:      perl < 4:5.22.0-347
 
 %description Unicode-Normalize
@@ -2358,8 +2358,8 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          5
-# real version 0.9909
-Version:        0.99.09
+# real version 0.9916
+Version:        0.99.16
 Requires:       %perl_compat
 BuildArch:      noarch
 
@@ -2382,7 +2382,6 @@ Perl extension for Version Objects
 %patch16 -p1
 %patch22 -p1
 %patch26 -p1
-%patch27 -p1
 %patch28 -p1
 %patch30 -p1
 %patch200 -p1
@@ -2535,7 +2534,8 @@ perl regen.pl -v
         -Ud_endprotoent_r_proto -Ud_setprotoent_r_proto \
         -Ud_endservent_r_proto -Ud_setservent_r_proto \
         -Dscriptdir='%{_bindir}' \
-        -Dusesitecustomize
+        -Dusesitecustomize \
+        -Duse64bitint1
 
 # -Duseshrplib creates libperl.so, -Ubincompat5005 help create DSO -> libperl.so
 
@@ -2876,8 +2876,6 @@ popd
 
 # Devel-PPPort
 %exclude %{archlib}/Devel/PPPort.pm
-%exclude %dir %{archlib}/auto/Devel/PPPort
-%exclude %{archlib}/auto/Devel/PPPort/PPPort.so
 %exclude %{_mandir}/man3/Devel::PPPort.3*
 
 # Devel-SelfStubber
@@ -3555,7 +3553,8 @@ popd
 %exclude %{_mandir}/man3/Unicode::Collate::*
 
 # Unicode-Normalize
-%exclude %{privlib}/Unicode/Normalize.pm
+%exclude %{archlib}/auto/Unicode/Normalize
+%exclude %{archlib}/Unicode/Normalize.pm
 %exclude %{_mandir}/man3/Unicode::Normalize.*
 
 # version
@@ -3792,9 +3791,6 @@ popd
 %files Devel-PPPort
 %dir %{archlib}/Devel
 %{archlib}/Devel/PPPort.pm
-%dir %{archlib}/auto/Devel
-%dir %{archlib}/auto/Devel/PPPort
-%{archlib}/auto/Devel/PPPort/PPPort.so
 %{_mandir}/man3/Devel::PPPort.3*
 %endif
 
@@ -4657,8 +4653,10 @@ popd
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Unicode-Normalize
-%dir %{privlib}/Unicode
-%{privlib}/Unicode/Normalize.pm
+%dir %{archlib}/auto/Unicode
+%{archlib}/auto/Unicode/Normalize
+%dir %{archlib}/Unicode
+%{archlib}/Unicode/Normalize.pm
 %{_mandir}/man3/Unicode::Normalize.*
 %endif
 
@@ -4676,6 +4674,11 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed May 11 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.0-362
+- 5.24.0 bump (see <http://search.cpan.org/dist/perl-5.24.0/pod/perldelta.pod>
+  for release notes)
+- Update sub-packages; Update or remove patches
+
 * Mon May 02 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.6-361
 - 5.22.2 bump (see <http://search.cpan.org/dist/perl-5.22.2/pod/perldelta.pod>
   for release notes)

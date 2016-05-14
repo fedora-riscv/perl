@@ -15,8 +15,8 @@ Signed-off-by: Petr Písař <ppisar@redhat.com>
 
 diff --git a/dist/Math-BigInt/lib/Math/BigInt/CalcEmu.pm b/dist/Math-BigInt/lib/Math/BigInt/CalcEmu.pm
 index c82e153..0c0b496 100644
---- a/dist/Math-BigInt/lib/Math/BigInt/CalcEmu.pm
-+++ b/dist/Math-BigInt/lib/Math/BigInt/CalcEmu.pm
+--- a/cpan/Math-BigInt/lib/Math/BigInt/CalcEmu.pm
++++ b/cpan/Math-BigInt/lib/Math/BigInt/CalcEmu.pm
 @@ -290,6 +290,7 @@ Math::BigInt::CalcEmu - Emulate low-level math with BigInt code
  
  =head1 SYNOPSIS

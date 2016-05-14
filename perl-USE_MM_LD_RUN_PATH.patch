@@ -53,7 +53,7 @@ diff -up perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker.pm.usem perl
 +    };
  
      print "MakeMaker (v$VERSION)\n" if $Verbose;
-     if (-f "MANIFEST" && ! -f "Makefile" && ! $ENV{PERL_CORE}){
+     if (-f "MANIFEST" && ! -f "Makefile" && ! $UNDER_CORE){
 @@ -2352,6 +2372,40 @@ precedence.  A typemap in the current di
  precedence, even if it isn't listed in TYPEMAPS.  The default system
  typemap has lowest precedence.
