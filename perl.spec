@@ -32,13 +32,25 @@ Release:        362%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
-# Modules Tie::File and Getopt::Long are licenced under "GPLv2+ or Artistic,"
-# we have to reflect that in the sub-package containing them.
-# under UCD are unicode tables
-# Public domain: ext/SDBM_File/sdbm/*, ext/Compress-Raw-Bzip2/bzip2-src/dlltest.c 
-# Copyright Only: for example ext/Text-Soundex/Soundex.xs 
-# HSRL; regexec.c
-License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and HSRL and Public Domain and UCD
+# These are all found licenses. They are distributed among various
+# subpackages.
+# dist/Tie-File/lib/Tie/File.pm:        GPLv2+ or Artistic
+# cpan/Getopt-Long/lib/Getopt/Long.pm:  GPLv2+ or Artistic
+# lib/unicore:                          UCD
+# ext/SDBM_File/sdbm.{c,h}:             Public domain
+# regexec.c, regcomp.c:                 HSLR
+# time64.c:                             MIT
+# pod/perlunicook.pod:                  (GPL+ or Artistic) and Public Domain
+# pod/perlgpl.pod:                      GPL text
+# pod/perlartistic.pod:                 Artistic text
+# ext/File-Glob/bsd_glob.{c,h}:         BSD
+# Other files:                          GPL+ or Artistic
+## Unbundled
+# cpan/Compress-Raw-Bzip2/bzip2-src:    BSD
+# cpan/Compress-Raw-Zlib/zlib-src:      zlib
+## perl sub-package notice
+# perluniprops.pod is generated from lib/unicore sources:   UCD
+License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and BSD and Public Domain and UCD
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
 Source3:        macros.perl
@@ -168,7 +180,7 @@ Perl utils like "splain" or "perlbug" can be found in perl-utils package.
 %package libs
 Summary:        The libraries for the perl run-time
 Group:          Development/Languages
-License:        GPL+ or Artistic
+License:        (GPL+ or Artistic) and HSLR and MIT and UCD
 # Compat provides
 Provides:       %perl_compat
 Provides:       perl(:MODULE_COMPAT_5.22.2)
@@ -207,7 +219,8 @@ directories).
 %package devel
 Summary:        Header #files for use in perl development
 Group:          Development/Languages
-License:        GPL+ or Artistic
+# l1_char_class_tab.h is generated from lib/unicore sources:    UCD
+License:        (GPL+ or Artistic) and UCD
 # Require $Config{libs} providers, bug #905482
 Requires:       libdb-devel
 %if %{with gdbm}
@@ -2147,8 +2160,7 @@ Use TAP::Parser, Test::Harness package was whole rewritten.
 %package Test-Simple
 Summary:        Basic utilities for writing tests
 Group:          Development/Languages
-# NOTE: For future reference, 1.001010+ also uses the `CC0' license
-License:        (GPL+ or Artistic) and Public Domain
+License:        (GPL+ or Artistic) and CC0 and Public Domain
 Epoch:          0
 Version:        1.001014
 Requires:       %perl_compat
