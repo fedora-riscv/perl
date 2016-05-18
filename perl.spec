@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        362%{?dist}
+Release:        363%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -183,9 +183,6 @@ Group:          Development/Languages
 License:        (GPL+ or Artistic) and HSLR and MIT and UCD
 # Compat provides
 Provides:       %perl_compat
-Provides:       perl(:MODULE_COMPAT_5.22.2)
-Provides:       perl(:MODULE_COMPAT_5.22.1)
-Provides:       perl(:MODULE_COMPAT_5.22.0)
 # Interpreter version to fulfil required genersted from "require 5.006;"
 Provides:       perl(:VERSION) = %{perl_version}
 # Threading provides
@@ -4686,6 +4683,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed May 18 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.0-363
+- Stop providing old perl(MODULE_COMPAT_5.22.*)
+- Update license tags
+
 * Wed May 11 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.0-362
 - 5.24.0 bump (see <http://search.cpan.org/dist/perl-5.24.0/pod/perldelta.pod>
   for release notes)
