@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        363%{?dist}
+Release:        364%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -121,7 +121,10 @@ BuildRequires:  systemtap-sdt-devel
 %if %{with gdbm}
 BuildRequires:  gdbm-devel
 %endif
-BuildRequires:  perl(Data::Dumper)
+%if !%{defined perl_bootstrap}
+BuildRequires:  perl
+%endif
+BuildRequires:  perl-generators
 
 # For tests
 BuildRequires:  procps, rsyslog
@@ -1959,8 +1962,6 @@ License:        GPL+ or Artistic
 Group:          Development/Libraries
 Epoch:          4
 Version:        1.68
-# Pod::Usage execute perldoc from perl-Pod-Perldoc by default
-BuildRequires:  perl-Pod-Perldoc
 Requires:       %perl_compat
 # Pod::Usage executes perldoc from perl-Pod-Perldoc by default
 Requires:       perl-Pod-Perldoc
@@ -2481,9 +2482,6 @@ echo "RPM Build arch: %{_arch}"
 
 %global perl_vendorlib  %{privlib}/vendor_perl
 %global perl_vendorarch %{archlib}/vendor_perl
-
-# For perl-5.14.2-large-repeat-heap-abuse.patch 
-perl regen.pl -v
 
 # Disable hardening due to some run-time failures, bug #1238804
 %undefine _hardened_build
@@ -4683,6 +4681,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu May 19 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-364
+- Remove reflexive dependencies
+
 * Wed May 18 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.0-363
 - Stop providing old perl(MODULE_COMPAT_5.22.*)
 - Update license tags
