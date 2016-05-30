@@ -61,6 +61,14 @@ Source5:        perl-example.stp
 # Tom Christiansen confirms Pod::Html uses the same license as perl
 Source6:        Pod-Html-license-clarification
 
+# Pregenerated dependencies for bootstrap.
+# If your RPM tool fails on including the source file, then you forgot to
+# define _sourcedir macro to point to the directory with the sources.
+Source7:        gendep.macros
+%if %{defined perl_bootstrap}
+%include %{SOURCE7}
+%endif
+
 # Removes date check, Fedora/RHEL specific
 Patch1:         perl-perlbug-tag.patch
 
@@ -122,9 +130,9 @@ BuildRequires:  systemtap-sdt-devel
 BuildRequires:  gdbm-devel
 %endif
 %if !%{defined perl_bootstrap}
-BuildRequires:  perl
+BuildRequires:	perl
+BuildRequires:	perl-generators
 %endif
-BuildRequires:  perl-generators
 
 # For tests
 BuildRequires:  procps, rsyslog
@@ -146,6 +154,9 @@ Obsoletes: perl-suidperl <= 4:5.12.2
 Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 # Require this till perl sub-package requires any modules
 Requires: %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl
+%endif
 
 # We need this to break the dependency loop, and ensure that perl-libs 
 # gets installed before perl.
@@ -205,6 +216,9 @@ Requires:       perl(Carp)
 Requires:       perl(Exporter)
 # Term::Cap is optional
 Requires:       perl(XSLoader)
+%if %{defined perl_bootstrap}
+%gendep_perl_libs
+%endif
 
 # Remove private redefinitions
 # XSLoader redefines DynaLoader name space for compatibility, but does not
@@ -232,6 +246,9 @@ Requires:       perl(ExtUtils::ParseXS)
 Requires:       %perl_compat
 # Match library and header files when downgrading releases
 Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
+%if %{defined perl_bootstrap}
+%gendep_perl_devel
+%endif
 
 %description devel
 This package contains header files and development modules.
@@ -243,6 +260,9 @@ Summary:        Macros for rpmbuild
 Group:          Development/Languages
 License:        GPL+ or Artistic
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_macros
+%endif
 
 %description macros
 Macros for rpmbuild are needed during build of srpm in koji. This
@@ -259,6 +279,9 @@ AutoReqProv:    0
 Requires:       %perl_compat
 # FIXME - note this will need to change when doing the core/minimal swizzle
 Requires:       perl-core
+%if %{defined perl_bootstrap}
+%gendep_perl_tests
+%endif
 
 %description tests
 This package contains the test suite included with Perl %{perl_version}.
@@ -277,6 +300,9 @@ BuildArch:      noarch
 # Match library exactly for splain messages
 Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 # Keep /usr/sbin/sendmail and Module::CoreList optional for the perlbug tool
+%if %{defined perl_bootstrap}
+%gendep_perl_utils
+%endif
 Conflicts:      perl < 4:5.22.0-351
 
 %description utils
@@ -299,6 +325,9 @@ Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-macros
 Requires:       perl-utils
+%if %{defined perl_bootstrap}
+%gendep_perl_core
+%endif
 
 Requires:       perl-Archive-Tar, perl-Attribute-Handlers, perl-autodie,
 Requires:       perl-B-Debug, perl-bignum
@@ -372,6 +401,9 @@ Requires:       perl(IO::Uncompress::Bunzip2) >= 2.015
 %if !%{defined perl_bootstrap}
 Requires:       perl(Text::Diff)
 %endif
+%if %{defined perl_bootstrap}
+%gendep_perl_Archive_Tar
+%endif
 
 %description Archive-Tar
 Archive::Tar provides an object oriented mechanism for handling tar files.  It
@@ -389,6 +421,9 @@ Epoch:          0
 Version:        0.99
 BuildArch:      noarch
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Attribute_Handlers
+%endif
 Conflicts:      perl < 4:5.22.0-351
 
 %description Attribute-Handlers
@@ -412,6 +447,9 @@ Requires:       perl(B)
 Requires:       perl(Fcntl)
 Requires:       perl(overload)
 Requires:       perl(POSIX)
+%if %{defined perl_bootstrap}
+%gendep_perl_autodie
+%endif
 Conflicts:      perl < 4:5.16.2-259
 
 %description autodie
@@ -432,6 +470,9 @@ Epoch:          0
 Version:        1.23
 Requires:       %perl_compat
 BuildArch:      noarch
+%if %{defined perl_bootstrap}
+%gendep_perl_B_Debug
+%endif
 Conflicts:      perl < 4:5.20.1-310
 
 %description B-Debug
@@ -451,6 +492,9 @@ Requires:       perl(Carp)
 Requires:       perl(Math::BigRat)
 Requires:       perl(warnings)
 BuildArch:      noarch
+%if %{defined perl_bootstrap}
+%gendep_perl_bignum
+%endif
 Conflicts:      perl < 4:5.22.0-348
 
 %description bignum
@@ -467,6 +511,9 @@ License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       %perl_compat
 Provides:       perl(Carp::Heavy) = %{version}
+%if %{defined perl_bootstrap}
+%gendep_perl_Carp
+%endif
 BuildArch:      noarch
 
 # Do not export unversioned module
@@ -490,6 +537,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.069
 Requires:       perl(Exporter), perl(File::Temp)
+%if %{defined perl_bootstrap}
+%gendep_perl_Compress_Raw_Bzip2
+%endif
 
 %description Compress-Raw-Bzip2
 This module provides a Perl interface to the bzip2 compression library.
@@ -502,6 +552,9 @@ License:        (GPL+ or Artistic) and zlib
 Epoch:          0
 Version:        2.069
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Compress_Raw_Zlib
+%endif
 
 %description Compress-Raw-Zlib
 This module provides a Perl interface to the zlib compression library.
@@ -516,6 +569,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.25
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Config_Perl_V
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.22.0-347
 
@@ -535,6 +591,9 @@ Epoch:          0
 Version:        1.33
 Requires:       %perl_compat
 Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_constant
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.16.3-264
 
@@ -609,6 +668,9 @@ Requires:       perl(Text::Glob)
 %endif
 Requires:       %perl_compat
 Provides:       cpan = %{version}
+%if %{defined perl_bootstrap}
+%gendep_perl_CPAN
+%endif
 BuildArch:      noarch
 
 %description CPAN
@@ -626,6 +688,9 @@ Version:        2.150005
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_CPAN_Meta
+%endif
 BuildArch:      noarch
 
 %description CPAN-Meta
@@ -649,6 +714,9 @@ BuildArch:      noarch
 # CPAN-Meta-Requirements used to have six decimal places
 %global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\(CPAN::Meta::Requirements\\)
 Provides:       perl(CPAN::Meta::Requirements) = %{version}000
+%if %{defined perl_bootstrap}
+%gendep_perl_CPAN_Meta_Requirements
+%endif
 
 %description CPAN-Meta-Requirements
 A CPAN::Meta::Requirements object models a set of version constraints like
@@ -666,6 +734,9 @@ License:        GPL+ or Artistic
 Group:          Development/Libraries
 BuildArch:      noarch
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_CPAN_Meta_YAML
+%endif
 
 %description CPAN-Meta-YAML
 This module implements a subset of the YAML specification for use in reading
@@ -684,6 +755,9 @@ Version:        2.160
 Requires:       %perl_compat
 Requires:       perl(Scalar::Util)
 Requires:       perl(XSLoader)
+%if %{defined perl_bootstrap}
+%gendep_perl_Data_Dumper
+%endif
 
 %description Data-Dumper
 Given a list of scalars or reference variables, writes out their contents
@@ -702,6 +776,9 @@ Version:        1.835
 Requires:       %perl_compat
 Requires:       perl(Fcntl)
 Requires:       perl(XSLoader)
+%if %{defined perl_bootstrap}
+%gendep_perl_DB_File
+%endif
 Conflicts:      perl < 4:5.16.3-264
 
 %description DB_File
@@ -718,6 +795,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.23
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Devel_Peek
+%endif
 Conflicts:      perl < 4:5.22.0-351
 
 %description Devel-Peek
@@ -734,6 +814,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        3.32
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Devel_PPPort
+%endif
 Conflicts:      perl < 4:5.20.1-310
 
 %description Devel-PPPort
@@ -753,6 +836,9 @@ Epoch:          0
 Version:        1.05
 BuildArch:      noarch
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Devel_SelfStubber
+%endif
 Conflicts:      perl < 4:5.22.0-351
 
 %description Devel-SelfStubber
@@ -772,6 +858,9 @@ Version:        1.17
 BuildArch:      noarch
 Requires:       %perl_compat
 Requires:       perl(MIME::Base64)
+%if %{defined perl_bootstrap}
+%gendep_perl_Digest
+%endif
 
 %description Digest
 The Digest:: modules calculate digests, also called "fingerprints" or
@@ -793,6 +882,9 @@ Requires:       %perl_compat
 Requires:       perl(XSLoader)
 # Recommended
 Requires:       perl(Digest::base) >= 1.00
+%if %{defined perl_bootstrap}
+%gendep_perl_Digest_MD5
+%endif
 
 %description Digest-MD5
 The Digest::MD5 module allows you to use the RSA Data Security Inc. MD5
@@ -813,6 +905,9 @@ Requires:       %perl_compat
 Requires:       perl(Carp)
 # Recommended
 Requires:       perl(Digest::base)
+%if %{defined perl_bootstrap}
+%gendep_perl_Digest_SHA
+%endif
 
 %description Digest-SHA
 Digest::SHA is a complete implementation of the NIST Secure Hash
@@ -829,6 +924,9 @@ License:        (GPL+ or Artistic) and UCD
 Epoch:          4
 Version:        2.80
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Encode
+%endif
 Conflicts:      perl < 4:5.16.2-256
 
 %description Encode
@@ -851,6 +949,9 @@ Requires:       perl(Filter::Util::Call)
 # I18N::Langinfo is optional
 # PerlIO::encoding is optional
 Requires:       perl(utf8)
+%if %{defined perl_bootstrap}
+%gendep_perl_encoding
+%endif
 Conflicts:      perl-Encode < 2:2.60-314
 
 %description encoding
@@ -873,6 +974,9 @@ Version:        2.80
 Requires:       %perl_compat
 Requires:       %{name}-Encode = %{epoch}:%{version}-%{release}
 Recommends:     perl-devel
+%if %{defined perl_bootstrap}
+%gendep_perl_Encode_devel
+%endif
 BuildArch:      noarch
 
 %description Encode-devel
@@ -889,6 +993,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.04
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Env
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.16.2-265
 
@@ -906,6 +1013,9 @@ Epoch:          0
 Version:        1.25
 Requires:       %perl_compat
 Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_Errno
+%endif
 Conflicts:      perl < 4:5.22.0-351
 
 %description Errno
@@ -921,6 +1031,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.016
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_experimental
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.20.0-303
 
@@ -938,6 +1051,9 @@ Epoch:          0
 Version:        5.72
 Requires:       %perl_compat
 Requires:       perl(Carp) >= 1.05
+%if %{defined perl_bootstrap}
+%gendep_perl_Exporter
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.16.2-265
 
@@ -964,6 +1080,9 @@ Requires:       perl(DynaLoader)
 Requires:       perl(ExtUtils::Mksymlists)
 Requires:       perl(File::Spec) >= 3.13
 Requires:       perl(Perl::OSType) >= 1
+%if %{defined perl_bootstrap}
+%gendep_perl_ExtUtils_CBuilder
+%endif
 
 %description ExtUtils-CBuilder
 This module can build the C portions of Perl modules by invoking the
@@ -982,6 +1101,9 @@ BuildArch:      noarch
 Requires:       %perl_compat
 Conflicts:      perl < 4:5.20.1-312
 Requires:       perl(File::Find)
+%if %{defined perl_bootstrap}
+%gendep_perl_ExtUtils_Command
+%endif
 
 %description ExtUtils-Command
 This Perl module is used to replace common UNIX commands. In all cases the
@@ -997,6 +1119,9 @@ Epoch:          0
 Version:        1.33
 Requires:       perl-devel
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_ExtUtils_Embed
+%endif
 BuildArch:      noarch
 
 %description ExtUtils-Embed
@@ -1013,6 +1138,9 @@ Version:        2.04
 BuildArch:      noarch
 Requires:       %perl_compat
 Requires:       perl(Data::Dumper)
+%if %{defined perl_bootstrap}
+%gendep_perl_ExtUtils_Install
+%endif
 
 %description ExtUtils-Install
 Handles the installing and uninstalling of perl modules, scripts, man
@@ -1045,6 +1173,9 @@ Requires:       perl(POSIX)
 Requires:       perl(Test::Harness)
 # If an XS module is compiled, xsubpp(1) is needed
 Requires:       perl-ExtUtils-ParseXS
+%if %{defined perl_bootstrap}
+%gendep_perl_ExtUtils_MakeMaker
+%endif
 BuildArch:      noarch
 
 # Filter false DynaLoader provides. Versioned perl(DynaLoader) keeps
@@ -1065,6 +1196,9 @@ Epoch:          0
 Version:        1.70
 Requires:       %perl_compat
 Requires:       perl(File::Path)
+%if %{defined perl_bootstrap}
+%gendep_perl_ExtUtils_Manifest
+%endif
 BuildArch:      noarch
 
 %description ExtUtils-Manifest
@@ -1079,6 +1213,9 @@ Epoch:          0
 Version:        1.05
 Requires:       perl-devel
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_ExtUtils_Miniperl
+%endif
 BuildArch:      noarch
 
 %description ExtUtils-Miniperl
@@ -1099,6 +1236,9 @@ Epoch:          0
 Version:        7.11
 BuildArch:      noarch
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_ExtUtils_MM_Utils
+%endif
 
 %description -n perl-ExtUtils-MM-Utils
 This is a collection of ExtUtils::MM subroutines that are used by many
@@ -1116,6 +1256,9 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        3.31
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_ExtUtils_ParseXS
+%endif
 BuildArch:      noarch
 Obsoletes:      perl-ExtUtils-Typemaps
 
@@ -1137,6 +1280,9 @@ Requires:       perl(IPC::Cmd) >= 0.36
 Requires:       perl(Module::Load::Conditional) >= 0.04
 Requires:       perl(Params::Check) >= 0.07
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_File_Fetch
+%endif
 BuildArch:      noarch
 
 %description File-Fetch
@@ -1152,6 +1298,9 @@ Epoch:          0
 Version:        2.12
 Requires:       %perl_compat
 Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_File_Path
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.16.2-265
 
@@ -1172,6 +1321,9 @@ Requires:       %perl_compat
 BuildArch:      noarch
 Requires:       perl(File::Path) >= 2.06
 Requires:       perl(POSIX)
+%if %{defined perl_bootstrap}
+%gendep_perl_File_Temp
+%endif
 Conflicts:      perl < 4:5.16.2-265
 
 %description File-Temp
@@ -1191,6 +1343,9 @@ License:        GPL+ or Artistic
 Epoch:          2
 Version:        1.55
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Filter
+%endif
 
 %description Filter
 Source filters alter the program text of a module before Perl sees it, much as
@@ -1210,6 +1365,9 @@ Requires:       %perl_compat
 Conflicts:      perl < 4:5.20.1-312
 Requires:       perl(Text::Balanced) >= 1.97
 Requires:       perl(warnings)
+%if %{defined perl_bootstrap}
+%gendep_perl_Filter_Simple
+%endif
 
 %description Filter-Simple
 The Filter::Simple Perl module provides a simplified interface to
@@ -1228,6 +1386,9 @@ Requires:       perl(overload)
 Requires:       perl(Text::ParseWords)
 # Recommended:
 Requires:       perl(Pod::Usage) >= 1.14
+%if %{defined perl_bootstrap}
+%gendep_perl_Getopt_Long
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.16.3-268
 
@@ -1249,6 +1410,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.36
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_IO
+%endif
 Conflicts:      perl < 4:5.22.0-351
 
 %description IO
@@ -1264,6 +1428,9 @@ Version:        2.069
 Requires:       %perl_compat
 Obsoletes:      perl-Compress-Zlib <= 2.020
 Provides:       perl(IO::Uncompress::Bunzip2)
+%if %{defined perl_bootstrap}
+%gendep_perl_IO_Compress
+%endif
 BuildArch:      noarch
 
 %description IO-Compress
@@ -1280,6 +1447,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.37
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_IO_Socket_IP
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.20.0-303
 
@@ -1298,6 +1468,9 @@ Epoch:          1
 Version:        1.10
 Requires:       perl(Compress::Zlib)
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_IO_Zlib
+%endif
 BuildArch:      noarch
 
 %description IO-Zlib
@@ -1317,6 +1490,9 @@ Epoch:          1
 Version:        0.92
 Requires:       perl(ExtUtils::MM::Utils)
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_IPC_Cmd
+%endif
 BuildArch:      noarch
 
 %description IPC-Cmd
@@ -1333,6 +1509,9 @@ Epoch:          0
 Version:        2.06
 Requires:       %perl_compat
 Requires:       perl(DynaLoader)
+%if %{defined perl_bootstrap}
+%gendep_perl_IPC_SysV
+%endif
 Conflicts:      perl < 4:5.22.0-351
 
 %description IPC-SysV
@@ -1351,6 +1530,9 @@ Requires:       perl(bytes)
 Requires:       perl(Carp)
 Requires:       perl(IO::Socket)
 Requires:       perl(Time::Local)
+%if %{defined perl_bootstrap}
+%gendep_perl_HTTP_Tiny
+%endif
 BuildArch:      noarch
 
 %description HTTP-Tiny
@@ -1376,6 +1558,9 @@ Requires:       perl(Math::BigFloat)
 Requires:       perl(Math::BigInt)
 Requires:       perl(Scalar::Util)
 Requires:       perl(subs)
+%if %{defined perl_bootstrap}
+%gendep_perl_JSON_PP
+%endif
 Conflicts:      perl-JSON < 2.50
 
 %description JSON-PP
@@ -1399,6 +1584,9 @@ Requires:       perl(IO::Socket::IP) >= 0.20
 Requires:       perl(POSIX)
 Requires:       perl(Socket) >= 2.016
 Requires:       perl(utf8)
+%if %{defined perl_bootstrap}
+%gendep_perl_libnet
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.22.0-347
 
@@ -1416,6 +1604,9 @@ Epoch:          %perl_epoch
 Version:        %perl_version
 # Net::Config is optional
 BuildArch:      noarch
+%if %{defined perl_bootstrap}
+%gendep_perl_libnetcfg
+%endif
 Conflicts:      perl-devel < 4:5.22.0-347
 
 %description libnetcfg
@@ -1431,6 +1622,9 @@ Group:          Development/Libraries
 Requires:       %perl_compat
 Requires:       perl(constant)
 Provides:       perl(Locale::Codes) = %{version}
+%if %{defined perl_bootstrap}
+%gendep_perl_Locale_Codes
+%endif
 BuildArch:      noarch
 
 # Do not export unversioned module
@@ -1454,6 +1648,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.26
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Locale_Maketext
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.16.3-268
 
@@ -1475,6 +1672,9 @@ License:        MIT
 Epoch:          1
 Version:        0.21
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Locale_Maketext_Simple
+%endif
 BuildArch:      noarch
 
 %description Locale-Maketext-Simple
@@ -1492,6 +1692,9 @@ Version:        1.9997.15
 Requires:       %perl_compat
 Requires:       perl(Carp)
 # File::Spec not used on recent perl
+%if %{defined perl_bootstrap}
+%gendep_perl_Math_BigInt
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.22.0-347
 
@@ -1509,6 +1712,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.40
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Math_BigInt_FastCalc
+%endif
 Conflicts:      perl < 4:5.22.0-348
 
 %description Math-BigInt-FastCalc
@@ -1523,6 +1729,9 @@ Epoch:          0
 Version:        0.2608.02
 Requires:       %perl_compat
 Requires:       perl(Math::BigInt)
+%if %{defined perl_bootstrap}
+%gendep_perl_Math_BigRat
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.22.0-348
 
@@ -1537,6 +1746,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.59
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Math_Complex
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.22.0-348
 
@@ -1554,6 +1766,9 @@ Epoch:          0
 Version:        1.03
 Requires:       %perl_compat
 # Keep Time::HiRes optional
+%if %{defined perl_bootstrap}
+%gendep_perl_Memoize
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.22.0-350
 
@@ -1574,6 +1789,9 @@ License:        (GPL+ or Artistic) and MIT
 Epoch:          0
 Version:        3.15
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_MIME_Base64
+%endif
 Conflicts:      perl < 4:5.22.0-347
 
 %description MIME-Base64
@@ -1592,6 +1810,9 @@ Version:        5.20160506
 Requires:       %perl_compat
 Requires:       perl(List::Util)
 Requires:       perl(version) >= 0.88
+%if %{defined perl_bootstrap}
+%gendep_perl_Module_CoreList
+%endif
 BuildArch:      noarch
 
 %description Module-CoreList
@@ -1609,6 +1830,9 @@ Requires:       %perl_compat
 Requires:       perl(feature)
 Requires:       perl(version) >= 0.88
 Requires:       perl-Module-CoreList = %{epoch}:%{version}-%{release}
+%if %{defined perl_bootstrap}
+%gendep_perl_Module_CoreList_tools
+%endif
 # The files were distributed with perl.spec's subpackage
 # perl-Module-CoreList <= 1:5.020001-309
 Conflicts:      perl-Module-CoreList < 1:5.020001-310
@@ -1629,6 +1853,9 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        0.32
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Module_Load
+%endif
 BuildArch:      noarch
 
 %description Module-Load
@@ -1645,6 +1872,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.64
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Module_Load_Conditional
+%endif
 BuildArch:      noarch
 
 %description Module-Load-Conditional
@@ -1661,6 +1891,9 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        0.08
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Module_Loaded
+%endif
 BuildArch:      noarch
 
 %description Module-Loaded
@@ -1680,6 +1913,9 @@ License:        GPL+ or Artistic
 Group:          Development/Libraries
 BuildArch:      noarch
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Module_Metadata
+%endif
 
 %description Module-Metadata
 Gather package and POD information from perl module files
@@ -1693,6 +1929,9 @@ Epoch:          0
 Version:        2.43
 Requires:       %perl_compat
 # Keep Net::Ping::External optional
+%if %{defined perl_bootstrap}
+%gendep_perl_Net_Ping
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.22.0-350
 
@@ -1710,6 +1949,9 @@ Requires:       %perl_compat
 Requires:       perl(Carp)
 Requires:       perl(Encode)
 Requires:       perl(encoding)
+%if %{defined perl_bootstrap}
+%gendep_perl_open
+%endif
 Conflicts:      perl < 4:5.20.2-326
 BuildArch:      noarch
 
@@ -1726,6 +1968,9 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        0.234
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_parent
+%endif
 BuildArch:      noarch
 
 %description parent
@@ -1751,6 +1996,9 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        0.38
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Params_Check
+%endif
 BuildArch:      noarch
 
 %description Params-Check
@@ -1769,6 +2017,9 @@ Requires:       %perl_compat
 BuildArch:      noarch
 Requires:       perl(CPAN::Meta::YAML) >= 0.002
 Requires:       perl(JSON::PP) >= 2.27103
+%if %{defined perl_bootstrap}
+%gendep_perl_Parse_CPAN_Meta
+%endif
 # FIXME it could be removed now?
 Obsoletes:      perl-Parse-CPAN-Meta < 1.40
 
@@ -1786,6 +2037,9 @@ Epoch:          0
 Version:        3.63
 Requires:       %perl_compat
 Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_PathTools
+%endif
 
 %description PathTools
 PathTools Perl module (Cwd, File::Spec).
@@ -1800,6 +2054,9 @@ License:        (GPL+ or Artistic) and Public Domain
 Epoch:          0
 Version:        5.021010
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_perlfaq
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.22.0-347
 
@@ -1816,6 +2073,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.08
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_PerlIO_via_QuotedPrint
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.22.0-347
 
@@ -1834,6 +2094,9 @@ Epoch:          0
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Perl_OSType
+%endif
 BuildArch:      noarch
 
 %description Perl-OSType
@@ -1854,6 +2117,9 @@ Version:        1.60
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Pod_Checker
+%endif
 BuildArch:      noarch
 
 %description Pod-Checker
@@ -1870,6 +2136,9 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        1.07
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Pod_Escapes
+%endif
 BuildArch:      noarch
 
 %description Pod-Escapes
@@ -1883,6 +2152,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.22
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Pod_Html
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.22.0-350
 
@@ -1899,6 +2171,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.63
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Pod_Parser
+%endif
 BuildArch:      noarch
 
 %description Pod-Parser
@@ -1929,6 +2204,9 @@ Requires:       perl(Pod::Simple::XMLOutStream) >= 3.16
 Requires:       perl(Text::ParseWords)
 # Tk is optional
 Requires:       perl(Symbol)
+%if %{defined perl_bootstrap}
+%gendep_perl_Pod_Perldoc
+%endif
 BuildArch:      noarch
 
 %description Pod-Perldoc
@@ -1947,6 +2225,9 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        3.32
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Pod_Simple
+%endif
 BuildArch:      noarch
 
 %description Pod-Simple
@@ -1966,6 +2247,9 @@ Requires:       %perl_compat
 # Pod::Usage executes perldoc from perl-Pod-Perldoc by default
 Requires:       perl-Pod-Perldoc
 Requires:       perl(Pod::Text)
+%if %{defined perl_bootstrap}
+%gendep_perl_Pod_Usage
+%endif
 BuildArch:      noarch
 
 %description Pod-Usage
@@ -1989,6 +2273,9 @@ BuildArch:      noarch
 Requires:       %perl_compat
 Requires:       perl(File::Spec) >= 0.8
 Requires:       perl(Pod::Simple) >= 3.06
+%if %{defined perl_bootstrap}
+%gendep_perl_podlators
+%endif
 Conflicts:      perl < 4:5.16.1-234
 
 %description podlators
@@ -2007,6 +2294,9 @@ Epoch:          3
 # Real version 1.42_02
 Version:        1.42
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Scalar_List_Utils
+%endif
 
 %description Scalar-List-Utils
 Scalar::Util and List::Util contain a selection of subroutines that people have
@@ -2024,6 +2314,9 @@ Version:        1.23
 BuildArch:      noarch
 Requires:       %perl_compat
 Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_SelfLoader
+%endif
 Conflicts:      perl < 4:5.22.0-351
 
 %description SelfLoader
@@ -2039,6 +2332,9 @@ License:        GPL+ or Artistic
 Epoch:          4
 Version:        2.020
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Socket
+%endif
 
 %description Socket
 This module is just a translation of the C socket.h file.  Unlike the old
@@ -2062,6 +2358,9 @@ Requires:       perl(Config)
 # Fcntl is optional, but locking is good
 Requires:       perl(Fcntl)
 Requires:       perl(IO::File)
+%if %{defined perl_bootstrap}
+%gendep_perl_Storable
+%endif
 Conflicts:      perl < 4:5.16.3-274
 
 %description Storable
@@ -2079,6 +2378,9 @@ Epoch:          0
 Version:        0.33
 Requires:       %perl_compat
 Requires:       perl(XSLoader)
+%if %{defined perl_bootstrap}
+%gendep_perl_Sys_Syslog
+%endif
 Conflicts:      perl < 4:5.16.3-269
 
 %description Sys-Syslog
@@ -2094,6 +2396,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        4.04
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Term_ANSIColor
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.18.2-302
 
@@ -2115,6 +2420,9 @@ Requires:       %perl_compat
 # ncurses for infocmp tool
 Requires:       ncurses
 Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_Term_Cap
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.22.0-347
 
@@ -2132,6 +2440,9 @@ Version:        1.28
 Requires:       %perl_compat
 # Algorithm::Diff 1.15 is optional
 Requires:       perl(File::Temp)
+%if %{defined perl_bootstrap}
+%gendep_perl_Test
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.22.0-351
 
@@ -2147,6 +2458,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        3.36
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Test_Harness
+%endif
 BuildArch:      noarch
 
 %description Test-Harness
@@ -2163,6 +2477,9 @@ Epoch:          0
 Version:        1.001014
 Requires:       %perl_compat
 Requires:       perl(Data::Dumper)
+%if %{defined perl_bootstrap}
+%gendep_perl_Test_Simple
+%endif
 BuildArch:      noarch
 
 %description Test-Simple
@@ -2177,6 +2494,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.03
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Text_Balanced
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.22.0-347
 
@@ -2194,6 +2514,9 @@ Epoch:          0
 Version:        3.30
 Requires:       %perl_compat
 Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_Text_ParseWords
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.16.2-256
 
@@ -2209,6 +2532,9 @@ License:        TTWL
 Epoch:          0
 Version:        2013.0523
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Text_Tabs_Wrap
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.20.2-325
 
@@ -2229,6 +2555,9 @@ Epoch:          0
 Version:        3.09
 Requires:       %perl_compat
 Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_Thread_Queue
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.16.2-257
 
@@ -2246,6 +2575,9 @@ Epoch:          0
 Version:        1.9733
 Requires:       %perl_compat
 Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_Time_HiRes
+%endif
 Conflicts:      perl < 4:5.16.3-271
 
 %description Time-HiRes
@@ -2262,6 +2594,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.2300
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Time_Local
+%endif
 BuildArch:      noarch
 Conflicts:      perl < 4:5.16.3-262
 
@@ -2281,6 +2616,9 @@ License:        (GPL+ or Artistic) and BSD
 Epoch:          0
 Version:        1.31
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Time_Piece
+%endif
 
 %description Time-Piece
 The Time::Piece module replaces the standard localtime and gmtime functions
@@ -2296,6 +2634,9 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        2.07
 Requires:       perl = %{perl_epoch}:%{perl_version}
+%if %{defined perl_bootstrap}
+%gendep_perl_threads
+%endif
 
 %description threads
 Since Perl 5.8, thread programming has been available using a model called
@@ -2318,6 +2659,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.51
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_threads_shared
+%endif
 
 %description threads-shared
 By default, variables are private to each thread, and each newly created thread
@@ -2337,6 +2681,9 @@ Epoch:          0
 Version:        1.14
 Requires:       %perl_compat
 Requires:       perl(Unicode::Normalize)
+%if %{defined perl_bootstrap}
+%gendep_perl_Unicode_Collate
+%endif
 Conflicts:      perl < 4:5.22.0-347
 
 %description Unicode-Collate
@@ -2354,6 +2701,9 @@ Version:        1.25
 Requires:       %perl_compat
 # unicore/CombiningClass.pl and unicore/Decomposition.pl from perl, perl is
 # auto-detected.
+%if %{defined perl_bootstrap}
+%gendep_perl_Unicode_Normalize
+%endif
 Conflicts:      perl < 4:5.22.0-347
 
 %description Unicode-Normalize
@@ -2371,6 +2721,9 @@ Epoch:          5
 # real version 0.9916
 Version:        0.99.16
 Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_version
+%endif
 BuildArch:      noarch
 
 %description version
@@ -4683,6 +5036,7 @@ popd
 %changelog
 * Thu May 19 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-364
 - Remove reflexive dependencies
+- Use pregenerated dependencies on bootstrapping
 
 * Wed May 18 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.0-363
 - Stop providing old perl(MODULE_COMPAT_5.22.*)
