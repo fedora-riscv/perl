@@ -122,20 +122,35 @@ Patch201:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-MM-on-Linux.pa
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
-# Build-require groff tools for populating %%Config correctly, bug #135101
-BuildRequires:  groff-base
-BuildRequires:  libdb-devel, tcsh, zlib-devel, bzip2-devel
-BuildRequires:  systemtap-sdt-devel
+BuildRequires:  bash
+BuildRequires:  bzip2-devel
+BuildRequires:  coreutils
+BuildRequires:  findutils
+BuildRequires:  gcc
 %if %{with gdbm}
 BuildRequires:  gdbm-devel
 %endif
+# glibc-common for iconv
+BuildRequires:  glibc-common
+# Build-require groff tools for populating %%Config correctly, bug #135101
+BuildRequires:  groff-base
+BuildRequires:  libdb-devel
+BuildRequires:  make
 %if !%{defined perl_bootstrap}
 BuildRequires:	perl
 BuildRequires:	perl-generators
 %endif
+BuildRequires:  sed
+BuildRequires:  systemtap-sdt-devel
+BuildRequires:  tar
+BuildRequires:  tcsh
+BuildRequires:  zlib-devel
 
 # For tests
-BuildRequires:  procps, rsyslog
+%if %{with test}
+BuildRequires:  procps
+BuildRequires:  rsyslog
+%endif
 
 # The long line of Perl provides.
 
@@ -2957,7 +2972,7 @@ install -p -m 644 %{SOURCE3} ${RPM_BUILD_ROOT}%{_rpmconfigdir}/macros.d/
 # Dual-living binaries clashes on debuginfo files between perl and standalone
 # packages. Excluding is not enough, we need to remove them. This is
 # a work-around for rpmbuild bug #878863.
-find $RPM_BUILD_ROOT -type f -name '*.bs' -empty | xargs rm -f
+find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -delete
 chmod -R u+w $RPM_BUILD_ROOT/*
 
 # miniperl? As an interpreter? How odd. Anyway, a symlink does it:
@@ -5037,6 +5052,7 @@ popd
 * Thu May 19 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-364
 - Remove reflexive dependencies
 - Use pregenerated dependencies on bootstrapping
+- Specify more build-time dependencies
 
 * Wed May 18 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.0-363
 - Stop providing old perl(MODULE_COMPAT_5.22.*)
