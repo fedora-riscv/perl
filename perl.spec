@@ -92,6 +92,10 @@ Patch27:        perl-5.22.0-make-PadlistNAMES-lvalue-again.patch
 # Workaround for Coro, bug #1231165, CPAN RT#101063. To remove in the future.
 Patch28:        perl-5.22.0-Revert-const-the-core-magic-vtables.patch
 
+# Fix duplicating PerlIO::encoding when spawning threads, bug #1345788,
+# RT#31923, in upstream after 5.23.3
+Patch29:        perl-5.23.3-Properly-duplicate-PerlIO-encoding-objects.patch
+
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2134,6 +2138,7 @@ Perl extension for Version Objects
 %patch26 -p1
 %patch27 -p1
 %patch28 -p1
+%patch29 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2154,6 +2159,7 @@ perl -x patchlevel.h \
     'Fedora Patch26: Make *DBM_File desctructors thread-safe (RT#61912)' \
     'Fedora Patch27: Make PadlistNAMES() lvalue again (CPAN RT#101063)' \
     'Fedora Patch28: Make magic vtable writable as a work-around for Coro (CPAN RT#101063)' \
+    'Fedora Patch29: Fix duplicating PerlIO::encoding when spawning threads (RT#31923)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4170,6 +4176,7 @@ popd
 * Mon Jun 13 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.2-352
 - 5.22.2 bump (see <http://search.cpan.org/dist/perl-5.22.2/pod/perldelta.pod>
   for release notes)
+- Fix duplicating PerlIO::encoding when spawning threads (bug #1345788)
 
 * Wed Mar 02 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.1-351
 - Fix CVE-2016-2381 (ambiguous environment variables handling) (bug #1313702)
