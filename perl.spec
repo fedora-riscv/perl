@@ -145,8 +145,8 @@ BuildRequires:  groff-base
 BuildRequires:  libdb-devel
 BuildRequires:  make
 %if !%{defined perl_bootstrap}
-BuildRequires:	perl
-BuildRequires:	perl-generators
+BuildRequires:  perl
+BuildRequires:  perl-generators
 %endif
 BuildRequires:  sed
 BuildRequires:  systemtap-sdt-devel
