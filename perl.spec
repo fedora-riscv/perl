@@ -2656,7 +2656,7 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          1
 Version:        2.07
-Requires:       perl = %{perl_epoch}:%{perl_version}
+Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_threads
 %endif
