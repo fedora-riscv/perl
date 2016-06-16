@@ -107,6 +107,10 @@ Patch31:        perl-5.22.2-CVE-2016-1238-maint-5.22-dot-in-inc.patch
 # Fix a crash in lexical scope warnings, RT#128597, in upstream after 5.25.2
 Patch32:        perl-5.22.2-perl-128597-Crash-from-gp_free-ckWARN_d.patch
 
+# Do not mangle errno from failed socket calls, RT#128316,
+# in upstream after 5.25.1
+Patch33:        perl-5.25.1-perl-128316-preserve-errno-from-failed-system-calls.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2152,6 +2156,7 @@ Perl extension for Version Objects
 %patch30 -p1
 %patch31 -p1
 %patch32 -p1
+%patch33 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2176,6 +2181,7 @@ perl -x patchlevel.h \
     'Fedora Patch30: Do not let XSLoader load relative paths (CVE-2016-6185)' \
     'Fedora Patch31: Avoid loading optional modules from default . (CVE-2016-1238)' \
     'Fedora Patch32: Fix a crash in lexical scope warnings (RT#128597)' \
+    'Fedora Patch33: Do not mangle errno from failed socket calls (RT#128316)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4191,6 +4197,7 @@ popd
 %changelog
 * Fri Nov 04 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.2-355
 - Fix a crash in lexical scope warnings (RT#128597)
+- Do not mangle errno from failed socket calls (RT#128316)
 
 * Wed Aug 03 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.2-354
 - Avoid loading optional modules from default . (CVE-2016-1238)
