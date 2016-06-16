@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        365%{?dist}
+Release:        366%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -116,6 +116,10 @@ Patch30:        perl-5.22.1-Replace-EU-MM-dependnecy-with-EU-MM-Utils-in-IPC-Cmd
 # Fix a memory leak when compiling a regular expression with a POSIX class,
 # RT#128313, in upstream after 5.25.1
 Patch31:        perl-5.24.0-Fix-a-memory-leak-in-strict-regex-posix-classes.patch
+
+# Do not mangle errno from failed socket calls, RT#128316,
+# in upstream after 5.25.1
+Patch32:        perl-5.25.1-perl-128316-preserve-errno-from-failed-system-calls.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2767,6 +2771,7 @@ Perl extension for Version Objects
 %patch28 -p1
 %patch30 -p1
 %patch31 -p1
+%patch32 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2789,6 +2794,7 @@ perl -x patchlevel.h \
     'Fedora Patch28: Make magic vtable writable as a work-around for Coro (CPAN RT#101063)' \
     'Fedora Patch30: Replace EU::MakeMaker dependency with EU::MM::Utils in IPC::Cmd (bug #1129443)' \
     'Fedora Patch31: Fix a memory leak in compiling a POSIX class (RT#128313)' \
+    'Fedora Patch32: Do not mangle errno from failed socket calls (RT#128316)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5055,6 +5061,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jun 16 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-366
+- Do not mangle errno from failed socket calls (RT#128316)
+
 * Tue Jun 14 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-365
 - Fix a memory leak when compiling a regular expression with a POSIX class
   (RT#128313)
