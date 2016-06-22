@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        367%{?dist}
+Release:        368%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -124,6 +124,10 @@ Patch32:        perl-5.25.1-perl-128316-preserve-errno-from-failed-system-calls.
 # Fix compiling regular expressions like /\X*(?0)/, RT#128109, in upstream
 # after 5.25.1
 Patch33:        perl-5.24.0-fix-128109-do-not-move-RExC_open_parens-0-in-reginse.patch
+
+# Do not use unitialized memory in $h{\const} warnings, RT#128189,
+# in upstream after 5.25.2
+Patch34:        perl-5.25.2-uninit-warning-from-h-const-coredumped.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2777,6 +2781,7 @@ Perl extension for Version Objects
 %patch31 -p1
 %patch32 -p1
 %patch33 -p1
+%patch34 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2801,6 +2806,7 @@ perl -x patchlevel.h \
     'Fedora Patch31: Fix a memory leak in compiling a POSIX class (RT#128313)' \
     'Fedora Patch32: Do not mangle errno from failed socket calls (RT#128316)' \
     'Fedora Patch33: Fix compiling regular expressions like /\X*(?0)/ (RT#128109)' \
+    'Fedora Patch34: Do not use unitialized memory in $h{\const} warnings (RT#128189)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5067,6 +5073,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jun 22 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-368
+- Do not use unitialized memory in $h{\const} warnings (RT#128189)
+
 * Mon Jun 20 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-367
 - Fix compiling regular expressions like /\X*(?0)/ (RT#128109)
 
