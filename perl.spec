@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        368%{?dist}
+Release:        369%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -134,6 +134,10 @@ Patch35:        perl-5.25.0-Fix-precedence-in-hv_ename_delete.patch
 
 # Do not treat %: as a stash, RT#128238, in upstream after 5.25.2
 Patch36:        perl-5.25.2-only-treat-stash-entries-with-.-as-sub-stashes.patch
+
+# Do not crash when inserting a non-stash into a stash, RT#128238,
+# in upstream after 5.25.2
+Patch37:        perl-5.25.2-perl-128238-Crash-with-non-stash-in-stash.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2790,6 +2794,7 @@ Perl extension for Version Objects
 %patch34 -p1
 %patch35 -p1
 %patch36 -p1
+%patch37 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2817,6 +2822,7 @@ perl -x patchlevel.h \
     'Fedora Patch34: Do not use unitialized memory in $h{\const} warnings (RT#128189)' \
     'Fedora Patch35: Fix precedence in hv_ename_delete (RT#128086)' \
     'Fedora Patch36: Do not treat %: as a stash (RT#128238)' \
+    'Fedora Patch37: Do not crash when inserting a non-stash into a stash (RT#128238)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5083,6 +5089,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jun 24 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-369
+- Do not crash when inserting a non-stash into a stash (RT#128238)
+
 * Wed Jun 22 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-368
 - Do not use unitialized memory in $h{\const} warnings (RT#128189)
 - Fix precedence in hv_ename_delete (RT#128086)
