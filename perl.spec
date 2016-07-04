@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        369%{?dist}
+Release:        370%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -138,6 +138,9 @@ Patch36:        perl-5.25.2-only-treat-stash-entries-with-.-as-sub-stashes.patch
 # Do not crash when inserting a non-stash into a stash, RT#128238,
 # in upstream after 5.25.2
 Patch37:        perl-5.25.2-perl-128238-Crash-with-non-stash-in-stash.patch
+
+# Fix line numbers with perl -x, RT#128508, in upstream after 5.25.2
+Patch38:        perl-5.25.2-perl-128508-Fix-line-numbers-with-perl-x.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2795,6 +2798,7 @@ Perl extension for Version Objects
 %patch35 -p1
 %patch36 -p1
 %patch37 -p1
+%patch38 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2823,6 +2827,7 @@ perl -x patchlevel.h \
     'Fedora Patch35: Fix precedence in hv_ename_delete (RT#128086)' \
     'Fedora Patch36: Do not treat %: as a stash (RT#128238)' \
     'Fedora Patch37: Do not crash when inserting a non-stash into a stash (RT#128238)' \
+    'Fedora Patch38: Fix line numbers with perl -x (RT#128508)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5089,6 +5094,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jul 04 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-370
+- Fix line numbers with perl -x (RT#128508)
+
 * Fri Jun 24 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-369
 - Do not crash when inserting a non-stash into a stash (RT#128238)
 
