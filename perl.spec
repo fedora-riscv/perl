@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        371%{?dist}
+Release:        372%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -145,6 +145,10 @@ Patch38:        perl-5.25.2-perl-128508-Fix-line-numbers-with-perl-x.patch
 # Do not let XSLoader load relative paths, RT#115808,
 # in upstream after 5.25.2
 Patch39:        perl-5.25.2-Don-t-let-XSLoader-load-relative-paths.patch
+
+# Fix a crash when vivifying a stub in a deleted package, RT#128532,
+# in upstream after 5.25.2
+Patch40:        perl-5.25.2-perl-128532-Crash-vivifying-stub-in-deleted-pkg.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2804,6 +2808,7 @@ Perl extension for Version Objects
 %patch37 -p1
 %patch38 -p1
 %patch39 -p1
+%patch40 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2834,6 +2839,7 @@ perl -x patchlevel.h \
     'Fedora Patch37: Do not crash when inserting a non-stash into a stash (RT#128238)' \
     'Fedora Patch38: Fix line numbers with perl -x (RT#128508)' \
     'Fedora Patch39: Do not let XSLoader load relative paths (RT#115808)' \
+    'Fedora Patch40: Fix a crash when vivifying a stub in a deleted package (RT#128532)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5100,6 +5106,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jul 07 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-372
+- Fix a crash when vivifying a stub in a deleted package (RT#128532)
+
 * Thu Jul 07 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.0-371
 - Do not let XSLoader load relative paths (RT#115808)
 
