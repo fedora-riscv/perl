@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        352%{?dist}
+Release:        353%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -96,6 +96,9 @@ Patch28:        perl-5.22.0-Revert-const-the-core-magic-vtables.patch
 # RT#31923, in upstream after 5.23.3
 Patch29:        perl-5.23.3-Properly-duplicate-PerlIO-encoding-objects.patch
 
+# Do not let XSLoader load relative paths, RT#115808,
+# in upstream after 5.25.2
+Patch30:        perl-5.25.2-Don-t-let-XSLoader-load-relative-paths.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2139,6 +2142,7 @@ Perl extension for Version Objects
 %patch27 -p1
 %patch28 -p1
 %patch29 -p1
+%patch30 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2160,6 +2164,7 @@ perl -x patchlevel.h \
     'Fedora Patch27: Make PadlistNAMES() lvalue again (CPAN RT#101063)' \
     'Fedora Patch28: Make magic vtable writable as a work-around for Coro (CPAN RT#101063)' \
     'Fedora Patch29: Fix duplicating PerlIO::encoding when spawning threads (RT#31923)' \
+    'Fedora Patch30: Do not let XSLoader load relative paths (RT#115808)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4173,6 +4178,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jul 07 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.2-353
+- Do not let XSLoader load relative paths (RT#115808)
+
 * Mon Jun 13 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.2-352
 - 5.22.2 bump (see <http://search.cpan.org/dist/perl-5.22.2/pod/perldelta.pod>
   for release notes)
