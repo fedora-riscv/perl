@@ -1890,7 +1890,7 @@ Provides: perl(:WITH_ITHREADS) \
 Provides: perl(:WITH_LARGEFILES) \
 Provides: perl(:WITH_PERLIO) \
 Provides: perl(:WITH_THREADS) \
-Provides: perl(XSLoader) = 0.21 \
+Provides: perl(XSLoader) = 0.22 \
 Provides: perl(integer) = 1.01 \
 Provides: perl(re) = 0.32 \
 Provides: perl(strict) = 1.11 \
