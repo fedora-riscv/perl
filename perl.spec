@@ -30,7 +30,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        331%{?dist}
+Release:        332%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -120,6 +120,10 @@ Patch31:        perl-5.20.3-PATCH-perl-123562-Regexp-matching-hangs.patch
 # Fix duplicating PerlIO::encoding when spawning threads, bug #1345788,
 # RT#31923, in upstream after 5.23.3
 Patch32:        perl-5.20.3-Properly-duplicate-PerlIO-encoding-objects.patch
+
+# Do not let XSLoader load relative paths, RT#115808,
+# in upstream after 5.25.2
+Patch33:        perl-5.25.2-Don-t-let-XSLoader-load-relative-paths.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2063,6 +2067,7 @@ tarball from perl.org.
 %patch30 -p1
 %patch31 -p1
 %patch32 -p1
+%patch33 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2088,6 +2093,7 @@ perl -x patchlevel.h \
     'Fedora Patch30: Fix CVE-2016-2381 (ambiguous environment variables handling)' \
     'Fedora Patch31: Fix CVE-2015-8853 (regexp matching hangs on illegal UTF-8)' \
     'Fedora Patch32: Fix duplicating PerlIO::encoding when spawning threads (RT#31923)' \
+    'Fedora Patch33: Do not let XSLoader load relative paths (RT#115808)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3941,6 +3947,9 @@ sed \
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jul 07 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.20.3-332
+- Do not let XSLoader load relative paths (RT#115808)
+
 * Mon Jun 13 2016 Petr Pisar <ppisar@redhat.com> - 4:5.20.3-331
 - Fix duplicating PerlIO::encoding when spawning threads (bug #1345788)
 
