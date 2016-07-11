@@ -95,7 +95,7 @@ Patch28:        perl-5.22.0-Revert-const-the-core-magic-vtables.patch
 # RT#31923, in upstream after 5.23.3
 Patch29:        perl-5.23.3-Properly-duplicate-PerlIO-encoding-objects.patch
 
-# Do not let XSLoader load relative paths, RT#115808,
+# Do not let XSLoader load relative paths, CVE-2016-6185, RT#115808,
 # in upstream after 5.25.2
 Patch30:        perl-5.25.2-Don-t-let-XSLoader-load-relative-paths.patch
 
@@ -2391,7 +2391,7 @@ perl -x patchlevel.h \
     'Fedora Patch27: Make PadlistNAMES() lvalue again (CPAN RT#101063)' \
     'Fedora Patch28: Make magic vtable writable as a work-around for Coro (CPAN RT#101063)' \
     'Fedora Patch29: Fix duplicating PerlIO::encoding when spawning threads (RT#31923)' \
-    'Fedora Patch30: Do not let XSLoader load relative paths (RT#115808)' \
+    'Fedora Patch30: Do not let XSLoader load relative paths (CVE-2016-6185)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4645,7 +4645,7 @@ popd
 # Old changelog entries are preserved in CVS.
 %changelog
 * Thu Jul 07 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.2-361
-- Do not let XSLoader load relative paths (RT#115808)
+- Do not let XSLoader load relative paths (CVE-2016-6185)
 
 * Mon Jun 13 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.2-360
 - Fix duplicating PerlIO::encoding when spawning threads (bug #1345788)
