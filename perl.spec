@@ -142,7 +142,7 @@ Patch37:        perl-5.25.2-perl-128238-Crash-with-non-stash-in-stash.patch
 # Fix line numbers with perl -x, RT#128508, in upstream after 5.25.2
 Patch38:        perl-5.25.2-perl-128508-Fix-line-numbers-with-perl-x.patch
 
-# Do not let XSLoader load relative paths, RT#115808,
+# Do not let XSLoader load relative paths, CVE-2016-6185, RT#115808,
 # in upstream after 5.25.2
 Patch39:        perl-5.25.2-Don-t-let-XSLoader-load-relative-paths.patch
 
@@ -2843,7 +2843,7 @@ perl -x patchlevel.h \
     'Fedora Patch36: Do not treat %: as a stash (RT#128238)' \
     'Fedora Patch37: Do not crash when inserting a non-stash into a stash (RT#128238)' \
     'Fedora Patch38: Fix line numbers with perl -x (RT#128508)' \
-    'Fedora Patch39: Do not let XSLoader load relative paths (RT#115808)' \
+    'Fedora Patch39: Do not let XSLoader load relative paths (CVE-2016-6185)' \
     'Fedora Patch40: Fix a crash when vivifying a stub in a deleted package (RT#128532)' \
     'Fedora Patch41: Fix a crash in "Subroutine redefined" warning (RT#128257)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
@@ -5119,7 +5119,7 @@ popd
 - Fix a crash when vivifying a stub in a deleted package (RT#128532)
 
 * Thu Jul 07 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.0-371
-- Do not let XSLoader load relative paths (RT#115808)
+- Do not let XSLoader load relative paths (CVE-2016-6185)
 
 * Mon Jul 04 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-370
 - Fix line numbers with perl -x (RT#128508)
