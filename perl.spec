@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        362%{?dist}
+Release:        363%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -102,6 +102,9 @@ Patch30:        perl-5.25.2-Don-t-let-XSLoader-load-relative-paths.patch
 # Avoid loading optional modules from default . CVE-2016-1238, bug #1360425
 # in upstream after 5.22.3
 Patch31:        perl-5.22.2-CVE-2016-1238-maint-5.22-dot-in-inc.patch
+
+# Fix a crash in lexical scope warnings, RT#128597, in upstream after 5.25.2
+Patch32:        perl-5.22.2-perl-128597-Crash-from-gp_free-ckWARN_d.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2375,6 +2378,7 @@ Perl extension for Version Objects
 %patch29 -p1
 %patch30 -p1
 %patch31 -p1
+%patch32 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2398,6 +2402,7 @@ perl -x patchlevel.h \
     'Fedora Patch29: Fix duplicating PerlIO::encoding when spawning threads (RT#31923)' \
     'Fedora Patch30: Do not let XSLoader load relative paths (CVE-2016-6185)' \
     'Fedora Patch31: Avoid loading optional modules from default . (CVE-2016-1238)' \
+    'Fedora Patch32: Fix a crash in lexical scope warnings (RT#128597)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4650,6 +4655,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Nov 04 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.2-363
+- Fix a crash in lexical scope warnings (RT#128597)
+
 * Wed Aug 03 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.2-362
 - Avoid loading optional modules from default . (CVE-2016-1238)
 
