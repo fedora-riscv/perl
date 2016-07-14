@@ -1230,6 +1230,7 @@ Requires:       perl(Getopt::Long)
 Requires:       perl(Pod::Man)
 Requires:       perl(POSIX)
 Requires:       perl(Test::Harness)
+Requires:       perl(version)
 # If an XS module is compiled, xsubpp(1) is needed
 Requires:       perl-ExtUtils-ParseXS
 %if %{defined perl_bootstrap}
