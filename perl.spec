@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        374%{?dist}
+Release:        375%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -2987,6 +2987,11 @@ BUILD_BZIP2=0
 BZIP2_LIB=%{_libdir}
 export BUILD_BZIP2 BZIP2_LIB
 
+# Prepapre a symlink from proper DSO name to libperl.so now so that new perl
+# can be executed from make.
+%global soname libperl.so.%(echo '%{perl_version}' | sed 's/^\\([^.]*\\.[^.]*\\).*/\\1/')
+test -L %soname || ln -s libperl.so %soname
+
 %ifarch sparc64 %{arm}
 make
 %else
@@ -3005,7 +3010,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
     %{build_bindir}/perl
 
 # Make proper DSO names, move libperl to standard path.
-%global soname libperl.so.%(echo '%{perl_version}' | sed 's/^\\([^.]*\\.[^.]*\\).*/\\1/')
 mv "%{build_archlib}/CORE/libperl.so" \
     "$RPM_BUILD_ROOT%{_libdir}/libperl.so.%{perl_version}"
 ln -s "libperl.so.%{perl_version}" "$RPM_BUILD_ROOT%{_libdir}/%{soname}"
@@ -3013,6 +3017,10 @@ ln -s "libperl.so.%{perl_version}" "$RPM_BUILD_ROOT%{_libdir}/libperl.so"
 # XXX: Keep symlink from original location because various code glues
 # $archlib/CORE/$libperl to get the DSO.
 ln -s "../../libperl.so.%{perl_version}" "%{build_archlib}/CORE/libperl.so"
+# XXX: Remove the soname named file from CORE directory that was created as
+# a symlink in build section and installed as a regular file by perl build
+# system.
+rm -f "%{build_archlib}/CORE/%{soname}"
 
 install -p -m 755 utils/pl2pm %{build_bindir}/pl2pm
 
@@ -5118,6 +5126,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jul 26 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-375
+- Fix building without perl in the build root
+
 * Tue Jul 12 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-374
 - Fix a crash in lexical scope warnings (RT#128597)
 
