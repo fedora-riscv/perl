@@ -3174,6 +3174,8 @@ popd
 %exclude %{archlib}/CORE/*.h
 %exclude %{_libdir}/libperl.so
 %exclude %{_mandir}/man1/perlxs*
+%exclude %dir %{_datadir}/systemtap
+%exclude %dir %{_datadir}/systemtap/tapset
 
 # utils
 %exclude %{_bindir}/c2ph
@@ -4052,6 +4054,8 @@ popd
 %{archlib}/CORE/*.h
 %{_libdir}/libperl.so
 %{_mandir}/man1/perlxs*
+%dir %{_datadir}/systemtap
+%dir %{_datadir}/systemtap/tapset
 %{tapsetdir}/%{libperl_stp}
 %doc perl-example.stp
 
@@ -5128,6 +5132,7 @@ popd
 %changelog
 * Tue Jul 26 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-375
 - Fix building without perl in the build root
+- Own systemtap directories by perl-devel
 
 * Tue Jul 12 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-374
 - Fix a crash in lexical scope warnings (RT#128597)
