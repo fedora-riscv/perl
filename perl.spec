@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        375%{?dist}
+Release:        376%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -156,6 +156,10 @@ Patch41:        perl-5.25.2-SEGV-in-Subroutine-redefined-warning.patch
 
 # Fix a crash in lexical scope warnings, RT#128597, in upstream after 5.25.2
 Patch42:        perl-5.25.2-perl-128597-Crash-from-gp_free-ckWARN_d.patch
+
+# Fix handling \N{} in tr for characters in range 128--255, RT#128734,
+# in upstream after 5.25.3
+Patch43:        perl-5.24.0-PATCH-perl-128734-tr-N-.-failing-for-128-255.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2819,6 +2823,7 @@ Perl extension for Version Objects
 %patch40 -p1
 %patch41 -p1
 %patch42 -p1
+%patch43 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2852,6 +2857,7 @@ perl -x patchlevel.h \
     'Fedora Patch40: Fix a crash when vivifying a stub in a deleted package (RT#128532)' \
     'Fedora Patch41: Fix a crash in "Subroutine redefined" warning (RT#128257)' \
     'Fedora Patch42: Fix a crash in lexical scope warnings (RT#128597)' \
+    'Fedora Patch43: Fix handling \N{} in tr for characters in range 128--255 (RT#128734)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5130,6 +5136,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jul 28 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-376
+- Fix handling \N{} in tr for characters in range 128--255 (RT#128734)
+
 * Tue Jul 26 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-375
 - Fix building without perl in the build root
 - Own systemtap directories by perl-devel
