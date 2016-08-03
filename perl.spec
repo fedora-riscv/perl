@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        376%{?dist}
+Release:        377%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -160,6 +160,10 @@ Patch42:        perl-5.25.2-perl-128597-Crash-from-gp_free-ckWARN_d.patch
 # Fix handling \N{} in tr for characters in range 128--255, RT#128734,
 # in upstream after 5.25.3
 Patch43:        perl-5.24.0-PATCH-perl-128734-tr-N-.-failing-for-128-255.patch
+
+# Avoid loading of modules from current directory, CVE-2016-1238, bug #1360425
+# in upstream after 5.24.1
+Patch44:        perl-5.24.0-CVE-2016-1238-maint-5.24-dot-in-inc.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2214,7 +2218,8 @@ Summary:        Convert POD files to HTML
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.22
+# Real version 1.2201
+Version:        1.22.01
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_Pod_Html
@@ -2824,6 +2829,7 @@ Perl extension for Version Objects
 %patch41 -p1
 %patch42 -p1
 %patch43 -p1
+%patch44 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2858,6 +2864,7 @@ perl -x patchlevel.h \
     'Fedora Patch41: Fix a crash in "Subroutine redefined" warning (RT#128257)' \
     'Fedora Patch42: Fix a crash in lexical scope warnings (RT#128597)' \
     'Fedora Patch43: Fix handling \N{} in tr for characters in range 128--255 (RT#128734)' \
+    'Fedora Patch44: Avoid loading of modules from current directory (CVE-2016-1238)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5136,6 +5143,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Aug 02 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.0-377
+- Avoid loading of modules from current directory, CVE-2016-1238, (bug #1360425)
+
 * Thu Jul 28 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-376
 - Fix handling \N{} in tr for characters in range 128--255 (RT#128734)
 
