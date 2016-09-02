@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        377%{?dist}
+Release:        378%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -429,7 +429,10 @@ Requires:       perl-Module-CoreList-tools, perl-Module-Load
 Requires:       perl-Module-Load-Conditional, perl-Module-Loaded,
 Requires:       perl-Module-Metadata, perl-Net-Ping,
 Requires:       perl-open, perl-PathTools
-Requires:       perl-Params-Check, perl-Parse-CPAN-Meta,
+Requires:       perl-Params-Check
+# TODO: Merge perl-Parse-CPAN-Meta sub-package into perl-CPAN-Meta after
+# upgrading standalone perl-CPAN-Meta to 2.150010, bug #1370681
+Requires:       perl(Parse::CPAN::Meta)
 Requires:       perl-perlfaq,
 Requires:       perl-PerlIO-via-QuotedPrint, perl-Perl-OSType
 Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-Html,
@@ -5143,6 +5146,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Sep 02 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-378
+- perl-core depends on Parse::CPAN::Meta module instead of package name to allow
+  upgrading perl-CPAN-Meta to 2.150010 (bug #1370681)
+
 * Tue Aug 02 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.0-377
 - Avoid loading of modules from current directory, CVE-2016-1238, (bug #1360425)
 
