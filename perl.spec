@@ -1331,7 +1331,6 @@ Requires:       %perl_compat
 %gendep_perl_ExtUtils_ParseXS
 %endif
 BuildArch:      noarch
-Obsoletes:      perl-ExtUtils-Typemaps
 
 %description ExtUtils-ParseXS
 ExtUtils::ParseXS will compile XS code into C code by embedding the constructs
