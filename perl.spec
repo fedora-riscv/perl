@@ -36,6 +36,7 @@ Group:          Development/Languages
 # subpackages.
 # dist/Tie-File/lib/Tie/File.pm:        GPLv2+ or Artistic
 # cpan/Getopt-Long/lib/Getopt/Long.pm:  GPLv2+ or Artistic
+# cpan/Encode/bin/encguess:             Artistic 2.0
 # lib/unicore:                          UCD
 # ext/SDBM_File/sdbm.{c,h}:             Public domain
 # regexec.c, regcomp.c:                 HSLR
@@ -987,7 +988,7 @@ module can handle all types of input, including partial-byte data.
 %package Encode
 Summary:        Character encodings in Perl
 Group:          Development/Libraries
-License:        (GPL+ or Artistic) and UCD
+License:        (GPL+ or Artistic) and Artistic 2.0 and UCD
 Epoch:          4
 Version:        2.80
 Requires:       %perl_compat
