@@ -736,7 +736,7 @@ module can handle all types of input, including partial-byte data.
 %package Encode
 Summary:        Character encodings in Perl
 Group:          Development/Libraries
-License:        (GPL+ or Artistic) and UCD
+License:        (GPL+ or Artistic) and Artistic 2.0 and UCD
 Epoch:          3
 Version:        2.72
 Requires:       %perl_compat
