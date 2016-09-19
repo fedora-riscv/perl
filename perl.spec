@@ -2317,7 +2317,7 @@ hashes and hash refs.
 %package Unicode-Collate
 Summary:        Unicode Collation Algorithm
 Group:          Development/Libraries
-License:        (GPL+ or Artistic) and UCD
+License:        (GPL+ or Artistic) and Unicode
 Epoch:          0
 Version:        1.12
 Requires:       %perl_compat
