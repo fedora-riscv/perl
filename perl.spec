@@ -37,6 +37,7 @@ Group:          Development/Languages
 # dist/Tie-File/lib/Tie/File.pm:        GPLv2+ or Artistic
 # cpan/Getopt-Long/lib/Getopt/Long.pm:  GPLv2+ or Artistic
 # cpan/Encode/bin/encguess:             Artistic 2.0
+# cpan/Unicode-Collate/Collate/allkeys.txt:     Unicode
 # lib/unicore:                          UCD
 # ext/SDBM_File/sdbm.{c,h}:             Public domain
 # regexec.c, regcomp.c:                 HSLR
@@ -2746,7 +2747,7 @@ hashes and hash refs.
 %package Unicode-Collate
 Summary:        Unicode Collation Algorithm
 Group:          Development/Libraries
-License:        (GPL+ or Artistic) and UCD
+License:        (GPL+ or Artistic) and Unicode
 Epoch:          0
 Version:        1.14
 Requires:       %perl_compat
