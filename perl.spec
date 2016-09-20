@@ -42,6 +42,7 @@ Group:          Development/Languages
 # ext/SDBM_File/sdbm.{c,h}:             Public domain
 # regexec.c, regcomp.c:                 HSLR
 # time64.c:                             MIT
+# pod/perlpodstyle.pod:                 MIT
 # pod/perlunicook.pod:                  (GPL+ or Artistic) and Public Domain
 # pod/perlgpl.pod:                      GPL text
 # pod/perlartistic.pod:                 Artistic text
@@ -2337,7 +2338,7 @@ verbose level is 2, then the entire manual page is printed.
 %package podlators
 Summary:        Format POD source into various output formats
 Group:          Development/Libraries
-License:        GPL+ or Artistic
+License:        (GPL+ or Artistic) and MIT
 Epoch:          0
 Version:        4.07
 BuildArch:      noarch
