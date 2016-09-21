@@ -36,11 +36,23 @@ Group:          Development/Languages
 # subpackages.
 # dist/Tie-File/lib/Tie/File.pm:        GPLv2+ or Artistic
 # cpan/Getopt-Long/lib/Getopt/Long.pm:  GPLv2+ or Artistic
+# cpan/Compress-Raw-Zlib/Zlib.xs:       (GPL+ or Artistic) and zlib
+# cpan/Digest-MD5/MD5.xs:               (GPL+ or Artistic) and BSD
+# cpan/Time-Piece/Piece.xs:             (GPL+ or Artisitc) and BSD
+# dist/PathTools/Cwd.xs:                (GPL+ or Artisitc) and BSD
+# cpan/perlfaq/lib/perlfaq4.pod:        (GPL+ or Artistic) and Public Domain
+# cpan/Test-Simple/lib/Test/Tutorial.pod:   (GPL+ or Artistic) and
+#                                           Public Domain
+# cpan/MIME-Base64/Base64.xs:           (GPL+ or Artistic) and MIT
+# cpan/Test-Simple/lib/ok.pm:           CC0
+# cpan/Text-Tabs/lib/Text/Wrap.pm:      TTWL
 # cpan/Encode/bin/encguess:             Artistic 2.0
 # cpan/Unicode-Collate/Collate/allkeys.txt:     Unicode
 # lib/unicore:                          UCD
 # ext/SDBM_File/sdbm.{c,h}:             Public domain
 # regexec.c, regcomp.c:                 HSLR
+# cpan/Locale-Maketext-Simple/lib/Locale/Maketext/Simple.pm:    MIT (with
+#                                       exception for Perl)
 # time64.c:                             MIT
 # pod/perlpodstyle.pod:                 MIT
 # pod/perlunicook.pod:                  (GPL+ or Artistic) and Public Domain
@@ -48,6 +60,9 @@ Group:          Development/Languages
 # pod/perlartistic.pod:                 Artistic text
 # ext/File-Glob/bsd_glob.{c,h}:         BSD
 # Other files:                          GPL+ or Artistic
+## Not is a binary package
+# cpan/podlators/t/style/minimum-version.t          MIT
+# cpan/Term-ANSIColor/t/lib/Test/RRA/Config.pm:     MIT
 ## Unbundled
 # cpan/Compress-Raw-Bzip2/bzip2-src:    BSD
 # cpan/Compress-Raw-Zlib/zlib-src:      zlib
