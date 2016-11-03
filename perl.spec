@@ -119,6 +119,14 @@ Patch36:        perl-5.25.4-toke.c-fix-mswin32-builds.patch
 # Fix crash in splice, RT#129164, RT#129166, RT#129167, in upstream after 5.25.4
 Patch37:        perl-5.22.2-perl-129164-Crash-with-splice.patch
 
+# Fix string overrun in Perl_gv_fetchmethod_pvn_flags, RT#129267,
+# in upstream after 5.25.4
+Patch38:        perl-5.24.0-clean-up-gv_fetchmethod_pvn_flags-introduce-name_end.patch
+Patch39:        perl-5.25.4-clean-up-gv_fetchmethod_pvn_flags-move-origname-init.patch
+Patch40:        perl-5.25.4-clean-up-gv_fetchmethod_pvn_flags-rename-nsplit-to-l.patch
+Patch41:        perl-5.25.4-fix-129267-rework-gv_fetchmethod_pvn_flags-separator.patch
+Patch42:        perl-5.25.4-perl-129267-Test-for-gv_fetchmethod-buffer-overrun.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2169,6 +2177,11 @@ Perl extension for Version Objects
 %patch35 -p1
 %patch36 -p1
 %patch37 -p1
+%patch38 -p1
+%patch39 -p1
+%patch40 -p1
+%patch41 -p1
+%patch42 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2198,6 +2211,11 @@ perl -x patchlevel.h \
     'Fedora Patch35: Fix crash in "evalbytes S" (RT#129196)' \
     'Fedora Patch36: Fix crash in "evalbytes S" (RT#129196)' \
     'Fedora Patch37: Fix crash in splice (RT#129164, RT#129166, RT#129167)' \
+    'Fedora Patch38: Fix string overrun in Perl_gv_fetchmethod_pvn_flags (RT#129267)' \
+    'Fedora Patch39: Fix string overrun in Perl_gv_fetchmethod_pvn_flags (RT#129267)' \
+    'Fedora Patch40: Fix string overrun in Perl_gv_fetchmethod_pvn_flags (RT#129267)' \
+    'Fedora Patch41: Fix string overrun in Perl_gv_fetchmethod_pvn_flags (RT#129267)' \
+    'Fedora Patch42: Fix string overrun in Perl_gv_fetchmethod_pvn_flags (RT#129267)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4216,6 +4234,7 @@ popd
 - Do not mangle errno from failed socket calls (RT#128316)
 - Fix crash in "evalbytes S" (RT#129196)
 - Fix crash in splice (RT#129164, RT#129166, RT#129167)
+- Fix string overrun in Perl_gv_fetchmethod_pvn_flags (RT#129267)
 
 * Wed Aug 03 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.2-354
 - Avoid loading optional modules from default . (CVE-2016-1238)
