@@ -1,0 +1,97 @@
+From 1b90dad20879f0e7a3eced5da0e0aacda93708ed Mon Sep 17 00:00:00 2001
+From: Yves Orton <demerphq@gmail.com>
+Date: Thu, 27 Oct 2016 13:52:24 +0200
+Subject: [PATCH] regcomp.c: fix perl #129950 - fix firstchar bitmap under utf8
+ with prefix optimisation
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Ported to 5.24.0:
+
+commit da42332b10691ba7af7550035ffc7f46c87e4e66
+Author: Yves Orton <demerphq@gmail.com>
+Date:   Thu Oct 27 13:52:24 2016 +0200
+
+    regcomp.c: fix perl #129950 - fix firstchar bitmap under utf8 with prefix optimisation
+
+    The trie code contains a number of sub optimisations, one of which
+    extracts common prefixes from alternations, and another which isa
+    bitmap of the possible matching first chars.
+
+    The bitmap needs to contain the possible first octets of the string
+    which the trie can match, and for codepoints which might have a different
+    first octet under utf8 or non-utf8 need to register BOTH codepoints.
+
+    So for instance in the pattern (?:a|a\x{E4}) we should restructure this
+    as a(|\x{E4), and the bitmap for the trie should contain both \x{E4} AND
+    \x{C3} as \x{C3} is the first byte of \x{EF} expressed as utf8.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ regcomp.c  | 14 ++++++++++++++
+ t/re/pat.t |  9 ++++++++-
+ 2 files changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/regcomp.c b/regcomp.c
+index 7462885..bcb8db5 100644
+--- a/regcomp.c
++++ b/regcomp.c
+@@ -3272,6 +3272,13 @@ S_make_trie(pTHX_ RExC_state_t *pRExC_state, regnode *startbranch,
+                                     TRIE_BITMAP_SET(trie,*ch);
+                                     if ( folder )
+                                         TRIE_BITMAP_SET(trie, folder[ *ch ]);
++                                    if ( !UTF ) {
++                                        /* store first byte of utf8 representation of
++                                           variant codepoints */
++                                        if (! UVCHR_IS_INVARIANT(*ch)) {
++                                            TRIE_BITMAP_SET(trie, UTF8_TWO_BYTE_HI(*ch));
++                                        }
++                                    }
+                                     DEBUG_OPTIMISE_r(
+                                         Perl_re_printf( aTHX_  "%s", (char*)ch)
+                                     );
+@@ -3280,6 +3287,13 @@ S_make_trie(pTHX_ RExC_state_t *pRExC_state, regnode *startbranch,
+ 			    TRIE_BITMAP_SET(trie,*ch);
+ 			    if ( folder )
+ 				TRIE_BITMAP_SET(trie,folder[ *ch ]);
++                            if ( !UTF ) {
++                                /* store first byte of utf8 representation of
++                                   variant codepoints */
++                                if (! UVCHR_IS_INVARIANT(*ch)) {
++                                    TRIE_BITMAP_SET(trie, UTF8_TWO_BYTE_HI(*ch));
++                                }
++                            }
+                             DEBUG_OPTIMISE_r(Perl_re_printf( aTHX_ "%s", ch));
+ 			}
+                         idx = ofs;
+diff --git a/t/re/pat.t b/t/re/pat.t
+index 295a9f7..4aa77cf 100644
+--- a/t/re/pat.t
++++ b/t/re/pat.t
+@@ -23,7 +23,7 @@ BEGIN {
+     skip_all_without_unicode_tables();
+ }
+ 
+-plan tests => 789;  # Update this when adding/deleting tests.
++plan tests => 791;  # Update this when adding/deleting tests.
+ 
+ run_tests() unless caller;
+ 
+@@ -1758,6 +1758,13 @@ EOP
+                 fresh_perl_is($code, $expect, {}, "$bug - $test_name" );
+             }
+         }
++
++        {
++            my $str = "a\xE4";
++            ok( $str =~ m{^(a|a\x{e4})$}, "fix [perl #129950] - latin1 case" );
++            utf8::upgrade($str);
++            ok( $str =~ m{^(a|a\x{e4})$}, "fix [perl #129950] - utf8 case" );
++        }
+ } # End of sub run_tests
+ 
+ 1;
+-- 
+2.7.4
+
