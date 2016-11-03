@@ -111,6 +111,11 @@ Patch32:        perl-5.22.2-perl-128597-Crash-from-gp_free-ckWARN_d.patch
 # in upstream after 5.25.1
 Patch33:        perl-5.25.1-perl-128316-preserve-errno-from-failed-system-calls.patch
 
+# Fix crash in "evalbytes S", RT#129196, in upstream after 5.25.4
+Patch34:        perl-5.25.4-perl-129196-Crash-bad-read-with-evalbytes-S.patch
+Patch35:        perl-5.24.0-Regression-test-for-RT-129196.patch
+Patch36:        perl-5.25.4-toke.c-fix-mswin32-builds.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2157,6 +2162,9 @@ Perl extension for Version Objects
 %patch31 -p1
 %patch32 -p1
 %patch33 -p1
+%patch34 -p1
+%patch35 -p1
+%patch36 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2182,6 +2190,9 @@ perl -x patchlevel.h \
     'Fedora Patch31: Avoid loading optional modules from default . (CVE-2016-1238)' \
     'Fedora Patch32: Fix a crash in lexical scope warnings (RT#128597)' \
     'Fedora Patch33: Do not mangle errno from failed socket calls (RT#128316)' \
+    'Fedora Patch34: Fix crash in "evalbytes S" (RT#129196)' \
+    'Fedora Patch35: Fix crash in "evalbytes S" (RT#129196)' \
+    'Fedora Patch36: Fix crash in "evalbytes S" (RT#129196)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4198,6 +4209,7 @@ popd
 * Fri Nov 04 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.2-355
 - Fix a crash in lexical scope warnings (RT#128597)
 - Do not mangle errno from failed socket calls (RT#128316)
+- Fix crash in "evalbytes S" (RT#129196)
 
 * Wed Aug 03 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.2-354
 - Avoid loading optional modules from default . (CVE-2016-1238)
