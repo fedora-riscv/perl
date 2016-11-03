@@ -1,0 +1,92 @@
+From 03fcc0c44bc7972f2c92736daae5b63d601b7c49 Mon Sep 17 00:00:00 2001
+From: Dan Collins <dcollinsn@gmail.com>
+Date: Fri, 23 Sep 2016 01:21:20 -0400
+Subject: [PATCH] [rt #129336] #!perl -i u erroneously interpreted as -u
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Ported to 5.24.0:
+
+commit f54cfdacff1f3744ef08fc70f1f3bc6c7d862e83
+Author: Dan Collins <dcollinsn@gmail.com>
+Date:   Fri Sep 23 01:21:20 2016 -0400
+
+    [rt #129336] #!perl -i u erroneously interpreted as -u
+
+    Perl_moreswitches processes a single switch, and returns a pointer
+    to the start of the next switch. It can return either
+    the a pointer to the next flag itself:
+
+        #!perl -n -p
+                   ^ Can point here
+
+    Or, to the space before the next "arg":
+
+        #!perl -n -p
+                 ^ Can point here
+
+    (Where the next call to Perl_moreswitches will consume " -".)
+
+    In the case of -i[extension], the pointer is by default pointing at
+    the space after the end of the argument. The current code tries to
+    do the former, by unconditionally advancing the pointer, and then
+    advancing it again if it is on a '-'. But that is incorrect:
+
+        #!perl -i p
+                  ^ Will point here, but that isn't a flag
+
+    I could fix this by removing the unconditional s++, and having it
+    increment by 2 if *(s+1)=='-', but this work isn't actually
+    necessary - it's better to just leave it pointing at the space after
+    the argument.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ perl.c     | 5 -----
+ t/op/lex.t | 9 ++++++++-
+ 2 files changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/perl.c b/perl.c
+index 228a0d8..5cc7d0b 100644
+--- a/perl.c
++++ b/perl.c
+@@ -3306,11 +3306,6 @@ Perl_moreswitches(pTHX_ const char *s)
+ 
+ 	    PL_inplace = savepvn(start, s - start);
+ 	}
+-	if (*s) {
+-	    ++s;
+-	    if (*s == '-')	/* Additional switches on #! line. */
+-		s++;
+-	}
+ 	return s;
+     case 'I':	/* -I handled both here and in parse_body() */
+ 	forbid_setid('I', FALSE);
+diff --git a/t/op/lex.t b/t/op/lex.t
+index c515449..9ada592 100644
+--- a/t/op/lex.t
++++ b/t/op/lex.t
+@@ -7,7 +7,7 @@ use warnings;
+ 
+ BEGIN { chdir 't' if -d 't'; require './test.pl'; }
+ 
+-plan(tests => 25);
++plan(tests => 26);
+ 
+ {
+     no warnings 'deprecated';
+@@ -209,3 +209,10 @@ fresh_perl_is(
+    { stderr => 1 },
+   's;@{<<a; [perl #123995]'
+ );
++
++fresh_perl_like(
++    "#!perl -i u\nprint 'OK'",
++    qr/OK/,
++    {},
++    '[perl #129336] - #!perl -i argument handling'
++);
+-- 
+2.7.4
+
