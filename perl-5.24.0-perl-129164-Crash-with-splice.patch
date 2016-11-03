@@ -1,0 +1,79 @@
+From 54550573a613ad20f00521880f345644a1db85cc Mon Sep 17 00:00:00 2001
+From: Father Chrysostomos <sprout@cpan.org>
+Date: Sun, 11 Sep 2016 21:29:56 -0700
+Subject: [PATCH] Crash with splice
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Ported to 5.24.0:
+
+commit 92b69f6501b4d7351e09c8b1ddd386aa7e1c9cd1
+Author: Father Chrysostomos <sprout@cpan.org>
+Date:   Sun Sep 11 21:29:56 2016 -0700
+
+    [perl #129164] Crash with splice
+
+    This fixes #129166 and #129167 as well.
+
+    splice needs to take into account that arrays can hold NULLs and
+    return &PL_sv_undef in those cases where it would have returned a
+    NULL element.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ pp.c         |  4 ++++
+ t/op/array.t | 17 +++++++++++++++++
+ 2 files changed, 21 insertions(+)
+
+diff --git a/pp.c b/pp.c
+index 4a2cde0..4153482 100644
+--- a/pp.c
++++ b/pp.c
+@@ -5488,6 +5488,8 @@ PP(pp_splice)
+ 		for (i = length - 1, dst = &AvARRAY(ary)[offset]; i > 0; i--)
+ 		    SvREFCNT_dec(*dst++);	/* free them now */
+ 	    }
++	    if (!*MARK)
++		*MARK = &PL_sv_undef;
+ 	}
+ 	AvFILLp(ary) += diff;
+ 
+@@ -5584,6 +5586,8 @@ PP(pp_splice)
+ 		while (length-- > 0)
+ 		    SvREFCNT_dec(tmparyval[length]);
+ 	    }
++	    if (!*MARK)
++		*MARK = &PL_sv_undef;
+ 	}
+ 	else
+ 	    *MARK = &PL_sv_undef;
+diff --git a/t/op/array.t b/t/op/array.t
+index 4f0a772..fb4e8c6 100644
+--- a/t/op/array.t
++++ b/t/op/array.t
+@@ -555,4 +555,21 @@ is $#foo, 3, 'assigning to arylen aliased in foreach(scalar $#arylen)';
+     is "@a", 'a b c', 'assigning to itself';
+ }
+ 
++# [perl #129164], [perl #129166], [perl #129167]
++# splice() with null array entries
++# These used to crash.
++$#a = -1; $#a++;
++() = 0-splice @a; # subtract
++$#a = -1; $#a++;
++() =  -splice @a; # negate
++$#a = -1; $#a++;
++() = 0+splice @a; # add
++# And with array expansion, too
++$#a = -1; $#a++;
++() = 0-splice @a, 0, 1, 1, 1;
++$#a = -1; $#a++;
++() =  -splice @a, 0, 1, 1, 1;
++$#a = -1; $#a++;
++() = 0+splice @a, 0, 1, 1, 1;
++
+ "We're included by lib/Tie/Array/std.t so we need to return something true";
+-- 
+2.7.4
+
