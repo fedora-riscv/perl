@@ -199,6 +199,10 @@ Patch51:        perl-5.25.4-clean-up-gv_fetchmethod_pvn_flags-rename-nsplit-to-l
 Patch52:        perl-5.25.4-fix-129267-rework-gv_fetchmethod_pvn_flags-separator.patch
 Patch53:        perl-5.25.4-perl-129267-Test-for-gv_fetchmethod-buffer-overrun.patch
 
+# Fix crash when matching UTF-8 string with non-UTF-8 substrings, RT#129350,
+# in upstream after 5.25.5
+Patch54:        perl-5.24.0-perl-129350-anchored-floating-substrings-must-be-utf.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2875,6 +2879,7 @@ Perl extension for Version Objects
 %patch51 -p1
 %patch52 -p1
 %patch53 -p1
+%patch54 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2919,6 +2924,7 @@ perl -x patchlevel.h \
     'Fedora Patch51: Fix string overrun in Perl_gv_fetchmethod_pvn_flags (RT#129267)' \
     'Fedora Patch52: Fix string overrun in Perl_gv_fetchmethod_pvn_flags (RT#129267)' \
     'Fedora Patch53: Fix string overrun in Perl_gv_fetchmethod_pvn_flags (RT#129267)' \
+    'Fedora Patch54: Fix crash when matching UTF-8 string with non-UTF-8 substrings (RT#129350)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5201,6 +5207,7 @@ popd
 - Fix crash in "evalbytes S" (RT#129196)
 - Fix crash in splice (RT#129164, RT#129166, RT#129167)
 - Fix string overrun in Perl_gv_fetchmethod_pvn_flags (RT#129267)
+- Fix crash when matching UTF-8 string with non-UTF-8 substrings (RT#129350)
 
 * Fri Sep 02 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-378
 - perl-core depends on Parse::CPAN::Meta module instead of package name to allow
