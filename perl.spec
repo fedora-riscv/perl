@@ -134,6 +134,11 @@ Patch43:        perl-5.22.2-perl-129350-anchored-floating-substrings-must-be-utf
 # Fix parsing perl options in shell bang line, RT#129336,
 # in upstream after 5.25.5
 Patch44:        perl-5.24.0-rt-129336-perl-i-u-erroneously-interpreted-as-u.patch
+
+# Fix firstchar bitmap under UTF-8 with prefix optimization, RT#129950,
+# in upstream after 5.25.6
+Patch45:        perl-5.22.2-regcomp.c-fix-perl-129950-fix-firstchar-bitmap-under.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2191,6 +2196,7 @@ Perl extension for Version Objects
 %patch42 -p1
 %patch43 -p1
 %patch44 -p1
+%patch45 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2227,6 +2233,7 @@ perl -x patchlevel.h \
     'Fedora Patch42: Fix string overrun in Perl_gv_fetchmethod_pvn_flags (RT#129267)' \
     'Fedora Patch43: Fix crash when matching UTF-8 string with non-UTF-8 substrings (RT#129350)' \
     'Fedora Patch44: Fix parsing perl options in shell bang line (RT#129336)' \
+    'Fedora Patch45: Fix firstchar bitmap under UTF-8 with prefix optimization (RT#129950)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4248,6 +4255,7 @@ popd
 - Fix string overrun in Perl_gv_fetchmethod_pvn_flags (RT#129267)
 - Fix crash when matching UTF-8 string with non-UTF-8 substrings (RT#129350)
 - Fix parsing perl options in shell bang line (RT#129336)
+- Fix firstchar bitmap under UTF-8 with prefix optimization (RT#129950)
 
 * Wed Aug 03 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.2-354
 - Avoid loading optional modules from default . (CVE-2016-1238)
