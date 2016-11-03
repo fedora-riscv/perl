@@ -1,0 +1,37 @@
+From 9bde56224e82f20e7a65b3469b1ffb6b9f6d4df8 Mon Sep 17 00:00:00 2001
+From: Father Chrysostomos <sprout@cpan.org>
+Date: Sun, 4 Sep 2016 20:24:19 -0700
+Subject: [PATCH] =?UTF-8?q?[perl=20#129196]=20Crash/bad=20read=20with=20?=
+ =?UTF-8?q?=E2=80=98evalbytes=20S=E2=80=99?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+5dc13276 added some code to toke.c that did not take into account
+that the opnum (‘f’) argument to UNI* could be a negated op number.
+PL_last_lop_op must never be negative, since it is used as an offset
+into a struct.
+
+Tests for the crash will come in the next commit.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ toke.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/toke.c b/toke.c
+index 2fe8b69..2350703 100644
+--- a/toke.c
++++ b/toke.c
+@@ -241,7 +241,7 @@ static const char* const lex_state_names[] = {
+ 	if (have_x) PL_expect = x; \
+ 	PL_bufptr = s; \
+ 	PL_last_uni = PL_oldbufptr; \
+-	PL_last_lop_op = f; \
++	PL_last_lop_op = f < 0 ? -f : f; \
+ 	if (*s == '(') \
+ 	    return REPORT( (int)FUNC1 ); \
+ 	s = skipspace(s); \
+-- 
+2.7.4
+

@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        378%{?dist}
+Release:        379%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -182,6 +182,11 @@ Patch43:        perl-5.24.0-PATCH-perl-128734-tr-N-.-failing-for-128-255.patch
 # Avoid loading of modules from current directory, CVE-2016-1238, bug #1360425
 # in upstream after 5.24.1
 Patch44:        perl-5.24.0-CVE-2016-1238-maint-5.24-dot-in-inc.patch
+
+# Fix crash in "evalbytes S", RT#129196, in upstream after 5.25.4
+Patch45:        perl-5.25.4-perl-129196-Crash-bad-read-with-evalbytes-S.patch
+Patch46:        perl-5.24.0-Regression-test-for-RT-129196.patch
+Patch47:        perl-5.25.4-toke.c-fix-mswin32-builds.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2850,6 +2855,9 @@ Perl extension for Version Objects
 %patch42 -p1
 %patch43 -p1
 %patch44 -p1
+%patch45 -p1
+%patch46 -p1
+%patch47 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2885,6 +2893,9 @@ perl -x patchlevel.h \
     'Fedora Patch42: Fix a crash in lexical scope warnings (RT#128597)' \
     'Fedora Patch43: Fix handling \N{} in tr for characters in range 128--255 (RT#128734)' \
     'Fedora Patch44: Avoid loading of modules from current directory (CVE-2016-1238)' \
+    'Fedora Patch45: Fix crash in "evalbytes S" (RT#129196)' \
+    'Fedora Patch46: Fix crash in "evalbytes S" (RT#129196)' \
+    'Fedora Patch47: Fix crash in "evalbytes S" (RT#129196)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5163,6 +5174,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Nov 03 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-379
+- Fix crash in "evalbytes S" (RT#129196)
+
 * Fri Sep 02 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-378
 - perl-core depends on Parse::CPAN::Meta module instead of package name to allow
   upgrading perl-CPAN-Meta to 2.150010 (bug #1370681)
