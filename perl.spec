@@ -142,6 +142,9 @@ Patch45:        perl-5.22.2-regcomp.c-fix-perl-129950-fix-firstchar-bitmap-under
 # RT#130001, in upstream after 5.25.6
 Patch46:        perl-5.25.6-perl-130001-h2xs-avoid-infinite-loop-for-enums.patch
 
+# Fix stack handling when calling chdir without an argument, RT#129130
+Patch47:        perl-5.22.2-perl-129130-make-chdir-allocate-the-stack-it-needs.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2429,6 +2432,7 @@ Perl extension for Version Objects
 %patch44 -p1
 %patch45 -p1
 %patch46 -p1
+%patch47 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2467,6 +2471,7 @@ perl -x patchlevel.h \
     'Fedora Patch44: Fix parsing perl options in shell bang line (RT#129336)' \
     'Fedora Patch45: Fix firstchar bitmap under UTF-8 with prefix optimization (RT#129950)' \
     'Fedora Patch46: Avoid infinite loop in h2xs tool if enum and type have the same name (RT130001)' \
+    'Fedora Patch47: Fix stack handling when calling chdir without an argument (RT#129130)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4730,6 +4735,7 @@ popd
 - Fix firstchar bitmap under UTF-8 with prefix optimization (RT#129950)
 - Avoid infinite loop in h2xs tool if enum and type have the same name
   (RT130001)
+- Fix stack handling when calling chdir without an argument (RT#129130)
 
 * Wed Aug 03 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.2-362
 - Avoid loading optional modules from default . (CVE-2016-1238)
