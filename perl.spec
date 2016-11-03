@@ -115,6 +115,9 @@ Patch34:        perl-5.25.4-perl-129196-Crash-bad-read-with-evalbytes-S.patch
 Patch35:        perl-5.24.0-Regression-test-for-RT-129196.patch
 Patch36:        perl-5.25.4-toke.c-fix-mswin32-builds.patch
 
+# Fix crash in splice, RT#129164, RT#129166, RT#129167, in upstream after 5.25.4
+Patch37:        perl-5.22.2-perl-129164-Crash-with-splice.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2392,6 +2395,7 @@ Perl extension for Version Objects
 %patch34 -p1
 %patch35 -p1
 %patch36 -p1
+%patch37 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2420,6 +2424,7 @@ perl -x patchlevel.h \
     'Fedora Patch34: Fix crash in "evalbytes S" (RT#129196)' \
     'Fedora Patch35: Fix crash in "evalbytes S" (RT#129196)' \
     'Fedora Patch36: Fix crash in "evalbytes S" (RT#129196)' \
+    'Fedora Patch37: Fix crash in splice (RT#129164, RT#129166, RT#129167)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4676,6 +4681,7 @@ popd
 - Fix a crash in lexical scope warnings (RT#128597)
 - Do not mangle errno from failed socket calls (RT#128316)
 - Fix crash in "evalbytes S" (RT#129196)
+- Fix crash in splice (RT#129164, RT#129166, RT#129167)
 
 * Wed Aug 03 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.2-362
 - Avoid loading optional modules from default . (CVE-2016-1238)
