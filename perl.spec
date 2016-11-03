@@ -188,6 +188,9 @@ Patch45:        perl-5.25.4-perl-129196-Crash-bad-read-with-evalbytes-S.patch
 Patch46:        perl-5.24.0-Regression-test-for-RT-129196.patch
 Patch47:        perl-5.25.4-toke.c-fix-mswin32-builds.patch
 
+# Fix crash in splice, RT#129164, RT#129166, RT#129167, in upstream after 5.25.4
+Patch48:        perl-5.24.0-perl-129164-Crash-with-splice.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2858,6 +2861,7 @@ Perl extension for Version Objects
 %patch45 -p1
 %patch46 -p1
 %patch47 -p1
+%patch48 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2896,6 +2900,7 @@ perl -x patchlevel.h \
     'Fedora Patch45: Fix crash in "evalbytes S" (RT#129196)' \
     'Fedora Patch46: Fix crash in "evalbytes S" (RT#129196)' \
     'Fedora Patch47: Fix crash in "evalbytes S" (RT#129196)' \
+    'Fedora Petch48: Fix crash in splice (RT#129164, RT#129166, RT#129167)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5176,6 +5181,7 @@ popd
 %changelog
 * Thu Nov 03 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-379
 - Fix crash in "evalbytes S" (RT#129196)
+- Fix crash in splice (RT#129164, RT#129166, RT#129167)
 
 * Fri Sep 02 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-378
 - perl-core depends on Parse::CPAN::Meta module instead of package name to allow
