@@ -1,0 +1,32 @@
+From d5ea0ef8623c7d7ba5f42d239787aa71393e2054 Mon Sep 17 00:00:00 2001
+From: Yves Orton <demerphq@gmail.com>
+Date: Tue, 13 Sep 2016 23:06:58 +0200
+Subject: [PATCH 2/5] clean up gv_fetchmethod_pvn_flags: move origname init to
+ function start
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+so it is more obvious that it is a constant copy of the
+original name.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ gv.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/gv.c b/gv.c
+index b0221e0..fe38d44 100644
+--- a/gv.c
++++ b/gv.c
+@@ -1014,7 +1014,6 @@ Perl_gv_fetchmethod_pvn_flags(pTHX_ HV *stash, const char *name, const STRLEN le
+     const char *nsplit = NULL;
+     GV* gv;
+     HV* ostash = stash;
+-    const char * const origname = name;
+     SV *const error_report = MUTABLE_SV(stash);
+     const U32 autoload = flags & GV_AUTOLOAD;
+     const U32 do_croak = flags & GV_CROAK;
+-- 
+2.7.4
+

@@ -1,0 +1,94 @@
+From af04cb4d2503c5c75d2229e232b8a0bd5c210084 Mon Sep 17 00:00:00 2001
+From: Yves Orton <demerphq@gmail.com>
+Date: Tue, 13 Sep 2016 23:06:07 +0200
+Subject: [PATCH] clean up gv_fetchmethod_pvn_flags: introduce name_end
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Ported to 5.24.0:
+
+commit 65308f87d02a1900e59f0002fa94c855d4d4c5df
+Author: Yves Orton <demerphq@gmail.com>
+Date:   Tue Sep 13 23:06:07 2016 +0200
+
+    clean up gv_fetchmethod_pvn_flags: introduce name_end
+
+    nend is used for too many things, this replaces various
+    uses of nend with name_end, which is constant.
+
+    this is a first step to fixing [perl #129267], which shouldnt
+    change any behavior
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ gv.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/gv.c b/gv.c
+index 28396de..d738bf0 100644
+--- a/gv.c
++++ b/gv.c
+@@ -1014,6 +1014,8 @@ Perl_gv_fetchmethod_pv_flags(pTHX_ HV *stash, const char *name, U32 flags)
+ GV *
+ Perl_gv_fetchmethod_pvn_flags(pTHX_ HV *stash, const char *name, const STRLEN len, U32 flags)
+ {
++    const char * const origname = name;
++    const char * const name_end = name + len;
+     const char *nend;
+     const char *nsplit = NULL;
+     GV* gv;
+@@ -1034,7 +1036,7 @@ Perl_gv_fetchmethod_pvn_flags(pTHX_ HV *stash, const char *name, const STRLEN le
+ 	   the error reporting code.  */
+     }
+ 
+-    for (nend = name; *nend || nend != (origname + len); nend++) {
++    for (nend = name; *nend || nend != name_end; nend++) {
+ 	if (*nend == '\'') {
+ 	    nsplit = nend;
+ 	    name = nend + 1;
+@@ -1065,13 +1067,13 @@ Perl_gv_fetchmethod_pvn_flags(pTHX_ HV *stash, const char *name, const STRLEN le
+ 	ostash = stash;
+     }
+ 
+-    gv = gv_fetchmeth_pvn(stash, name, nend - name, 0, flags);
++    gv = gv_fetchmeth_pvn(stash, name, name_end - name, 0, flags);
+     if (!gv) {
+ 	if (strEQ(name,"import") || strEQ(name,"unimport"))
+ 	    gv = MUTABLE_GV(&PL_sv_yes);
+ 	else if (autoload)
+ 	    gv = gv_autoload_pvn(
+-		ostash, name, nend - name, GV_AUTOLOAD_ISMETHOD|flags
++		ostash, name, name_end - name, GV_AUTOLOAD_ISMETHOD|flags
+ 	    );
+ 	if (!gv && do_croak) {
+ 	    /* Right now this is exclusively for the benefit of S_method_common
+@@ -1087,14 +1089,14 @@ Perl_gv_fetchmethod_pvn_flags(pTHX_ HV *stash, const char *name, const STRLEN le
+ 				       HV_FETCH_ISEXISTS, NULL, 0)
+ 		) {
+ 		    require_pv("IO/File.pm");
+-		    gv = gv_fetchmeth_pvn(stash, name, nend - name, 0, flags);
++		    gv = gv_fetchmeth_pvn(stash, name, name_end - name, 0, flags);
+ 		    if (gv)
+ 			return gv;
+ 		}
+ 		Perl_croak(aTHX_
+ 			   "Can't locate object method \"%"UTF8f
+ 			   "\" via package \"%"HEKf"\"",
+-			            UTF8fARG(is_utf8, nend - name, name),
++			            UTF8fARG(is_utf8, name_end - name, name),
+                                     HEKfARG(HvNAME_HEK(stash)));
+ 	    }
+ 	    else {
+@@ -1111,7 +1113,7 @@ Perl_gv_fetchmethod_pvn_flags(pTHX_ HV *stash, const char *name, const STRLEN le
+ 			   "Can't locate object method \"%"UTF8f
+ 			   "\" via package \"%"SVf"\""
+ 			   " (perhaps you forgot to load \"%"SVf"\"?)",
+-			   UTF8fARG(is_utf8, nend - name, name),
++			   UTF8fARG(is_utf8, name_end - name, name),
+                            SVfARG(packnamesv), SVfARG(packnamesv));
+ 	    }
+ 	}
+-- 
+2.7.4
+
