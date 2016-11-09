@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        363%{?dist}
+Release:        364%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -942,6 +942,9 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.23
 Requires:       %perl_compat
+# Errno.pm bakes in kernel version at build time and compares it against
+# $Config{osvers} at run time. Match exact interpreter build. Bug #1393421.
+Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Carp)
 Conflicts:      perl < 4:5.22.0-351
 
@@ -4724,6 +4727,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Nov 09 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.2-364
+- Tie perl-Errno release to interpreter build because of kernel version check
+  (bug #1393421)
+
 * Fri Nov 04 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.2-363
 - Fix a crash in lexical scope warnings (RT#128597)
 - Do not mangle errno from failed socket calls (RT#128316)
