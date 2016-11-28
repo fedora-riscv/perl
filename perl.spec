@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        380%{?dist}
+Release:        381%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -218,6 +218,10 @@ Patch57:        perl-5.25.6-perl-130001-h2xs-avoid-infinite-loop-for-enums.patch
 # Fix stack handling when calling chdir without an argument, RT#129130,
 # in upstream after 5.25.6
 Patch58:        perl-5.24.0-perl-129130-make-chdir-allocate-the-stack-it-needs.patch
+
+# Fix crash in Storable when deserializing malformed code reference, RT#68348,
+# RT130098
+Patch59:        perl-5.25.7-Fix-Storable-segfaults.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2903,6 +2907,7 @@ Perl extension for Version Objects
 %patch56 -p1
 %patch57 -p1
 %patch58 -p1
+%patch59 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2952,6 +2957,7 @@ perl -x patchlevel.h \
     'Fedora Patch56: Fix firstchar bitmap under UTF-8 with prefix optimization (RT#129950)' \
     'Fedora Patch57: Avoid infinite loop in h2xs tool if enum and type have the same name (RT130001)' \
     'Fedora Patch58: Fix stack handling when calling chdir without an argument (RT#129130)' \
+    'Fedora Patch59: Fix crash in Storable when deserializing malformed code reference (RT#68348, RT#130098)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5230,6 +5236,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Nov 28 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-381
+- Fix crash in Storable when deserializing malformed code reference
+  (RT#68348, RT#130098)
+
 * Wed Nov 09 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-380
 - Tie perl-Errno release to interpreter build because of kernel version check
   (bug #1393421)
