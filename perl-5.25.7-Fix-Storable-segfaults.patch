@@ -1,0 +1,61 @@
+From fecd3be8dbdb747b9cbf4cbb9299ce40faabc8e6 Mon Sep 17 00:00:00 2001
+From: John Lightsey <lightsey@debian.org>
+Date: Mon, 14 Nov 2016 11:56:15 +0100
+Subject: [PATCH] Fix Storable segfaults.
+
+Fix a null pointed dereference segfault in storable when the
+retrieve_code logic was unable to read the string that contained
+the code.
+
+Also fix several locations where retrieve_other was called with a
+null context pointer. This also resulted in a null pointer
+dereference.
+---
+ dist/Storable/Storable.xs | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/dist/Storable/Storable.xs b/dist/Storable/Storable.xs
+index 053951c..caa489c 100644
+--- a/dist/Storable/Storable.xs
++++ b/dist/Storable/Storable.xs
+@@ -5647,6 +5647,10 @@ static SV *retrieve_code(pTHX_ stcxt_t *cxt, const char *cname)
+ 		CROAK(("Unexpected type %d in retrieve_code\n", type));
+ 	}
+ 
++	if (!text) {
++		CROAK(("Unable to retrieve code\n"));
++	}
++
+ 	/*
+ 	 * prepend "sub " to the source
+ 	 */
+@@ -5767,7 +5771,7 @@ static SV *old_retrieve_array(pTHX_ stcxt_t *cxt, const char *cname)
+ 			continue;			/* av_extend() already filled us with undef */
+ 		}
+ 		if (c != SX_ITEM)
+-			(void) retrieve_other(aTHX_ (stcxt_t *) 0, 0);	/* Will croak out */
++			(void) retrieve_other(aTHX_ cxt, 0);	/* Will croak out */
+ 		TRACEME(("(#%d) item", i));
+ 		sv = retrieve(aTHX_ cxt, 0);						/* Retrieve item */
+ 		if (!sv)
+@@ -5844,7 +5848,7 @@ static SV *old_retrieve_hash(pTHX_ stcxt_t *cxt, const char *cname)
+ 			if (!sv)
+ 				return (SV *) 0;
+ 		} else
+-			(void) retrieve_other(aTHX_ (stcxt_t *) 0, 0);	/* Will croak out */
++			(void) retrieve_other(aTHX_ cxt, 0);	/* Will croak out */
+ 
+ 		/*
+ 		 * Get key.
+@@ -5855,7 +5859,7 @@ static SV *old_retrieve_hash(pTHX_ stcxt_t *cxt, const char *cname)
+ 
+ 		GETMARK(c);
+ 		if (c != SX_KEY)
+-			(void) retrieve_other(aTHX_ (stcxt_t *) 0, 0);	/* Will croak out */
++			(void) retrieve_other(aTHX_ cxt, 0);	/* Will croak out */
+ 		RLEN(size);						/* Get key size */
+ 		KBUFCHK((STRLEN)size);					/* Grow hash key read pool if needed */
+ 		if (size)
+-- 
+2.10.2
+
