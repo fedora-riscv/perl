@@ -280,7 +280,7 @@ Provides: perl(perl5db.pl)
 # suidperl isn't created by upstream since 5.12.0
 Obsoletes: perl-suidperl <= 4:5.12.2
 
-Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
+Requires: perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
 # Require this till perl sub-package requires any modules
 Requires: %perl_compat
 %if %{defined perl_bootstrap}
@@ -374,7 +374,7 @@ Requires:       systemtap-sdt-devel
 Requires:       perl(ExtUtils::ParseXS)
 Requires:       %perl_compat
 # Match library and header files when downgrading releases
-Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
 %if %{defined perl_bootstrap}
 %gendep_perl_devel
 %endif
@@ -450,8 +450,8 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        %{perl_version}
 Requires:       %perl_compat
-Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
-Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl-devel%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-macros
 Requires:       perl-utils
 %if %{defined perl_bootstrap}
@@ -1146,7 +1146,7 @@ Version:        1.25
 Requires:       %perl_compat
 # Errno.pm bakes in kernel version at build time and compares it against
 # $Config{osvers} at run time. Match exact interpreter build. Bug #1393421.
-Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Carp)
 %if %{defined perl_bootstrap}
 %gendep_perl_Errno
@@ -5246,6 +5246,7 @@ popd
 - Fix crash in Storable when deserializing malformed code reference
   (RT#68348, RT#130098)
 - Fix crash on explicit return from regular expression substitution (RT#130188)
+- Tighten dependencies between architecture specific sub-packages to ISA
 
 * Wed Nov 09 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-380
 - Tie perl-Errno release to interpreter build because of kernel version check
