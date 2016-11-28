@@ -215,7 +215,8 @@ Patch56:        perl-5.24.0-regcomp.c-fix-perl-129950-fix-firstchar-bitmap-under
 # RT#130001, in upstream after 5.25.6
 Patch57:        perl-5.25.6-perl-130001-h2xs-avoid-infinite-loop-for-enums.patch
 
-# Fix stack handling when calling chdir without an argument, RT#129130
+# Fix stack handling when calling chdir without an argument, RT#129130,
+# in upstream after 5.25.6
 Patch58:        perl-5.24.0-perl-129130-make-chdir-allocate-the-stack-it-needs.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
