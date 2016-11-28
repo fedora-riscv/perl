@@ -184,7 +184,7 @@ Provides: perl(perl5db.pl)
 # suidperl isn't created by upstream since 5.12.0
 Obsoletes: perl-suidperl <= 4:5.12.2
 
-Requires: perl-libs = %{perl_epoch}:%{perl_version}-%{release}
+Requires: perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
 # Require this till perl sub-package requires any modules
 Requires: %perl_compat
 
@@ -273,7 +273,7 @@ Requires:       systemtap-sdt-devel
 Requires:       perl(ExtUtils::ParseXS)
 Requires:       %perl_compat
 # Match library and header files when downgrading releases
-Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
 
 %description devel
 This package contains header files and development modules.
@@ -337,8 +337,8 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        %{perl_version}
 Requires:       %perl_compat
-Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
-Requires:       perl-devel = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl-devel%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl-macros
 Requires:       perl-utils
 
@@ -949,7 +949,7 @@ Version:        1.23
 Requires:       %perl_compat
 # Errno.pm bakes in kernel version at build time and compares it against
 # $Config{osvers} at run time. Match exact interpreter build. Bug #1393421.
-Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
 Requires:       perl(Carp)
 Conflicts:      perl < 4:5.22.0-351
 
@@ -4737,6 +4737,7 @@ popd
 * Mon Dec 19 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.2-365
 - Fix crash in Storable when deserializing malformed code reference
   (RT#68348, RT#130098)
+- Tighten dependencies between architecture specific sub-packages to ISA
 
 * Wed Nov 09 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.2-364
 - Tie perl-Errno release to interpreter build because of kernel version check
