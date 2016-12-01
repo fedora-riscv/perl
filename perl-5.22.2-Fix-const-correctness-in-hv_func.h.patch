@@ -1,0 +1,126 @@
+From fb211db6cbcf25bbdeaa39b6685fae7228c92b3a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20P=C3=ADsa=C5=99?= <ppisar@redhat.com>
+Date: Thu, 24 Nov 2016 16:34:09 +0100
+Subject: [PATCH] Fix const correctness in hv_func.h
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Building an XS code with -Wcast-qual yielded warnings about discarding
+const qualifiers from pointer targets like:
+
+$ printf '#include "EXTERN.h"\n#include "perl.h"\n' | gcc -Wcast-qual -I/usr/lib64/perl5/CORE -c -x c -
+In file included from /usr/lib64/perl5/CORE/hv.h:629:0,
+                 from /usr/lib64/perl5/CORE/perl.h:3740,
+                 from <stdin>:2:
+/usr/lib64/perl5/CORE/hv_func.h: In function ‘S_perl_hash_siphash_2_4’:
+/usr/lib64/perl5/CORE/hv_func.h:213:17: warning: cast discards ‘const’ qualifier from pointer target type [-Wcast-qual]
+   U64TYPE k0 = ((U64TYPE*)seed)[0];
+                 ^
+
+Petr Písař: Ported to 5.22.2.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ hv_func.h | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/hv_func.h b/hv_func.h
+index 49a677e..e64d21f 100644
+--- a/hv_func.h
++++ b/hv_func.h
+@@ -118,7 +118,7 @@
+ 
+ #if (BYTEORDER == 0x1234 || BYTEORDER == 0x12345678) && U32SIZE == 4
+   /* CPU endian matches murmurhash algorithm, so read 32-bit word directly */
+-  #define U8TO32_LE(ptr)   (*((U32*)(ptr)))
++  #define U8TO32_LE(ptr)   (*((const U32*)(ptr)))
+ #elif BYTEORDER == 0x4321 || BYTEORDER == 0x87654321
+   /* TODO: Add additional cases below where a compiler provided bswap32 is available */
+   #if defined(__GNUC__) && (__GNUC__>4 || (__GNUC__==4 && __GNUC_MINOR__>=3))
+@@ -210,8 +210,8 @@ S_perl_hash_siphash_2_4(const unsigned char * const seed, const unsigned char *i
+   U64TYPE v3 = UINT64_C(0x7465646279746573);
+ 
+   U64TYPE b;
+-  U64TYPE k0 = ((U64TYPE*)seed)[0];
+-  U64TYPE k1 = ((U64TYPE*)seed)[1];
++  U64TYPE k0 = ((const U64TYPE*)seed)[0];
++  U64TYPE k1 = ((const U64TYPE*)seed)[1];
+   U64TYPE m;
+   const int left = inlen & 7;
+   const U8 *end = in + inlen - left;
+@@ -269,7 +269,7 @@ S_perl_hash_siphash_2_4(const unsigned char * const seed, const unsigned char *i
+ 
+ PERL_STATIC_INLINE U32
+ S_perl_hash_superfast(const unsigned char * const seed, const unsigned char *str, STRLEN len) {
+-    U32 hash = *((U32*)seed) + (U32)len;
++    U32 hash = *((const U32*)seed) + (U32)len;
+     U32 tmp;
+     int rem= len & 3;
+     len >>= 2;
+@@ -373,7 +373,7 @@ S_perl_hash_superfast(const unsigned char * const seed, const unsigned char *str
+ /* now we create the hash function */
+ PERL_STATIC_INLINE U32
+ S_perl_hash_murmur3(const unsigned char * const seed, const unsigned char *ptr, STRLEN len) {
+-    U32 h1 = *((U32*)seed);
++    U32 h1 = *((const U32*)seed);
+     U32 k1;
+     U32 carry = 0;
+ 
+@@ -467,7 +467,7 @@ S_perl_hash_murmur3(const unsigned char * const seed, const unsigned char *ptr,
+ PERL_STATIC_INLINE U32
+ S_perl_hash_djb2(const unsigned char * const seed, const unsigned char *str, const STRLEN len) {
+     const unsigned char * const end = (const unsigned char *)str + len;
+-    U32 hash = *((U32*)seed) + (U32)len;
++    U32 hash = *((const U32*)seed) + (U32)len;
+     while (str < end) {
+         hash = ((hash << 5) + hash) + *str++;
+     }
+@@ -477,7 +477,7 @@ S_perl_hash_djb2(const unsigned char * const seed, const unsigned char *str, con
+ PERL_STATIC_INLINE U32
+ S_perl_hash_sdbm(const unsigned char * const seed, const unsigned char *str, const STRLEN len) {
+     const unsigned char * const end = (const unsigned char *)str + len;
+-    U32 hash = *((U32*)seed) + (U32)len;
++    U32 hash = *((const U32*)seed) + (U32)len;
+     while (str < end) {
+         hash = (hash << 6) + (hash << 16) - hash + *str++;
+     }
+@@ -503,7 +503,7 @@ S_perl_hash_sdbm(const unsigned char * const seed, const unsigned char *str, con
+ PERL_STATIC_INLINE U32
+ S_perl_hash_one_at_a_time(const unsigned char * const seed, const unsigned char *str, const STRLEN len) {
+     const unsigned char * const end = (const unsigned char *)str + len;
+-    U32 hash = *((U32*)seed) + (U32)len;
++    U32 hash = *((const U32*)seed) + (U32)len;
+     while (str < end) {
+         hash += *str++;
+         hash += (hash << 10);
+@@ -518,7 +518,7 @@ S_perl_hash_one_at_a_time(const unsigned char * const seed, const unsigned char
+ PERL_STATIC_INLINE U32
+ S_perl_hash_one_at_a_time_hard(const unsigned char * const seed, const unsigned char *str, const STRLEN len) {
+     const unsigned char * const end = (const unsigned char *)str + len;
+-    U32 hash = *((U32*)seed) + (U32)len;
++    U32 hash = *((const U32*)seed) + (U32)len;
+     
+     while (str < end) {
+         hash += (hash << 10);
+@@ -553,7 +553,7 @@ S_perl_hash_one_at_a_time_hard(const unsigned char * const seed, const unsigned
+ PERL_STATIC_INLINE U32
+ S_perl_hash_old_one_at_a_time(const unsigned char * const seed, const unsigned char *str, const STRLEN len) {
+     const unsigned char * const end = (const unsigned char *)str + len;
+-    U32 hash = *((U32*)seed);
++    U32 hash = *((const U32*)seed);
+     while (str < end) {
+         hash += *str++;
+         hash += (hash << 10);
+@@ -581,7 +581,7 @@ S_perl_hash_murmur_hash_64a (const unsigned char * const seed, const unsigned ch
+ {
+         const U64TYPE m = 0xc6a4a7935bd1e995;
+         const int r = 47;
+-        U64TYPE h = *((U64TYPE*)seed) ^ len;
++        U64TYPE h = *((const U64TYPE*)seed) ^ len;
+         const U64TYPE * data = (const U64TYPE *)str;
+         const U64TYPE * end = data + (len/8);
+         const unsigned char * data2;
+-- 
+2.7.4
+

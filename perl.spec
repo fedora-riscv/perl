@@ -153,6 +153,10 @@ Patch48:        perl-5.25.7-Fix-Storable-segfaults.patch
 # Fix assigning split() return values to an array, in upstream after 5.25.7
 Patch49:        perl-5.24.0-split-was-leaving-PL_sv_undef-in-unused-ary-slots.patch
 
+# Fix const correctness in hv_func.h, bug #1242980, RT#130169,
+# in upstream after 5.25.7
+Patch50:        perl-5.22.2-Fix-const-correctness-in-hv_func.h.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2446,6 +2450,7 @@ Perl extension for Version Objects
 %patch47 -p1
 %patch48 -p1
 %patch49 -p1
+%patch50 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2487,6 +2492,7 @@ perl -x patchlevel.h \
     'Fedora Patch47: Fix stack handling when calling chdir without an argument (RT#129130)' \
     'Fedora Patch48: Fix crash in Storable when deserializing malformed code reference (RT#68348, RT#130098)' \
     'Fedora Patch49: Fix assigning split() return values to an array' \
+    'Fedora Patch50: Fix const correctness in hv_func.h (RT#130169)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4744,6 +4750,7 @@ popd
   (RT#68348, RT#130098)
 - Tighten dependencies between architecture specific sub-packages to ISA
 - Fix assigning split() return values to an array
+- Fix const correctness in hv_func.h (bug #1242980)
 
 * Wed Nov 09 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.2-364
 - Tie perl-Errno release to interpreter build because of kernel version check
