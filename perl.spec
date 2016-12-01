@@ -227,6 +227,9 @@ Patch59:        perl-5.25.7-Fix-Storable-segfaults.patch
 # in upstream after 5.25.7
 Patch60:        perl-5.24.0-crash-on-explicit-return-from-s-e.patch
 
+# Fix assigning split() return values to an array, in upstream after 5.25.7
+Patch61:        perl-5.24.0-split-was-leaving-PL_sv_undef-in-unused-ary-slots.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2913,6 +2916,7 @@ Perl extension for Version Objects
 %patch58 -p1
 %patch59 -p1
 %patch60 -p1
+%patch61 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2964,6 +2968,7 @@ perl -x patchlevel.h \
     'Fedora Patch58: Fix stack handling when calling chdir without an argument (RT#129130)' \
     'Fedora Patch59: Fix crash in Storable when deserializing malformed code reference (RT#68348, RT#130098)' \
     'Fedora Patch60: Fix crash on explicit return from regular expression substitution (RT#130188)' \
+    'Fedora Patch61: Fix assigning split() return values to an array' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5242,11 +5247,12 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Mon Nov 28 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-381
+* Thu Dec 01 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-381
 - Fix crash in Storable when deserializing malformed code reference
   (RT#68348, RT#130098)
 - Fix crash on explicit return from regular expression substitution (RT#130188)
 - Tighten dependencies between architecture specific sub-packages to ISA
+- Fix assigning split() return values to an array
 
 * Wed Nov 09 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-380
 - Tie perl-Errno release to interpreter build because of kernel version check
