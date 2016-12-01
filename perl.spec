@@ -230,6 +230,10 @@ Patch60:        perl-5.24.0-crash-on-explicit-return-from-s-e.patch
 # Fix assigning split() return values to an array, in upstream after 5.25.7
 Patch61:        perl-5.24.0-split-was-leaving-PL_sv_undef-in-unused-ary-slots.patch
 
+# Fix const correctness in hv_func.h, bug #1242980, RT#130169,
+# in upstream after 5.25.7
+Patch62:        perl-5.25.7-Fix-const-correctness-in-hv_func.h.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2917,6 +2921,7 @@ Perl extension for Version Objects
 %patch59 -p1
 %patch60 -p1
 %patch61 -p1
+%patch62 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2969,6 +2974,7 @@ perl -x patchlevel.h \
     'Fedora Patch59: Fix crash in Storable when deserializing malformed code reference (RT#68348, RT#130098)' \
     'Fedora Patch60: Fix crash on explicit return from regular expression substitution (RT#130188)' \
     'Fedora Patch61: Fix assigning split() return values to an array' \
+    'Fedora Patch62: Fix const correctness in hv_func.h (RT#130169)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5253,6 +5259,7 @@ popd
 - Fix crash on explicit return from regular expression substitution (RT#130188)
 - Tighten dependencies between architecture specific sub-packages to ISA
 - Fix assigning split() return values to an array
+- Fix const correctness in hv_func.h (bug #1242980)
 
 * Wed Nov 09 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-380
 - Tie perl-Errno release to interpreter build because of kernel version check
