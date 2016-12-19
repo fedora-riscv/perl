@@ -1,0 +1,53 @@
+From 5d9b0550a63f6b1e20a69ea9f60d2fffaca0af74 Mon Sep 17 00:00:00 2001
+From: Hugo van der Sanden <hv@crypt.org>
+Date: Mon, 12 Dec 2016 15:15:06 +0000
+Subject: [PATCH] Correctly unwind on cache hit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Petr Pisar: Ported to 5.22.2:
+
+commit d3c48e81594c1d64ba9833495e45d8951b42027c
+Author: Hugo van der Sanden <hv@crypt.org>
+Date:   Mon Dec 12 15:15:06 2016 +0000
+
+    [perl #130307] Correctly unwind on cache hit
+
+    We've already incremented curlyx.count in the WHILEM branch before
+    we check for a hit in the super-linear cache, so must reverse that
+    on the sayNO.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ regexec.c     | 1 +
+ t/re/re_tests | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/regexec.c b/regexec.c
+index 98df35d..ff1d5d8 100644
+--- a/regexec.c
++++ b/regexec.c
+@@ -6867,6 +6867,7 @@ NULL
+ 			    "%*s  whilem: (cache) already tried at this position...\n",
+ 			    REPORT_CODE_OFF+depth*2, "")
+ 			);
++                        cur_curlyx->u.curlyx.count--;
+ 			sayNO; /* cache records failure */
+ 		    }
+ 		    ST.cache_offset = offset;
+diff --git a/t/re/re_tests b/t/re/re_tests
+index c65bcce..41fc458 100644
+--- a/t/re/re_tests
++++ b/t/re/re_tests
+@@ -1942,6 +1942,7 @@ A+(*PRUNE)BC(?{})	AAABC	y	$&	AAABC
+ .{1}?+	-	c	-	Nested quantifiers
+ (?:.||)(?|)000000000@	000000000@	y	$&	000000000@		#  [perl #126405]
+ \b\z0*\x{100}	.\x{100}	n	-	-	# [perl #129350] crashed in intuit_start
++(X{2,}[-X]{1,4}){3,}X{2,}	XXX-XXX-XXX--	n	-	-	# [perl #130307]
+ 
+ # Keep these lines at the end of the file
+ # vim: softtabstop=0 noexpandtab
+-- 
+2.7.4
+

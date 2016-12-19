@@ -164,6 +164,9 @@ Patch51:        perl-5.22.2-assertion-failure-in-.-or-0-x-0.patch
 # Fix a memory leak in IO::Poll, RT#129788, in upstream after 5.25.7
 Patch52:        perl-5.22.2-perl-129788-IO-Poll-fix-memory-leak.patch
 
+# Fix regular expression matching, RT#130307, in upstream after 5.25.7
+Patch53:        perl-5.22.2-perl-130307-Correctly-unwind-on-cache-hit.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2460,6 +2463,7 @@ Perl extension for Version Objects
 %patch50 -p1
 %patch51 -p1
 %patch52 -p1
+%patch53 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2504,6 +2508,7 @@ perl -x patchlevel.h \
     'Fedora Patch50: Fix const correctness in hv_func.h (RT#130169)' \
     'Fedora Patch51: Fix a crash in optimized evaluation of "or ((0) x 0))" (RT#130247)' \
     'Fedora Patch52: Fix a memory leak in IO::Poll (RT#129788)' \
+    'Fedora Patch53: Fix regular expression matching (RT#130307)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4764,6 +4769,7 @@ popd
 - Fix const correctness in hv_func.h (bug #1242980)
 - Fix a crash in optimized evaluation of "or ((0) x 0))" (RT#130247)
 - Fix a memory leak in IO::Poll (RT#129788)
+- Fix regular expression matching (RT#130307)
 
 * Wed Nov 09 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.2-364
 - Tie perl-Errno release to interpreter build because of kernel version check
