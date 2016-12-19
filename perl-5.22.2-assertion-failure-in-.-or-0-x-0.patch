@@ -1,0 +1,73 @@
+From fdee5b4a06f183a26f897e1ea8825da3577b74fd Mon Sep 17 00:00:00 2001
+From: David Mitchell <davem@iabyn.com>
+Date: Mon, 5 Dec 2016 14:54:44 +0000
+Subject: [PATCH] assertion failure in ... or ((0) x 0))
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Petr Pisar: Ported to 5.22.2:
+
+commit 5aa240eab7dbaa91f98c2fee1f04b6c0b5a9b9e3
+Author: David Mitchell <davem@iabyn.com>
+Date:   Mon Dec 5 14:54:44 2016 +0000
+
+    assertion failure in ... or ((0) x 0))
+
+    [perl #130247] Perl_rpeep(OP *): Assertion `oldop' failed
+
+    the 'x 0' optimising code in rpeep didn't expect the repeat expression
+    to occur on the op_other side of an op_next chain.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ op.c          |  4 ++--
+ t/op/repeat.t | 11 ++++++++++-
+ 2 files changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/op.c b/op.c
+index e92de57..48b1130 100644
+--- a/op.c
++++ b/op.c
+@@ -13297,10 +13297,10 @@ Perl_rpeep(pTHX_ OP *o)
+                  && kid->op_next->op_type == OP_REPEAT
+                  && kid->op_next->op_private & OPpREPEAT_DOLIST
+                  && (kid->op_next->op_flags & OPf_WANT) == OPf_WANT_LIST
+-                 && SvIOK(kSVOP_sv) && SvIVX(kSVOP_sv) == 0)
++                 && SvIOK(kSVOP_sv) && SvIVX(kSVOP_sv) == 0
++                 && oldop)
+                 {
+                     o = kid->op_next; /* repeat */
+-                    assert(oldop);
+                     oldop->op_next = o;
+                     op_free(cBINOPo->op_first);
+                     op_free(cBINOPo->op_last );
+diff --git a/t/op/repeat.t b/t/op/repeat.t
+index 8df5241..2bd3c62 100644
+--- a/t/op/repeat.t
++++ b/t/op/repeat.t
+@@ -6,7 +6,7 @@ BEGIN {
+ }
+ 
+ require './test.pl';
+-plan(tests => 47);
++plan(tests => 48);
+ 
+ # compile time
+ 
+@@ -173,3 +173,12 @@ for(($#that_array)x2) {
+     $_ *= 2;
+ }
+ is($#that_array, 28, 'list repetition propagates lvalue cx to its lhs');
++
++# [perl #130247] Perl_rpeep(OP *): Assertion `oldop' failed
++# 
++# the 'x 0' optimising code in rpeep didn't expect the repeat expression
++# to occur on the op_other side of an op_next chain.
++# This used to give an assertion failure
++
++eval q{() = (() or ((0) x 0)); 1};
++is($@, "", "RT #130247");
+-- 
+2.7.4
+
