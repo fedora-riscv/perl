@@ -238,6 +238,9 @@ Patch62:        perl-5.25.7-Fix-const-correctness-in-hv_func.h.patch
 # in upsream after 5.25.7
 Patch63:        perl-5.24.0-assertion-failure-in-.-or-0-x-0.patch
 
+# Fix a memory leak in IO::Poll, RT#129788, in upstream after 5.25.7
+Patch64:        perl-5.24.0-perl-129788-IO-Poll-fix-memory-leak.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2925,6 +2928,7 @@ Perl extension for Version Objects
 %patch61 -p1
 %patch62 -p1
 %patch63 -p1
+%patch64 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2979,6 +2983,7 @@ perl -x patchlevel.h \
     'Fedora Patch61: Fix assigning split() return values to an array' \
     'Fedora Patch62: Fix const correctness in hv_func.h (RT#130169)' \
     'Fedora Patch63: Fix a crash in optimized evaluation of "or ((0) x 0))" (RT#130247)' \
+    'Fedora Patch64: Fix a memory leak in IO::Poll (RT#129788)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5265,6 +5270,7 @@ popd
 - Fix assigning split() return values to an array
 - Fix const correctness in hv_func.h (bug #1242980)
 - Fix a crash in optimized evaluation of "or ((0) x 0))" (RT#130247)
+- Fix a memory leak in IO::Poll (RT#129788)
 
 * Wed Nov 09 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-379
 - Tie perl-Errno release to interpreter build because of kernel version check
