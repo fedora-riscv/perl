@@ -627,10 +627,9 @@ Conflicts:      perl < 4:5.20.1-310
 %description B-Debug
 Walk Perl syntax tree and print debug information about op-codes. See
 B::Concise and B::Terse for other details.
-%endif
 
 %package bignum
-Summary:        Use BigInts and BigFloats transparently
+Summary:        Transparent big number support for Perl
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
@@ -650,7 +649,6 @@ Conflicts:      perl < 4:5.22.0-348
 This package attempts to make it easier to write scripts that use BigInts and
 BigFloats in a transparent way.
 
-%if %{dual_life} || %{rebuild_from_scratch}
 %package Carp
 Summary:        Alternative warn and die for modules
 Epoch:          0
@@ -4257,7 +4255,6 @@ popd
 %dir %{privlib}/B
 %{privlib}/B/Debug.pm
 %{_mandir}/man3/B::Debug.3*
-%endif
 
 %files bignum
 %{privlib}/bigint.pm
@@ -4271,7 +4268,6 @@ popd
 %{_mandir}/man3/bignum.*
 %{_mandir}/man3/bigrat.*
 
-%if %{dual_life} || %{rebuild_from_scratch}
 %files Carp
 %{privlib}/Carp
 %{privlib}/Carp.*
@@ -5273,6 +5269,7 @@ popd
 * Fri Jan 06 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-383
 - Remove bundled Math-BigInt-FastCalc (bug #1408463)
 - Remove bundled Math-BigRat (bug #1408467)
+- Remove bundled bignum (bug #1409585)
 
 * Mon Dec 19 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-382
 - Fix a crash in optimized evaluation of "or ((0) x 0))" (RT#130247)
