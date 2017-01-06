@@ -1871,7 +1871,6 @@ Conflicts:      perl < 4:5.22.0-348
 
 %description Math-BigInt-FastCalc
 This package provides support for faster big integer calculations.
-%endif
 
 %package Math-BigRat
 Summary:        Arbitrary big rational numbers
@@ -1891,6 +1890,7 @@ Conflicts:      perl < 4:5.22.0-348
 %description Math-BigRat
 Math::BigRat complements Math::BigInt and Math::BigFloat by providing support
 for arbitrary big rational numbers.
+%endif
 
 %package Math-Complex
 Summary:        Complex numbers and trigonometric functions
@@ -4854,12 +4854,12 @@ popd
 %{archlib}/Math
 %{archlib}/auto/Math
 %{_mandir}/man3/Math::BigInt::FastCalc.*
-%endif
 
 %files Math-BigRat
 %dir %{privlib}/Math
 %{privlib}/Math/BigRat.pm
 %{_mandir}/man3/Math::BigRat.*
+%endif
 
 %files Math-Complex
 %dir %{privlib}/Math
@@ -5272,6 +5272,7 @@ popd
 %changelog
 * Fri Jan 06 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-383
 - Remove bundled Math-BigInt-FastCalc (bug #1408463)
+- Remove bundled Math-BigRat (bug #1408467)
 
 * Mon Dec 19 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-382
 - Fix a crash in optimized evaluation of "or ((0) x 0))" (RT#130247)
