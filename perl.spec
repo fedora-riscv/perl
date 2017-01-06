@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        382%{?dist}
+Release:        383%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -1855,14 +1855,14 @@ Conflicts:      perl < 4:5.22.0-347
 
 %description Math-BigInt
 This provides Perl modules for arbitrary-size integer and float mathematics.
-%endif
 
 %package Math-BigInt-FastCalc
 Summary:        Math::BigInt::Calc XS implementation
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.40
+# Version normalized to dot format
+Version:        0.400
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_Math_BigInt_FastCalc
@@ -1871,6 +1871,7 @@ Conflicts:      perl < 4:5.22.0-348
 
 %description Math-BigInt-FastCalc
 This package provides support for faster big integer calculations.
+%endif
 
 %package Math-BigRat
 Summary:        Arbitrary big rational numbers
@@ -4848,12 +4849,12 @@ popd
 %{_mandir}/man3/Math::BigInt.*
 %{_mandir}/man3/Math::BigInt::Calc.*
 %{_mandir}/man3/Math::BigInt::CalcEmu.*
-%endif
 
 %files Math-BigInt-FastCalc
 %{archlib}/Math
 %{archlib}/auto/Math
 %{_mandir}/man3/Math::BigInt::FastCalc.*
+%endif
 
 %files Math-BigRat
 %dir %{privlib}/Math
@@ -5269,6 +5270,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jan 06 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-383
+- Remove bundled Math-BigInt-FastCalc (bug #1408463)
+
 * Mon Dec 19 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-382
 - Fix a crash in optimized evaluation of "or ((0) x 0))" (RT#130247)
 - Fix a memory leak in IO::Poll (RT#129788)
