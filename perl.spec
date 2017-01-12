@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        383%{?dist}
+Release:        384%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -5266,6 +5266,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jan 12 2017 Igor Gnatenko <ignatenko@redhat.com> - 4:5.24.0-384
+- Rebuild for readline 7.x
+
 * Fri Jan 06 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-383
 - Remove bundled Math-BigInt-FastCalc (bug #1408463)
 - Remove bundled Math-BigRat (bug #1408467)
