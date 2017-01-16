@@ -1,4 +1,4 @@
-%global perl_version    5.24.0
+%global perl_version    5.24.1
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        384%{?dist}
+Release:        385%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -160,10 +160,6 @@ Patch37:        perl-5.25.2-perl-128238-Crash-with-non-stash-in-stash.patch
 # Fix line numbers with perl -x, RT#128508, in upstream after 5.25.2
 Patch38:        perl-5.25.2-perl-128508-Fix-line-numbers-with-perl-x.patch
 
-# Do not let XSLoader load relative paths, CVE-2016-6185, RT#115808,
-# in upstream after 5.25.2
-Patch39:        perl-5.25.2-Don-t-let-XSLoader-load-relative-paths.patch
-
 # Fix a crash when vivifying a stub in a deleted package, RT#128532,
 # in upstream after 5.25.2
 Patch40:        perl-5.25.2-perl-128532-Crash-vivifying-stub-in-deleted-pkg.patch
@@ -178,10 +174,6 @@ Patch42:        perl-5.25.2-perl-128597-Crash-from-gp_free-ckWARN_d.patch
 # Fix handling \N{} in tr for characters in range 128--255, RT#128734,
 # in upstream after 5.25.3
 Patch43:        perl-5.24.0-PATCH-perl-128734-tr-N-.-failing-for-128-255.patch
-
-# Avoid loading of modules from current directory, CVE-2016-1238, bug #1360425
-# in upstream after 5.24.1
-Patch44:        perl-5.24.0-CVE-2016-1238-maint-5.24-dot-in-inc.patch
 
 # Fix crash in "evalbytes S", RT#129196, in upstream after 5.25.4
 Patch45:        perl-5.25.4-perl-129196-Crash-bad-read-with-evalbytes-S.patch
@@ -287,7 +279,7 @@ BuildRequires:  rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.24.0)
+%global perl_compat perl(:MODULE_COMPAT_5.24.1)
 
 # File provides
 Provides: perl(bytes_heavy.pl)
@@ -343,6 +335,7 @@ Group:          Development/Languages
 License:        (GPL+ or Artistic) and HSLR and MIT and UCD
 # Compat provides
 Provides:       %perl_compat
+Provides:       perl(:MODULE_COMPAT_5.24.0)
 # Interpreter version to fulfil required genersted from "require 5.006;"
 Provides:       perl(:VERSION) = %{perl_version}
 # Threading provides
@@ -1957,7 +1950,7 @@ Summary:        What modules are shipped with versions of perl
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20160506
+Version:        5.20170114
 Requires:       %perl_compat
 Requires:       perl(List::Util)
 Requires:       perl(version) >= 0.88
@@ -1976,7 +1969,7 @@ Summary:        Tool for listing modules shipped with perl
 Group:          Development/Tools
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20160506
+Version:        5.20170114
 Requires:       %perl_compat
 Requires:       perl(feature)
 Requires:       perl(version) >= 0.88
@@ -2907,12 +2900,10 @@ Perl extension for Version Objects
 %patch36 -p1
 %patch37 -p1
 %patch38 -p1
-%patch39 -p1
 %patch40 -p1
 %patch41 -p1
 %patch42 -p1
 %patch43 -p1
-%patch44 -p1
 %patch45 -p1
 %patch46 -p1
 %patch47 -p1
@@ -2963,12 +2954,10 @@ perl -x patchlevel.h \
     'Fedora Patch36: Do not treat %: as a stash (RT#128238)' \
     'Fedora Patch37: Do not crash when inserting a non-stash into a stash (RT#128238)' \
     'Fedora Patch38: Fix line numbers with perl -x (RT#128508)' \
-    'Fedora Patch39: Do not let XSLoader load relative paths (CVE-2016-6185)' \
     'Fedora Patch40: Fix a crash when vivifying a stub in a deleted package (RT#128532)' \
     'Fedora Patch41: Fix a crash in "Subroutine redefined" warning (RT#128257)' \
     'Fedora Patch42: Fix a crash in lexical scope warnings (RT#128597)' \
     'Fedora Patch43: Fix handling \N{} in tr for characters in range 128--255 (RT#128734)' \
-    'Fedora Patch44: Avoid loading of modules from current directory (CVE-2016-1238)' \
     'Fedora Patch45: Fix crash in "evalbytes S" (RT#129196)' \
     'Fedora Patch46: Fix crash in "evalbytes S" (RT#129196)' \
     'Fedora Patch47: Fix crash in "evalbytes S" (RT#129196)' \
@@ -5266,6 +5255,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jan 16 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.1-385
+- 5.24.1 bump (see <http://search.cpan.org/dist/perl-5.24.1/pod/perldelta.pod>
+  for release notes)
+
 * Thu Jan 12 2017 Igor Gnatenko <ignatenko@redhat.com> - 4:5.24.0-384
 - Rebuild for readline 7.x
 
