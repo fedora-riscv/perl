@@ -1,4 +1,4 @@
-%global perl_version    5.22.2
+%global perl_version    5.22.3
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        365%{?dist}
+Release:        366%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -84,24 +84,12 @@ Patch22:        perl-5.18.1-Document-Math-BigInt-CalcEmu-requires-Math-BigInt.pa
 # Make *DBM_File desctructors thread-safe, bug #1107543, RT#61912
 Patch26:        perl-5.18.2-Destroy-GDBM-NDBM-ODBM-SDBM-_File-objects-only-from-.patch
 
-# Make PadlistNAMES() lvalue again, bug #1231165, CPAN RT#101063,
-# in upstream after 5.22.0
-Patch27:        perl-5.22.0-make-PadlistNAMES-lvalue-again.patch
-
 # Workaround for Coro, bug #1231165, CPAN RT#101063. To remove in the future.
 Patch28:        perl-5.22.0-Revert-const-the-core-magic-vtables.patch
 
 # Fix duplicating PerlIO::encoding when spawning threads, bug #1345788,
 # RT#31923, in upstream after 5.23.3
 Patch29:        perl-5.23.3-Properly-duplicate-PerlIO-encoding-objects.patch
-
-# Do not let XSLoader load relative paths, CVE-2016-6185, RT#115808,
-# in upstream after 5.25.2
-Patch30:        perl-5.25.2-Don-t-let-XSLoader-load-relative-paths.patch
-
-# Avoid loading optional modules from default . CVE-2016-1238, bug #1360425
-# in upstream after 5.22.3
-Patch31:        perl-5.22.2-CVE-2016-1238-maint-5.22-dot-in-inc.patch
 
 # Fix a crash in lexical scope warnings, RT#128597, in upstream after 5.25.2
 Patch32:        perl-5.22.2-perl-128597-Crash-from-gp_free-ckWARN_d.patch
@@ -191,7 +179,7 @@ BuildRequires:  procps, rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.22.2)
+%global perl_compat perl(:MODULE_COMPAT_5.22.3)
 
 # File provides
 Provides: perl(bytes_heavy.pl)
@@ -244,6 +232,7 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 # Compat provides
 Provides:       %perl_compat
+Provides:       perl(:MODULE_COMPAT_5.22.2)
 Provides:       perl(:MODULE_COMPAT_5.22.1)
 Provides:       perl(:MODULE_COMPAT_5.22.0)
 # Interpreter version to fulfil required genersted from "require 5.006;"
@@ -2437,11 +2426,8 @@ Perl extension for Version Objects
 %patch16 -p1
 %patch22 -p1
 %patch26 -p1
-%patch27 -p1
 %patch28 -p1
 %patch29 -p1
-%patch30 -p1
-%patch31 -p1
 %patch32 -p1
 %patch33 -p1
 %patch34 -p1
@@ -2482,11 +2468,8 @@ perl -x patchlevel.h \
     'Fedora Patch16: Install libperl.so to -Dshrpdir value' \
     'Fedora Patch22: Document Math::BigInt::CalcEmu requires Math::BigInt (CPAN RT#85015)' \
     'Fedora Patch26: Make *DBM_File desctructors thread-safe (RT#61912)' \
-    'Fedora Patch27: Make PadlistNAMES() lvalue again (CPAN RT#101063)' \
     'Fedora Patch28: Make magic vtable writable as a work-around for Coro (CPAN RT#101063)' \
     'Fedora Patch29: Fix duplicating PerlIO::encoding when spawning threads (RT#31923)' \
-    'Fedora Patch30: Do not let XSLoader load relative paths (CVE-2016-6185)' \
-    'Fedora Patch31: Avoid loading optional modules from default . (CVE-2016-1238)' \
     'Fedora Patch32: Fix a crash in lexical scope warnings (RT#128597)' \
     'Fedora Patch33: Do not mangle errno from failed socket calls (RT#128316)' \
     'Fedora Patch34: Fix crash in "evalbytes S" (RT#129196)' \
@@ -4761,6 +4744,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jan 16 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.3-366
+- 5.22.3 bump (see <http://search.cpan.org/dist/perl-5.22.3/pod/perldelta.pod>
+  for release notes)
+
 * Mon Dec 19 2016 Petr Pisar <ppisar@redhat.com> - 4:5.22.2-365
 - Fix crash in Storable when deserializing malformed code reference
   (RT#68348, RT#130098)
