@@ -1458,8 +1458,8 @@ Summary:        Return name and handle of a temporary file safely
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-# Real version 0.2304
-Version:        0.23.04
+# Normalized version
+Version:        0.230.400
 Requires:       %perl_compat
 BuildArch:      noarch
 Requires:       perl(File::Path) >= 2.06
