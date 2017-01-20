@@ -159,6 +159,10 @@ Patch53:        perl-5.22.2-perl-130307-Correctly-unwind-on-cache-hit.patch
 # in upstream after 5.25.8
 Patch54:        perl-5.24.1-perl-130262-split-scalar-context-stack-overflow-fix.patch
 
+# Fix a heap overflow with pack "W", RT129149, in upstream after 5.25.8
+Patch55:        perl-5.25.8-perl-129149-avoid-a-heap-buffer-overflow-with-pack-W.patch
+Patch56:        perl-5.25.8-perl-129149-fix-the-test-so-skip-has-a-SKIP-to-work-.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2455,6 +2459,8 @@ Perl extension for Version Objects
 %patch52 -p1
 %patch53 -p1
 %patch54 -p1
+%patch55 -p1
+%patch56 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2498,6 +2504,7 @@ perl -x patchlevel.h \
     'Fedora Patch52: Fix a memory leak in IO::Poll (RT#129788)' \
     'Fedora Patch53: Fix regular expression matching (RT#130307)' \
     'Fedora Patch54: Fix a buffer overflow in split in scalar context (RT#130262)' \
+    'Fedora Patch55: Fix a heap overflow with pack "W" (RT129149)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4752,6 +4759,7 @@ popd
 %changelog
 * Fri Jan 20 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-367
 - Fix a buffer overflow in split in scalar context (RT#130262)
+- Fix a heap overflow with pack "W" (RT129149)
 
 * Mon Jan 16 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.3-366
 - 5.22.3 bump (see <http://search.cpan.org/dist/perl-5.22.3/pod/perldelta.pod>
