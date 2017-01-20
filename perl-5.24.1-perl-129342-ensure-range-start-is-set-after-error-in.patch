@@ -1,0 +1,73 @@
+From a26907949ed561dccd661fc8600889eddc6664ea Mon Sep 17 00:00:00 2001
+From: Hugo van der Sanden <hv@crypt.org>
+Date: Wed, 5 Oct 2016 14:53:27 +0100
+Subject: [PATCH] [perl #129342] ensure range-start is set after error in tr///
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Ported to 5.24.1:
+
+t 59143e29a717d67a61b869a6c5bb49574f1ef43f
+Author: Tony Cook <tony@develop-help.com>
+Date:   Tue Jan 17 11:52:53 2017 +1100
+
+    (perl #129342) test for buffer overflow
+
+commit 3dd4eaeb8ac39e08179145b86aedda36584a3509
+Author: Hugo van der Sanden <hv@crypt.org>
+Date:   Wed Oct 5 14:53:27 2016 +0100
+
+    [perl #129342] ensure range-start is set after error in tr///
+
+    A parse error due to invalid octal or hex escape in the range of a
+    transliteration must still ensure some kind of start and end values
+    are captured, since we don't stop on the first such error. Failure
+    to do so can cause invalid reads after "Here we have parsed a range".
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ t/lib/croak/toke | 7 +++++++
+ toke.c           | 4 ++--
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/t/lib/croak/toke b/t/lib/croak/toke
+index 18dfa24..578a6da 100644
+--- a/t/lib/croak/toke
++++ b/t/lib/croak/toke
+@@ -302,3 +302,10 @@ Execution of - aborted due to compilation errors.
+ BEGIN <>
+ EXPECT
+ Illegal declaration of subroutine BEGIN at - line 1.
++########
++# NAME tr/// handling of mis-formatted \o characters
++# may only fail with ASAN
++tr/\o-0//;
++EXPECT
++Missing braces on \o{} at - line 2, within string
++Execution of - aborted due to compilation errors.
+diff --git a/toke.c b/toke.c
+index 288f372..576ce72 100644
+--- a/toke.c
++++ b/toke.c
+@@ -3338,7 +3338,7 @@ S_scan_const(pTHX_ char *start)
+                                                UTF);
+ 		    if (! valid) {
+ 			yyerror(error);
+-			continue;
++			uv = 0; /* drop through to ensure range ends are set */
+ 		    }
+ 		    goto NUM_ESCAPE_INSERT;
+ 		}
+@@ -3356,7 +3356,7 @@ S_scan_const(pTHX_ char *start)
+                                                UTF);
+ 		    if (! valid) {
+ 			yyerror(error);
+-			continue;
++			uv = 0; /* drop through to ensure range ends are set */
+ 		    }
+ 		}
+ 
+-- 
+2.7.4
+
