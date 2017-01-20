@@ -167,6 +167,10 @@ Patch56:        perl-5.25.8-perl-129149-fix-the-test-so-skip-has-a-SKIP-to-work-
 # in upstream after 5.25.8
 Patch57:        perl-5.24.1-perl-129125-copy-form-data-if-it-might-be-freed.patch
 
+# Fix a heap overflow if invalid octal or hexadecimal number is used in
+# transliteration expression, RT#129342, in upstream after 5.25.8
+Patch58:        perl-5.24.1-perl-129342-ensure-range-start-is-set-after-error-in.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2466,6 +2470,7 @@ Perl extension for Version Objects
 %patch55 -p1
 %patch56 -p1
 %patch57 -p1
+%patch58 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2511,6 +2516,7 @@ perl -x patchlevel.h \
     'Fedora Patch54: Fix a buffer overflow in split in scalar context (RT#130262)' \
     'Fedora Patch55: Fix a heap overflow with pack "W" (RT129149)' \
     'Fedora Patch57: Fix a use-after-free when processing scalar variables in forms (RT#129125)' \
+    'Fedora Patch58: Fix a heap overflow if invalid octal or hexadecimal number is used in transliteration expression (RT#129342)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4767,6 +4773,8 @@ popd
 - Fix a buffer overflow in split in scalar context (RT#130262)
 - Fix a heap overflow with pack "W" (RT129149)
 - Fix a use-after-free when processing scalar variables in forms (RT#129125)
+- Fix a heap overflow if invalid octal or hexadecimal number is used in
+  transliteration expression (RT#129342)
 
 * Mon Jan 16 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.3-366
 - 5.22.3 bump (see <http://search.cpan.org/dist/perl-5.22.3/pod/perldelta.pod>
