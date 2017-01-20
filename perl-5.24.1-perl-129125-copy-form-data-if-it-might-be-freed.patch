@@ -1,0 +1,107 @@
+From 0c43d46cd570d2a19edfa54b9c637dea5c0a3514 Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Thu, 19 Jan 2017 16:28:03 +1100
+Subject: [PATCH] (perl #129125) copy form data if it might be freed
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Ported to 5.24.1:
+
+commit 86191aed6f092273950ebdd48f886d4ec0c5e85e
+Author: Tony Cook <tony@develop-help.com>
+Date:   Thu Jan 19 16:28:03 2017 +1100
+
+    (perl #129125) copy form data if it might be freed
+
+    If the format SV also appeared as an argument, and the FF_CHOP
+    operator modified that argument, the magic and hence the compiled
+    format would be freed, and the next iteration of the processing
+    the compiled format would read freed memory.
+
+    Unlike my original patch this copies the formsv too, since
+    that is also stored in the magic, and is needed for presenting
+    literal text from the format.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ pp_ctl.c     | 18 ++++++++++++++++++
+ t/op/write.t | 19 ++++++++++++++++++-
+ 2 files changed, 36 insertions(+), 1 deletion(-)
+
+diff --git a/pp_ctl.c b/pp_ctl.c
+index b94c09a..e859e01 100644
+--- a/pp_ctl.c
++++ b/pp_ctl.c
+@@ -490,6 +490,7 @@ PP(pp_formline)
+     U8 *source;		    /* source of bytes to append */
+     STRLEN to_copy;	    /* how may bytes to append */
+     char trans;		    /* what chars to translate */
++    bool copied_form = false; /* have we duplicated the form? */
+ 
+     mg = doparseform(tmpForm);
+ 
+@@ -687,6 +688,23 @@ PP(pp_formline)
+ 	case FF_CHOP: /* (for ^*) chop the current item */
+ 	    if (sv != &PL_sv_no) {
+ 		const char *s = chophere;
++                if (!copied_form &&
++                    ((sv == tmpForm || SvSMAGICAL(sv))
++                     || (SvGMAGICAL(tmpForm) && !sv_only_taint_gmagic(tmpForm))) ) {
++                    /* sv and tmpForm are either the same SV, or magic might allow modification
++                       of tmpForm when sv is modified, so copy */
++                    SV *newformsv = sv_mortalcopy(formsv);
++                    U32 *new_compiled;
++
++                    f = SvPV_nolen(newformsv) + (f - SvPV_nolen(formsv));
++                    Newx(new_compiled, mg->mg_len / sizeof(U32), U32);
++                    memcpy(new_compiled, mg->mg_ptr, mg->mg_len);
++                    SAVEFREEPV(new_compiled);
++                    fpc = new_compiled + (fpc - (U32*)mg->mg_ptr);
++                    formsv = newformsv;
++
++                    copied_form = true;
++                }
+ 		if (chopspace) {
+ 		    while (isSPACE(*s))
+ 			s++;
+diff --git a/t/op/write.t b/t/op/write.t
+index 590d658..ab2733f 100644
+--- a/t/op/write.t
++++ b/t/op/write.t
+@@ -98,7 +98,7 @@ for my $tref ( @NumTests ){
+ my $bas_tests = 21;
+ 
+ # number of tests in section 3
+-my $bug_tests = 66 + 3 * 3 * 5 * 2 * 3 + 2 + 66 + 4 + 2 + 3 + 96 + 11 + 3;
++my $bug_tests = 66 + 3 * 3 * 5 * 2 * 3 + 2 + 66 + 6 + 2 + 3 + 96 + 11 + 3;
+ 
+ # number of tests in section 4
+ my $hmb_tests = 37;
+@@ -1637,6 +1637,23 @@ printf ">%s<\n", ref $zamm;
+ print "$zamm->[0]\n";
+ EOP
+ 
++# [perl #129125] - detected by -fsanitize=address or valgrind
++# the compiled format would be freed when the format string was modified
++# by the chop operator
++fresh_perl_is(<<'EOP', "^", { stderr => 1 }, '#129125 - chop on format');
++my $x = '^@';
++formline$x=>$x;
++print $^A;
++EOP
++
++fresh_perl_is(<<'EOP', '<^< xx AA><xx ^<><>', { stderr => 1 }, '#129125 - chop on format, later values');
++my $x = '^< xx ^<';
++my $y = 'AA';
++formline $x => $x, $y;
++print "<$^A><$x><$y>";
++EOP
++
++
+ # [perl #73690]
+ 
+ select +(select(RT73690), do {
+-- 
+2.7.4
+
