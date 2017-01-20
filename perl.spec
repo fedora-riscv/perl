@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        385%{?dist}
+Release:        386%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -235,6 +235,10 @@ Patch64:        perl-5.24.0-perl-129788-IO-Poll-fix-memory-leak.patch
 
 # Fix regular expression matching, RT#130307, in upstream after 5.25.7
 Patch65:        perl-5.25.7-perl-130307-Correctly-unwind-on-cache-hit.patch
+
+# Fix a buffer overflow in split in scalar context, RT#130262,
+# in upstream after 5.25.8
+Patch66:        perl-5.24.1-perl-130262-split-scalar-context-stack-overflow-fix.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2925,6 +2929,7 @@ Perl extension for Version Objects
 %patch63 -p1
 %patch64 -p1
 %patch65 -p1
+%patch66 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2979,6 +2984,7 @@ perl -x patchlevel.h \
     'Fedora Patch63: Fix a crash in optimized evaluation of "or ((0) x 0))" (RT#130247)' \
     'Fedora Patch64: Fix a memory leak in IO::Poll (RT#129788)' \
     'Fedora Patch65: Fix regular expression matching (RT#130307)' \
+    'Fedora Patch66: Fix a buffer overflow in split in scalar context (RT#130262)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5255,6 +5261,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jan 20 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-386
+- Fix a buffer overflow in split in scalar context (RT#130262)
+
 * Mon Jan 16 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.1-385
 - 5.24.1 bump (see <http://search.cpan.org/dist/perl-5.24.1/pod/perldelta.pod>
   for release notes)
