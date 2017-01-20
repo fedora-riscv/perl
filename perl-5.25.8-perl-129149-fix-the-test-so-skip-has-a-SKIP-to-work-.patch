@@ -1,0 +1,30 @@
+From 30be69c851a7fa7e29d85c9b6e070273df82f3e7 Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Tue, 17 Jan 2017 15:36:31 +1100
+Subject: [PATCH] (perl #129149) fix the test so skip has a SKIP: to work with
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Thanks to bulk88 for pointing this out.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ t/op/pack.t | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/t/op/pack.t b/t/op/pack.t
+index 47d1216..919e4c5 100644
+--- a/t/op/pack.t
++++ b/t/op/pack.t
+@@ -2048,6 +2048,7 @@ ok(1, "argument underflow did not crash");
+        "check pack H zero fills (utf8 source)");
+ }
+ 
++SKIP:
+ {
+     # [perl #129149] the code below would write one past the end of the output
+     # buffer, only detected by ASAN, not by valgrind
+-- 
+2.7.4
+
