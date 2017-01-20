@@ -171,6 +171,10 @@ Patch57:        perl-5.24.1-perl-129125-copy-form-data-if-it-might-be-freed.patc
 # transliteration expression, RT#129342, in upstream after 5.25.8
 Patch58:        perl-5.24.1-perl-129342-ensure-range-start-is-set-after-error-in.patch
 
+# Fix out-of-bound read in case of unmatched regexp backreference, RT#129377,
+# in upstream after 5.25.8
+Patch59:        perl-5.22.3-perl-129377-don-t-read-past-start-of-string-for-unma.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2471,6 +2475,7 @@ Perl extension for Version Objects
 %patch56 -p1
 %patch57 -p1
 %patch58 -p1
+%patch59 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2517,6 +2522,7 @@ perl -x patchlevel.h \
     'Fedora Patch55: Fix a heap overflow with pack "W" (RT129149)' \
     'Fedora Patch57: Fix a use-after-free when processing scalar variables in forms (RT#129125)' \
     'Fedora Patch58: Fix a heap overflow if invalid octal or hexadecimal number is used in transliteration expression (RT#129342)' \
+    'Fedora Patch59: Fix out-of-bound read in case of unmatched regexp backreference (RT#129377)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4775,6 +4781,7 @@ popd
 - Fix a use-after-free when processing scalar variables in forms (RT#129125)
 - Fix a heap overflow if invalid octal or hexadecimal number is used in
   transliteration expression (RT#129342)
+- Fix out-of-bound read in case of unmatched regexp backreference (RT#129377)
 
 * Mon Jan 16 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.3-366
 - 5.22.3 bump (see <http://search.cpan.org/dist/perl-5.22.3/pod/perldelta.pod>
