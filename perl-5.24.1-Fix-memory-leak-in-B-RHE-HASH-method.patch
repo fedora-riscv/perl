@@ -1,0 +1,65 @@
+From 3c38abae50c05c6f3c9f7eca561ec08c62fba1ba Mon Sep 17 00:00:00 2001
+From: Sergey Aleynikov <sergey.aleynikov@gmail.com>
+Date: Thu, 5 Jan 2017 01:33:32 +0300
+Subject: [PATCH] Fix memory leak in B::RHE->HASH method.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Petr Písař: Ported to 5.24.1:
+
+commit 4b6e9aa6aa2256da1ec7ed08f819cbf5d1463741
+Author: Sergey Aleynikov <sergey.aleynikov@gmail.com>
+Date:   Thu Jan 5 01:33:32 2017 +0300
+
+    Fix memory leak in B::RHE->HASH method.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ ext/B/B.xs    |  2 +-
+ t/op/svleak.t | 12 +++++++++++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/ext/B/B.xs b/ext/B/B.xs
+index b4b6a40..e859d7d 100644
+--- a/ext/B/B.xs
++++ b/ext/B/B.xs
+@@ -2179,7 +2179,7 @@ SV*
+ HASH(h)
+ 	B::RHE h
+     CODE:
+-	RETVAL = newRV( (SV*)cophh_2hv(h, 0) );
++	RETVAL = newRV_noinc( (SV*)cophh_2hv(h, 0) );
+     OUTPUT:
+ 	RETVAL
+ 
+diff --git a/t/op/svleak.t b/t/op/svleak.t
+index c18f498..b0692ff 100644
+--- a/t/op/svleak.t
++++ b/t/op/svleak.t
+@@ -15,7 +15,7 @@ BEGIN {
+ 
+ use Config;
+ 
+-plan tests => 132;
++plan tests => 133;
+ 
+ # run some code N times. If the number of SVs at the end of loop N is
+ # greater than (N-1)*delta at the end of loop 1, we've got a leak
+@@ -547,3 +547,13 @@ EOF
+     sub f { $a =~ /[^.]+$b/; }
+     ::leak(2, 0, \&f, q{use re 'strict' shouldn't leak warning strings});
+ }
++
++# check that B::RHE->HASH does not leak
++{
++    package BHINT;
++    sub foo {}
++    require B;
++    my $op = B::svref_2object(\&foo)->ROOT->first;
++    sub lk { { my $d = $op->hints_hash->HASH } }
++    ::leak(3, 0, \&lk, q!B::RHE->HASH shoudln't leak!);
++}
+-- 
+2.7.4
+

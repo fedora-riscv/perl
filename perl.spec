@@ -262,6 +262,9 @@ Patch72:        perl-5.25.4-perl-129287-Make-UTF8-append-null.patch
 # Fix recreation of *::, RT#129869, in upstream after 5.25.9
 Patch73:        perl-5.24.1-fix-special-case-recreation-of.patch
 
+# Fix a memory leak in B::RHE->HASH method, RT#130504, in upstream after 5.25.9
+Patch74:        perl-5.24.1-Fix-memory-leak-in-B-RHE-HASH-method.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2958,6 +2961,7 @@ Perl extension for Version Objects
 %patch71 -p1
 %patch72 -p1
 %patch73 -p1
+%patch74 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3019,6 +3023,7 @@ perl -x patchlevel.h \
     'Fedora Patch71: Fix out-of-bound read in case of unmatched regexp backreference (RT#129377)' \
     'Fedora Patch72: Fix UTF-8 string handling in & operator (RT#129287)' \
     'Fedora Patch73: Fix recreation of *:: (RT#129869)' \
+    'Fedora Patch74: Fix a memory leak in B::RHE->HASH method (RT#130504)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5300,6 +5305,7 @@ popd
 * Thu Jan 26 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-383
 - Fix UTF-8 string handling in & operator (RT#129287)
 - Fix recreation of *:: (RT#129869)
+- Fix a memory leak in B::RHE->HASH method (RT#130504)
 
 * Fri Jan 20 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-382
 - Fix a buffer overflow in split in scalar context (RT#130262)
