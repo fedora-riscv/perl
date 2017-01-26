@@ -178,6 +178,9 @@ Patch59:        perl-5.22.3-perl-129377-don-t-read-past-start-of-string-for-unma
 # Fix UTF-8 string handling in & operator, RT#129287, in upstream after 5.25.4
 Patch60:        perl-5.22.3-perl-129287-Make-UTF8-append-null.patch
 
+# Fix recreation of *::, RT#129869, in upstream after 5.25.9
+Patch61:        perl-5.22.3-fix-special-case-recreation-of.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2480,6 +2483,7 @@ Perl extension for Version Objects
 %patch58 -p1
 %patch59 -p1
 %patch60 -p1
+%patch61 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2528,6 +2532,7 @@ perl -x patchlevel.h \
     'Fedora Patch58: Fix a heap overflow if invalid octal or hexadecimal number is used in transliteration expression (RT#129342)' \
     'Fedora Patch59: Fix out-of-bound read in case of unmatched regexp backreference (RT#129377)' \
     'Fedora Patch60: Fix UTF-8 string handling in & operator (RT#129287)' \
+    'Fedora Patch61: Fix recreation of *:: (RT#129869)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4782,6 +4787,7 @@ popd
 %changelog
 * Thu Jan 26 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-368
 - Fix UTF-8 string handling in & operator (RT#129287)
+- Fix recreation of *:: (RT#129869)
 
 * Fri Jan 20 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-367
 - Fix a buffer overflow in split in scalar context (RT#130262)

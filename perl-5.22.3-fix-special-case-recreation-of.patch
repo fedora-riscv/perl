@@ -1,0 +1,79 @@
+From e70566d418a424aef71fa277a3c93240659790af Mon Sep 17 00:00:00 2001
+From: Zefram <zefram@fysh.org>
+Date: Sun, 22 Jan 2017 07:26:34 +0000
+Subject: [PATCH] fix special-case recreation of *::
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Ported to 5.22.3:
+
+commit 120921acd4cf27bb932a725a8cf5c957652b22eb
+Author: Zefram <zefram@fysh.org>
+Date:   Sun Jan 22 07:26:34 2017 +0000
+
+    fix special-case recreation of *::
+
+    If *:: is called for then as a special case it is looked up as
+    $::{"main::"}.  If $::{"main::"} has been deleted, then that hash entry
+    is recreated.  But formerly it was only recreated as an undef scalar,
+    which broke things relying on glob lookup returning a glob.  Now in
+    that special case the recreated hash entry is initialised as a glob,
+    and populated with the customary recursive reference to the main stash.
+    Fixes [perl #129869].
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ gv.c         | 11 +++++++++--
+ t/op/stash.t |  9 ++++++++-
+ 2 files changed, 17 insertions(+), 3 deletions(-)
+
+diff --git a/gv.c b/gv.c
+index 47a5407..ba7516b 100644
+--- a/gv.c
++++ b/gv.c
+@@ -1637,8 +1637,15 @@ S_parse_gv_stash_name(pTHX_ HV **stash, GV **gv, const char **name,
+                 name_cursor++;
+             *name = name_cursor+1;
+             if (*name == name_end) {
+-                if (!*gv)
+-                    *gv = MUTABLE_GV(*hv_fetchs(PL_defstash, "main::", TRUE));
++                if (!*gv) {
++		    *gv = MUTABLE_GV(*hv_fetchs(PL_defstash, "main::", TRUE));
++		    if (SvTYPE(*gv) != SVt_PVGV) {
++			gv_init_pvn(*gv, PL_defstash, "main::", 6,
++				    GV_ADDMULTI);
++			GvHV(*gv) =
++			    MUTABLE_HV(SvREFCNT_inc_simple(PL_defstash));
++		    }
++		}
+                 return TRUE;
+             }
+         }
+diff --git a/t/op/stash.t b/t/op/stash.t
+index af218ad..0433c9d 100644
+--- a/t/op/stash.t
++++ b/t/op/stash.t
+@@ -7,7 +7,7 @@ BEGIN {
+ 
+ BEGIN { require "./test.pl"; }
+ 
+-plan( tests => 51 );
++plan( tests => 52 );
+ 
+ # Used to segfault (bug #15479)
+ fresh_perl_like(
+@@ -334,3 +334,10 @@ is runperl(
+    ),
+    "ok\n",
+    '[perl #123847] no crash from *foo::=*bar::=*glob_with_hash';
++
++is runperl(
++    prog => '%:: = (); print *{q|::|}, qq|\n|',
++    stderr => 1,
++   ),
++   "*main::main::\n",
++   "[perl #129869] lookup %:: by name after clearing %::";
+-- 
+2.7.4
+
