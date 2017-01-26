@@ -265,6 +265,10 @@ Patch73:        perl-5.24.1-fix-special-case-recreation-of.patch
 # Fix a memory leak in B::RHE->HASH method, RT#130504, in upstream after 5.25.9
 Patch74:        perl-5.24.1-Fix-memory-leak-in-B-RHE-HASH-method.patch
 
+# Fix parsing goto statements in multicalled subroutine, RT#113938,
+# in upstream after 5.25.9
+Patch75:        perl-5.24.1-permit-goto-at-top-level-of-multicalled-sub.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2962,6 +2966,7 @@ Perl extension for Version Objects
 %patch72 -p1
 %patch73 -p1
 %patch74 -p1
+%patch75 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3024,6 +3029,7 @@ perl -x patchlevel.h \
     'Fedora Patch72: Fix UTF-8 string handling in & operator (RT#129287)' \
     'Fedora Patch73: Fix recreation of *:: (RT#129869)' \
     'Fedora Patch74: Fix a memory leak in B::RHE->HASH method (RT#130504)' \
+    'Fedora Patch75: Fix parsing goto statements in multicalled subroutine (RT#113938)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5306,6 +5312,7 @@ popd
 - Fix UTF-8 string handling in & operator (RT#129287)
 - Fix recreation of *:: (RT#129869)
 - Fix a memory leak in B::RHE->HASH method (RT#130504)
+- Fix parsing goto statements in multicalled subroutine (RT#113938)
 
 * Fri Jan 20 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-382
 - Fix a buffer overflow in split in scalar context (RT#130262)
