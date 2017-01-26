@@ -1,0 +1,94 @@
+From 7778ccd83efc90dd4c0635d67184bcf9ace5b4ce Mon Sep 17 00:00:00 2001
+From: Zefram <zefram@fysh.org>
+Date: Mon, 23 Jan 2017 02:25:50 +0000
+Subject: [PATCH] permit goto at top level of multicalled sub
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Petr Písař: Ported to 5.22.3:
+
+commit 3c157b3cf0631c69ffa5aa2d55b9199bf93b22a9
+Author: Zefram <zefram@fysh.org>
+Date:   Mon Jan 23 02:25:50 2017 +0000
+
+    permit goto at top level of multicalled sub
+
+    A multicalled sub is reckoned to be a pseudo block, out of which it is
+    not permissible to goto.  However, the test for a pseudo block was being
+    applied too early, preventing not just escape from a multicalled sub but
+    also a goto at the top level within the sub.  This is a bug similar, but
+    not identical, to [perl #113938].  Now the test is deferred, permitting
+    goto at the sub's top level but still forbidding goto out of it.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ pp_ctl.c    | 11 ++++++-----
+ t/op/goto.t | 11 ++++++++++-
+ 2 files changed, 16 insertions(+), 6 deletions(-)
+
+diff --git a/pp_ctl.c b/pp_ctl.c
+index 74005a6..ad06186 100644
+--- a/pp_ctl.c
++++ b/pp_ctl.c
+@@ -3023,6 +3023,7 @@ PP(pp_goto)
+ 	OP *gotoprobe = NULL;
+ 	bool leaving_eval = FALSE;
+ 	bool in_block = FALSE;
++	bool pseudo_block = FALSE;
+ 	PERL_CONTEXT *last_eval_cx = NULL;
+ 
+ 	/* find label */
+@@ -3060,11 +3061,9 @@ PP(pp_goto)
+ 		    gotoprobe = PL_main_root;
+ 		break;
+ 	    case CXt_SUB:
+-		if (CvDEPTH(cx->blk_sub.cv) && !CxMULTICALL(cx)) {
+-		    gotoprobe = CvROOT(cx->blk_sub.cv);
+-		    break;
+-		}
+-		/* FALLTHROUGH */
++		gotoprobe = CvROOT(cx->blk_sub.cv);
++		pseudo_block = cBOOL(CxMULTICALL(cx));
++		break;
+ 	    case CXt_FORMAT:
+ 	    case CXt_NULL:
+ 		DIE(aTHX_ "Can't \"goto\" out of a pseudo block");
+@@ -3093,6 +3092,8 @@ PP(pp_goto)
+ 			break;
+ 		}
+ 	    }
++	    if (pseudo_block)
++		DIE(aTHX_ "Can't \"goto\" out of a pseudo block");
+ 	    PL_lastgotoprobe = gotoprobe;
+ 	}
+ 	if (!retop)
+diff --git a/t/op/goto.t b/t/op/goto.t
+index ca48ac0..ca8fa08 100644
+--- a/t/op/goto.t
++++ b/t/op/goto.t
+@@ -10,7 +10,7 @@ BEGIN {
+ 
+ use warnings;
+ use strict;
+-plan tests => 94;
++plan tests => 95;
+ our $TODO;
+ 
+ my $deprecated = 0;
+@@ -702,3 +702,12 @@ sub FETCH     { $_[0][0] }
+ tie my $t, "", sub { "cluck up porridge" };
+ is eval { sub { goto $t }->() }//$@, 'cluck up porridge',
+   'tied arg returning sub ref';
++
++sub revnumcmp ($$) {
++  goto FOO;
++  die;
++  FOO:
++  return $_[1] <=> $_[0];
++}
++is eval { join(":", sort revnumcmp (9,5,1,3,7)) }, "9:7:5:3:1",
++  "can goto at top level of multicalled sub";
+-- 
+2.7.4
+
