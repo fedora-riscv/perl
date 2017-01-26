@@ -269,6 +269,9 @@ Patch74:        perl-5.24.1-Fix-memory-leak-in-B-RHE-HASH-method.patch
 # in upstream after 5.25.9
 Patch75:        perl-5.24.1-permit-goto-at-top-level-of-multicalled-sub.patch
 
+# Fix a heap overlow in parsing $#, RT#129274, in upstream after 5.25.9
+Patch76:        perl-5.24.1-perl-129274-avoid-treating-the-in-as-a-comment-intro.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2968,6 +2971,7 @@ Perl extension for Version Objects
 %patch73 -p1
 %patch74 -p1
 %patch75 -p1
+%patch76 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3031,6 +3035,7 @@ perl -x patchlevel.h \
     'Fedora Patch73: Fix recreation of *:: (RT#129869)' \
     'Fedora Patch74: Fix a memory leak in B::RHE->HASH method (RT#130504)' \
     'Fedora Patch75: Fix parsing goto statements in multicalled subroutine (RT#113938)' \
+    'Fedora Patch76: Fix a heap overlow in parsing $# (RT#129274)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5312,6 +5317,7 @@ popd
 - Fix recreation of *:: (RT#129869)
 - Fix a memory leak in B::RHE->HASH method (RT#130504)
 - Fix parsing goto statements in multicalled subroutine (RT#113938)
+- Fix a heap overlow in parsing $# (RT#129274)
 
 * Fri Jan 20 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-386
 - Fix a buffer overflow in split in scalar context (RT#130262)
