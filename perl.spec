@@ -185,6 +185,9 @@ Patch61:        perl-5.22.3-fix-special-case-recreation-of.patch
 # in upstream after 5.25.9
 Patch62:        perl-5.22.3-permit-goto-at-top-level-of-multicalled-sub.patch
 
+# Fix a heap overlow in parsing $#, RT#129274, in upstream after 5.25.9
+Patch63:        perl-5.22.3-perl-129274-avoid-treating-the-in-as-a-comment-intro.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2489,6 +2492,7 @@ Perl extension for Version Objects
 %patch60 -p1
 %patch61 -p1
 %patch62 -p1
+%patch63 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2539,6 +2543,7 @@ perl -x patchlevel.h \
     'Fedora Patch60: Fix UTF-8 string handling in & operator (RT#129287)' \
     'Fedora Patch61: Fix recreation of *:: (RT#129869)' \
     'Fedora Patch62: Fix parsing goto statements in multicalled subroutine (RT#113938)' \
+    'Fedora Patch63: Fix a heap overlow in parsing $# (RT#129274)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4795,6 +4800,7 @@ popd
 - Fix UTF-8 string handling in & operator (RT#129287)
 - Fix recreation of *:: (RT#129869)
 - Fix parsing goto statements in multicalled subroutine (RT#113938)
+- Fix a heap overlow in parsing $# (RT#129274)
 
 * Fri Jan 20 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-367
 - Fix a buffer overflow in split in scalar context (RT#130262)

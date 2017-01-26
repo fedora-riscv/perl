@@ -1,0 +1,70 @@
+From 34fd995c20ab8049eadd63b0bfaca732e4cdb4bd Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Tue, 24 Jan 2017 11:14:28 +1100
+Subject: [PATCH] (perl #129274) avoid treating the # in $# as a comment intro
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Petr Písař: Ported to 5.22.3:
+
+commit 71776ae4fad9a7659deefe0c2376d45b873ffd6a
+Author: Tony Cook <tony@develop-help.com>
+Date:   Tue Jan 24 11:14:28 2017 +1100
+
+    (perl #129274) avoid treating the # in $# as a comment intro
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ t/op/lex.t | 15 ++++++++++++++-
+ toke.c     |  4 +++-
+ 2 files changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/t/op/lex.t b/t/op/lex.t
+index a58beb5..2f29e85 100644
+--- a/t/op/lex.t
++++ b/t/op/lex.t
+@@ -7,7 +7,7 @@ use warnings;
+ 
+ BEGIN { chdir 't' if -d 't'; require './test.pl'; }
+ 
+-plan(tests => 26);
++plan(tests => 27);
+ 
+ {
+     no warnings 'deprecated';
+@@ -216,3 +216,16 @@ fresh_perl_like(
+     {},
+     '[perl #129336] - #!perl -i argument handling'
+ );
++
++# probably only failed under ASAN
++fresh_perl_is(
++    "stat\tt\$#0",
++    <<'EOM',
++$# is no longer supported at - line 1.
++Number found where operator expected at - line 1, near "$#0"
++	(Missing operator before 0?)
++Can't call method "t" on an undefined value at - line 1.
++EOM
++    {},
++    "[perl #129273] heap use after free or overflow"
++);
+diff --git a/toke.c b/toke.c
+index c8c14d5..999eb2c 100644
+--- a/toke.c
++++ b/toke.c
+@@ -3895,7 +3895,9 @@ S_intuit_method(pTHX_ char *start, SV *ioname, CV *cv)
+ 	if (cv || PL_last_lop_op == OP_PRINT || PL_last_lop_op == OP_SAY ||
+ 		isUPPER(*PL_tokenbuf))
+ 	    return 0;
+-	s = skipspace(s);
++        /* this could be $# */
++        if (isSPACE(*s))
++            s = skipspace(s);
+ 	PL_bufptr = start;
+ 	PL_expect = XREF;
+ 	return *s == '(' ? FUNCMETH : METHOD;
+-- 
+2.7.4
+
