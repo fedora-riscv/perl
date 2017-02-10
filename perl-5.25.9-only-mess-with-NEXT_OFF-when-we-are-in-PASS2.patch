@@ -1,0 +1,38 @@
+From bb78386f13c18a1a7dae932b9b36e977056b13c7 Mon Sep 17 00:00:00 2001
+From: Yves Orton <demerphq@gmail.com>
+Date: Fri, 27 Jan 2017 16:57:40 +0100
+Subject: [PATCH] only mess with NEXT_OFF() when we are in PASS2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+In 31fc93954d1f379c7a49889d91436ce99818e1f6 I added code that would modify
+NEXT_OFF() when we were not in PASS2, when we should not do so. Strangly this
+did not segfault when I tested, but this fix is required.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ regcomp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/regcomp.c b/regcomp.c
+index 322d230..d5ce63f 100644
+--- a/regcomp.c
++++ b/regcomp.c
+@@ -11709,11 +11709,11 @@ S_regpiece(pTHX_ RExC_state_t *pRExC_state, I32 *flagp, U32 depth)
+ 	    nextchar(pRExC_state);
+             if (max < min) {    /* If can't match, warn and optimize to fail
+                                    unconditionally */
++                reginsert(pRExC_state, OPFAIL, orig_emit, depth+1);
+                 if (PASS2) {
+                     ckWARNreg(RExC_parse, "Quantifier {n,m} with n > m can't match");
++                    NEXT_OFF(orig_emit)= regarglen[OPFAIL] + NODE_STEP_REGNODE;
+                 }
+-                reginsert(pRExC_state, OPFAIL, orig_emit, depth+1);
+-                NEXT_OFF(orig_emit)= regarglen[OPFAIL] + NODE_STEP_REGNODE;
+                 return ret;
+             }
+             else if (min == max && *RExC_parse == '?')
+-- 
+2.7.4
+
