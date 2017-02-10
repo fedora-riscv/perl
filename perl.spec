@@ -198,6 +198,11 @@ Patch66:        perl-5.25.9-silence-warnings-from-tests-about-impossible-quantif
 # in upstream after 5.25.9
 Patch67:        perl-5.24.1-buffer-overrun-with-format-and-use-bytes.patch
 
+# Fix a buffer overflow when studying some regexps repeatedly,
+# RT#129281, RT#129061, un upstream after 5.25.9
+Patch68:        perl-5.22.3-perl-129281-test-for-buffer-overflow-issue.patch
+Patch69:        perl-5.25.9-perl-129061-CURLYX-nodes-can-be-studied-more-than-on.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2507,6 +2512,8 @@ Perl extension for Version Objects
 %patch65 -p1
 %patch66 -p1
 %patch67 -p1
+%patch68 -p1
+%patch69 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2560,6 +2567,7 @@ perl -x patchlevel.h \
     'Fedora Patch63: Fix a heap overlow in parsing $# (RT#129274)' \
     'Fedora Patch64: Fix a crash when compiling a regexp with impossible quantifiers (RT#130561)' \
     'Fedora Patch67: Fix a buffer overrun with format and "use bytes" (RT#130703)' \
+    'Fedora Patch68: Fix a buffer overflow when studying some regexps repeatedly (RT#129281, RT#129061)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4815,6 +4823,8 @@ popd
 * Fri Feb 17 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-369
 - Fix a crash when compiling a regexp with impossible quantifiers (RT#130561)
 - Fix a buffer overrun with format and "use bytes" (RT#130703)
+- Fix a buffer overflow when studying some regexps repeatedly
+  (RT#129281, RT#129061)
 
 * Thu Jan 26 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-368
 - Fix UTF-8 string handling in & operator (RT#129287)
