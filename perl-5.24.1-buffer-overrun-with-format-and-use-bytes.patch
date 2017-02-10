@@ -1,0 +1,93 @@
+From fd25d49cae6409a4ce901fd4d899a197541604b3 Mon Sep 17 00:00:00 2001
+From: David Mitchell <davem@iabyn.com>
+Date: Sat, 4 Feb 2017 15:10:49 +0000
+Subject: [PATCH] buffer overrun with format and 'use bytes'
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Ported to 5.24.1:
+
+commit e452bf1c9e9f30813b1f289188a6e8b0894575ba
+Author: David Mitchell <davem@iabyn.com>
+Date:   Sat Feb 4 15:10:49 2017 +0000
+
+    buffer overrun with format and 'use bytes'
+
+    RT #130703
+
+    In the scope of 'use bytes', appending a string to a format where the
+    format is utf8 and the string is non-utf8 but contains lots of chars
+    with ords >= 128, the buffer could be overrun. This is due to all the
+    \x80-type chars going from being stored as 1 bytes to 2 bytes, without
+    growing PL_formtarget accordingly.
+
+    This commit contains a minimal fix; the next commit will more generally
+    tidy up the grow code in pp_formline.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ pp_ctl.c     |  3 +++
+ t/op/write.t | 18 +++++++++++++++++-
+ 2 files changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/pp_ctl.c b/pp_ctl.c
+index a1fc2f4..4d5ef2e 100644
+--- a/pp_ctl.c
++++ b/pp_ctl.c
+@@ -505,6 +505,8 @@ PP(pp_formline)
+ 	SvTAINTED_on(PL_formtarget);
+     if (DO_UTF8(PL_formtarget))
+ 	targ_is_utf8 = TRUE;
++    /* this is an initial estimate of how much output buffer space
++     * to allocate. It may be exceeded later */
+     linemax = (SvCUR(formsv) * (IN_BYTES ? 1 : 3) + 1);
+     t = SvGROW(PL_formtarget, len + linemax + 1);
+     /* XXX from now onwards, SvCUR(PL_formtarget) is invalid */
+@@ -766,6 +768,7 @@ PP(pp_formline)
+ 
+ 		if (targ_is_utf8 && !item_is_utf8) {
+ 		    source = tmp = bytes_to_utf8(source, &to_copy);
++                    grow = to_copy;
+ 		} else {
+ 		    if (item_is_utf8 && !targ_is_utf8) {
+ 			U8 *s;
+diff --git a/t/op/write.t b/t/op/write.t
+index ab2733f..ae4ddb5 100644
+--- a/t/op/write.t
++++ b/t/op/write.t
+@@ -98,7 +98,7 @@ for my $tref ( @NumTests ){
+ my $bas_tests = 21;
+ 
+ # number of tests in section 3
+-my $bug_tests = 66 + 3 * 3 * 5 * 2 * 3 + 2 + 66 + 6 + 2 + 3 + 96 + 11 + 3;
++my $bug_tests = 66 + 3 * 3 * 5 * 2 * 3 + 2 + 66 + 6 + 2 + 3 + 96 + 11 + 4;
+ 
+ # number of tests in section 4
+ my $hmb_tests = 37;
+@@ -1562,6 +1562,22 @@ ok  defined *{$::{CmT}}{FORMAT}, "glob assign";
+     formline $format, $orig, 12345;
+     is $^A, ("x" x 100) . " 12345\n", "\@* doesn't overflow";
+ 
++    # ...nor this (RT #130703).
++    # Under 'use bytes', the two bytes (c2, 80) making up each \x80 char
++    # each get expanded to two bytes (so four in total per \x80 char); the
++    # buffer growth wasn't accounting for this doubling in size
++
++    {
++        local $^A = '';
++        my $format = "X\n\x{100}" . ("\x80" x 200);
++        my $expected = $format;
++        utf8::encode($expected);
++        use bytes;
++        formline($format);
++        is $^A, $expected, "RT #130703";
++    }
++
++
+     # make sure it can cope with formats > 64k
+ 
+     $format = 'x' x 65537;
+-- 
+2.7.4
+
