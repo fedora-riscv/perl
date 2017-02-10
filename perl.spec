@@ -194,6 +194,10 @@ Patch64:        perl-5.22.3-fix-RT-130561-recursion-and-optimising-away-impossib
 Patch65:        perl-5.22.3-only-mess-with-NEXT_OFF-when-we-are-in-PASS2.patch
 Patch66:        perl-5.25.9-silence-warnings-from-tests-about-impossible-quantif.patch
 
+# Fix a buffer overrun with format and "use bytes", RT#130703,
+# in upstream after 5.25.9
+Patch67:        perl-5.24.1-buffer-overrun-with-format-and-use-bytes.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2502,6 +2506,7 @@ Perl extension for Version Objects
 %patch64 -p1
 %patch65 -p1
 %patch66 -p1
+%patch67 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2554,6 +2559,7 @@ perl -x patchlevel.h \
     'Fedora Patch62: Fix parsing goto statements in multicalled subroutine (RT#113938)' \
     'Fedora Patch63: Fix a heap overlow in parsing $# (RT#129274)' \
     'Fedora Patch64: Fix a crash when compiling a regexp with impossible quantifiers (RT#130561)' \
+    'Fedora Patch67: Fix a buffer overrun with format and "use bytes" (RT#130703)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4808,6 +4814,7 @@ popd
 %changelog
 * Fri Feb 17 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-369
 - Fix a crash when compiling a regexp with impossible quantifiers (RT#130561)
+- Fix a buffer overrun with format and "use bytes" (RT#130703)
 
 * Thu Jan 26 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-368
 - Fix UTF-8 string handling in & operator (RT#129287)
