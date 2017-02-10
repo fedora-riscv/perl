@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        387%{?dist}
+Release:        388%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -271,6 +271,11 @@ Patch75:        perl-5.24.1-permit-goto-at-top-level-of-multicalled-sub.patch
 
 # Fix a heap overlow in parsing $#, RT#129274, in upstream after 5.25.9
 Patch76:        perl-5.24.1-perl-129274-avoid-treating-the-in-as-a-comment-intro.patch
+
+# Adapt tests to zlib-1.2.11, bug #1420326, CPAN RT#119762,
+# should be removed after fixing Compress-Raw-Zlib properly
+Patch77:        Compress-Raw-Zlib-2.071-Adapt-tests-to-zlib-1.2.11.patch
+Patch78:        IO-Compress-2.070-Adapt-tests-to-zlib-1.2.11.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2972,6 +2977,12 @@ Perl extension for Version Objects
 %patch74 -p1
 %patch75 -p1
 %patch76 -p1
+pushd cpan/Compress-Raw-Zlib
+%patch77 -p1
+popd
+pushd cpan/IO-Compress
+%patch78 -p1
+popd
 %patch200 -p1
 %patch201 -p1
 
@@ -3036,6 +3047,7 @@ perl -x patchlevel.h \
     'Fedora Patch74: Fix a memory leak in B::RHE->HASH method (RT#130504)' \
     'Fedora Patch75: Fix parsing goto statements in multicalled subroutine (RT#113938)' \
     'Fedora Patch76: Fix a heap overlow in parsing $# (RT#129274)' \
+    'Fedora Patch77: Adapt tests to zlib-1.2.11 (CPAN RT#119762)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5312,6 +5324,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Feb 10 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-388
+- Adapt tests to zlib-1.2.11 (bug #1420326)
+
 * Thu Jan 26 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-387
 - Fix UTF-8 string handling in & operator (RT#129287)
 - Fix recreation of *:: (RT#129869)
