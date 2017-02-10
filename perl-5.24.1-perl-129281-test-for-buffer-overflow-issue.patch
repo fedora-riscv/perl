@@ -1,0 +1,49 @@
+From 92f8cd4e7b0ff3d09162139e3c99b1d9310bca81 Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Mon, 10 Oct 2016 10:46:46 +1100
+Subject: [PATCH] (perl #129281) test for buffer overflow issue
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Ported to 5.24.1:
+
+commit d2ba660af00f1bf2e7012741615eff7c19f29707
+Author: Tony Cook <tony@develop-help.com>
+Date:   Mon Oct 10 10:46:46 2016 +1100
+
+    (perl #129281) test for buffer overflow issue
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ t/re/pat.t | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/t/re/pat.t b/t/re/pat.t
+index 749edd0..7b8e6f7 100644
+--- a/t/re/pat.t
++++ b/t/re/pat.t
+@@ -23,7 +23,7 @@ BEGIN {
+     skip_all_without_unicode_tables();
+ }
+ 
+-plan tests => 792;  # Update this when adding/deleting tests.
++plan tests => 793;  # Update this when adding/deleting tests.
+ 
+ run_tests() unless caller;
+ 
+@@ -1779,6 +1779,11 @@ EOP
+ 	    }msx, { stderr => 1 }, "Offsets in debug output are not negative");
+ 	}
+     }
++    {
++        # [perl #129281] buffer write overflow, detected by ASAN, valgrind
++        local $::TODO = "whilem_c  bumped too much";
++        fresh_perl_is('/0(?0)|^*0(?0)|^*(^*())0|/', '', {}, "don't bump whilem_c too much");
++    }
+ } # End of sub run_tests
+ 
+ 1;
+-- 
+2.7.4
+
