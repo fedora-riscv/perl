@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        368%{?dist}
+Release:        369%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -187,6 +187,12 @@ Patch62:        perl-5.22.3-permit-goto-at-top-level-of-multicalled-sub.patch
 
 # Fix a heap overlow in parsing $#, RT#129274, in upstream after 5.25.9
 Patch63:        perl-5.22.3-perl-129274-avoid-treating-the-in-as-a-comment-intro.patch
+
+# Fix a crash when compiling a regexp with impossible quantifiers, RT#130561,
+# in upstream after 5.25.9
+Patch64:        perl-5.22.3-fix-RT-130561-recursion-and-optimising-away-impossib.patch
+Patch65:        perl-5.22.3-only-mess-with-NEXT_OFF-when-we-are-in-PASS2.patch
+Patch66:        perl-5.25.9-silence-warnings-from-tests-about-impossible-quantif.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2493,6 +2499,9 @@ Perl extension for Version Objects
 %patch61 -p1
 %patch62 -p1
 %patch63 -p1
+%patch64 -p1
+%patch65 -p1
+%patch66 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2544,6 +2553,7 @@ perl -x patchlevel.h \
     'Fedora Patch61: Fix recreation of *:: (RT#129869)' \
     'Fedora Patch62: Fix parsing goto statements in multicalled subroutine (RT#113938)' \
     'Fedora Patch63: Fix a heap overlow in parsing $# (RT#129274)' \
+    'Fedora Patch64: Fix a crash when compiling a regexp with impossible quantifiers (RT#130561)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4796,6 +4806,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Feb 17 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-369
+- Fix a crash when compiling a regexp with impossible quantifiers (RT#130561)
+
 * Thu Jan 26 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-368
 - Fix UTF-8 string handling in & operator (RT#129287)
 - Fix recreation of *:: (RT#129869)
