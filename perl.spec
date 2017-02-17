@@ -297,6 +297,10 @@ Patch84:        perl-5.25.9-perl-129061-CURLYX-nodes-can-be-studied-more-than-on
 # from more than one source, RT#129881, in upstream after 5.25.9
 Patch85:        perl-5.24.1-fix-pad-scope-issue-in-re_evals.patch
 
+# Fix a memory leak in list assignment from or to magic values, RT#130766,
+# in upstream after 5.25.9
+Patch86:        perl-5.25.9-avoid-a-leak-in-list-assign-from-to-magic-values.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3008,6 +3012,7 @@ popd
 %patch83 -p1
 %patch84 -p1
 %patch85 -p1
+%patch86 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3078,6 +3083,7 @@ perl -x patchlevel.h \
     'Fedora Patch82: Fix a buffer overrun with format and "use bytes" (RT#130703)' \
     'Fedora Patch83: Fix a buffer overflow when studying some regexps repeatedly (RT#129281, RT#129061)' \
     'Fedora Patch85: Fix a heap buffer overflow when evaluating regexps with embedded code blocks from more than one source, RT#129881' \
+    'Fedora Patch86: Fix a memory leak in list assignment from or to magic values, (RT#130766)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5358,6 +5364,7 @@ popd
 - Adapt Compress::Raw::Zlib to zlib-1.2.11 (bug #1420326)
 - Fix a heap buffer overflow when evaluating regexps with embedded code blocks
   from more than one source (RT#129881)
+- Fix a memory leak in list assignment from or to magic values (RT#130766)
 
 * Fri Feb 10 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-388
 - Adapt tests to zlib-1.2.11 (bug #1420326)
