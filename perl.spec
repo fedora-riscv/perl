@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        388%{?dist}
+Release:        389%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -272,10 +272,11 @@ Patch75:        perl-5.24.1-permit-goto-at-top-level-of-multicalled-sub.patch
 # Fix a heap overlow in parsing $#, RT#129274, in upstream after 5.25.9
 Patch76:        perl-5.24.1-perl-129274-avoid-treating-the-in-as-a-comment-intro.patch
 
-# Adapt tests to zlib-1.2.11, bug #1420326, CPAN RT#119762,
-# should be removed after fixing Compress-Raw-Zlib properly
-Patch77:        Compress-Raw-Zlib-2.071-Adapt-tests-to-zlib-1.2.11.patch
-Patch78:        IO-Compress-2.070-Adapt-tests-to-zlib-1.2.11.patch
+# 1/2 Adapt to zlib-1.2.11, bug #1420326, CPAN RT#119762,
+# in upstream Compress-Raw-Zlib-2.072
+Patch77:        Compress-Raw-Zlib-2.071-Adapt-to-zlib-1.2.11.patch
+# 2/2 Fix compiler fatal warnings in Compress-Raw-Zlib, CPAN RT#120272
+Patch78:        Compress-Raw-Zlib-2.071-Conform-to-C90.patch
 
 # Fix a crash when compiling a regexp with impossible quantifiers, RT#130561,
 # in upstream after 5.25.9
@@ -2994,8 +2995,6 @@ Perl extension for Version Objects
 %patch76 -p1
 pushd cpan/Compress-Raw-Zlib
 %patch77 -p1
-popd
-pushd cpan/IO-Compress
 %patch78 -p1
 popd
 %patch79 -p1
@@ -3068,7 +3067,8 @@ perl -x patchlevel.h \
     'Fedora Patch74: Fix a memory leak in B::RHE->HASH method (RT#130504)' \
     'Fedora Patch75: Fix parsing goto statements in multicalled subroutine (RT#113938)' \
     'Fedora Patch76: Fix a heap overlow in parsing $# (RT#129274)' \
-    'Fedora Patch77: Adapt tests to zlib-1.2.11 (CPAN RT#119762)' \
+    'Fedora Patch77: Adapt to zlib-1.2.11 (CPAN RT#119762)' \
+    'Fedora Patch78: Fix compiler fatal warnings in Compress-Raw-Zlib (CPAN RT#120272)' \
     'Fedora Patch79: Fix a crash when compiling a regexp with impossible quantifiers (RT#130561)' \
     'Fedora Patch82: Fix a buffer overrun with format and "use bytes" (RT#130703)' \
     'Fedora Patch83: Fix a buffer overflow when studying some regexps repeatedly (RT#129281, RT#129061)' \
@@ -5348,6 +5348,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Feb 17 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-389
+- Adapt Compress::Raw::Zlib to zlib-1.2.11 (bug #1420326)
+
 * Fri Feb 10 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-388
 - Adapt tests to zlib-1.2.11 (bug #1420326)
 - Fix a crash when compiling a regexp with impossible quantifiers (RT#130561)
