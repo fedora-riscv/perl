@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        389%{?dist}
+Release:        390%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -300,6 +300,10 @@ Patch85:        perl-5.24.1-fix-pad-scope-issue-in-re_evals.patch
 # Fix a memory leak in list assignment from or to magic values, RT#130766,
 # in upstream after 5.25.9
 Patch86:        perl-5.25.9-avoid-a-leak-in-list-assign-from-to-magic-values.patch
+
+# Fix a null-pointer dereference on malformed code, RT#130815,
+# in upstream after 5.25.9
+Patch87:        perl-5.24.1-perl-130815-fix-ck_return-null-pointer-deref-on-malf.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -3013,6 +3017,7 @@ popd
 %patch84 -p1
 %patch85 -p1
 %patch86 -p1
+%patch87 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3084,6 +3089,7 @@ perl -x patchlevel.h \
     'Fedora Patch83: Fix a buffer overflow when studying some regexps repeatedly (RT#129281, RT#129061)' \
     'Fedora Patch85: Fix a heap buffer overflow when evaluating regexps with embedded code blocks from more than one source, RT#129881' \
     'Fedora Patch86: Fix a memory leak in list assignment from or to magic values, (RT#130766)' \
+    'Fedora Patch87: Fix a null-pointer dereference on malformed code (RT#130815)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5360,6 +5366,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Mar 08 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-390
+- Fix a null-pointer dereference on malformed code (RT#130815)
+
 * Fri Feb 17 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-389
 - Adapt Compress::Raw::Zlib to zlib-1.2.11 (bug #1420326)
 - Fix a heap buffer overflow when evaluating regexps with embedded code blocks
