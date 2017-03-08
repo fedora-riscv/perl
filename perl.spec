@@ -225,6 +225,10 @@ Patch75:        perl-5.25.2-t-test.pl-Add-fresh_perl-function.patch
 # in upstream after 5.25.10
 Patch76:        perl-5.25.10-fix-VMS-test-fail.patch
 
+# Fix a heap-use-after-free in four-arguments substr call, RT#130624,
+# in upstream after 5.25.10
+Patch77:        perl-5.24.1-RT-130624-heap-use-after-free-in-4-arg-substr.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2543,6 +2547,7 @@ Perl extension for Version Objects
 %patch74 -p1
 %patch75 -p1
 %patch76 -p1
+%patch77 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2601,6 +2606,7 @@ perl -x patchlevel.h \
     'Fedora Patch71: Fix an use-after-free in substr() that modifies a magic variable (RT#129340)' \
     'Fedora Patch72: Fix a memory leak leak in Perl_reg_named_buff_fetch() (RT#130822)' \
     'Fedora Patch73: Fix an invalid memory read when parsing a loop variable (RT#130814)' \
+    'Fedora Patch77: Fix a heap-use-after-free in four-arguments substr call (RT#130624)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4858,6 +4864,7 @@ popd
 - Fix an use-after-free in substr() that modifies a magic variable (RT#129340)
 - Fix a memory leak leak in Perl_reg_named_buff_fetch() (RT#130822)
 - Fix an invalid memory read when parsing a loop variable (RT#130814)
+- Fix a heap-use-after-free in four-arguments substr call (RT#130624)
 
 * Fri Feb 17 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-369
 - Fix a crash when compiling a regexp with impossible quantifiers (RT#130561)
