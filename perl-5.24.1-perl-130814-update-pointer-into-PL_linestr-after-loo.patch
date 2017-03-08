@@ -1,0 +1,50 @@
+From 9df34f9c4701104a366e768237ca694411136d2a Mon Sep 17 00:00:00 2001
+From: Hugo van der Sanden <hv@crypt.org>
+Date: Sun, 19 Feb 2017 10:46:09 +0000
+Subject: [PATCH] update pointer into PL_linestr after lookahead
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Ported to: 5.24.1:
+
+commit 90f2cc9a600117a49f8ee3e30cc681f062350c24
+Author: Hugo van der Sanden <hv@crypt.org>
+Date:   Sun Feb 19 10:46:09 2017 +0000
+
+    [perl #130814] update pointer into PL_linestr after lookahead
+
+    Looking ahead for the "Missing $ on loop variable" diagnostic can reallocate
+    PL_linestr, invalidating our pointer. Save the offset so we can update it
+    in that case.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ toke.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/toke.c b/toke.c
+index 630fc59..029d2ea 100644
+--- a/toke.c
++++ b/toke.c
+@@ -7565,6 +7565,7 @@ Perl_yylex(pTHX)
+ 	    s = skipspace(s);
+ 	    if (PL_expect == XSTATE && isIDFIRST_lazy_if(s,UTF)) {
+ 		char *p = s;
++                SSize_t s_off = s - SvPVX(PL_linestr);
+ 
+ 		if ((PL_bufend - p) >= 3
+                     && strnEQ(p, "my", 2) && isSPACE(*(p + 2)))
+@@ -7582,6 +7583,9 @@ Perl_yylex(pTHX)
+ 		}
+ 		if (*p != '$')
+ 		    Perl_croak(aTHX_ "Missing $ on loop variable");
++
++                /* The buffer may have been reallocated, update s */
++                s = SvPVX(PL_linestr) + s_off;
+ 	    }
+ 	    OPERATOR(FOR);
+ 
+-- 
+2.7.4
+
