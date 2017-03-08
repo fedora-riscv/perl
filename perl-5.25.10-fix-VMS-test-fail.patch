@@ -1,0 +1,44 @@
+From bce4a2abeb8652d19e97d3bf07dd2580a3cc2e6c Mon Sep 17 00:00:00 2001
+From: Hugo van der Sanden <hv@crypt.org>
+Date: Sat, 25 Feb 2017 10:42:17 +0000
+Subject: [PATCH] fix VMS test fail
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+d7186add added a runperl() test that breaks command line length limits for
+VMS. Switch to fresh_perl() instead, so the prog is put in a file for us.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ t/comp/parser_run.t | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/t/comp/parser_run.t b/t/comp/parser_run.t
+index 2543f49..e74644d 100644
+--- a/t/comp/parser_run.t
++++ b/t/comp/parser_run.t
+@@ -14,14 +14,14 @@ plan(1);
+ 
+ # [perl #130814] can reallocate lineptr while looking ahead for
+ # "Missing $ on loop variable" diagnostic.
+-my $result = runperl(
+-    prog => " foreach m0\n\$" . ("0" x 0x2000),
+-    stderr => 1,
++my $result = fresh_perl(
++    " foreach m0\n\$" . ("0" x 0x2000),
++    { stderr => 1 },
+ );
+-is($result, <<EXPECT);
+-syntax error at -e line 3, near "foreach m0
++is($result . "\n", <<EXPECT);
++syntax error at - line 3, near "foreach m0
+ "
+-Identifier too long at -e line 3.
++Identifier too long at - line 3.
+ EXPECT
+ 
+ __END__
+-- 
+2.7.4
+

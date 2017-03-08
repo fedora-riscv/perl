@@ -1,0 +1,55 @@
+From d7186addd1b477f6bdcef5e9d24f2125691a9082 Mon Sep 17 00:00:00 2001
+From: Hugo van der Sanden <hv@crypt.org>
+Date: Sun, 19 Feb 2017 11:15:38 +0000
+Subject: [PATCH] [perl #130814] Add testcase, and new testfile
+ t/comp/parser_run.t
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Sometimes it's useful to have test.pl around, but it seems inappropriate
+to pollute the existing t/comp/parser.t with that.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ t/comp/parser_run.t | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 t/comp/parser_run.t
+
+diff --git a/t/comp/parser_run.t b/t/comp/parser_run.t
+new file mode 100644
+index 0000000..2543f49
+--- /dev/null
++++ b/t/comp/parser_run.t
+@@ -0,0 +1,28 @@
++#!./perl
++
++# Parser tests that want test.pl, eg to use runperl() for tests to show
++# reads through invalid pointers.
++# Note that this should still be runnable under miniperl.
++
++BEGIN {
++    @INC = qw(. ../lib );
++    chdir 't' if -d 't';
++}
++
++require './test.pl';
++plan(1);
++
++# [perl #130814] can reallocate lineptr while looking ahead for
++# "Missing $ on loop variable" diagnostic.
++my $result = runperl(
++    prog => " foreach m0\n\$" . ("0" x 0x2000),
++    stderr => 1,
++);
++is($result, <<EXPECT);
++syntax error at -e line 3, near "foreach m0
++"
++Identifier too long at -e line 3.
++EXPECT
++
++__END__
++# ex: set ts=8 sts=4 sw=4 et:
+-- 
+2.7.4
+
