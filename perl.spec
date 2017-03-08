@@ -211,6 +211,10 @@ Patch70:        perl-5.24.1-perl-130815-fix-ck_return-null-pointer-deref-on-malf
 # in upstream after 5.25.9
 Patch71:        perl-5.22.3-perl-129340-copy-the-source-when-inside-the-dest-in-.patch
 
+# Fix a memory leak leak in Perl_reg_named_buff_fetch(), RT#130822,
+# in upstream after 5.25.10
+Patch72:        perl-5.22.3-perl-130822-fix-an-AV-leak-in-Perl_reg_named_buff_fe.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2524,6 +2528,7 @@ Perl extension for Version Objects
 %patch69 -p1
 %patch70 -p1
 %patch71 -p1
+%patch72 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2580,6 +2585,7 @@ perl -x patchlevel.h \
     'Fedora Patch68: Fix a buffer overflow when studying some regexps repeatedly (RT#129281, RT#129061)' \
     'Fedora Patch70: Fix a null-pointer dereference on malformed code (RT#130815)' \
     'Fedora Patch71: Fix an use-after-free in substr() that modifies a magic variable (RT#129340)' \
+    'Fedora Patch72: Fix a memory leak leak in Perl_reg_named_buff_fetch() (RT#130822)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4835,6 +4841,7 @@ popd
 * Wed Mar 08 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-370
 - Fix a null-pointer dereference on malformed code (RT#130815)
 - Fix an use-after-free in substr() that modifies a magic variable (RT#129340)
+- Fix a memory leak leak in Perl_reg_named_buff_fetch() (RT#130822)
 
 * Fri Feb 17 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-369
 - Fix a crash when compiling a regexp with impossible quantifiers (RT#130561)
