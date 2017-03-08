@@ -215,6 +215,16 @@ Patch71:        perl-5.22.3-perl-129340-copy-the-source-when-inside-the-dest-in-
 # in upstream after 5.25.10
 Patch72:        perl-5.22.3-perl-130822-fix-an-AV-leak-in-Perl_reg_named_buff_fe.patch
 
+# Fix an invalid memory read when parsing a loop variable, RT#130814,
+# in upstream after 5.25.10
+Patch73:        perl-5.25.10-perl-130814-Add-testcase-and-new-testfile-t-comp-par.patch
+# in upstream after 5.25.10
+Patch74:        perl-5.22.3-perl-130814-update-pointer-into-PL_linestr-after-loo.patch
+# in upstream after 5.25.2
+Patch75:        perl-5.25.2-t-test.pl-Add-fresh_perl-function.patch
+# in upstream after 5.25.10
+Patch76:        perl-5.25.10-fix-VMS-test-fail.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2529,6 +2539,10 @@ Perl extension for Version Objects
 %patch70 -p1
 %patch71 -p1
 %patch72 -p1
+%patch73 -p1
+%patch74 -p1
+%patch75 -p1
+%patch76 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2586,6 +2600,7 @@ perl -x patchlevel.h \
     'Fedora Patch70: Fix a null-pointer dereference on malformed code (RT#130815)' \
     'Fedora Patch71: Fix an use-after-free in substr() that modifies a magic variable (RT#129340)' \
     'Fedora Patch72: Fix a memory leak leak in Perl_reg_named_buff_fetch() (RT#130822)' \
+    'Fedora Patch73: Fix an invalid memory read when parsing a loop variable (RT#130814)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4842,6 +4857,7 @@ popd
 - Fix a null-pointer dereference on malformed code (RT#130815)
 - Fix an use-after-free in substr() that modifies a magic variable (RT#129340)
 - Fix a memory leak leak in Perl_reg_named_buff_fetch() (RT#130822)
+- Fix an invalid memory read when parsing a loop variable (RT#130814)
 
 * Fri Feb 17 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-369
 - Fix a crash when compiling a regexp with impossible quantifiers (RT#130561)
