@@ -207,6 +207,10 @@ Patch69:        perl-5.25.9-perl-129061-CURLYX-nodes-can-be-studied-more-than-on
 # in upstream after 5.25.9
 Patch70:        perl-5.24.1-perl-130815-fix-ck_return-null-pointer-deref-on-malf.patch
 
+# Fix an use-after-free in substr() that modifies a magic variable, RT#129340,
+# in upstream after 5.25.9
+Patch71:        perl-5.22.3-perl-129340-copy-the-source-when-inside-the-dest-in-.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2519,6 +2523,7 @@ Perl extension for Version Objects
 %patch68 -p1
 %patch69 -p1
 %patch70 -p1
+%patch71 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2574,6 +2579,7 @@ perl -x patchlevel.h \
     'Fedora Patch67: Fix a buffer overrun with format and "use bytes" (RT#130703)' \
     'Fedora Patch68: Fix a buffer overflow when studying some regexps repeatedly (RT#129281, RT#129061)' \
     'Fedora Patch70: Fix a null-pointer dereference on malformed code (RT#130815)' \
+    'Fedora Patch71: Fix an use-after-free in substr() that modifies a magic variable (RT#129340)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4828,6 +4834,7 @@ popd
 %changelog
 * Wed Mar 08 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-370
 - Fix a null-pointer dereference on malformed code (RT#130815)
+- Fix an use-after-free in substr() that modifies a magic variable (RT#129340)
 
 * Fri Feb 17 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-369
 - Fix a crash when compiling a regexp with impossible quantifiers (RT#130561)
