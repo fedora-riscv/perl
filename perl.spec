@@ -309,6 +309,10 @@ Patch87:        perl-5.24.1-perl-130815-fix-ck_return-null-pointer-deref-on-malf
 # in upstream after 5.25.9
 Patch88:        perl-5.24.1-perl-129340-copy-the-source-when-inside-the-dest-in-.patch
 
+# Fix a memory leak leak in Perl_reg_named_buff_fetch(), RT#130822,
+# in upstream after 5.25.10
+Patch89:        perl-5.24.1-perl-130822-fix-an-AV-leak-in-Perl_reg_named_buff_fe.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3023,6 +3027,7 @@ popd
 %patch86 -p1
 %patch87 -p1
 %patch88 -p1
+%patch89 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3096,6 +3101,7 @@ perl -x patchlevel.h \
     'Fedora Patch86: Fix a memory leak in list assignment from or to magic values, (RT#130766)' \
     'Fedora Patch87: Fix a null-pointer dereference on malformed code (RT#130815)' \
     'Fedora Patch88: Fix an use-after-free in substr() that modifies a magic variable (RT#129340)' \
+    'Fedora Patch89: Fix a memory leak leak in Perl_reg_named_buff_fetch() (RT#130822)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5375,6 +5381,7 @@ popd
 * Wed Mar 08 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-390
 - Fix a null-pointer dereference on malformed code (RT#130815)
 - Fix an use-after-free in substr() that modifies a magic variable (RT#129340)
+- Fix a memory leak leak in Perl_reg_named_buff_fetch() (RT#130822)
 
 * Fri Feb 17 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-389
 - Adapt Compress::Raw::Zlib to zlib-1.2.11 (bug #1420326)
