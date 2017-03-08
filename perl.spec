@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        369%{?dist}
+Release:        370%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -202,6 +202,10 @@ Patch67:        perl-5.24.1-buffer-overrun-with-format-and-use-bytes.patch
 # RT#129281, RT#129061, un upstream after 5.25.9
 Patch68:        perl-5.22.3-perl-129281-test-for-buffer-overflow-issue.patch
 Patch69:        perl-5.25.9-perl-129061-CURLYX-nodes-can-be-studied-more-than-on.patch
+
+# Fix a null-pointer dereference on malformed code, RT#130815,
+# in upstream after 5.25.9
+Patch70:        perl-5.24.1-perl-130815-fix-ck_return-null-pointer-deref-on-malf.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2514,6 +2518,7 @@ Perl extension for Version Objects
 %patch67 -p1
 %patch68 -p1
 %patch69 -p1
+%patch70 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2568,6 +2573,7 @@ perl -x patchlevel.h \
     'Fedora Patch64: Fix a crash when compiling a regexp with impossible quantifiers (RT#130561)' \
     'Fedora Patch67: Fix a buffer overrun with format and "use bytes" (RT#130703)' \
     'Fedora Patch68: Fix a buffer overflow when studying some regexps repeatedly (RT#129281, RT#129061)' \
+    'Fedora Patch70: Fix a null-pointer dereference on malformed code (RT#130815)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4820,6 +4826,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Mar 08 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-370
+- Fix a null-pointer dereference on malformed code (RT#130815)
+
 * Fri Feb 17 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-369
 - Fix a crash when compiling a regexp with impossible quantifiers (RT#130561)
 - Fix a buffer overrun with format and "use bytes" (RT#130703)
