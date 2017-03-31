@@ -20,15 +20,24 @@
 # same as we provide in /usr/lib/rpm/macros.d/macros.perl
 %global perl5_testdir   %{_libexecdir}/perl5-tests
 
+# Optional features
 # We can bootstrap without gdbm
 %bcond_without gdbm
+# Support for groff, bug #135101
+%bcond_without perl_enables_groff
+# Run syslog tests
+%bcond_with perl_enables_syslog_test
+# SystemTap support
+%bcond_without perl_enables_systemtap
+# <> operator uses File::Glob nowadays. CSH is not needed.
+%bcond_with perl_enables_tcsh
 # We can skip %%check phase
 %bcond_without test
 
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        390%{?dist}
+Release:        391%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -346,8 +355,10 @@ BuildRequires:  gdbm-devel
 %endif
 # glibc-common for iconv
 BuildRequires:  glibc-common
+%if %{with perl_enables_groff}
 # Build-require groff tools for populating %%Config correctly, bug #135101
 BuildRequires:  groff-base
+%endif
 BuildRequires:  libdb-devel
 BuildRequires:  make
 %if !%{defined perl_bootstrap}
@@ -355,15 +366,21 @@ BuildRequires:  perl
 BuildRequires:  perl-generators
 %endif
 BuildRequires:  sed
+%if %{with perl_enables_systemtap}
 BuildRequires:  systemtap-sdt-devel
+%endif
 BuildRequires:  tar
+%if %{with perl_enables_tcsh}
 BuildRequires:  tcsh
+%endif
 BuildRequires:  zlib-devel
 
 # For tests
 %if %{with test}
 BuildRequires:  procps
+%if %{with perl_enables_syslog_test}
 BuildRequires:  rsyslog
+%endif
 %endif
 
 # The long line of Perl provides.
@@ -471,7 +488,9 @@ Requires:       libdb-devel
 Requires:       gdbm-devel
 %endif
 Requires:       glibc-devel
+%if %{with perl_enables_systemtap}
 Requires:       systemtap-sdt-devel
+%endif
 Requires:       perl(ExtUtils::ParseXS)
 Requires:       %perl_compat
 # Match library and header files when downgrading releases
@@ -2425,8 +2444,10 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        3.25
+%if %{with perl_enables_groff}
 # Pod::Perldoc::ToMan executes roff
 Requires:       groff-base
+%endif
 Requires:       %perl_compat
 Requires:       perl(File::Temp) >= 0.22
 Requires:       perl(HTTP::Tiny)
@@ -3211,6 +3232,10 @@ echo "RPM Build arch: %{_arch}"
         -Dcc='%{__cc}' \
         -Dcf_by='Red Hat, Inc.' \
         -Dprefix=%{_prefix} \
+%if %{without perl_enables_groff}
+        -Dman1dir="%{_mandir}/man1" \
+        -Dman3dir="%{_mandir}/man3" \
+%endif
         -Dvendorprefix=%{_prefix} \
         -Dsiteprefix=%{_prefix}/local \
         -Dsitelib="%{_prefix}/local/share/perl5" \
@@ -3229,7 +3254,11 @@ echo "RPM Build arch: %{_arch}"
         -Duseshrplib \
         -Dusethreads \
         -Duseithreads \
+%if %{with perl_enables_systemtap}
         -Dusedtrace='/usr/bin/dtrace' \
+%else
+        -Uusedtrace \
+%endif
         -Duselargefiles \
         -Dd_semctl_semun \
         -Di_db \
@@ -3362,6 +3391,7 @@ for dir in `find ext/ -type d -name t -maxdepth 2` ; do
     tar -cf - $dir | ( cd %{buildroot}%{perl5_testdir}/perl-tests/t && tar -xf - )
 done
 
+%if %{with perl_enables_systemtap}
 # Systemtap tapset install
 mkdir -p %{buildroot}%{tapsetdir}
 %ifarch %{multilib_64_archs}
@@ -3374,6 +3404,7 @@ sed \
   -e "s|LIBRARY_PATH|%{_libdir}/%{soname}|" \
   %{SOURCE4} \
   > %{buildroot}%{tapsetdir}/%{libperl_stp}
+%endif
 
 # TODO: Canonicalize test files (rewrite intrerpreter path, fix permissions)
 # XXX: We cannot rewrite ./perl before %%check phase. Otherwise the test
@@ -3445,8 +3476,10 @@ popd
 %exclude %{archlib}/CORE/*.h
 %exclude %{_libdir}/libperl.so
 %exclude %{_mandir}/man1/perlxs*
+%if %{with perl_enables_systemtap}
 %exclude %dir %{_datadir}/systemtap
 %exclude %dir %{_datadir}/systemtap/tapset
+%endif
 
 # utils
 %exclude %{_bindir}/c2ph
@@ -4325,10 +4358,12 @@ popd
 %{archlib}/CORE/*.h
 %{_libdir}/libperl.so
 %{_mandir}/man1/perlxs*
+%if %{with perl_enables_systemtap}
 %dir %{_datadir}/systemtap
 %dir %{_datadir}/systemtap/tapset
 %{tapsetdir}/%{libperl_stp}
 %doc perl-example.stp
+%endif
 
 %files macros
 %{_rpmconfigdir}/macros.d/macros.perl
@@ -5399,6 +5434,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Mar 31 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-391
+- Introduce build-conditions for groff, systemtap, syslog tests, and tcsh
+
 * Wed Mar 08 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-390
 - Fix a null-pointer dereference on malformed code (RT#130815)
 - Fix an use-after-free in substr() that modifies a magic variable (RT#129340)
