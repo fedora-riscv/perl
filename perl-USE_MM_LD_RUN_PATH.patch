@@ -20,10 +20,10 @@ diff -up perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker.pm.usem perl
      PERM_DIR PERM_RW PERM_RWX MAGICXS
      PL_FILES PM PM_FILTER PMLIBDIRS PMLIBPARENTDIRS POLLUTE
      PREREQ_FATAL PREREQ_PM PREREQ_PRINT PRINT_PREREQ
--    SIGN SKIP TEST_REQUIRES TYPEMAPS UNINST VERSION VERSION_FROM XS XSOPT XSPROTOARG
-+    SIGN SKIP TEST_REQUIRES TYPEMAPS UNINST USE_MM_LD_RUN_PATH VERSION VERSION_FROM XS XSOPT XSPROTOARG
-     XS_VERSION clean depend dist dynamic_lib linkext macro realclean
-     tool_autosplit
+-    SIGN SKIP TEST_REQUIRES TYPEMAPS UNINST VERSION VERSION_FROM XS
++    SIGN SKIP TEST_REQUIRES TYPEMAPS UNINST USE_MM_LD_RUN_PATH VERSION VERSION_FROM XS
+     XSBUILD XSMULTI XSOPT XSPROTOARG XS_VERSION
+     clean depend dist dynamic_lib linkext macro realclean tool_autosplit
  
 @@ -422,7 +422,27 @@ sub new {
      # PRINT_PREREQ is RedHatism.
@@ -104,6 +104,6 @@ diff -up perl-5.14.0/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Unix.pm.usem perl-5
      my $ld_run_path_shell = "";
 -    if ($self->{LD_RUN_PATH} ne "") {
 +    if (($self->{LD_RUN_PATH} ne "") && ($self->{USE_MM_LD_RUN_PATH})) {
- 	$ld_run_path_shell = 'LD_RUN_PATH="$(LD_RUN_PATH)" ';
+         $ld_run_path_shell = 'LD_RUN_PATH="$(LD_RUN_PATH)" ';
      }
  

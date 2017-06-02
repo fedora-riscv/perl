@@ -24,7 +24,7 @@ index 6af238c..d4f0c56 100644
 --- a/MANIFEST
 +++ b/MANIFEST
 @@ -1045,6 +1045,7 @@ cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_OS2.pm			MakeMaker methods for OS/2
- cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM.pm			MakeMaker adaptor class
+ cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_OS2.pm			MakeMaker methods for OS/2
  cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_QNX.pm			MakeMaker methods for QNX
  cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Unix.pm			MakeMaker methods for Unix
 +cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM/Utils.pm		Independed MM methods
