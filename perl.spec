@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        385%{?dist}
+Release:        386%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -320,6 +320,10 @@ Patch91:        perl-5.25.10-fix-VMS-test-fail.patch
 # Fix a heap-use-after-free in four-arguments substr call, RT#130624,
 # in upstream after 5.25.10
 Patch92:        perl-5.24.1-RT-130624-heap-use-after-free-in-4-arg-substr.patch
+
+# Make File::Glob more resistant against degenerative matching, RT#131211,
+# in upstream after 5.27.0
+Patch93:        perl-5.27.0-perl-131211-fixup-File-Glob-degenerate-matching.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -3036,6 +3040,7 @@ Perl extension for Version Objects
 %patch90 -p1
 %patch91 -p1
 %patch92 -p1
+%patch93 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3110,6 +3115,7 @@ perl -x patchlevel.h \
     'Fedora Patch87: Fix a memory leak leak in Perl_reg_named_buff_fetch() (RT#130822)' \
     'Fedora Patch88: Fix an invalid memory read when parsing a loop variable (RT#130814)' \
     'Fedora Patch92: Fix a heap-use-after-free in four-arguments substr call (RT#130624)' \
+    'Fedora Patch93: Make File::Glob more resistant against degenerative matching (RT#131211)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5388,6 +5394,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jun 16 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-386
+- Make File::Glob more resistant against degenerative matching (RT#131211)
+
 * Wed Mar 08 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-385
 - Fix a null-pointer dereference on malformed code (RT#130815)
 - Fix an use-after-free in substr() that modifies a magic variable (RT#129340)
