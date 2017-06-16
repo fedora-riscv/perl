@@ -243,6 +243,10 @@ Patch80:        perl-5.24.1-sprintf-add-memory-wrap-tests.patch
 # in upstream after 5.27.0
 Patch81:        perl-5.24.1-perl-131085-Crash-with-sub-in-stash.patch
 
+# Fix an improper cast of a negative integer to an unsigned 8-bit type,
+# RT#131190, in upstream after 5.27.0
+Patch82:        perl-5.27.0-Fix-131190-UTF8-code-improperly-casting-negative-int.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2566,6 +2570,7 @@ Perl extension for Version Objects
 %patch79 -p1
 %patch80 -p1
 %patch81 -p1
+%patch82 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2628,6 +2633,7 @@ perl -x patchlevel.h \
     'Fedora Patch78: Make File::Glob more resistant against degenerative matching (RT#131211)' \
     'Fedora Patch79: Fix a memory wrap in sv_vcatpvfn_flags() (RT#131260)' \
     'Fedora Patch81: Fix a crash when calling a subroutine from a stash (RT#131085)' \
+    'Fedora Patch82: Fix an improper cast of a negative integer to an unsigned 8-bit type (RT#131190)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4884,6 +4890,7 @@ popd
 - Make File::Glob more resistant against degenerative matching (RT#131211)
 - Fix a memory wrap in sv_vcatpvfn_flags() (RT#131260)
 - Fix a crash when calling a subroutine from a stash (RT#131085)
+- Fix an improper cast of a negative integer to an unsigned 8-bit type (RT#131190)
 
 * Wed Mar 08 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-370
 - Fix a null-pointer dereference on malformed code (RT#130815)
