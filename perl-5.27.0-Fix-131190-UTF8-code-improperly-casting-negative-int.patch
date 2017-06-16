@@ -1,0 +1,33 @@
+From 2c2da8e7f0f6325fab643997a536072633fa0cf8 Mon Sep 17 00:00:00 2001
+From: Yves Orton <demerphq@gmail.com>
+Date: Thu, 1 Jun 2017 14:51:44 +0200
+Subject: [PATCH] Fix #131190 - UTF8 code improperly casting negative integer
+ to U8 in comparison
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This reverts commit b4972372a75776de3c9e6bd234a398d103677316,
+effectively restoring commit ca7eb79a236b41b7722c6800527f95cd76843eed,
+and commit 85fde2b7c3f5631fd982f5db735b84dc9224bec0.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ regexec.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/regexec.c b/regexec.c
+index 82128a7..35b88d7 100644
+--- a/regexec.c
++++ b/regexec.c
+@@ -5593,6 +5593,7 @@ S_regmatch(pTHX_ regmatch_info *reginfo, char *startpos, regnode *prog)
+                 if (scan->flags == EXACTL || scan->flags == EXACTFLU8) {
+                     _CHECK_AND_WARN_PROBLEMATIC_LOCALE;
+                     if (utf8_target
++                        && nextchr >= 0 /* guard against negative EOS value in nextchr */
+                         && UTF8_IS_ABOVE_LATIN1(nextchr)
+                         && scan->flags == EXACTL)
+                     {
+-- 
+2.9.4
+
