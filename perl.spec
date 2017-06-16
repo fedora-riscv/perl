@@ -354,6 +354,11 @@ Patch98:        perl-5.24.1-perl-131085-Crash-with-sub-in-stash.patch
 # RT#131190, in upstream after 5.27.0
 Patch99:        perl-5.27.0-Fix-131190-UTF8-code-improperly-casting-negative-int.patch
 
+# Fix cloning :via handles on thread creation, RT#131221,
+# in upstream after 5.27.0
+Patch100:       perl-5.27.0-perl-131221-improve-duplication-of-via-handles.patch
+Patch101:       perl-5.27.0-perl-131221-sv_dup-sv_dup_inc-are-only-available-und.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3091,6 +3096,8 @@ popd
 %patch97 -p1
 %patch98 -p1
 %patch99 -p1
+%patch100 -p1
+%patch101 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3171,6 +3178,7 @@ perl -x patchlevel.h \
     'Fedora Patch96: Fix a memory wrap in sv_vcatpvfn_flags() (RT#131260)' \
     'Fedora Patch98: Fix a crash when calling a subroutine from a stash (RT#131085)' \
     'Fedora Patch99: Fix an improper cast of a negative integer to an unsigned 8-bit type (RT#131190)' \
+    'Fedora Patch100: Fix cloning :via handles on thread creation (RT#131221)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5466,6 +5474,7 @@ popd
 - Fix a memory wrap in sv_vcatpvfn_flags() (RT#131260)
 - Fix a crash when calling a subroutine from a stash (RT#131085)
 - Fix an improper cast of a negative integer to an unsigned 8-bit type (RT#131190)
+- Fix cloning :via handles on thread creation (RT#131221)
 
 * Fri Mar 31 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-391
 - Introduce build-conditions for groff, systemtap, syslog tests, and tcsh
