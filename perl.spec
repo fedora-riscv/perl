@@ -141,6 +141,10 @@ Patch30:        perl-5.22.1-Replace-EU-MM-dependnecy-with-EU-MM-Utils-in-IPC-Cmd
 # in upstream after 5.27.0
 Patch31:        perl-5.27.0-perl-131211-fixup-File-Glob-degenerate-matching.patch
 
+# Fix a crash when calling a subroutine from a stash, RT#131085,
+# in upstream after 5.27.0
+Patch32:        perl-5.27.0-perl-131085-Crash-with-sub-in-stash.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2790,6 +2794,7 @@ Perl extension for Version Objects
 %patch26 -p1
 %patch30 -p1
 %patch31 -p1
+%patch32 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2811,6 +2816,7 @@ perl -x patchlevel.h \
     'Fedora Patch27: Make PadlistNAMES() lvalue again (CPAN RT#101063)' \
     'Fedora Patch30: Replace EU::MakeMaker dependency with EU::MM::Utils in IPC::Cmd (bug #1129443)' \
     'Fedora Patch31: Make File::Glob more resistant against degenerative matching (RT#131211)' \
+    'Fedora Patch32: Fix a crash when calling a subroutine from a stash (RT#131085)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5095,6 +5101,7 @@ popd
 %changelog
 * Fri Jun 16 2017 Petr Pisar <ppisar@redhat.com> - 4:5.26.0-394
 - Make File::Glob more resistant against degenerative matching (RT#131211)
+- Fix a crash when calling a subroutine from a stash (RT#131085)
 
 * Tue Jun 06 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.0-393
 - Stop providing old perl(MODULE_COMPAT_5.24.*)

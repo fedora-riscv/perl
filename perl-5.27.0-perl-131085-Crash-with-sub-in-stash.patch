@@ -1,0 +1,53 @@
+From 790acddeaa0d2c73524596048b129561225cf100 Mon Sep 17 00:00:00 2001
+From: Father Chrysostomos <sprout@cpan.org>
+Date: Fri, 7 Apr 2017 14:08:02 -0700
+Subject: [PATCH] [perl #131085] Crash with sub-in-stash
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+$ perl -e '$::{"A"} = sub {}; \&{"A"}'
+Segmentation fault (core dumped)
+
+The code that vivifies a typeglob out of a code ref assumed that the
+CV had a name hek, which is always the case when perl itself puts the
+code ref there (via ‘sub A{}’), but is not necessarily the case if
+someone is insinuating other stuff into the stash.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ gv.c      | 2 +-
+ t/op/gv.t | 4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/gv.c b/gv.c
+index d32a9c5..315ec49 100644
+--- a/gv.c
++++ b/gv.c
+@@ -421,7 +421,7 @@ Perl_gv_init_pvn(pTHX_ GV *gv, HV *stash, const char *name, STRLEN len, U32 flag
+ 	/* Not actually a constant.  Just a regular sub.  */
+ 	CV * const cv = (CV *)has_constant;
+ 	GvCV_set(gv,cv);
+-	if (CvSTASH(cv) == stash && (
++	if (CvNAMED(cv) && CvSTASH(cv) == stash && (
+ 	       CvNAME_HEK(cv) == GvNAME_HEK(gv)
+ 	    || (  HEK_LEN(CvNAME_HEK(cv)) == HEK_LEN(GvNAME_HEK(gv))
+ 	       && HEK_FLAGS(CvNAME_HEK(cv)) != HEK_FLAGS(GvNAME_HEK(gv))
+diff --git a/t/op/gv.t b/t/op/gv.t
+index 8d5e7dc..4fe6b00 100644
+--- a/t/op/gv.t
++++ b/t/op/gv.t
+@@ -1187,6 +1187,10 @@ package GV_DOWNGRADE {
+     ::like "$GV_DOWNGRADE::{FOO}", qr/SCALAR/, "gv_downgrade: post";
+ }
+ 
++# [perl #131085] This used to crash; no ok() necessary.
++$::{"A131085"} = sub {}; \&{"A131085"};
++
++
+ __END__
+ Perl
+ Rules
+-- 
+2.9.4
+
