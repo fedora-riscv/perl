@@ -359,6 +359,10 @@ Patch99:        perl-5.27.0-Fix-131190-UTF8-code-improperly-casting-negative-int
 Patch100:       perl-5.27.0-perl-131221-improve-duplication-of-via-handles.patch
 Patch101:       perl-5.27.0-perl-131221-sv_dup-sv_dup_inc-are-only-available-und.patch
 
+# Fix glob UTF-8 flag on a glob reassignment, RT#131263,
+# in upstream after 5.27.0
+Patch102:       perl-5.24.1-perl-131263-clear-the-UTF8-flag-on-a-glob-if-it-isn-.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3098,6 +3102,7 @@ popd
 %patch99 -p1
 %patch100 -p1
 %patch101 -p1
+%patch102 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3179,6 +3184,7 @@ perl -x patchlevel.h \
     'Fedora Patch98: Fix a crash when calling a subroutine from a stash (RT#131085)' \
     'Fedora Patch99: Fix an improper cast of a negative integer to an unsigned 8-bit type (RT#131190)' \
     'Fedora Patch100: Fix cloning :via handles on thread creation (RT#131221)' \
+    'Fedora Patch102: Fix glob UTF-8 flag on a glob reassignment (RT#131263)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5475,6 +5481,7 @@ popd
 - Fix a crash when calling a subroutine from a stash (RT#131085)
 - Fix an improper cast of a negative integer to an unsigned 8-bit type (RT#131190)
 - Fix cloning :via handles on thread creation (RT#131221)
+- Fix glob UTF-8 flag on a glob reassignment (RT#131263)
 
 * Fri Mar 31 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-391
 - Introduce build-conditions for groff, systemtap, syslog tests, and tcsh
