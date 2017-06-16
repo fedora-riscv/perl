@@ -161,6 +161,10 @@ Patch36:        perl-5.26.0-perl-131263-clear-the-UTF8-flag-on-a-glob-if-it-isn-
 # Fix a buffer overflow in my_atof2(), RT#131526, in upstream after 5.27.0
 Patch37:        perl-5.27.0-perl-131526-don-t-go-beyond-the-end-of-the-NUL-in-my.patch
 
+# Fix handling backslashes in PATH environment variable when executing
+# "perl -S", RT#129183, in upstream after 5.27.0
+Patch38:        perl-5.27.0-perl-129183-don-t-treat-as-an-escape-in-PATH-for-S.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2816,6 +2820,7 @@ Perl extension for Version Objects
 %patch35 -p1
 %patch36 -p1
 %patch37 -p1
+%patch38 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2842,6 +2847,7 @@ perl -x patchlevel.h \
     'Fedora Patch34: Fix cloning :via handles on thread creation (RT#131221)' \
     'Fedora Patch36: Fix glob UTF-8 flag on a glob reassignment (RT#131263)' \
     'Fedora Patch37: Fix a buffer overflow in my_atof2() (RT#131526)' \
+    'Fedora Patch38: Fix handling backslashes in PATH environment variable when executing "perl -S" (RT#129183)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5131,6 +5137,8 @@ popd
 - Fix cloning :via handles on thread creation (RT#131221)
 - Fix glob UTF-8 flag on a glob reassignment (RT#131263)
 - Fix a buffer overflow in my_atof2() (RT#131526)
+- Fix handling backslashes in PATH environment variable when executing
+  "perl -S" (RT#129183)
 
 * Tue Jun 06 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.0-393
 - Stop providing old perl(MODULE_COMPAT_5.24.*)
