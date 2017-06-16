@@ -355,6 +355,10 @@ Patch101:       perl-5.27.0-perl-131526-don-t-go-beyond-the-end-of-the-NUL-in-my
 # in upstream after 5.25.4
 Patch102:       perl-5.24.1-Fix-checks-for-tainted-dir-in-ENV-PATH.patch
 
+# Fix handling backslashes in PATH environment variable when executing
+# "perl -S", RT#129183, in upstream after 5.27.0
+Patch103:       perl-5.27.0-perl-129183-don-t-treat-as-an-escape-in-PATH-for-S.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3080,6 +3084,7 @@ Perl extension for Version Objects
 %patch100 -p1
 %patch101 -p1
 %patch102 -p1
+%patch103 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3162,6 +3167,7 @@ perl -x patchlevel.h \
     'Fedora Patch100: Fix glob UTF-8 flag on a glob reassignment (RT#131263)' \
     'Fedora Patch101: Fix a buffer overflow in my_atof2() (RT#131526)' \
     'Fedora Patch102: Fix checks for tainted directory in $ENV{PATH} if a backslash escape presents' \
+    'Fedora Patch103: Fix handling backslashes in PATH environment variable when executing "perl -S" (RT#129183)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5449,6 +5455,8 @@ popd
 - Fix glob UTF-8 flag on a glob reassignment (RT#131263)
 - Fix a buffer overflow in my_atof2() (RT#131526)
 - Fix checks for tainted directory in $ENV{PATH} if a backslash escape presents
+- Fix handling backslashes in PATH environment variable when executing
+  "perl -S" (RT#129183)
 
 * Wed Mar 08 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-385
 - Fix a null-pointer dereference on malformed code (RT#130815)
