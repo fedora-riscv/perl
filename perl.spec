@@ -37,7 +37,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        393%{?dist}
+Release:        394%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -136,6 +136,10 @@ Patch26:        perl-5.18.2-Destroy-GDBM-NDBM-ODBM-SDBM-_File-objects-only-from-
 # Replace ExtUtils::MakeMaker dependency with ExtUtils::MM::Utils.
 # This allows not to require perl-devel. Bug #1129443
 Patch30:        perl-5.22.1-Replace-EU-MM-dependnecy-with-EU-MM-Utils-in-IPC-Cmd.patch
+
+# Make File::Glob more resistant against degenerative matching, RT#131211,
+# in upstream after 5.27.0
+Patch31:        perl-5.27.0-perl-131211-fixup-File-Glob-degenerate-matching.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2785,6 +2789,7 @@ Perl extension for Version Objects
 %patch22 -p1
 %patch26 -p1
 %patch30 -p1
+%patch31 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2805,6 +2810,7 @@ perl -x patchlevel.h \
     'Fedora Patch26: Make *DBM_File desctructors thread-safe (RT#61912)' \
     'Fedora Patch27: Make PadlistNAMES() lvalue again (CPAN RT#101063)' \
     'Fedora Patch30: Replace EU::MakeMaker dependency with EU::MM::Utils in IPC::Cmd (bug #1129443)' \
+    'Fedora Patch31: Make File::Glob more resistant against degenerative matching (RT#131211)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5087,6 +5093,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jun 16 2017 Petr Pisar <ppisar@redhat.com> - 4:5.26.0-394
+- Make File::Glob more resistant against degenerative matching (RT#131211)
+
 * Tue Jun 06 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.0-393
 - Stop providing old perl(MODULE_COMPAT_5.24.*)
 
