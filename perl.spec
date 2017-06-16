@@ -346,6 +346,10 @@ Patch96:        perl-5.25.12-avoid-a-memory-wrap-in-sv_vcatpvfn_flags.patch
 # in upstream after 5.27.0
 Patch97:        perl-5.24.1-sprintf-add-memory-wrap-tests.patch
 
+# Fix a crash when calling a subroutine from a stash, RT#131085,
+# in upstream after 5.27.0
+Patch98:        perl-5.24.1-perl-131085-Crash-with-sub-in-stash.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3081,6 +3085,7 @@ popd
 %patch95 -p1
 %patch96 -p1
 %patch97 -p1
+%patch98 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3159,6 +3164,7 @@ perl -x patchlevel.h \
     'Fedora Patch94: Fix a heap-use-after-free in four-arguments substr call (RT#130624)' \
     'Fedora Patch95: Make File::Glob more resistant against degenerative matching (RT#131211)' \
     'Fedora Patch96: Fix a memory wrap in sv_vcatpvfn_flags() (RT#131260)' \
+    'Fedora Patch98: Fix a crash when calling a subroutine from a stash (RT#131085)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5452,6 +5458,7 @@ popd
 * Fri Jun 16 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-392
 - Make File::Glob more resistant against degenerative matching (RT#131211)
 - Fix a memory wrap in sv_vcatpvfn_flags() (RT#131260)
+- Fix a crash when calling a subroutine from a stash (RT#131085)
 
 * Fri Mar 31 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-391
 - Introduce build-conditions for groff, systemtap, syslog tests, and tcsh
