@@ -293,6 +293,11 @@ BuildRequires:  procps, rsyslog
 # compat macro needed for rebuild
 %global perl_compat perl(:MODULE_COMPAT_5.22.3)
 
+# perl-interpreter denotes a package with the perl executable.
+# Full EVR is for compatibility with systems that swapped perl and perl-core
+# <https://fedoraproject.org/wiki/Changes/perl_Package_to_Install_Core_Modules>.
+Provides: perl-interpreter = %{perl_epoch}:%{perl_version}-%{release}
+
 # File provides
 Provides: perl(bytes_heavy.pl)
 Provides: perl(dumpvar.pl)
@@ -4917,7 +4922,7 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Fri Jun 16 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-371
+* Mon Jun 26 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-371
 - Make File::Glob more resistant against degenerative matching (RT#131211)
 - Fix a memory wrap in sv_vcatpvfn_flags() (RT#131260)
 - Fix a crash when calling a subroutine from a stash (RT#131085)
@@ -4928,6 +4933,8 @@ popd
 - Fix checks for tainted directory in $ENV{PATH} if a backslash escape presents
 - Fix handling backslashes in PATH environment variable when executing
   "perl -S" (RT#129183)
+- Provide perl-interpreter RPM dependency symbol
+  <https://fedoraproject.org/wiki/Changes/perl_Package_to_Install_Core_Modules>
 
 * Wed Mar 08 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-370
 - Fix a null-pointer dereference on malformed code (RT#130815)
