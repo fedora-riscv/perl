@@ -374,6 +374,10 @@ Patch104:       perl-5.24.1-Fix-checks-for-tainted-dir-in-ENV-PATH.patch
 # "perl -S", RT#129183, in upstream after 5.27.0
 Patch105:       perl-5.27.0-perl-129183-don-t-treat-as-an-escape-in-PATH-for-S.patch
 
+# Fix a conditional jump on uninitilized memory in re_intuit_start(),
+# RT#131575, in upstream after 5.27.0
+Patch106:       perl-5.24.1-don-t-call-Perl_fbm_instr-with-negative-length.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3117,6 +3121,7 @@ popd
 %patch103 -p1
 %patch104 -p1
 %patch105 -p1
+%patch106 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3202,6 +3207,7 @@ perl -x patchlevel.h \
     'Fedora Patch103: Fix a buffer overflow in my_atof2() (RT#131526)' \
     'Fedora Patch104: Fix checks for tainted directory in $ENV{PATH} if a backslash escape presents' \
     'Fedora Patch105: Fix handling backslashes in PATH environment variable when executing "perl -S" (RT#129183)' \
+    'Fedora Patch106: Fix a conditional jump on uninitilized memory in re_intuit_start() (RT#131575)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5492,7 +5498,7 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Fri Jun 16 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-392
+* Mon Jun 19 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-392
 - Make File::Glob more resistant against degenerative matching (RT#131211)
 - Fix a memory wrap in sv_vcatpvfn_flags() (RT#131260)
 - Fix a crash when calling a subroutine from a stash (RT#131085)
@@ -5503,6 +5509,7 @@ popd
 - Fix checks for tainted directory in $ENV{PATH} if a backslash escape presents
 - Fix handling backslashes in PATH environment variable when executing
   "perl -S" (RT#129183)
+- Fix a conditional jump on uninitilized memory in re_intuit_start() (RT#131575)
 
 * Fri Mar 31 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-391
 - Introduce build-conditions for groff, systemtap, syslog tests, and tcsh
