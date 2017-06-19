@@ -231,7 +231,13 @@ Patch77:        perl-5.24.1-RT-130624-heap-use-after-free-in-4-arg-substr.patch
 
 # Make File::Glob more resistant against degenerative matching, RT#131211,
 # in upstream after 5.27.0
-Patch78:        perl-5.27.0-perl-131211-fixup-File-Glob-degenerate-matching.patch
+Patch78:        perl-5.24.1-perl-131211-fixup-File-Glob-degenerate-matching.patch
+
+# Fix a memory wrap in sv_vcatpvfn_flags(), RT#131260, in upstream after 5.25.12
+Patch79:        perl-5.25.12-avoid-a-memory-wrap-in-sv_vcatpvfn_flags.patch
+# Tests for avoid-a-memory-wrap-in-sv_vcatpvfn_flags.patch, RT#131260,
+# in upstream after 5.27.0
+Patch80:        perl-5.24.1-sprintf-add-memory-wrap-tests.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2553,6 +2559,8 @@ Perl extension for Version Objects
 %patch76 -p1
 %patch77 -p1
 %patch78 -p1
+%patch79 -p1
+%patch80 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2613,6 +2621,7 @@ perl -x patchlevel.h \
     'Fedora Patch73: Fix an invalid memory read when parsing a loop variable (RT#130814)' \
     'Fedora Patch77: Fix a heap-use-after-free in four-arguments substr call (RT#130624)' \
     'Fedora Patch78: Make File::Glob more resistant against degenerative matching (RT#131211)' \
+    'Fedora Patch79: Fix a memory wrap in sv_vcatpvfn_flags() (RT#131260)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4867,6 +4876,7 @@ popd
 %changelog
 * Fri Jun 16 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-371
 - Make File::Glob more resistant against degenerative matching (RT#131211)
+- Fix a memory wrap in sv_vcatpvfn_flags() (RT#131260)
 
 * Wed Mar 08 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-370
 - Fix a null-pointer dereference on malformed code (RT#130815)
