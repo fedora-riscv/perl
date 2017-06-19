@@ -436,6 +436,11 @@ BuildRequires:  rsyslog
 # compat macro needed for rebuild
 %global perl_compat perl(:MODULE_COMPAT_5.24.1)
 
+# perl-interpreter denotes a package with the perl executable.
+# Full EVR is for compatibility with systems that swapped perl and perl-core
+# <https://fedoraproject.org/wiki/Changes/perl_Package_to_Install_Core_Modules>.
+Provides: perl-interpreter = %{perl_epoch}:%{perl_version}-%{release}
+
 # File provides
 Provides: perl(bytes_heavy.pl)
 Provides: perl(dumpvar.pl)
@@ -5519,6 +5524,8 @@ popd
   "perl -S" (RT#129183)
 - Fix a conditional jump on uninitilized memory in re_intuit_start() (RT#131575)
 - Fix spurious "Assuming NOT a POSIX class" warning (RT#131522)
+- Provide perl-interpreter RPM dependency symbol
+  <https://fedoraproject.org/wiki/Changes/perl_Package_to_Install_Core_Modules>
 
 * Fri Mar 31 2017 Petr Pisar <ppisar@redhat.com> - 4:5.24.1-391
 - Introduce build-conditions for groff, systemtap, syslog tests, and tcsh
