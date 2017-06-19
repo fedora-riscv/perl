@@ -1,0 +1,74 @@
+From 08bc282a248b21c92ff45e49490fb95e24358213 Mon Sep 17 00:00:00 2001
+From: David Mitchell <davem@iabyn.com>
+Date: Tue, 9 May 2017 14:29:11 +0100
+Subject: [PATCH] sprintf(): add memory wrap tests
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Ported to 5.24.1:
+
+commit d729f63cc94318c248eab95844cfbed5298a7ecd
+Author: David Mitchell <davem@iabyn.com>
+Date:   Tue May 9 14:29:11 2017 +0100
+
+    sprintf(): add memory wrap tests
+
+    In various places Perl_sv_vcatpvfn_flags() does croak_memory_wrap()
+    (including a couple added by the previous commit to fix RT #131260),
+    but there don't appear to be any tests for them.
+
+    So this commit adds some tests.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ t/op/sprintf2.t | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/t/op/sprintf2.t b/t/op/sprintf2.t
+index 43ed919..ef8a743 100644
+--- a/t/op/sprintf2.t
++++ b/t/op/sprintf2.t
+@@ -262,7 +262,7 @@ if ($Config{nvsize} == 8 &&
+     print "# no hexfloat tests\n";
+ }
+ 
+-plan tests => 1408 + ($Q ? 0 : 12) + @hexfloat + 12;
++plan tests => 1408 + ($Q ? 0 : 12) + @hexfloat + 16;
+ 
+ use strict;
+ use Config;
+@@ -749,3 +749,30 @@ SKIP: {
+            "non-canonical form");
+     }
+ }
++
++# check all calls to croak_memory_wrap()
++# RT #131260
++
++{
++    my $s = 8 * $Config{sizesize};
++    my $i = 1;
++    my $max;
++    while ($s--) { $max |= $i; $i <<= 1; }
++    my $max40 = $max - 40; # see the magic fudge factor in sv_vcatpvfn_flags()
++
++    my @tests = (
++                  # format, arg
++                  ["%.${max}a",        1.1 ],
++                  ["%.${max40}a",      1.1 ],
++                  ["%.${max}i",          1 ],
++                  ["%.${max}i",         -1 ],
++    );
++
++    for my $test (@tests) {
++        my ($fmt, $arg) = @$test;
++        eval { my $s = sprintf $fmt, $arg; };
++        like("$@", qr/panic: memory wrap/, qq{memory wrap: "$fmt", "$arg"});
++    }
++}
++
++
+-- 
+2.9.4
+

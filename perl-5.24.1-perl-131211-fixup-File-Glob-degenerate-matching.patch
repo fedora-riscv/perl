@@ -1,22 +1,30 @@
-From 0db967b2e6a4093a6a5f649190159767e5d005e0 Mon Sep 17 00:00:00 2001
+From 30cba075ecbb662b392b2c6e896dec287ea49aa8 Mon Sep 17 00:00:00 2001
 From: Yves Orton <demerphq@gmail.com>
 Date: Tue, 25 Apr 2017 15:17:06 +0200
-Subject: [PATCH] [perl #131211] fixup File::Glob degenerate matching
+Subject: [PATCH] fixup File::Glob degenerate matching
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The old code would go quadratic with recursion and backtracking
-when doing patterns like "a*a*a*a*a*a*a*x" on a file like
-"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".
+Ported to 5.24.1:
 
-This patch changes the code to not recurse, and to not backtrack,
-as per this article from Russ Cox: https://research.swtch.com/glob
+commit 0db967b2e6a4093a6a5f649190159767e5d005e0
+Author: Yves Orton <demerphq@gmail.com>
+Date:   Tue Apr 25 15:17:06 2017 +0200
 
-It also adds a micro-optimisation for M_ONE and M_SET under the new code.
+    [perl #131211] fixup File::Glob degenerate matching
 
-Thanks to Avar and Russ Cox for helping with this patch, along with
-Jilles Tjoelker and the rest of the FreeBSD community.
+    The old code would go quadratic with recursion and backtracking
+    when doing patterns like "a*a*a*a*a*a*a*x" on a file like
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".
+
+    This patch changes the code to not recurse, and to not backtrack,
+    as per this article from Russ Cox: https://research.swtch.com/glob
+
+    It also adds a micro-optimisation for M_ONE and M_SET under the new code.
+
+    Thanks to Avar and Russ Cox for helping with this patch, along with
+    Jilles Tjoelker and the rest of the FreeBSD community.
 
 Signed-off-by: Petr Písař <ppisar@redhat.com>
 ---
@@ -27,17 +35,17 @@ Signed-off-by: Petr Písař <ppisar@redhat.com>
  create mode 100644 ext/File-Glob/t/rt131211.t
 
 diff --git a/MANIFEST b/MANIFEST
-index b7b6e74..af0da6c 100644
+index fe045a7..be2a44f 100644
 --- a/MANIFEST
 +++ b/MANIFEST
-@@ -3948,6 +3948,7 @@ ext/File-Glob/t/basic.t		See if File::Glob works
- ext/File-Glob/t/case.t		See if File::Glob works
+@@ -3678,6 +3678,7 @@ ext/File-Glob/t/case.t		See if File::Glob works
  ext/File-Glob/t/global.t	See if File::Glob works
+ ext/File-Glob/TODO		File::Glob extension todo list
  ext/File-Glob/t/rt114984.t	See if File::Glob works
 +ext/File-Glob/t/rt131211.t	See if File::Glob works
  ext/File-Glob/t/taint.t		See if File::Glob works
  ext/File-Glob/t/threads.t	See if File::Glob + threads works
- ext/File-Glob/TODO		File::Glob extension todo list
+ ext/GDBM_File/GDBM_File.pm	GDBM extension Perl module
 diff --git a/ext/File-Glob/bsd_glob.c b/ext/File-Glob/bsd_glob.c
 index 821ef20..e96fb73 100644
 --- a/ext/File-Glob/bsd_glob.c
