@@ -35,11 +35,6 @@
 %bcond_without test
 
 Name:           perl
-Version:        %{perl_version}
-# release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        394%{?dist}
-Epoch:          %{perl_epoch}
-Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
 # These are all found licenses. They are distributed among various
 # subpackages.
@@ -77,7 +72,16 @@ Group:          Development/Languages
 # cpan/Compress-Raw-Zlib/zlib-src:      zlib
 ## perl sub-package notice
 # perluniprops.pod is generated from lib/unicore sources:   UCD
-License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and BSD and Public Domain and UCD
+#
+# This sub-subpackage doesn't contain any copyrightable material.
+# Nevertheless, it needs a License tag, so we'll use the generic
+# "perl" license.
+License:        GPL+ or Artistic
+Epoch:          %{perl_epoch}
+Version:        %{perl_version}
+# release number must be even higher, because dual-lived modules will be broken otherwise
+Release:        395%{?dist}
+Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
 Source3:        macros.perl
@@ -221,46 +225,136 @@ BuildRequires:  rsyslog
 %endif
 %endif
 
-# The long line of Perl provides.
-
 
 # compat macro needed for rebuild
 %global perl_compat perl(:MODULE_COMPAT_5.26.0)
 
-# perl-interpreter denotes a package with the perl executable.
-# Full EVR is for compatibility with systems that swapped perl and perl-core
-# <https://fedoraproject.org/wiki/Changes/perl_Package_to_Install_Core_Modules>.
-Provides: perl-interpreter = %{perl_epoch}:%{perl_version}-%{release}
-
-# File provides
-Provides: perl(bytes_heavy.pl)
-Provides: perl(dumpvar.pl)
-Provides: perl(perl5db.pl)
-
-# suidperl isn't created by upstream since 5.12.0
-Obsoletes: perl-suidperl <= 4:5.12.2
-
-Requires: perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
-# Require this till perl sub-package requires any modules
-Requires: %perl_compat
+Requires:       %perl_compat
+Requires:       perl-interpreter%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl-devel%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl-macros
+Requires:       perl-utils
 %if %{defined perl_bootstrap}
 %gendep_perl
 %endif
 
+Requires:       perl-Archive-Tar, perl-Attribute-Handlers, perl-autodie,
+Requires:       perl-B-Debug, perl-bignum
+Requires:       perl-Compress-Raw-Bzip2,
+Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-Config-Perl-V,
+Requires:       perl-constant,
+Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
+Requires:       perl-CPAN-Meta-YAML, perl-Encode, perl-encoding
+Requires:       perl-Data-Dumper, perl-DB_File,
+Requires:       perl-Devel-Peek, perl-Devel-PPPort, perl-Devel-SelfStubber,
+Requires:       perl-Digest, perl-Digest-MD5,
+Requires:       perl-Digest-SHA,
+Requires:       perl-Env, perl-Errno, perl-Exporter, perl-experimental
+Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Command,
+Requires:       perl-ExtUtils-Embed,
+Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
+Requires:       perl-ExtUtils-Manifest, perl-ExtUtils-Miniperl
+Requires:       perl-ExtUtils-ParseXS, perl-File-Fetch
+Requires:       perl-File-Path, perl-File-Temp, perl-Filter,
+Requires:       perl-Filter-Simple, perl-Getopt-Long
+Requires:       perl-HTTP-Tiny,
+Requires:       perl-IO, perl-IO-Compress, perl-IO-Socket-IP
+Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-IPC-SysV, perl-JSON-PP
+Requires:       perl-libnet, perl-libnetcfg,
+Requires:       perl-Locale-Codes, perl-Locale-Maketext,
+Requires:       perl-Locale-Maketext-Simple
+Requires:       perl-Math-BigInt, perl-Math-BigInt-FastCalc, perl-Math-BigRat,
+Requires:       perl-Math-Complex, perl-Memoize,
+Requires:       perl-MIME-Base64,
+Requires:       perl-Module-CoreList,
+Requires:       perl-Module-CoreList-tools, perl-Module-Load
+Requires:       perl-Module-Load-Conditional, perl-Module-Loaded,
+Requires:       perl-Module-Metadata, perl-Net-Ping,
+Requires:       perl-open, perl-PathTools
+Requires:       perl-Params-Check
+Requires:       perl-perlfaq,
+Requires:       perl-PerlIO-via-QuotedPrint, perl-Perl-OSType
+Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-Html,
+Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
+Requires:       perl-podlators, perl-Pod-Simple, perl-Scalar-List-Utils
+Requires:       perl-SelfLoader, perl-Socket, perl-Storable, perl-Sys-Syslog,
+Requires:       perl-Term-ANSIColor, perl-Term-Cap,
+Requires:       perl-Test, perl-Test-Harness, perl-Test-Simple
+Requires:       perl-Text-Balanced, perl-Text-ParseWords, perl-Text-Tabs+Wrap,
+Requires:       perl-Thread-Queue
+Requires:       perl-Time-HiRes
+Requires:       perl-Time-Local, perl-Time-Piece
+Requires:       perl-Unicode-Collate, perl-Unicode-Normalize,
+Requires:       perl-version, perl-threads, perl-threads-shared, perl-parent
+
+# Full EVR is for compatibility with systems that swapped perl and perl-core
+# <https://fedoraproject.org/wiki/Changes/perl_Package_to_Install_Core_Modules>,
+# bug #1464903.
+Provides:       perl-core = %{perl_version}-%{release}
+Provides:       perl-core%{?_isa} = %{perl_version}-%{release}
+# perl was renamed to perl-interpreter and perl-core renamed to perl
+Obsoletes:      perl-core < 5.26.0-395
+
+
+%description
+Perl is a high-level programming language with roots in C, sed, awk and shell
+scripting. Perl is good at handling processes and files, and is especially
+good at handling text. Perl's hallmarks are practicality and efficiency.
+While it is used to do a lot of different things, Perl's most common
+applications are system administration utilities and web programming.
+
+This is a metapackage with all the Perl bits and core modules that can be
+found in the upstream tarball from perl.org.
+
+If you need only a specific feature, you can install a specific package
+instead. E.g. to handle Perl scripts with %{_bindir}/perl interpreter,
+install perl-interpreter package. See perl-interpreter description for more
+details on the Perl decomposition into packages.
+
+
+%package interpreter
+Summary:        Standalone executable Perl interpreter
+Group:          Development/Languages
+License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and BSD and Public Domain and UCD
+# perl-interpreter denotes a package with the perl executable.
+# Full EVR is for compatibility with systems that swapped perl and perl-core
+# <https://fedoraproject.org/wiki/Changes/perl_Package_to_Install_Core_Modules>,
+# bug #1464903.
+Version:        %{perl_version}
+Epoch:          %{perl_epoch}
+
+Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
+# Require this till perl-interpreter sub-package provides any modules
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_interpreter
+%endif
+
 # We need this to break the dependency loop, and ensure that perl-libs 
-# gets installed before perl.
+# gets installed before perl-interpreter.
 Requires(post): perl-libs
 # Same as perl-libs. We need macros in basic buildroot, where Perl is only
 # because of git.
 Requires(post): perl-macros
 
+# File provides
+Provides:       perl(bytes_heavy.pl)
+Provides:       perl(dumpvar.pl)
+Provides:       perl(perl5db.pl)
 
-%description
-Perl is a high-level programming language with roots in C, sed, awk and shell
-scripting.  Perl is good at handling processes and files, and is especially
-good at handling text.  Perl's hallmarks are practicality and efficiency.
-While it is used to do a lot of different things, Perl's most common
-applications are system administration utilities and web programming.
+# suidperl isn't created by upstream since 5.12.0
+Obsoletes:      perl-suidperl <= 4:5.12.2
+# perl was renamed to perl-interpreter and perl-core renamed to perl
+# <https://fedoraproject.org/wiki/Changes/perl_Package_to_Install_Core_Modules>,
+# bug #1464903.
+Obsoletes:      perl < 4:5.26.0-395
+
+
+%description interpreter
+This is a Perl interpreter as a standalone executable %{_bindir}/perl
+required for handling Perl scripts. It does not provide all the other Perl
+modules or tools.
 
 Install this package if you want to program in Perl or enable your system to
 handle Perl scripts with %{_bindir}/perl interpreter.
@@ -270,7 +364,7 @@ If your script requires some Perl modules, you can install them with
 "perl(Test::More)" to make Test::More Perl module available.
 
 If you need all the Perl modules that come with upstream Perl sources, so
-called core modules, install perl-core package.
+called core modules, install perl package.
 
 If you only need perl run-time as a shared library, i.e. Perl interpreter
 embedded into another application, the only essential package is perl-libs.
@@ -369,7 +463,7 @@ License:        GPL+ or Artistic
 AutoReqProv:    0
 Requires:       %perl_compat
 # FIXME - note this will need to change when doing the core/minimal swizzle
-Requires:       perl-core
+Requires:       perl
 %if %{defined perl_bootstrap}
 %gendep_perl_tests
 %endif
@@ -400,78 +494,6 @@ Conflicts:      perl < 4:5.22.0-351
 Several utilities which come with Perl distribution like h2ph, perlbug,
 perlthanks, pl2pm, and splain. Some utilities are provided by more specific
 packages like perldoc by perl-Pod-Perldoc.
-
-
-%package core
-Summary:        Base perl metapackage
-Group:          Development/Languages
-# This rpm doesn't contain any copyrightable material.
-# Nevertheless, it needs a License tag, so we'll use the generic
-# "perl" license.
-License:        GPL+ or Artistic
-Epoch:          0
-Version:        %{perl_version}
-Requires:       %perl_compat
-Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
-Requires:       perl-devel%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
-Requires:       perl-macros
-Requires:       perl-utils
-%if %{defined perl_bootstrap}
-%gendep_perl_core
-%endif
-
-Requires:       perl-Archive-Tar, perl-Attribute-Handlers, perl-autodie,
-Requires:       perl-B-Debug, perl-bignum
-Requires:       perl-Compress-Raw-Bzip2,
-Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-Config-Perl-V,
-Requires:       perl-constant,
-Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
-Requires:       perl-CPAN-Meta-YAML, perl-Encode, perl-encoding
-Requires:       perl-Data-Dumper, perl-DB_File,
-Requires:       perl-Devel-Peek, perl-Devel-PPPort, perl-Devel-SelfStubber,
-Requires:       perl-Digest, perl-Digest-MD5,
-Requires:       perl-Digest-SHA,
-Requires:       perl-Env, perl-Errno, perl-Exporter, perl-experimental
-Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Command,
-Requires:       perl-ExtUtils-Embed,
-Requires:       perl-ExtUtils-Install, perl-ExtUtils-MakeMaker
-Requires:       perl-ExtUtils-Manifest, perl-ExtUtils-Miniperl
-Requires:       perl-ExtUtils-ParseXS, perl-File-Fetch
-Requires:       perl-File-Path, perl-File-Temp, perl-Filter,
-Requires:       perl-Filter-Simple, perl-Getopt-Long
-Requires:       perl-HTTP-Tiny,
-Requires:       perl-IO, perl-IO-Compress, perl-IO-Socket-IP
-Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-IPC-SysV, perl-JSON-PP
-Requires:       perl-libnet, perl-libnetcfg,
-Requires:       perl-Locale-Codes, perl-Locale-Maketext,
-Requires:       perl-Locale-Maketext-Simple
-Requires:       perl-Math-BigInt, perl-Math-BigInt-FastCalc, perl-Math-BigRat,
-Requires:       perl-Math-Complex, perl-Memoize,
-Requires:       perl-MIME-Base64,
-Requires:       perl-Module-CoreList,
-Requires:       perl-Module-CoreList-tools, perl-Module-Load
-Requires:       perl-Module-Load-Conditional, perl-Module-Loaded,
-Requires:       perl-Module-Metadata, perl-Net-Ping,
-Requires:       perl-open, perl-PathTools
-Requires:       perl-Params-Check
-Requires:       perl-perlfaq,
-Requires:       perl-PerlIO-via-QuotedPrint, perl-Perl-OSType
-Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-Html,
-Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Usage
-Requires:       perl-podlators, perl-Pod-Simple, perl-Scalar-List-Utils
-Requires:       perl-SelfLoader, perl-Socket, perl-Storable, perl-Sys-Syslog,
-Requires:       perl-Term-ANSIColor, perl-Term-Cap,
-Requires:       perl-Test, perl-Test-Harness, perl-Test-Simple
-Requires:       perl-Text-Balanced, perl-Text-ParseWords, perl-Text-Tabs+Wrap,
-Requires:       perl-Thread-Queue
-Requires:       perl-Time-HiRes
-Requires:       perl-Time-Local, perl-Time-Piece
-Requires:       perl-Unicode-Collate, perl-Unicode-Normalize,
-Requires:       perl-version, perl-threads, perl-threads-shared, perl-parent
-
-%description core
-A metapackage which requires all of the perl bits and modules in the upstream
-tarball from perl.org.
 
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -3155,7 +3177,12 @@ popd
 
 %postun libs -p /sbin/ldconfig
 
+# We sub-package modules from perl-interpreter subpackage. Main perl package
+# is a meta package.
 %files
+# Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
+
+%files interpreter
 %{_mandir}/man1/*.1*
 %{_mandir}/man3/*.3*
 %{_bindir}/*
@@ -5144,11 +5171,14 @@ popd
 %{_mandir}/man3/version::Internals.3*
 %endif
 
-%files core
-# Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
-
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jun 28 2017 Petr Pisar <ppisar@redhat.com> - 4:5.26.0-395
+- perl package installs all core modules, interpreter moved to
+  perl-interpreter package, perl-core package is obsolete
+  <https://fedoraproject.org/wiki/Changes/perl_Package_to_Install_Core_Modules>
+  (bug #1464903)
+
 * Mon Jun 19 2017 Petr Pisar <ppisar@redhat.com> - 4:5.26.0-394
 - Make File::Glob more resistant against degenerative matching (RT#131211)
 - Fix a crash when calling a subroutine from a stash (RT#131085)
