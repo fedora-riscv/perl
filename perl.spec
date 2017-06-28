@@ -35,7 +35,6 @@
 %bcond_without test
 
 Name:           perl
-Group:          Development/Languages
 # These are all found licenses. They are distributed among various
 # subpackages.
 # dist/Tie-File/lib/Tie/File.pm:        GPLv2+ or Artistic
@@ -315,7 +314,6 @@ details on the Perl decomposition into packages.
 
 %package interpreter
 Summary:        Standalone executable Perl interpreter
-Group:          Development/Languages
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and BSD and Public Domain and UCD
 # perl-interpreter denotes a package with the perl executable.
 # Full EVR is for compatibility with systems that swapped perl and perl-core
@@ -376,7 +374,6 @@ Perl utils like "splain" or "perlbug" can be found in perl-utils package.
 
 %package libs
 Summary:        The libraries for the perl run-time
-Group:          Development/Languages
 License:        (GPL+ or Artistic) and HSLR and MIT and UCD
 # Compat provides
 Provides:       %perl_compat
@@ -415,7 +412,6 @@ directories).
 
 %package devel
 Summary:        Header #files for use in perl development
-Group:          Development/Languages
 # l1_char_class_tab.h is generated from lib/unicore sources:    UCD
 License:        (GPL+ or Artistic) and UCD
 # Require $Config{libs} providers, bug #905482
@@ -442,7 +438,6 @@ Most perl packages will need to install perl-devel to build.
 
 %package macros
 Summary:        Macros for rpmbuild
-Group:          Development/Languages
 License:        GPL+ or Artistic
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
@@ -457,7 +452,6 @@ by perl. Perl is needed because of git.
 
 %package tests
 Summary:        The Perl test suite
-Group:          Development/Languages
 License:        GPL+ or Artistic
 # right?
 AutoReqProv:    0
@@ -477,7 +471,6 @@ modules).
 
 %package utils
 Summary:        Utilities packaged with the Perl distribution
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        %{perl_version}
@@ -499,7 +492,6 @@ packages like perldoc by perl-Pod-Perldoc.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Archive-Tar
 Summary:        A module for Perl manipulation of .tar files
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.24
@@ -528,7 +520,6 @@ gzipped tar files.
 
 %package Attribute-Handlers
 Summary:        Simpler definition of attribute handlers
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.99
@@ -550,7 +541,6 @@ phases (i.e. in a "BEGIN", "CHECK", "INIT", or "END" block).
 %if %{dual_life} || %{rebuild_from_scratch}
 %package autodie
 Summary:        Replace functions with ones that succeed or die
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.29
@@ -577,7 +567,6 @@ autodie in preference to "Fatal".
 %if %{dual_life} || %{rebuild_from_scratch}
 %package B-Debug
 Summary:        Walk Perl syntax tree, print debug information about op-codes
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.24
@@ -594,7 +583,6 @@ B::Concise and B::Terse for other details.
 
 %package bignum
 Summary:        Transparent big number support for Perl
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.47
@@ -619,7 +607,6 @@ Epoch:          0
 # Real version 1.42
 Version:        1.42
 License:        GPL+ or Artistic
-Group:          Development/Libraries
 Requires:       %perl_compat
 Provides:       perl(Carp::Heavy) = %{version}
 %if %{defined perl_bootstrap}
@@ -643,7 +630,6 @@ but it is a good educated guess.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Compress-Raw-Bzip2
 Summary:        Low-Level Interface to bzip2 compression library
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.074
@@ -658,7 +644,6 @@ It is used by IO::Compress::Bzip2.
 
 %package Compress-Raw-Zlib
 Summary:        Low-Level Interface to the zlib compression library
-Group:          Development/Libraries
 License:        (GPL+ or Artistic) and zlib
 Epoch:          0
 Version:        2.074
@@ -675,7 +660,6 @@ It is used by IO::Compress::Zlib.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Config-Perl-V
 Summary:        Structured data retrieval of perl -V output
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.28
@@ -696,7 +680,6 @@ module that will return you the output of "perl -V" in a structure.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package constant
 Summary:        Perl pragma to declare constants
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.33
@@ -729,7 +712,6 @@ away if the constant is false.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package CPAN
 Summary:        Query, download and build perl modules from CPAN sites
-Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.18
@@ -797,7 +779,6 @@ Summary:        Distribution metadata for a CPAN dist
 Epoch:          0
 Version:        2.150010
 License:        GPL+ or Artistic
-Group:          Development/Libraries
 Requires:       %perl_compat
 Requires:       perl(CPAN::Meta::YAML) >= 0.011
 Requires:       perl(Encode)
@@ -822,7 +803,6 @@ Epoch:          0
 # Real version 2.140
 Version:        2.140
 License:        GPL+ or Artistic
-Group:          Development/Libraries
 Requires:       %perl_compat
 BuildArch:      noarch
 # CPAN-Meta-Requirements used to have six decimal places
@@ -845,7 +825,6 @@ Version:        0.018
 Epoch:          0
 Summary:        Read and write a subset of YAML for CPAN Meta files
 License:        GPL+ or Artistic
-Group:          Development/Libraries
 BuildArch:      noarch
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
@@ -862,7 +841,6 @@ used for any other general YAML parsing or generation task.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Data-Dumper
 Summary:        Stringify perl data structures, suitable for printing and eval
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.167
@@ -883,7 +861,6 @@ structures correctly.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package DB_File
 Summary:        Perl5 access to Berkeley DB version 1.x
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.840
@@ -904,7 +881,6 @@ interface defined here mirrors the Berkeley DB interface closely.
 
 %package Devel-Peek
 Summary:        A data debugging tool for the XS programmer
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.26
@@ -923,7 +899,6 @@ should look.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Devel-PPPort
 Summary:        Perl Pollution Portability header generator
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        3.35
@@ -944,7 +919,6 @@ of old releases, but users can still reap the benefit.
 
 %package Devel-SelfStubber
 Summary:        Generate stubs for a SelfLoading module
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.06
@@ -964,7 +938,6 @@ loaded. They are needed specifically for inherited autoloaded methods.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Digest
 Summary:        Modules that calculate message digests
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          0
@@ -987,7 +960,6 @@ bytes or bits.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Digest-MD5
 Summary:        Perl interface to the MD5 Algorithm
-Group:          Development/Libraries
 License:        (GPL+ or Artistic) and BSD
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          0
@@ -1010,7 +982,6 @@ input a message of arbitrary length and produces as output a 128-bit
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Digest-SHA
 Summary:        Perl extension for SHA-1/224/256/384/512
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
@@ -1033,7 +1004,6 @@ module can handle all types of input, including partial-byte data.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Encode
 Summary:        Character encodings in Perl
-Group:          Development/Libraries
 License:        (GPL+ or Artistic) and Artistic 2.0 and UCD
 Epoch:          4
 Version:        2.88
@@ -1049,7 +1019,6 @@ of the system. Perl strings are sequences of characters.
 
 %package encoding
 Summary:        Write your Perl script in non-ASCII or non-UTF-8
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          4
 Version:        2.19
@@ -1081,7 +1050,6 @@ The easiest and the best alternative is to write your script in UTF-8.
 
 %package Encode-devel
 Summary:        Character encodings in Perl
-Group:          Development/Libraries
 License:        (GPL+ or Artistic) and UCD
 Epoch:          4
 Version:        2.88
@@ -1102,7 +1070,6 @@ your own encoding to perl. No knowledge of XS is necessary.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Env
 Summary:        Perl module that imports environment variables as scalars or arrays
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.04
@@ -1121,7 +1088,6 @@ variables to be treated as scalar or array variables.
 
 %package Errno
 Summary:        System errno constants
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.28
@@ -1143,7 +1109,6 @@ which will export all POSIX defined error numbers.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package experimental
 Summary:        Experimental features made easy
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.016
@@ -1162,7 +1127,6 @@ experimental features.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Exporter
 Summary:        Implements default import method for modules
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        5.72
@@ -1185,7 +1149,6 @@ the common case.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package ExtUtils-CBuilder
 Summary:        Compile and link C code for Perl modules
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
@@ -1210,7 +1173,6 @@ by the Module::Build project, but may be useful for other purposes as well.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package ExtUtils-Command
 Summary:        Perl routines to replace common UNIX commands in Makefiles
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          1
 Version:        7.24
@@ -1230,7 +1192,6 @@ easier to deal with in Makefiles.
 
 %package ExtUtils-Embed
 Summary:        Utilities for embedding Perl in C/C++ applications
-Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.34
@@ -1248,7 +1209,6 @@ Utilities for embedding Perl in C/C++ applications.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package ExtUtils-Install
 Summary:        Install files from here to there
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.04
@@ -1267,7 +1227,6 @@ pages, etc.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package ExtUtils-MakeMaker
 Summary:        Create a module Makefile
-Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          1
 Version:        7.24
@@ -1308,7 +1267,6 @@ Create a module Makefile.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package ExtUtils-Manifest
 Summary:        Utilities to write and check a MANIFEST file
-Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.70
@@ -1325,7 +1283,6 @@ BuildArch:      noarch
 
 %package ExtUtils-Miniperl
 Summary:        Write the C code for perlmain.c
-Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.06
@@ -1348,7 +1305,6 @@ STDOUT.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package ExtUtils-MM-Utils
 Summary:        ExtUtils::MM methods without dependency on ExtUtils::MakeMaker
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          1
 # Real version 7.11
@@ -1370,7 +1326,6 @@ is an overkill for small subroutines.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package ExtUtils-ParseXS
 Summary:        Module and a script for converting Perl XS code into C code
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
@@ -1391,7 +1346,6 @@ necessary to let Perl access those functions.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package File-Fetch
 Summary:        Generic file fetching mechanism
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.52
@@ -1411,7 +1365,6 @@ File::Fetch is a generic file fetching mechanism.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package File-Path
 Summary:        Create or remove directory trees
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.12
@@ -1431,7 +1384,6 @@ depth and to delete an entire directory subtree from the file system.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package File-Temp
 Summary:        Return name and handle of a temporary file safely
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 # Normalized version
@@ -1457,7 +1409,6 @@ can be used to create a temporary directory.
 # FIXME Filter-Simple? version?
 %package Filter
 Summary:        Perl source filters
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          2
 Version:        1.55
@@ -1475,7 +1426,6 @@ sees it.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Filter-Simple
 Summary:        Simplified Perl source filtering
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.93
@@ -1496,7 +1446,6 @@ Filter::Util::Call; one that is sufficient for most common cases.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Getopt-Long
 Summary:        Extended processing of command line options
-Group:          Development/Libraries
 License:        GPLv2+ or Artistic
 Epoch:          1
 Version:        2.49
@@ -1524,7 +1473,6 @@ enabled by default.
 
 %package IO
 Summary:        Perl input/output modules
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.38
@@ -1540,7 +1488,6 @@ This is a collection of Perl input/output modules.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package IO-Compress
 Summary:        IO::Compress wrapper for modules
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.074
@@ -1561,7 +1508,6 @@ purpose is to to be sub-classed by IO::Compress modules.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package IO-Socket-IP
 Summary:        Drop-in replacement for IO::Socket::INET supporting both IPv4 and IPv6
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.38
@@ -1580,7 +1526,6 @@ arguments and methods are provided in a backward-compatible way.
 
 %package IO-Zlib
 Summary:        Perl IO:: style interface to Compress::Zlib
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
@@ -1602,7 +1547,6 @@ of file it is using.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package IPC-Cmd
 Summary:        Finding and running system commands made easy
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          2
@@ -1622,7 +1566,6 @@ independent way, but have them still work.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package IPC-SysV
 Summary:        Object interface to System V IPC
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.07
@@ -1641,7 +1584,6 @@ inter-process calls.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package HTTP-Tiny
 Summary:        A small, simple, correct HTTP/1.1 client
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.070
@@ -1668,7 +1610,6 @@ Summary:        JSON::XS compatible pure-Perl module
 Epoch:          1
 Version:        2.27400
 License:        GPL+ or Artistic
-Group:          Development/Libraries
 BuildArch:      noarch
 Requires:       %perl_compat 
 Requires:       perl(Data::Dumper)
@@ -1691,7 +1632,6 @@ JSON::PP is a pure-Perl module and is compatible with JSON::XS.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package libnet
 Summary:        Perl clients for various network protocols
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        3.10
@@ -1717,7 +1657,6 @@ protocols used in the internet community.
 
 %package libnetcfg
 Summary:        Configure libnet
-Group:          Development/Tools
 License:        GPL+ or Artistic
 Epoch:          %perl_epoch
 Version:        %perl_version
@@ -1737,7 +1676,6 @@ Summary:        Distribution of modules to handle locale codes
 Epoch:          0
 Version:        3.25
 License:        GPL+ or Artistic
-Group:          Development/Libraries
 Requires:       %perl_compat
 Requires:       perl(constant)
 Provides:       perl(Locale::Codes) = %{version}
@@ -1762,7 +1700,6 @@ including languages, countries, currency, etc.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Locale-Maketext
 Summary:        Framework for localization
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.28
@@ -1785,7 +1722,6 @@ producing localized applications.
 
 %package Locale-Maketext-Simple
 Summary:        Simple interface to Locale::Maketext::Lexicon
-Group:          Development/Libraries
 License:        MIT
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
@@ -1803,7 +1739,6 @@ to alleviate the need of creating Language Classes for module authors.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Math-BigInt
 Summary:        Arbitrary-size integer and float mathematics
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          1
 # Real version 1.999806
@@ -1825,7 +1760,6 @@ This provides Perl modules for arbitrary-size integer and float mathematics.
 
 %package Math-BigInt-FastCalc
 Summary:        Math::BigInt::Calc XS implementation
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 # Version normalized to dot format
@@ -1842,7 +1776,6 @@ This package provides support for faster big integer calculations.
 
 %package Math-BigRat
 Summary:        Arbitrary big rational numbers
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 # Real version 0.2611
@@ -1862,7 +1795,6 @@ for arbitrary big rational numbers.
 
 %package Math-Complex
 Summary:        Complex numbers and trigonometric functions
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.59
@@ -1881,7 +1813,6 @@ associated with and/or extended to complex numbers.
 
 %package Memoize
 Summary:        Transparently speed up functions by caching return values
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.03
@@ -1903,7 +1834,6 @@ the value all over again.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package MIME-Base64
 Summary:        Encoding and decoding of Base64 and quoted-printable strings
-Group:          Development/Libraries
 # cpan/MIME-Base64/Base64.xs:   (GPL+ or Artistic) and MIT (Bellcore's part)
 # Other files:                  GPL+ or Artistic
 License:        (GPL+ or Artistic) and MIT
@@ -1924,7 +1854,6 @@ encoder/decoder. These encoding methods are specified in RFC 2045 - MIME
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Module-CoreList
 Summary:        What modules are shipped with versions of perl
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          1
 Version:        5.20170530
@@ -1943,7 +1872,6 @@ are shipped with each version of perl.
 
 %package Module-CoreList-tools
 Summary:        Tool for listing modules shipped with perl
-Group:          Development/Tools
 License:        GPL+ or Artistic
 Epoch:          1
 Version:        5.20170530
@@ -1968,7 +1896,6 @@ modules were shipped with given perl version.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Module-Load
 Summary:        Runtime require of both modules and files
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
@@ -1988,7 +1915,6 @@ either a file or a module.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Module-Load-Conditional
 Summary:        Looking up module information / loading at runtime
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.68
@@ -2006,7 +1932,6 @@ of the modules you have installed on your system during runtime.
 
 %package Module-Loaded
 Summary:        Mark modules as loaded or unloaded
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
@@ -2031,7 +1956,6 @@ Summary:        Gather package and POD information from perl module files
 Epoch:          0
 Version:        1.000033
 License:        GPL+ or Artistic
-Group:          Development/Libraries
 BuildArch:      noarch
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
@@ -2044,7 +1968,6 @@ Gather package and POD information from perl module files
 
 %package Net-Ping
 Summary:        Check a remote host for reachability
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.55
@@ -2062,7 +1985,6 @@ a network.
 
 %package open
 Summary:        Perl pragma to set default PerlIO layers for input and output
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.11
@@ -2083,7 +2005,6 @@ The "open" pragma serves as one of the interfaces to declare default "layers"
 %if %{dual_life} || %{rebuild_from_scratch}
 %package parent
 Summary:        Establish an ISA relationship with base classes at compile time
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
@@ -2111,7 +2032,6 @@ inheritance from those modules at the same time. Mostly similar in effect to:
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Params-Check
 Summary:        Generic input parsing/checking mechanism
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
@@ -2129,7 +2049,6 @@ Params::Check is a generic input parsing/checking mechanism.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package PathTools
 Summary:        PathTools Perl module (Cwd, File::Spec)
-Group:          Development/Libraries
 License:        (GPL+ or Artistic) and BSD
 Epoch:          0
 Version:        3.67
@@ -2146,7 +2065,6 @@ PathTools Perl module (Cwd, File::Spec).
 %if %{dual_life} || %{rebuild_from_scratch}
 %package perlfaq
 Summary:        Frequently asked questions about Perl
-Group:          Development/Libraries
 # Code examples are Public Domain
 License:        (GPL+ or Artistic) and Public Domain
 Epoch:          0
@@ -2166,7 +2084,6 @@ questions about Perl and Perl programming.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package PerlIO-via-QuotedPrint
 Summary:        PerlIO layer for quoted-printable strings
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.08
@@ -2190,7 +2107,6 @@ Summary:        Map Perl operating system names to generic types
 Version:        1.010
 Epoch:          0
 License:        GPL+ or Artistic
-Group:          Development/Libraries
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_Perl_OSType
@@ -2213,7 +2129,6 @@ Summary:        Check POD documents for syntax errors
 Epoch:          4
 Version:        1.73
 License:        GPL+ or Artistic
-Group:          Development/Libraries
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_Pod_Checker
@@ -2228,7 +2143,6 @@ Plain Old Documentation format specifications.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-Escapes
 Summary:        Resolve POD escape sequences
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
@@ -2245,7 +2159,6 @@ This module provides things that are useful in decoding Pod E<...> sequences.
 
 %package Pod-Html
 Summary:        Convert POD files to HTML
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 # Real version 1.2202
@@ -2265,7 +2178,6 @@ of things it knows how to cross-reference.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-Parser
 Summary:        Basic perl modules for handling Plain Old Documentation (POD)
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.63
@@ -2284,7 +2196,6 @@ Perl5 distribution for more information about POD.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-Perldoc
 Summary:        Look up Perl documentation in Pod format
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        3.28
@@ -2320,7 +2231,6 @@ the perl library modules.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-Simple
 Summary:        Framework for parsing POD documentation
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
@@ -2341,7 +2251,6 @@ documentation for Perl and for Perl modules.
 %package Pod-Usage
 Summary:        Print a usage message from embedded pod documentation
 License:        GPL+ or Artistic
-Group:          Development/Libraries
 Epoch:          4
 Version:        1.69
 Requires:       %perl_compat
@@ -2366,7 +2275,6 @@ verbose level is 2, then the entire manual page is printed.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package podlators
 Summary:        Format POD source into various output formats
-Group:          Development/Libraries
 License:        (GPL+ or Artistic) and MIT
 Epoch:          0
 Version:        4.09
@@ -2389,7 +2297,6 @@ with various capabilities.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Scalar-List-Utils
 Summary:        A selection of general-utility scalar and list subroutines
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          3
 # Real version 1.46_02
@@ -2408,7 +2315,6 @@ such that being individual extensions would be wasteful.
 
 %package SelfLoader
 Summary:        Load functions only on demand
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.23
@@ -2428,7 +2334,6 @@ perlsub.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Socket
 Summary:        C socket.h defines and structure manipulators
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          4
 Version:        2.020
@@ -2448,7 +2353,6 @@ includes all of the commonly used pound-defines like AF_INET, SOCK_STREAM, etc.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Storable
 Summary:        Persistence for Perl data structures
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          1
 Version:        2.62
@@ -2473,7 +2377,6 @@ can be conveniently stored to disk and retrieved at a later time.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Sys-Syslog
 Summary:        Perl interface to the UNIX syslog(3) calls
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        0.35
@@ -2492,7 +2395,6 @@ a string priority and a list of printf() arguments just like at syslog(3).
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Term-ANSIColor
 Summary:        Color screen output using ANSI escape sequences
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        4.06
@@ -2514,7 +2416,6 @@ imported to be used.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Term-Cap
 Summary:        Perl termcap interface
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.17
@@ -2535,7 +2436,6 @@ capability (termcap) database.
 
 %package Test
 Summary:        Simple framework for writing test scripts
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.30
@@ -2555,7 +2455,6 @@ such that their output is in the format that Test::Harness expects to see.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Test-Harness
 Summary:        Run Perl standard test scripts with statistics
-Group:          Development/Languages
 License:        GPL+ or Artistic
 Epoch:          1
 Version:        3.38
@@ -2573,7 +2472,6 @@ Use TAP::Parser, Test::Harness package was whole rewritten.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Test-Simple
 Summary:        Basic utilities for writing tests
-Group:          Development/Languages
 License:        (GPL+ or Artistic) and CC0 and Public Domain
 Epoch:          1
 Version:        1.302073
@@ -2591,7 +2489,6 @@ Basic utilities for writing tests.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Text-Balanced
 Summary:        Extract delimited text sequences from strings
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.03
@@ -2610,7 +2507,6 @@ after skipping a specified prefix string.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Text-ParseWords
 Summary:        Parse text into an array of tokens or array of arrays
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        3.30
@@ -2629,7 +2525,6 @@ Parse text into an array of tokens or array of arrays.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Text-Tabs+Wrap
 Summary:        Expand tabs and do simple line wrapping
-Group:          Development/Libraries
 License:        TTWL
 Epoch:          0
 Version:        2013.0523
@@ -2651,7 +2546,6 @@ up long lines, it will not join short lines together.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Thread-Queue
 Summary:        Thread-safe queues
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        3.12
@@ -2671,7 +2565,6 @@ any number of threads.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Time-HiRes
 Summary:        High resolution alarm, sleep, gettimeofday, interval timers
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.9741
@@ -2691,7 +2584,6 @@ high resolution time and timers.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Time-Local
 Summary:        Efficiently compute time from local and GMT time
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 # Real version 1.25
@@ -2714,7 +2606,6 @@ so dates before the system's epoch may not work on all operating systems.
 
 %package Time-Piece
 Summary:        Time objects from localtime and gmtime
-Group:          Development/Libraries
 License:        (GPL+ or Artistic) and BSD
 Epoch:          0
 Version:        1.31
@@ -2732,7 +2623,6 @@ behave as expected.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package threads
 Summary:        Perl interpreter-based threads
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          1
 Version:        2.15
@@ -2757,7 +2647,6 @@ variables, you need to also load threads::shared.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package threads-shared
 Summary:        Perl extension for sharing data structures between threads
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.56
@@ -2778,7 +2667,6 @@ hashes and hash refs.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Unicode-Collate
 Summary:        Unicode Collation Algorithm
-Group:          Development/Libraries
 License:        (GPL+ or Artistic) and Unicode
 Epoch:          0
 Version:        1.19
@@ -2797,7 +2685,6 @@ Collation Algorithm).
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Unicode-Normalize
 Summary:        Unicode Normalization Forms
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        1.25
@@ -2817,7 +2704,6 @@ Unicode normalization forms as defined in Unicode Standard Annex #15.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package version
 Summary:        Perl extension for Version Objects
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          6
