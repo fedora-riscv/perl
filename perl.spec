@@ -200,7 +200,7 @@ BuildRequires:  groff-base
 BuildRequires:  libdb-devel
 BuildRequires:  make
 %if !%{defined perl_bootstrap}
-BuildRequires:  perl
+BuildRequires:  perl-interpreter
 BuildRequires:  perl-generators
 %endif
 BuildRequires:  sed
