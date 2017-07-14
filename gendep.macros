@@ -841,7 +841,6 @@ Provides: perl(subs) = 1.02 \
 Provides: perl(vars) = 1.03 \
 Provides: perl(vmsish) = 1.04 \
 Provides: perl(warnings::register) = 1.04 \
-Provides: perl(x86-64) = 4:5.26.0-392.fc27 \
 %{nil}
 %global gendep_perl_Archive_Tar \
 Requires: perl(:VERSION) >= 5.5.0 \
