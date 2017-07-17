@@ -1,4 +1,4 @@
-%global perl_version    5.22.3
+%global perl_version    5.22.4
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -29,7 +29,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        371%{?dist}
+Release:        372%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -259,10 +259,6 @@ Patch85:        perl-5.24.1-perl-131263-clear-the-UTF8-flag-on-a-glob-if-it-isn-
 # Fix a buffer overflow in my_atof2(), RT#131526, in upstream after 5.27.0
 Patch86:        perl-5.27.0-perl-131526-don-t-go-beyond-the-end-of-the-NUL-in-my.patch
 
-# Fix checks for tainted directory in $ENV{PATH} if a backslash escape presents,
-# in upstream after 5.25.4
-Patch87:        perl-5.22.3-Fix-checks-for-tainted-dir-in-ENV-PATH.patch
-
 # Fix handling backslashes in PATH environment variable when executing
 # "perl -S", RT#129183, in upstream after 5.27.0
 Patch88:        perl-5.27.0-perl-129183-don-t-treat-as-an-escape-in-PATH-for-S.patch
@@ -291,7 +287,7 @@ BuildRequires:  procps, rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.22.3)
+%global perl_compat perl(:MODULE_COMPAT_5.22.4)
 
 # perl-interpreter denotes a package with the perl executable.
 # Full EVR is for compatibility with systems that swapped perl and perl-core
@@ -349,6 +345,7 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 # Compat provides
 Provides:       %perl_compat
+Provides:       perl(:MODULE_COMPAT_5.22.3)
 Provides:       perl(:MODULE_COMPAT_5.22.2)
 Provides:       perl(:MODULE_COMPAT_5.22.1)
 Provides:       perl(:MODULE_COMPAT_5.22.0)
@@ -2600,7 +2597,6 @@ Perl extension for Version Objects
 %patch84 -p1
 %patch85 -p1
 %patch86 -p1
-%patch87 -p1
 %patch88 -p1
 %patch200 -p1
 %patch201 -p1
@@ -2668,7 +2664,6 @@ perl -x patchlevel.h \
     'Fedora Patch83: Fix cloning :via handles on thread creation (RT#131221)' \
     'Fedora Patch85: Fix glob UTF-8 flag on a glob reassignment (RT#131263)' \
     'Fedora Patch86: Fix a buffer overflow in my_atof2() (RT#131526)' \
-    'Fedora Patch87: Fix checks for tainted directory in $ENV{PATH} if a backslash escape presents' \
     'Fedora Patch88: Fix handling backslashes in PATH environment variable when executing "perl -S" (RT#129183)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
@@ -4922,6 +4917,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jul 17 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.22.4-372
+- 5.22.4 bump (see <http://search.cpan.org/dist/perl-5.22.4/pod/perldelta.pod>
+  for release notes)
+
 * Mon Jun 26 2017 Petr Pisar <ppisar@redhat.com> - 4:5.22.3-371
 - Make File::Glob more resistant against degenerative matching (RT#131211)
 - Fix a memory wrap in sv_vcatpvfn_flags() (RT#131260)
