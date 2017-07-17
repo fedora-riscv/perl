@@ -5506,7 +5506,7 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Mon Jul 17 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.1-393
+* Mon Jul 17 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.2-393
 - 5.24.2 bump (see <http://search.cpan.org/dist/perl-5.24.2/pod/perldelta.pod>
   for release notes)
 
