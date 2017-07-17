@@ -65,14 +65,14 @@ index 26a78c7..c039cc4 100644
      require './loc_tools.pl';
  }
  
--plan( tests => 270 );
-+plan( tests => 271 );
+-plan( tests => 271 );
++plan( tests => 272 );
  
  $_ = 'david';
  $a = s/david/rules/r;
-@@ -1102,3 +1102,18 @@ SKIP: {
-     $s =~ s/..\G//g;
-     is($s, "\x{123}", "#RT 126260 gofs");
+@@ -1119,3 +1119,15 @@ SKIP: {
+                    {stderr => 1 },
+                    '[perl #129038 ] s/\xff//l no longer crashes');
  }
 +
 +# [perl #130188] crash on return from substitution in subroutine
