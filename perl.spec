@@ -20,6 +20,10 @@
 # same as we provide in /usr/lib/rpm/macros.d/macros.perl
 %global perl5_testdir   %{_libexecdir}/perl5-tests
 
+# Disable debuginfo-per-subpackage generation for now due to RPM bug
+# https://github.com/rpm-software-management/rpm/issues/278
+%undefine _debuginfo_subpackages
+
 # Optional features
 # We can bootstrap without gdbm
 %bcond_without gdbm
