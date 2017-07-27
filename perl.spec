@@ -83,7 +83,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        395%{?dist}
+Release:        396%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
@@ -5063,6 +5063,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.26.0-396
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
 * Wed Jun 28 2017 Petr Pisar <ppisar@redhat.com> - 4:5.26.0-395
 - perl package installs all core modules, interpreter moved to
   perl-interpreter package, perl-core package is obsolete
