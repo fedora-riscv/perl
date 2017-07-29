@@ -20,10 +20,6 @@
 # same as we provide in /usr/lib/rpm/macros.d/macros.perl
 %global perl5_testdir   %{_libexecdir}/perl5-tests
 
-# Disable debuginfo-per-subpackage generation for now due to RPM bug
-# https://github.com/rpm-software-management/rpm/issues/278
-%undefine _debuginfo_subpackages
-
 # Optional features
 # We can bootstrap without gdbm
 %bcond_without gdbm
@@ -83,7 +79,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        396%{?dist}
+Release:        397%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
@@ -5063,6 +5059,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sat Jul 29 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 4:5.26.0-397
+- Enable separate debuginfo back
+
 * Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.26.0-396
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
 
