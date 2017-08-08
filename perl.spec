@@ -185,6 +185,9 @@ Patch44:        perl-5.27.2-perl-131646-make-the-test-less-fragile.patch
 # Fix File::Glob rt131211.t test random failures, in upstream after 5.27.1
 Patch45:        perl-5.27.1-File-Glob-tweak-rt131211.t-to-be-less-sensitive-on-w.patch
 
+# Fix t/op/hash.t test random failures, in upstream after 5.27.1
+Patch46:        perl-5.26.0-t-op-hash.t-fixup-intermittently-failing-test.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2758,6 +2761,7 @@ Perl extension for Version Objects
 %patch43 -p1
 %patch44 -p1
 %patch45 -p1
+%patch46 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2789,6 +2793,7 @@ perl -x patchlevel.h \
     'Fedora Patch40: Fix spurious "Assuming NOT a POSIX class" warning (RT#131522)' \
     'Fedora Patch42: Fix reporting malformed UTF-8 character (RT#131646)' \
     'Fedora Patch45: Fix File::Glob rt131211.t test random failures' \
+    'Fedora Patch46: Fix t/op/hash.t test random failures' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5075,6 +5080,7 @@ popd
 * Tue Aug 08 2017 Petr Pisar <ppisar@redhat.com> - 4:5.26.0-398
 - Fix reporting malformed UTF-8 character (RT#131646)
 - Fix File::Glob rt131211.t test random failures
+- Fix t/op/hash.t test random failures
 
 * Sat Jul 29 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 4:5.26.0-397
 - Enable separate debuginfo back
