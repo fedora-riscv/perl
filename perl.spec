@@ -79,7 +79,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        397%{?dist}
+Release:        398%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
@@ -176,6 +176,11 @@ Patch39:        perl-5.26.0-don-t-call-Perl_fbm_instr-with-negative-length.patch
 # in upsteam after 5.27.0
 Patch40:        perl-5.27.0-Resolve-Perl-131522-Spurious-Assuming-NOT-a-POSIX-cl.patch
 Patch41:        perl-5.27.0-add-test-for-perl-131522-and-fix-test-for-related-pe.patch
+
+# Fix reporting malformed UTF-8 character, RT#131646, in upstream after 5.27.1
+Patch42:        perl-5.27.1-PATCH-perl-131646-Assertion-fail-UTF-8-error-msg.patch
+Patch43:        perl-5.27.1-t-lib-warnings-utf8-Fix-test.patch
+Patch44:        perl-5.27.2-perl-131646-make-the-test-less-fragile.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2746,6 +2751,9 @@ Perl extension for Version Objects
 %patch39 -p1
 %patch40 -p1
 %patch41 -p1
+%patch42 -p1
+%patch43 -p1
+%patch44 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2775,6 +2783,7 @@ perl -x patchlevel.h \
     'Fedora Patch38: Fix handling backslashes in PATH environment variable when executing "perl -S" (RT#129183)' \
     'Fedora Patch39: Fix a conditional jump on uninitilized memory in re_intuit_start() (RT#131575)' \
     'Fedora Patch40: Fix spurious "Assuming NOT a POSIX class" warning (RT#131522)' \
+    'Fedora Patch42: Fix reporting malformed UTF-8 character (RT#131646)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5058,6 +5067,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Aug 08 2017 Petr Pisar <ppisar@redhat.com> - 4:5.26.0-398
+- Fix reporting malformed UTF-8 character (RT#131646)
+
 * Sat Jul 29 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 4:5.26.0-397
 - Enable separate debuginfo back
 
