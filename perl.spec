@@ -3063,10 +3063,9 @@ popd
 
 %postun libs -p /sbin/ldconfig
 
+%files
 # We sub-package modules from perl-interpreter subpackage. Main perl package
 # is a meta package.
-%files
-# Nothing. Nada. Zilch. Zarro. Uh uh. Nope. Sorry.
 
 %files interpreter
 %{_mandir}/man1/*.1*
