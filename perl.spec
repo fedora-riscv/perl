@@ -197,6 +197,10 @@ Patch48:        perl-5.27.1-add-an-additional-test-for-whitespace-tolerance-in-c
 # in upstream after 5.27.1
 Patch49:        perl-5.27.1-utf8n_to_uvchr-Don-t-display-too-many-bytes-in-msg.patch
 
+# Fix select called with a repeated magical variable, RT#131645,
+# in upstream after 5.27.1
+Patch50:        perl-5.27.1-perl-131645-Fix-assert-fail-in-pp_sselect.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2774,6 +2778,7 @@ Perl extension for Version Objects
 %patch47 -p1
 %patch48 -p1
 %patch49 -p1
+%patch50 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2808,6 +2813,7 @@ perl -x patchlevel.h \
     'Fedora Patch46: Fix t/op/hash.t test random failures' \
     'Fedora Patch47: Parse caret variables with subscripts as normal variables inside ${...} escaping (RT#131664)' \
     'Fedora Patch49: Do not display too many bytes when reporting malformed UTF-8 character' \
+    'Fedora Patch50: Fix select called with a repeated magical variable (RT#131645)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5098,6 +5104,7 @@ popd
 - Parse caret variables with subscripts as normal variables inside ${...}
   escaping (RT#131664)
 - Do not display too many bytes when reporting malformed UTF-8 character
+- Fix select called with a repeated magical variable (RT#131645)
 
 * Sat Jul 29 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 4:5.26.0-397
 - Enable separate debuginfo back
