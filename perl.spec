@@ -406,6 +406,8 @@ License:        (GPL+ or Artistic) and HSLR and MIT and UCD
 Provides:       %perl_compat
 # Interpreter version to fulfil required genersted from "require 5.006;"
 Provides:       perl(:VERSION) = %{perl_version}
+# Integeres are 64-bit on all platforms
+Provides:       perl(:WITH_64BIT)
 # Threading provides
 Provides:       perl(:WITH_ITHREADS)
 Provides:       perl(:WITH_THREADS)
