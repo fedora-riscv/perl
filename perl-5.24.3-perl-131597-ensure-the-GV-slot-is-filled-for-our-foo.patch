@@ -1,0 +1,64 @@
+From b890486ff0c482cbdec59a0f9beb28275aeee19b Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Mon, 19 Jun 2017 14:59:53 +1000
+Subject: [PATCH] (perl #131597) ensure the GV slot is filled for our [%$@]foo:
+ attr
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Petr Písař: Ported to 5.24.3.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ op.c         |  6 +++---
+ t/op/attrs.t | 18 ++++++++++++++++++
+ 2 files changed, 21 insertions(+), 3 deletions(-)
+
+diff --git a/op.c b/op.c
+index 2960dd5..8a5fc3f 100644
+--- a/op.c
++++ b/op.c
+@@ -3671,9 +3671,9 @@ S_my_kid(pTHX_ OP *o, OP *attrs, OP **imopsp)
+ 	    PL_parser->in_my = FALSE;
+ 	    PL_parser->in_my_stash = NULL;
+ 	    apply_attrs(GvSTASH(gv),
+-			(type == OP_RV2SV ? GvSV(gv) :
+-			 type == OP_RV2AV ? MUTABLE_SV(GvAV(gv)) :
+-			 type == OP_RV2HV ? MUTABLE_SV(GvHV(gv)) : MUTABLE_SV(gv)),
++			(type == OP_RV2SV ? GvSVn(gv) :
++			 type == OP_RV2AV ? MUTABLE_SV(GvAVn(gv)) :
++			 type == OP_RV2HV ? MUTABLE_SV(GvHVn(gv)) : MUTABLE_SV(gv)),
+ 			attrs);
+ 	}
+ 	o->op_private |= OPpOUR_INTRO;
+diff --git a/t/op/attrs.t b/t/op/attrs.t
+index 219db03..b038c87 100644
+--- a/t/op/attrs.t
++++ b/t/op/attrs.t
+@@ -447,4 +447,22 @@ package P126257 {
+     ::is $@, "", "RT 126257 sub";
+ }
+ 
++fresh_perl_is('sub dummy {} our $dummy : Dummy', <<EOS, {},
++Invalid SCALAR attribute: Dummy at - line 1.
++BEGIN failed--compilation aborted at - line 1.
++EOS
++              "attribute on our scalar with sub of same name");
++
++fresh_perl_is('sub dummy {} our @dummy : Dummy', <<EOS, {},
++Invalid ARRAY attribute: Dummy at - line 1.
++BEGIN failed--compilation aborted at - line 1.
++EOS
++              "attribute on our array with sub of same name");
++
++fresh_perl_is('sub dummy {} our %dummy : Dummy', <<EOS, {},
++Invalid HASH attribute: Dummy at - line 1.
++BEGIN failed--compilation aborted at - line 1.
++EOS
++              "attribute on our hash with sub of same name");
++
+ done_testing();
+-- 
+2.13.6
+

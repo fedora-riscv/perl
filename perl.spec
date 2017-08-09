@@ -37,7 +37,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        395%{?dist}
+Release:        396%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 # These are all found licenses. They are distributed among various
@@ -341,6 +341,10 @@ Patch106:       perl-5.24.1-don-t-call-Perl_fbm_instr-with-negative-length.patch
 # in upsteam after 5.27.0
 Patch107:       perl-5.27.0-Resolve-Perl-131522-Spurious-Assuming-NOT-a-POSIX-cl.patch
 Patch108:       perl-5.27.0-add-test-for-perl-131522-and-fix-test-for-related-pe.patch
+
+# Fix handling attribute specification on our variables, RT#131597,
+# in upstream adter 5.27.1
+Patch109:       perl-5.24.3-perl-131597-ensure-the-GV-slot-is-filled-for-our-foo.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2968,6 +2972,7 @@ popd
 %patch106 -p1
 %patch107 -p1
 %patch108 -p1
+%patch109 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3042,6 +3047,7 @@ perl -x patchlevel.h \
     'Fedora Patch105: Fix handling backslashes in PATH environment variable when executing "perl -S" (RT#129183)' \
     'Fedora Patch106: Fix a conditional jump on uninitilized memory in re_intuit_start() (RT#131575)' \
     'Fedora Patch107: Fix spurious "Assuming NOT a POSIX class" warning (RT#131522)' \
+    'Fedora Patch109: Fix handling attribute specification on our variables (RT#131597)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5332,6 +5338,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Feb 06 2018 Petr Pisar <ppisar@redhat.com> - 4:5.24.3-396
+- Fix handling attribute specification on our variables (RT#131597)
+
 * Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.3-395
 - Update perl(:MODULE_COMPAT_*)
 
