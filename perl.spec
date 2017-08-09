@@ -212,6 +212,10 @@ Patch52:        perl-5.26.0-perl-131588-be-a-little-more-careful-in-arybase-_tie
 # in upstream adter 5.27.1
 Patch53:        perl-5.27.1-perl-131597-ensure-the-GV-slot-is-filled-for-our-foo.patch
 
+# Fix splitting non-ASCII strings if unicode_strings feature is enabled,
+# RT#130907 in upstream after 5.27.1
+Patch54:        perl-5.27.1-RT-130907-Fix-the-Unicode-Bug-in-split.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2795,6 +2799,7 @@ Perl extension for Version Objects
 %patch51 -p1
 %patch52 -p1
 %patch53 -p1
+%patch54 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2833,6 +2838,7 @@ perl -x patchlevel.h \
     'Fedora Patch51: Fix error message for "our sub foo::bar" (RT#131679)' \
     'Fedora Patch52: Fix executing arybase::_tie_it() in Safe compartement (RT#131588)' \
     'Fedora Patch53: Fix handling attribute specification on our variables (RT#131597)' \
+    'Fedora Patch54: Fix splitting non-ASCII strings if unicode_strings feature is enabled (RT#130907)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5127,6 +5133,7 @@ popd
 - Fix error message for "our sub foo::bar" (RT#131679)
 - Fix executing arybase::_tie_it() in Safe compartement (RT#131588)
 - Fix handling attribute specification on our variables (RT#131597)
+- Fix splitting non-ASCII strings if unicode_strings feature is enabled (RT#130907)
 
 * Sat Jul 29 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 4:5.26.0-397
 - Enable separate debuginfo back
