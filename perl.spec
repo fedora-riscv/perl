@@ -204,6 +204,10 @@ Patch50:        perl-5.27.1-perl-131645-Fix-assert-fail-in-pp_sselect.patch
 # Fix error message for "our sub foo::bar", RT#131679, in upstream after 5.27.1
 Patch51:        perl-5.27.1-perl-131679-Fix-our-sub-foo-bar-message.patch
 
+# Fix executing arybase::_tie_it() in Safe compartement, RT#131588,
+# not yet accepted by upstream
+Patch52:        perl-5.26.0-perl-131588-be-a-little-more-careful-in-arybase-_tie.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2785,6 +2789,7 @@ Perl extension for Version Objects
 %patch49 -p1
 %patch50 -p1
 %patch51 -p1
+%patch52 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2821,6 +2826,7 @@ perl -x patchlevel.h \
     'Fedora Patch49: Do not display too many bytes when reporting malformed UTF-8 character' \
     'Fedora Patch50: Fix select called with a repeated magical variable (RT#131645)' \
     'Fedora Patch51: Fix error message for "our sub foo::bar" (RT#131679)' \
+    'Fedora Patch52: Fix executing arybase::_tie_it() in Safe compartement (RT#131588)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5113,6 +5119,7 @@ popd
 - Do not display too many bytes when reporting malformed UTF-8 character
 - Fix select called with a repeated magical variable (RT#131645)
 - Fix error message for "our sub foo::bar" (RT#131679)
+- Fix executing arybase::_tie_it() in Safe compartement (RT#131588)
 
 * Sat Jul 29 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 4:5.26.0-397
 - Enable separate debuginfo back
