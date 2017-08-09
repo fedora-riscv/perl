@@ -193,6 +193,10 @@ Patch46:        perl-5.26.0-t-op-hash.t-fixup-intermittently-failing-test.patch
 Patch47:        perl-5.27.1-Parse-caret-vars-with-subscripts-the-same-as-normal-.patch
 Patch48:        perl-5.27.1-add-an-additional-test-for-whitespace-tolerance-in-c.patch
 
+# Do not display too many bytes when reporting malformed UTF-8 character,
+# in upstream after 5.27.1
+Patch49:        perl-5.27.1-utf8n_to_uvchr-Don-t-display-too-many-bytes-in-msg.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2769,6 +2773,7 @@ Perl extension for Version Objects
 %patch46 -p1
 %patch47 -p1
 %patch48 -p1
+%patch49 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2802,6 +2807,7 @@ perl -x patchlevel.h \
     'Fedora Patch45: Fix File::Glob rt131211.t test random failures' \
     'Fedora Patch46: Fix t/op/hash.t test random failures' \
     'Fedora Patch47: Parse caret variables with subscripts as normal variables inside ${...} escaping (RT#131664)' \
+    'Fedora Patch49: Do not display too many bytes when reporting malformed UTF-8 character' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5091,6 +5097,7 @@ popd
 - Fix t/op/hash.t test random failures
 - Parse caret variables with subscripts as normal variables inside ${...}
   escaping (RT#131664)
+- Do not display too many bytes when reporting malformed UTF-8 character
 
 * Sat Jul 29 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 4:5.26.0-397
 - Enable separate debuginfo back
