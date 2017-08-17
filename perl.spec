@@ -101,7 +101,7 @@ Patch1:         perl-perlbug-tag.patch
 # Fedora/RHEL only (64bit only)
 Patch3:         perl-5.8.0-libdir64.patch
 
-# Fedora/RHEL specific (use libresolv instead of libbind)
+# Fedora/RHEL specific (use libresolv instead of libbind), bug #151127
 Patch4:         perl-5.10.0-libresolv.patch
 
 # FIXME: May need the "Fedora" references removed before upstreaming
