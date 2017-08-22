@@ -470,12 +470,6 @@ directories).
 Summary:        Header #files for use in perl development
 # l1_char_class_tab.h is generated from lib/unicore sources:    UCD
 License:        (GPL+ or Artistic) and UCD
-# Require $Config{libs} providers, bug #905482
-Requires:       libdb-devel
-%if %{with gdbm}
-Requires:       gdbm-devel
-%endif
-Requires:       glibc-devel
 %if %{with perl_enables_systemtap}
 Requires:       systemtap-sdt-devel
 %endif
@@ -5147,6 +5141,7 @@ popd
 %changelog
 * Tue Aug 22 2017 Petr Pisar <ppisar@redhat.com> - 4:5.26.0-399
 - Fix unreliable Time-HiRes tests (CPAN RT#122819)
+- Do not require $Config{libs} providers by perl-devel package (bug #1481324)
 
 * Tue Aug 08 2017 Petr Pisar <ppisar@redhat.com> - 4:5.26.0-398
 - Fix reporting malformed UTF-8 character (RT#131646)
