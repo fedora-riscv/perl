@@ -37,7 +37,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        394%{?dist}
+Release:        395%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -394,7 +394,7 @@ BuildRequires:  rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.24.2)
+%global perl_compat perl(:MODULE_COMPAT_5.24.3)
 
 # perl-interpreter denotes a package with the perl executable.
 # Full EVR is for compatibility with systems that swapped perl and perl-core
@@ -455,6 +455,7 @@ Group:          Development/Languages
 License:        (GPL+ or Artistic) and HSLR and MIT and UCD
 # Compat provides
 Provides:       %perl_compat
+Provides:       perl(:MODULE_COMPAT_5.24.2)
 Provides:       perl(:MODULE_COMPAT_5.24.1)
 Provides:       perl(:MODULE_COMPAT_5.24.0)
 # Interpreter version to fulfil required genersted from "require 5.006;"
@@ -5446,6 +5447,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.3-395
+- Update perl(:MODULE_COMPAT_*)
+
 * Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.3-394
 - 5.24.3 bump (see <http://search.cpan.org/dist/perl-5.24.3/pod/perldelta.pod>
   for release notes)
