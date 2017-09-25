@@ -79,7 +79,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        400%{?dist}
+Release:        401%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
@@ -246,7 +246,7 @@ BuildRequires:  rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.26.0)
+%global perl_compat perl(:MODULE_COMPAT_5.26.1)
 
 Requires:       %perl_compat
 Requires:       perl-interpreter%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
@@ -397,6 +397,7 @@ Summary:        The libraries for the perl run-time
 License:        (GPL+ or Artistic) and HSLR and MIT and UCD
 # Compat provides
 Provides:       %perl_compat
+Provides:       perl(:MODULE_COMPAT_5.26.0)
 # Interpreter version to fulfil required genersted from "require 5.006;"
 Provides:       perl(:VERSION) = %{perl_version}
 # Integeres are 64-bit on all platforms
@@ -5085,6 +5086,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.1-401
+- Update perl(:MODULE_COMPAT)
+
 * Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.1-400
 - 5.26.1 bump (see <http://search.cpan.org/dist/perl-5.26.1/pod/perldelta.pod>
   for release notes)
