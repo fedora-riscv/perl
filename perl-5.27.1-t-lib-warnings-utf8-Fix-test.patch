@@ -20,7 +20,7 @@ index 9066308..dfc58c1 100644
 +++ b/t/lib/warnings/utf8
 @@ -781,4 +781,5 @@ no warnings;
  use warnings 'utf8';
- for(uc 0..t){0~~pack"UXp>",exp}
+ for(uc 0..t){0~~pack"UXc",exp}
  EXPECT
 -Malformed UTF-8 character: \xc2\x00 (unexpected non-continuation byte 0x00, immediately after start byte 0xc2; need 2 bytes, got 1)  in smart match at - line 9.
 +OPTIONS regex
