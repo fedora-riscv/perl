@@ -42,26 +42,26 @@ index ed13273..93e020b 100644
  
  =head2 The 'unicode_eval' and 'evalbytes' features
  
-diff --git a/pod/perldelta.pod b/pod/perldelta.pod
-index 06dcd1d..d31335f 100644
---- a/pod/perldelta.pod
-+++ b/pod/perldelta.pod
-@@ -3206,6 +3206,15 @@ calls.
- Parsing bad POSIX charclasses no longer leaks memory.
- L<[perl #128313]|https://rt.perl.org/Public/Bug/Display.html?id=128313>
- 
-+=item *
-+
-+C<split ' '> now correctly handles the argument being split when in the
-+scope of the L<< C<unicode_strings>|feature/"The 'unicode_strings' feature"
-+>> feature. Previously, when a string using the single-byte internal
-+representation contained characters that are whitespace by Unicode rules but
-+not by ASCII rules, it treated those characters as part of fields rather
-+than as field separators.  [perl #130907]
-+
- =back
- 
- =head1 Known Problems
+#diff --git a/pod/perldelta.pod b/pod/perldelta.pod
+#index 06dcd1d..d31335f 100644
+#--- a/pod/perldelta.pod
+#+++ b/pod/perldelta.pod
+#@@ -3206,6 +3206,15 @@ calls.
+# Parsing bad POSIX charclasses no longer leaks memory.
+# L<[perl #128313]|https://rt.perl.org/Public/Bug/Display.html?id=128313>
+# 
+#+=item *
+#+
+#+C<split ' '> now correctly handles the argument being split when in the
+#+scope of the L<< C<unicode_strings>|feature/"The 'unicode_strings' feature"
+#+>> feature. Previously, when a string using the single-byte internal
+#+representation contained characters that are whitespace by Unicode rules but
+#+not by ASCII rules, it treated those characters as part of fields rather
+#+than as field separators.  [perl #130907]
+#+
+# =back
+# 
+# =head1 Known Problems
 diff --git a/pod/perlfunc.pod b/pod/perlfunc.pod
 index b8dca6e..9abadf4 100644
 --- a/pod/perlfunc.pod
