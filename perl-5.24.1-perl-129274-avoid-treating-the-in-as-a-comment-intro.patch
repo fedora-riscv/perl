@@ -28,12 +28,12 @@ index 9ada592..d679d7c 100644
  
  BEGIN { chdir 't' if -d 't'; require './test.pl'; }
  
--plan(tests => 26);
-+plan(tests => 27);
+-plan(tests => 27);
++plan(tests => 28);
  
  {
      no warnings 'deprecated';
-@@ -216,3 +216,16 @@ fresh_perl_like(
+@@ -223,3 +223,16 @@ fresh_perl_like(
      {},
      '[perl #129336] - #!perl -i argument handling'
  );

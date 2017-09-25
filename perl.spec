@@ -1,4 +1,4 @@
-%global perl_version    5.24.2
+%global perl_version    5.24.3
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -28,7 +28,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        387%{?dist}
+Release:        388%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 Group:          Development/Languages
@@ -131,24 +131,9 @@ Patch28:        perl-5.22.0-Revert-const-the-core-magic-vtables.patch
 # This allows not to require perl-devel. Bug #1129443
 Patch30:        perl-5.22.1-Replace-EU-MM-dependnecy-with-EU-MM-Utils-in-IPC-Cmd.patch
 
-# Fix a memory leak when compiling a regular expression with a POSIX class,
-# RT#128313, in upstream after 5.25.1
-Patch31:        perl-5.24.0-Fix-a-memory-leak-in-strict-regex-posix-classes.patch
-
-# Do not mangle errno from failed socket calls, RT#128316,
-# in upstream after 5.25.1
-Patch32:        perl-5.25.1-perl-128316-preserve-errno-from-failed-system-calls.patch
-
-# Fix compiling regular expressions like /\X*(?0)/, RT#128109, in upstream
-# after 5.25.1
-Patch33:        perl-5.24.0-fix-128109-do-not-move-RExC_open_parens-0-in-reginse.patch
-
 # Do not use unitialized memory in $h{\const} warnings, RT#128189,
 # in upstream after 5.25.2
 Patch34:        perl-5.25.2-uninit-warning-from-h-const-coredumped.patch
-
-# Fix precedence in hv_ename_delete, RT#128086, in upstream after 5.25.0
-Patch35:        perl-5.25.0-Fix-precedence-in-hv_ename_delete.patch
 
 # Do not treat %: as a stash, RT#128238, in upstream after 5.25.2
 Patch36:        perl-5.25.2-only-treat-stash-entries-with-.-as-sub-stashes.patch
@@ -157,9 +142,6 @@ Patch36:        perl-5.25.2-only-treat-stash-entries-with-.-as-sub-stashes.patch
 # in upstream after 5.25.2
 Patch37:        perl-5.25.2-perl-128238-Crash-with-non-stash-in-stash.patch
 
-# Fix line numbers with perl -x, RT#128508, in upstream after 5.25.2
-Patch38:        perl-5.25.2-perl-128508-Fix-line-numbers-with-perl-x.patch
-
 # Fix a crash when vivifying a stub in a deleted package, RT#128532,
 # in upstream after 5.25.2
 Patch40:        perl-5.25.2-perl-128532-Crash-vivifying-stub-in-deleted-pkg.patch
@@ -167,18 +149,6 @@ Patch40:        perl-5.25.2-perl-128532-Crash-vivifying-stub-in-deleted-pkg.patc
 # Fix a crash in "Subroutine redefined" warning, RT#128257,
 # in upstream after 5.25.2
 Patch41:        perl-5.25.2-SEGV-in-Subroutine-redefined-warning.patch
-
-# Fix a crash in lexical scope warnings, RT#128597, in upstream after 5.25.2
-Patch42:        perl-5.25.2-perl-128597-Crash-from-gp_free-ckWARN_d.patch
-
-# Fix handling \N{} in tr for characters in range 128--255, RT#128734,
-# in upstream after 5.25.3
-Patch43:        perl-5.24.0-PATCH-perl-128734-tr-N-.-failing-for-128-255.patch
-
-# Fix crash in "evalbytes S", RT#129196, in upstream after 5.25.4
-Patch45:        perl-5.25.4-perl-129196-Crash-bad-read-with-evalbytes-S.patch
-Patch46:        perl-5.24.0-Regression-test-for-RT-129196.patch
-Patch47:        perl-5.25.4-toke.c-fix-mswin32-builds.patch
 
 # Fix crash in splice, RT#129164, RT#129166, RT#129167, in upstream after 5.25.4
 Patch48:        perl-5.24.0-perl-129164-Crash-with-splice.patch
@@ -291,10 +261,6 @@ Patch82:        perl-5.25.9-perl-129061-CURLYX-nodes-can-be-studied-more-than-on
 # from more than one source, RT#129881, in upstream after 5.25.9
 Patch83:        perl-5.24.1-fix-pad-scope-issue-in-re_evals.patch
 
-# Fix a memory leak in list assignment from or to magic values, RT#130766,
-# in upstream after 5.25.9
-Patch84:        perl-5.25.9-avoid-a-leak-in-list-assign-from-to-magic-values.patch
-
 # Fix a null-pointer dereference on malformed code, RT#130815,
 # in upstream after 5.25.9
 Patch85:        perl-5.24.1-perl-130815-fix-ck_return-null-pointer-deref-on-malf.patch
@@ -325,8 +291,6 @@ Patch92:        perl-5.24.1-RT-130624-heap-use-after-free-in-4-arg-substr.patch
 # in upstream after 5.27.0
 Patch93:        perl-5.24.1-perl-131211-fixup-File-Glob-degenerate-matching.patch
 
-# Fix a memory wrap in sv_vcatpvfn_flags(), RT#131260, in upstream after 5.25.12
-Patch94:        perl-5.25.12-avoid-a-memory-wrap-in-sv_vcatpvfn_flags.patch
 # Tests for avoid-a-memory-wrap-in-sv_vcatpvfn_flags.patch, RT#131260,
 # in upstream after 5.27.0
 Patch95:        perl-5.24.1-sprintf-add-memory-wrap-tests.patch
@@ -2083,7 +2047,7 @@ Summary:        What modules are shipped with versions of perl
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20170114
+Version:        5.20170922
 Requires:       %perl_compat
 Requires:       perl(List::Util)
 Requires:       perl(version) >= 0.88
@@ -2102,7 +2066,7 @@ Summary:        Tool for listing modules shipped with perl
 Group:          Development/Tools
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20170114
+Version:        5.20170922
 Requires:       %perl_compat
 Requires:       perl(feature)
 Requires:       perl(version) >= 0.88
@@ -2850,7 +2814,7 @@ Summary:        High resolution alarm, sleep, gettimeofday, interval timers
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.9733
+Version:        1.9741
 Requires:       %perl_compat
 Requires:       perl(Carp)
 %if %{defined perl_bootstrap}
@@ -3025,21 +2989,11 @@ Perl extension for Version Objects
 %patch26 -p1
 %patch28 -p1
 %patch30 -p1
-%patch31 -p1
-%patch32 -p1
-%patch33 -p1
 %patch34 -p1
-%patch35 -p1
 %patch36 -p1
 %patch37 -p1
-%patch38 -p1
 %patch40 -p1
 %patch41 -p1
-%patch42 -p1
-%patch43 -p1
-%patch45 -p1
-%patch46 -p1
-%patch47 -p1
 %patch48 -p1
 %patch49 -p1
 %patch50 -p1
@@ -3076,7 +3030,6 @@ Perl extension for Version Objects
 %patch81 -p1
 %patch82 -p1
 %patch83 -p1
-%patch84 -p1
 %patch85 -p1
 %patch86 -p1
 %patch87 -p1
@@ -3086,7 +3039,6 @@ Perl extension for Version Objects
 %patch91 -p1
 %patch92 -p1
 %patch93 -p1
-%patch94 -p1
 %patch95 -p1
 %patch96 -p1
 %patch97 -p1
@@ -3119,21 +3071,11 @@ perl -x patchlevel.h \
     'Fedora Patch27: Make PadlistNAMES() lvalue again (CPAN RT#101063)' \
     'Fedora Patch28: Make magic vtable writable as a work-around for Coro (CPAN RT#101063)' \
     'Fedora Patch30: Replace EU::MakeMaker dependency with EU::MM::Utils in IPC::Cmd (bug #1129443)' \
-    'Fedora Patch31: Fix a memory leak in compiling a POSIX class (RT#128313)' \
-    'Fedora Patch32: Do not mangle errno from failed socket calls (RT#128316)' \
-    'Fedora Patch33: Fix compiling regular expressions like /\X*(?0)/ (RT#128109)' \
     'Fedora Patch34: Do not use unitialized memory in $h{\const} warnings (RT#128189)' \
-    'Fedora Patch35: Fix precedence in hv_ename_delete (RT#128086)' \
     'Fedora Patch36: Do not treat %: as a stash (RT#128238)' \
     'Fedora Patch37: Do not crash when inserting a non-stash into a stash (RT#128238)' \
-    'Fedora Patch38: Fix line numbers with perl -x (RT#128508)' \
     'Fedora Patch40: Fix a crash when vivifying a stub in a deleted package (RT#128532)' \
     'Fedora Patch41: Fix a crash in "Subroutine redefined" warning (RT#128257)' \
-    'Fedora Patch42: Fix a crash in lexical scope warnings (RT#128597)' \
-    'Fedora Patch43: Fix handling \N{} in tr for characters in range 128--255 (RT#128734)' \
-    'Fedora Patch45: Fix crash in "evalbytes S" (RT#129196)' \
-    'Fedora Patch46: Fix crash in "evalbytes S" (RT#129196)' \
-    'Fedora Patch47: Fix crash in "evalbytes S" (RT#129196)' \
     'Fedora Petch48: Fix crash in splice (RT#129164, RT#129166, RT#129167)' \
     'Fedora Patch49: Fix string overrun in Perl_gv_fetchmethod_pvn_flags (RT#129267)' \
     'Fedora Patch50: Fix string overrun in Perl_gv_fetchmethod_pvn_flags (RT#129267)' \
@@ -3166,14 +3108,12 @@ perl -x patchlevel.h \
     'Fedora Patch80: Fix a buffer overrun with format and "use bytes" (RT#130703)' \
     'Fedora Patch81: Fix a buffer overflow when studying some regexps repeatedly (RT#129281, RT#129061)' \
     'Fedora Patch83: Fix a heap buffer overflow when evaluating regexps with embedded code blocks from more than one source, RT#129881' \
-    'Fedora Patch84: Fix a memory leak in list assignment from or to magic values, (RT#130766)' \
     'Fedora Patch85: Fix a null-pointer dereference on malformed code (RT#130815)' \
     'Fedora Patch86: Fix an use-after-free in substr() that modifies a magic variable (RT#129340)' \
     'Fedora Patch87: Fix a memory leak leak in Perl_reg_named_buff_fetch() (RT#130822)' \
     'Fedora Patch88: Fix an invalid memory read when parsing a loop variable (RT#130814)' \
     'Fedora Patch92: Fix a heap-use-after-free in four-arguments substr call (RT#130624)' \
     'Fedora Patch93: Make File::Glob more resistant against degenerative matching (RT#131211)' \
-    'Fedora Patch94: Fix a memory wrap in sv_vcatpvfn_flags() (RT#131260)' \
     'Fedora Patch96: Fix a crash when calling a subroutine from a stash (RT#131085)' \
     'Fedora Patch97: Fix an improper cast of a negative integer to an unsigned 8-bit type (RT#131190)' \
     'Fedora Patch98: Fix cloning :via handles on thread creation (RT#131221)' \
@@ -5460,6 +5400,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.3-388
+- 5.24.3 bump (see <http://search.cpan.org/dist/perl-5.24.3/pod/perldelta.pod>
+  for release notes)
+
 * Mon Jul 17 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.2-387
 - 5.24.2 bump (see <http://search.cpan.org/dist/perl-5.24.2/pod/perldelta.pod>
   for release notes)
