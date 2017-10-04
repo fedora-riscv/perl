@@ -1625,7 +1625,8 @@ resumes after EINTR.
 %package JSON-PP
 Summary:        JSON::XS compatible pure-Perl module
 Epoch:          1
-Version:        2.27400
+# Real version 2.27400
+Version:        2.27.400
 License:        GPL+ or Artistic
 BuildArch:      noarch
 Requires:       %perl_compat 
