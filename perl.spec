@@ -376,6 +376,10 @@ Patch116:       perl-5.26.1-fix-do-dir-returning-no.patch
 # a member of an iteration list, RT#132442, in upstream after 5.27.5
 Patch117:       perl-5.24.3-perl-132442-Fix-stack-with-do-my-sub-l-1.patch
 
+# Fix setting $! when statting a closed filehandle, RT#108288,
+# in upstream after 5.27.5
+Patch118:       perl-5.24.3-set-when-statting-a-closed-filehandle.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3011,6 +3015,7 @@ popd
 %patch115 -p1
 %patch116 -p1
 %patch117 -p1
+%patch118 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3094,6 +3099,7 @@ perl -x patchlevel.h \
     'Fedora Patch115: Fix deparsing of transliterations with unprintable characters (RT#132405)' \
     'Fedora Patch116: Fix error reporting on do() on a directory (RT#125774)' \
     'Fedora Patch117: Fix stack manipulation when a lexical subroutine is defined in a do block in a member of an iteration list (RT#132442)' \
+    'Fedora Patch118: Fix setting $! when statting a closed filehandle (RT#108288)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5398,6 +5404,7 @@ popd
 - Fix error reporting on do() on a directory (RT#125774)
 - Fix stack manipulation when a lexical subroutine is defined in a do block in
   a member of an iteration list (RT#132442)
+- Fix setting $! when statting a closed filehandle (RT#108288)
 
 * Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.3-395
 - Update perl(:MODULE_COMPAT_*)
