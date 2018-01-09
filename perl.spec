@@ -225,6 +225,10 @@ Patch66:        perl-5.26.1-perl-131895-fail-stat-on-names-with-0-embedded.patch
 # Fix a crash when untying an object witout a stash, in upstream after 5.27.5
 Patch67:        perl-5.27.5-Avoid-a-segfault-when-untying-an-object.patch
 
+# Fix deparsing of transliterations with unprintable characters, RT#132405,
+# in upstream after 5.27.5
+Patch68:        perl-5.26.1-Fix-deparsing-of-transliterations-with-unprintable-c.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2807,6 +2811,7 @@ Perl extension for Version Objects
 %patch65 -p1
 %patch66 -p1
 %patch67 -p1
+%patch68 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2848,6 +2853,7 @@ perl -x patchlevel.h \
     'Fedora Patch65: Fix walking symbol table for ISA in Carp' \
     'Fedora Patch66: Fix handling file names with null bytes in stat and lstat functions (RT#131895)' \
     'Fedora Patch67: Fix a crash when untying an object witout a stash' \
+    'Fedora Patch68: Fix deparsing of transliterations with unprintable characters (RT#132405)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5142,6 +5148,7 @@ popd
 - Fix handling file names with null bytes in stat and lstat functions
   (RT#131895)
 - Fix a crash when untying an object witout a stash
+- Fix deparsing of transliterations with unprintable characters (RT#132405)
 
 * Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.1-401
 - Update perl(:MODULE_COMPAT)
