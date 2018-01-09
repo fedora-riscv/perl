@@ -1,0 +1,48 @@
+From 2657358b67ba3eadd1be99bd7e732a8d68f1f95d Mon Sep 17 00:00:00 2001
+From: John Lightsey <lightsey@debian.org>
+Date: Tue, 31 Oct 2017 18:12:26 -0500
+Subject: [PATCH] Fix deparsing of transliterations with unprintable
+ characters.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+RT #132405
+
+Signed-off-by: Nicolas R <atoomic@cpan.org>
+Petr Písař: Port to 5.24.3.
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ lib/B/Deparse.pm | 2 +-
+ lib/B/Deparse.t  | 5 +++++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/lib/B/Deparse.pm b/lib/B/Deparse.pm
+index 9879d67..f5f7d82 100644
+--- a/lib/B/Deparse.pm
++++ b/lib/B/Deparse.pm
+@@ -5047,7 +5047,7 @@ sub pchr { # ASCII
+     } elsif ($n == ord "\r") {
+ 	return '\\r';
+     } elsif ($n >= ord("\cA") and $n <= ord("\cZ")) {
+-	return '\\c' . unctrl{chr $n};
++	return '\\c' . $unctrl{chr $n};
+     } else {
+ #	return '\x' . sprintf("%02x", $n);
+ 	return '\\' . sprintf("%03o", $n);
+diff --git a/lib/B/Deparse.t b/lib/B/Deparse.t
+index 19db404..45b1ff3 100644
+--- a/lib/B/Deparse.t
++++ b/lib/B/Deparse.t
+@@ -2488,3 +2488,8 @@ $_ ^= $_;
+ $_ |.= $_;
+ $_ &.= $_;
+ $_ ^.= $_;
++####
++# tr with unprintable characters
++my $str;
++$str = 'foo';
++$str =~ tr/\cA//;
+-- 
+2.13.6
+
