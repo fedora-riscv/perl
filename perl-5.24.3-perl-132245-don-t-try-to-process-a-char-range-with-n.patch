@@ -1,0 +1,52 @@
+From 86a48d83a7caf38c553000a250ed1359c235f55e Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Thu, 19 Oct 2017 10:46:04 +1100
+Subject: [PATCH] (perl #132245) don't try to process a char range with no
+ preceding char
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+A range like \N{}-0 eventually results in compilation failing, but
+before that, get_and_check_backslash_N_name() attempts to treat
+the memory before the empty output of \N{} as a character.
+
+Petr Písař: Ported to 5.24.3.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ t/lib/warnings/toke | 5 +++++
+ toke.c              | 4 ++--
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/t/lib/warnings/toke b/t/lib/warnings/toke
+index 493c8a2..4a521e0 100644
+--- a/t/lib/warnings/toke
++++ b/t/lib/warnings/toke
+@@ -1509,3 +1509,8 @@ my $v = 𝛃 - 5;
+ EXPECT
+ OPTION regex
+ (Wide character.*\n)?Warning: Use of "𝛃" without parentheses is ambiguous
++########
++# NAME tr/// range with empty \N{} at the start
++tr//\N{}-0/;
++EXPECT
++Unknown charname '' is deprecated at - line 1.
+diff --git a/toke.c b/toke.c
+index f2310cc..3d93fac 100644
+--- a/toke.c
++++ b/toke.c
+@@ -2906,8 +2906,8 @@ S_scan_const(pTHX_ char *start)
+                  * at least one character, then see if this next one is a '-',
+                  * indicating the previous one was the start of a range.  But
+                  * don't bother if we're too close to the end for the minus to
+-                 * mean that. */
+-                if (*s != '-' || s >= send - 1 || s == start) {
++                 * mean that, or if we haven't output any characters yet. */
++                if (*s != '-' || s >= send - 1 || s == start || d == SvPVX(sv)) {
+ 
+                     /* A regular character.  Process like any other, but first
+                      * clear any flags */
+-- 
+2.13.6
+

@@ -350,6 +350,10 @@ Patch109:       perl-5.24.3-perl-131597-ensure-the-GV-slot-is-filled-for-our-foo
 # in upstream after 5.27.3
 Patch110:       perl-5.24.3-fix-132017-OPFAIL-insert-needs-to-set-flags-to-0.patch
 
+# Fix an overflow when parsing a character range with no preceding character,
+# RT#132245, in upstream after 5.27.5
+Patch111:       perl-5.24.3-perl-132245-don-t-try-to-process-a-char-range-with-n.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2978,6 +2982,7 @@ popd
 %patch108 -p1
 %patch109 -p1
 %patch110 -p1
+%patch111 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3054,6 +3059,7 @@ perl -x patchlevel.h \
     'Fedora Patch107: Fix spurious "Assuming NOT a POSIX class" warning (RT#131522)' \
     'Fedora Patch109: Fix handling attribute specification on our variables (RT#131597)' \
     'Fedora Patch110: Fix a crash when a match for inversely repeated group fails (RT#132017)' \
+    'Fedora Patch111: Fix an overflow when parsing a character range with no preceding character (RT#132245)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5348,6 +5354,8 @@ popd
 - Fix handling attribute specification on our variables (RT#131597)
 - Remove invalid macro definitions from macros.perl (bug #1532539)
 - Fix a crash when a match for inversely repeated group fails (RT#132017)
+- Fix an overflow when parsing a character range with no preceding character
+  (RT#132245)
 
 * Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.3-395
 - Update perl(:MODULE_COMPAT_*)
