@@ -5340,6 +5340,7 @@ popd
 %changelog
 * Tue Feb 06 2018 Petr Pisar <ppisar@redhat.com> - 4:5.24.3-396
 - Fix handling attribute specification on our variables (RT#131597)
+- Remove invalid macro definitions from macros.perl (bug #1532539)
 
 * Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.3-395
 - Update perl(:MODULE_COMPAT_*)
