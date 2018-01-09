@@ -79,7 +79,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        401%{?dist}
+Release:        402%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
@@ -5087,6 +5087,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jan 09 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.1-402
+- Remove invalid macro definitions from macros.perl (bug #1532539)
+
 * Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.1-401
 - Update perl(:MODULE_COMPAT)
 
