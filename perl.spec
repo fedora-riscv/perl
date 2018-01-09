@@ -211,6 +211,10 @@ Patch62:        perl-5.27.3-perl-132008-make-sure-the-test-behaves-without-a-tty
 # in upstream after 5.27.3
 Patch63:        perl-5.26.1-fix-132017-OPFAIL-insert-needs-to-set-flags-to-0.patch
 
+# Fix an overflow when parsing a character range with no preceding character,
+# RT#132245, in upstream after 5.27.5
+Patch64:        perl-5.26.1-perl-132245-don-t-try-to-process-a-char-range-with-n.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2789,6 +2793,7 @@ Perl extension for Version Objects
 %patch61 -p1
 %patch62 -p1
 %patch63 -p1
+%patch64 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2826,6 +2831,7 @@ perl -x patchlevel.h \
     'Fedora Patch59: Fix an overflow in the lexer when reading a new line (RT#131793)' \
     'Fedora Patch60: Fix Term::ReadLine not to create spurious &STDERR files (RT#132008)' \
     'Fedora Patch63: Fix a crash when a match for inversely repeated group fails (RT#132017)' \
+    'Fedora Patch64: Fix an overflow when parsing a character range with no preceding character (RT#132245)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5114,6 +5120,8 @@ popd
 - Fix an overflow in the lexer when reading a new line (RT#131793)
 - Fix Term::ReadLine not to create spurious &STDERR files (RT#132008)
 - Fix a crash when a match for inversely repeated group fails (RT#132017)
+- Fix an overflow when parsing a character range with no preceding character
+  (RT#132245)
 
 * Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.1-401
 - Update perl(:MODULE_COMPAT)
