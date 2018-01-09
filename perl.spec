@@ -218,6 +218,10 @@ Patch64:        perl-5.26.1-perl-132245-don-t-try-to-process-a-char-range-with-n
 # Fix walking symbol table for ISA in Carp, in upstream after 5.27.5
 Patch65:        perl-5.27.5-Carp-Don-t-choke-on-ISA-constant.patch
 
+# Fix handling file names with null bytes in stat and lstat functions,
+# RT#131895, in upstream after 5.27.5
+Patch66:        perl-5.26.1-perl-131895-fail-stat-on-names-with-0-embedded.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2798,6 +2802,7 @@ Perl extension for Version Objects
 %patch63 -p1
 %patch64 -p1
 %patch65 -p1
+%patch66 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2837,6 +2842,7 @@ perl -x patchlevel.h \
     'Fedora Patch63: Fix a crash when a match for inversely repeated group fails (RT#132017)' \
     'Fedora Patch64: Fix an overflow when parsing a character range with no preceding character (RT#132245)' \
     'Fedora Patch65: Fix walking symbol table for ISA in Carp' \
+    'Fedora Patch66: Fix handling file names with null bytes in stat and lstat functions (RT#131895)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5128,6 +5134,8 @@ popd
 - Fix an overflow when parsing a character range with no preceding character
   (RT#132245)
 - Fix walking symbol table for ISA in Carp
+- Fix handling file names with null bytes in stat and lstat functions
+  (RT#131895)
 
 * Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.1-401
 - Update perl(:MODULE_COMPAT)
