@@ -391,6 +391,11 @@ Patch120:       perl-5.24.3-perform-system-arg-processing-before-fork.patch
 Patch121:       perl-5.27.7-preserve-numericness-of-system-args-on-Win32.patch
 Patch122:       perl-5.27.7-Reenable-numeric-first-argument-of-system-on-VMS.patch
 
+# Avoid undefined behavior when copying memory in Glob and pp_caller,
+# RT#131746, in upstream after 5.27.3
+Patch123:       perl-5.26.1-perl-131746-avoid-undefined-behaviour-in-Copy-etc.patch
+Patch124:       perl-5.27.3-avoid-the-address-of-.-will-always-evaluate-as-.-war.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3031,6 +3036,8 @@ popd
 %patch120 -p1
 %patch121 -p1
 %patch122 -p1
+%patch123 -p1
+%patch124 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3117,6 +3124,7 @@ perl -x patchlevel.h \
     'Fedora Patch118: Fix setting $! when statting a closed filehandle (RT#108288)' \
     'Fedora Patch119: Fix tainting of s/// with overloaded replacement (RT#115266)' \
     'Fedora Patch120: Expand system() arguments before a fork (RT#121105)' \
+    'Fedora Patch123: Avoid undefined behavior when copying memory in Glob and pp_caller (RT#131746)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5424,6 +5432,7 @@ popd
 - Fix setting $! when statting a closed filehandle (RT#108288)
 - Fix tainting of s/// with overloaded replacement (RT#115266)
 - Expand system() arguments before a fork (RT#121105)
+- Avoid undefined behavior when copying memory in Glob and pp_caller (RT#131746)
 
 * Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.3-395
 - Update perl(:MODULE_COMPAT_*)
