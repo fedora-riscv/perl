@@ -245,6 +245,13 @@ Patch71:        perl-5.26.1-set-when-statting-a-closed-filehandle.patch
 # in upstream after 5.27.5
 Patch72:        perl-5.27.5-fix-tainting-of-s-with-overloaded-replacement.patch
 
+# Expand system() arguments before a fork, RT#121105,
+# in upstream after 5.27.6
+Patch73:        perl-5.26.1-perform-system-arg-processing-before-fork.patch
+# in upstream after 5.27.7
+Patch74:        perl-5.27.7-preserve-numericness-of-system-args-on-Win32.patch
+Patch75:        perl-5.27.7-Reenable-numeric-first-argument-of-system-on-VMS.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2832,6 +2839,9 @@ Perl extension for Version Objects
 %patch70 -p1
 %patch71 -p1
 %patch72 -p1
+%patch73 -p1
+%patch74 -p1
+%patch75 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2878,6 +2888,7 @@ perl -x patchlevel.h \
     'Fedora Patch70: Fix stack manipulation when a lexical subroutine is defined in a do block in a member of an iteration list (RT#132442)' \
     'Fedora Patch71: Fix setting $! when statting a closed filehandle (RT#108288)' \
     'Fedora Patch72: Fix tainting of s/// with overloaded replacement (RT#115266)' \
+    'Fedora Patch73: Expand system() arguments before a fork (RT#121105)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5178,6 +5189,7 @@ popd
   a member of an iteration list (RT#132442)
 - Fix setting $! when statting a closed filehandle (RT#108288)
 - Fix tainting of s/// with overloaded replacement (RT#115266)
+- Expand system() arguments before a fork (RT#121105)
 
 * Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.1-401
 - Update perl(:MODULE_COMPAT)
