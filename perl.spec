@@ -79,7 +79,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        402%{?dist}
+Release:        403%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
@@ -5180,6 +5180,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jan 15 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.1-403
+- Rebuild against glibc without nsl library
+
 * Tue Jan 09 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.1-402
 - Remove invalid macro definitions from macros.perl (bug #1532539)
 - Fix an overflow in the lexer when reading a new line (RT#131793)
