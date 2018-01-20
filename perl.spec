@@ -402,6 +402,10 @@ Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li
 # Link XS modules to libperl.so with EU::MM on Linux, bug #960048
 Patch201:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-MM-on-Linux.patch
 
+# Conditionalize a fix for an old and long fixed bug
+# in libcrypt / glibc, rhbz#1536752
+Patch202:       perl-5.26.1-guard_old_libcrypt_fix.patch
+
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
 
@@ -3040,6 +3044,7 @@ popd
 %patch124 -p1
 %patch200 -p1
 %patch201 -p1
+%patch202 -p1
 
 %if !%{defined perl_bootstrap}
 # Local patch tracking
@@ -5433,6 +5438,8 @@ popd
 - Fix tainting of s/// with overloaded replacement (RT#115266)
 - Expand system() arguments before a fork (RT#121105)
 - Avoid undefined behavior when copying memory in Glob and pp_caller (RT#131746)
+- Add patch to conditionalize a fix for an old and long fixed bug
+  in libcrypt / glibc (rhbz#1536752)
 
 * Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.3-395
 - Update perl(:MODULE_COMPAT_*)
