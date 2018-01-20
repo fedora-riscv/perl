@@ -79,7 +79,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        402%{?dist}
+Release:        403%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
@@ -262,6 +262,10 @@ Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li
 
 # Link XS modules to libperl.so with EU::MM on Linux, bug #960048
 Patch201:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-MM-on-Linux.patch
+
+# Conditionalize a fix for an old and long fixed bug
+# in libcrypt / glibc, rhbz#1536752
+Patch202:       perl-5.26.1-guard_old_libcrypt_fix.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -2851,6 +2855,7 @@ Perl extension for Version Objects
 %patch77 -p1
 %patch200 -p1
 %patch201 -p1
+%patch202 -p1
 
 %if !%{defined perl_bootstrap}
 # Local patch tracking
@@ -5180,6 +5185,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Feb 06 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.1-403
+- Add patch to conditionalize a fix for an old and long fixed bug
+  in libcrypt / glibc (rhbz#1536752)
+
 * Tue Jan 09 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.1-402
 - Remove invalid macro definitions from macros.perl (bug #1532539)
 - Fix an overflow in the lexer when reading a new line (RT#131793)
