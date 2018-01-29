@@ -396,15 +396,15 @@ Patch122:       perl-5.27.7-Reenable-numeric-first-argument-of-system-on-VMS.pat
 Patch123:       perl-5.26.1-perl-131746-avoid-undefined-behaviour-in-Copy-etc.patch
 Patch124:       perl-5.27.3-avoid-the-address-of-.-will-always-evaluate-as-.-war.patch
 
+# Conditionalize a fix for an old and long fixed bug
+# in libcrypt / glibc, rhbz#1536752
+Patch125:       perl-5.26.1-guard_old_libcrypt_fix.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
 # Link XS modules to libperl.so with EU::MM on Linux, bug #960048
 Patch201:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-MM-on-Linux.patch
-
-# Conditionalize a fix for an old and long fixed bug
-# in libcrypt / glibc, rhbz#1536752
-Patch202:       perl-5.26.1-guard_old_libcrypt_fix.patch
 
 # Update some of the bundled modules
 # see http://fedoraproject.org/wiki/Perl/perl.spec for instructions
@@ -3042,9 +3042,9 @@ popd
 %patch122 -p1
 %patch123 -p1
 %patch124 -p1
+%patch125 -p1
 %patch200 -p1
 %patch201 -p1
-%patch202 -p1
 
 %if !%{defined perl_bootstrap}
 # Local patch tracking
@@ -3130,6 +3130,7 @@ perl -x patchlevel.h \
     'Fedora Patch119: Fix tainting of s/// with overloaded replacement (RT#115266)' \
     'Fedora Patch120: Expand system() arguments before a fork (RT#121105)' \
     'Fedora Patch123: Avoid undefined behavior when copying memory in Glob and pp_caller (RT#131746)' \
+    'Fedora Patch125: Fix compatibility with libxcrypt (bug #1536752)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
