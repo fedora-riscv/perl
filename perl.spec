@@ -261,6 +261,10 @@ Patch77:        perl-5.27.3-avoid-the-address-of-.-will-always-evaluate-as-.-war
 # in libcrypt / glibc, rhbz#1536752
 Patch78:        perl-5.26.1-guard_old_libcrypt_fix.patch
 
+# Link XS modules to pthread library to fix linking with -z defs,
+# <https://lists.fedoraproject.org/archives/list/devel@lists.fedoraproject.org/message/3RHZEHLRUHJFF2XGHI5RB6YPDNLDR4HG/>
+Patch79:        perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2854,6 +2858,7 @@ Perl extension for Version Objects
 %patch76 -p1
 %patch77 -p1
 %patch78 -p1
+%patch79 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2903,6 +2908,7 @@ perl -x patchlevel.h \
     'Fedora Patch73: Expand system() arguments before a fork (RT#121105)' \
     'Fedora Patch76: Avoid undefined behavior when copying memory in Glob and pp_caller (RT#131746)' \
     'Fedora Patch78: Fix compatibility with libxcrypt (bug #1536752)' \
+    'Fedora Patch79: Link XS modules to pthread library to fix linking with -z defs' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5189,6 +5195,7 @@ popd
 * Tue Feb 06 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.1-403
 - Add patch to conditionalize a fix for an old and long fixed bug
   in libcrypt / glibc (rhbz#1536752)
+- Link XS modules to pthread library to fix linking with -z defs
 
 * Tue Jan 09 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.1-402
 - Remove invalid macro definitions from macros.perl (bug #1532539)
