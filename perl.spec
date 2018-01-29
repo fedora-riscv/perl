@@ -400,6 +400,10 @@ Patch124:       perl-5.27.3-avoid-the-address-of-.-will-always-evaluate-as-.-war
 # in libcrypt / glibc, rhbz#1536752
 Patch125:       perl-5.26.1-guard_old_libcrypt_fix.patch
 
+# Link XS modules to pthread library to fix linking with -z defs,
+# <https://lists.fedoraproject.org/archives/list/devel@lists.fedoraproject.org/message/3RHZEHLRUHJFF2XGHI5RB6YPDNLDR4HG/>
+Patch126:       perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3043,6 +3047,7 @@ popd
 %patch123 -p1
 %patch124 -p1
 %patch125 -p1
+%patch126 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3131,6 +3136,7 @@ perl -x patchlevel.h \
     'Fedora Patch120: Expand system() arguments before a fork (RT#121105)' \
     'Fedora Patch123: Avoid undefined behavior when copying memory in Glob and pp_caller (RT#131746)' \
     'Fedora Patch125: Fix compatibility with libxcrypt (bug #1536752)' \
+    'Fedora Patch126: Link XS modules to pthread library to fix linking with -z defs' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5441,6 +5447,7 @@ popd
 - Avoid undefined behavior when copying memory in Glob and pp_caller (RT#131746)
 - Add patch to conditionalize a fix for an old and long fixed bug
   in libcrypt / glibc (rhbz#1536752)
+- Link XS modules to pthread library to fix linking with -z defs
 
 * Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.3-395
 - Update perl(:MODULE_COMPAT_*)
