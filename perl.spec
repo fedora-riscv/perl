@@ -3154,6 +3154,12 @@ for dir in `find ext/ -type d -name t -maxdepth 2` ; do
     tar -cf - $dir | ( cd %{buildroot}%{perl5_testdir}/perl-tests/t && tar -xf - )
 done
 
+# Normalize shell bangs in tests.
+# brp-mangle-shebangs executed by rpm-build chokes on t/TEST.
+%{new_perl} -MConfig -i -pn \
+    -e 's"\A#!(?:perl|\./perl|/usr/bin/perl|/usr/bin/env perl)\b"$Config{startperl}"' \
+    $(find %{buildroot}%{perl5_testdir}/perl-tests -type f)
+
 %if %{with perl_enables_systemtap}
 # Systemtap tapset install
 mkdir -p %{buildroot}%{tapsetdir}
@@ -5196,6 +5202,7 @@ popd
 - Add patch to conditionalize a fix for an old and long fixed bug
   in libcrypt / glibc (rhbz#1536752)
 - Link XS modules to pthread library to fix linking with -z defs
+- Correct shell bangs in tests
 
 * Tue Jan 09 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.1-402
 - Remove invalid macro definitions from macros.perl (bug #1532539)
