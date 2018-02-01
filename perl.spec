@@ -79,7 +79,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        405%{?dist}
+Release:        406%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
@@ -3154,6 +3154,12 @@ for dir in `find ext/ -type d -name t -maxdepth 2` ; do
     tar -cf - $dir | ( cd %{buildroot}%{perl5_testdir}/perl-tests/t && tar -xf - )
 done
 
+# Normalize shell bangs in tests.
+# brp-mangle-shebangs executed by rpm-build chokes on t/TEST.
+%{new_perl} -MConfig -i -pn \
+    -e 's"\A#!(?:perl|\./perl|/usr/bin/perl|/usr/bin/env perl)\b"$Config{startperl}"' \
+    $(find %{buildroot}%{perl5_testdir}/perl-tests -type f)
+
 %if %{with perl_enables_systemtap}
 # Systemtap tapset install
 mkdir -p %{buildroot}%{tapsetdir}
@@ -5192,6 +5198,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Feb 01 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.1-406
+- Correct shell bangs in tests
+
 * Mon Jan 29 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.1-405
 - Link XS modules to pthread library to fix linking with -z defs
 
