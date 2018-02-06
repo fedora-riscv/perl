@@ -1,2 +1,2 @@
 from Config import *
-addFilter("spelling-error .* (awk|groff|sed)");
+addFilter("spelling-error .* (awk|groff|metapackage|sed|usr)");
