@@ -3435,9 +3435,7 @@ popd
 %endif
 %endif
 
-%post libs -p /sbin/ldconfig
-
-%postun libs -p /sbin/ldconfig
+%ldconfig_scriptlets -n libs
 
 %files
 %{_mandir}/man1/*.1*
@@ -5462,6 +5460,7 @@ popd
 - Link XS modules to pthread library to fix linking with -z defs
 - Correct shell bangs in tests
 - Fix parsing braced subscript after parentheses (RT#8045)
+- Call ldconfig scriptlets using a macro
 
 * Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.3-395
 - Update perl(:MODULE_COMPAT_*)
