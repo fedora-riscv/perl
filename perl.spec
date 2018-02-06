@@ -269,6 +269,10 @@ Patch79:        perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
 # in upstream after 5.27.7
 Patch80:        perl-5.26.1-fix-parsing-of-braced-subscript-after-parens.patch
 
+# Fix a heap use after free when moving a stack, RT#131954,
+# in upstream after 5.27.7
+Patch81:        perl-5.27.7-perl-131954-don-t-initialize-mark-before-a-possible-.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2864,6 +2868,7 @@ Perl extension for Version Objects
 %patch78 -p1
 %patch79 -p1
 %patch80 -p1
+%patch81 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2915,6 +2920,7 @@ perl -x patchlevel.h \
     'Fedora Patch78: Fix compatibility with libxcrypt (bug #1536752)' \
     'Fedora Patch79: Link XS modules to pthread library to fix linking with -z defs' \
     'Fedora Patch80: Fix parsing braced subscript after parentheses (RT#8045)' \
+    'Fedora Patch81: Fix a heap use after free when moving a stack (RT#131954)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5206,6 +5212,7 @@ popd
 %changelog
 * Tue Feb 06 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.1-407
 - Fix parsing braced subscript after parentheses (RT#8045)
+- Fix a heap use after free when moving a stack (RT#131954)
 
 * Thu Feb 01 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.1-406
 - Correct shell bangs in tests
