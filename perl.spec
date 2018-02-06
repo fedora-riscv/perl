@@ -404,6 +404,10 @@ Patch125:       perl-5.26.1-guard_old_libcrypt_fix.patch
 # <https://lists.fedoraproject.org/archives/list/devel@lists.fedoraproject.org/message/3RHZEHLRUHJFF2XGHI5RB6YPDNLDR4HG/>
 Patch126:       perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
 
+# Fix parsing braced subscript after parentheses, RT#8045,
+# in upstream after 5.27.7
+Patch127:       perl-5.24.3-fix-parsing-of-braced-subscript-after-parens.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3048,6 +3052,7 @@ popd
 %patch124 -p1
 %patch125 -p1
 %patch126 -p1
+%patch127 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3137,6 +3142,7 @@ perl -x patchlevel.h \
     'Fedora Patch123: Avoid undefined behavior when copying memory in Glob and pp_caller (RT#131746)' \
     'Fedora Patch125: Fix compatibility with libxcrypt (bug #1536752)' \
     'Fedora Patch126: Link XS modules to pthread library to fix linking with -z defs' \
+    'Fedora Patch127: Fix parsing braced subscript after parentheses (RT#8045)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5455,6 +5461,7 @@ popd
   in libcrypt / glibc (rhbz#1536752)
 - Link XS modules to pthread library to fix linking with -z defs
 - Correct shell bangs in tests
+- Fix parsing braced subscript after parentheses (RT#8045)
 
 * Mon Sep 25 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.24.3-395
 - Update perl(:MODULE_COMPAT_*)
