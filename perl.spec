@@ -3211,9 +3211,7 @@ popd
 %endif
 %endif
 
-%post libs -p /sbin/ldconfig
-
-%postun libs -p /sbin/ldconfig
+%ldconfig_scriptlets -n libs
 
 %files
 # We sub-package modules from perl-interpreter subpackage. Main perl package
@@ -5213,6 +5211,7 @@ popd
 * Tue Feb 06 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.1-407
 - Fix parsing braced subscript after parentheses (RT#8045)
 - Fix a heap use after free when moving a stack (RT#131954)
+- Call ldconfig scriptlets using a macro
 
 * Thu Feb 01 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.1-406
 - Correct shell bangs in tests
