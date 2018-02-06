@@ -79,7 +79,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        406%{?dist}
+Release:        407%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
@@ -264,6 +264,10 @@ Patch78:        perl-5.26.1-guard_old_libcrypt_fix.patch
 # Link XS modules to pthread library to fix linking with -z defs,
 # <https://lists.fedoraproject.org/archives/list/devel@lists.fedoraproject.org/message/3RHZEHLRUHJFF2XGHI5RB6YPDNLDR4HG/>
 Patch79:        perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
+
+# Fix parsing braced subscript after parentheses, RT#8045,
+# in upstream after 5.27.7
+Patch80:        perl-5.26.1-fix-parsing-of-braced-subscript-after-parens.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2859,6 +2863,7 @@ Perl extension for Version Objects
 %patch77 -p1
 %patch78 -p1
 %patch79 -p1
+%patch80 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2909,6 +2914,7 @@ perl -x patchlevel.h \
     'Fedora Patch76: Avoid undefined behavior when copying memory in Glob and pp_caller (RT#131746)' \
     'Fedora Patch78: Fix compatibility with libxcrypt (bug #1536752)' \
     'Fedora Patch79: Link XS modules to pthread library to fix linking with -z defs' \
+    'Fedora Patch80: Fix parsing braced subscript after parentheses (RT#8045)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5198,6 +5204,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Feb 06 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.1-407
+- Fix parsing braced subscript after parentheses (RT#8045)
+
 * Thu Feb 01 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.1-406
 - Correct shell bangs in tests
 
