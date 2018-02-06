@@ -3211,7 +3211,7 @@ popd
 %endif
 %endif
 
-%ldconfig_scriptlets -n libs
+%ldconfig_scriptlets libs
 
 %files
 # We sub-package modules from perl-interpreter subpackage. Main perl package
