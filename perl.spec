@@ -3435,7 +3435,7 @@ popd
 %endif
 %endif
 
-%ldconfig_scriptlets -n libs
+%ldconfig_scriptlets libs
 
 %files
 %{_mandir}/man1/*.1*
