@@ -5414,7 +5414,7 @@ popd
 * Wed Jun 22 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-368
 - Do not use unitialized memory in $h{\const} warnings (RT#128189)
 - Fix precedence in hv_ename_delete (RT#128086)
-- Do not treat %: as a stash (RT#128238)
+- Do not treat %%: as a stash (RT#128238)
 
 * Mon Jun 20 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-367
 - Fix compiling regular expressions like /\X*(?0)/ (RT#128109)
