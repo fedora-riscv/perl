@@ -79,7 +79,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        407%{?dist}
+Release:        408%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
@@ -5208,6 +5208,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Feb 09 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 4:5.26.1-408
+- Escape macros in %%changelog
+
 * Tue Feb 06 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.1-407
 - Fix parsing braced subscript after parentheses (RT#8045)
 - Fix a heap use after free when moving a stack (RT#131954)
@@ -5423,7 +5426,7 @@ popd
 * Wed Jun 22 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-368
 - Do not use unitialized memory in $h{\const} warnings (RT#128189)
 - Fix precedence in hv_ename_delete (RT#128086)
-- Do not treat %: as a stash (RT#128238)
+- Do not treat %%: as a stash (RT#128238)
 
 * Mon Jun 20 2016 Petr Pisar <ppisar@redhat.com> - 4:5.24.0-367
 - Fix compiling regular expressions like /\X*(?0)/ (RT#128109)
