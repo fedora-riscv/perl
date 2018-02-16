@@ -41,8 +41,9 @@ Name:           perl
 # cpan/Getopt-Long/lib/Getopt/Long.pm:  GPLv2+ or Artistic
 # cpan/Compress-Raw-Zlib/Zlib.xs:       (GPL+ or Artistic) and zlib
 # cpan/Digest-MD5/MD5.xs:               (GPL+ or Artistic) and BSD
-# cpan/Time-Piece/Piece.xs:             (GPL+ or Artisitc) and BSD
-# dist/PathTools/Cwd.xs:                (GPL+ or Artisitc) and BSD
+# cpan/Time-Piece/Piece.xs:             (GPL+ or Artistic) and BSD
+# dist/PathTools/Cwd.xs:                (GPL+ or Artistic) and BSD
+# util.c:                               (GPL+ or Artistic) and BSD
 # cpan/perlfaq/lib/perlfaq4.pod:        (GPL+ or Artistic) and Public Domain
 # cpan/Test-Simple/lib/Test/Tutorial.pod:   (GPL+ or Artistic) and
 #                                           Public Domain
@@ -50,6 +51,7 @@ Name:           perl
 # cpan/Test-Simple/lib/ok.pm:           CC0
 # cpan/Text-Tabs/lib/Text/Wrap.pm:      TTWL
 # cpan/Encode/bin/encguess:             Artistic 2.0
+# cpan/libnet/lib/Net/libnetFAQ.pod:    Artistic    (CPAN RT#117888)
 # cpan/Unicode-Collate/Collate/allkeys.txt:     Unicode
 # lib/unicore:                          UCD
 # ext/SDBM_File/sdbm.{c,h}:             Public domain
@@ -1726,7 +1728,7 @@ JSON::PP is a pure-Perl module and is compatible with JSON::XS.
 %if %{dual_life} || %{rebuild_from_scratch}
 %package libnet
 Summary:        Perl clients for various network protocols
-License:        GPL+ or Artistic
+License:        (GPL+ or Artistic) and Artistic
 Epoch:          0
 Version:        3.10
 Requires:       %perl_compat
