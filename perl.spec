@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        408%{?dist}
+Release:        409%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
@@ -5210,6 +5210,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Mar  1 2018 Florian Weimer <fweimer@redhat.com> - 4:5.26.1-409
+- Rebuild to pick up new build flags from redhat-rpm-config
+
 * Fri Feb 09 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 4:5.26.1-408
 - Escape macros in %%changelog
 
