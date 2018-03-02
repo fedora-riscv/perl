@@ -1249,6 +1249,10 @@ License:        GPL+ or Artistic
 Epoch:          1
 Version:        0.280225
 BuildArch:      noarch
+# C and C++ compilers are highly recommended because compiling code is the
+# purpose of ExtUtils::CBuilder, bug #1547165
+Requires:       gcc
+Requires:       gcc-c++
 Requires:       perl-devel
 Requires:       %perl_compat
 Requires:       perl(DynaLoader)
@@ -1325,11 +1329,13 @@ Summary:        Create a module Makefile
 License:        GPL+ or Artistic
 Epoch:          1
 Version:        7.24
+# These dependencies are weak in order to relieve building noarch
+# packages from perl-devel and gcc. See bug #1547165.
+# If an XS module is built, the generated Makefile executes gcc.
+Recommends:     gcc
 # If an XS module is built, code generated from XS will be compiled and it
 # includes Perl header files.
-# TODO: This dependency will be weaken in order to relieve building noarch
-# packages from perl-devel and gcc.
-Requires:       perl-devel
+Recommends:     perl-devel
 Requires:       %perl_compat
 Requires:       perl(Data::Dumper)
 Requires:       perl(DynaLoader)
