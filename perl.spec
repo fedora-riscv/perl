@@ -1,4 +1,4 @@
-%global perl_version    5.26.1
+%global perl_version    5.26.2
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        403%{?dist}
+Release:        404%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
@@ -146,11 +146,6 @@ Patch30:        perl-5.22.1-Replace-EU-MM-dependnecy-with-EU-MM-Utils-in-IPC-Cmd
 # in upstream after 5.27.0
 Patch31:        perl-5.27.0-perl-131211-fixup-File-Glob-degenerate-matching.patch
 
-# Fix cloning :via handles on thread creation, RT#131221,
-# in upstream after 5.27.0
-Patch34:        perl-5.27.0-perl-131221-improve-duplication-of-via-handles.patch
-Patch35:        perl-5.27.0-perl-131221-sv_dup-sv_dup_inc-are-only-available-und.patch
-
 # Fix glob UTF-8 flag on a glob reassignment, RT#131263,
 # in upstream after 5.27.0
 Patch36:        perl-5.26.0-perl-131263-clear-the-UTF8-flag-on-a-glob-if-it-isn-.patch
@@ -170,8 +165,8 @@ Patch46:        perl-5.26.0-t-op-hash.t-fixup-intermittently-failing-test.patch
 
 # Parse caret variables with subscripts as normal variables inside ${...}
 # escaping, RT#131664, in upstream after 5.27.1
-Patch47:        perl-5.27.1-Parse-caret-vars-with-subscripts-the-same-as-normal-.patch
-Patch48:        perl-5.27.1-add-an-additional-test-for-whitespace-tolerance-in-c.patch
+Patch47:        perl-5.26.2-RC1-Parse-caret-vars-with-subscripts-the-same-as-normal-.patch
+Patch48:        perl-5.26.2-RC1-add-an-additional-test-for-whitespace-tolerance-in-c.patch
 
 # Do not display too many bytes when reporting malformed UTF-8 character,
 # in upstream after 5.27.1
@@ -199,19 +194,9 @@ Patch56:        perl-5.27.2-EU-Constant-avoid-uninit-warning.patch
 # Fix unreliable Time-HiRes tests, CPAN RT#122819, in Time-HiRes-1.9746
 Patch58:        perl-5.26.0-Time-HiRes-Fix-unreliable-t-usleep.t-and-t-utime.t.patch
 
-# Fix an overflow in the lexer when reading a new line, RT#131793,
-# in upstream after 5.27.2
-Patch59:        perl-5.27.2-perl-131793-sanely-handle-PL_linestart-PL_bufptr.patch
-
 # Fix Term::ReadLine not to create spurious &STDERR files, RT#132008,
 # in upstream after 5.27.3
-Patch60:        perl-5.27.3-Term-ReadLine-generates-empty-STDERR-files.patch
 Patch61:        perl-5.27.3-perl-132008-try-to-prevent-the-similar-mistakes-in-t.patch
-Patch62:        perl-5.27.3-perl-132008-make-sure-the-test-behaves-without-a-tty.patch
-
-# Fix a crash when a match for inversely repeated group fails, RT#132017,
-# in upstream after 5.27.3
-Patch63:        perl-5.26.1-fix-132017-OPFAIL-insert-needs-to-set-flags-to-0.patch
 
 # Fix an overflow when parsing a character range with no preceding character,
 # RT#132245, in upstream after 5.27.5
@@ -249,7 +234,7 @@ Patch72:        perl-5.27.5-fix-tainting-of-s-with-overloaded-replacement.patch
 
 # Expand system() arguments before a fork, RT#121105,
 # in upstream after 5.27.6
-Patch73:        perl-5.26.1-perform-system-arg-processing-before-fork.patch
+Patch73:        perl-5.26.2-RC1-perform-system-arg-processing-before-fork.patch
 # in upstream after 5.27.7
 Patch74:        perl-5.27.7-preserve-numericness-of-system-args-on-Win32.patch
 Patch75:        perl-5.27.7-Reenable-numeric-first-argument-of-system-on-VMS.patch
@@ -270,10 +255,6 @@ Patch79:        perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
 # Fix parsing braced subscript after parentheses, RT#8045,
 # in upstream after 5.27.7
 Patch80:        perl-5.26.1-fix-parsing-of-braced-subscript-after-parens.patch
-
-# Fix a heap use after free when moving a stack, RT#131954,
-# in upstream after 5.27.7
-Patch81:        perl-5.27.7-perl-131954-don-t-initialize-mark-before-a-possible-.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -324,7 +305,7 @@ BuildRequires:  rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.26.1)
+%global perl_compat perl(:MODULE_COMPAT_5.26.2)
 
 Requires:       %perl_compat
 Requires:       perl-interpreter%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
@@ -475,6 +456,7 @@ Summary:        The libraries for the perl run-time
 License:        (GPL+ or Artistic) and HSLR and MIT and UCD
 # Compat provides
 Provides:       %perl_compat
+Provides:       perl(:MODULE_COMPAT_5.26.1)
 Provides:       perl(:MODULE_COMPAT_5.26.0)
 # Interpreter version to fulfil required genersted from "require 5.006;"
 Provides:       perl(:VERSION) = %{perl_version}
@@ -1952,7 +1934,7 @@ encoder/decoder. These encoding methods are specified in RFC 2045 - MIME
 Summary:        What modules are shipped with versions of perl
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20170922
+Version:        5.20180414
 Requires:       %perl_compat
 Requires:       perl(List::Util)
 Requires:       perl(version) >= 0.88
@@ -1970,7 +1952,7 @@ are shipped with each version of perl.
 Summary:        Tool for listing modules shipped with perl
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20170922
+Version:        5.20180414
 Requires:       %perl_compat
 Requires:       perl(feature)
 Requires:       perl(version) >= 0.88
@@ -2832,8 +2814,6 @@ Perl extension for Version Objects
 %patch26 -p1
 %patch30 -p1
 %patch31 -p1
-%patch34 -p1
-%patch35 -p1
 %patch36 -p1
 %patch38 -p1
 %patch43 -p1
@@ -2848,11 +2828,7 @@ Perl extension for Version Objects
 %patch55 -p1
 %patch56 -p1
 %patch58 -p1
-%patch59 -p1
-%patch60 -p1
 %patch61 -p1
-%patch62 -p1
-%patch63 -p1
 %patch64 -p1
 %patch65 -p1
 %patch66 -p1
@@ -2870,7 +2846,6 @@ Perl extension for Version Objects
 %patch78 -p1
 %patch79 -p1
 %patch80 -p1
-%patch81 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2892,7 +2867,6 @@ perl -x patchlevel.h \
     'Fedora Patch27: Make PadlistNAMES() lvalue again (CPAN RT#101063)' \
     'Fedora Patch30: Replace EU::MakeMaker dependency with EU::MM::Utils in IPC::Cmd (bug #1129443)' \
     'Fedora Patch31: Make File::Glob more resistant against degenerative matching (RT#131211)' \
-    'Fedora Patch34: Fix cloning :via handles on thread creation (RT#131221)' \
     'Fedora Patch36: Fix glob UTF-8 flag on a glob reassignment (RT#131263)' \
     'Fedora Patch38: Fix handling backslashes in PATH environment variable when executing "perl -S" (RT#129183)' \
     'Fedora Patch45: Fix File::Glob rt131211.t test random failures' \
@@ -2905,9 +2879,7 @@ perl -x patchlevel.h \
     'Fedora Patch55: Fix compiler warnings in code generated by ExtUtils::Constant (CPAN RT#63832)' \
     'Fedora Patch56: Fix compiler warnings in code generated by ExtUtils::Constant (CPAN RT#101487)' \
     'Fedora Patch58: Fix unreliable Time-HiRes tests (CPAN RT#122819)' \
-    'Fedora Patch59: Fix an overflow in the lexer when reading a new line (RT#131793)' \
-    'Fedora Patch60: Fix Term::ReadLine not to create spurious &STDERR files (RT#132008)' \
-    'Fedora Patch63: Fix a crash when a match for inversely repeated group fails (RT#132017)' \
+    'Fedora Patch61: Fix Term::ReadLine not to create spurious &STDERR files (RT#132008)' \
     'Fedora Patch64: Fix an overflow when parsing a character range with no preceding character (RT#132245)' \
     'Fedora Patch65: Fix walking symbol table for ISA in Carp' \
     'Fedora Patch66: Fix handling file names with null bytes in stat and lstat functions (RT#131895)' \
@@ -2922,7 +2894,6 @@ perl -x patchlevel.h \
     'Fedora Patch78: Fix compatibility with libxcrypt (bug #1536752)' \
     'Fedora Patch79: Link XS modules to pthread library to fix linking with -z defs' \
     'Fedora Patch80: Fix parsing braced subscript after parentheses (RT#8045)' \
-    'Fedora Patch81: Fix a heap use after free when moving a stack (RT#131954)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5210,6 +5181,12 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Apr 16 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.2-404
+- 5.26.2 bump
+- Fix CVE-2018-6913 (heap buffer overflow in pp_pack.c) (bug #1567776)
+- Fix CVE-2018-6798 (heap read overflow in regexec.c) (bug #1567777)
+- Fix CVE-2018-6797 (heap write overflow in regcomp.c) (bug #1567778)
+
 * Tue Feb 06 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.1-403
 - Add patch to conditionalize a fix for an old and long fixed bug
   in libcrypt / glibc (rhbz#1536752)
