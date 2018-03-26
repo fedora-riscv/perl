@@ -1,4 +1,4 @@
-From cbe3025c652289aee2f2f4145f882be5b33a27ee Mon Sep 17 00:00:00 2001
+From 3e6e57e89f298f450cbe14c61609f08fc01bf233 Mon Sep 17 00:00:00 2001
 From: Zefram <zefram@fysh.org>
 Date: Sat, 16 Dec 2017 05:33:20 +0000
 Subject: [PATCH] perform system() arg processing before fork
@@ -14,7 +14,7 @@ $$, and in that case it should also happen in the parent process.
 Therefore reduce the argument scalars to strings first thing in pp_system.
 Fixes [perl #121105].
 
-Petr Písař: Ported to 5.26.1 from
+Petr Písař: Ported to 5.26.2-RC1 from
 64def2aeaeb63f92dadc6dfa33486c1d7b311963.
 
 Signed-off-by: Petr Písař <ppisar@redhat.com>
@@ -53,19 +53,19 @@ index 87961f1..07e552a 100644
      }
      PERL_FLUSHALL_FOR_CHILD;
 diff --git a/t/op/exec.t b/t/op/exec.t
-index 1155439..45237e9 100644
+index 237388b..e29de82 100644
 --- a/t/op/exec.t
 +++ b/t/op/exec.t
 @@ -36,7 +36,7 @@ $ENV{LANGUAGE} = 'C';		# Ditto in GNU.
  my $Is_VMS   = $^O eq 'VMS';
  my $Is_Win32 = $^O eq 'MSWin32';
  
--plan(tests => 25);
-+plan(tests => 28);
+-plan(tests => 34);
++plan(tests => 37);
  
  my $Perl = which_perl();
  
-@@ -156,6 +156,19 @@ TODO: {
+@@ -177,6 +177,19 @@ TODO: {
          "exec failure doesn't terminate process");
  }
  
@@ -86,5 +86,5 @@ index 1155439..45237e9 100644
  exec $Perl, '-le', qq{${quote}print 'ok $test - exec PROG, LIST'${quote}};
  fail("This should never be reached if the exec() worked");
 -- 
-2.13.6
+2.14.3
 
