@@ -1,10 +1,17 @@
-From bf4a926a29374161655548b149d1cb37300bcc05 Mon Sep 17 00:00:00 2001
+From cd6b0f4e030d55ff077e9bc8fbcf156ab79dceb1 Mon Sep 17 00:00:00 2001
 From: Tony Cook <tony@develop-help.com>
 Date: Wed, 7 Sep 2016 16:51:39 +1000
 Subject: [PATCH] (perl #129149) avoid a heap buffer overflow with pack "W"...
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+
+Petr Písař: Ported to 5.24.4:
+
+From bf4a926a29374161655548b149d1cb37300bcc05 Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Wed, 7 Sep 2016 16:51:39 +1000
+Subject: [PATCH] (perl #129149) avoid a heap buffer overflow with pack "W"...
 
 Signed-off-by: Petr Písař <ppisar@redhat.com>
 ---
@@ -13,10 +20,10 @@ Signed-off-by: Petr Písař <ppisar@redhat.com>
  2 files changed, 13 insertions(+), 2 deletions(-)
 
 diff --git a/pp_pack.c b/pp_pack.c
-index ee4c69e..737e019 100644
+index c0de5ab..29fdb01 100644
 --- a/pp_pack.c
 +++ b/pp_pack.c
-@@ -2587,7 +2587,7 @@ S_pack_rec(pTHX_ SV *cat, tempsym_t* symptr, SV **beglist, SV **endlist )
+@@ -2598,7 +2598,7 @@ S_pack_rec(pTHX_ SV *cat, tempsym_t* symptr, SV **beglist, SV **endlist )
  		if (in_bytes) auv = auv % 0x100;
  		if (utf8) {
  		  W_utf8:
@@ -26,21 +33,21 @@ index ee4c69e..737e019 100644
  			SvCUR_set(cat, cur - start);
  
 diff --git a/t/op/pack.t b/t/op/pack.t
-index 3fc12e4..47d1216 100644
+index a480c3a..cf5ae78 100644
 --- a/t/op/pack.t
 +++ b/t/op/pack.t
 @@ -12,7 +12,7 @@ my $no_endianness = $] > 5.009 ? '' :
  my $no_signedness = $] > 5.009 ? '' :
    "Signed/unsigned pack modifiers not available on this perl";
  
--plan tests => 14712;
-+plan tests => 14713;
+-plan tests => 14716;
++plan tests => 14717;
  
  use strict;
  use warnings qw(FATAL all);
-@@ -2047,3 +2047,14 @@ ok(1, "argument underflow did not crash");
-     is(pack("H40", $up_nul), $twenty_nuls,
-        "check pack H zero fills (utf8 source)");
+@@ -2066,3 +2066,14 @@ SKIP:
+     fresh_perl_like('pack "c10f1073741824"', qr/Out of memory during pack/, { stderr => 1 },
+ 		    "integer overflow calculating allocation (multiply)");
  }
 +
 +{
@@ -54,5 +61,5 @@ index 3fc12e4..47d1216 100644
 +EOS
 +}
 -- 
-2.7.4
+2.14.3
 

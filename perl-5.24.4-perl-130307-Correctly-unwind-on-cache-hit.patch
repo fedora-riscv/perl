@@ -1,4 +1,4 @@
-From 95ec90ac7c7c5fb158401eb65721bbeaae1949ab Mon Sep 17 00:00:00 2001
+From 7ec44a7b6adbc0221150969fc61134322fd5ed85 Mon Sep 17 00:00:00 2001
 From: Hugo van der Sanden <hv@crypt.org>
 Date: Mon, 12 Dec 2016 15:15:06 +0000
 Subject: [PATCH] Correctly unwind on cache hit
@@ -6,7 +6,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Petr Pisar: Ported to 5.24.0:
+Petr Pisar: Ported to 5.24.4:
 
 commit d3c48e81594c1d64ba9833495e45d8951b42027c
 Author: Hugo van der Sanden <hv@crypt.org>
@@ -25,10 +25,10 @@ Signed-off-by: Petr Písař <ppisar@redhat.com>
  2 files changed, 2 insertions(+)
 
 diff --git a/regexec.c b/regexec.c
-index 38ff44a..a5d5db4 100644
+index 6904546..25ea3a3 100644
 --- a/regexec.c
 +++ b/regexec.c
-@@ -7322,6 +7322,7 @@ NULL
+@@ -7334,6 +7334,7 @@ NULL
                          DEBUG_EXECUTE_r( Perl_re_exec_indentf( aTHX_  "whilem: (cache) already tried at this position...\n",
                              depth)
  			);
@@ -37,17 +37,17 @@ index 38ff44a..a5d5db4 100644
  		    }
  		    ST.cache_offset = offset;
 diff --git a/t/re/re_tests b/t/re/re_tests
-index 2f4d00c..c81f67f 100644
+index 8b0feaa..6717b85 100644
 --- a/t/re/re_tests
 +++ b/t/re/re_tests
-@@ -1969,6 +1969,7 @@ ab(?#Comment){2}c	abbc	y	$&	abbc
- aa$|a(?R)a|a	aaa	y	$&	aaa		# [perl 128420] recursive matches
+@@ -1970,6 +1970,7 @@ aa$|a(?R)a|a	aaa	y	$&	aaa		# [perl 128420] recursive matches
  (?:\1|a)([bcd])\1(?:(?R)|e)\1	abbaccaddedcb	y	$&	abbaccaddedcb		# [perl 128420] recursive match with backreferences
+ (?il)\x{100}|\x{100}|\x{FF}	\xFF	y	$&	\xFF
  \b\z0*\x{100}	.\x{100}	n	-	-	# [perl #129350] crashed in intuit_start
 +(X{2,}[-X]{1,4}){3,}X{2,}	XXX-XXX-XXX--	n	-	-	# [perl #130307]
  
  # Keep these lines at the end of the file
  # vim: softtabstop=0 noexpandtab
 -- 
-2.7.4
+2.14.3
 

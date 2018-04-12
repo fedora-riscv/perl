@@ -1,4 +1,4 @@
-%global perl_version    5.24.3
+%global perl_version    5.24.4
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -37,7 +37,7 @@
 Name:           perl
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        396%{?dist}
+Release:        397%{?dist}
 Epoch:          %{perl_epoch}
 Summary:        Practical Extraction and Report Language
 # These are all found licenses. They are distributed among various
@@ -171,7 +171,7 @@ Patch53:        perl-5.25.4-perl-129267-Test-for-gv_fetchmethod-buffer-overrun.p
 
 # Fix crash when matching UTF-8 string with non-UTF-8 substrings, RT#129350,
 # in upstream after 5.25.5
-Patch54:        perl-5.24.0-perl-129350-anchored-floating-substrings-must-be-utf.patch
+Patch54:        perl-5.24.4-perl-129350-anchored-floating-substrings-must-be-utf.patch
 
 # Fix parsing perl options in shell bang line, RT#129336,
 # in upstream after 5.25.5
@@ -212,15 +212,15 @@ Patch63:        perl-5.24.0-assertion-failure-in-.-or-0-x-0.patch
 Patch64:        perl-5.24.0-perl-129788-IO-Poll-fix-memory-leak.patch
 
 # Fix regular expression matching, RT#130307, in upstream after 5.25.7
-Patch65:        perl-5.25.7-perl-130307-Correctly-unwind-on-cache-hit.patch
+Patch65:        perl-5.24.4-perl-130307-Correctly-unwind-on-cache-hit.patch
 
 # Fix a buffer overflow in split in scalar context, RT#130262,
 # in upstream after 5.25.8
 Patch66:        perl-5.24.1-perl-130262-split-scalar-context-stack-overflow-fix.patch
 
 # Fix a heap overflow with pack "W", RT129149, in upstream after 5.25.8
-Patch67:        perl-5.25.8-perl-129149-avoid-a-heap-buffer-overflow-with-pack-W.patch
-Patch68:        perl-5.25.8-perl-129149-fix-the-test-so-skip-has-a-SKIP-to-work-.patch
+Patch67:        perl-5.24.4-perl-129149-avoid-a-heap-buffer-overflow-with-pack-W.patch
+Patch68:        perl-5.24.4-perl-129149-fix-the-test-so-skip-has-a-SKIP-to-work-.patch
 
 # Fix a use-after-free when processing scalar variables in forms, RT#129125,
 # in upstream after 5.25.8
@@ -386,7 +386,7 @@ Patch119:       perl-5.24.3-fix-tainting-of-s-with-overloaded-replacement.patch
 
 # Expand system() arguments before a fork, RT#121105,
 # in upstream after 5.27.6
-Patch120:       perl-5.24.3-perform-system-arg-processing-before-fork.patch
+Patch120:       perl-5.24.4-perform-system-arg-processing-before-fork.patch
 # in upstream after 5.27.7
 Patch121:       perl-5.27.7-preserve-numericness-of-system-args-on-Win32.patch
 Patch122:       perl-5.27.7-Reenable-numeric-first-argument-of-system-on-VMS.patch
@@ -459,7 +459,7 @@ BuildRequires:  rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.24.3)
+%global perl_compat perl(:MODULE_COMPAT_5.24.4)
 
 # perl-interpreter denotes a package with the perl executable.
 # Full EVR is for compatibility with systems that swapped perl and perl-core
@@ -519,6 +519,7 @@ Summary:        The libraries for the perl run-time
 License:        (GPL+ or Artistic) and HSLR and MIT and UCD
 # Compat provides
 Provides:       %perl_compat
+Provides:       perl(:MODULE_COMPAT_5.24.3)
 Provides:       perl(:MODULE_COMPAT_5.24.2)
 Provides:       perl(:MODULE_COMPAT_5.24.1)
 Provides:       perl(:MODULE_COMPAT_5.24.0)
@@ -2069,7 +2070,7 @@ encoder/decoder. These encoding methods are specified in RFC 2045 - MIME
 Summary:        What modules are shipped with versions of perl
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20170922
+Version:        5.20180414
 Requires:       %perl_compat
 Requires:       perl(List::Util)
 Requires:       perl(version) >= 0.88
@@ -2087,7 +2088,7 @@ are shipped with each version of perl.
 Summary:        Tool for listing modules shipped with perl
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20170922
+Version:        5.20180414
 Requires:       %perl_compat
 Requires:       perl(feature)
 Requires:       perl(version) >= 0.88
@@ -5437,6 +5438,12 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Apr 16 2018 Petr Pisar <ppisar@redhat.com> - 4:5.24.4-397
+- 5.24.4 bump
+- Fix CVE-2018-6913 (heap buffer overflow in pp_pack.c) (bug #1567776)
+- Fix CVE-2018-6798 (heap read overflow in regexec.c) (bug #1567777)
+- Fix CVE-2018-6797 (heap write overflow in regcomp.c) (bug #1567778)
+
 * Tue Feb 06 2018 Petr Pisar <ppisar@redhat.com> - 4:5.24.3-396
 - Fix handling attribute specification on our variables (RT#131597)
 - Remove invalid macro definitions from macros.perl (bug #1532539)

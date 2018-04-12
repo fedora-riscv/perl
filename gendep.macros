@@ -67,14 +67,14 @@ Provides: perl(B) = 1.62 \
 Provides: perl(B::Concise) = 0.996 \
 Provides: perl(B::Deparse) = 1.37 \
 Provides: perl(B::OBJECT) \
-Provides: perl(B::Op_private) = 5.024000 \
+Provides: perl(B::Op_private) = 5.024004 \
 Provides: perl(B::Showlex) = 1.05 \
 Provides: perl(B::Terse) = 1.06 \
 Provides: perl(B::Xref) = 1.05 \
 Provides: perl(Benchmark) = 1.22 \
 Provides: perl(Class::Struct) = 0.65 \
 Provides: perl(Class::Struct::Tie_ISA) \
-Provides: perl(Config) = 5.024000 \
+Provides: perl(Config) = 5.024004 \
 Provides: perl(Config::Extensions) = 0.01 \
 Provides: perl(DB) = 1.08 \
 Provides: perl(DBM_Filter) = 0.06 \
@@ -140,7 +140,7 @@ Provides: perl(PerlIO) = 1.09 \
 Provides: perl(PerlIO::encoding) = 0.24 \
 Provides: perl(PerlIO::mmap) = 0.016 \
 Provides: perl(PerlIO::scalar) = 0.24 \
-Provides: perl(PerlIO::via) = 0.16 \
+Provides: perl(PerlIO::via) = 0.17 \
 Provides: perl(Pod::Functions) = 1.10 \
 Provides: perl(SDBM_File) = 1.14 \
 Provides: perl(Safe) = 2.39 \
@@ -213,7 +213,7 @@ Provides: perl(subs) = 1.02 \
 Provides: perl(vars) = 1.03 \
 Provides: perl(vmsish) = 1.04 \
 Provides: perl(warnings::register) = 1.04 \
-Provides: perl(x86-64) = 4:5.24.0-364.fc25 \
+Provides: perl(x86-64) = 4:5.24.4-397.RC1.fc26 \
 %{nil}
 %global gendep_perl_Archive_Tar \
 Requires: perl(:VERSION) >= 5.5.0 \
@@ -1167,9 +1167,9 @@ Requires: perl(strict) \
 Requires: perl(vars) \
 Requires: perl(version) \
 Requires: perl(warnings) \
-Provides: perl(Module::CoreList) = 5.20160506 \
-Provides: perl(Module::CoreList::TieHashDelta) = 5.20160506 \
-Provides: perl(Module::CoreList::Utils) = 5.20160506 \
+Provides: perl(Module::CoreList) = 5.20180414 \
+Provides: perl(Module::CoreList::TieHashDelta) = 5.20180414 \
+Provides: perl(Module::CoreList::Utils) = 5.20180414 \
 %{nil}
 %global gendep_perl_Module_CoreList_tools \
 Requires: perl(Getopt::Long) \
@@ -1311,7 +1311,7 @@ Requires: perl(parent) \
 Requires: perl(strict) \
 Requires: perl(vars) \
 Requires: perl(warnings) \
-Provides: perl(Pod::Html) = 1.22 \
+Provides: perl(Pod::Html) = 1.2201 \
 Provides: perl(Pod::Simple::XHTML::LocalPodLinks) \
 %{nil}
 %global gendep_perl_Pod_Parser \
@@ -1699,7 +1699,7 @@ Provides: perl(Thread::Queue) = 3.09 \
 Requires: perl(DynaLoader) \
 Requires: perl(Exporter) \
 Requires: perl(strict) \
-Provides: perl(Time::HiRes) = 1.9733 \
+Provides: perl(Time::HiRes) = 1.9741 \
 %{nil}
 %global gendep_perl_Time_Local \
 Requires: perl(Carp) \
@@ -1885,7 +1885,11 @@ Requires: perl(integer) \
 Requires: perl(strict) \
 Requires: perl(warnings) \
 Provides: perl(:MODULE_COMPAT_5.24.0) \
-Provides: perl(:VERSION) = 5.24.0 \
+Provides: perl(:MODULE_COMPAT_5.24.1) \
+Provides: perl(:MODULE_COMPAT_5.24.2) \
+Provides: perl(:MODULE_COMPAT_5.24.3) \
+Provides: perl(:MODULE_COMPAT_5.24.4) \
+Provides: perl(:VERSION) = 5.24.4 \
 Provides: perl(:WITH_ITHREADS) \
 Provides: perl(:WITH_LARGEFILES) \
 Provides: perl(:WITH_PERLIO) \
