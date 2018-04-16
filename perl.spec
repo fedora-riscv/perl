@@ -81,10 +81,10 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        410.RC1%{?dist}
+Release:        411%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
-Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}-RC1.tar.bz2
+Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
 Source3:        macros.perl
 #Systemtap tapset and example that make use of systemtap-sdt-devel
 # build requirement. Written by lberk; Not yet upstream.
@@ -2804,7 +2804,7 @@ Perl extension for Version Objects
 %endif
 
 %prep
-%setup -q -n perl-%{perl_version}-RC1
+%setup -q -n perl-%{perl_version}
 %patch1 -p1
 %ifarch %{multilib_64_archs}
 %patch3 -p1
@@ -5187,11 +5187,14 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Apr 16 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.2-411
+- 5.26.2 bump
+
 * Mon Mar 26 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.2-410.RC1
 - 5.26.2-RC1 bump
-- Fix CVE-2018-6913 (heap buffer overflow in pp_pack.c) (RT#131844)
-- Fix CVE-2018-6798 (heap read overflow in regexec.c) (RT#132063)
-- Fix CVE-2018-6797 (heap write overflow in regcomp.c) (RT#132227)
+- Fix CVE-2018-6913 (heap buffer overflow in pp_pack.c) (bug #1567776)
+- Fix CVE-2018-6798 (heap read overflow in regexec.c) (bug #1567777)
+- Fix CVE-2018-6797 (heap write overflow in regcomp.c) (bug #1567778)
 
 * Thu Mar  1 2018 Florian Weimer <fweimer@redhat.com> - 4:5.26.1-409
 - Rebuild to pick up new build flags from redhat-rpm-config
