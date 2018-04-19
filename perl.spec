@@ -256,6 +256,10 @@ Patch79:        perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
 # in upstream after 5.27.7
 Patch80:        perl-5.26.1-fix-parsing-of-braced-subscript-after-parens.patch
 
+# Do not clobber file bytes in :encoding layer, RT#132833,
+# in upstream after 5.27.8
+Patch81:        perl-5.27.8-don-t-clobber-file-bytes-in-encoding-layer.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2857,6 +2861,7 @@ Perl extension for Version Objects
 %patch78 -p1
 %patch79 -p1
 %patch80 -p1
+%patch81 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2905,6 +2910,7 @@ perl -x patchlevel.h \
     'Fedora Patch78: Fix compatibility with libxcrypt (bug #1536752)' \
     'Fedora Patch79: Link XS modules to pthread library to fix linking with -z defs' \
     'Fedora Patch80: Fix parsing braced subscript after parentheses (RT#8045)' \
+    'Fedora Patch81: Do not clobber file bytes in :encoding layer (RT#132833)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5195,6 +5201,7 @@ popd
 * Thu Apr 19 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.2-412
 - perl-devel requires redhat-rpm-config because of hardened compiler profiles
   (bug #1557667)
+- Do not clobber file bytes in :encoding layer (RT#132833)
 
 * Mon Apr 16 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.2-411
 - 5.26.2 bump
