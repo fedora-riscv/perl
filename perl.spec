@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        405%{?dist}
+Release:        406%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
@@ -504,6 +504,11 @@ Requires:       perl(ExtUtils::ParseXS)
 Requires:       %perl_compat
 # Match library and header files when downgrading releases
 Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
+# Compiler and linker options stored into perl and used when building XS
+# modules refer to hardering profiles like
+# /usr/lib/rpm/redhat/redhat-hardened-cc1 that are delivered by
+# redhat-rpm-config. Bug #1557667.
+Requires:       redhat-rpm-config
 %if %{defined perl_bootstrap}
 %gendep_perl_devel
 %endif
@@ -5181,6 +5186,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri May 25 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.2-406
+- perl-devel requires redhat-rpm-config because of hardened compiler profiles
+  (bug #1557667)
+
 * Fri May 18 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.2-405
 - Correct license tags of perl-libs (bug #1579524)
 
