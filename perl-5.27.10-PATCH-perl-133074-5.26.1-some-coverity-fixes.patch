@@ -1,0 +1,71 @@
+From 62e6b70574842d7f2c547d33c85c50228522f685 Mon Sep 17 00:00:00 2001
+From: Marc-Philip <marc-philip.werner@sap.com>
+Date: Sun, 8 Apr 2018 12:15:29 -0600
+Subject: [PATCH] PATCH: [perl #133074] 5.26.1: some coverity fixes
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+we have some coverity code scans here. They have found this
+uninilialized variable in pp.c and the integer overrun in toke.c.
+Though it might be possible that these are false positives (no
+reasonable control path gets there), it's good to mute the scan here to
+see the real problems easier.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ pp.c   | 1 +
+ toke.c | 8 ++++----
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/pp.c b/pp.c
+index 5524131658..d777ae4309 100644
+--- a/pp.c
++++ b/pp.c
+@@ -3727,6 +3727,7 @@ PP(pp_ucfirst)
+     if (! slen) {   /* If empty */
+ 	need = 1; /* still need a trailing NUL */
+ 	ulen = 0;
++        *tmpbuf = '\0';
+     }
+     else if (DO_UTF8(source)) {	/* Is the source utf8? */
+ 	doing_utf8 = TRUE;
+diff --git a/toke.c b/toke.c
+index 3405dc6c89..fc87252bb1 100644
+--- a/toke.c
++++ b/toke.c
+@@ -9052,7 +9052,7 @@ S_pending_ident(pTHX)
+ 		HEK * const stashname = HvNAME_HEK(stash);
+ 		SV *  const sym = newSVhek(stashname);
+                 sv_catpvs(sym, "::");
+-                sv_catpvn_flags(sym, PL_tokenbuf+1, tokenbuf_len - 1, (UTF ? SV_CATUTF8 : SV_CATBYTES ));
++                sv_catpvn_flags(sym, PL_tokenbuf+1, tokenbuf_len > 0 ? tokenbuf_len - 1 : 0, (UTF ? SV_CATUTF8 : SV_CATBYTES ));
+                 pl_yylval.opval = newSVOP(OP_CONST, 0, sym);
+                 pl_yylval.opval->op_private = OPpCONST_ENTERED;
+                 if (pit != '&')
+@@ -9080,7 +9080,7 @@ S_pending_ident(pTHX)
+         && PL_lex_state != LEX_NORMAL
+         && !PL_lex_brackets)
+     {
+-        GV *const gv = gv_fetchpvn_flags(PL_tokenbuf + 1, tokenbuf_len - 1,
++        GV *const gv = gv_fetchpvn_flags(PL_tokenbuf + 1, tokenbuf_len > 0 ? tokenbuf_len - 1 : 0,
+                                          ( UTF ? SVf_UTF8 : 0 ) | GV_ADDMG,
+                                          SVt_PVAV);
+         if ((!gv || ((PL_tokenbuf[0] == '@') ? !GvAV(gv) : !GvHV(gv)))
+@@ -9097,11 +9097,11 @@ S_pending_ident(pTHX)
+     /* build ops for a bareword */
+     pl_yylval.opval = newSVOP(OP_CONST, 0,
+ 				   newSVpvn_flags(PL_tokenbuf + 1,
+-						      tokenbuf_len - 1,
++                                                      tokenbuf_len > 0 ? tokenbuf_len - 1 : 0,
+                                                       UTF ? SVf_UTF8 : 0 ));
+     pl_yylval.opval->op_private = OPpCONST_ENTERED;
+     if (pit != '&')
+-	gv_fetchpvn_flags(PL_tokenbuf+1, tokenbuf_len - 1,
++        gv_fetchpvn_flags(PL_tokenbuf+1, tokenbuf_len > 0 ? tokenbuf_len - 1 : 0,
+ 		     (PL_in_eval ? GV_ADDMULTI : GV_ADD)
+                      | ( UTF ? SVf_UTF8 : 0 ),
+ 		     ((PL_tokenbuf[0] == '$') ? SVt_PV
+-- 
+2.14.3
+
