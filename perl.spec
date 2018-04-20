@@ -260,6 +260,9 @@ Patch80:        perl-5.26.1-fix-parsing-of-braced-subscript-after-parens.patch
 # in upstream after 5.27.8
 Patch81:        perl-5.27.8-don-t-clobber-file-bytes-in-encoding-layer.patch
 
+# Fix line numbers in multi-line s///, RT#131930, in upstream after 5.27.9
+Patch82:        perl-5.27.9-fix-line-numbers-in-multi-line-s.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2856,6 +2859,7 @@ Perl extension for Version Objects
 %patch79 -p1
 %patch80 -p1
 %patch81 -p1
+%patch82 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2905,6 +2909,7 @@ perl -x patchlevel.h \
     'Fedora Patch79: Link XS modules to pthread library to fix linking with -z defs' \
     'Fedora Patch80: Fix parsing braced subscript after parentheses (RT#8045)' \
     'Fedora Patch81: Do not clobber file bytes in :encoding layer (RT#132833)' \
+    'Fedora Patch82: Fix line numbers in multi-line s/// (RT#131930)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5196,6 +5201,7 @@ popd
 - perl-devel requires redhat-rpm-config because of hardened compiler profiles
   (bug #1557667)
 - Do not clobber file bytes in :encoding layer (RT#132833)
+- Fix line numbers in multi-line s/// (RT#131930)
 
 * Fri May 18 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.2-411
 - Correct license tags of perl-libs (bug #1579524)
