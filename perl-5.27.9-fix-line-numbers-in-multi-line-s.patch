@@ -1,0 +1,68 @@
+From 823ba440369100de3f2693420a3887a645a57d28 Mon Sep 17 00:00:00 2001
+From: David Mitchell <davem@iabyn.com>
+Date: Wed, 7 Mar 2018 09:27:26 +0000
+Subject: [PATCH] fix line numbers in multi-line s///
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+my commit v5.25.6-230-g6432a58, "Eliminate SVrepl_EVAL and SvEVALED()",
+introduced a regression: __LINE__ no longer took account of multiple
+lines in the s///.
+
+Now fixed.
+
+Spotted by Abigail.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ t/re/subst.t | 12 +++++++++++-
+ toke.c       |  2 +-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/t/re/subst.t b/t/re/subst.t
+index b9b9939b11..dd62e95ee6 100644
+--- a/t/re/subst.t
++++ b/t/re/subst.t
+@@ -11,7 +11,7 @@ BEGIN {
+     require './loc_tools.pl';
+ }
+ 
+-plan(tests => 275);
++plan(tests => 276);
+ 
+ $_ = 'david';
+ $a = s/david/rules/r;
+@@ -1163,6 +1163,16 @@ __EOF__
+     pass("RT #130188");
+ }
+ 
++# RT #131930
++# a multi-line s/// wasn't resetting the cop_line correctly
++{
++    my $l0 = __LINE__;
++    my $s = "a";
++    $s =~ s[a]
++           [b];
++    my $lines = __LINE__ - $l0;
++    is $lines, 4, "RT #131930";
++}
+ 
+ 
+ 
+diff --git a/toke.c b/toke.c
+index 9dbad98408..0ef33415c0 100644
+--- a/toke.c
++++ b/toke.c
+@@ -9884,7 +9884,7 @@ S_scan_subst(pTHX_ char *start)
+          * the NVX field indicates how many src code lines the replacement
+          * spreads over */
+         sv_upgrade(PL_parser->lex_sub_repl, SVt_PVNV);
+-        ((XPVNV*)SvANY(PL_parser->lex_sub_repl))->xnv_u.xnv_lines = 0;
++        ((XPVNV*)SvANY(PL_parser->lex_sub_repl))->xnv_u.xnv_lines = linediff;
+         ((XPVIV*)SvANY(PL_parser->lex_sub_repl))->xiv_u.xivu_eval_seen =
+                                                                     cBOOL(es);
+     }
+-- 
+2.14.3
+
