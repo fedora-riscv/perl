@@ -245,7 +245,7 @@ Patch76:        perl-5.26.1-perl-131746-avoid-undefined-behaviour-in-Copy-etc.pa
 Patch77:        perl-5.27.3-avoid-the-address-of-.-will-always-evaluate-as-.-war.patch
 
 # Conditionalize a fix for an old and long fixed bug
-# in libcrypt / glibc, rhbz#1536752
+# in libcrypt / glibc, rhbz#1536752, RT#133184, in upstream after 5.27.11
 Patch78:        perl-5.26.1-guard_old_libcrypt_fix.patch
 
 # Link XS modules to pthread library to fix linking with -z defs,
@@ -2915,7 +2915,7 @@ perl -x patchlevel.h \
     'Fedora Patch72: Fix tainting of s/// with overloaded replacement (RT#115266)' \
     'Fedora Patch73: Expand system() arguments before a fork (RT#121105)' \
     'Fedora Patch76: Avoid undefined behavior when copying memory in Glob and pp_caller (RT#131746)' \
-    'Fedora Patch78: Fix compatibility with libxcrypt (bug #1536752)' \
+    'Fedora Patch78: Fix compatibility with libxcrypt (RT#133184)' \
     'Fedora Patch79: Link XS modules to pthread library to fix linking with -z defs' \
     'Fedora Patch80: Fix parsing braced subscript after parentheses (RT#8045)' \
     'Fedora Patch81: Do not clobber file bytes in :encoding layer (RT#132833)' \
