@@ -1,0 +1,105 @@
+From dc1f8f6b581a8e4efbb782398ab3e7c3a52b062f Mon Sep 17 00:00:00 2001
+From: Karl Williamson <khw@cpan.org>
+Date: Tue, 8 May 2018 12:13:18 -0600
+Subject: [PATCH] PATCH: [perl #133185] Infinite loop in qr//
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This loop was inadvertently introduced as part of patches to fix
+(perl #132227 CVE-2018-6797] heap-buffer-overflow".  The commit in 5.27
+responsible was f8fb8615ddc5a80e3bbd4386a8914497f921b62d.
+
+To be vulnerable, the pattern must start out as /d (hence no use 5.012
+or higher), and then there must be something that implicitly forces /u
+(which the \pp does in the test case added by this patch), and then
+(?aa), and then the code point \xDF.  (German Sharp S).  The /i must be
+in effect by the time the DF is encountered, but it needn't come in the
+(?aa) which the test does.
+
+The problem is that the conditional that is testing that we switched
+away from /d rules is assuming that this happened during the
+construction of the current EXACTFish node.  The comments I wrote
+indicate this assumption.  But this example shows that the switch can
+come before this node started getting constructed, and so it loops.
+
+The patch explicitly saves the state at the beginning of this node's
+construction, and only retries if it changed during that construction.
+Therefore the next time through, it will see that it hasn't changed
+since the previous time, and won't loop.
+
+Petr Písař: Ported to 5.26.2 from:
+
+commit 0b9cb33b146b3eb55634853f883a880771dd1413
+Author: Karl Williamson <khw@cpan.org>
+Date:   Tue May 8 12:13:18 2018 -0600
+
+    PATCH: [perl #133185] Infinite loop in qr//
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ regcomp.c    | 10 +++++++++-
+ t/re/speed.t |  5 ++++-
+ 2 files changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/regcomp.c b/regcomp.c
+index 845e660..18fa465 100644
+--- a/regcomp.c
++++ b/regcomp.c
+@@ -13100,6 +13100,10 @@ S_regatom(pTHX_ RExC_state_t *pRExC_state, I32 *flagp, U32 depth)
+             bool maybe_exactfu = PASS2
+                                && (node_type == EXACTF || node_type == EXACTFL);
+ 
++            /* To see if RExC_uni_semantics changes during parsing of the node.
++             * */
++            bool uni_semantics_at_node_start;
++
+             /* If a folding node contains only code points that don't
+              * participate in folds, it can be changed into an EXACT node,
+              * which allows the optimizer more things to look for */
+@@ -13147,6 +13151,8 @@ S_regatom(pTHX_ RExC_state_t *pRExC_state, I32 *flagp, U32 depth)
+                    || UTF8_IS_INVARIANT(UCHARAT(RExC_parse))
+                    || UTF8_IS_START(UCHARAT(RExC_parse)));
+ 
++            uni_semantics_at_node_start = RExC_uni_semantics;
++
+             /* Here, we have a literal character.  Find the maximal string of
+              * them in the input that we can fit into a single EXACTish node.
+              * We quit at the first non-literal or when the node gets full */
+@@ -13550,7 +13556,9 @@ S_regatom(pTHX_ RExC_state_t *pRExC_state, I32 *flagp, U32 depth)
+                              * didn't think it needed to reparse.  But this
+                              * sharp s now does indicate the need for
+                              * reparsing. */
+-                            if (RExC_uni_semantics) {
++                            if (   uni_semantics_at_node_start
++                                     != RExC_uni_semantics)
++                            {
+                                 p = oldp;
+                                 goto loopdone;
+                             }
+diff --git a/t/re/speed.t b/t/re/speed.t
+index 4a4830f..9a57de1 100644
+--- a/t/re/speed.t
++++ b/t/re/speed.t
+@@ -24,7 +24,7 @@ BEGIN {
+ skip_all('no re module') unless defined &DynaLoader::boot_DynaLoader;
+ skip_all_without_unicode_tables();
+ 
+-plan tests => 58;  #** update watchdog timeouts proportionally when adding tests
++plan tests => 59;  #** update watchdog timeouts proportionally when adding tests
+ 
+ use strict;
+ use warnings;
+@@ -156,6 +156,9 @@ PROG
+         ok( $elapsed <= 1, "should not COW on long string with substr and m//g");
+     }
+ 
++    # [perl #133185] Infinite loop
++    like("!\xdf", eval 'qr/\pp(?aai)\xdf/',
++         'Compiling qr/\pp(?aai)\xdf/ doesn\'t loop');
+ 
+ } # End of sub run_tests
+ 
+-- 
+2.14.3
+

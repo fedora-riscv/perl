@@ -271,6 +271,10 @@ Patch83:        perl-5.27.10-PATCH-perl-132167-Parse-error-in-regex_sets.patch
 # in upstream after 5.27.10
 Patch84:        perl-5.27.10-PATCH-perl-133074-5.26.1-some-coverity-fixes.patch
 
+# Fix an infinite loop in the regular expression compiler, RT#133185,
+# in upstream after 5.27.11
+Patch85:        perl-5.26.2-PATCH-perl-133185-Infinite-loop-in-qr.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2870,6 +2874,7 @@ Perl extension for Version Objects
 %patch82 -p1
 %patch83 -p1
 %patch84 -p1
+%patch85 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2922,6 +2927,7 @@ perl -x patchlevel.h \
     'Fedora Patch82: Fix line numbers in multi-line s/// (RT#131930)' \
     'Fedora Patch83: Fix parsing extended bracketed character classes (RT#132167)' \
     'Fedora Patch84: Fix a possibly unitialized memory read in the Perl parser (RT#133074)' \
+    'Fedora Patch85: Fix an infinite loop in the regular expression compiler (RT#133185)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5216,6 +5222,7 @@ popd
 - Fix line numbers in multi-line s/// (RT#131930)
 - Fix parsing extended bracketed character classes (RT#132167)
 - Fix a possibly unitialized memory read in the Perl parser (RT#133074)
+- Fix an infinite loop in the regular expression compiler (RT#133185)
 
 * Fri May 18 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.2-405
 - Correct license tags of perl-libs (bug #1579524)
