@@ -14,7 +14,7 @@ diff --git a/Makefile.SH b/Makefile.SH
 index d1da0a0..7733a32 100755
 --- a/Makefile.SH
 +++ b/Makefile.SH
-@@ -58,7 +58,7 @@ true)
+@@ -68,7 +68,7 @@ true)
  				${api_revision}.${api_version}.${api_subversion} \
  			     -current_version \
  				${revision}.${patchlevel}.${subversion} \
@@ -23,7 +23,7 @@ index d1da0a0..7733a32 100755
  		;;
  	cygwin*)
  		shrpldflags="$shrpldflags -Wl,--out-implib=libperl.dll.a -Wl,--image-base,0x52000000"
-@@ -66,13 +66,15 @@ true)
+@@ -76,13 +76,15 @@ true)
  		;;
  	sunos*)
  		linklibperl="-lperl"
@@ -40,7 +40,7 @@ index d1da0a0..7733a32 100755
  		;;
  	aix*)
  		case "$cc" in
-@@ -110,6 +112,9 @@ true)
+@@ -120,6 +122,9 @@ true)
  	    linklibperl='libperl.x'
  	    DPERL_EXTERNAL_GLOB=''
  	    ;;

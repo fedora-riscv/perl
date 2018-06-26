@@ -18,7 +18,7 @@ diff --git a/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Unix.pm b/cpan/ExtUtils-Mak
 index a8b172f..a3fbce2 100644
 --- a/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Unix.pm
 +++ b/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Unix.pm
-@@ -31,6 +31,7 @@ BEGIN {
+@@ -30,6 +30,7 @@ BEGIN {
      $Is{IRIX}    = $^O eq 'irix';
      $Is{NetBSD}  = $^O eq 'netbsd';
      $Is{Interix} = $^O eq 'interix';
@@ -26,7 +26,7 @@ index a8b172f..a3fbce2 100644
      $Is{SunOS4}  = $^O eq 'sunos';
      $Is{Solaris} = $^O eq 'solaris';
      $Is{SunOS}   = $Is{SunOS4} || $Is{Solaris};
-@@ -932,7 +933,7 @@ $(INST_DYNAMIC): $(OBJECT) $(MYEXTLIB) $(BOOTSTRAP) $(INST_ARCHAUTODIR)$(DFSEP).
+@@ -1028,7 +1029,7 @@ sub xs_make_dynamic_lib {
      push(@m,"	\$(RM_F) \$\@\n");
  
      my $libs = '$(LDLOADLIBS)';
@@ -35,7 +35,7 @@ index a8b172f..a3fbce2 100644
          # Use nothing on static perl platforms, and to the flags needed
          # to link against the shared libperl library on shared perl
          # platforms.  We peek at lddlflags to see if we need -Wl,-R
-@@ -941,6 +942,11 @@ $(INST_DYNAMIC): $(OBJECT) $(MYEXTLIB) $(BOOTSTRAP) $(INST_ARCHAUTODIR)$(DFSEP).
+@@ -1041,6 +1042,11 @@ sub xs_make_dynamic_lib {
              # The Android linker will not recognize symbols from
              # libperl unless the module explicitly depends on it.
              $libs .= ' "-L$(PERL_INC)" -lperl';

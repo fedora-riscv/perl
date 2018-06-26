@@ -20,7 +20,7 @@ diff --git a/cpan/IPC-Cmd/lib/IPC/Cmd.pm b/cpan/IPC-Cmd/lib/IPC/Cmd.pm
 index 6a82bdf..b6cd7ef 100644
 --- a/cpan/IPC-Cmd/lib/IPC/Cmd.pm
 +++ b/cpan/IPC-Cmd/lib/IPC/Cmd.pm
-@@ -230,7 +230,7 @@ sub can_run {
+@@ -232,7 +232,7 @@ sub can_run {
      }
  
      require File::Spec;

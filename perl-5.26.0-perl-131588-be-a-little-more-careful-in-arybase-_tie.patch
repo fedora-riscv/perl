@@ -19,7 +19,7 @@ diff --git a/ext/arybase/arybase.xs b/ext/arybase/arybase.xs
 index 880bbe3..216442a 100644
 --- a/ext/arybase/arybase.xs
 +++ b/ext/arybase/arybase.xs
-@@ -438,10 +438,12 @@ _tie_it(SV *sv)
+@@ -428,10 +428,12 @@ _tie_it(SV *sv)
      INIT:
  	GV * const gv = (GV *)sv;
      CODE:

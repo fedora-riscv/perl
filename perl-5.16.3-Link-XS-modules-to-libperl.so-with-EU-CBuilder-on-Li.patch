@@ -20,7 +20,7 @@ diff --git a/MANIFEST b/MANIFEST
 index 397252a..d7c519b 100644
 --- a/MANIFEST
 +++ b/MANIFEST
-@@ -3093,6 +3093,7 @@ dist/ExtUtils-CBuilder/lib/ExtUtils/CBuilder/Platform/aix.pm	CBuilder methods fo
+@@ -3424,6 +3424,7 @@ dist/ExtUtils-CBuilder/lib/ExtUtils/CBuilder/Platform/aix.pm	CBuilder methods fo
  dist/ExtUtils-CBuilder/lib/ExtUtils/CBuilder/Platform/cygwin.pm	CBuilder methods for cygwin
  dist/ExtUtils-CBuilder/lib/ExtUtils/CBuilder/Platform/darwin.pm	CBuilder methods for darwin
  dist/ExtUtils-CBuilder/lib/ExtUtils/CBuilder/Platform/dec_osf.pm	CBuilder methods for OSF
