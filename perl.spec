@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        415%{?dist}
+Release:        416%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -350,9 +350,6 @@ Summary:        The libraries for the perl run-time
 License:        (GPL+ or Artistic) and HSRL and MIT and UCD
 # Compat provides
 Provides:       %perl_compat
-Provides:       perl(:MODULE_COMPAT_5.26.2)
-Provides:       perl(:MODULE_COMPAT_5.26.1)
-Provides:       perl(:MODULE_COMPAT_5.26.0)
 # Interpreter version to fulfil required genersted from "require 5.006;"
 Provides:       perl(:VERSION) = %{perl_version}
 # Integeres are 64-bit on all platforms
@@ -5030,6 +5027,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jun 27 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.0-416
+- Stop providing old perl(MODULE_COMPAT_5.26.*)
+
 * Tue Jun 26 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.0-415
 - 5.28.0 bump (see <https://metacpan.org/pod/release/XSAWYERX/perl-5.28.0/pod/perldelta.pod>
   for release notes)
