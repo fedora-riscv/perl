@@ -1,2 +1,2 @@
 from Config import *
-addFilter("spelling-error .* (awk|groff|metapackage|sed|usr)");
+addFilter("spelling-error .* (autoloaded|awk|gmtime|groff|libnet|localtime|metapackage|perlbug|perldoc|perlfunc|perlmain|perlpod|perlsub|reachability|sed|splain|usr|writemain)");
