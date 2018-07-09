@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        416%{?dist}
+Release:        417%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -149,6 +149,9 @@ Patch13:        perl-5.26.0-perl-131588-be-a-little-more-careful-in-arybase-_tie
 # Link XS modules to pthread library to fix linking with -z defs,
 # <https://lists.fedoraproject.org/archives/list/devel@lists.fedoraproject.org/message/3RHZEHLRUHJFF2XGHI5RB6YPDNLDR4HG/>
 Patch14:        perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
+
+# Adjust tests to gdbm-1.15, RT#133295
+Patch15:        perl-5.29.0-Remove-ext-GDBM_File-t-fatal.t.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2718,6 +2721,7 @@ Perl extension for Version Objects
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2739,6 +2743,7 @@ perl -x patchlevel.h \
     'Fedora Patch12: Replace EU::MakeMaker dependency with EU::MM::Utils in IPC::Cmd (bug #1129443)' \
     'Fedora Patch13: Fix executing arybase::_tie_it() in Safe compartement (RT#131588)' \
     'Fedora Patch14: Link XS modules to pthread library to fix linking with -z defs' \
+    'Fedora Patch15: Adjust tests to gdbm-1.15 (RT#133295)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5027,6 +5032,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jul 09 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.0-417
+- Adjust tests to gdbm-1.15 (RT#133295)
+
 * Wed Jun 27 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.0-416
 - Stop providing old perl(MODULE_COMPAT_5.26.*)
 
