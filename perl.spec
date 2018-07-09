@@ -2938,8 +2938,8 @@ mkdir -p $RPM_BUILD_ROOT%{perl_vendorlib}
 #
 # perl RPM macros
 #
-mkdir -p ${RPM_BUILD_ROOT}%{_rpmconfigdir}/macros.d
-install -p -m 644 %{SOURCE3} ${RPM_BUILD_ROOT}%{_rpmconfigdir}/macros.d/
+mkdir -p ${RPM_BUILD_ROOT}%{_rpmmacrodir}
+install -p -m 644 %{SOURCE3} ${RPM_BUILD_ROOT}%{_rpmmacrodir}
 
 #
 # Core modules removal
@@ -3970,7 +3970,7 @@ popd
 %endif
 
 %files macros
-%{_rpmconfigdir}/macros.d/macros.perl
+%{_rpmmacrodir}/macros.perl
 
 %files tests
 %{perl5_testdir}/
