@@ -286,6 +286,9 @@ Patch87:        perl-5.26.2-Perl_my_setenv-handle-integer-wrap.patch
 # expression while ISO-8859-1 locale is in effect
 Patch88:        perl-5.29.0-regexec.c-Call-macro-with-correct-args.patch
 
+# Fix invoking a check for wide characters while ISO-8859-1 locale is in effect
+Patch89:        perl-5.26.2-perl.h-Add-parens-around-macro-arguments.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2889,6 +2892,7 @@ Perl extension for Version Objects
 %patch86 -p1
 %patch87 -p1
 %patch88 -p1
+%patch89 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2945,6 +2949,7 @@ perl -x patchlevel.h \
     'Fedora Patch86: Adjust tests to gdbm-1.15 (RT#133295)' \
     'Fedora Patch87: Fix an integer wrap when allocating memory for an environment variable (RT#133204)' \
     'Fedora Patch88: Fix printing a warning about a wide character when matching a regular expression while ISO-8859-1 locale is in effect' \
+    'Fedora Patch89: Fix invoking a check for wide characters while ISO-8859-1 locale is in effect' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5238,6 +5243,7 @@ popd
   (RT#133204)
 - Fix printing a warning about a wide character when matching a regular
   expression while ISO-8859-1 locale is in effect
+- Fix invoking a check for wide characters while ISO-8859-1 locale is in effect
 
 * Fri May 25 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.2-412
 - perl-devel requires redhat-rpm-config because of hardened compiler profiles
