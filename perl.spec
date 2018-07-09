@@ -153,6 +153,10 @@ Patch14:        perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
 # Adjust tests to gdbm-1.15, RT#133295
 Patch15:        perl-5.29.0-Remove-ext-GDBM_File-t-fatal.t.patch
 
+# Fix an integer wrap when allocating memory for an environment variable,
+# RT#133204, in upstream after 5.29.0
+Patch16:        perl-5.29.0-Perl_my_setenv-handle-integer-wrap.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2722,6 +2726,7 @@ Perl extension for Version Objects
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2744,6 +2749,7 @@ perl -x patchlevel.h \
     'Fedora Patch13: Fix executing arybase::_tie_it() in Safe compartement (RT#131588)' \
     'Fedora Patch14: Link XS modules to pthread library to fix linking with -z defs' \
     'Fedora Patch15: Adjust tests to gdbm-1.15 (RT#133295)' \
+    'Fedora Patch16: Fix an integer wrap when allocating memory for an environment variable (RT#133204)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5034,6 +5040,8 @@ popd
 %changelog
 * Mon Jul 09 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.0-417
 - Adjust tests to gdbm-1.15 (RT#133295)
+- Fix an integer wrap when allocating memory for an environment variable
+  (RT#133204)
 
 * Wed Jun 27 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.0-416
 - Stop providing old perl(MODULE_COMPAT_5.26.*)
