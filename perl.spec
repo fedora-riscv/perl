@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        406%{?dist}
+Release:        407%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
@@ -274,6 +274,9 @@ Patch84:        perl-5.27.10-PATCH-perl-133074-5.26.1-some-coverity-fixes.patch
 # Fix an infinite loop in the regular expression compiler, RT#133185,
 # in upstream after 5.27.11
 Patch85:        perl-5.26.2-PATCH-perl-133185-Infinite-loop-in-qr.patch
+
+# Adjust tests to gdbm-1.15, RT#133295
+Patch86:        perl-5.29.0-Remove-ext-GDBM_File-t-fatal.t.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2875,6 +2878,7 @@ Perl extension for Version Objects
 %patch83 -p1
 %patch84 -p1
 %patch85 -p1
+%patch86 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2928,6 +2932,7 @@ perl -x patchlevel.h \
     'Fedora Patch83: Fix parsing extended bracketed character classes (RT#132167)' \
     'Fedora Patch84: Fix a possibly unitialized memory read in the Perl parser (RT#133074)' \
     'Fedora Patch85: Fix an infinite loop in the regular expression compiler (RT#133185)' \
+    'Fedora Patch86: Adjust tests to gdbm-1.15 (RT#133295)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5215,6 +5220,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jul 09 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.2-407
+- Adjust tests to gdbm-1.15 (RT#133295)
+
 * Fri May 25 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.2-406
 - perl-devel requires redhat-rpm-config because of hardened compiler profiles
   (bug #1557667)
