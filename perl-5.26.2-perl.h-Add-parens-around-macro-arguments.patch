@@ -1,0 +1,35 @@
+From 7714b11d11da2bfd0dc11638e9dd6836b6a32e90 Mon Sep 17 00:00:00 2001
+From: Karl Williamson <khw@cpan.org>
+Date: Mon, 11 Jun 2018 13:26:24 -0600
+Subject: [PATCH] perl.h: Add parens around macro arguments
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Arguments used within macros need to be parenthesized in case they are
+called with an expression.  This commit changes
+_CHECK_AND_OUTPUT_WIDE_LOCALE_UTF8_MSG() to do that.
+
+Petr Písař: Ported to 5.26.2 from upstream ff58ca57f844 commit.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ perl.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/perl.h b/perl.h
+index 1c613bc..d278c2a 100644
+--- a/perl.h
++++ b/perl.h
+@@ -5980,7 +5980,7 @@ typedef struct am_table_short AMTS;
+ #  define _CHECK_AND_OUTPUT_WIDE_LOCALE_UTF8_MSG(s, send)                   \
+ 	STMT_START { /* Check if to warn before doing the conversion work */\
+             if (! PL_in_utf8_CTYPE_locale && ckWARN(WARN_LOCALE)) {         \
+-                UV cp = utf8_to_uvchr_buf((U8 *) s, (U8 *) send, NULL);     \
++                UV cp = utf8_to_uvchr_buf((U8 *) (s), (U8 *) (send), NULL); \
+                 Perl_warner(aTHX_ packWARN(WARN_LOCALE),                    \
+                     "Wide character (U+%" UVXf ") in %s",                   \
+                     (cp == 0)                                               \
+-- 
+2.14.4
+
