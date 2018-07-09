@@ -1,0 +1,32 @@
+From e1a2878a55b1a7f11f19b384c4ea5235c29866b2 Mon Sep 17 00:00:00 2001
+From: Karl Williamson <khw@cpan.org>
+Date: Mon, 11 Jun 2018 13:28:53 -0600
+Subject: [PATCH] regexec.c: Call macro with correct args.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The second argument to this macro is a pointer to the end, as opposed to
+a length.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ regexec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/regexec.c b/regexec.c
+index 7ed8f4fabc..ba52ae97c7 100644
+--- a/regexec.c
++++ b/regexec.c
+@@ -1808,7 +1808,7 @@ STMT_START {
+     case trie_flu8:                                                                 \
+         _CHECK_AND_WARN_PROBLEMATIC_LOCALE;                                         \
+         if (UTF8_IS_ABOVE_LATIN1(*uc)) {                                            \
+-            _CHECK_AND_OUTPUT_WIDE_LOCALE_UTF8_MSG(uc, uc_end - uc);                \
++            _CHECK_AND_OUTPUT_WIDE_LOCALE_UTF8_MSG(uc, uc_end);                     \
+         }                                                                           \
+         goto do_trie_utf8_fold;                                                     \
+     case trie_utf8_exactfa_fold:                                                    \
+-- 
+2.14.4
+
