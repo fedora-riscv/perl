@@ -157,6 +157,10 @@ Patch15:        perl-5.29.0-Remove-ext-GDBM_File-t-fatal.t.patch
 # RT#133204, in upstream after 5.29.0
 Patch16:        perl-5.29.0-Perl_my_setenv-handle-integer-wrap.patch
 
+# Fix printing a warning about a wide character when matching a regular
+# expression while ISO-8859-1 locale is in effect
+Patch17:        perl-5.29.0-regexec.c-Call-macro-with-correct-args.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2727,6 +2731,7 @@ Perl extension for Version Objects
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2750,6 +2755,7 @@ perl -x patchlevel.h \
     'Fedora Patch14: Link XS modules to pthread library to fix linking with -z defs' \
     'Fedora Patch15: Adjust tests to gdbm-1.15 (RT#133295)' \
     'Fedora Patch16: Fix an integer wrap when allocating memory for an environment variable (RT#133204)' \
+    'Fedora Patch17: Fix printing a warning about a wide character when matching a regular expression while ISO-8859-1 locale is in effect' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5042,6 +5048,8 @@ popd
 - Adjust tests to gdbm-1.15 (RT#133295)
 - Fix an integer wrap when allocating memory for an environment variable
   (RT#133204)
+- Fix printing a warning about a wide character when matching a regular
+  expression while ISO-8859-1 locale is in effect
 
 * Wed Jun 27 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.0-416
 - Stop providing old perl(MODULE_COMPAT_5.26.*)
