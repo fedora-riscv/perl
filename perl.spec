@@ -879,7 +879,7 @@ Requires:       %perl_compat
 Conflicts:      perl < 4:5.22.0-351
 
 %description Devel-Peek
-Devel::Peek contains functions which allows raw Perl datatypes to be
+Devel::Peek contains functions which allows raw Perl data types to be
 manipulated from a Perl script. This is used by those who do XS programming to
 check that the data they are sending from C to Perl looks as they think it
 should look.
@@ -1292,8 +1292,8 @@ writemain() takes an argument list of directories containing archive libraries
 that relate to perl modules and should be linked into a new perl binary. It
 writes a corresponding perlmain.c file that is a plain C file containing all
 the bootstrap code to make the If the first argument to writemain() is a
-reference to a scalar it is used as the filename to open for ouput. Any other
-reference is used as the filehandle to write to. Otherwise output defaults to
+reference to a scalar it is used as the file name to open for output. Any other
+reference is used as the file handle to write to. Otherwise output defaults to
 STDOUT.
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -5126,7 +5126,7 @@ popd
 - Fix error reporting on do() on a directory (RT#125774)
 - Fix stack manipulation when a lexical subroutine is defined in a do block in
   a member of an iteration list (RT#132442)
-- Fix setting $! when statting a closed filehandle (RT#108288)
+- Fix setting $! when statting a closed file handle (RT#108288)
 - Fix tainting of s/// with overloaded replacement (RT#115266)
 - Expand system() arguments before a fork (RT#121105)
 - Avoid undefined behavior when copying memory in Glob and pp_caller (RT#131746)
