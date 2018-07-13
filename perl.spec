@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        417%{?dist}
+Release:        418%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -5049,6 +5049,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.28.0-418
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
 * Mon Jul 09 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.0-417
 - Adjust tests to gdbm-1.15 (RT#133295)
 - Fix an integer wrap when allocating memory for an environment variable
