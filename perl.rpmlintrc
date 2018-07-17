@@ -1,2 +1,3 @@
 from Config import *
-addFilter("spelling-error .* (autoloaded|awk|gmtime|groff|libnet|localtime|metapackage|perlbug|perldoc|perlfunc|perlmain|perlpod|perlsub|reachability|sed|splain|usr|writemain)");
+addFilter("spelling-error .* (autoloaded|awk|gmtime|groff|libnet|localtime|Memoizing|metapackage|perlbug|perldoc|perlfunc|perlmain|perlpod|perlsub|reachability|rpmbuild|sed|splain|usr|writemain)");
+addFilter("unexpanded-macro %description .* %INC");
