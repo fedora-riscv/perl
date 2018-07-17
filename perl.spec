@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        418%{?dist}
+Release:        419%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -163,6 +163,10 @@ Patch17:        perl-5.29.0-regexec.c-Call-macro-with-correct-args.patch
 
 # Fix invoking a check for wide characters while ISO-8859-1 locale is in effect
 Patch18:        perl-5.29.0-perl.h-Add-parens-around-macro-arguments.patch
+
+# Fix index() and rindex() optimization in given-when boolean context,
+# RT#133368, in upstream after 5.29.0
+Patch19:        perl-5.29.0-treat-when-index-1-as-a-boolean-expression.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2736,6 +2740,7 @@ Perl extension for Version Objects
 %patch16 -p1
 %patch17 -p1
 %patch18 -p1
+%patch19 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2761,6 +2766,7 @@ perl -x patchlevel.h \
     'Fedora Patch16: Fix an integer wrap when allocating memory for an environment variable (RT#133204)' \
     'Fedora Patch17: Fix printing a warning about a wide character when matching a regular expression while ISO-8859-1 locale is in effect' \
     'Fedora Patch18: Fix invoking a check for wide characters while ISO-8859-1 locale is in effect' \
+    'Fedora Patch19: Fix index() and rindex() optimization in given-when boolean context (RT#133368)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5049,6 +5055,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jul 17 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.0-419
+- Fix index() and rindex() optimization in given-when boolean context
+  (RT#133368)
+
 * Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.28.0-418
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
