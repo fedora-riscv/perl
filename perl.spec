@@ -168,6 +168,9 @@ Patch18:        perl-5.29.0-perl.h-Add-parens-around-macro-arguments.patch
 # RT#133368, in upstream after 5.29.0
 Patch19:        perl-5.29.0-treat-when-index-1-as-a-boolean-expression.patch
 
+# Fix build conditions in locale.c, in upstream after 5.29.0
+Patch20:        perl-5.29.0-locale.c-Fix-conditional-compilation.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2741,6 +2744,7 @@ Perl extension for Version Objects
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
+%patch20 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2767,6 +2771,7 @@ perl -x patchlevel.h \
     'Fedora Patch17: Fix printing a warning about a wide character when matching a regular expression while ISO-8859-1 locale is in effect' \
     'Fedora Patch18: Fix invoking a check for wide characters while ISO-8859-1 locale is in effect' \
     'Fedora Patch19: Fix index() and rindex() optimization in given-when boolean context (RT#133368)' \
+    'Fedora Patch20: Fix build conditions in locale.c' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5058,6 +5063,7 @@ popd
 * Tue Jul 17 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.0-419
 - Fix index() and rindex() optimization in given-when boolean context
   (RT#133368)
+- Fix build conditions in locale.c
 
 * Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.28.0-418
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
