@@ -440,9 +440,7 @@ Requires:       %perl_compat
 %endif
 
 %description macros
-Macros for rpmbuild are needed during build of srpm in koji. This
-sub-package must be installed into buildroot, so it will be needed
-by perl. Perl is needed because of git.
+RPM macros that are handy when building binary RPM packages.
 
 
 %package tests
