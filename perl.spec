@@ -158,10 +158,11 @@ Patch15:        perl-5.29.0-Remove-ext-GDBM_File-t-fatal.t.patch
 Patch16:        perl-5.29.0-Perl_my_setenv-handle-integer-wrap.patch
 
 # Fix printing a warning about a wide character when matching a regular
-# expression while ISO-8859-1 locale is in effect
+# expression while ISO-8859-1 locale is in effect, in upstream after 5.29.0
 Patch17:        perl-5.29.0-regexec.c-Call-macro-with-correct-args.patch
 
-# Fix invoking a check for wide characters while ISO-8859-1 locale is in effect
+# Fix invoking a check for wide characters while ISO-8859-1 locale is in effect,
+# in upstream after 5.29.0
 Patch18:        perl-5.29.0-perl.h-Add-parens-around-macro-arguments.patch
 
 # Fix index() and rindex() optimization in given-when boolean context,
