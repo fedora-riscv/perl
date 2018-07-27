@@ -283,10 +283,11 @@ Patch86:        perl-5.29.0-Remove-ext-GDBM_File-t-fatal.t.patch
 Patch87:        perl-5.26.2-Perl_my_setenv-handle-integer-wrap.patch
 
 # Fix printing a warning about a wide character when matching a regular
-# expression while ISO-8859-1 locale is in effect
+# expression while ISO-8859-1 locale is in effect, in upstream after 5.29.0
 Patch88:        perl-5.29.0-regexec.c-Call-macro-with-correct-args.patch
 
-# Fix invoking a check for wide characters while ISO-8859-1 locale is in effect
+# Fix invoking a check for wide characters while ISO-8859-1 locale is in effect,
+# in upstream after 5.29.0
 Patch89:        perl-5.26.2-perl.h-Add-parens-around-macro-arguments.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
