@@ -1,0 +1,29 @@
+From 80ebe57f7bd7f07d3ad1ff9604b2580b98579582 Mon Sep 17 00:00:00 2001
+From: Steve Hay <steve.m.hay@googlemail.com>
+Date: Thu, 19 Jul 2018 13:49:00 +0100
+Subject: [PATCH] Fix VC6 build following commit aa3c16bd70
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ utf8.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/utf8.c b/utf8.c
+index 51039aed4f..57eac2d8f2 100644
+--- a/utf8.c
++++ b/utf8.c
+@@ -6363,7 +6363,7 @@ Perl_utf8_to_uvchr(pTHX_ const U8 *s, STRLEN *retlen)
+     }
+ 
+     return utf8_to_uvchr_buf(s,
+-                             s + strnlen((char *) s, UTF8_MAXBYTES),
++                             s + my_strnlen((char *) s, UTF8_MAXBYTES),
+                             retlen);
+ }
+ 
+-- 
+2.14.4
+

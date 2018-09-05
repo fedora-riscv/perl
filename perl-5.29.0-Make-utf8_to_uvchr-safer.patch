@@ -1,0 +1,54 @@
+From aa3c16bd709ef9b9c8c785af48f368e08f70c74b Mon Sep 17 00:00:00 2001
+From: Karl Williamson <khw@cpan.org>
+Date: Tue, 17 Jul 2018 13:57:54 -0600
+Subject: [PATCH] Make utf8_to_uvchr() safer
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This function is deprecated because the API doesn't allow it to
+determine the end of the input string, so it can read off the far end.
+But I just realized that since many strings are NUL-terminated, so we
+can forbid it from reading past the next NUL, and hence make it safe in
+many cases.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ utf8.c | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/utf8.c b/utf8.c
+index dec8aa1252..51039aed4f 100644
+--- a/utf8.c
++++ b/utf8.c
+@@ -6345,7 +6345,26 @@ Perl_utf8_to_uvchr(pTHX_ const U8 *s, STRLEN *retlen)
+ {
+     PERL_ARGS_ASSERT_UTF8_TO_UVCHR;
+ 
+-    return utf8_to_uvchr_buf(s, s + UTF8_MAXBYTES, retlen);
++    /* This function is unsafe if malformed UTF-8 input is given it, which is
++     * why the function is deprecated.  If the first byte of the input
++     * indicates that there are more bytes remaining in the sequence that forms
++     * the character than there are in the input buffer, it can read past the
++     * end.  But we can make it safe if the input string happens to be
++     * NUL-terminated, as many strings in Perl are, by refusing to read past a
++     * NUL.  A NUL indicates the start of the next character anyway.  If the
++     * input isn't NUL-terminated, the function remains unsafe, as it always
++     * has been.
++     *
++     * An initial NUL has to be handled separately, but all ASCIIs can be
++     * handled the same way, speeding up this common case */
++
++    if (UTF8_IS_INVARIANT(*s)) {  /* Assumes 's' contains at least 1 byte */
++        return (UV) *s;
++    }
++
++    return utf8_to_uvchr_buf(s,
++                             s + strnlen((char *) s, UTF8_MAXBYTES),
++                            retlen);
+ }
+ 
+ /*
+-- 
+2.14.4
+

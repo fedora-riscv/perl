@@ -1,0 +1,39 @@
+From 2951abb4de83bfd534d332144e6a0bb3e2aaecdc Mon Sep 17 00:00:00 2001
+From: Karl Williamson <khw@cpan.org>
+Date: Mon, 30 Jul 2018 21:41:44 -0600
+Subject: [PATCH] Make utf8_to_uvchr() slightly safer
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Recent commit aa3c16bd709ef9b9c8c785af48f368e08f70c74b made this
+function safe if the input is a NUL-terminated string.  But if not, it
+can read past the end of the buffer.  It used as a limit the maximum
+length a UTF-8 code point can be.  But most code points in real-world
+use aren't nearly that long, and we know how long that can be by looking
+at the first byte.  Therefore, use the length determined by the first
+byte as the limit instead of the maximum possible.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ utf8.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/utf8.c b/utf8.c
+index ceb8ed82df..06b77689c0 100644
+--- a/utf8.c
++++ b/utf8.c
+@@ -5755,8 +5755,8 @@ Perl_utf8_to_uvchr(pTHX_ const U8 *s, STRLEN *retlen)
+     }
+ 
+     return utf8_to_uvchr_buf(s,
+-                             s + my_strnlen((char *) s, UTF8_MAXBYTES),
+-                            retlen);
++                             s + my_strnlen((char *) s, UTF8SKIP(s)),
++                             retlen);
+ }
+ 
+ /*
+-- 
+2.14.4
+
