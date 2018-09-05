@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        415%{?dist}
+Release:        416%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
@@ -288,6 +288,9 @@ Patch89:        perl-5.26.2-perl.h-Add-parens-around-macro-arguments.patch
 
 # Pass the correct CFLAGS to dtrace
 Patch90:        perl-5.26.2-Pass-CFLAGS-to-dtrace.patch
+
+# Fix a time race in Time-HiRes/t/itimer.t test, in upstream after 5.29.1
+Patch91:        perl-5.29.1-Time-HiRes-t-itimer.t-avoid-race-condition.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2892,6 +2895,7 @@ Perl extension for Version Objects
 %patch88 -p1
 %patch89 -p1
 %patch90 -p1
+%patch91 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2949,6 +2953,7 @@ perl -x patchlevel.h \
     'Fedora Patch88: Fix printing a warning about a wide character when matching a regular expression while ISO-8859-1 locale is in effect' \
     'Fedora Patch89: Fix invoking a check for wide characters while ISO-8859-1 locale is in effect' \
     'Fedora Patch90: Pass the correct CFLAGS to dtrace' \
+    'Fedora Patch91: Fix a time race in Time-HiRes/t/itimer.t test' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5236,6 +5241,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Dec 11 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.3-416
+- Fix a time race in Time-HiRes/t/itimer.t test
+
 * Fri Nov 30 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.3-415
 - 5.26.3 bump
 
