@@ -452,6 +452,8 @@ Requires:       perl(ExtUtils::ParseXS)
 Requires:       %perl_compat
 # Match library and header files when downgrading releases
 Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
+# Devel::PPPort for h2xs script
+Requires:       perl(Devel::PPPort)
 # Compiler and linker options stored into perl and used when building XS
 # modules refer to hardering profiles like
 # /usr/lib/rpm/redhat/redhat-hardened-cc1 that are delivered by
@@ -5123,6 +5125,7 @@ popd
 - Fix an assignment to a lexical variable in multiconcatenation expressions
   (RT#133441)
 - Fix a spurious warning about uninitialized value in warn (RT#132683)
+- Require Devel::PPPort by perl-devel for h2xs script
 
 * Wed Aug 01 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.0-420
 - Fix a file descriptor leak in in-place edits (RT#133314)
