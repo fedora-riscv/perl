@@ -194,6 +194,10 @@ Patch27:        perl-5.29.1-Time-HiRes-t-itimer.t-avoid-race-condition.patch
 # run, in upstream after 5.29.1
 Patch28:        perl-5.28.0-Fix-script-run-bug-1-followed-by-Thai-digit.patch
 
+# Fix Time::Piece to handle objects in overloaded methods correctly,
+# in upstream after 5.29.1
+Patch29:        perl-5.29.1-Update-Time-Piece-to-CPAN-version-1.33.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2630,8 +2634,7 @@ so dates before the system's epoch may not work on all operating systems.
 Summary:        Time objects from localtime and gmtime
 License:        (GPL+ or Artistic) and BSD
 Epoch:          0
-# Real version 1.3204
-Version:        1.32.04
+Version:        1.33
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_Time_Piece
@@ -2774,6 +2777,7 @@ Perl extension for Version Objects
 %patch26 -p1
 %patch27 -p1
 %patch28 -p1
+%patch29 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2809,6 +2813,7 @@ perl -x patchlevel.h \
     'Fedora Patch26: Fix a buffer overrun in deprecated utf8_to_uvchr()' \
     'Fedora Patch27: Fix a time race in Time-HiRes/t/itimer.t test' \
     'Fedora Patch28: Fix matching an ASCII digit followed by a non-ASCII digit using a script run' \
+    'Fedora Patch29: Fix Time::Piece to handle objects in overloaded methods correctly' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5102,6 +5107,7 @@ popd
 - Fix a buffer overrun in deprecated utf8_to_uvchr()
 - Fix a time race in Time-HiRes/t/itimer.t test
 - Fix matching an ASCII digit followed by a non-ASCII digit using a script run
+- Fix Time::Piece to handle objects in overloaded methods correctly
 
 * Wed Aug 01 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.0-420
 - Fix a file descriptor leak in in-place edits (RT#133314)

@@ -1612,6 +1612,7 @@ Provides: perl(Time::Local) = 1.25 \
 %global gendep_perl_Time_Piece \
 Requires: perl(Carp) \
 Requires: perl(Exporter) >= 5.57 \
+Requires: perl(Scalar::Util) \
 Requires: perl(Time::Local) \
 Requires: perl(Time::Seconds) \
 Requires: perl(XSLoader) \
@@ -1619,8 +1620,8 @@ Requires: perl(constant) \
 Requires: perl(integer) \
 Requires: perl(overload) \
 Requires: perl(strict) \
-Provides: perl(Time::Piece) = 1.3204 \
-Provides: perl(Time::Seconds) = 1.3204 \
+Provides: perl(Time::Piece) = 1.33 \
+Provides: perl(Time::Seconds) = 1.33 \
 %{nil}
 %global gendep_perl_Time_Piece_debuginfo \
 %{nil}
