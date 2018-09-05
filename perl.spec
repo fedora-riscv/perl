@@ -545,6 +545,8 @@ Requires:       perl(ExtUtils::ParseXS)
 Requires:       %perl_compat
 # Match library and header files when downgrading releases
 Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
+# Devel::PPPort for h2xs script
+Requires:       perl(Devel::PPPort)
 # Compiler and linker options stored into perl and used when building XS
 # modules refer to hardering profiles like
 # /usr/lib/rpm/redhat/redhat-hardened-cc1 that are delivered by
@@ -5250,6 +5252,7 @@ popd
 * Tue Dec 11 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.3-416
 - Fix a time race in Time-HiRes/t/itimer.t test
 - Fix a spurious warning about uninitialized value in warn (RT#132683)
+- Require Devel::PPPort by perl-devel for h2xs script
 
 * Fri Nov 30 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.3-415
 - 5.26.3 bump
