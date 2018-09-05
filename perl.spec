@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        420%{?dist}
+Release:        421%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -176,6 +176,10 @@ Patch20:        perl-5.29.0-locale.c-Fix-conditional-compilation.patch
 # in upstream after 5.29.1
 Patch21:        perl-5.29.1-perl-133314-test-for-handle-leaks-from-in-place-edit.patch
 Patch22:        perl-5.29.1-perl-133314-always-close-the-directory-handle-on-cle.patch
+
+# Fix a buffer overrun in deprecated S_is_utf8_common(),
+# in upstream after 5.29.1
+Patch23:        perl-5.29.1-utf8.c-Make-safer-a-deprecated-function.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2751,6 +2755,7 @@ Perl extension for Version Objects
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
+%patch23 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2780,6 +2785,7 @@ perl -x patchlevel.h \
     'Fedora Patch20: Fix build conditions in locale.c' \
     'Fedora Patch21: Fix a file descriptor leak in in-place edits (RT#133314)' \
     'Fedora Patch22: Fix a file descriptor leak in in-place edits (RT#133314)' \
+    'Fedora Patch23: Fix a buffer overrun in deprecated S_is_utf8_common()' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5068,6 +5074,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Sep 05 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.0-421
+- Fix a buffer overrun in deprecated S_is_utf8_common()
+
 * Wed Aug 01 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.0-420
 - Fix a file descriptor leak in in-place edits (RT#133314)
 
