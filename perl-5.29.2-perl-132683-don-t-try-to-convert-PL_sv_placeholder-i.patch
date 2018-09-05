@@ -1,0 +1,79 @@
+From 2460a4968c375f226973ba7e7e5fe6cf5a997ddb Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Wed, 21 Feb 2018 16:24:08 +1100
+Subject: [PATCH] (perl #132683) don't try to convert PL_sv_placeholder into a
+ CV
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Constant folding sets PL_warnhook to PERL_WARNHOOK_FATAL, which is
+&PL_sv_placeholder, an undef SV.
+
+If warn() is called while constant folding, invoke_exception_hook()
+attempts to use the value of a non-NULL PL_warnhook as a CV, which
+caused an undefined value warning.
+
+invoke_exception_hook() now treats a PL_warnhook of PERL_WARNHOOK_FATAL
+the same as NULL, falling back to the normal warning handling which
+throws an exception to abort constant folding.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ t/lib/warnings/util | 29 +++++++++++++++++++++++++++++
+ util.c              |  2 +-
+ 2 files changed, 30 insertions(+), 1 deletion(-)
+
+diff --git a/t/lib/warnings/util b/t/lib/warnings/util
+index e82d6a6617..92be6efa73 100644
+--- a/t/lib/warnings/util
++++ b/t/lib/warnings/util
+@@ -106,3 +106,32 @@ no warnings 'portable' ;
+    $a =  oct "0047777777777" ;
+ EXPECT
+ Octal number > 037777777777 non-portable at - line 5.
++########
++# util.c
++# NAME 132683: Use of uninitialized value" in warn() with constant folding and overloaded numbers
++use strict;
++use warnings;
++
++package Foo;
++
++use overload log => sub {
++    warn "here\n";                  # Use of uninitialized value in warn
++    CORE::log($_[0]->{value});
++};
++
++sub import {
++    overload::constant
++        integer => sub { __PACKAGE__->new($_[0]) };
++}
++
++sub new {
++    my ($class, $value) = @_;
++    bless {value => $value}, $class;
++}
++
++package main;
++
++BEGIN { Foo->import }
++my $x = log(2);
++EXPECT
++here
+diff --git a/util.c b/util.c
+index 37a71a1a81..ff88a54bf6 100644
+--- a/util.c
++++ b/util.c
+@@ -1534,7 +1534,7 @@ S_invoke_exception_hook(pTHX_ SV *ex, bool warn)
+     /* sv_2cv might call Perl_croak() or Perl_warner() */
+     SV * const oldhook = *hook;
+ 
+-    if (!oldhook)
++    if (!oldhook || oldhook == PERL_WARNHOOK_FATAL)
+ 	return FALSE;
+ 
+     ENTER;
+-- 
+2.14.4
+
