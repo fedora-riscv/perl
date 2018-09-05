@@ -198,6 +198,10 @@ Patch28:        perl-5.28.0-Fix-script-run-bug-1-followed-by-Thai-digit.patch
 # in upstream after 5.29.1
 Patch29:        perl-5.29.1-Update-Time-Piece-to-CPAN-version-1.33.patch
 
+# Fix an assignment to a lexical variable in multiconcatenation expressions,
+# RT#133441, in upstream after 5.29.2
+Patch30:        perl-5.29.2-multiconcat-mutator-not-seen-in-lex.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2778,6 +2782,7 @@ Perl extension for Version Objects
 %patch27 -p1
 %patch28 -p1
 %patch29 -p1
+%patch30 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2814,6 +2819,7 @@ perl -x patchlevel.h \
     'Fedora Patch27: Fix a time race in Time-HiRes/t/itimer.t test' \
     'Fedora Patch28: Fix matching an ASCII digit followed by a non-ASCII digit using a script run' \
     'Fedora Patch29: Fix Time::Piece to handle objects in overloaded methods correctly' \
+    'Fedora Patch30: Fix an assignment to a lexical variable in multiconcatenation expressions (RT#133441)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5108,6 +5114,8 @@ popd
 - Fix a time race in Time-HiRes/t/itimer.t test
 - Fix matching an ASCII digit followed by a non-ASCII digit using a script run
 - Fix Time::Piece to handle objects in overloaded methods correctly
+- Fix an assignment to a lexical variable in multiconcatenation expressions
+  (RT#133441)
 
 * Wed Aug 01 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.0-420
 - Fix a file descriptor leak in in-place edits (RT#133314)

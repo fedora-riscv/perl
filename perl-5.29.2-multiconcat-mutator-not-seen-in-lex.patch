@@ -1,0 +1,111 @@
+From 0fe04e1dc741a43190e79a985fb0cec0493ebfe9 Mon Sep 17 00:00:00 2001
+From: David Mitchell <davem@iabyn.com>
+Date: Wed, 29 Aug 2018 14:32:24 +0100
+Subject: [PATCH] multiconcat: mutator not seen in (lex = ...) .= ...
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+RT #133441
+
+TL;DR:
+(($lex = expr1.expr2) .= expr3) was being misinterpreted as
+(expr1 . expr2 . expr3) when the ($lex = expr1) subtree had had the
+assign op optimised away by the OPpTARGET_MY optimisation.
+
+Full details.
+
+S_maybe_multiconcat() looks for suitable chains of OP_CONCAT to convert
+into a single OP_MULTICONCAT.
+
+Part of the code needs to distinguish between (expr . expr) and
+(expr .= expr). This didn't used to be easy, as both are just OP_CONCAT
+ops, but with the OPf_STACKED set on the second one. But...
+
+perl also used to optimise ($a . $b . $c) into ($a . $b) .= $c, to
+reuse the padtmp returned by the $a.$b concat. This meant that an
+OP_CONCAT could have the OPf_STACKED flag on even when it was a '.'
+rather than a '.='.
+
+I disambiguated these cases by seeing whether the top op in the LHS
+expression had the OPf_MOD flag set too - if so, it implies '.='.
+
+This fails in the specific case where the LHS expression is a
+sub-expression which is assigned to a lexical variable, e.g.
+
+    ($lex = $a+$b) .= $c.
+
+Initially the top node in the LHS expression above is OP_SASSIGN, with
+OPf_MOD set due to the enclosing '.='. Then the OPpTARGET_MY
+optimisation kicks in, and the ($lex = $a + $b) part of the optree is
+converted from
+
+    sassign sKPRMS
+        add[t4] sK
+            padsv[a$] s
+            padsv[$b] s
+        padsv[$lex] s
+
+to
+        add[$lex] sK/TARGMY
+            padsv[a$] s
+            padsv[$b] s
+
+which is all fine and dandy, except that the top node of that optree no
+longer has the OPf_MOD flag set, which trips up S_maybe_multiconcat into
+no longer spotting that the outer concat is a '.=' rather than a '.'.
+
+Whether the OPpTARGET_MY optimising code should copy the OPf_MOD from
+the being-removed sassign op to its successor is an issue I won't
+address here. But in the meantime, the good news is that for 5.28.0
+I added the OPpCONCAT_NESTED private flag, which is set whenever
+($a . $b . $c) is optimised into ($a . $b) .= $c. This means that it's
+no longer necessary to inspect the OPf_MOD flag of the first child to
+disambiguate the two cases. So the fix is trivial.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ op.c               |  1 -
+ t/opbasic/concat.t | 10 +++++++++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/op.c b/op.c
+index ddeb484b64..d0dcffbecb 100644
+--- a/op.c
++++ b/op.c
+@@ -2722,7 +2722,6 @@ S_maybe_multiconcat(pTHX_ OP *o)
+     }
+     else if (   topop->op_type == OP_CONCAT
+              && (topop->op_flags & OPf_STACKED)
+-             && (cUNOPo->op_first->op_flags & OPf_MOD)
+              && (!(topop->op_private & OPpCONCAT_NESTED))
+             )
+     {
+diff --git a/t/opbasic/concat.t b/t/opbasic/concat.t
+index 9ce9722f5c..4b73b22c1c 100644
+--- a/t/opbasic/concat.t
++++ b/t/opbasic/concat.t
+@@ -39,7 +39,7 @@ sub is {
+     return $ok;
+ }
+ 
+-print "1..253\n";
++print "1..254\n";
+ 
+ ($a, $b, $c) = qw(foo bar);
+ 
+@@ -853,3 +853,11 @@ package RT132595 {
+     my $res = $a.$t.$a.$t;
+     ::is($res, "b1c1b1c2", "RT #132595");
+ }
++
++# RT #133441
++# multiconcat wasn't seeing a mutator as a mutator
++{
++    my ($a, $b)  = qw(a b);
++    ($a = 'A'.$b) .= 'c';
++    is($a, "Abc", "RT #133441");
++}
+-- 
+2.14.4
+
