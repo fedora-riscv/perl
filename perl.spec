@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        421%{?dist}
+Release:        422%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -181,30 +181,24 @@ Patch22:        perl-5.29.1-perl-133314-always-close-the-directory-handle-on-cle
 # in upstream after 5.29.1
 Patch23:        perl-5.29.1-utf8.c-Make-safer-a-deprecated-function.patch
 
-# Fix a buffer overrun in deprecated utf8_to_uvchr(),
-# in upstrem after 5.29.0
-Patch24:        perl-5.29.0-Make-utf8_to_uvchr-safer.patch
-Patch25:        perl-5.29.0-Fix-VC6-build-following-commit-aa3c16bd70.patch
-Patch26:        perl-5.29.1-Make-utf8_to_uvchr-slightly-safer.patch
-
 # Fix a time race in Time-HiRes/t/itimer.t test, in upstream after 5.29.1
-Patch27:        perl-5.29.1-Time-HiRes-t-itimer.t-avoid-race-condition.patch
+Patch24:        perl-5.29.1-Time-HiRes-t-itimer.t-avoid-race-condition.patch
 
 # Fix matching an ASCII digit followed by a non-ASCII digit using a script
 # run, in upstream after 5.29.1
-Patch28:        perl-5.28.0-Fix-script-run-bug-1-followed-by-Thai-digit.patch
+Patch25:        perl-5.28.0-Fix-script-run-bug-1-followed-by-Thai-digit.patch
 
 # Fix Time::Piece to handle objects in overloaded methods correctly,
 # in upstream after 5.29.1
-Patch29:        perl-5.29.1-Update-Time-Piece-to-CPAN-version-1.33.patch
+Patch26:        perl-5.29.1-Update-Time-Piece-to-CPAN-version-1.33.patch
 
 # Fix an assignment to a lexical variable in multiconcatenation expressions,
 # RT#133441, in upstream after 5.29.2
-Patch30:        perl-5.29.2-multiconcat-mutator-not-seen-in-lex.patch
+Patch27:        perl-5.29.2-multiconcat-mutator-not-seen-in-lex.patch
 
 # Fix a spurious warning about uninitialized value in warn, RT#132683,
 # in upstream after 5.29.2
-Patch31:        perl-5.29.2-perl-132683-don-t-try-to-convert-PL_sv_placeholder-i.patch
+Patch28:        perl-5.29.2-perl-132683-don-t-try-to-convert-PL_sv_placeholder-i.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2787,9 +2781,6 @@ Perl extension for Version Objects
 %patch26 -p1
 %patch27 -p1
 %patch28 -p1
-%patch29 -p1
-%patch30 -p1
-%patch31 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2820,14 +2811,11 @@ perl -x patchlevel.h \
     'Fedora Patch21: Fix a file descriptor leak in in-place edits (RT#133314)' \
     'Fedora Patch22: Fix a file descriptor leak in in-place edits (RT#133314)' \
     'Fedora Patch23: Fix a buffer overrun in deprecated S_is_utf8_common()' \
-    'Fedora Patch24: Fix a buffer overrun in deprecated utf8_to_uvchr()' \
-    'Fedora Patch25: Fix a buffer overrun in deprecated utf8_to_uvchr()' \
-    'Fedora Patch26: Fix a buffer overrun in deprecated utf8_to_uvchr()' \
-    'Fedora Patch27: Fix a time race in Time-HiRes/t/itimer.t test' \
-    'Fedora Patch28: Fix matching an ASCII digit followed by a non-ASCII digit using a script run' \
-    'Fedora Patch29: Fix Time::Piece to handle objects in overloaded methods correctly' \
-    'Fedora Patch30: Fix an assignment to a lexical variable in multiconcatenation expressions (RT#133441)' \
-    'Fedora Patch31: Fix a spurious warning about uninitialized value in warn (RT#132683)' \
+    'Fedora Patch24: Fix a time race in Time-HiRes/t/itimer.t test' \
+    'Fedora Patch25: Fix matching an ASCII digit followed by a non-ASCII digit using a script run' \
+    'Fedora Patch26: Fix Time::Piece to handle objects in overloaded methods correctly' \
+    'Fedora Patch27: Fix an assignment to a lexical variable in multiconcatenation expressions (RT#133441)' \
+    'Fedora Patch28: Fix a spurious warning about uninitialized value in warn (RT#132683)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5116,6 +5104,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Sep 10 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.0-422
+- Revert a fix for a buffer overrun in deprecated S_is_utf8_common()
+  (bug #1627091)
+
 * Wed Sep 05 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.0-421
 - Fix a buffer overrun in deprecated S_is_utf8_common()
 - Fix a buffer overrun in deprecated utf8_to_uvchr()
