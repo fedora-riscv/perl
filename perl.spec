@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        422%{?dist}
+Release:        423%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -199,6 +199,9 @@ Patch27:        perl-5.29.2-multiconcat-mutator-not-seen-in-lex.patch
 # Fix a spurious warning about uninitialized value in warn, RT#132683,
 # in upstream after 5.29.2
 Patch28:        perl-5.29.2-perl-132683-don-t-try-to-convert-PL_sv_placeholder-i.patch
+
+# Fix upack "u" of invalid data, RT#132655, in upstream after 5.29.2
+Patch29:        perl-5.29.2-perl-132655-nul-terminate-result-of-unpack-u-of-inva.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2781,6 +2784,7 @@ Perl extension for Version Objects
 %patch26 -p1
 %patch27 -p1
 %patch28 -p1
+%patch29 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -5104,6 +5108,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Sep 24 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.0-423
+- Fix upack "u" of invalid data (RT#132655)
+
 * Mon Sep 10 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.0-422
 - Revert a fix for a buffer overrun in deprecated S_is_utf8_common()
   (bug #1627091)

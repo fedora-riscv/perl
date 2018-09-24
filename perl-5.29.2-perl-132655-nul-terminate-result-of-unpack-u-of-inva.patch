@@ -1,0 +1,61 @@
+From 12cad9bd99725bba72029e2651b2b7f0cab2e0b0 Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Mon, 20 Aug 2018 16:31:45 +1000
+Subject: [PATCH] (perl #132655) nul terminate result of unpack "u" of invalid
+ data
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+In the given test case, Perl_atof2() would run off the end of the PV,
+producing an error from ASAN.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ pp_pack.c   | 5 ++++-
+ t/op/pack.t | 9 ++++++++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/pp_pack.c b/pp_pack.c
+index 5e9cc64301..f8be9d48ae 100644
+--- a/pp_pack.c
++++ b/pp_pack.c
+@@ -1727,7 +1727,10 @@ S_unpack_rec(pTHX_ tempsym_t* symptr, const char *s, const char *strbeg, const c
+ 	    if (!checksum) {
+                 const STRLEN l = (STRLEN) (strend - s) * 3 / 4;
+ 		sv = sv_2mortal(newSV(l));
+-		if (l) SvPOK_on(sv);
++		if (l) {
++                    SvPOK_on(sv);
++                    *SvEND(sv) = '\0';
++                }
+ 	    }
+ 
+             /* Note that all legal uuencoded strings are ASCII printables, so
+diff --git a/t/op/pack.t b/t/op/pack.t
+index cf0e286509..bb9f865091 100644
+--- a/t/op/pack.t
++++ b/t/op/pack.t
+@@ -12,7 +12,7 @@ my $no_endianness = $] > 5.009 ? '' :
+ my $no_signedness = $] > 5.009 ? '' :
+   "Signed/unsigned pack modifiers not available on this perl";
+ 
+-plan tests => 14717;
++plan tests => 14718;
+ 
+ use strict;
+ use warnings qw(FATAL all);
+@@ -2081,3 +2081,10 @@ SKIP:
+     fresh_perl_like('pack "c10f1073741824"', qr/Out of memory during pack/, { stderr => 1 },
+ 		    "integer overflow calculating allocation (multiply)");
+ }
++
++{
++    # [perl #132655] heap-buffer-overflow READ of size 11
++    # only expect failure under ASAN (and maybe valgrind)
++    fresh_perl_is('0.0 + unpack("u", "ab")', "", { stderr => 1 },
++                  "ensure unpack u of invalid data nul terminates result");
++}
+-- 
+2.17.1
+
