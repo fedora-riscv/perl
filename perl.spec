@@ -296,6 +296,9 @@ Patch91:        perl-5.29.1-Time-HiRes-t-itimer.t-avoid-race-condition.patch
 # in upstream after 5.29.2
 Patch92:        perl-5.29.2-perl-132683-don-t-try-to-convert-PL_sv_placeholder-i.patch
 
+# Fix unpack "u" of invalid data, RT#132655, in upstream after 5.29.2
+Patch93:        perl-5.29.2-perl-132655-nul-terminate-result-of-unpack-u-of-inva.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2903,6 +2906,7 @@ Perl extension for Version Objects
 %patch90 -p1
 %patch91 -p1
 %patch92 -p1
+%patch93 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2962,6 +2966,7 @@ perl -x patchlevel.h \
     'Fedora Patch90: Pass the correct CFLAGS to dtrace' \
     'Fedora Patch91: Fix a time race in Time-HiRes/t/itimer.t test' \
     'Fedora Patch92: Fix a spurious warning about uninitialized value in warn (RT#132683)' \
+    'Fedora Patch93: Fix unpack "u" of invalid data (RT#132655)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5253,6 +5258,7 @@ popd
 - Fix a time race in Time-HiRes/t/itimer.t test
 - Fix a spurious warning about uninitialized value in warn (RT#132683)
 - Require Devel::PPPort by perl-devel for h2xs script
+- Fix unpack "u" of invalid data (RT#132655)
 
 * Fri Nov 30 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.3-415
 - 5.26.3 bump
