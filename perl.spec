@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        423%{?dist}
+Release:        424%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -202,6 +202,9 @@ Patch28:        perl-5.29.2-perl-132683-don-t-try-to-convert-PL_sv_placeholder-i
 
 # Fix upack "u" of invalid data, RT#132655, in upstream after 5.29.2
 Patch29:        perl-5.29.2-perl-132655-nul-terminate-result-of-unpack-u-of-inva.patch
+
+# Pass the correct CFLAGS to dtrace
+Patch30:        perl-5.28.0-Pass-CFLAGS-to-dtrace.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2785,6 +2788,7 @@ Perl extension for Version Objects
 %patch27 -p1
 %patch28 -p1
 %patch29 -p1
+%patch30 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2820,6 +2824,7 @@ perl -x patchlevel.h \
     'Fedora Patch26: Fix Time::Piece to handle objects in overloaded methods correctly' \
     'Fedora Patch27: Fix an assignment to a lexical variable in multiconcatenation expressions (RT#133441)' \
     'Fedora Patch28: Fix a spurious warning about uninitialized value in warn (RT#132683)' \
+    'Fedora Patch30: Pass the correct CFLAGS to dtrace' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5108,6 +5113,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Oct 25 2018 Jitka Plesnikova <jplesnik@redhat.com> -  4:5.28.0-424
+- Fix annocheck failure by passing CFLAGS to dtrace
+
 * Mon Sep 24 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.0-423
 - Fix upack "u" of invalid data (RT#132655)
 
