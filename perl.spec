@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        413%{?dist}
+Release:        414%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
@@ -289,6 +289,9 @@ Patch88:        perl-5.29.0-regexec.c-Call-macro-with-correct-args.patch
 # Fix invoking a check for wide characters while ISO-8859-1 locale is in effect,
 # in upstream after 5.29.0
 Patch89:        perl-5.26.2-perl.h-Add-parens-around-macro-arguments.patch
+
+# Pass the correct CFLAGS to dtrace
+Patch90:        perl-5.26.2-Pass-CFLAGS-to-dtrace.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2892,6 +2895,7 @@ Perl extension for Version Objects
 %patch87 -p1
 %patch88 -p1
 %patch89 -p1
+%patch90 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2949,6 +2953,7 @@ perl -x patchlevel.h \
     'Fedora Patch87: Fix an integer wrap when allocating memory for an environment variable (RT#133204)' \
     'Fedora Patch88: Fix printing a warning about a wide character when matching a regular expression while ISO-8859-1 locale is in effect' \
     'Fedora Patch89: Fix invoking a check for wide characters while ISO-8859-1 locale is in effect' \
+    'Fedora Patch90: Pass the correct CFLAGS to dtrace' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5236,6 +5241,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Oct 25 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.2-414
+- Fix annocheck failure by passing CFLAGS to dtrace
+
 * Mon Jul 09 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.2-413
 - Adjust tests to gdbm-1.15 (RT#133295)
 - Fix an integer wrap when allocating memory for an environment variable
