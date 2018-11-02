@@ -366,11 +366,12 @@ Requires:       perl-Compress-Raw-Bzip2,
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-Config-Perl-V,
 Requires:       perl-constant,
 Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
-Requires:       perl-CPAN-Meta-YAML, perl-Encode, perl-encoding
+Requires:       perl-CPAN-Meta-YAML
 Requires:       perl-Data-Dumper, perl-DB_File,
 Requires:       perl-Devel-Peek, perl-Devel-PPPort, perl-Devel-SelfStubber,
 Requires:       perl-Digest, perl-Digest-MD5,
 Requires:       perl-Digest-SHA,
+Requires:       perl-Encode, perl-Encode-devel, perl-encoding
 Requires:       perl-Env, perl-Errno, perl-Exporter, perl-experimental
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Command,
 Requires:       perl-ExtUtils-Embed,
@@ -5259,6 +5260,7 @@ popd
 - Fix a spurious warning about uninitialized value in warn (RT#132683)
 - Require Devel::PPPort by perl-devel for h2xs script
 - Fix unpack "u" of invalid data (RT#132655)
+- Install Encode developmental files when installing complete Perl
 
 * Fri Nov 30 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.3-415
 - 5.26.3 bump
