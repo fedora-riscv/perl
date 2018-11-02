@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        425%{?dist}
+Release:        426%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -260,11 +260,12 @@ Requires:       perl-Compress-Raw-Bzip2,
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-Config-Perl-V,
 Requires:       perl-constant,
 Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
-Requires:       perl-CPAN-Meta-YAML, perl-Encode, perl-encoding
+Requires:       perl-CPAN-Meta-YAML
 Requires:       perl-Data-Dumper, perl-DB_File,
 Requires:       perl-Devel-Peek, perl-Devel-PPPort, perl-Devel-SelfStubber,
 Requires:       perl-Digest, perl-Digest-MD5,
 Requires:       perl-Digest-SHA,
+Requires:       perl-Encode, perl-Encode-devel, perl-encoding
 Requires:       perl-Env, perl-Errno, perl-Exporter, perl-experimental
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Command,
 Requires:       perl-ExtUtils-Embed,
@@ -5093,6 +5094,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Nov 30 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-426
+- Install Encode developmental files when installing complete Perl
+
 * Fri Nov 30 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.1-425
 - 5.28.1 bump
 - Fix CVE-2018-18312 (heap-buffer-overflow write in regcomp.c)
