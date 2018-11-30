@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        426%{?dist}
+Release:        427%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -192,6 +192,11 @@ Patch29:        perl-5.29.2-perl-132655-nul-terminate-result-of-unpack-u-of-inva
 
 # Pass the correct CFLAGS to dtrace
 Patch30:        perl-5.28.0-Pass-CFLAGS-to-dtrace.patch
+
+# Fix script run matching to allow ASCII digits in scripts that use their own in
+# addition, RT#133547, in upstream after 5.29.3
+Patch31:        perl-5.28.1-regexec.c-Rename-variable.patch
+Patch32:        perl-5.28.1-PATCH-perl-133547-script-run-broken.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2774,6 +2779,8 @@ Perl extension for Version Objects
 %patch28 -p1
 %patch29 -p1
 %patch30 -p1
+%patch31 -p1
+%patch32 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2806,6 +2813,7 @@ perl -x patchlevel.h \
     'Fedora Patch27: Fix an assignment to a lexical variable in multiconcatenation expressions (RT#133441)' \
     'Fedora Patch28: Fix a spurious warning about uninitialized value in warn (RT#132683)' \
     'Fedora Patch30: Pass the correct CFLAGS to dtrace' \
+    'Fedora Patch31: Fix script run matching to allow ASCII digits in scripts that use their own in addition (RT#133547)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5094,6 +5102,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Nov 30 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-427
+- Fix script run matching to allow ASCII digits in scripts that use their own in
+  addition (RT#133547)
+
 * Fri Nov 30 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.1-426
 - 5.28.1 bump
 - Fix CVE-2018-18312 (heap-buffer-overflow write in regcomp.c)
