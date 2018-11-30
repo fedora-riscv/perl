@@ -1,4 +1,4 @@
-%global perl_version    5.26.2
+%global perl_version    5.26.3
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        414%{?dist}
+Release:        415%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
@@ -278,10 +278,6 @@ Patch85:        perl-5.26.2-PATCH-perl-133185-Infinite-loop-in-qr.patch
 # Adjust tests to gdbm-1.15, RT#133295
 Patch86:        perl-5.29.0-Remove-ext-GDBM_File-t-fatal.t.patch
 
-# Fix an integer wrap when allocating memory for an environment variable,
-# RT#133204, in upstream after 5.29.0
-Patch87:        perl-5.26.2-Perl_my_setenv-handle-integer-wrap.patch
-
 # Fix printing a warning about a wide character when matching a regular
 # expression while ISO-8859-1 locale is in effect, in upstream after 5.29.0
 Patch88:        perl-5.29.0-regexec.c-Call-macro-with-correct-args.patch
@@ -342,7 +338,7 @@ BuildRequires:  rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.26.2)
+%global perl_compat perl(:MODULE_COMPAT_5.26.3)
 
 Requires:       %perl_compat
 Requires:       perl-interpreter%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
@@ -493,6 +489,7 @@ Summary:        The libraries for the perl run-time
 License:        (GPL+ or Artistic) and HSRL and MIT and UCD
 # Compat provides
 Provides:       %perl_compat
+Provides:       perl(:MODULE_COMPAT_5.26.2)
 Provides:       perl(:MODULE_COMPAT_5.26.1)
 Provides:       perl(:MODULE_COMPAT_5.26.0)
 # Interpreter version to fulfil required genersted from "require 5.006;"
@@ -2892,7 +2889,6 @@ Perl extension for Version Objects
 %patch84 -p1
 %patch85 -p1
 %patch86 -p1
-%patch87 -p1
 %patch88 -p1
 %patch89 -p1
 %patch90 -p1
@@ -2950,7 +2946,6 @@ perl -x patchlevel.h \
     'Fedora Patch84: Fix a possibly unitialized memory read in the Perl parser (RT#133074)' \
     'Fedora Patch85: Fix an infinite loop in the regular expression compiler (RT#133185)' \
     'Fedora Patch86: Adjust tests to gdbm-1.15 (RT#133295)' \
-    'Fedora Patch87: Fix an integer wrap when allocating memory for an environment variable (RT#133204)' \
     'Fedora Patch88: Fix printing a warning about a wide character when matching a regular expression while ISO-8859-1 locale is in effect' \
     'Fedora Patch89: Fix invoking a check for wide characters while ISO-8859-1 locale is in effect' \
     'Fedora Patch90: Pass the correct CFLAGS to dtrace' \
@@ -5241,6 +5236,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Nov 30 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.3-415
+- 5.26.3 bump
+
 * Thu Oct 25 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.26.2-414
 - Fix annocheck failure by passing CFLAGS to dtrace
 
