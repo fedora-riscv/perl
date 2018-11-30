@@ -1810,14 +1810,14 @@ Provides: perl(B) = 1.74 \
 Provides: perl(B::Concise) = 1.003 \
 Provides: perl(B::Deparse) = 1.48 \
 Provides: perl(B::OBJECT) \
-Provides: perl(B::Op_private) = 5.028000 \
+Provides: perl(B::Op_private) = 5.028001 \
 Provides: perl(B::Showlex) = 1.05 \
 Provides: perl(B::Terse) = 1.08 \
 Provides: perl(B::Xref) = 1.07 \
 Provides: perl(Benchmark) = 1.22 \
 Provides: perl(Class::Struct) = 0.65 \
 Provides: perl(Class::Struct::Tie_ISA) \
-Provides: perl(Config) = 5.028000 \
+Provides: perl(Config) = 5.028001 \
 Provides: perl(Config::Extensions) = 0.02 \
 Provides: perl(DB) = 1.08 \
 Provides: perl(DBM_Filter) = 0.06 \
@@ -2008,11 +2008,9 @@ Requires: perl(vars) \
 Requires: perl(integer) \
 Requires: perl(strict) \
 Requires: perl(warnings) \
-Provides: perl(:MODULE_COMPAT_5.26.0) \
-Provides: perl(:MODULE_COMPAT_5.26.1) \
-Provides: perl(:MODULE_COMPAT_5.26.2) \
 Provides: perl(:MODULE_COMPAT_5.28.0) \
-Provides: perl(:VERSION) = 5.28.0 \
+Provides: perl(:MODULE_COMPAT_5.28.1) \
+Provides: perl(:VERSION) = 5.28.1 \
 Provides: perl(:WITH_64BIT) \
 Provides: perl(:WITH_ITHREADS) \
 Provides: perl(:WITH_LARGEFILES) \
