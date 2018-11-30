@@ -198,6 +198,10 @@ Patch30:        perl-5.28.0-Pass-CFLAGS-to-dtrace.patch
 Patch31:        perl-5.28.1-regexec.c-Rename-variable.patch
 Patch32:        perl-5.28.1-PATCH-perl-133547-script-run-broken.patch
 
+# Fix PathTools tests to cope with ESTALE error, RT#133534,
+# in upstream after 5.29.3
+Patch33:        perl-5.29.3-Accept-also-ESTALE-fix-for-RT-133534.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2781,6 +2785,7 @@ Perl extension for Version Objects
 %patch30 -p1
 %patch31 -p1
 %patch32 -p1
+%patch33 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2814,6 +2819,7 @@ perl -x patchlevel.h \
     'Fedora Patch28: Fix a spurious warning about uninitialized value in warn (RT#132683)' \
     'Fedora Patch30: Pass the correct CFLAGS to dtrace' \
     'Fedora Patch31: Fix script run matching to allow ASCII digits in scripts that use their own in addition (RT#133547)' \
+    'Fedora Patch33: Fix PathTools tests to cope with ESTALE error (RT#133534)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5105,6 +5111,7 @@ popd
 * Fri Nov 30 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-427
 - Fix script run matching to allow ASCII digits in scripts that use their own in
   addition (RT#133547)
+- Fix PathTools tests to cope with ESTALE error (RT#133534)
 
 * Fri Nov 30 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.1-426
 - 5.28.1 bump
