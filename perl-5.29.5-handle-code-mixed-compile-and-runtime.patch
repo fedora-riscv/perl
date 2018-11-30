@@ -1,0 +1,118 @@
+From 278d8c58e85c646b61e60fe48207e090278bb61c Mon Sep 17 00:00:00 2001
+From: David Mitchell <davem@iabyn.com>
+Date: Tue, 27 Nov 2018 13:26:39 +0000
+Subject: [PATCH] handle /(?(?{code}))/ mixed compile-and runtime
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Where a runtime pattern contains both compile-time and run-time code
+blocks, e.g.:
+
+    $re = '(?{ RRR })';
+    / $re X(?{ CCC })Y/
+
+The compile-time code-block CCC is parsed at the same time as the
+surrounding text. The runtime code RRR is parsed at runtime by
+constructing a fake pattern and re-parsing it, but with any compile-time
+code-blocks blanked out (so they don't get compiled twice). The compiled
+regex is then thrown away, but any optrees just created for the runtime
+code blocks are kept.
+
+For example at runtime, the re-parsed pattern looks like:
+
+    / (?{ RRR }) X__________Y/
+
+Unfortunately this was failing for the conditional pattern, e.g.
+
+    / $re X(?(?{ CCC }))Y/
+
+which was getting blanked as
+
+    / (?{ RRR }) X(?_______)Y/
+
+which isn't valid syntax.
+
+This commit blanks (?{...}) into (?=====) instead which is always legal.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ regcomp.c          | 24 +++++++++++++++++++-----
+ t/re/pat_re_eval.t | 17 ++++++++++++++++-
+ 2 files changed, 35 insertions(+), 6 deletions(-)
+
+diff --git a/regcomp.c b/regcomp.c
+index bf987f6e28..ff26f2242f 100644
+--- a/regcomp.c
++++ b/regcomp.c
+@@ -6756,13 +6756,27 @@ S_compile_runtime_code(pTHX_ RExC_state_t * const pRExC_state,
+ 	        && n < pRExC_state->code_blocks->count
+ 		&& s == pRExC_state->code_blocks->cb[n].start)
+ 	    {
+-		/* blank out literal code block */
+-		assert(pat[s] == '(');
+-		while (s <= pRExC_state->code_blocks->cb[n].end) {
+-		    *p++ = '_';
++		/* blank out literal code block so that they aren't
++                 * recompiled: eg change from/to:
++                 *     /(?{xyz})/
++                 *     /(?=====)/
++                 * and
++                 *     /(??{xyz})/
++                 *     /(?======)/
++                 * and
++                 *     /(?(?{xyz}))/
++                 *     /(?(?=====))/
++                */
++		assert(pat[s]   == '(');
++		assert(pat[s+1] == '?');
++                *p++ = '(';
++                *p++ = '?';
++                s += 2;
++		while (s < pRExC_state->code_blocks->cb[n].end) {
++		    *p++ = '=';
+ 		    s++;
+ 		}
+-		s--;
++                *p++ = ')';
+ 		n++;
+ 		continue;
+ 	    }
+diff --git a/t/re/pat_re_eval.t b/t/re/pat_re_eval.t
+index f88a8651a1..8325451377 100644
+--- a/t/re/pat_re_eval.t
++++ b/t/re/pat_re_eval.t
+@@ -23,7 +23,7 @@ BEGIN {
+ 
+ our @global;
+ 
+-plan tests => 502;  # Update this when adding/deleting tests.
++plan tests => 504;  # Update this when adding/deleting tests.
+ 
+ run_tests() unless caller;
+ 
+@@ -1301,6 +1301,21 @@ sub run_tests {
+         ok /^$qr$/,  "RT #132772 -  run time time qr//";
+     }
+ 
++    # RT #133687
++    # mixing compile-time (?(?{code})) with run-time code blocks
++    # was failing, because the second pass through the parser
++    # (which compiles the runtime code blocks) was failing to adequately
++    # mask the compile-time code blocks to shield them from a second
++    # compile: /X(?{...})Y/ was being correctly masked as /X________Y/
++    # but /X(?(?{...}))Y/ was being incorrectly masked as
++    # /X(?________)Y/
++
++    {
++        use re 'eval';
++        my $runtime_re = '(??{ "A"; })';
++        ok "ABC" =~ /^ $runtime_re (?(?{ 1; })BC)    $/x, 'RT #133687 yes';
++        ok "ABC" =~ /^ $runtime_re (?(?{ 0; })xy|BC) $/x, 'RT #133687 yes|no';
++    }
+ 
+ } # End of sub run_tests
+ 
+-- 
+2.17.2
+
