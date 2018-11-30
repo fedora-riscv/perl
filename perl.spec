@@ -1,4 +1,4 @@
-%global perl_version    5.28.0
+%global perl_version    5.28.1
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        425%{?dist}
+Release:        426%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -153,10 +153,6 @@ Patch14:        perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
 # Adjust tests to gdbm-1.15, RT#133295
 Patch15:        perl-5.29.0-Remove-ext-GDBM_File-t-fatal.t.patch
 
-# Fix an integer wrap when allocating memory for an environment variable,
-# RT#133204, in upstream after 5.29.0
-Patch16:        perl-5.29.0-Perl_my_setenv-handle-integer-wrap.patch
-
 # Fix printing a warning about a wide character when matching a regular
 # expression while ISO-8859-1 locale is in effect, in upstream after 5.29.0
 Patch17:        perl-5.29.0-regexec.c-Call-macro-with-correct-args.patch
@@ -165,17 +161,12 @@ Patch17:        perl-5.29.0-regexec.c-Call-macro-with-correct-args.patch
 # in upstream after 5.29.0
 Patch18:        perl-5.29.0-perl.h-Add-parens-around-macro-arguments.patch
 
-# Fix index() and rindex() optimization in given-when boolean context,
-# RT#133368, in upstream after 5.29.0
-Patch19:        perl-5.29.0-treat-when-index-1-as-a-boolean-expression.patch
-
 # Fix build conditions in locale.c, in upstream after 5.29.0
 Patch20:        perl-5.29.0-locale.c-Fix-conditional-compilation.patch
 
 # Fix a file descriptor leak in in-place edits, RT#133314,
 # in upstream after 5.29.1
 Patch21:        perl-5.29.1-perl-133314-test-for-handle-leaks-from-in-place-edit.patch
-Patch22:        perl-5.29.1-perl-133314-always-close-the-directory-handle-on-cle.patch
 
 # Fix a buffer overrun in deprecated S_is_utf8_common(),
 # in upstream after 5.29.1
@@ -183,10 +174,6 @@ Patch23:        perl-5.29.1-utf8.c-Make-safer-a-deprecated-function.patch
 
 # Fix a time race in Time-HiRes/t/itimer.t test, in upstream after 5.29.1
 Patch24:        perl-5.29.1-Time-HiRes-t-itimer.t-avoid-race-condition.patch
-
-# Fix matching an ASCII digit followed by a non-ASCII digit using a script
-# run, in upstream after 5.29.1
-Patch25:        perl-5.28.0-Fix-script-run-bug-1-followed-by-Thai-digit.patch
 
 # Fix Time::Piece to handle objects in overloaded methods correctly,
 # in upstream after 5.29.1
@@ -255,7 +242,7 @@ BuildRequires:  rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.28.0)
+%global perl_compat perl(:MODULE_COMPAT_5.28.1)
 
 Requires:       %perl_compat
 Requires:       perl-interpreter%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
@@ -407,6 +394,7 @@ Summary:        The libraries for the perl run-time
 License:        (GPL+ or Artistic) and HSRL and MIT and UCD
 # Compat provides
 Provides:       %perl_compat
+Provides:       perl(:MODULE_COMPAT_5.28.0)
 # Interpreter version to fulfil required genersted from "require 5.006;"
 Provides:       perl(:VERSION) = %{perl_version}
 # Integeres are 64-bit on all platforms
@@ -2775,16 +2763,12 @@ Perl extension for Version Objects
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
-%patch16 -p1
 %patch17 -p1
 %patch18 -p1
-%patch19 -p1
 %patch20 -p1
 %patch21 -p1
-%patch22 -p1
 %patch23 -p1
 %patch24 -p1
-%patch25 -p1
 %patch26 -p1
 %patch27 -p1
 %patch28 -p1
@@ -2812,16 +2796,12 @@ perl -x patchlevel.h \
     'Fedora Patch13: Fix executing arybase::_tie_it() in Safe compartement (RT#131588)' \
     'Fedora Patch14: Link XS modules to pthread library to fix linking with -z defs' \
     'Fedora Patch15: Adjust tests to gdbm-1.15 (RT#133295)' \
-    'Fedora Patch16: Fix an integer wrap when allocating memory for an environment variable (RT#133204)' \
     'Fedora Patch17: Fix printing a warning about a wide character when matching a regular expression while ISO-8859-1 locale is in effect' \
     'Fedora Patch18: Fix invoking a check for wide characters while ISO-8859-1 locale is in effect' \
-    'Fedora Patch19: Fix index() and rindex() optimization in given-when boolean context (RT#133368)' \
     'Fedora Patch20: Fix build conditions in locale.c' \
     'Fedora Patch21: Fix a file descriptor leak in in-place edits (RT#133314)' \
-    'Fedora Patch22: Fix a file descriptor leak in in-place edits (RT#133314)' \
     'Fedora Patch23: Fix a buffer overrun in deprecated S_is_utf8_common()' \
     'Fedora Patch24: Fix a time race in Time-HiRes/t/itimer.t test' \
-    'Fedora Patch25: Fix matching an ASCII digit followed by a non-ASCII digit using a script run' \
     'Fedora Patch26: Fix Time::Piece to handle objects in overloaded methods correctly' \
     'Fedora Patch27: Fix an assignment to a lexical variable in multiconcatenation expressions (RT#133441)' \
     'Fedora Patch28: Fix a spurious warning about uninitialized value in warn (RT#132683)' \
@@ -5114,6 +5094,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Nov 30 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.1-426
+- 5.28.1 bump
+- Fix CVE-2018-18312 (heap-buffer-overflow write in regcomp.c)
+
 * Fri Nov 02 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.0-425
 - Install Encode developmental files when installing complete Perl
 
