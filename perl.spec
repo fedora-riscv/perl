@@ -5093,7 +5093,7 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Fri Nov 30 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.0-425
+* Fri Nov 30 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.1-425
 - 5.28.1 bump
 - Fix CVE-2018-18312 (heap-buffer-overflow write in regcomp.c)
 
