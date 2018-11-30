@@ -211,6 +211,10 @@ Patch35:        perl-5.29.5-perl-133659-move-argvout-cleanup-to-a-new-function.p
 Patch36:        perl-5.29.5-perl-133659-tests-for-global-destruction-handling-of.patch
 Patch37:        perl-5.29.5-perl-133659-make-an-in-place-edit-successful-if-the-.patch
 
+# Fix compiling regular expressions that contain both compile- and run-time
+# compiled code blocks, RT#133687, in upstream after 5.29.5
+Patch38:        perl-5.29.5-handle-code-mixed-compile-and-runtime.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2799,6 +2803,7 @@ Perl extension for Version Objects
 %patch35 -p1
 %patch36 -p1
 %patch37 -p1
+%patch38 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2835,6 +2840,7 @@ perl -x patchlevel.h \
     'Fedora Patch33: Fix PathTools tests to cope with ESTALE error (RT#133534)' \
     'Fedora Patch34: Fix an undefined behaviour in S_hv_delete_common()' \
     'Fedora Patch35: Fix in-place edit to replace files on a successful perl exit status (bug #1650041)' \
+    'Fedora Patch38: Fix compiling regular expressions that contain both compile- and run-time compiled code blocks (RT#133687)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5130,6 +5136,8 @@ popd
 - Fix an undefined behaviour in S_hv_delete_common()
 - Fix in-place edit to replace files on a successful perl exit status
   (bug #1650041)
+- Fix compiling regular expressions that contain both compile- and run-time
+  compiled code blocks (RT#133687)
 
 * Fri Nov 30 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.1-426
 - 5.28.1 bump
