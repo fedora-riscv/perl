@@ -205,6 +205,12 @@ Patch33:        perl-5.29.3-Accept-also-ESTALE-fix-for-RT-133534.patch
 # Fix an undefined behaviour in S_hv_delete_common(), in upstream after 5.29.5
 Patch34:        perl-5.29.5-S_hv_delete_common-avoid-undefined-behaviour.patch
 
+# Fix in-place edit to replace files on a successful perl exit status,
+# bug #1650041, RT#133659, in upstream after 5.29.5
+Patch35:        perl-5.29.5-perl-133659-move-argvout-cleanup-to-a-new-function.patch
+Patch36:        perl-5.29.5-perl-133659-tests-for-global-destruction-handling-of.patch
+Patch37:        perl-5.29.5-perl-133659-make-an-in-place-edit-successful-if-the-.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2790,6 +2796,9 @@ Perl extension for Version Objects
 %patch32 -p1
 %patch33 -p1
 %patch34 -p1
+%patch35 -p1
+%patch36 -p1
+%patch37 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2825,6 +2834,7 @@ perl -x patchlevel.h \
     'Fedora Patch31: Fix script run matching to allow ASCII digits in scripts that use their own in addition (RT#133547)' \
     'Fedora Patch33: Fix PathTools tests to cope with ESTALE error (RT#133534)' \
     'Fedora Patch34: Fix an undefined behaviour in S_hv_delete_common()' \
+    'Fedora Patch35: Fix in-place edit to replace files on a successful perl exit status (bug #1650041)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5118,6 +5128,8 @@ popd
   addition (RT#133547)
 - Fix PathTools tests to cope with ESTALE error (RT#133534)
 - Fix an undefined behaviour in S_hv_delete_common()
+- Fix in-place edit to replace files on a successful perl exit status
+  (bug #1650041)
 
 * Fri Nov 30 2018 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.1-426
 - 5.28.1 bump
