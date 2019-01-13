@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        416%{?dist}
+Release:        417%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            http://www.perl.org/
 Source0:        http://www.cpan.org/src/5.0/perl-%{perl_version}.tar.bz2
@@ -347,6 +347,7 @@ BuildRequires:  zlib-devel
 
 # For tests
 %if %{with test}
+BuildRequires:  gcc-c++
 BuildRequires:  procps
 %if %{with perl_enables_syslog_test}
 BuildRequires:  rsyslog
@@ -5266,6 +5267,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Feb 26 2019 Petr Pisar <ppisar@redhat.com> - 4:5.26.3-417
+- Add BuildRequires: gcc-c++ for tests
+
 * Tue Dec 11 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.3-416
 - Fix a time race in Time-HiRes/t/itimer.t test
 - Fix a spurious warning about uninitialized value in warn (RT#132683)
