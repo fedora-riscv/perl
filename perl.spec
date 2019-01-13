@@ -81,7 +81,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        427%{?dist}
+Release:        428%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -256,6 +256,7 @@ BuildRequires:  zlib-devel
 
 # For tests
 %if %{with test}
+BuildRequires:  gcc-c++
 BuildRequires:  procps
 %if %{with perl_enables_syslog_test}
 BuildRequires:  rsyslog
@@ -5129,6 +5130,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sun Jan 13 2019 Björn Esser <besser82@fedoraproject.org> - 4:5.28.1-428
+- Add BuildRequires: gcc-c++ for tests
+
 * Fri Nov 30 2018 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-427
 - Fix script run matching to allow ASCII digits in scripts that use their own in
   addition (RT#133547)
