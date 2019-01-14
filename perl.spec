@@ -83,7 +83,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        428%{?dist}
+Release:        429%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -5135,6 +5135,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jan 14 2019 Björn Esser <besser82@fedoraproject.org> - 4:5.28.1-429
+- Rebuilt for libcrypt.so.2 (#1666033)
+
 * Sun Jan 13 2019 Björn Esser <besser82@fedoraproject.org> - 4:5.28.1-428
 - Add BuildRequires: gcc-c++ for tests
 
