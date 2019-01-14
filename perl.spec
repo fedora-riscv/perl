@@ -83,7 +83,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        428%{?dist}
+Release:        429%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -152,9 +152,6 @@ Patch13:        perl-5.26.0-perl-131588-be-a-little-more-careful-in-arybase-_tie
 # <https://lists.fedoraproject.org/archives/list/devel@lists.fedoraproject.org/message/3RHZEHLRUHJFF2XGHI5RB6YPDNLDR4HG/>
 Patch14:        perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
 
-# Adjust tests to gdbm-1.15, RT#133295
-Patch15:        perl-5.29.0-Remove-ext-GDBM_File-t-fatal.t.patch
-
 # Fix printing a warning about a wide character when matching a regular
 # expression while ISO-8859-1 locale is in effect, in upstream after 5.29.0
 Patch17:        perl-5.29.0-regexec.c-Call-macro-with-correct-args.patch
@@ -216,6 +213,11 @@ Patch37:        perl-5.29.5-perl-133659-make-an-in-place-edit-successful-if-the-
 # Fix compiling regular expressions that contain both compile- and run-time
 # compiled code blocks, RT#133687, in upstream after 5.29.5
 Patch38:        perl-5.29.5-handle-code-mixed-compile-and-runtime.patch
+
+# Adjust tests to gdbm-1.15, RT#133295, in upstream after 5.29.5
+Patch39:        perl-5.28.1-ext-GDBM_File-t-fatal.t-handle-non-fatality.patch
+Patch40:        perl-5.29.5-Correct-spelling-error-in-skip-message.patch
+Patch41:        perl-5.29.5-Avoid-Use-of-uninitialized-value-res-in-numeric-eq-w.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2790,7 +2792,6 @@ Perl extension for Version Objects
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
-%patch15 -p1
 %patch17 -p1
 %patch18 -p1
 %patch20 -p1
@@ -2810,6 +2811,9 @@ Perl extension for Version Objects
 %patch36 -p1
 %patch37 -p1
 %patch38 -p1
+%patch39 -p1
+%patch40 -p1
+%patch41 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2831,7 +2835,6 @@ perl -x patchlevel.h \
     'Fedora Patch12: Replace EU::MakeMaker dependency with EU::MM::Utils in IPC::Cmd (bug #1129443)' \
     'Fedora Patch13: Fix executing arybase::_tie_it() in Safe compartement (RT#131588)' \
     'Fedora Patch14: Link XS modules to pthread library to fix linking with -z defs' \
-    'Fedora Patch15: Adjust tests to gdbm-1.15 (RT#133295)' \
     'Fedora Patch17: Fix printing a warning about a wide character when matching a regular expression while ISO-8859-1 locale is in effect' \
     'Fedora Patch18: Fix invoking a check for wide characters while ISO-8859-1 locale is in effect' \
     'Fedora Patch20: Fix build conditions in locale.c' \
@@ -2847,6 +2850,7 @@ perl -x patchlevel.h \
     'Fedora Patch34: Fix an undefined behaviour in S_hv_delete_common()' \
     'Fedora Patch35: Fix in-place edit to replace files on a successful perl exit status (bug #1650041)' \
     'Fedora Patch38: Fix compiling regular expressions that contain both compile- and run-time compiled code blocks (RT#133687)' \
+    'Fedora Patch39: Adjust tests to gdbm-1.15 (RT#133295)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5135,6 +5139,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Feb 26 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-429
+- Adjust tests to gdbm-1.15 using an upstream fix (RT#133295)
+
 * Sun Jan 13 2019 Björn Esser <besser82@fedoraproject.org> - 4:5.28.1-428
 - Add BuildRequires: gcc-c++ for tests
 
