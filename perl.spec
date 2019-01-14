@@ -224,6 +224,10 @@ Patch41:        perl-5.29.5-Avoid-Use-of-uninitialized-value-res-in-numeric-eq-w
 Patch42:        perl-5.29.5-Always-mark-pipe-in-pipe-open-as-inherit-on-exec.patch
 Patch43:        perl-5.29.5-Always-mark-pipe-in-pipe-open-as-inherit-on-exec-2.patch
 
+# Fix reporting a line number for non-terminated prototypes, RT#133524,
+# in upstream after 5.29.6
+Patch44:        perl-5.28.1-perl-133524-report-line-number-for-Prototype-not-ter.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2821,6 +2825,7 @@ Perl extension for Version Objects
 %patch41 -p1
 %patch42 -p1
 %patch43 -p1
+%patch44 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2859,6 +2864,7 @@ perl -x patchlevel.h \
     'Fedora Patch38: Fix compiling regular expressions that contain both compile- and run-time compiled code blocks (RT#133687)' \
     'Fedora Patch39: Adjust tests to gdbm-1.15 (RT#133295)' \
     'Fedora Patch42: Do not close an IPC pipe that already has a desired descriptor (RT#133726)' \
+    'Fedora Patch44: Fix reporting a line number for non-terminated prototypes (RT#133524)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5150,6 +5156,7 @@ popd
 * Tue Feb 26 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-429
 - Adjust tests to gdbm-1.15 using an upstream fix (RT#133295)
 - Do not close an IPC pipe that already has a desired descriptor (RT#133726)
+- Fix reporting a line number for non-terminated prototypes (RT#133524)
 
 * Sun Jan 13 2019 Björn Esser <besser82@fedoraproject.org> - 4:5.28.1-428
 - Add BuildRequires: gcc-c++ for tests
