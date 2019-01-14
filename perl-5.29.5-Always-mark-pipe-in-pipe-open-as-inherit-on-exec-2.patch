@@ -1,0 +1,35 @@
+From 30c869b87739b56280daca3cd44b0588144747b7 Mon Sep 17 00:00:00 2001
+From: Leon Timmermans <fawaka@gmail.com>
+Date: Sun, 16 Dec 2018 01:05:06 +0100
+Subject: [PATCH] Always mark pipe in list pipe-open as inherit-on-exec
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This is the my_popen_list counterpart of
+c6fe5b981b942ddabb23ed4b7602067e906e6d88
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ util.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/util.c b/util.c
+index 99bf4ae2b0..8c9909e10c 100644
+--- a/util.c
++++ b/util.c
+@@ -2330,8 +2330,10 @@ Perl_my_popen_list(pTHX_ const char *mode, int n, SV **args)
+ 	    if (p[THAT] != (*mode == 'r'))	/* if dup2() didn't close it */
+ 		PerlLIO_close(p[THAT]);	/* close parent's end of _the_ pipe */
+ 	}
+-	else
++	else {
++	    setfd_cloexec_or_inhexec_by_sysfdness(p[THIS]);
+ 	    PerlLIO_close(p[THAT]);	/* close parent's end of _the_ pipe */
++        }
+ #if !defined(HAS_FCNTL) || !defined(F_SETFD)
+ 	/* No automatic close - do it by hand */
+ #  ifndef NOFILE
+-- 
+2.17.2
+

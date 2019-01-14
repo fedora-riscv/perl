@@ -219,6 +219,11 @@ Patch39:        perl-5.28.1-ext-GDBM_File-t-fatal.t-handle-non-fatality.patch
 Patch40:        perl-5.29.5-Correct-spelling-error-in-skip-message.patch
 Patch41:        perl-5.29.5-Avoid-Use-of-uninitialized-value-res-in-numeric-eq-w.patch
 
+# Do not close an IPC pipe that already has a desired descriptor, RT#133726,
+# in upstream after 5.29.5
+Patch42:        perl-5.29.5-Always-mark-pipe-in-pipe-open-as-inherit-on-exec.patch
+Patch43:        perl-5.29.5-Always-mark-pipe-in-pipe-open-as-inherit-on-exec-2.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2814,6 +2819,8 @@ Perl extension for Version Objects
 %patch39 -p1
 %patch40 -p1
 %patch41 -p1
+%patch42 -p1
+%patch43 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2851,6 +2858,7 @@ perl -x patchlevel.h \
     'Fedora Patch35: Fix in-place edit to replace files on a successful perl exit status (bug #1650041)' \
     'Fedora Patch38: Fix compiling regular expressions that contain both compile- and run-time compiled code blocks (RT#133687)' \
     'Fedora Patch39: Adjust tests to gdbm-1.15 (RT#133295)' \
+    'Fedora Patch42: Do not close an IPC pipe that already has a desired descriptor (RT#133726)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5141,6 +5149,7 @@ popd
 %changelog
 * Mon Jan 14 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-430
 - Adjust tests to gdbm-1.15 using an upstream fix (RT#133295)
+- Do not close an IPC pipe that already has a desired descriptor (RT#133726)
 
 * Mon Jan 14 2019 Björn Esser <besser82@fedoraproject.org> - 4:5.28.1-429
 - Rebuilt for libcrypt.so.2 (#1666033)
