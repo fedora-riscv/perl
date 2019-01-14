@@ -277,9 +277,6 @@ Patch84:        perl-5.27.10-PATCH-perl-133074-5.26.1-some-coverity-fixes.patch
 # in upstream after 5.27.11
 Patch85:        perl-5.26.2-PATCH-perl-133185-Infinite-loop-in-qr.patch
 
-# Adjust tests to gdbm-1.15, RT#133295
-Patch86:        perl-5.29.0-Remove-ext-GDBM_File-t-fatal.t.patch
-
 # Fix printing a warning about a wide character when matching a regular
 # expression while ISO-8859-1 locale is in effect, in upstream after 5.29.0
 Patch88:        perl-5.29.0-regexec.c-Call-macro-with-correct-args.patch
@@ -307,6 +304,11 @@ Patch94:        perl-5.29.5-S_hv_delete_common-avoid-undefined-behaviour.patch
 # Fix compiling regular expressions that contain both compile- and run-time
 # compiled code blocks, RT#133687, in upstream after 5.29.5
 Patch95:        perl-5.26.3-handle-code-mixed-compile-and-runtime.patch
+
+# Adjust tests to gdbm-1.15, RT#133295, in upstream after 5.29.5
+Patch96:        perl-5.28.1-ext-GDBM_File-t-fatal.t-handle-non-fatality.patch
+Patch97:        perl-5.29.5-Correct-spelling-error-in-skip-message.patch
+Patch98:        perl-5.29.5-Avoid-Use-of-uninitialized-value-res-in-numeric-eq-w.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2914,7 +2916,6 @@ Perl extension for Version Objects
 %patch83 -p1
 %patch84 -p1
 %patch85 -p1
-%patch86 -p1
 %patch88 -p1
 %patch89 -p1
 %patch90 -p1
@@ -2923,6 +2924,9 @@ Perl extension for Version Objects
 %patch93 -p1
 %patch94 -p1
 %patch95 -p1
+%patch96 -p1
+%patch97 -p1
+%patch98 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2976,7 +2980,6 @@ perl -x patchlevel.h \
     'Fedora Patch83: Fix parsing extended bracketed character classes (RT#132167)' \
     'Fedora Patch84: Fix a possibly unitialized memory read in the Perl parser (RT#133074)' \
     'Fedora Patch85: Fix an infinite loop in the regular expression compiler (RT#133185)' \
-    'Fedora Patch86: Adjust tests to gdbm-1.15 (RT#133295)' \
     'Fedora Patch88: Fix printing a warning about a wide character when matching a regular expression while ISO-8859-1 locale is in effect' \
     'Fedora Patch89: Fix invoking a check for wide characters while ISO-8859-1 locale is in effect' \
     'Fedora Patch90: Pass the correct CFLAGS to dtrace' \
@@ -2985,6 +2988,7 @@ perl -x patchlevel.h \
     'Fedora Patch93: Fix unpack "u" of invalid data (RT#132655)' \
     'Fedora Patch94: Fix an undefined behaviour in S_hv_delete_common()' \
     'Fedora Patch95: Fix compiling regular expressions that contain both compile- and run-time compiled code blocks (RT#133687)' \
+    'Fedora Patch96: Adjust tests to gdbm-1.15 (RT#133295)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5274,6 +5278,7 @@ popd
 %changelog
 * Tue Feb 26 2019 Petr Pisar <ppisar@redhat.com> - 4:5.26.3-417
 - Add BuildRequires: gcc-c++ for tests
+- Adjust tests to gdbm-1.15 using an upstream fix (RT#133295)
 
 * Tue Dec 11 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.3-416
 - Fix a time race in Time-HiRes/t/itimer.t test
