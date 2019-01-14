@@ -310,6 +310,10 @@ Patch96:        perl-5.28.1-ext-GDBM_File-t-fatal.t-handle-non-fatality.patch
 Patch97:        perl-5.29.5-Correct-spelling-error-in-skip-message.patch
 Patch98:        perl-5.29.5-Avoid-Use-of-uninitialized-value-res-in-numeric-eq-w.patch
 
+# Fix reporting a line number for non-terminated prototypes, RT#133524,
+# in upstream after 5.29.6
+Patch99:        perl-5.26.3-perl-133524-report-line-number-for-Prototype-not-ter.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2927,6 +2931,7 @@ Perl extension for Version Objects
 %patch96 -p1
 %patch97 -p1
 %patch98 -p1
+%patch99 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2989,6 +2994,7 @@ perl -x patchlevel.h \
     'Fedora Patch94: Fix an undefined behaviour in S_hv_delete_common()' \
     'Fedora Patch95: Fix compiling regular expressions that contain both compile- and run-time compiled code blocks (RT#133687)' \
     'Fedora Patch96: Adjust tests to gdbm-1.15 (RT#133295)' \
+    'Fedora Patch99: Fix reporting a line number for non-terminated prototypes (RT#133524)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5279,6 +5285,7 @@ popd
 * Tue Feb 26 2019 Petr Pisar <ppisar@redhat.com> - 4:5.26.3-417
 - Add BuildRequires: gcc-c++ for tests
 - Adjust tests to gdbm-1.15 using an upstream fix (RT#133295)
+- Fix reporting a line number for non-terminated prototypes (RT#133524)
 
 * Tue Dec 11 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.3-416
 - Fix a time race in Time-HiRes/t/itimer.t test
