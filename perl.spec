@@ -21,6 +21,8 @@
 %global perl5_testdir   %{_libexecdir}/perl5-tests
 
 # Optional features
+# Run C++ tests
+%bcond_without perl_enables_cplusplus_test
 # We can bootstrap without gdbm
 %bcond_without gdbm
 # Support for groff, bug #135101
@@ -347,7 +349,10 @@ BuildRequires:  zlib-devel
 
 # For tests
 %if %{with test}
+%if %{with perl_enables_cplusplus_test}
+# An optional ExtUtils-CBuilder's test
 BuildRequires:  gcc-c++
+%endif
 BuildRequires:  procps
 %if %{with perl_enables_syslog_test}
 BuildRequires:  rsyslog
