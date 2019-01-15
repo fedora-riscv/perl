@@ -1,0 +1,83 @@
+From 8c165a32b7cc4f2a147a37c920a96f1b09b2386d Mon Sep 17 00:00:00 2001
+From: Karl Williamson <khw@cpan.org>
+Date: Sun, 30 Dec 2018 21:29:07 -0700
+Subject: [PATCH] regen/warnings.pl: Fix undefined C behavior
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This fixes compiler warnings "performing pointer arithmetic on a null
+pointer has undefined behavior"
+
+There are several ways to fix this.  This one was suggested by
+Tomasz Konojacki++.  Instead of trying to point to address 1 and 2, two
+variables are created, and we point to them.  const is cast away.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ globvar.sym       | 2 ++
+ perl.h            | 5 +++++
+ regen/warnings.pl | 4 ++--
+ warnings.h        | 4 ++--
+ 4 files changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/globvar.sym b/globvar.sym
+index 6fb387ca0a..476f4ca095 100644
+--- a/globvar.sym
++++ b/globvar.sym
+@@ -83,4 +83,6 @@ PL_warn_nl
+ PL_warn_nosemi
+ PL_warn_reserved
+ PL_warn_uninit
++PL_WARN_ALL
++PL_WARN_NONE
+ PL_watch_pvx
+diff --git a/perl.h b/perl.h
+index 43b42a8aa5..dd66b120af 100644
+--- a/perl.h
++++ b/perl.h
+@@ -4454,6 +4454,11 @@ EXTCONST char PL_Zero[]
+ EXTCONST char PL_hexdigit[]
+   INIT("0123456789abcdef0123456789ABCDEF");
+ 
++EXTCONST STRLEN PL_WARN_ALL
++  INIT(0);
++EXTCONST STRLEN PL_WARN_NONE
++  INIT(0);
++
+ /* This is constant on most architectures, a global on OS/2 */
+ #ifndef OS2
+ EXTCONST char PL_sh_path[]
+diff --git a/regen/warnings.pl b/regen/warnings.pl
+index 9c01e6762f..d244160b3e 100644
+--- a/regen/warnings.pl
++++ b/regen/warnings.pl
+@@ -322,8 +322,8 @@ my ($index, $warn_size);
+ #define G_WARN_ALL_MASK		(G_WARN_ALL_ON|G_WARN_ALL_OFF)
+ 
+ #define pWARN_STD		NULL
+-#define pWARN_ALL		(((STRLEN*)0)+1)    /* use warnings 'all' */
+-#define pWARN_NONE		(((STRLEN*)0)+2)    /* no  warnings 'all' */
++#define pWARN_ALL		(STRLEN *) &PL_WARN_ALL    /* use warnings 'all' */
++#define pWARN_NONE		(STRLEN *) &PL_WARN_NONE   /* no  warnings 'all' */
+ 
+ #define specialWARN(x)		((x) == pWARN_STD || (x) == pWARN_ALL ||	\
+ 				 (x) == pWARN_NONE)
+diff --git a/warnings.h b/warnings.h
+index e0c12ed403..58f52272de 100644
+--- a/warnings.h
++++ b/warnings.h
+@@ -18,8 +18,8 @@
+ #define G_WARN_ALL_MASK		(G_WARN_ALL_ON|G_WARN_ALL_OFF)
+ 
+ #define pWARN_STD		NULL
+-#define pWARN_ALL		(((STRLEN*)0)+1)    /* use warnings 'all' */
+-#define pWARN_NONE		(((STRLEN*)0)+2)    /* no  warnings 'all' */
++#define pWARN_ALL		(STRLEN *) &PL_WARN_ALL    /* use warnings 'all' */
++#define pWARN_NONE		(STRLEN *) &PL_WARN_NONE   /* no  warnings 'all' */
+ 
+ #define specialWARN(x)		((x) == pWARN_STD || (x) == pWARN_ALL ||	\
+ 				 (x) == pWARN_NONE)
+-- 
+2.17.2
+
