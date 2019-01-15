@@ -232,6 +232,9 @@ Patch44:        perl-5.28.1-perl-133524-report-line-number-for-Prototype-not-ter
 Patch45:        perl-5.29.6-perl-133721-TODO-test-for-eof-with-no-LAST_FH.patch
 Patch46:        perl-5.29.6-First-eof-should-return-true.patch
 
+# Fix a crash when compiling a malformed form, RT#132158, in upstream after 5.29.6
+Patch47:        perl-5.29.6-perl-132158-abort-compilation-if-we-see-an-error-com.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2832,6 +2835,7 @@ Perl extension for Version Objects
 %patch44 -p1
 %patch45 -p1
 %patch46 -p1
+%patch47 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2872,6 +2876,7 @@ perl -x patchlevel.h \
     'Fedora Patch42: Do not close an IPC pipe that already has a desired descriptor (RT#133726)' \
     'Fedora Patch44: Fix reporting a line number for non-terminated prototypes (RT#133524)' \
     'Fedora Patch45: Fix first eof() return value (RT#133721)' \
+    'Fedora Patch47: Fix a crash when compiling a malformed form (RT#132158)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5165,6 +5170,7 @@ popd
 - Do not close an IPC pipe that already has a desired descriptor (RT#133726)
 - Fix reporting a line number for non-terminated prototypes (RT#133524)
 - Fix first eof() return value (RT#133721)
+- Fix a crash when compiling a malformed form (RT#132158)
 
 * Sun Jan 13 2019 Björn Esser <besser82@fedoraproject.org> - 4:5.28.1-428
 - Add BuildRequires: gcc-c++ for tests
