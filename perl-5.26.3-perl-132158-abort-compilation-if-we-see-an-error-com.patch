@@ -1,0 +1,65 @@
+From f26127676e3e257399c5bc2d4d06eb5aa7912ffc Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Tue, 28 Aug 2018 14:11:10 +1000
+Subject: [PATCH] (perl #132158) abort compilation if we see an error compiling
+ a form
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Petr Písař: Ported to 5.26.3 from upstream's
+817480137a8b1165315f21d14b8968862101c3a2.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ t/lib/croak/toke | 9 +++++++++
+ toke.c           | 9 +++++++++
+ 2 files changed, 18 insertions(+)
+
+diff --git a/t/lib/croak/toke b/t/lib/croak/toke
+index ba4e7b9..8a6a072 100644
+--- a/t/lib/croak/toke
++++ b/t/lib/croak/toke
+@@ -383,3 +383,12 @@ sub t1 {}
+ sub t2 (}
+ EXPECT
+ Prototype not terminated at - line 2.
++########
++# NAME [perl #132158] format with syntax errors
++format=
++@
++=h
++=cut
++EXPECT
++syntax error at - line 4, next token ???
++Execution of - aborted due to compilation errors.
+diff --git a/toke.c b/toke.c
+index f371c0a..00261f1 100644
+--- a/toke.c
++++ b/toke.c
+@@ -5077,6 +5077,14 @@ Perl_yylex(pTHX)
+ 
+ 	return yylex();
+     case LEX_FORMLINE:
++        if (PL_parser->sub_error_count != PL_error_count) {
++            /* There was an error parsing a formline, which tends to
++               mess up the parser.
++               Unlike interpolated sub-parsing, we can't treat any of
++               these as recoverable, so no need to check sub_no_recover.
++            */
++            yyquit();
++        }
+ 	s = scan_formline(PL_bufptr);
+ 	if (!PL_lex_formbrack)
+ 	{
+@@ -6454,6 +6462,7 @@ Perl_yylex(pTHX)
+ 		SAVEI32(PL_lex_formbrack);
+ 		PL_parser->form_lex_state = PL_lex_state;
+ 		PL_lex_formbrack = PL_lex_brackets + 1;
++                PL_parser->sub_error_count = PL_error_count;
+ 		goto leftbracket;
+ 	    }
+ 	}
+-- 
+2.20.1
+

@@ -318,6 +318,9 @@ Patch99:        perl-5.26.3-perl-133524-report-line-number-for-Prototype-not-ter
 Patch100:       perl-5.26.3-perl-133721-TODO-test-for-eof-with-no-LAST_FH.patch
 Patch101:       perl-5.26.3-First-eof-should-return-true.patch
 
+# Fix a crash when compiling a malformed form, RT#132158, in upstream after 5.29.6
+Patch102:       perl-5.26.3-perl-132158-abort-compilation-if-we-see-an-error-com.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2938,6 +2941,7 @@ Perl extension for Version Objects
 %patch99 -p1
 %patch100 -p1
 %patch101 -p1
+%patch102 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3002,6 +3006,7 @@ perl -x patchlevel.h \
     'Fedora Patch96: Adjust tests to gdbm-1.15 (RT#133295)' \
     'Fedora Patch99: Fix reporting a line number for non-terminated prototypes (RT#133524)' \
     'Fedora Patch100: Fix first eof() return value (RT#133721)' \
+    'Fedora Patch102: Fix a crash when compiling a malformed form (RT#132158)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5294,6 +5299,7 @@ popd
 - Adjust tests to gdbm-1.15 using an upstream fix (RT#133295)
 - Fix reporting a line number for non-terminated prototypes (RT#133524)
 - Fix first eof() return value (RT#133721)
+- Fix a crash when compiling a malformed form (RT#132158)
 
 * Tue Dec 11 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.3-416
 - Fix a time race in Time-HiRes/t/itimer.t test
