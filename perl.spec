@@ -243,6 +243,10 @@ Patch48:        perl-5.29.6-regen-warnings.pl-Fix-undefined-C-behavior.patch
 # in upstream after 5.29.6
 Patch49:        perl-5.29.6-perl-133575-prevent-set-longjmp-clobbering-locals-in.patch
 
+# Fix a mismatch with a case-insesitive regular expression on a text with
+# ligatures, RT#133756, in upstream after 5.29.6
+Patch50:        perl-5.29.6-PATCH-perl-133756-Failure-to-match-properly.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2846,6 +2850,7 @@ Perl extension for Version Objects
 %patch47 -p1
 %patch48 -p1
 %patch49 -p1
+%patch50 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2889,6 +2894,7 @@ perl -x patchlevel.h \
     'Fedora Patch47: Fix a crash when compiling a malformed form (RT#132158)' \
     'Fedora Patch48: Fix un undefined C behavior in NULL pointer arithmetics (RT#133223)' \
     'Fedora Patch49: Prevent long jumps from clobbering local variables (RT#133575)' \
+    'Fedora Patch50: Fix a mismatch with a case-insesitive regular expression on a text with ligatures (RT#133756)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5185,6 +5191,8 @@ popd
 - Fix a crash when compiling a malformed form (RT#132158)
 - Fix un undefined C behavior in NULL pointer arithmetics (RT#133223)
 - Prevent long jumps from clobbering local variables (RT#133575)
+- Fix a mismatch with a case-insesitive regular expression on a text with ligatures
+  (RT#133756)
 
 * Mon Jan 14 2019 Björn Esser <besser82@fedoraproject.org> - 4:5.28.1-429
 - Rebuilt for libcrypt.so.2 (#1666033)
