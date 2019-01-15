@@ -228,6 +228,10 @@ Patch43:        perl-5.29.5-Always-mark-pipe-in-pipe-open-as-inherit-on-exec-2.p
 # in upstream after 5.29.6
 Patch44:        perl-5.28.1-perl-133524-report-line-number-for-Prototype-not-ter.patch
 
+# Fix first eof() return value, RT#133721, in upstream after 5.29.6
+Patch45:        perl-5.29.6-perl-133721-TODO-test-for-eof-with-no-LAST_FH.patch
+Patch46:        perl-5.29.6-First-eof-should-return-true.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2826,6 +2830,8 @@ Perl extension for Version Objects
 %patch42 -p1
 %patch43 -p1
 %patch44 -p1
+%patch45 -p1
+%patch46 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2865,6 +2871,7 @@ perl -x patchlevel.h \
     'Fedora Patch39: Adjust tests to gdbm-1.15 (RT#133295)' \
     'Fedora Patch42: Do not close an IPC pipe that already has a desired descriptor (RT#133726)' \
     'Fedora Patch44: Fix reporting a line number for non-terminated prototypes (RT#133524)' \
+    'Fedora Patch45: Fix first eof() return value (RT#133721)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5157,6 +5164,7 @@ popd
 - Adjust tests to gdbm-1.15 using an upstream fix (RT#133295)
 - Do not close an IPC pipe that already has a desired descriptor (RT#133726)
 - Fix reporting a line number for non-terminated prototypes (RT#133524)
+- Fix first eof() return value (RT#133721)
 
 * Mon Jan 14 2019 Björn Esser <besser82@fedoraproject.org> - 4:5.28.1-429
 - Rebuilt for libcrypt.so.2 (#1666033)
