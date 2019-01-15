@@ -321,6 +321,10 @@ Patch101:       perl-5.26.3-First-eof-should-return-true.patch
 # Fix a crash when compiling a malformed form, RT#132158, in upstream after 5.29.6
 Patch102:       perl-5.26.3-perl-132158-abort-compilation-if-we-see-an-error-com.patch
 
+# Prevent long jumps from clobbering local variables, RT#133575,
+# in upstream after 5.29.6
+Patch103:       perl-5.26.3-perl-133575-prevent-set-longjmp-clobbering-locals-in.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2942,6 +2946,7 @@ Perl extension for Version Objects
 %patch100 -p1
 %patch101 -p1
 %patch102 -p1
+%patch103 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3007,6 +3012,7 @@ perl -x patchlevel.h \
     'Fedora Patch99: Fix reporting a line number for non-terminated prototypes (RT#133524)' \
     'Fedora Patch100: Fix first eof() return value (RT#133721)' \
     'Fedora Patch102: Fix a crash when compiling a malformed form (RT#132158)' \
+    'Fedora Patch103: Prevent long jumps from clobbering local variables (RT#133575)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5300,6 +5306,7 @@ popd
 - Fix reporting a line number for non-terminated prototypes (RT#133524)
 - Fix first eof() return value (RT#133721)
 - Fix a crash when compiling a malformed form (RT#132158)
+- Prevent long jumps from clobbering local variables (RT#133575)
 
 * Tue Dec 11 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.3-416
 - Fix a time race in Time-HiRes/t/itimer.t test
