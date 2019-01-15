@@ -325,6 +325,13 @@ Patch102:       perl-5.26.3-perl-132158-abort-compilation-if-we-see-an-error-com
 # in upstream after 5.29.6
 Patch103:       perl-5.26.3-perl-133575-prevent-set-longjmp-clobbering-locals-in.patch
 
+# 1/2 Fix a mismatch with a case-insesitive regular expression on a text with
+# ligatures, RT#133756, in upstream after 5.27.6
+Patch104:       perl-5.26.3-Emulate-C99-int_fast8_t-etc-typedefs.patch
+# 2/2 Fix a mismatch with a case-insesitive regular expression on a text with
+# ligatures, RT#133756, in upstream after 5.29.6
+Patch105:       perl-5.29.6-PATCH-perl-133756-Failure-to-match-properly.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2947,6 +2954,8 @@ Perl extension for Version Objects
 %patch101 -p1
 %patch102 -p1
 %patch103 -p1
+%patch104 -p1
+%patch105 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3013,6 +3022,7 @@ perl -x patchlevel.h \
     'Fedora Patch100: Fix first eof() return value (RT#133721)' \
     'Fedora Patch102: Fix a crash when compiling a malformed form (RT#132158)' \
     'Fedora Patch103: Prevent long jumps from clobbering local variables (RT#133575)' \
+    'Fedora Patch104: Fix a mismatch with a case-insesitive regular expression on a text with ligatures (RT#133756)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5307,6 +5317,8 @@ popd
 - Fix first eof() return value (RT#133721)
 - Fix a crash when compiling a malformed form (RT#132158)
 - Prevent long jumps from clobbering local variables (RT#133575)
+- Fix a mismatch with a case-insesitive regular expression on a text with ligatures
+  (RT#133756)
 
 * Tue Dec 11 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.3-416
 - Fix a time race in Time-HiRes/t/itimer.t test

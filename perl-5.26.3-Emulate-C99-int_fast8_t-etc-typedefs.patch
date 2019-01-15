@@ -1,0 +1,62 @@
+From 3bc91a5e8943e5e339ed08618b9aea45a93a85df Mon Sep 17 00:00:00 2001
+From: Karl Williamson <khw@cpan.org>
+Date: Thu, 7 Dec 2017 22:10:52 -0700
+Subject: [PATCH] Emulate C99 int_fast8_t, etc typedefs
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+These are useful if you know you have a variable with a restricted range,
+and so could fit in a byte or 16 bits, but speed is more important.
+These C99 typedefs allows you to specify the minimal size you need, and
+allows the compiler to substitute a wider type if it is faster.
+
+This commit adds typedefs spelled the same as the C99 ones, but upper
+cased.  On non-C99 compilers, it just uses 'int' behind the scenes,
+which should be safe.
+
+These are currently restricted to core to be sure these aren't a bad
+idea before they are made public.
+
+Petr Písař: Ported from upstream's
+247cee9ff410fe6e91536ff55cfaf5498db96770.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ handy.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/handy.h b/handy.h
+index 9722b52..3c67e4b 100644
+--- a/handy.h
++++ b/handy.h
+@@ -269,6 +269,26 @@ typedef U64TYPE U64;
+ 
+ #endif
+ 
++/* These C99 typedefs are useful sometimes for, say, loop variables whose
++ * maximum values are small, but for which speed trumps size.  If we have a C99
++ * compiler, use that.  Otherwise, a plain 'int' should be good enough.
++ *
++ * Restrict these to core for now until we are more certain this is a good
++ * idea. */
++#if defined(PERL_CORE) || defined(PERL_EXT)
++#  ifdef I_STDINT
++    typedef  int_fast8_t  PERL_INT_FAST8_T;
++    typedef uint_fast8_t  PERL_UINT_FAST8_T;
++    typedef  int_fast16_t PERL_INT_FAST16_T;
++    typedef uint_fast16_t PERL_UINT_FAST16_T;
++#  else
++    typedef int           PERL_INT_FAST8_T;
++    typedef unsigned int  PERL_UINT_FAST8_T;
++    typedef int           PERL_INT_FAST16_T;
++    typedef unsigned int  PERL_UINT_FAST16_T;
++#  endif
++#endif
++
+ /* log(2) is pretty close to  0.30103, just in case anyone is grepping for it */
+ #define BIT_DIGITS(N)   (((N)*146)/485 + 1)  /* log2(10) =~ 146/485 */
+ #define TYPE_DIGITS(T)  BIT_DIGITS(sizeof(T) * 8)
+-- 
+2.20.1
+
