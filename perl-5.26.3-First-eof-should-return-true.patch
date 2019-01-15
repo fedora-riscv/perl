@@ -1,0 +1,48 @@
+From 017ca072c12947378ed335b8903388931ebe6a7d Mon Sep 17 00:00:00 2001
+From: Hauke D <haukex@zero-g.net>
+Date: Wed, 12 Dec 2018 22:26:26 +0100
+Subject: [PATCH 2/2] First "eof" should return true
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When no file has previously been opened, "eof" should return true. This
+behavior was broken by 32e653230c7ccc (see also [#60978]).
+
+Petr Písař: Ported to 5.26.3 from upstream's
+eb699a9c8fb7ddfcafc714f1eba1bbc395dc3675.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ pp_sys.c    | 2 +-
+ t/io/tell.t | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/pp_sys.c b/pp_sys.c
+index 7a6d668..c458da1 100644
+--- a/pp_sys.c
++++ b/pp_sys.c
+@@ -2187,7 +2187,7 @@ PP(pp_eof)
+     }
+ 
+     if (!gv)
+-	RETPUSHNO;
++	RETPUSHYES;
+ 
+     if ((io = GvIO(gv)) && (mg = SvTIED_mg((const SV *)io, PERL_MAGIC_tiedscalar))) {
+ 	return tied_method1(SV_CONST(EOF), SP, MUTABLE_SV(io), mg, newSVuv(which));
+diff --git a/t/io/tell.t b/t/io/tell.t
+index 87bc260..1092950 100644
+--- a/t/io/tell.t
++++ b/t/io/tell.t
+@@ -195,7 +195,6 @@ $not = "not " x! (tell == 0);
+ print "${not}ok 35 - argless tell after seek *\$coercible...\n";
+ 
+ {
+-    local $TODO = "not fixed yet";
+     # [perl #133721]
+     my $result = fresh_perl(<<'EOI', {});
+ print "ok" if eof;
+-- 
+2.20.1
+

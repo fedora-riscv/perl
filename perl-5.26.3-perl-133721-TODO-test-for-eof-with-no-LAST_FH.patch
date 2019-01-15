@@ -1,0 +1,47 @@
+From 59e36db2a9625a343360616874b8439a6a554b13 Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Wed, 2 Jan 2019 11:49:47 +1100
+Subject: [PATCH 1/2] TODO test for eof with no ${^LAST_FH}
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Petr Písař: Ported to 5.26.3 from upstream's
+b4e880f3b5c8c8ba39c7c767167801a7caf81821.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ t/io/tell.t | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/t/io/tell.t b/t/io/tell.t
+index 5474499..87bc260 100644
+--- a/t/io/tell.t
++++ b/t/io/tell.t
+@@ -6,7 +6,7 @@ BEGIN {
+     set_up_inc('../lib');
+ }
+ 
+-print "1..35\n";
++print "1..36\n";
+ 
+ $TST = 'TST';
+ 
+@@ -193,3 +193,14 @@ print "${not}ok 34 - argless tell after seek \$coercible...\n";
+ seek *$fh,0,0;
+ $not = "not " x! (tell == 0);
+ print "${not}ok 35 - argless tell after seek *\$coercible...\n";
++
++{
++    local $TODO = "not fixed yet";
++    # [perl #133721]
++    my $result = fresh_perl(<<'EOI', {});
++print "ok" if eof;
++EOI
++    $not = "not " x! ($result eq 'ok');
++    print "${not}ok 36 - eof with no \${^LAST_FH}\n";
++
++}
+-- 
+2.20.1
+

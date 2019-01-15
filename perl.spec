@@ -314,6 +314,10 @@ Patch98:        perl-5.29.5-Avoid-Use-of-uninitialized-value-res-in-numeric-eq-w
 # in upstream after 5.29.6
 Patch99:        perl-5.26.3-perl-133524-report-line-number-for-Prototype-not-ter.patch
 
+# Fix first eof() return value, RT#133721, in upstream after 5.29.6
+Patch100:       perl-5.26.3-perl-133721-TODO-test-for-eof-with-no-LAST_FH.patch
+Patch101:       perl-5.26.3-First-eof-should-return-true.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2932,6 +2936,8 @@ Perl extension for Version Objects
 %patch97 -p1
 %patch98 -p1
 %patch99 -p1
+%patch100 -p1
+%patch101 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2995,6 +3001,7 @@ perl -x patchlevel.h \
     'Fedora Patch95: Fix compiling regular expressions that contain both compile- and run-time compiled code blocks (RT#133687)' \
     'Fedora Patch96: Adjust tests to gdbm-1.15 (RT#133295)' \
     'Fedora Patch99: Fix reporting a line number for non-terminated prototypes (RT#133524)' \
+    'Fedora Patch100: Fix first eof() return value (RT#133721)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5286,6 +5293,7 @@ popd
 - Add BuildRequires: gcc-c++ for tests
 - Adjust tests to gdbm-1.15 using an upstream fix (RT#133295)
 - Fix reporting a line number for non-terminated prototypes (RT#133524)
+- Fix first eof() return value (RT#133721)
 
 * Tue Dec 11 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.3-416
 - Fix a time race in Time-HiRes/t/itimer.t test
