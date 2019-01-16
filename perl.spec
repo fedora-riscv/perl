@@ -83,7 +83,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        430%{?dist}
+Release:        431%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -234,10 +234,6 @@ Patch46:        perl-5.29.6-First-eof-should-return-true.patch
 
 # Fix a crash when compiling a malformed form, RT#132158, in upstream after 5.29.6
 Patch47:        perl-5.29.6-perl-132158-abort-compilation-if-we-see-an-error-com.patch
-
-# Fix un undefined C behavior in NULL pointer arithmetics, RT#133223,
-# in upstream after 5.29.6
-Patch48:        perl-5.29.6-regen-warnings.pl-Fix-undefined-C-behavior.patch
 
 # Prevent long jumps from clobbering local variables, RT#133575,
 # in upstream after 5.29.6
@@ -2852,7 +2848,6 @@ Perl extension for Version Objects
 %patch45 -p1
 %patch46 -p1
 %patch47 -p1
-%patch48 -p1
 %patch49 -p1
 %patch50 -p1
 %patch51 -p1
@@ -2897,7 +2892,6 @@ perl -x patchlevel.h \
     'Fedora Patch44: Fix reporting a line number for non-terminated prototypes (RT#133524)' \
     'Fedora Patch45: Fix first eof() return value (RT#133721)' \
     'Fedora Patch47: Fix a crash when compiling a malformed form (RT#132158)' \
-    'Fedora Patch48: Fix un undefined C behavior in NULL pointer arithmetics (RT#133223)' \
     'Fedora Patch49: Prevent long jumps from clobbering local variables (RT#133575)' \
     'Fedora Patch50: Fix a mismatch with a case-insesitive regular expression on a text with ligatures (RT#133756)' \
     'Fedora Patch51: Fix the interpreter path if procfs is not mounted (RT#133573)' \
@@ -5189,6 +5183,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jan 16 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-431
+- Remove a fix for un undefined C behavior in NULL pointer arithmetics
+  (RT#133223) because it changes perl ABI
+
 * Mon Jan 14 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-430
 - Adjust tests to gdbm-1.15 using an upstream fix (RT#133295)
 - Do not close an IPC pipe that already has a desired descriptor (RT#133726)
