@@ -83,7 +83,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        431%{?dist}
+Release:        432%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -5183,6 +5183,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Feb 01 2019 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.28.1-432
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
 * Wed Jan 16 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-431
 - Remove a fix for un undefined C behavior in NULL pointer arithmetics
   (RT#133223) because it changes perl ABI
