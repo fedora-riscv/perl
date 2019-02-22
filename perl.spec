@@ -247,6 +247,10 @@ Patch50:        perl-5.29.6-PATCH-perl-133756-Failure-to-match-properly.patch
 # in upstream after 5.29.3
 Patch51:        perl-5.29.3-RT-133573-X-fallback-when-platform-specific-techniqu.patch
 
+# Fix a crash when parsing #line directives with large numbers in eval, RT#131562,
+# in upstream after 5.29.7
+Patch52:        perl-5.29.7-perl-131562-correct-large-line-numbers-copying-eval-.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2851,6 +2855,7 @@ Perl extension for Version Objects
 %patch49 -p1
 %patch50 -p1
 %patch51 -p1
+%patch52 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2895,6 +2900,7 @@ perl -x patchlevel.h \
     'Fedora Patch49: Prevent long jumps from clobbering local variables (RT#133575)' \
     'Fedora Patch50: Fix a mismatch with a case-insesitive regular expression on a text with ligatures (RT#133756)' \
     'Fedora Patch51: Fix the interpreter path if procfs is not mounted (RT#133573)' \
+    'Fedora Patch52: Fix a crash when parsing #line directives with large numbers in eval (RT#131562)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5193,6 +5199,8 @@ popd
 - Fix a mismatch with a case-insesitive regular expression on a text with ligatures
   (RT#133756)
 - Fix the interpreter path if procfs is not mounted (RT#133573)
+- Fix a crash when parsing #line directives with large numbers in eval
+  (RT#131562)
 
 * Sun Jan 13 2019 Björn Esser <besser82@fedoraproject.org> - 4:5.28.1-428
 - Add BuildRequires: gcc-c++ for tests
