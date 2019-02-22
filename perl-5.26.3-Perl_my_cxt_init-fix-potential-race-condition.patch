@@ -1,0 +1,75 @@
+From 88e973699f8543ead8f3ab407c2133699d052fc7 Mon Sep 17 00:00:00 2001
+From: David Mitchell <davem@iabyn.com>
+Date: Mon, 18 Feb 2019 09:19:38 +0000
+Subject: [PATCH] Perl_my_cxt_init: fix potential race condition
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+(Found by code inspection - I can't reproduce a failure)
+
+the MY_CXT subsystem, which allows per-thread pseudo-static variables,
+has a thread race condition.
+
+When a module is first loaded, it is allocated  unique index (from
+PL_my_cxt_index++) which is assigned to the module's my_cxt_index static
+var.
+
+If two threads both try to load an XS module at the same time, its
+possible for one thread to set my_cxtp, then a second thread to overwrite
+it with a higher value, causing the first thread to use the wrong index
+into its local storage.
+
+Petr Písař: Ported to 5.26.3 from upstream's
+61d4c87c940fea028f08f27addc275b469320fda.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ util.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/util.c b/util.c
+index 98c5513..88a3d2b 100644
+--- a/util.c
++++ b/util.c
+@@ -5369,12 +5369,18 @@ Perl_my_cxt_init(pTHX_ int *index, size_t size)
+     dVAR;
+     void *p;
+     PERL_ARGS_ASSERT_MY_CXT_INIT;
++    /* do initial check without locking.
++     * -1:    not allocated or another thread currently allocating
++     *  other: already allocated by another thread
++     */
+     if (*index == -1) {
+-	/* this module hasn't been allocated an index yet */
+ #if defined(USE_ITHREADS)
+ 	MUTEX_LOCK(&PL_my_ctx_mutex);
+ #endif
+-	*index = PL_my_cxt_index++;
++        /*now a stricter check with locking */
++        if (*index == -1)
++            /* this module hasn't been allocated an index yet */
++            *index = PL_my_cxt_index++;
+ #if defined(USE_ITHREADS)
+ 	MUTEX_UNLOCK(&PL_my_ctx_mutex);
+ #endif
+@@ -5433,11 +5439,14 @@ Perl_my_cxt_init(pTHX_ const char *my_cxt_key, size_t size)
+ 
+     index = Perl_my_cxt_index(aTHX_ my_cxt_key);
+     if (index == -1) {
+-	/* this module hasn't been allocated an index yet */
+ #if defined(USE_ITHREADS)
+ 	MUTEX_LOCK(&PL_my_ctx_mutex);
+ #endif
+-	index = PL_my_cxt_index++;
++        /*now a stricter check with locking */
++        index = Perl_my_cxt_index(aTHX_ my_cxt_key);
++        if (index == -1)
++            /* this module hasn't been allocated an index yet */
++            index = PL_my_cxt_index++;
+ #if defined(USE_ITHREADS)
+ 	MUTEX_UNLOCK(&PL_my_ctx_mutex);
+ #endif
+-- 
+2.20.1
+
