@@ -251,6 +251,9 @@ Patch51:        perl-5.29.3-RT-133573-X-fallback-when-platform-specific-techniqu
 # in upstream after 5.29.7
 Patch52:        perl-5.29.7-perl-131562-correct-large-line-numbers-copying-eval-.patch
 
+# Fix setting magic when changing $^R, RT#133782, in upstream after 5.29.7
+Patch53:        perl-5.28.1-perl-133782-set-magic-when-changing-R.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2856,6 +2859,7 @@ Perl extension for Version Objects
 %patch50 -p1
 %patch51 -p1
 %patch52 -p1
+%patch53 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2901,6 +2905,7 @@ perl -x patchlevel.h \
     'Fedora Patch50: Fix a mismatch with a case-insesitive regular expression on a text with ligatures (RT#133756)' \
     'Fedora Patch51: Fix the interpreter path if procfs is not mounted (RT#133573)' \
     'Fedora Patch52: Fix a crash when parsing #line directives with large numbers in eval (RT#131562)' \
+    'Fedora Patch53: Fix setting magic when changing $^R (RT#133782)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5192,6 +5197,7 @@ popd
 * Fri Feb 22 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-433
 - Fix a crash when parsing #line directives with large numbers in eval
   (RT#131562)
+- Fix setting magic when changing $^R (RT#133782)
 
 * Fri Feb 01 2019 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.28.1-432
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
