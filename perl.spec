@@ -336,6 +336,9 @@ Patch105:       perl-5.29.6-PATCH-perl-133756-Failure-to-match-properly.patch
 # in upstream after 5.29.7
 Patch106:       perl-5.29.7-perl-131562-correct-large-line-numbers-copying-eval-.patch
 
+# Fix setting magic when changing $^R, RT#133782, in upstream after 5.29.7
+Patch107:       perl-5.26.3-perl-133782-set-magic-when-changing-R.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2961,6 +2964,7 @@ Perl extension for Version Objects
 %patch104 -p1
 %patch105 -p1
 %patch106 -p1
+%patch107 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3029,6 +3033,7 @@ perl -x patchlevel.h \
     'Fedora Patch103: Prevent long jumps from clobbering local variables (RT#133575)' \
     'Fedora Patch104: Fix a mismatch with a case-insesitive regular expression on a text with ligatures (RT#133756)' \
     'Fedora Patch106: Fix a crash when parsing #line directives with large numbers in eval (RT#131562)' \
+    'Fedora Patch107: Fix setting magic when changing $^R (RT#133782)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5327,6 +5332,7 @@ popd
   (RT#133756)
 - Fix a crash when parsing #line directives with large numbers in eval
   (RT#131562)
+- Fix setting magic when changing $^R (RT#133782)
 
 * Tue Dec 11 2018 Petr Pisar <ppisar@redhat.com> - 4:5.26.3-416
 - Fix a time race in Time-HiRes/t/itimer.t test
