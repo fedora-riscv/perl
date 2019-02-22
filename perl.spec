@@ -257,6 +257,9 @@ Patch53:        perl-5.28.1-perl-133782-set-magic-when-changing-R.patch
 # Fix a race when loading XS modules, in upstream after 5.29.7
 Patch54:        perl-5.29.7-Perl_my_cxt_init-fix-potential-race-condition.patch
 
+# Fix extending a stack in Perl parser, RT#133778, in upstream after 5.29.8
+Patch55:        perl-5.29.8-perl-133778-adjust-MARK-if-we-extend-the-stack-in-pp.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2864,6 +2867,7 @@ Perl extension for Version Objects
 %patch52 -p1
 %patch53 -p1
 %patch54 -p1
+%patch55 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2911,6 +2915,7 @@ perl -x patchlevel.h \
     'Fedora Patch52: Fix a crash when parsing #line directives with large numbers in eval (RT#131562)' \
     'Fedora Patch53: Fix setting magic when changing $^R (RT#133782)' \
     'Fedora Patch54: Fix a race when loading XS modules' \
+    'Fedora Patch55: Fix extending a stack in Perl parser (RT#133778)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5213,6 +5218,7 @@ popd
   (RT#131562)
 - Fix setting magic when changing $^R (RT#133782)
 - Fix a race when loading XS modules
+- Fix extending a stack in Perl parser (RT#133778)
 
 * Sun Jan 13 2019 Björn Esser <besser82@fedoraproject.org> - 4:5.28.1-428
 - Add BuildRequires: gcc-c++ for tests
