@@ -83,7 +83,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        432%{?dist}
+Release:        433%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -246,6 +246,10 @@ Patch50:        perl-5.29.6-PATCH-perl-133756-Failure-to-match-properly.patch
 # Fix the interpreter path if procfs is not mounted, RT#133573,
 # in upstream after 5.29.3
 Patch51:        perl-5.29.3-RT-133573-X-fallback-when-platform-specific-techniqu.patch
+
+# Fix a crash when parsing #line directives with large numbers in eval, RT#131562,
+# in upstream after 5.29.7
+Patch52:        perl-5.29.7-perl-131562-correct-large-line-numbers-copying-eval-.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2851,6 +2855,7 @@ Perl extension for Version Objects
 %patch49 -p1
 %patch50 -p1
 %patch51 -p1
+%patch52 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2895,6 +2900,7 @@ perl -x patchlevel.h \
     'Fedora Patch49: Prevent long jumps from clobbering local variables (RT#133575)' \
     'Fedora Patch50: Fix a mismatch with a case-insesitive regular expression on a text with ligatures (RT#133756)' \
     'Fedora Patch51: Fix the interpreter path if procfs is not mounted (RT#133573)' \
+    'Fedora Patch52: Fix a crash when parsing #line directives with large numbers in eval (RT#131562)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5183,6 +5189,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Feb 22 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-433
+- Fix a crash when parsing #line directives with large numbers in eval
+  (RT#131562)
+
 * Fri Feb 01 2019 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.28.1-432
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
