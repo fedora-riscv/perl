@@ -83,7 +83,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        429%{?dist}
+Release:        430%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -519,6 +519,9 @@ Requires:       perl(Devel::PPPort)
 # /usr/lib/rpm/redhat/redhat-hardened-cc1 that are delivered by
 # redhat-rpm-config. Bug #1557667.
 Requires:       redhat-rpm-config
+# Those linker options also include libcrypt.
+Requires:       libxcrypt-devel%{?_isa}
+
 %if %{defined perl_bootstrap}
 %gendep_perl_devel
 %endif
@@ -5204,6 +5207,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Mar 05 2019 Björn Esser <besser82@fedoraproject.org> - 4:5.28.1-430
+- Add explicit Requires: libxcrypt-devel to devel sub-package
+
 * Tue Feb 26 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-429
 - Adjust tests to gdbm-1.15 using an upstream fix (RT#133295)
 - Do not close an IPC pipe that already has a desired descriptor (RT#133726)
