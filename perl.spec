@@ -519,7 +519,7 @@ Requires:       perl(Devel::PPPort)
 # /usr/lib/rpm/redhat/redhat-hardened-cc1 that are delivered by
 # redhat-rpm-config. Bug #1557667.
 Requires:       redhat-rpm-config
-# Those linker options also include libcrypt.
+# ExtUtils::Embed -e ldopts include libcrypt, bug #1666098
 Requires:       libxcrypt-devel%{?_isa}
 
 %if %{defined perl_bootstrap}
@@ -5208,7 +5208,7 @@ popd
 # Old changelog entries are preserved in CVS.
 %changelog
 * Tue Mar 05 2019 Björn Esser <besser82@fedoraproject.org> - 4:5.28.1-434
-- Add explicit Requires: libxcrypt-devel to devel sub-package
+- Add explicit Requires: libxcrypt-devel to devel sub-package (bug #1666098)
 
 * Fri Feb 22 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-433
 - Fix a crash when parsing #line directives with large numbers in eval
