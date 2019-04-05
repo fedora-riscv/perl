@@ -1,0 +1,62 @@
+From dd0510590a1124f91ef2c615a64cd9bfbb245dd6 Mon Sep 17 00:00:00 2001
+From: David Mitchell <davem@iabyn.com>
+Date: Tue, 26 Mar 2019 14:58:04 +0000
+Subject: [PATCH] fix leak in Perl__force_out_malformed_utf8_message()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This function temporarily sets PL_curcop->cop_warnings to pWARN_ALL in
+order to enforce mandatory warnings about malformed utf8, but it
+didn't restore cop_warnings, so the old value leaked.
+
+Can be reproduced with, e.g.
+
+    no warnings 'utf8';
+    CORE::evalbytes qq{ use utf8; "\\N{abc\x{c0}}"};
+
+which is already exercised in t/uni/parser.t.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ utf8.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/utf8.c b/utf8.c
+index e479400b71..84db2f6aee 100644
+--- a/utf8.c
++++ b/utf8.c
+@@ -53,6 +53,19 @@ within non-zero characters.
+ =cut
+ */
+ 
++/* helper for Perl__force_out_malformed_utf8_message(). Like
++ * SAVECOMPILEWARNINGS(), but works with PL_curcop rather than
++ * PL_compiling */
++
++static void
++S_restore_cop_warnings(pTHX_ void *p)
++{
++    if (!specialWARN(PL_curcop->cop_warnings))
++        PerlMemShared_free(PL_curcop->cop_warnings);
++    PL_curcop->cop_warnings = (STRLEN*)p;
++}
++
++
+ void
+ Perl__force_out_malformed_utf8_message(pTHX_
+             const U8 *const p,      /* First byte in UTF-8 sequence */
+@@ -84,6 +97,10 @@ Perl__force_out_malformed_utf8_message(pTHX_
+ 
+     PL_dowarn = G_WARN_ALL_ON|G_WARN_ON;
+     if (PL_curcop) {
++        /* this is like SAVECOMPILEWARNINGS() except with PL_curcop rather
++         * than PL_compiling */
++        SAVEDESTRUCTOR_X(S_restore_cop_warnings,
++                (void*)PL_curcop->cop_warnings);
+         PL_curcop->cop_warnings = pWARN_ALL;
+     }
+ 
+-- 
+2.20.1
+
