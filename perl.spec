@@ -299,6 +299,9 @@ Patch65:        perl-5.28.1-fix-a-leak-with-indented-heredocs.patch
 Patch66:        perl-5.29.9-fix-leak-in-package-name-lookup.patch
 Patch67:        perl-5.29.9-Fix-recent-double-free-in-S_parse_gv_stash_name.patch
 
+# Fix a memory leak when deletion in a tied hash dies, in upstream after 5.29.9
+Patch68:        perl-5.29.9-avoid-leak-with-local-h-foo-a-n.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2922,6 +2925,7 @@ Perl extension for Version Objects
 %patch65 -p1
 %patch66 -p1
 %patch67 -p1
+%patch68 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2980,6 +2984,7 @@ perl -x patchlevel.h \
     'Fedora Patch64: Fix a memory leak when assignig to a localized ${^WARNING_BITS}' \
     'Fedora Patch65: Fix a memory leak when parsing misindented here-documents' \
     'Fedora Patch66: Fix a memory leak in package name lookup (RT#133977)' \
+    'Fedora Patch68: Fix a memory leak when deletion in a tied hash dies' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5280,6 +5285,7 @@ popd
 - Fix a memory leak when assignig to a localized ${^WARNING_BITS}
 - Fix a memory leak when parsing misindented here-documents
 - Fix a memory leak in package name lookup (RT#133977)
+- Fix a memory leak when deletion in a tied hash dies
 
 * Tue Mar 05 2019 Björn Esser <besser82@fedoraproject.org> - 4:5.28.1-434
 - Add explicit Requires: libxcrypt-devel to devel sub-package (bug #1666098)
