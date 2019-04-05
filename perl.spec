@@ -306,6 +306,9 @@ Patch68:        perl-5.29.9-avoid-leak-with-local-h-foo-a-n.patch
 # in upstream after 5.29.9
 Patch69:        perl-5.28.1-perl-133892-coredump-in-Perl_re_intuit_start.patch
 
+# Fix a memory leak when warning about malformed UTF-8 string
+Patch70:        perl-5.29.9-fix-leak-in-Perl__force_out_malformed_utf8_message.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2931,6 +2934,7 @@ Perl extension for Version Objects
 %patch67 -p1
 %patch68 -p1
 %patch69 -p1
+%patch70 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2991,6 +2995,7 @@ perl -x patchlevel.h \
     'Fedora Patch66: Fix a memory leak in package name lookup (RT#133977)' \
     'Fedora Patch68: Fix a memory leak when deletion in a tied hash dies' \
     'Fedora Patch69: Fix a crash when matching case insensitively (RT#133892)' \
+    'Fedora Patch70: Fix a memory leak when warning about malformed UTF-8 string' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5293,6 +5298,7 @@ popd
 - Fix a memory leak in package name lookup (RT#133977)
 - Fix a memory leak when deletion in a tied hash dies
 - Fix a crash when matching case insensitively (RT#133892)
+- Fix a memory leak when warning about malformed UTF-8 string
 
 * Tue Mar 05 2019 Björn Esser <besser82@fedoraproject.org> - 4:5.28.1-434
 - Add explicit Requires: libxcrypt-devel to devel sub-package (bug #1666098)
