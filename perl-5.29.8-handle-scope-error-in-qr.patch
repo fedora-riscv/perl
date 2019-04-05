@@ -1,0 +1,122 @@
+From 170c919fc4986a85062e9292e4cfed24771d2224 Mon Sep 17 00:00:00 2001
+From: David Mitchell <davem@iabyn.com>
+Date: Tue, 19 Mar 2019 10:58:46 +0000
+Subject: [PATCH] handle scope error in qr/\(?{/
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+RT #133879
+
+In this code:
+
+    BEGIN {$^H = 0x10000 }; # HINT_NEW_RE
+    qr/\(?{/
+
+When the toker sees the 'qr', it looks ahead and thinks that the
+pattern *might* contain code blocks, so creates a new anon sub to wrap
+compilation of the pattern in (so that any code blocks get compiled as
+part of the anon sub rather than the main body of the code).
+
+Normally at the end of parsing the qr construct, the parser notes that
+no code blocks were found, and throws the unneeded CV away and
+restores the old PL_compcv (via a LEAVE_SCOPE). This false positive is
+normal and is expected in the relevant code paths.
+
+However, setting the HINT_NEW_RE  (which indicates that
+overload::constant is present for qr// but with no overloaded function
+actually present) causes an error to be raised. The parser does error
+recovery and continues.
+
+However, v5.25.9-148-g7c44985626 added a test to not bother compiling a
+pattern if the parser is in an errored state, which again is fine,
+except it turns out that if this branch is taken, it skips the 'restore
+the old PL_compcv' code, leading to the wrong value for PL_compcv when
+ops are freed.
+
+The fix is simple: move the "skip if errored" test to after PL_compcv
+has been restored.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ op.c                  | 20 ++++++++++++++------
+ t/re/reg_eval_scope.t | 14 +++++++++++++-
+ 2 files changed, 27 insertions(+), 7 deletions(-)
+
+diff --git a/op.c b/op.c
+index 1f7ae3e610..afee9fcf02 100644
+--- a/op.c
++++ b/op.c
+@@ -7082,11 +7082,6 @@ Perl_pmruntime(pTHX_ OP *o, OP *expr, OP *repl, UV flags, I32 floor)
+             rx_flags |= RXf_SPLIT;
+         }
+ 
+-        /* Skip compiling if parser found an error for this pattern */
+-        if (pm->op_pmflags & PMf_HAS_ERROR) {
+-            return o;
+-        }
+-
+ 	if (!has_code || !eng->op_comp) {
+ 	    /* compile-time simple constant pattern */
+ 
+@@ -7123,6 +7118,11 @@ Perl_pmruntime(pTHX_ OP *o, OP *expr, OP *repl, UV flags, I32 floor)
+ 		pm->op_pmflags &= ~PMf_HAS_CV;
+ 	    }
+ 
++            /* Skip compiling if parser found an error for this pattern */
++            if (pm->op_pmflags & PMf_HAS_ERROR) {
++                return o;
++            }
++
+ 	    PM_SETRE(pm,
+ 		eng->op_comp
+ 		    ? eng->op_comp(aTHX_ NULL, 0, expr, eng, NULL, NULL,
+@@ -7134,7 +7134,15 @@ Perl_pmruntime(pTHX_ OP *o, OP *expr, OP *repl, UV flags, I32 floor)
+ 	}
+ 	else {
+ 	    /* compile-time pattern that includes literal code blocks */
+-	    REGEXP* re = eng->op_comp(aTHX_ NULL, 0, expr, eng, NULL, NULL,
++
++	    REGEXP* re;
++
++            /* Skip compiling if parser found an error for this pattern */
++            if (pm->op_pmflags & PMf_HAS_ERROR) {
++                return o;
++            }
++
++	    re = eng->op_comp(aTHX_ NULL, 0, expr, eng, NULL, NULL,
+ 			rx_flags,
+ 			(pm->op_pmflags |
+ 			    ((PL_hints & HINT_RE_EVAL) ? PMf_USE_RE_EVAL : 0))
+diff --git a/t/re/reg_eval_scope.t b/t/re/reg_eval_scope.t
+index 25b90b6482..3bf937d251 100644
+--- a/t/re/reg_eval_scope.t
++++ b/t/re/reg_eval_scope.t
+@@ -12,7 +12,7 @@ BEGIN {
+     }
+ }
+ 
+-plan 48;
++plan 49;
+ 
+ fresh_perl_is <<'CODE', '781745', {}, '(?{}) has its own lexical scope';
+  my $x = 7; my $a = 4; my $b = 5;
+@@ -371,3 +371,15 @@ SKIP: {
+     f3();
+     is ($s, \&f3, '__SUB__ qr multi');
+ }
++
++# RT #133879
++# ensure scope is properly restored when there's an error compiling a
++# "looks a bit like it has (?{}) but doesn't" qr//
++
++fresh_perl_like <<'CODE',
++    BEGIN {$^H = 0x10000 }; # HINT_NEW_RE
++    qr/\(?{/
++CODE
++    qr/Constant\(qq\) unknown/,
++    { stderr => 1 },
++    'qr/\(?{';
+-- 
+2.20.1
+

@@ -264,6 +264,10 @@ Patch55:        perl-5.29.8-perl-133778-adjust-MARK-if-we-extend-the-stack-in-pp
 Patch56:        perl-5.28.1-fix-leak-when-compiling-typed-hash-deref.patch
 Patch57:        perl-5.29.8-fix-blead-on-non-threaded-builds.patch
 
+# Fix a buffer overread when handling a scope error in qr/\(?{/, RT#133879,
+# in upstream after 5.29.8
+Patch58:        perl-5.29.8-handle-scope-error-in-qr.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2877,6 +2881,7 @@ Perl extension for Version Objects
 %patch55 -p1
 %patch56 -p1
 %patch57 -p1
+%patch58 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2926,6 +2931,7 @@ perl -x patchlevel.h \
     'Fedora Patch54: Fix a race when loading XS modules' \
     'Fedora Patch55: Fix extending a stack in Perl parser (RT#133778)' \
     'Fedora Patch56: Fix a leak when compiling a typed hash dereference' \
+    'Fedora Patch58: Fix a buffer overread when handling a scope error in qr/\(?{/ (RT#133879)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5217,6 +5223,7 @@ popd
 * Fri Apr 05 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-430
 - Add explicit Requires: libxcrypt-devel to devel sub-package (bug #1666098)
 - Fix a leak when compiling a typed hash dereference
+- Fix a buffer overread when handling a scope error in qr/\(?{/ (RT#133879)
 
 * Tue Feb 26 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-429
 - Adjust tests to gdbm-1.15 using an upstream fix (RT#133295)
