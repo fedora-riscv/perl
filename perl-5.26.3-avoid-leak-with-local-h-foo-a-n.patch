@@ -1,0 +1,111 @@
+From d531a72eb4a6ecbc65b213f4704f4b197f6730ff Mon Sep 17 00:00:00 2001
+From: David Mitchell <davem@iabyn.com>
+Date: Tue, 26 Mar 2019 11:04:07 +0000
+Subject: [PATCH] avoid leak with local $h{foo}, $a[n]
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When SAVEt_DELETE / SAVEt_ADELETE deletes a hash/array entry on scope
+exit, they also decrement the refcount of the hash/array, and for the
+hash, also free the saved key.
+
+However, if the call to hv_delete() or av_delete() dies (e.g. when
+calling a tied DELETE method) then the hash/array and key will leak
+because leave_scope() calls av/hv_delete(), *then* does the
+SvREFCNT_dec() etc.
+
+The fix is to push new FREEPV/FREESV actions just before calling
+av/hv_delete().
+
+Petr Písař: Ported to 5.26.3 from
+85df897fcfe76250deecfdeb239ba1e4279d8532.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ scope.c    | 17 ++++++++++++++---
+ t/op/tie.t | 37 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 51 insertions(+), 3 deletions(-)
+
+diff --git a/scope.c b/scope.c
+index a7c17e8..e054137 100644
+--- a/scope.c
++++ b/scope.c
+@@ -1245,15 +1245,26 @@ Perl_leave_scope(pTHX_ I32 base)
+ 
+ 	case SAVEt_DELETE:
+             a0 = ap[0]; a1 = ap[1]; a2 = ap[2];
++            /* hv_delete could die, so free the key and SvREFCNT_dec the
++             * hv by pushing new save actions
++             */
++            /* ap[0] is the key */
++            ap[1].any_uv = SAVEt_FREEPV; /* was len */
++            /* ap[2] is the hv */
++            ap[3].any_uv = SAVEt_FREESV; /* was SAVEt_DELETE */
++            PL_savestack_ix += 4;
+ 	    (void)hv_delete(a2.any_hv, a0.any_pv, a1.any_i32, G_DISCARD);
+-	    SvREFCNT_dec(a2.any_hv);
+-	    Safefree(a0.any_ptr);
+ 	    break;
+ 
+ 	case SAVEt_ADELETE:
+             a0 = ap[0]; a1 = ap[1];
++            /* av_delete could die, so SvREFCNT_dec the av by pushing a
++             * new save action
++             */
++            ap[0].any_av = a1.any_av;
++            ap[1].any_uv = SAVEt_FREESV;
++            PL_savestack_ix += 2;
+ 	    (void)av_delete(a1.any_av, a0.any_iv, G_DISCARD);
+-	    SvREFCNT_dec(a1.any_av);
+ 	    break;
+ 
+ 	case SAVEt_DESTRUCTOR_X:
+diff --git a/t/op/tie.t b/t/op/tie.t
+index 12fc935..48c79ca 100644
+--- a/t/op/tie.t
++++ b/t/op/tie.t
+@@ -1517,3 +1517,40 @@ print "$h{x}\n";
+ EXPECT
+ foo
+ bar
++########
++# dying while doing a SAVEt_DELETE dureing scope exit leaked a copy of the
++# key. Give ASan something to play with
++sub TIEHASH { bless({}, $_[0]) }
++sub EXISTS { 0 }
++sub DELETE { die; }
++sub DESTROY { print "destroy\n"; }
++
++eval {
++    my %h;
++    tie %h, "main";
++    local $h{foo};
++    print "leaving\n";
++};
++print "left\n";
++EXPECT
++leaving
++destroy
++left
++########
++# ditto for SAVEt_DELETE with an array
++sub TIEARRAY { bless({}, $_[0]) }
++sub EXISTS { 0 }
++sub DELETE { die; }
++sub DESTROY { print "destroy\n"; }
++
++eval {
++    my @a;
++    tie @a, "main";
++    delete local $a[0];
++    print "leaving\n";
++};
++print "left\n";
++EXPECT
++leaving
++destroy
++left
+-- 
+2.20.1
+

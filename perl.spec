@@ -365,6 +365,9 @@ Patch114:       perl-5.29.9-fix-leak-with-local-WARNING_BITS.patch
 # in upstream after 5.29.9
 Patch115:       perl-5.26.3-fix-a-leak-with-indented-heredocs.patch
 
+# Fix a memory leak when deletion in a tied hash dies, in upstream after 5.29.9
+Patch116:       perl-5.26.3-avoid-leak-with-local-h-foo-a-n.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3002,6 +3005,7 @@ Perl extension for Version Objects
 %patch113 -p1
 %patch114 -p1
 %patch115 -p1
+%patch116 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3078,6 +3082,7 @@ perl -x patchlevel.h \
     'Fedora Patch113: Fix a memory leak when spawning threads in a BEGIN phase' \
     'Fedora Patch114: Fix a memory leak when assignig to a localized ${^WARNING_BITS}' \
     'Fedora Patch115: Fix a memory leak when parsing misindented here-documents' \
+    'Fedora Patch116: Fix a memory leak when deletion in a tied hash dies' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5372,6 +5377,7 @@ popd
 - Fix a memory leak when spawning threads in a BEGIN phase
 - Fix a memory leak when assignig to a localized ${^WARNING_BITS}
 - Fix a memory leak when parsing misindented here-documents
+- Fix a memory leak when deletion in a tied hash dies
 
 * Tue Feb 26 2019 Petr Pisar <ppisar@redhat.com> - 4:5.26.3-417
 - Add BuildRequires: gcc-c++ for tests
