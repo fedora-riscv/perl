@@ -287,6 +287,10 @@ Patch62:        perl-5.29.9-fix-leak-in-BEGIN-threads-new.patch
 # string, in upstream after 5.29.9
 Patch63:        perl-5.29.9-avoid-leak-assigning-regexp-to-non-COW-string.patch
 
+# Fix a memory leak when assignig to a localized ${^WARNING_BITS},
+# in upstream after 5.29.9
+Patch64:        perl-5.29.9-fix-leak-with-local-WARNING_BITS.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2906,6 +2910,7 @@ Perl extension for Version Objects
 %patch61 -p1
 %patch62 -p1
 %patch63 -p1
+%patch64 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2961,6 +2966,7 @@ perl -x patchlevel.h \
     'Fedora Patch61: Fix a memory leak when cloning a regular expression' \
     'Fedora Patch62: Fix a memory leak when spawning threads in a BEGIN phase' \
     'Fedora Patch63: Fix a memory leak when assigning a regular expression to a non-copy-on-write string' \
+    'Fedora Patch64: Fix a memory leak when assignig to a localized ${^WARNING_BITS}' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5259,6 +5265,7 @@ popd
 - Fix a memory leak when cloning a regular expression
 - Fix a memory leak when spawning threads in a BEGIN phase
 - Fix a memory leak when assigning a regular expression to a non-copy-on-write string
+- Fix a memory leak when assignig to a localized ${^WARNING_BITS}
 
 * Tue Feb 26 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-429
 - Adjust tests to gdbm-1.15 using an upstream fix (RT#133295)
