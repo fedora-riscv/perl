@@ -357,6 +357,10 @@ Patch112:       perl-5.29.8-handle-scope-error-in-qr.patch
 # in upstream after 5.29.9
 Patch113:       perl-5.29.9-fix-leak-in-BEGIN-threads-new.patch
 
+# Fix a memory leak when assignig to a localized ${^WARNING_BITS},
+# in upstream after 5.29.9
+Patch114:       perl-5.29.9-fix-leak-with-local-WARNING_BITS.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2992,6 +2996,7 @@ Perl extension for Version Objects
 %patch111 -p1
 %patch112 -p1
 %patch113 -p1
+%patch114 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3066,6 +3071,7 @@ perl -x patchlevel.h \
     'Fedora Patch110: Fix a leak when compiling a typed hash dereference' \
     'Fedora Patch112: Fix a buffer overread when handling a scope error in qr/\(?{/ (RT#133879)' \
     'Fedora Patch113: Fix a memory leak when spawning threads in a BEGIN phase' \
+    'Fedora Patch114: Fix a memory leak when assignig to a localized ${^WARNING_BITS}' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5358,6 +5364,7 @@ popd
 - Fix a leak when compiling a typed hash dereference
 - Fix a buffer overread when handling a scope error in qr/\(?{/ (RT#133879)
 - Fix a memory leak when spawning threads in a BEGIN phase
+- Fix a memory leak when assignig to a localized ${^WARNING_BITS}
 
 * Tue Feb 26 2019 Petr Pisar <ppisar@redhat.com> - 4:5.26.3-417
 - Add BuildRequires: gcc-c++ for tests

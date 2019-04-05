@@ -1,0 +1,39 @@
+From 1113f30d91f662c876a07b357666f02f04a30a75 Mon Sep 17 00:00:00 2001
+From: David Mitchell <davem@iabyn.com>
+Date: Mon, 25 Mar 2019 17:18:58 +0000
+Subject: [PATCH] fix leak with local ${^WARNING_BITS} = ...
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When restoring the old value, need to free the current value first.
+Can be reproduced with
+
+    {
+        local ${^WARNING_BITS} = 'swit';
+    }
+
+when run under ASan or similar.
+An equivalent test already exists in t/op/leaky-magic.t.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ mg.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/mg.c b/mg.c
+index b022d63442..320e2d39bb 100644
+--- a/mg.c
++++ b/mg.c
+@@ -2916,6 +2916,8 @@ Perl_magic_set(pTHX_ SV *sv, MAGIC *mg)
+ 	else if (strEQ(mg->mg_ptr+1, "ARNING_BITS")) {
+ 	    if ( ! (PL_dowarn & G_WARN_ALL_MASK)) {
+ 		if (!SvPOK(sv)) {
++                    if (!specialWARN(PL_compiling.cop_warnings))
++                        PerlMemShared_free(PL_compiling.cop_warnings);
+ 	            PL_compiling.cop_warnings = pWARN_STD;
+ 		    break;
+ 		}
+-- 
+2.20.1
+
