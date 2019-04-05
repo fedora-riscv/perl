@@ -1,0 +1,79 @@
+From 4d980ef2cd6bf458706048a5627d02ea8ebf39b4 Mon Sep 17 00:00:00 2001
+From: Hugo van der Sanden <hv@crypt.org>
+Date: Mon, 25 Mar 2019 11:27:12 +0000
+Subject: [PATCH] coredump in Perl_re_intuit_start
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Make sure we have a valid non-utf8 'other' check substring before we
+try to use it.
+
+Petr Písař: Ported to 5.28.1 from
+fd8def15a58c97aa89cce8569befded97fd8c3b7.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ regexec.c            |  9 +++++++--
+ t/re/pat_rt_report.t | 11 ++++++++++-
+ 2 files changed, 17 insertions(+), 3 deletions(-)
+
+diff --git a/regexec.c b/regexec.c
+index 830a16a..357a109 100644
+--- a/regexec.c
++++ b/regexec.c
+@@ -1277,8 +1277,8 @@ Perl_re_intuit_start(pTHX_
+ 
+     /* now look for the 'other' substring if defined */
+ 
+-    if (utf8_target ? prog->substrs->data[other_ix].utf8_substr
+-                    : prog->substrs->data[other_ix].substr)
++    if (prog->substrs->data[other_ix].utf8_substr
++        || prog->substrs->data[other_ix].substr)
+     {
+ 	/* Take into account the "other" substring. */
+         char *last, *last1;
+@@ -1288,6 +1288,11 @@ Perl_re_intuit_start(pTHX_
+ 
+       do_other_substr:
+         other = &prog->substrs->data[other_ix];
++        if (!utf8_target && !other->substr) {
++            if (!to_byte_substr(prog)) {
++                NON_UTF8_TARGET_BUT_UTF8_REQUIRED(fail);
++            }
++        }
+ 
+         /* if "other" is anchored:
+          * we've previously found a floating substr starting at check_at.
+diff --git a/t/re/pat_rt_report.t b/t/re/pat_rt_report.t
+index dd740e7..4dc2dec 100644
+--- a/t/re/pat_rt_report.t
++++ b/t/re/pat_rt_report.t
+@@ -20,7 +20,7 @@ use warnings;
+ use 5.010;
+ use Config;
+ 
+-plan tests => 2504;  # Update this when adding/deleting tests.
++plan tests => 2505;  # Update this when adding/deleting tests.
+ 
+ run_tests() unless caller;
+ 
+@@ -1141,6 +1141,15 @@ EOP
+         ok($s=~/(foo){1,0}|(?1)/,
+             "RT #130561 - allowing impossible quantifier should not break recursion");
+     }
++	{
++		# RT #133892 Coredump in Perl_re_intuit_start
++		# Second match flips to checking floating substring before fixed
++		# substring, which triggers a pathway that failed to check there
++		# was a non-utf8 version of the string before trying to use it
++		# resulting in a SEGV.
++		my $result = grep /b\x{1c0}ss0/i, qw{ xxxx xxxx0 };
++		ok($result == 0);
++	}
+ 
+ } # End of sub run_tests
+ 
+-- 
+2.20.1
+
