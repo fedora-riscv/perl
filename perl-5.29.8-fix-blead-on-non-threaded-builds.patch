@@ -1,0 +1,34 @@
+From eef8d518b95b0221f81805d75bd63fbbf2995f3b Mon Sep 17 00:00:00 2001
+From: David Mitchell <davem@iabyn.com>
+Date: Tue, 12 Mar 2019 07:10:10 +0000
+Subject: [PATCH] fix blead on non-threaded builds
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+My recent v5.29.8-64-g02a9632ac4 commit broke unthreaded builds.
+This is the obvious fix. I've heard a report that unthreaded perl
+SEGVs now but can't reproduce.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ op.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/op.c b/op.c
+index 4e49eeeedf..b4ba9c8f83 100644
+--- a/op.c
++++ b/op.c
+@@ -14716,8 +14716,8 @@ S_maybe_multideref(pTHX_ OP *start, OP *orig_o, UV orig_action, U8 hints)
+                                                             pass);
+                         }
+ 
+-#ifdef USE_ITHREADS
+                         if (pass) {
++#ifdef USE_ITHREADS
+                             /* Relocate sv to the pad for thread safety */
+                             op_relocate_sv(&cSVOPo->op_sv, &o->op_targ);
+                             arg->pad_offset = o->op_targ;
+-- 
+2.20.1
+
