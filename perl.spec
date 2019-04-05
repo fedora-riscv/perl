@@ -279,6 +279,10 @@ Patch60:        perl-5.28.1-Fix-POSIX-mblen-mbstate_t-initialization-on-threaded
 # Fix a memory leak when cloning a regular expression, in upstream after 5.29.9
 Patch61:        perl-5.29.9-fix-leak-in-cloned-regexes.patch
 
+# Fix a memory leak when spawning threads in a BEGIN phase,
+# in upstream after 5.29.9
+Patch62:        perl-5.29.9-fix-leak-in-BEGIN-threads-new.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2896,6 +2900,7 @@ Perl extension for Version Objects
 %patch59 -p1
 %patch60 -p1
 %patch61 -p1
+%patch62 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2949,6 +2954,7 @@ perl -x patchlevel.h \
     'Fedora Patch59: Fix a buffer overread when parsing a regular expression with an unknown character name (RT#133880)' \
     'Fedora Patch60: Fix mbstate_t initialization in POSIX::mblen (RT#133928)' \
     'Fedora Patch61: Fix a memory leak when cloning a regular expression' \
+    'Fedora Patch62: Fix a memory leak when spawning threads in a BEGIN phase' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5244,6 +5250,7 @@ popd
   character name (RT#133880)
 - Fix mbstate_t initialization in POSIX::mblen (RT#133928)
 - Fix a memory leak when cloning a regular expression
+- Fix a memory leak when spawning threads in a BEGIN phase
 
 * Tue Mar 05 2019 Björn Esser <besser82@fedoraproject.org> - 4:5.28.1-434
 - Add explicit Requires: libxcrypt-devel to devel sub-package (bug #1666098)
