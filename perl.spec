@@ -283,6 +283,10 @@ Patch61:        perl-5.29.9-fix-leak-in-cloned-regexes.patch
 # in upstream after 5.29.9
 Patch62:        perl-5.29.9-fix-leak-in-BEGIN-threads-new.patch
 
+# Fix a memory leak when assigning a regular expression to a non-copy-on-write
+# string, in upstream after 5.29.9
+Patch63:        perl-5.29.9-avoid-leak-assigning-regexp-to-non-COW-string.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2901,6 +2905,7 @@ Perl extension for Version Objects
 %patch60 -p1
 %patch61 -p1
 %patch62 -p1
+%patch63 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2955,6 +2960,7 @@ perl -x patchlevel.h \
     'Fedora Patch60: Fix mbstate_t initialization in POSIX::mblen (RT#133928)' \
     'Fedora Patch61: Fix a memory leak when cloning a regular expression' \
     'Fedora Patch62: Fix a memory leak when spawning threads in a BEGIN phase' \
+    'Fedora Patch63: Fix a memory leak when assigning a regular expression to a non-copy-on-write string' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5251,6 +5257,7 @@ popd
 - Fix mbstate_t initialization in POSIX::mblen (RT#133928)
 - Fix a memory leak when cloning a regular expression
 - Fix a memory leak when spawning threads in a BEGIN phase
+- Fix a memory leak when assigning a regular expression to a non-copy-on-write string
 
 * Tue Mar 05 2019 Björn Esser <besser82@fedoraproject.org> - 4:5.28.1-434
 - Add explicit Requires: libxcrypt-devel to devel sub-package (bug #1666098)
