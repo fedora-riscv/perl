@@ -272,6 +272,10 @@ Patch58:        perl-5.29.8-handle-scope-error-in-qr.patch
 # character name, RT#133880, in upstream after 5.29.9
 Patch59:        perl-5.28.1-PATCH-perl-133880-assertion-failure.patch
 
+# Fix mbstate_t initialization in POSIX::mblen, RT#133928,
+# in upstream after 5.29.9
+Patch60:        perl-5.28.1-Fix-POSIX-mblen-mbstate_t-initialization-on-threaded.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2887,6 +2891,7 @@ Perl extension for Version Objects
 %patch57 -p1
 %patch58 -p1
 %patch59 -p1
+%patch60 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2938,6 +2943,7 @@ perl -x patchlevel.h \
     'Fedora Patch56: Fix a leak when compiling a typed hash dereference' \
     'Fedora Patch58: Fix a buffer overread when handling a scope error in qr/\(?{/ (RT#133879)' \
     'Fedora Patch59: Fix a buffer overread when parsing a regular expression with an unknown character name (RT#133880)' \
+    'Fedora Patch60: Fix mbstate_t initialization in POSIX::mblen (RT#133928)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5232,6 +5238,7 @@ popd
 - Fix a buffer overread when handling a scope error in qr/\(?{/ (RT#133879)
 - Fix a buffer overread when parsing a regular expression with an unknown
   character name (RT#133880)
+- Fix mbstate_t initialization in POSIX::mblen (RT#133928)
 
 * Tue Feb 26 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-429
 - Adjust tests to gdbm-1.15 using an upstream fix (RT#133295)
