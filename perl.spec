@@ -345,6 +345,10 @@ Patch108:       perl-5.26.3-Perl_my_cxt_init-fix-potential-race-condition.patch
 # Fix extending a stack in Perl parser, RT#133778, in upstream after 5.29.8
 Patch109:       perl-5.29.8-perl-133778-adjust-MARK-if-we-extend-the-stack-in-pp.patch
 
+# Fix a leak when compiling a typed hash dereference, in upstream after 5.29.8
+Patch110:       perl-5.28.1-fix-leak-when-compiling-typed-hash-deref.patch
+Patch111:       perl-5.29.8-fix-blead-on-non-threaded-builds.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2976,6 +2980,8 @@ Perl extension for Version Objects
 %patch107 -p1
 %patch108 -p1
 %patch109 -p1
+%patch110 -p1
+%patch111 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3047,6 +3053,7 @@ perl -x patchlevel.h \
     'Fedora Patch107: Fix setting magic when changing $^R (RT#133782)' \
     'Fedora Patch108: Fix a race when loading XS modules' \
     'Fedora Patch109: Fix extending a stack in Perl parser (RT#133778)' \
+    'Fedora Patch110: Fix a leak when compiling a typed hash dereference' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5334,8 +5341,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Tue Mar 05 2019 Björn Esser <besser82@fedoraproject.org> - 4:5.26.3-418
+* Fri Apr 05 2019 Petr Pisar <ppisar@redhat.com> - 4:5.26.3-418
 - Add explicit Requires: libxcrypt-devel to devel sub-package (bug #1666098)
+- Fix a leak when compiling a typed hash dereference
 
 * Tue Feb 26 2019 Petr Pisar <ppisar@redhat.com> - 4:5.26.3-417
 - Add BuildRequires: gcc-c++ for tests
