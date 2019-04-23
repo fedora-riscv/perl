@@ -22,9 +22,9 @@ diff --git a/t/lib/croak/toke b/t/lib/croak/toke
 index 1d45a3f..5ec90b9 100644
 --- a/t/lib/croak/toke
 +++ b/t/lib/croak/toke
-@@ -480,3 +480,9 @@ Bareword found where operator expected at - line 2, near "2p0"
- 	(Missing operator before p0?)
- syntax error at - line 2, near "2p0"
+@@ -489,3 +489,9 @@ =cut
+ EXPECT
+ syntax error at - line 4, next token ???
  Execution of - aborted due to compilation errors.
 +########
 +# NAME check Prototype not terminated includes line number (133524)

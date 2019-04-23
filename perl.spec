@@ -1,4 +1,4 @@
-%global perl_version    5.28.1
+%global perl_version    5.28.2
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -83,7 +83,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        430%{?dist}
+Release:        431%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -186,16 +186,8 @@ Patch27:        perl-5.29.2-multiconcat-mutator-not-seen-in-lex.patch
 # in upstream after 5.29.2
 Patch28:        perl-5.29.2-perl-132683-don-t-try-to-convert-PL_sv_placeholder-i.patch
 
-# Fix upack "u" of invalid data, RT#132655, in upstream after 5.29.2
-Patch29:        perl-5.29.2-perl-132655-nul-terminate-result-of-unpack-u-of-inva.patch
-
 # Pass the correct CFLAGS to dtrace
 Patch30:        perl-5.28.0-Pass-CFLAGS-to-dtrace.patch
-
-# Fix script run matching to allow ASCII digits in scripts that use their own in
-# addition, RT#133547, in upstream after 5.29.3
-Patch31:        perl-5.28.1-regexec.c-Rename-variable.patch
-Patch32:        perl-5.28.1-PATCH-perl-133547-script-run-broken.patch
 
 # Fix PathTools tests to cope with ESTALE error, RT#133534,
 # in upstream after 5.29.3
@@ -203,12 +195,6 @@ Patch33:        perl-5.29.3-Accept-also-ESTALE-fix-for-RT-133534.patch
 
 # Fix an undefined behaviour in S_hv_delete_common(), in upstream after 5.29.5
 Patch34:        perl-5.29.5-S_hv_delete_common-avoid-undefined-behaviour.patch
-
-# Fix in-place edit to replace files on a successful perl exit status,
-# bug #1650041, RT#133659, in upstream after 5.29.5
-Patch35:        perl-5.29.5-perl-133659-move-argvout-cleanup-to-a-new-function.patch
-Patch36:        perl-5.29.5-perl-133659-tests-for-global-destruction-handling-of.patch
-Patch37:        perl-5.29.5-perl-133659-make-an-in-place-edit-successful-if-the-.patch
 
 # Fix compiling regular expressions that contain both compile- and run-time
 # compiled code blocks, RT#133687, in upstream after 5.29.5
@@ -219,11 +205,6 @@ Patch39:        perl-5.28.1-ext-GDBM_File-t-fatal.t-handle-non-fatality.patch
 Patch40:        perl-5.29.5-Correct-spelling-error-in-skip-message.patch
 Patch41:        perl-5.29.5-Avoid-Use-of-uninitialized-value-res-in-numeric-eq-w.patch
 
-# Do not close an IPC pipe that already has a desired descriptor, RT#133726,
-# in upstream after 5.29.5
-Patch42:        perl-5.29.5-Always-mark-pipe-in-pipe-open-as-inherit-on-exec.patch
-Patch43:        perl-5.29.5-Always-mark-pipe-in-pipe-open-as-inherit-on-exec-2.patch
-
 # Fix reporting a line number for non-terminated prototypes, RT#133524,
 # in upstream after 5.29.6
 Patch44:        perl-5.28.1-perl-133524-report-line-number-for-Prototype-not-ter.patch
@@ -231,9 +212,6 @@ Patch44:        perl-5.28.1-perl-133524-report-line-number-for-Prototype-not-ter
 # Fix first eof() return value, RT#133721, in upstream after 5.29.6
 Patch45:        perl-5.29.6-perl-133721-TODO-test-for-eof-with-no-LAST_FH.patch
 Patch46:        perl-5.29.6-First-eof-should-return-true.patch
-
-# Fix a crash when compiling a malformed form, RT#132158, in upstream after 5.29.6
-Patch47:        perl-5.29.6-perl-132158-abort-compilation-if-we-see-an-error-com.patch
 
 # Prevent long jumps from clobbering local variables, RT#133575,
 # in upstream after 5.29.6
@@ -243,22 +221,11 @@ Patch49:        perl-5.29.6-perl-133575-prevent-set-longjmp-clobbering-locals-in
 # ligatures, RT#133756, in upstream after 5.29.6
 Patch50:        perl-5.29.6-PATCH-perl-133756-Failure-to-match-properly.patch
 
-# Fix the interpreter path if procfs is not mounted, RT#133573,
-# in upstream after 5.29.3
-Patch51:        perl-5.29.3-RT-133573-X-fallback-when-platform-specific-techniqu.patch
-
-# Fix a crash when parsing #line directives with large numbers in eval, RT#131562,
-# in upstream after 5.29.7
-Patch52:        perl-5.29.7-perl-131562-correct-large-line-numbers-copying-eval-.patch
-
 # Fix setting magic when changing $^R, RT#133782, in upstream after 5.29.7
 Patch53:        perl-5.28.1-perl-133782-set-magic-when-changing-R.patch
 
 # Fix a race when loading XS modules, in upstream after 5.29.7
 Patch54:        perl-5.29.7-Perl_my_cxt_init-fix-potential-race-condition.patch
-
-# Fix extending a stack in Perl parser, RT#133778, in upstream after 5.29.8
-Patch55:        perl-5.29.8-perl-133778-adjust-MARK-if-we-extend-the-stack-in-pp.patch
 
 # Fix a leak when compiling a typed hash dereference, in upstream after 5.29.8
 Patch56:        perl-5.28.1-fix-leak-when-compiling-typed-hash-deref.patch
@@ -362,7 +329,7 @@ BuildRequires:  rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.28.1)
+%global perl_compat perl(:MODULE_COMPAT_5.28.2)
 
 Requires:       %perl_compat
 Requires:       perl-interpreter%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
@@ -514,6 +481,7 @@ Summary:        The libraries for the perl run-time
 License:        (GPL+ or Artistic) and HSRL and MIT and UCD
 # Compat provides
 Provides:       %perl_compat
+Provides:       perl(:MODULE_COMPAT_5.28.1)
 Provides:       perl(:MODULE_COMPAT_5.28.0)
 # Interpreter version to fulfil required genersted from "require 5.006;"
 Provides:       perl(:VERSION) = %{perl_version}
@@ -2005,7 +1973,7 @@ encoder/decoder. These encoding methods are specified in RFC 2045 - MIME
 Summary:        What modules are shipped with versions of perl
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20180622
+Version:        5.20190419
 Requires:       %perl_compat
 Requires:       perl(List::Util)
 Requires:       perl(version) >= 0.88
@@ -2023,7 +1991,7 @@ are shipped with each version of perl.
 Summary:        Tool for listing modules shipped with perl
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20180622
+Version:        5.20190419
 Requires:       %perl_compat
 Requires:       perl(feature)
 Requires:       perl(version) >= 0.88
@@ -2894,32 +2862,20 @@ Perl extension for Version Objects
 %patch26 -p1
 %patch27 -p1
 %patch28 -p1
-%patch29 -p1
 %patch30 -p1
-%patch31 -p1
-%patch32 -p1
 %patch33 -p1
 %patch34 -p1
-%patch35 -p1
-%patch36 -p1
-%patch37 -p1
 %patch38 -p1
 %patch39 -p1
 %patch40 -p1
 %patch41 -p1
-%patch42 -p1
-%patch43 -p1
 %patch44 -p1
 %patch45 -p1
 %patch46 -p1
-%patch47 -p1
 %patch49 -p1
 %patch50 -p1
-%patch51 -p1
-%patch52 -p1
 %patch53 -p1
 %patch54 -p1
-%patch55 -p1
 %patch56 -p1
 %patch57 -p1
 %patch58 -p1
@@ -2966,23 +2922,16 @@ perl -x patchlevel.h \
     'Fedora Patch27: Fix an assignment to a lexical variable in multiconcatenation expressions (RT#133441)' \
     'Fedora Patch28: Fix a spurious warning about uninitialized value in warn (RT#132683)' \
     'Fedora Patch30: Pass the correct CFLAGS to dtrace' \
-    'Fedora Patch31: Fix script run matching to allow ASCII digits in scripts that use their own in addition (RT#133547)' \
     'Fedora Patch33: Fix PathTools tests to cope with ESTALE error (RT#133534)' \
     'Fedora Patch34: Fix an undefined behaviour in S_hv_delete_common()' \
-    'Fedora Patch35: Fix in-place edit to replace files on a successful perl exit status (bug #1650041)' \
     'Fedora Patch38: Fix compiling regular expressions that contain both compile- and run-time compiled code blocks (RT#133687)' \
     'Fedora Patch39: Adjust tests to gdbm-1.15 (RT#133295)' \
-    'Fedora Patch42: Do not close an IPC pipe that already has a desired descriptor (RT#133726)' \
     'Fedora Patch44: Fix reporting a line number for non-terminated prototypes (RT#133524)' \
     'Fedora Patch45: Fix first eof() return value (RT#133721)' \
-    'Fedora Patch47: Fix a crash when compiling a malformed form (RT#132158)' \
     'Fedora Patch49: Prevent long jumps from clobbering local variables (RT#133575)' \
     'Fedora Patch50: Fix a mismatch with a case-insesitive regular expression on a text with ligatures (RT#133756)' \
-    'Fedora Patch51: Fix the interpreter path if procfs is not mounted (RT#133573)' \
-    'Fedora Patch52: Fix a crash when parsing #line directives with large numbers in eval (RT#131562)' \
     'Fedora Patch53: Fix setting magic when changing $^R (RT#133782)' \
     'Fedora Patch54: Fix a race when loading XS modules' \
-    'Fedora Patch55: Fix extending a stack in Perl parser (RT#133778)' \
     'Fedora Patch56: Fix a leak when compiling a typed hash dereference' \
     'Fedora Patch58: Fix a buffer overread when handling a scope error in qr/\(?{/ (RT#133879)' \
     'Fedora Patch59: Fix a buffer overread when parsing a regular expression with an unknown character name (RT#133880)' \
@@ -5284,6 +5233,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Apr 23 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.2-431
+- 5.28.2 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.28.2/pod/perldelta.pod>
+  for release notes)
+
 * Fri Apr 05 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-430
 - Add explicit Requires: libxcrypt-devel to devel sub-package (bug #1666098)
 - Fix a leak when compiling a typed hash dereference
