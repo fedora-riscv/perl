@@ -1,4 +1,4 @@
-%global perl_version    5.28.2
+%global perl_version    5.30.0
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -83,7 +83,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        436%{?dist}
+Release:        437%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -133,148 +133,19 @@ Patch8:         perl-5.16.3-create_libperl_soname.patch
 # Install libperl.so to -Dshrpdir value
 Patch9:         perl-5.22.0-Install-libperl.so-to-shrpdir-on-Linux.patch
 
-# Document Math::BigInt::CalcEmu requires Math::BigInt, rhbz#959096,
-# CPAN RT#85015
-Patch10:        perl-5.18.1-Document-Math-BigInt-CalcEmu-requires-Math-BigInt.patch
-
 # Make *DBM_File desctructors thread-safe, bug #1107543, RT#61912
-Patch11:        perl-5.18.2-Destroy-GDBM-NDBM-ODBM-SDBM-_File-objects-only-from-.patch
+Patch10:        perl-5.18.2-Destroy-GDBM-NDBM-ODBM-SDBM-_File-objects-only-from-.patch
 
 # Replace ExtUtils::MakeMaker dependency with ExtUtils::MM::Utils.
 # This allows not to require perl-devel. Bug #1129443
-Patch12:        perl-5.22.1-Replace-EU-MM-dependnecy-with-EU-MM-Utils-in-IPC-Cmd.patch
-
-# Fix executing arybase::_tie_it() in Safe compartement, RT#131588,
-# not yet accepted by upstream
-Patch13:        perl-5.26.0-perl-131588-be-a-little-more-careful-in-arybase-_tie.patch
+Patch11:        perl-5.22.1-Replace-EU-MM-dependnecy-with-EU-MM-Utils-in-IPC-Cmd.patch
 
 # Link XS modules to pthread library to fix linking with -z defs,
 # <https://lists.fedoraproject.org/archives/list/devel@lists.fedoraproject.org/message/3RHZEHLRUHJFF2XGHI5RB6YPDNLDR4HG/>
-Patch14:        perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
-
-# Fix printing a warning about a wide character when matching a regular
-# expression while ISO-8859-1 locale is in effect, in upstream after 5.29.0
-Patch17:        perl-5.29.0-regexec.c-Call-macro-with-correct-args.patch
-
-# Fix invoking a check for wide characters while ISO-8859-1 locale is in effect,
-# in upstream after 5.29.0
-Patch18:        perl-5.29.0-perl.h-Add-parens-around-macro-arguments.patch
-
-# Fix build conditions in locale.c, in upstream after 5.29.0
-Patch20:        perl-5.29.0-locale.c-Fix-conditional-compilation.patch
-
-# Fix a file descriptor leak in in-place edits, RT#133314,
-# in upstream after 5.29.1
-Patch21:        perl-5.29.1-perl-133314-test-for-handle-leaks-from-in-place-edit.patch
-
-# Fix a buffer overrun in deprecated S_is_utf8_common(),
-# in upstream after 5.29.1
-Patch23:        perl-5.29.1-utf8.c-Make-safer-a-deprecated-function.patch
-
-# Fix a time race in Time-HiRes/t/itimer.t test, in upstream after 5.29.1
-Patch24:        perl-5.29.1-Time-HiRes-t-itimer.t-avoid-race-condition.patch
-
-# Fix Time::Piece to handle objects in overloaded methods correctly,
-# in upstream after 5.29.1
-Patch26:        perl-5.29.1-Update-Time-Piece-to-CPAN-version-1.33.patch
-
-# Fix an assignment to a lexical variable in multiconcatenation expressions,
-# RT#133441, in upstream after 5.29.2
-Patch27:        perl-5.29.2-multiconcat-mutator-not-seen-in-lex.patch
-
-# Fix a spurious warning about uninitialized value in warn, RT#132683,
-# in upstream after 5.29.2
-Patch28:        perl-5.29.2-perl-132683-don-t-try-to-convert-PL_sv_placeholder-i.patch
+Patch12:        perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
 
 # Pass the correct CFLAGS to dtrace
-Patch30:        perl-5.28.0-Pass-CFLAGS-to-dtrace.patch
-
-# Fix PathTools tests to cope with ESTALE error, RT#133534,
-# in upstream after 5.29.3
-Patch33:        perl-5.29.3-Accept-also-ESTALE-fix-for-RT-133534.patch
-
-# Fix an undefined behaviour in S_hv_delete_common(), in upstream after 5.29.5
-Patch34:        perl-5.29.5-S_hv_delete_common-avoid-undefined-behaviour.patch
-
-# Fix compiling regular expressions that contain both compile- and run-time
-# compiled code blocks, RT#133687, in upstream after 5.29.5
-Patch38:        perl-5.29.5-handle-code-mixed-compile-and-runtime.patch
-
-# Adjust tests to gdbm-1.15, RT#133295, in upstream after 5.29.5
-Patch39:        perl-5.28.1-ext-GDBM_File-t-fatal.t-handle-non-fatality.patch
-Patch40:        perl-5.29.5-Correct-spelling-error-in-skip-message.patch
-Patch41:        perl-5.29.5-Avoid-Use-of-uninitialized-value-res-in-numeric-eq-w.patch
-
-# Fix reporting a line number for non-terminated prototypes, RT#133524,
-# in upstream after 5.29.6
-Patch44:        perl-5.28.1-perl-133524-report-line-number-for-Prototype-not-ter.patch
-
-# Fix first eof() return value, RT#133721, in upstream after 5.29.6
-Patch45:        perl-5.29.6-perl-133721-TODO-test-for-eof-with-no-LAST_FH.patch
-Patch46:        perl-5.29.6-First-eof-should-return-true.patch
-
-# Prevent long jumps from clobbering local variables, RT#133575,
-# in upstream after 5.29.6
-Patch49:        perl-5.29.6-perl-133575-prevent-set-longjmp-clobbering-locals-in.patch
-
-# Fix a mismatch with a case-insesitive regular expression on a text with
-# ligatures, RT#133756, in upstream after 5.29.6
-Patch50:        perl-5.29.6-PATCH-perl-133756-Failure-to-match-properly.patch
-
-# Fix setting magic when changing $^R, RT#133782, in upstream after 5.29.7
-Patch53:        perl-5.28.1-perl-133782-set-magic-when-changing-R.patch
-
-# Fix a race when loading XS modules, in upstream after 5.29.7
-Patch54:        perl-5.29.7-Perl_my_cxt_init-fix-potential-race-condition.patch
-
-# Fix a leak when compiling a typed hash dereference, in upstream after 5.29.8
-Patch56:        perl-5.28.1-fix-leak-when-compiling-typed-hash-deref.patch
-Patch57:        perl-5.29.8-fix-blead-on-non-threaded-builds.patch
-
-# Fix a buffer overread when handling a scope error in qr/\(?{/, RT#133879,
-# in upstream after 5.29.8
-Patch58:        perl-5.29.8-handle-scope-error-in-qr.patch
-
-# Fix a buffer overread when parsing a regular expression with an unknown
-# character name, RT#133880, in upstream after 5.29.9
-Patch59:        perl-5.28.1-PATCH-perl-133880-assertion-failure.patch
-
-# Fix mbstate_t initialization in POSIX::mblen, RT#133928,
-# in upstream after 5.29.9
-Patch60:        perl-5.28.1-Fix-POSIX-mblen-mbstate_t-initialization-on-threaded.patch
-
-# Fix a memory leak when cloning a regular expression, in upstream after 5.29.9
-Patch61:        perl-5.29.9-fix-leak-in-cloned-regexes.patch
-
-# Fix a memory leak when spawning threads in a BEGIN phase,
-# in upstream after 5.29.9
-Patch62:        perl-5.29.9-fix-leak-in-BEGIN-threads-new.patch
-
-# Fix a memory leak when assigning a regular expression to a non-copy-on-write
-# string, in upstream after 5.29.9
-Patch63:        perl-5.29.9-avoid-leak-assigning-regexp-to-non-COW-string.patch
-
-# Fix a memory leak when assignig to a localized ${^WARNING_BITS},
-# in upstream after 5.29.9
-Patch64:        perl-5.29.9-fix-leak-with-local-WARNING_BITS.patch
-
-# Fix a memory leak when parsing misindented here-documents,
-# in upstream after 5.29.9
-Patch65:        perl-5.28.1-fix-a-leak-with-indented-heredocs.patch
-
-# Fix a memory leak in package name lookup, RT#133977, in upstream after 5.29.9
-Patch66:        perl-5.29.9-fix-leak-in-package-name-lookup.patch
-Patch67:        perl-5.29.9-Fix-recent-double-free-in-S_parse_gv_stash_name.patch
-
-# Fix a memory leak when deletion in a tied hash dies, in upstream after 5.29.9
-Patch68:        perl-5.29.9-avoid-leak-with-local-h-foo-a-n.patch
-
-# Fix a crash when matching case insensitively, RT#133892,
-# in upstream after 5.29.9
-Patch69:        perl-5.28.1-perl-133892-coredump-in-Perl_re_intuit_start.patch
-
-# Fix a memory leak when warning about malformed UTF-8 string
-Patch70:        perl-5.29.9-fix-leak-in-Perl__force_out_malformed_utf8_message.patch
+Patch13:        perl-5.28.0-Pass-CFLAGS-to-dtrace.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -329,7 +200,7 @@ BuildRequires:  rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.28.2)
+%global perl_compat perl(:MODULE_COMPAT_5.30.0)
 
 Requires:       %perl_compat
 Requires:       perl-interpreter%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
@@ -342,7 +213,7 @@ Requires:       perl-utils
 %endif
 
 Requires:       perl-Archive-Tar, perl-Attribute-Handlers, perl-autodie,
-Requires:       perl-B-Debug, perl-bignum
+Requires:       perl-bignum
 Requires:       perl-Compress-Raw-Bzip2,
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-Config-Perl-V,
 Requires:       perl-constant,
@@ -365,7 +236,7 @@ Requires:       perl-HTTP-Tiny,
 Requires:       perl-IO, perl-IO-Compress, perl-IO-Socket-IP
 Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-IPC-SysV, perl-JSON-PP
 Requires:       perl-libnet, perl-libnetcfg,
-Requires:       perl-Locale-Codes, perl-Locale-Maketext,
+Requires:       perl-Locale-Maketext,
 Requires:       perl-Locale-Maketext-Simple
 Requires:       perl-Math-BigInt, perl-Math-BigInt-FastCalc, perl-Math-BigRat,
 Requires:       perl-Math-Complex, perl-Memoize,
@@ -481,8 +352,6 @@ Summary:        The libraries for the perl run-time
 License:        (GPL+ or Artistic) and HSRL and MIT and UCD
 # Compat provides
 Provides:       %perl_compat
-Provides:       perl(:MODULE_COMPAT_5.28.1)
-Provides:       perl(:MODULE_COMPAT_5.28.0)
 # Interpreter version to fulfil required genersted from "require 5.006;"
 Provides:       perl(:VERSION) = %{perl_version}
 # Integeres are 64-bit on all platforms
@@ -604,7 +473,7 @@ packages like perldoc by perl-Pod-Perldoc.
 Summary:        A module for Perl manipulation of .tar files
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.30
+Version:        2.32
 BuildArch:      noarch
 Requires:       %perl_compat
 Requires:       perl(IO::Zlib) >= 1.01
@@ -675,27 +544,11 @@ autodie in preference to "Fatal".
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
-%package B-Debug
-Summary:        Walk Perl syntax tree, print debug information about op-codes
-License:        GPL+ or Artistic
-Epoch:          0
-Version:        1.26
-Requires:       %perl_compat
-BuildArch:      noarch
-%if %{defined perl_bootstrap}
-%gendep_perl_B_Debug
-%endif
-Conflicts:      perl < 4:5.20.1-310
-
-%description B-Debug
-Walk Perl syntax tree and print debug information about op-codes. See
-B::Concise and B::Terse for other details.
-
 %package bignum
 Summary:        Transparent big number support for Perl
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.49
+Version:        0.51
 Requires:       %perl_compat
 Requires:       perl(Carp)
 # Math::BigInt::Lite is optional
@@ -742,7 +595,7 @@ but it is a good educated guess.
 Summary:        Low-Level Interface to bzip2 compression library
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.074
+Version:        2.084
 Requires:       perl(Exporter), perl(File::Temp)
 %if %{defined perl_bootstrap}
 %gendep_perl_Compress_Raw_Bzip2
@@ -756,7 +609,7 @@ It is used by IO::Compress::Bzip2.
 Summary:        Low-Level Interface to the zlib compression library
 License:        (GPL+ or Artistic) and zlib
 Epoch:          0
-Version:        2.076
+Version:        2.084
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_Compress_Raw_Zlib
@@ -772,7 +625,7 @@ It is used by IO::Compress::Zlib.
 Summary:        Structured data retrieval of perl -V output
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.29
+Version:        0.32
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_Config_Perl_V
@@ -824,7 +677,7 @@ away if the constant is false.
 Summary:        Query, download and build perl modules from CPAN sites
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.20
+Version:        2.22
 Requires:       make
 # Prefer Archive::Tar and Compress::Zlib over tar and gzip
 Requires:       perl(Archive::Tar) >= 1.50
@@ -953,7 +806,7 @@ used for any other general YAML parsing or generation task.
 Summary:        Stringify perl data structures, suitable for printing and eval
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.170
+Version:        2.174
 Requires:       %perl_compat
 Requires:       perl(Scalar::Util)
 Requires:       perl(XSLoader)
@@ -973,7 +826,7 @@ structures correctly.
 Summary:        Perl5 access to Berkeley DB version 1.x
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.840
+Version:        1.843
 Requires:       %perl_compat
 Requires:       perl(Fcntl)
 Requires:       perl(XSLoader)
@@ -993,7 +846,7 @@ interface defined here mirrors the Berkeley DB interface closely.
 Summary:        A data debugging tool for the XS programmer
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.27
+Version:        1.28
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_Devel_Peek
@@ -1011,7 +864,7 @@ should look.
 Summary:        Perl Pollution Portability header generator
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        3.40
+Version:        3.52
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_Devel_PPPort
@@ -1095,7 +948,7 @@ Summary:        Perl extension for SHA-1/224/256/384/512
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        6.01
+Version:        6.02
 Requires:       %perl_compat
 Requires:       perl(Carp)
 # Recommended
@@ -1116,7 +969,7 @@ module can handle all types of input, including partial-byte data.
 Summary:        Character encodings in Perl
 License:        (GPL+ or Artistic) and Artistic 2.0 and UCD
 Epoch:          4
-Version:        2.97
+Version:        3.01
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_Encode
@@ -1162,7 +1015,7 @@ The easiest and the best alternative is to write your script in UTF-8.
 Summary:        Character encodings in Perl
 License:        (GPL+ or Artistic) and UCD
 Epoch:          4
-Version:        2.97
+Version:        3.01
 Requires:       %perl_compat
 Requires:       %{name}-Encode = %{epoch}:%{version}-%{release}
 Recommends:     perl-devel
@@ -1200,7 +1053,7 @@ variables to be treated as scalar or array variables.
 Summary:        System errno constants
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.29
+Version:        1.30
 Requires:       %perl_compat
 # Errno.pm bakes in kernel version at build time and compares it against
 # $Config{osvers} at run time. Match exact interpreter build. Bug #1393421.
@@ -1221,7 +1074,7 @@ which will export all POSIX defined error numbers.
 Summary:        Experimental features made easy
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.019
+Version:        0.020
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_experimental
@@ -1262,7 +1115,7 @@ Summary:        Compile and link C code for Perl modules
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.280230
+Version:        0.280231
 BuildArch:      noarch
 # C and C++ compilers are highly recommended because compiling code is the
 # purpose of ExtUtils::CBuilder, bug #1547165
@@ -1342,7 +1195,7 @@ pages, etc.
 %package ExtUtils-MakeMaker
 Summary:        Create a module Makefile
 License:        GPL+ or Artistic
-Epoch:          1
+Epoch:          2
 Version:        7.34
 # These dependencies are weak in order to relieve building noarch
 # packages from perl-devel and gcc. See bug #1547165.
@@ -1385,7 +1238,7 @@ Create a module Makefile.
 Summary:        Utilities to write and check a MANIFEST file
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        1.70
+Version:        1.72
 Requires:       %perl_compat
 Requires:       perl(File::Path)
 %if %{defined perl_bootstrap}
@@ -1401,7 +1254,7 @@ BuildArch:      noarch
 Summary:        Write the C code for perlmain.c
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.08
+Version:        1.09
 Requires:       perl-devel
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
@@ -1445,7 +1298,7 @@ Summary:        Module and a script for converting Perl XS code into C code
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        3.39
+Version:        3.40
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_ExtUtils_ParseXS
@@ -1483,7 +1336,7 @@ File::Fetch is a generic file fetching mechanism.
 Summary:        Create or remove directory trees
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.15
+Version:        2.16
 Requires:       %perl_compat
 Requires:       perl(Carp)
 %if %{defined perl_bootstrap}
@@ -1503,7 +1356,7 @@ Summary:        Return name and handle of a temporary file safely
 License:        GPL+ or Artistic
 Epoch:          1
 # Normalized version
-Version:        0.230.400
+Version:        0.230.900
 Requires:       %perl_compat
 BuildArch:      noarch
 Requires:       perl(File::Path) >= 2.06
@@ -1527,7 +1380,7 @@ can be used to create a temporary directory.
 Summary:        Perl source filters
 License:        GPL+ or Artistic
 Epoch:          2
-Version:        1.58
+Version:        1.59
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_Filter
@@ -1591,7 +1444,7 @@ enabled by default.
 Summary:        Perl input/output modules
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.39
+Version:        1.40
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_IO
@@ -1606,7 +1459,7 @@ This is a collection of Perl input/output modules.
 Summary:        IO::Compress wrapper for modules
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.074
+Version:        2.084
 Requires:       %perl_compat
 Obsoletes:      perl-Compress-Zlib <= 2.020
 Provides:       perl(IO::Uncompress::Bunzip2)
@@ -1666,7 +1519,7 @@ Summary:        Finding and running system commands made easy
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          2
-Version:        1.00
+Version:        1.02
 Requires:       perl(ExtUtils::MM::Utils)
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
@@ -1702,7 +1555,7 @@ inter-process calls.
 Summary:        A small, simple, correct HTTP/1.1 client
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        0.070
+Version:        0.076
 Requires:       perl(bytes)
 Requires:       perl(Carp)
 Requires:       perl(IO::Socket)
@@ -1724,8 +1577,7 @@ resumes after EINTR.
 %package JSON-PP
 Summary:        JSON::XS compatible pure-Perl module
 Epoch:          1
-# Real version 2.97001
-Version:        2.97.001
+Version:        4.02
 License:        GPL+ or Artistic
 BuildArch:      noarch
 Requires:       %perl_compat 
@@ -1788,33 +1640,6 @@ Conflicts:      perl-devel < 4:5.22.0-347
 The libnetcfg utility can be used to configure the libnet.
 
 %if %{dual_life} || %{rebuild_from_scratch}
-%package Locale-Codes
-Summary:        Distribution of modules to handle locale codes
-Epoch:          0
-Version:        3.25
-License:        GPL+ or Artistic
-Requires:       %perl_compat
-Requires:       perl(constant)
-Provides:       perl(Locale::Codes) = %{version}
-%if %{defined perl_bootstrap}
-%gendep_perl_Locale_Codes
-%endif
-BuildArch:      noarch
-
-# Do not export unversioned module
-%global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\(Locale::Codes\\)\\s*$
-
-# Filter dependencies on private modules. Generator:
-# for F in $(find lib -type f); do perl -e '$/ = undef; $_ = <>; if (/^package #\R([\w:]*);/m) { print qq{|^perl\\\\($1\\\\)} }' "$F"; done
-%global __requires_exclude %{?__requires_exclude:%__requires_exclude|}^perl\\(Locale::Codes::Country_Retired\\)|^perl\\(Locale::Codes::LangFam_Retired\\)|^perl\\(Locale::Codes::Script_Retired\\)|^perl\\(Locale::Codes::LangExt_Codes\\)|^perl\\(Locale::Codes::LangFam_Codes\\)|^perl\\(Locale::Codes::Script_Codes\\)|^perl\\(Locale::Codes::Language_Codes\\)|^perl\\(Locale::Codes::LangExt_Retired\\)|^perl\\(Locale::Codes::Currency_Codes\\)|^perl\\(Locale::Codes::LangVar_Retired\\)|^perl\\(Locale::Codes::Language_Retired\\)|^perl\\(Locale::Codes::Country_Codes\\)|^perl\\(Locale::Codes::LangVar_Codes\\)|^perl\\(Locale::Codes::Currency_Retired\\)
-
-%description Locale-Codes
-Locale-Codes is a distribution containing a set of modules. The modules
-each deal with different types of codes which identify parts of the locale
-including languages, countries, currency, etc.
-%endif
-
-%if %{dual_life} || %{rebuild_from_scratch}
 %package Locale-Maketext
 Summary:        Framework for localization
 License:        GPL+ or Artistic
@@ -1858,8 +1683,8 @@ to alleviate the need of creating Language Classes for module authors.
 Summary:        Arbitrary-size integer and float mathematics
 License:        GPL+ or Artistic
 Epoch:          1
-# Real version 1.999811
-Version:        1.9998.11
+# Real version 1.999816
+Version:        1.9998.16
 Requires:       %perl_compat
 Requires:       perl(Carp)
 # File::Spec not used on recent perl
@@ -1880,8 +1705,8 @@ Summary:        Math::BigInt::Calc XS implementation
 License:        GPL+ or Artistic
 Epoch:          0
 # Version normalized to dot format
-# Real version 0.5006
-Version:        0.500.600
+# Real version 0.5008
+Version:        0.500.800
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_Math_BigInt_FastCalc
@@ -1895,8 +1720,8 @@ This package provides support for faster big integer calculations.
 Summary:        Arbitrary big rational numbers
 License:        GPL+ or Artistic
 Epoch:          0
-# Real version 0.2613
-Version:        0.2613
+# Real version 0.2614
+Version:        0.2614
 Requires:       %perl_compat
 Requires:       perl(Math::BigInt)
 %if %{defined perl_bootstrap}
@@ -1973,7 +1798,7 @@ encoder/decoder. These encoding methods are specified in RFC 2045 - MIME
 Summary:        What modules are shipped with versions of perl
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20190419
+Version:        5.20190522
 Requires:       %perl_compat
 Requires:       perl(List::Util)
 Requires:       perl(version) >= 0.88
@@ -1991,7 +1816,7 @@ are shipped with each version of perl.
 Summary:        Tool for listing modules shipped with perl
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20190419
+Version:        5.20190522
 Requires:       %perl_compat
 Requires:       perl(feature)
 Requires:       perl(version) >= 0.88
@@ -2016,7 +1841,7 @@ Summary:        Runtime require of both modules and files
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.32
+Version:        0.34
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_Module_Load
@@ -2071,7 +1896,7 @@ offers you a very simple way to mark modules as loaded and/or unloaded.
 %package Module-Metadata
 Summary:        Gather package and POD information from perl module files
 Epoch:          0
-Version:        1.000033
+Version:        1.000036
 License:        GPL+ or Artistic
 BuildArch:      noarch
 Requires:       %perl_compat
@@ -2087,7 +1912,7 @@ Gather package and POD information from perl module files
 Summary:        Check a remote host for reachability
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        2.62
+Version:        2.71
 Requires:       %perl_compat
 # Keep Net::Ping::External optional
 %if %{defined perl_bootstrap}
@@ -2125,7 +1950,7 @@ Summary:        Establish an ISA relationship with base classes at compile time
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
-Version:        0.236
+Version:        0.237
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_parent
@@ -2168,7 +1993,7 @@ Params::Check is a generic input parsing/checking mechanism.
 Summary:        PathTools Perl module (Cwd, File::Spec)
 License:        (GPL+ or Artistic) and BSD
 Epoch:          0
-Version:        3.74
+Version:        3.78
 Requires:       %perl_compat
 Requires:       perl(Carp)
 %if %{defined perl_bootstrap}
@@ -2185,7 +2010,7 @@ Summary:        Frequently asked questions about Perl
 # Code examples are Public Domain
 License:        (GPL+ or Artistic) and Public Domain
 Epoch:          0
-Version:        5.021011
+Version:        5.20190126
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_perlfaq
@@ -2394,7 +2219,7 @@ verbose level is 2, then the entire manual page is printed.
 Summary:        Format POD source into various output formats
 License:        (GPL+ or Artistic) and MIT
 Epoch:          1
-Version:        4.10
+Version:        4.11
 BuildArch:      noarch
 Requires:       %perl_compat
 Requires:       perl(File::Spec) >= 0.8
@@ -2471,7 +2296,7 @@ includes all of the commonly used pound-defines like AF_INET, SOCK_STREAM, etc.
 Summary:        Persistence for Perl data structures
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        3.08
+Version:        3.15
 Requires:       %perl_compat
 # Carp substitutes missing Log::Agent
 Requires:       perl(Carp)
@@ -2589,8 +2414,8 @@ Use TAP::Parser, Test::Harness package was whole rewritten.
 %package Test-Simple
 Summary:        Basic utilities for writing tests
 License:        (GPL+ or Artistic) and CC0 and Public Domain
-Epoch:          2
-Version:        1.302133
+Epoch:          3
+Version:        1.302162
 Requires:       %perl_compat
 Requires:       perl(Data::Dumper)
 %if %{defined perl_bootstrap}
@@ -2664,7 +2489,7 @@ up long lines, it will not join short lines together.
 Summary:        Thread-safe queues
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        3.12
+Version:        3.13
 Requires:       %perl_compat
 Requires:       perl(Carp)
 %if %{defined perl_bootstrap}
@@ -2683,7 +2508,7 @@ any number of threads.
 Summary:        High resolution alarm, sleep, gettimeofday, interval timers
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.9759
+Version:        1.9760
 Requires:       %perl_compat
 Requires:       perl(Carp)
 %if %{defined perl_bootstrap}
@@ -2702,8 +2527,8 @@ high resolution time and timers.
 Summary:        Efficiently compute time from local and GMT time
 License:        GPL+ or Artistic
 Epoch:          2
-# Real version 1.25
-Version:        1.250
+# Real version 1.28
+Version:        1.280
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_Time_Local
@@ -2765,7 +2590,7 @@ variables, you need to also load threads::shared.
 Summary:        Perl extension for sharing data structures between threads
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.58
+Version:        1.60
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_threads_shared
@@ -2785,7 +2610,7 @@ hashes and hash refs.
 Summary:        Unicode Collation Algorithm
 License:        (GPL+ or Artistic) and Unicode
 Epoch:          0
-Version:        1.25
+Version:        1.27
 Requires:       %perl_compat
 Requires:       perl(Unicode::Normalize)
 %if %{defined perl_bootstrap}
@@ -2823,8 +2648,8 @@ Summary:        Perl extension for Version Objects
 License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          7
-# real version 0.9923
-Version:        0.99.23
+# real version 0.9924
+Version:        0.99.24
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_version
@@ -2852,45 +2677,6 @@ Perl extension for Version Objects
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
-%patch14 -p1
-%patch17 -p1
-%patch18 -p1
-%patch20 -p1
-%patch21 -p1
-%patch23 -p1
-%patch24 -p1
-%patch26 -p1
-%patch27 -p1
-%patch28 -p1
-%patch30 -p1
-%patch33 -p1
-%patch34 -p1
-%patch38 -p1
-%patch39 -p1
-%patch40 -p1
-%patch41 -p1
-%patch44 -p1
-%patch45 -p1
-%patch46 -p1
-%patch49 -p1
-%patch50 -p1
-%patch53 -p1
-%patch54 -p1
-%patch56 -p1
-%patch57 -p1
-%patch58 -p1
-%patch59 -p1
-%patch60 -p1
-%patch61 -p1
-%patch62 -p1
-%patch63 -p1
-%patch64 -p1
-%patch65 -p1
-%patch66 -p1
-%patch67 -p1
-%patch68 -p1
-%patch69 -p1
-%patch70 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2907,44 +2693,10 @@ perl -x patchlevel.h \
     'Fedora Patch6: Dont run one io test due to random builder failures' \
     'Fedora Patch8: Define SONAME for libperl.so' \
     'Fedora Patch9: Install libperl.so to -Dshrpdir value' \
-    'Fedora Patch10: Document Math::BigInt::CalcEmu requires Math::BigInt (CPAN RT#85015)' \
-    'Fedora Patch11: Make *DBM_File desctructors thread-safe (RT#61912)' \
-    'Fedora Patch12: Replace EU::MakeMaker dependency with EU::MM::Utils in IPC::Cmd (bug #1129443)' \
-    'Fedora Patch13: Fix executing arybase::_tie_it() in Safe compartement (RT#131588)' \
-    'Fedora Patch14: Link XS modules to pthread library to fix linking with -z defs' \
-    'Fedora Patch17: Fix printing a warning about a wide character when matching a regular expression while ISO-8859-1 locale is in effect' \
-    'Fedora Patch18: Fix invoking a check for wide characters while ISO-8859-1 locale is in effect' \
-    'Fedora Patch20: Fix build conditions in locale.c' \
-    'Fedora Patch21: Fix a file descriptor leak in in-place edits (RT#133314)' \
-    'Fedora Patch23: Fix a buffer overrun in deprecated S_is_utf8_common()' \
-    'Fedora Patch24: Fix a time race in Time-HiRes/t/itimer.t test' \
-    'Fedora Patch26: Fix Time::Piece to handle objects in overloaded methods correctly' \
-    'Fedora Patch27: Fix an assignment to a lexical variable in multiconcatenation expressions (RT#133441)' \
-    'Fedora Patch28: Fix a spurious warning about uninitialized value in warn (RT#132683)' \
-    'Fedora Patch30: Pass the correct CFLAGS to dtrace' \
-    'Fedora Patch33: Fix PathTools tests to cope with ESTALE error (RT#133534)' \
-    'Fedora Patch34: Fix an undefined behaviour in S_hv_delete_common()' \
-    'Fedora Patch38: Fix compiling regular expressions that contain both compile- and run-time compiled code blocks (RT#133687)' \
-    'Fedora Patch39: Adjust tests to gdbm-1.15 (RT#133295)' \
-    'Fedora Patch44: Fix reporting a line number for non-terminated prototypes (RT#133524)' \
-    'Fedora Patch45: Fix first eof() return value (RT#133721)' \
-    'Fedora Patch49: Prevent long jumps from clobbering local variables (RT#133575)' \
-    'Fedora Patch50: Fix a mismatch with a case-insesitive regular expression on a text with ligatures (RT#133756)' \
-    'Fedora Patch53: Fix setting magic when changing $^R (RT#133782)' \
-    'Fedora Patch54: Fix a race when loading XS modules' \
-    'Fedora Patch56: Fix a leak when compiling a typed hash dereference' \
-    'Fedora Patch58: Fix a buffer overread when handling a scope error in qr/\(?{/ (RT#133879)' \
-    'Fedora Patch59: Fix a buffer overread when parsing a regular expression with an unknown character name (RT#133880)' \
-    'Fedora Patch60: Fix mbstate_t initialization in POSIX::mblen (RT#133928)' \
-    'Fedora Patch61: Fix a memory leak when cloning a regular expression' \
-    'Fedora Patch62: Fix a memory leak when spawning threads in a BEGIN phase' \
-    'Fedora Patch63: Fix a memory leak when assigning a regular expression to a non-copy-on-write string' \
-    'Fedora Patch64: Fix a memory leak when assignig to a localized ${^WARNING_BITS}' \
-    'Fedora Patch65: Fix a memory leak when parsing misindented here-documents' \
-    'Fedora Patch66: Fix a memory leak in package name lookup (RT#133977)' \
-    'Fedora Patch68: Fix a memory leak when deletion in a tied hash dies' \
-    'Fedora Patch69: Fix a crash when matching case insensitively (RT#133892)' \
-    'Fedora Patch70: Fix a memory leak when warning about malformed UTF-8 string' \
+    'Fedora Patch10: Make *DBM_File desctructors thread-safe (RT#61912)' \
+    'Fedora Patch11: Replace EU::MakeMaker dependency with EU::MM::Utils in IPC::Cmd (bug #1129443)' \
+    'Fedora Patch12: Link XS modules to pthread library to fix linking with -z defs' \
+    'Fedora Patch13: Pass the correct CFLAGS to dtrace' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -3325,10 +3077,6 @@ popd
 %exclude %{_mandir}/man3/autodie.3*
 %exclude %{_mandir}/man3/autodie::*
 %exclude %{_mandir}/man3/Fatal.3*
-
-# B-Debug
-%exclude %{privlib}/B/Debug.pm
-%exclude %{_mandir}/man3/B::Debug.3*
 
 # bignum
 %exclude %{privlib}/bigint.pm
@@ -3771,21 +3519,6 @@ popd
 %exclude %{_bindir}/libnetcfg
 %exclude %{_mandir}/man1/libnetcfg*
 
-# Locale-Codes
-%exclude %dir %{privlib}/Locale
-%exclude %{privlib}/Locale/Codes
-%exclude %{privlib}/Locale/Codes.*
-%exclude %{privlib}/Locale/Country.*
-%exclude %{privlib}/Locale/Currency.*
-%exclude %{privlib}/Locale/Language.*
-%exclude %{privlib}/Locale/Script.*
-%exclude %{_mandir}/man3/Locale::Codes::*
-%exclude %{_mandir}/man3/Locale::Codes.*
-%exclude %{_mandir}/man3/Locale::Country.*
-%exclude %{_mandir}/man3/Locale::Currency.*
-%exclude %{_mandir}/man3/Locale::Language.*
-%exclude %{_mandir}/man3/Locale::Script.*
-
 # Locale-Maketext
 %exclude %dir %{privlib}/Locale
 %exclude %dir %{privlib}/Locale/Maketext
@@ -3811,12 +3544,10 @@ popd
 %exclude %{privlib}/Math/BigInt.pm
 %exclude %dir %exclude %{privlib}/Math/BigInt
 %exclude %{privlib}/Math/BigInt/Calc.pm
-%exclude %{privlib}/Math/BigInt/CalcEmu.pm
 %exclude %{privlib}/Math/BigInt/Lib.pm
 %exclude %{_mandir}/man3/Math::BigFloat.*
 %exclude %{_mandir}/man3/Math::BigInt.*
 %exclude %{_mandir}/man3/Math::BigInt::Calc.*
-%exclude %{_mandir}/man3/Math::BigInt::CalcEmu.*
 %exclude %{_mandir}/man3/Math::BigInt::Lib.*
 
 # Math-BigInt-FastCalc
@@ -4220,11 +3951,6 @@ popd
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
-%files B-Debug
-%dir %{privlib}/B
-%{privlib}/B/Debug.pm
-%{_mandir}/man3/B::Debug.3*
-
 %files bignum
 %{privlib}/bigint.pm
 %{privlib}/bignum.pm
@@ -4769,23 +4495,6 @@ popd
 %{_mandir}/man1/libnetcfg*
 
 %if %{dual_life} || %{rebuild_from_scratch}
-%files Locale-Codes
-%dir %{privlib}/Locale
-%{privlib}/Locale/Codes
-%{privlib}/Locale/Codes.*
-%{privlib}/Locale/Country.*
-%{privlib}/Locale/Currency.*
-%{privlib}/Locale/Language.*
-%{privlib}/Locale/Script.*
-%{_mandir}/man3/Locale::Codes::*
-%{_mandir}/man3/Locale::Codes.*
-%{_mandir}/man3/Locale::Country.*
-%{_mandir}/man3/Locale::Currency.*
-%{_mandir}/man3/Locale::Language.*
-%{_mandir}/man3/Locale::Script.*
-%endif
-
-%if %{dual_life} || %{rebuild_from_scratch}
 %files Locale-Maketext
 %dir %{privlib}/Locale
 %dir %{privlib}/Locale/Maketext
@@ -4814,12 +4523,10 @@ popd
 %{privlib}/Math/BigInt.pm
 %dir %{privlib}/Math/BigInt
 %{privlib}/Math/BigInt/Calc.pm
-%{privlib}/Math/BigInt/CalcEmu.pm
 %{privlib}/Math/BigInt/Lib.pm
 %{_mandir}/man3/Math::BigFloat.*
 %{_mandir}/man3/Math::BigInt.*
 %{_mandir}/man3/Math::BigInt::Calc.*
-%{_mandir}/man3/Math::BigInt::CalcEmu.*
 %{_mandir}/man3/Math::BigInt::Lib.*
 
 %files Math-BigInt-FastCalc
@@ -5233,6 +4940,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed May 22 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.0-437
+- 5.30.0 bump (see <https://metacpan.org/pod/release/XSAWYERX/perl-5.30.0/pod/perldelta.pod>
+  for release notes)
+
 * Tue Apr 23 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.2-436
 - 5.28.2 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.28.2/pod/perldelta.pod>
   for release notes)
