@@ -2765,6 +2765,8 @@ echo "RPM Build arch: %{_arch}"
 %global perl_vendorlib  %{privlib}/vendor_perl
 %global perl_vendorarch %{archlib}/vendor_perl
 
+%global perl_abi    %(echo '%{perl_version}' | sed 's/^\\([^.]*\\.[^.]*\\).*/\\1/')
+
 # ldflags is not used when linking XS modules.
 # Only ldflags is used when linking miniperl.
 # Only ccflags and ldflags are used for Configure's compiler checks.
@@ -2789,8 +2791,8 @@ echo "RPM Build arch: %{_arch}"
 %endif
         -Dvendorprefix=%{_prefix} \
         -Dsiteprefix=%{_prefix}/local \
-        -Dsitelib="%{_prefix}/local/share/perl5" \
-        -Dsitearch="%{_prefix}/local/%{_lib}/perl5" \
+        -Dsitelib="%{_prefix}/local/share/perl5/%{perl_abi}" \
+        -Dsitearch="%{_prefix}/local/%{_lib}/perl5/%{perl_abi}" \
         -Dprivlib="%{privlib}" \
         -Dvendorlib="%{perl_vendorlib}" \
         -Darchlib="%{archlib}" \
@@ -2840,7 +2842,7 @@ export BUILD_BZIP2 BZIP2_LIB
 
 # Prepapre a symlink from proper DSO name to libperl.so now so that new perl
 # can be executed from make.
-%global soname libperl.so.%(echo '%{perl_version}' | sed 's/^\\([^.]*\\.[^.]*\\).*/\\1/')
+%global soname libperl.so.%{perl_abi}
 test -L %soname || ln -s libperl.so %soname
 
 %ifarch sparc64 %{arm}
@@ -4940,9 +4942,12 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Wed May 22 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.0-437
+* Wed May 22 2019 Jitka Plesnikova <jplesnik@redhat.com>, Petr Pisar <ppisar@redhat.com> - 4:5.30.0-437
 - 5.30.0 bump (see <https://metacpan.org/pod/release/XSAWYERX/perl-5.30.0/pod/perldelta.pod>
   for release notes)
+- Make site paths specific to Perl minor version (e.g.
+  /usr/local/share/perl5/5.30) to prevent from an ABI clash after upgrade
+  to an ABI-incompatible Perl
 
 * Tue Apr 23 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.2-436
 - 5.28.2 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.28.2/pod/perldelta.pod>
