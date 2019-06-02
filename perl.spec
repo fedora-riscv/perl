@@ -83,7 +83,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        437%{?dist}
+Release:        438%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -4942,6 +4942,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sun Jun 02 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.0-438
+- Perl 5.30 re-rebuild of bootstrapped packages
+
 * Wed May 22 2019 Jitka Plesnikova <jplesnik@redhat.com>, Petr Pisar <ppisar@redhat.com> - 4:5.30.0-437
 - 5.30.0 bump (see <https://metacpan.org/pod/release/XSAWYERX/perl-5.30.0/pod/perldelta.pod>
   for release notes)
