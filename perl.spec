@@ -83,7 +83,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        438%{?dist}
+Release:        439%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -421,6 +421,7 @@ Most perl packages will need to install perl-devel to build.
 Summary:        Macros for rpmbuild
 License:        GPL+ or Artistic
 Requires:       %perl_compat
+Requires:       perl-interpreter
 %if %{defined perl_bootstrap}
 %gendep_perl_macros
 %endif
@@ -4942,6 +4943,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jun 11 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.0-439
+- Define %%perl_vendor*, %%perl_archlib, %%perl_privlib, because in rpm
+  4.15 those are no longer defined
+
 * Sun Jun 02 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.0-438
 - Perl 5.30 re-rebuild of bootstrapped packages
 
