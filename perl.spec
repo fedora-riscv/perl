@@ -83,7 +83,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        432%{?dist}
+Release:        433%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -613,6 +613,7 @@ Most perl packages will need to install perl-devel to build.
 Summary:        Macros for rpmbuild
 License:        GPL+ or Artistic
 Requires:       %perl_compat
+Requires:       perl-interpreter
 %if %{defined perl_bootstrap}
 %gendep_perl_macros
 %endif
@@ -5338,6 +5339,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jul 19 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-433
+- Define %%perl_vendor*, %%perl_archlib, %%perl_privlib, because in rpm
+  4.15 those are no longer defined
+
 * Thu Jul 18 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-432
 - Do not panic when evaluating non-ASCII bare words (RT#134061)
 - Fix a crash in SIGALARM handler when waiting on a child process to be closed
