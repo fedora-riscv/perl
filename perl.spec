@@ -197,6 +197,10 @@ Patch30:        perl-5.31.0-perl-133936-ensure-TO-is-honoured-for-UDP-sock-send.
 Patch31:        perl-5.31.0-perl-133936-document-differences-between-IO-Socket-a.patch
 Patch32:        perl-5.31.0-perl-133936-make-send-a-bit-saner.patch
 
+# Fix a stack underflow in readline() if passed an empty array as an argument,
+# RT133989, fixed after 5.31.0
+Patch33:        perl-5.31.0-perl-133989-scalar-the-argument-to-readline-if-any.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2747,6 +2751,7 @@ Perl extension for Version Objects
 %patch30 -p1
 %patch31 -p1
 %patch32 -p1
+%patch33 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2786,6 +2791,7 @@ perl -x patchlevel.h \
     'Fedora Patch30: Fix changing packet destination sent from a UDP IO::Socket object (RT#133936)' \
     'Fedora Patch31: Fix changing packet destination sent from a UDP IO::Socket object (RT#133936)' \
     'Fedora Patch32: Fix changing packet destination sent from a UDP IO::Socket object (RT#133936)' \
+    'Fedora Patch33: Fix a stack underflow in readline() if passed an empty array as an argument (#RT133989)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5046,6 +5052,8 @@ popd
 - Improve retrieving a scalar value of a variable modified in a signal handler
   (RT#134035)
 - Fix changing packet destination sent from a UDP IO::Socket object (RT#133936)
+- Fix a stack underflow in readline() if passed an empty array as an argument
+  (#RT133989)
 
 * Tue Jun 11 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.0-439
 - Define %%perl_vendor*, %%perl_archlib, %%perl_privlib, because in rpm
