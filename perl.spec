@@ -176,6 +176,9 @@ Patch23:        perl-5.31.0-perl-122112-remove-some-interfering-debug-output.pat
 Patch24:        perl-5.31.0-134008-More-carefully-ignore-negative-precision-in-s.patch
 Patch25:        perl-5.31.0-perl-134008-an-alternative-test.patch
 
+# Fix an erroneous assertion on OP_SCALAR, RT#134048, fixed after 5.31.0
+Patch26:        perl-5.31.0-perl-134048-prevent-an-erroneous-assertion-on-OP_SCA.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2719,6 +2722,7 @@ Perl extension for Version Objects
 %patch23 -p1
 %patch24 -p1
 %patch25 -p1
+%patch26 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2751,6 +2755,7 @@ perl -x patchlevel.h \
     'Fedora Patch23: Fix a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
     'Fedora Patch24: Fix a crash with a negative precision in sprintf function (RT#134008)' \
     'Fedora Patch25: Fix a crash with a negative precision in sprintf function (RT#134008)' \
+    'Fedora Patch26: Fix an erroneous assertion on OP_SCALAR (RT#134048)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5005,6 +5010,7 @@ popd
 - Fix a crash in SIGALARM handler when waiting on a child process to be closed
   (RT#122112)
 - Fix a crash with a negative precision in sprintf function (RT#134008)
+- Fix an erroneous assertion on OP_SCALAR (RT#134048)
 
 * Tue Jun 11 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.0-439
 - Define %%perl_vendor*, %%perl_archlib, %%perl_privlib, because in rpm
