@@ -157,6 +157,11 @@ Patch15:        perl-5.31.0-PATCH-perl-134059-panic-outputting-a-warning.patch
 # Fix memory handling when parsing string literals, fixed after 5.31.0
 Patch16:        perl-5.31.0-S_scan_const-Properly-test-if-need-to-grow.patch
 
+# Fix an undefined behavior in shifting IV variables, fixed after 5.31.0
+Patch17:        perl-5.31.0-Create-fcn-for-lossless-conversion-of-NV-to-IV.patch
+Patch18:        perl-5.30.0-pp.c-Add-two-UNLIKELY-s.patch
+Patch19:        perl-5.30.0-Remove-undefined-behavior-from-IV-shifting.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2691,6 +2696,9 @@ Perl extension for Version Objects
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2714,6 +2722,9 @@ perl -x patchlevel.h \
     'Fedora Patch14: Fix an out-of-buffer read while parsing a Unicode property name (RT#134134)' \
     'Fedora Patch15: Do not panic when outputting a warning (RT#134059)' \
     'Fedora Patch16: Fix memory handling when parsing string literals' \
+    'Fedora Patch17: Fix an undefined behavior in shifting IV variables' \
+    'Fedora Patch18: Fix an undefined behavior in shifting IV variables' \
+    'Fedora Patch19: Fix an undefined behavior in shifting IV variables' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4963,6 +4974,7 @@ popd
 - Fix an out-of-buffer read while parsing a Unicode property name (RT#134134)
 - Do not panic when outputting a warning (RT#134059)
 - Fix memory handling when parsing string literals
+- Fix an undefined behavior in shifting IV variables
 
 * Tue Jun 11 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.0-439
 - Define %%perl_vendor*, %%perl_archlib, %%perl_privlib, because in rpm
