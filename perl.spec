@@ -210,6 +210,11 @@ Patch36:        perl-5.31.0-Manuel-Mausz-is-now-a-perl-author.patch
 # fixed after 5.31.0
 Patch37:        perl-5.31.0-CAPTURE_ALL-was-intended-to-be-an-alias-for-make-it-.patch
 
+# Fix %%{^CAPTURE} value when used after @{^CAPTURE}, RT#134193,
+# fixed after 5.31.0
+Patch38:        perl-5.31.0-perl-134193-allow-CAPTURE-to-work-when-CAPTURE-comes.patch
+Patch39:        perl-5.31.0-perl-134193-make-the-varname-match-the-names.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2765,6 +2770,8 @@ Perl extension for Version Objects
 %patch35 -p1
 %patch36 -p1
 %patch37 -p1
+%patch38 -p1
+%patch39 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2809,6 +2816,8 @@ perl -x patchlevel.h \
     'Fedora Patch35: Fix setting supplementar group IDs (RT#134169)' \
     'Fedora Patch36: Fix setting supplementar group IDs (RT#134169)' \
     'Fedora Patch37: Fix %%{^CAPTURE_ALL} to be an alias for %%- variable (RT#131867)' \
+    'Fedora Patch38: Fix %%{^CAPTURE} value when used after @{^CAPTURE} (RT#134193)' \
+    'Fedora Patch39: Fix %%{^CAPTURE} value when used after @{^CAPTURE} (RT#134193)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5073,6 +5082,7 @@ popd
   (#RT133989)
 - Fix setting supplementar group IDs (RT#134169)
 - Fix %%{^CAPTURE_ALL} to be an alias for %%- variable (RT#131867)
+- Fix %%{^CAPTURE} value when used after @{^CAPTURE} (RT#134193)
 
 * Tue Jun 11 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.0-439
 - Define %%perl_vendor*, %%perl_archlib, %%perl_privlib, because in rpm
