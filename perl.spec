@@ -314,6 +314,10 @@ Patch83:        perl-5.31.0-perl-133936-make-send-a-bit-saner.patch
 # RT133989, fixed after 5.31.0
 Patch84:        perl-5.28.2-perl-133989-scalar-the-argument-to-readline-if-any.patch
 
+# Fix %%{^CAPTURE_ALL} to be an alias for %%- variable, RT#131867,
+# fixed after 5.31.0
+Patch85:        perl-5.31.0-CAPTURE_ALL-was-intended-to-be-an-alias-for-make-it-.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2943,6 +2947,7 @@ Perl extension for Version Objects
 %patch82 -p1
 %patch83 -p1
 %patch84 -p1
+%patch85 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3011,6 +3016,7 @@ perl -x patchlevel.h \
     'Fedora Patch82: Fix changing packet destination sent from a UDP IO::Socket object (RT#133936)' \
     'Fedora Patch83: Fix changing packet destination sent from a UDP IO::Socket object (RT#133936)' \
     'Fedora Patch84: Fix a stack underflow in readline() if passed an empty array as an argument (#RT133989)' \
+    'Fedora Patch85: Fix %%{^CAPTURE_ALL} to be an alias for %%- variable (RT#131867)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5311,6 +5317,7 @@ popd
 - Fix changing packet destination sent from a UDP IO::Socket object (RT#133936)
 - Fix a stack underflow in readline() if passed an empty array as an argument
   (#RT133989)
+- Fix %%{^CAPTURE_ALL} to be an alias for %%- variable (RT#131867)
 
 * Tue Apr 23 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.2-436
 - 5.28.2 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.28.2/pod/perldelta.pod>
