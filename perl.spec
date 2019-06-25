@@ -162,6 +162,9 @@ Patch17:        perl-5.31.0-Create-fcn-for-lossless-conversion-of-NV-to-IV.patch
 Patch18:        perl-5.30.0-pp.c-Add-two-UNLIKELY-s.patch
 Patch19:        perl-5.30.0-Remove-undefined-behavior-from-IV-shifting.patch
 
+# Fix stacking file test operators, CPAN RT#127073, fixed after 5.31.0
+Patch20:        perl-5.31.0-Don-t-use-PL_check-op_type-to-check-for-filetets-ops.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2699,6 +2702,7 @@ Perl extension for Version Objects
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
+%patch20 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2725,6 +2729,7 @@ perl -x patchlevel.h \
     'Fedora Patch17: Fix an undefined behavior in shifting IV variables' \
     'Fedora Patch18: Fix an undefined behavior in shifting IV variables' \
     'Fedora Patch19: Fix an undefined behavior in shifting IV variables' \
+    'Fedora Patch20: Fix stacking file test operators (CPAN RT#127073)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4975,6 +4980,7 @@ popd
 - Do not panic when outputting a warning (RT#134059)
 - Fix memory handling when parsing string literals
 - Fix an undefined behavior in shifting IV variables
+- Fix stacking file test operators (CPAN RT#127073)
 
 * Tue Jun 11 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.0-439
 - Define %%perl_vendor*, %%perl_archlib, %%perl_privlib, because in rpm
