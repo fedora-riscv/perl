@@ -165,6 +165,12 @@ Patch19:        perl-5.30.0-Remove-undefined-behavior-from-IV-shifting.patch
 # Fix stacking file test operators, CPAN RT#127073, fixed after 5.31.0
 Patch20:        perl-5.31.0-Don-t-use-PL_check-op_type-to-check-for-filetets-ops.patch
 
+# Fix a crash in SIGALARM handler when waiting on a child process to be closed,
+# RT#122112, fixed after 5.31.0
+Patch21:        perl-5.31.0-perl-122112-test-for-signal-handler-death-in-pclose.patch
+Patch22:        perl-5.31.0-perl-122112-a-simpler-fix-for-pclose-aborted-by-a-si.patch
+Patch23:        perl-5.31.0-perl-122112-remove-some-interfering-debug-output.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2703,6 +2709,9 @@ Perl extension for Version Objects
 %patch18 -p1
 %patch19 -p1
 %patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2730,6 +2739,9 @@ perl -x patchlevel.h \
     'Fedora Patch18: Fix an undefined behavior in shifting IV variables' \
     'Fedora Patch19: Fix an undefined behavior in shifting IV variables' \
     'Fedora Patch20: Fix stacking file test operators (CPAN RT#127073)' \
+    'Fedora Patch21: Fix a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
+    'Fedora Patch22: Fix a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
+    'Fedora Patch23: Fix a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4981,6 +4993,8 @@ popd
 - Fix memory handling when parsing string literals
 - Fix an undefined behavior in shifting IV variables
 - Fix stacking file test operators (CPAN RT#127073)
+- Fix a crash in SIGALARM handler when waiting on a child process to be closed
+  (RT#122112)
 
 * Tue Jun 11 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.0-439
 - Define %%perl_vendor*, %%perl_archlib, %%perl_privlib, because in rpm
