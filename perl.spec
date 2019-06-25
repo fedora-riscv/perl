@@ -191,6 +191,12 @@ Patch28:        perl-5.31.0-perl-134072-allow-foo-bar-to-work-in-main.patch
 # handler, RT#134035, fixed after 5.31.0
 Patch29:        perl-5.31.0-perl-134035-ensure-sv_gets-handles-a-signal-handler-.patch
 
+# Fix changing packet destination sent from a UDP IO::Socket object,
+# RT#133936, fixed after 5.31.0
+Patch30:        perl-5.31.0-perl-133936-ensure-TO-is-honoured-for-UDP-sock-send.patch
+Patch31:        perl-5.31.0-perl-133936-document-differences-between-IO-Socket-a.patch
+Patch32:        perl-5.31.0-perl-133936-make-send-a-bit-saner.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2738,6 +2744,9 @@ Perl extension for Version Objects
 %patch27 -p1
 %patch28 -p1
 %patch29 -p1
+%patch30 -p1
+%patch31 -p1
+%patch32 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2774,6 +2783,9 @@ perl -x patchlevel.h \
     'Fedora Patch27: Prevent from wrapping a width in a numeric format string (RT#133913)' \
     'Fedora Patch28: Fix subroutine protypes to track reference aliases (RT#134072)' \
     'Fedora Patch29: Improve retrieving a scalar value of a variable modified in a signal handler (RT#134035)' \
+    'Fedora Patch30: Fix changing packet destination sent from a UDP IO::Socket object (RT#133936)' \
+    'Fedora Patch31: Fix changing packet destination sent from a UDP IO::Socket object (RT#133936)' \
+    'Fedora Patch32: Fix changing packet destination sent from a UDP IO::Socket object (RT#133936)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5033,6 +5045,7 @@ popd
 - Fix subroutine protypes to track reference aliases (RT#134072)
 - Improve retrieving a scalar value of a variable modified in a signal handler
   (RT#134035)
+- Fix changing packet destination sent from a UDP IO::Socket object (RT#133936)
 
 * Tue Jun 11 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.0-439
 - Define %%perl_vendor*, %%perl_archlib, %%perl_privlib, because in rpm
