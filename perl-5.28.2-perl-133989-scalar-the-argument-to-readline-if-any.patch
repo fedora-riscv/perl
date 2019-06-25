@@ -1,0 +1,50 @@
+From b5af6498f25dc28766a428c65eb577162d22d69e Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Wed, 12 Jun 2019 15:21:47 +1000
+Subject: [PATCH] (perl #133989) scalar() the argument to readline, if any
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+C< readline @foo > would treat @foo as array.  If the array was empty
+this would push zero items and readline() would then pop one item,
+possibly underflowing the stack.
+
+Petr Písař: Ported to 5.28.2 from
+a8e0c1fd5ade7c30aa0782f1aea274ef89190f6d.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ op.c               | 1 +
+ t/lib/croak/pp_sys | 6 ++++++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/op.c b/op.c
+index cf90902..d1458cb 100644
+--- a/op.c
++++ b/op.c
+@@ -12041,6 +12041,7 @@ Perl_ck_readline(pTHX_ OP *o)
+     if (o->op_flags & OPf_KIDS) {
+ 	 OP *kid = cLISTOPo->op_first;
+ 	 if (kid->op_type == OP_RV2GV) kid->op_private |= OPpALLOW_FAKE;
++         scalar(kid);
+     }
+     else {
+ 	OP * const newop
+diff --git a/t/lib/croak/pp_sys b/t/lib/croak/pp_sys
+index 8b7dc9d..3fd4a9f 100644
+--- a/t/lib/croak/pp_sys
++++ b/t/lib/croak/pp_sys
+@@ -73,3 +73,9 @@ open my $ｆｏｏ, "../harness";
+ opendir $ｆｏｏ, ".";
+ EXPECT
+ Cannot open $ｆｏｏ as a dirhandle: it is already open as a filehandle at - line 5.
++########
++# NAME readline() didn't scalar() its argument
++# this would assert rather than failing on the method call
++E{0;readline@0}
++EXPECT
++Can't call method "E" without a package or object reference at - line 2.
+-- 
+2.20.1
+
