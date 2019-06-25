@@ -179,6 +179,10 @@ Patch25:        perl-5.31.0-perl-134008-an-alternative-test.patch
 # Fix an erroneous assertion on OP_SCALAR, RT#134048, fixed after 5.31.0
 Patch26:        perl-5.31.0-perl-134048-prevent-an-erroneous-assertion-on-OP_SCA.patch
 
+# Prevent from wrapping a width in a numeric format string, RT#133913,
+# fixed after 5.31.0
+Patch27:        perl-5.31.0-perl-133913-limit-numeric-format-results-to-INT_MAX.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2723,6 +2727,7 @@ Perl extension for Version Objects
 %patch24 -p1
 %patch25 -p1
 %patch26 -p1
+%patch27 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2756,6 +2761,7 @@ perl -x patchlevel.h \
     'Fedora Patch24: Fix a crash with a negative precision in sprintf function (RT#134008)' \
     'Fedora Patch25: Fix a crash with a negative precision in sprintf function (RT#134008)' \
     'Fedora Patch26: Fix an erroneous assertion on OP_SCALAR (RT#134048)' \
+    'Fedora Patch27: Prevent from wrapping a width in a numeric format string (RT#133913)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5011,6 +5017,7 @@ popd
   (RT#122112)
 - Fix a crash with a negative precision in sprintf function (RT#134008)
 - Fix an erroneous assertion on OP_SCALAR (RT#134048)
+- Prevent from wrapping a width in a numeric format string (RT#133913)
 
 * Tue Jun 11 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.0-439
 - Define %%perl_vendor*, %%perl_archlib, %%perl_privlib, because in rpm
