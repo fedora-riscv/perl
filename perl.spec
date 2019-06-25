@@ -206,6 +206,10 @@ Patch34:        perl-5.31.0-perl-134169-mg.c-reset-endptr-after-use.patch
 Patch35:        perl-5.31.0-Add-test-for-perl-134169.patch
 Patch36:        perl-5.31.0-Manuel-Mausz-is-now-a-perl-author.patch
 
+# Fix %%{^CAPTURE_ALL} to be an alias for %%- variable, RT#131867,
+# fixed after 5.31.0
+Patch37:        perl-5.31.0-CAPTURE_ALL-was-intended-to-be-an-alias-for-make-it-.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2760,6 +2764,7 @@ Perl extension for Version Objects
 %patch34 -p1
 %patch35 -p1
 %patch36 -p1
+%patch37 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2803,6 +2808,7 @@ perl -x patchlevel.h \
     'Fedora Patch34: Fix setting supplementar group IDs (RT#134169)' \
     'Fedora Patch35: Fix setting supplementar group IDs (RT#134169)' \
     'Fedora Patch36: Fix setting supplementar group IDs (RT#134169)' \
+    'Fedora Patch37: Fix %%{^CAPTURE_ALL} to be an alias for %%- variable (RT#131867)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5066,6 +5072,7 @@ popd
 - Fix a stack underflow in readline() if passed an empty array as an argument
   (#RT133989)
 - Fix setting supplementar group IDs (RT#134169)
+- Fix %%{^CAPTURE_ALL} to be an alias for %%- variable (RT#131867)
 
 * Tue Jun 11 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.0-439
 - Define %%perl_vendor*, %%perl_archlib, %%perl_privlib, because in rpm
