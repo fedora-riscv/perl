@@ -171,6 +171,11 @@ Patch21:        perl-5.31.0-perl-122112-test-for-signal-handler-death-in-pclose.
 Patch22:        perl-5.31.0-perl-122112-a-simpler-fix-for-pclose-aborted-by-a-si.patch
 Patch23:        perl-5.31.0-perl-122112-remove-some-interfering-debug-output.patch
 
+# Fix a crash with a negative precision in sprintf function, RT#134008,
+# fixed after 5.31.0
+Patch24:        perl-5.31.0-134008-More-carefully-ignore-negative-precision-in-s.patch
+Patch25:        perl-5.31.0-perl-134008-an-alternative-test.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2712,6 +2717,8 @@ Perl extension for Version Objects
 %patch21 -p1
 %patch22 -p1
 %patch23 -p1
+%patch24 -p1
+%patch25 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2742,6 +2749,8 @@ perl -x patchlevel.h \
     'Fedora Patch21: Fix a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
     'Fedora Patch22: Fix a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
     'Fedora Patch23: Fix a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
+    'Fedora Patch24: Fix a crash with a negative precision in sprintf function (RT#134008)' \
+    'Fedora Patch25: Fix a crash with a negative precision in sprintf function (RT#134008)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4995,6 +5004,7 @@ popd
 - Fix stacking file test operators (CPAN RT#127073)
 - Fix a crash in SIGALARM handler when waiting on a child process to be closed
   (RT#122112)
+- Fix a crash with a negative precision in sprintf function (RT#134008)
 
 * Tue Jun 11 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.0-439
 - Define %%perl_vendor*, %%perl_archlib, %%perl_privlib, because in rpm
