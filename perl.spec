@@ -287,6 +287,11 @@ Patch73:        perl-5.31.0-perl-122112-test-for-signal-handler-death-in-pclose.
 Patch74:        perl-5.31.0-perl-122112-a-simpler-fix-for-pclose-aborted-by-a-si.patch
 Patch75:        perl-5.31.0-perl-122112-remove-some-interfering-debug-output.patch
 
+# Fix a crash with a negative precision in sprintf function, RT#134008,
+# fixed after 5.31.0
+Patch76:        perl-5.31.0-134008-More-carefully-ignore-negative-precision-in-s.patch
+Patch77:        perl-5.31.0-perl-134008-an-alternative-test.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2907,6 +2912,8 @@ Perl extension for Version Objects
 %patch73 -p1
 %patch74 -p1
 %patch75 -p1
+%patch76 -p1
+%patch77 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2966,6 +2973,8 @@ perl -x patchlevel.h \
     'Fedora Patch73: Fix a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
     'Fedora Patch74: Fix a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
     'Fedora Patch75: Fix a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
+    'Fedora Patch76: Fix a crash with a negative precision in sprintf function (RT#134008)' \
+    'Fedora Patch77: Fix a crash with a negative precision in sprintf function (RT#134008)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5258,6 +5267,7 @@ popd
 - Do not panic when evaluating non-ASCII bare words (RT#134061)
 - Fix a crash in SIGALARM handler when waiting on a child process to be closed
   (RT#122112)
+- Fix a crash with a negative precision in sprintf function (RT#134008)
 
 * Tue Apr 23 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.2-431
 - 5.28.2 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.28.2/pod/perldelta.pod>
