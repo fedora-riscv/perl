@@ -281,6 +281,12 @@ Patch70:        perl-5.29.9-fix-leak-in-Perl__force_out_malformed_utf8_message.p
 Patch71:        perl-5.29.10-RT-134061-don-t-call-pad_findmy_pvn-with-invalid-fla.patch
 Patch72:        perl-5.29.10-perl-134061-move-the-test-to-t-uni-parser.t.patch
 
+# Fix a crash in SIGALARM handler when waiting on a child process to be closed,
+# RT#122112, fixed after 5.31.0
+Patch73:        perl-5.31.0-perl-122112-test-for-signal-handler-death-in-pclose.patch
+Patch74:        perl-5.31.0-perl-122112-a-simpler-fix-for-pclose-aborted-by-a-si.patch
+Patch75:        perl-5.31.0-perl-122112-remove-some-interfering-debug-output.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2898,6 +2904,9 @@ Perl extension for Version Objects
 %patch70 -p1
 %patch71 -p1
 %patch72 -p1
+%patch73 -p1
+%patch74 -p1
+%patch75 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2954,6 +2963,9 @@ perl -x patchlevel.h \
     'Fedora Patch70: Fix a memory leak when warning about malformed UTF-8 string' \
     'Fedora Patch71: Do not panic when evaluating non-ASCII bare words (RT#134061)' \
     'Fedora Patch72: Do not panic when evaluating non-ASCII bare words (RT#134061)' \
+    'Fedora Patch73: Fix a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
+    'Fedora Patch74: Fix a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
+    'Fedora Patch75: Fix a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5244,6 +5256,8 @@ popd
 %changelog
 * Thu Jul 18 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-432
 - Do not panic when evaluating non-ASCII bare words (RT#134061)
+- Fix a crash in SIGALARM handler when waiting on a child process to be closed
+  (RT#122112)
 
 * Tue Apr 23 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.2-431
 - 5.28.2 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.28.2/pod/perldelta.pod>
