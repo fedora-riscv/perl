@@ -27,6 +27,8 @@
 %bcond_without gdbm
 # Support for groff, bug #135101
 %bcond_without perl_enables_groff
+# Run Turkish locale tests
+%bcond_without perl_enables_turkish_test
 # Run syslog tests
 %bcond_with perl_enables_syslog_test
 # SystemTap support
@@ -275,6 +277,10 @@ BuildRequires:  zlib-devel
 BuildRequires:  gcc-c++
 %endif
 BuildRequires:  procps
+%if %{with perl_enables_turkish_test}
+# An optional t/re/fold_grind_T.t test
+BuildRequires:  glibc-langpack-tr
+%endif
 %if %{with perl_enables_syslog_test}
 BuildRequires:  rsyslog
 %endif
@@ -5093,6 +5099,7 @@ popd
 - Fix a crash on an uninitialized warning when processing a multideref node
   (RT#134275)
 - Preserve append mode when opening anonymous files (RT#134221)
+- Run Turkish locale tests
 
 * Tue Jun 25 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.0-440
 - Fix an out-of-buffer read while parsing a Unicode property name (RT#134134)
