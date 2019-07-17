@@ -83,7 +83,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        440%{?dist}
+Release:        441%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -214,6 +214,10 @@ Patch37:        perl-5.31.0-CAPTURE_ALL-was-intended-to-be-an-alias-for-make-it-
 # fixed after 5.31.0
 Patch38:        perl-5.31.0-perl-134193-allow-CAPTURE-to-work-when-CAPTURE-comes.patch
 Patch39:        perl-5.31.0-perl-134193-make-the-varname-match-the-names.patch
+
+# Fix a test for a crash in SIGALARM handler when waiting on a child process to
+# be closed, RT#122112, fixed after 5.31.1
+Patch40:        perl-5.31.1-perl-122112-make-sure-SIGPIPE-is-delivered-if-we-tes.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2772,6 +2776,7 @@ Perl extension for Version Objects
 %patch37 -p1
 %patch38 -p1
 %patch39 -p1
+%patch40 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2818,6 +2823,7 @@ perl -x patchlevel.h \
     'Fedora Patch37: Fix %%{^CAPTURE_ALL} to be an alias for %%- variable (RT#131867)' \
     'Fedora Patch38: Fix %%{^CAPTURE} value when used after @{^CAPTURE} (RT#134193)' \
     'Fedora Patch39: Fix %%{^CAPTURE} value when used after @{^CAPTURE} (RT#134193)' \
+    'Fedora Patch40: Fix a test for a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5063,6 +5069,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jul 17 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.0-441
+- Fix a test for a crash in SIGALARM handler when waiting on a child process to
+  be closed (RT#122112)
+
 * Tue Jun 25 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.0-440
 - Fix an out-of-buffer read while parsing a Unicode property name (RT#134134)
 - Do not panic when outputting a warning (RT#134059)
