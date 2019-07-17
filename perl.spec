@@ -323,6 +323,10 @@ Patch85:        perl-5.31.0-CAPTURE_ALL-was-intended-to-be-an-alias-for-make-it-
 Patch86:        perl-5.31.0-perl-134193-allow-CAPTURE-to-work-when-CAPTURE-comes.patch
 Patch87:        perl-5.31.0-perl-134193-make-the-varname-match-the-names.patch
 
+# Fix a test for a crash in SIGALARM handler when waiting on a child process to
+# be closed, RT#122112, fixed after 5.31.1
+Patch88:        perl-5.31.1-perl-122112-make-sure-SIGPIPE-is-delivered-if-we-tes.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2955,6 +2959,7 @@ Perl extension for Version Objects
 %patch85 -p1
 %patch86 -p1
 %patch87 -p1
+%patch88 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3026,6 +3031,7 @@ perl -x patchlevel.h \
     'Fedora Patch85: Fix %%{^CAPTURE_ALL} to be an alias for %%- variable (RT#131867)' \
     'Fedora Patch86: Fix %%{^CAPTURE} value when used after @{^CAPTURE} (RT#134193)' \
     'Fedora Patch87: Fix %%{^CAPTURE} value when used after @{^CAPTURE} (RT#134193)' \
+    'Fedora Patch88: Fix a test for a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5328,6 +5334,8 @@ popd
   (#RT133989)
 - Fix %%{^CAPTURE_ALL} to be an alias for %%- variable (RT#131867)
 - Fix %%{^CAPTURE} value when used after @{^CAPTURE} (RT#134193)
+- Fix a test for a crash in SIGALARM handler when waiting on a child process to
+  be closed (RT#122112)
 
 * Tue Apr 23 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.2-431
 - 5.28.2 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.28.2/pod/perldelta.pod>
