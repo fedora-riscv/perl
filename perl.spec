@@ -223,6 +223,12 @@ Patch40:        perl-5.31.1-perl-122112-make-sure-SIGPIPE-is-delivered-if-we-tes
 # RT#134275, fixed after 5.31.1
 Patch41:        perl-5.31.1-avoid-SEGV-with-uninit-warning-with-multideref.patch
 
+# Preserve append mode when opening anonymous files, RT#134221,
+# fixed after 5.31.1
+Patch42:        perl-5.30.0-perl-134221-support-append-mode-for-open-.-undef.patch
+Patch43:        perl-5.31.1-perl-134221-support-append-mode-temp-files-on-Win32-.patch
+Patch44:        perl-5.31.1-perl-134221-support-O_APPEND-for-open-.-undef-on-VMS.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2782,6 +2788,9 @@ Perl extension for Version Objects
 %patch39 -p1
 %patch40 -p1
 %patch41 -p1
+%patch42 -p1
+%patch43 -p1
+%patch44 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2830,6 +2839,9 @@ perl -x patchlevel.h \
     'Fedora Patch39: Fix %%{^CAPTURE} value when used after @{^CAPTURE} (RT#134193)' \
     'Fedora Patch40: Fix a test for a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
     'Fedora Patch41: Fix a crash on an uninitialized warning when processing a multideref node (RT#134275)' \
+    'Fedora Patch42: Preserve append mode when opening anonymous files (RT#134221)' \
+    'Fedora Patch43: Preserve append mode when opening anonymous files (RT#134221)' \
+    'Fedora Patch44: Preserve append mode when opening anonymous files (RT#134221)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5080,6 +5092,7 @@ popd
   be closed (RT#122112)
 - Fix a crash on an uninitialized warning when processing a multideref node
   (RT#134275)
+- Preserve append mode when opening anonymous files (RT#134221)
 
 * Tue Jun 25 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.0-440
 - Fix an out-of-buffer read while parsing a Unicode property name (RT#134134)
