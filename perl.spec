@@ -219,6 +219,10 @@ Patch39:        perl-5.31.0-perl-134193-make-the-varname-match-the-names.patch
 # be closed, RT#122112, fixed after 5.31.1
 Patch40:        perl-5.31.1-perl-122112-make-sure-SIGPIPE-is-delivered-if-we-tes.patch
 
+# Fix a crash on an uninitialized warning when processing a multideref node,
+# RT#134275, fixed after 5.31.1
+Patch41:        perl-5.31.1-avoid-SEGV-with-uninit-warning-with-multideref.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2777,6 +2781,7 @@ Perl extension for Version Objects
 %patch38 -p1
 %patch39 -p1
 %patch40 -p1
+%patch41 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2824,6 +2829,7 @@ perl -x patchlevel.h \
     'Fedora Patch38: Fix %%{^CAPTURE} value when used after @{^CAPTURE} (RT#134193)' \
     'Fedora Patch39: Fix %%{^CAPTURE} value when used after @{^CAPTURE} (RT#134193)' \
     'Fedora Patch40: Fix a test for a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
+    'Fedora Patch41: Fix a crash on an uninitialized warning when processing a multideref node (RT#134275)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5072,6 +5078,8 @@ popd
 * Wed Jul 17 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.0-441
 - Fix a test for a crash in SIGALARM handler when waiting on a child process to
   be closed (RT#122112)
+- Fix a crash on an uninitialized warning when processing a multideref node
+  (RT#134275)
 
 * Tue Jun 25 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.0-440
 - Fix an out-of-buffer read while parsing a Unicode property name (RT#134134)
