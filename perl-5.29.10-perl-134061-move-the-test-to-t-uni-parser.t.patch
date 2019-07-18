@@ -1,0 +1,73 @@
+From 5a6219089f705beb81145b01c1e026157d1edd47 Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Fri, 3 May 2019 10:09:06 +1000
+Subject: [PATCH] (perl #134061) move the test to t/uni/parser.t
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+porting/test_bootstrap prevents most use of use in t/comp
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ t/comp/parser_run.t | 10 +---------
+ t/uni/parser.t      |  9 ++++++++-
+ 2 files changed, 9 insertions(+), 10 deletions(-)
+
+diff --git a/t/comp/parser_run.t b/t/comp/parser_run.t
+index 4179880497..79b669d807 100644
+--- a/t/comp/parser_run.t
++++ b/t/comp/parser_run.t
+@@ -10,7 +10,7 @@ BEGIN {
+     set_up_inc( qw(. ../lib ) );
+ }
+ 
+-plan(6);
++plan(5);
+ 
+ # [perl #130814] can reallocate lineptr while looking ahead for
+ # "Missing $ on loop variable" diagnostic.
+@@ -55,13 +55,5 @@ syntax error at - line 1, at EOF
+ Execution of - aborted due to compilation errors.
+ EXPECTED
+ 
+-fresh_perl_is(<<'EOS', <<'EXPECT', {}, 'no panic in pad_findmy_pvn (#134061)');
+-use utf8;
+-eval "sort \x{100}%";
+-die $@;
+-EOS
+-syntax error at (eval 1) line 1, at EOF
+-EXPECT
+-
+ __END__
+ # ex: set ts=8 sts=4 sw=4 et:
+diff --git a/t/uni/parser.t b/t/uni/parser.t
+index 2d24f1d06d..0df238428f 100644
+--- a/t/uni/parser.t
++++ b/t/uni/parser.t
+@@ -10,7 +10,7 @@ BEGIN {
+     skip_all_without_unicode_tables();
+ }
+ 
+-plan (tests => 57);
++plan (tests => 58);
+ 
+ use utf8;
+ use open qw( :utf8 :std );
+@@ -261,6 +261,13 @@ SKIP: {
+     }
+ }
+ 
++fresh_perl_is(<<'EOS', <<'EXPECT', {}, 'no panic in pad_findmy_pvn (#134061)');
++use utf8;
++eval "sort \x{100}%";
++die $@;
++EOS
++syntax error at (eval 1) line 1, at EOF
++EXPECT
+ 
+ # New tests go here ^^^^^
+ 
+-- 
+2.20.1
+
