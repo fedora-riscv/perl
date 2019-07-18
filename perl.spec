@@ -83,7 +83,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        431%{?dist}
+Release:        432%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -275,6 +275,11 @@ Patch69:        perl-5.28.1-perl-133892-coredump-in-Perl_re_intuit_start.patch
 
 # Fix a memory leak when warning about malformed UTF-8 string
 Patch70:        perl-5.29.9-fix-leak-in-Perl__force_out_malformed_utf8_message.patch
+
+# Do not panic when evaluating non-ASCII bare words, RT#134061,
+# in upstream after 5.29.10
+Patch71:        perl-5.29.10-RT-134061-don-t-call-pad_findmy_pvn-with-invalid-fla.patch
+Patch72:        perl-5.29.10-perl-134061-move-the-test-to-t-uni-parser.t.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2891,6 +2896,8 @@ Perl extension for Version Objects
 %patch68 -p1
 %patch69 -p1
 %patch70 -p1
+%patch71 -p1
+%patch72 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2945,6 +2952,8 @@ perl -x patchlevel.h \
     'Fedora Patch68: Fix a memory leak when deletion in a tied hash dies' \
     'Fedora Patch69: Fix a crash when matching case insensitively (RT#133892)' \
     'Fedora Patch70: Fix a memory leak when warning about malformed UTF-8 string' \
+    'Fedora Patch71: Do not panic when evaluating non-ASCII bare words (RT#134061)' \
+    'Fedora Patch72: Do not panic when evaluating non-ASCII bare words (RT#134061)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5233,6 +5242,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Jul 18 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-432
+- Do not panic when evaluating non-ASCII bare words (RT#134061)
+
 * Tue Apr 23 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.28.2-431
 - 5.28.2 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.28.2/pod/perldelta.pod>
   for release notes)
