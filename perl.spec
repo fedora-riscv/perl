@@ -85,7 +85,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        441%{?dist}
+Release:        442%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -5093,6 +5093,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jul 26 2019 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.0-442
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
 * Wed Jul 17 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.0-441
 - Fix a test for a crash in SIGALARM handler when waiting on a child process to
   be closed (RT#122112)
