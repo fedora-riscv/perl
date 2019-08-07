@@ -3080,7 +3080,7 @@ perl -x patchlevel.h \
 %endif
 
 #copy the example script
-cp -a %{SOURCE5} .
+install -m 0644 %{SOURCE5} .
 
 #copy Pod-Html license clarification
 cp %{SOURCE6} .
@@ -5367,6 +5367,7 @@ popd
 - Include trailing zero in scalars holding trie data (RT#134207)
 - Fix a use after free in /(?{...})/ (RT#134208)
 - Fix a use after free in debugging output of a collation
+- Fix file mode of a perl-example.stp example
 
 * Fri Jul 19 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-433
 - Define %%perl_vendor*, %%perl_archlib, %%perl_privlib, because in rpm
