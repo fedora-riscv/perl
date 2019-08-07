@@ -235,6 +235,10 @@ Patch44:        perl-5.31.1-perl-134221-support-O_APPEND-for-open-.-undef-on-VMS
 # fixed after 5.31.2
 Patch45:        perl-5.31.2-perl-134291-propagate-non-PVs-in-in-bare-die.patch
 
+# Include trailing zero in scalars holding trie data, RT#134207,
+# fixed after 5.31.2
+Patch46:        perl-5.31.2-include-a-trailing-0-in-SVs-holding-trie-info.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2802,6 +2806,7 @@ Perl extension for Version Objects
 %patch43 -p1
 %patch44 -p1
 %patch45 -p1
+%patch46 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2854,6 +2859,7 @@ perl -x patchlevel.h \
     'Fedora Patch43: Preserve append mode when opening anonymous files (RT#134221)' \
     'Fedora Patch44: Preserve append mode when opening anonymous files (RT#134221)' \
     'Fedora Patch45: Fix propagating non-string variables in an exception value (RT#134291)' \
+    'Fedora Patch46: Include trailing zero in scalars holding trie data (RT#134207)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5101,6 +5107,7 @@ popd
 %changelog
 * Wed Aug 07 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.0-443
 - Fix propagating non-string variables in an exception value (RT#134291)
+- Include trailing zero in scalars holding trie data (RT#134207)
 
 * Fri Jul 26 2019 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.0-442
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
