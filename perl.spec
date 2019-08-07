@@ -2877,7 +2877,7 @@ perl -x patchlevel.h \
 %endif
 
 #copy the example script
-cp -a %{SOURCE5} .
+install -m 0644 %{SOURCE5} .
 
 #copy Pod-Html license clarification
 cp %{SOURCE6} .
@@ -5121,6 +5121,7 @@ popd
 - Include trailing zero in scalars holding trie data (RT#134207)
 - Fix a use after free in /(?{...})/ (RT#134208)
 - Fix a use after free in debugging output of a collation
+- Fix file mode of a perl-example.stp example
 
 * Fri Jul 26 2019 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.0-442
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
