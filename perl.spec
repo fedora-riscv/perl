@@ -242,6 +242,10 @@ Patch46:        perl-5.31.2-include-a-trailing-0-in-SVs-holding-trie-info.patch
 # Fix a use after free in /(?{...})/, RT#134208, fixed after 5.31.2
 Patch47:        perl-5.31.2-avoid-use-after-free-in.patch
 
+# Fix a use after free in debugging output of a collation,
+# in upstream after 5.31.2
+Patch48:        perl-5.31.2-locale.c-Stop-Coverity-warning.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2811,6 +2815,7 @@ Perl extension for Version Objects
 %patch45 -p1
 %patch46 -p1
 %patch47 -p1
+%patch48 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2865,6 +2870,7 @@ perl -x patchlevel.h \
     'Fedora Patch45: Fix propagating non-string variables in an exception value (RT#134291)' \
     'Fedora Patch46: Include trailing zero in scalars holding trie data (RT#134207)' \
     'Fedora Patch47: Fix a use after free in /(?{...})/ (RT#134208)' \
+    'Fedora Patch48: Fix a use after free in debugging output of a collation' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5114,6 +5120,7 @@ popd
 - Fix propagating non-string variables in an exception value (RT#134291)
 - Include trailing zero in scalars holding trie data (RT#134207)
 - Fix a use after free in /(?{...})/ (RT#134208)
+- Fix a use after free in debugging output of a collation
 
 * Fri Jul 26 2019 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.0-442
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
