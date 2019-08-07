@@ -85,7 +85,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        442%{?dist}
+Release:        443%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -230,6 +230,10 @@ Patch41:        perl-5.31.1-avoid-SEGV-with-uninit-warning-with-multideref.patch
 Patch42:        perl-5.30.0-perl-134221-support-append-mode-for-open-.-undef.patch
 Patch43:        perl-5.31.1-perl-134221-support-append-mode-temp-files-on-Win32-.patch
 Patch44:        perl-5.31.1-perl-134221-support-O_APPEND-for-open-.-undef-on-VMS.patch
+
+# Fix propagating non-string variables in an exception value, RT#134291,
+# fixed after 5.31.2
+Patch45:        perl-5.31.2-perl-134291-propagate-non-PVs-in-in-bare-die.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2797,6 +2801,7 @@ Perl extension for Version Objects
 %patch42 -p1
 %patch43 -p1
 %patch44 -p1
+%patch45 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2848,6 +2853,7 @@ perl -x patchlevel.h \
     'Fedora Patch42: Preserve append mode when opening anonymous files (RT#134221)' \
     'Fedora Patch43: Preserve append mode when opening anonymous files (RT#134221)' \
     'Fedora Patch44: Preserve append mode when opening anonymous files (RT#134221)' \
+    'Fedora Patch45: Fix propagating non-string variables in an exception value (RT#134291)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5093,6 +5099,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Aug 07 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.0-443
+- Fix propagating non-string variables in an exception value (RT#134291)
+
 * Fri Jul 26 2019 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.0-442
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
