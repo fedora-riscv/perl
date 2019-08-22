@@ -352,6 +352,9 @@ Patch95:        perl-5.31.2-avoid-use-after-free-in.patch
 # in upstream after 5.31.2
 Patch96:        perl-5.31.2-locale.c-Stop-Coverity-warning.patch
 
+# Fix a NULL pointer dereference in PerlIOVia_pushed(), fixed after 5.31.2
+Patch97:        perl-5.31.2-PerlIO-Via-check-arg-is-non-NULL-before-using-it.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2994,6 +2997,7 @@ Perl extension for Version Objects
 %patch94 -p1
 %patch95 -p1
 %patch96 -p1
+%patch97 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3074,6 +3078,7 @@ perl -x patchlevel.h \
     'Fedora Patch94: Include trailing zero in scalars holding trie data (RT#134207)' \
     'Fedora Patch95: Fix a use after free in /(?{...})/ (RT#134208)' \
     'Fedora Patch96: Fix a use after free in debugging output of a collation' \
+    'Fedora Patch97: Fix a NULL pointer dereference in PerlIOVia_pushed()' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5368,6 +5373,7 @@ popd
 - Fix a use after free in /(?{...})/ (RT#134208)
 - Fix a use after free in debugging output of a collation
 - Fix file mode of a perl-example.stp example
+- Fix a NULL pointer dereference in PerlIOVia_pushed()
 
 * Fri Jul 19 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-433
 - Define %%perl_vendor*, %%perl_archlib, %%perl_privlib, because in rpm
