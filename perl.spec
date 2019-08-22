@@ -257,6 +257,9 @@ Patch50:        perl-5.30.0-perl-134266-make-sure-is-writable-when-we-write-to-i
 # fixed after 5.31.2
 Patch51:        perl-5.31.2-regcomp.c-Don-t-read-off-the-end-of-buffer.patch
 
+# Fix a documentation about a future API change, fixed after 5.31.2
+Patch52:        perl-5.31.2-perlapi-5.30-promise-not-met-change-to-5.32.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2830,6 +2833,7 @@ Perl extension for Version Objects
 %patch49 -p1
 %patch50 -p1
 %patch51 -p1
+%patch52 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2888,6 +2892,7 @@ perl -x patchlevel.h \
     'Fedora Patch49: Fix a NULL pointer dereference in PerlIOVia_pushed()' \
     'Fedora Patch50: Fix a crash when setting $@ on unwinding a call stack (RT#134266)' \
     'Fedora Patch51: Fix parsing a denominator when parsing a Unicode property name' \
+    'Fedora Patch52: Fix a documentation about a future API change' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5137,6 +5142,7 @@ popd
 - Fix a NULL pointer dereference in PerlIOVia_pushed()
 - Fix a crash when setting $@ on unwinding a call stack (RT#134266)
 - Fix parsing a denominator when parsing a Unicode property name
+- Fix a documentation about a future API change
 
 * Wed Aug 07 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.0-443
 - Fix propagating non-string variables in an exception value (RT#134291)
