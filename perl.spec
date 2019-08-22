@@ -359,6 +359,9 @@ Patch97:        perl-5.31.2-PerlIO-Via-check-arg-is-non-NULL-before-using-it.pat
 # fixed after 5.31.2
 Patch98:        perl-5.30.0-perl-134266-make-sure-is-writable-when-we-write-to-i.patch
 
+# Fix a documentation about a future API change, fixed after 5.31.2
+Patch99:        perl-5.31.2-perlapi-5.30-promise-not-met-change-to-5.32.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3003,6 +3006,7 @@ Perl extension for Version Objects
 %patch96 -p1
 %patch97 -p1
 %patch98 -p1
+%patch99 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3085,6 +3089,7 @@ perl -x patchlevel.h \
     'Fedora Patch96: Fix a use after free in debugging output of a collation' \
     'Fedora Patch97: Fix a NULL pointer dereference in PerlIOVia_pushed()' \
     'Fedora Patch98: Fix a crash when setting $@ on unwinding a call stack (RT#134266)' \
+    'Fedora Patch99: Fix a documentation about a future API change' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5381,6 +5386,7 @@ popd
 - Fix file mode of a perl-example.stp example
 - Fix a NULL pointer dereference in PerlIOVia_pushed()
 - Fix a crash when setting $@ on unwinding a call stack (RT#134266)
+- Fix a documentation about a future API change
 
 * Fri Jul 19 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-438
 - Define %%perl_vendor*, %%perl_archlib, %%perl_privlib, because in rpm
