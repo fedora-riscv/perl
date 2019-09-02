@@ -362,6 +362,10 @@ Patch98:        perl-5.30.0-perl-134266-make-sure-is-writable-when-we-write-to-i
 # Fix a documentation about a future API change, fixed after 5.31.2
 Patch99:        perl-5.31.2-perlapi-5.30-promise-not-met-change-to-5.32.patch
 
+# Correct a misspelling in perlrebackslash documentation, RT#134395,
+# fixed after 5.31.3
+Patch100:       perl-5.31.3-Supply-missing-right-brace-in-regex-example.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3007,6 +3011,7 @@ Perl extension for Version Objects
 %patch97 -p1
 %patch98 -p1
 %patch99 -p1
+%patch100 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3090,6 +3095,7 @@ perl -x patchlevel.h \
     'Fedora Patch97: Fix a NULL pointer dereference in PerlIOVia_pushed()' \
     'Fedora Patch98: Fix a crash when setting $@ on unwinding a call stack (RT#134266)' \
     'Fedora Patch99: Fix a documentation about a future API change' \
+    'Fedora Patch100: Correct a misspelling in perlrebackslash documentation (RT#134395)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5380,6 +5386,7 @@ popd
 %changelog
 * Wed Sep 11 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-440
 - Adjust spec file to rpm-build-4.15.0-0.rc1.1
+- Correct a misspelling in perlrebackslash documentation (RT#134395)
 
 * Wed Aug 07 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-439
 - Fix propagating non-string variables in an exception value (RT#134291)
