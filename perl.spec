@@ -284,6 +284,10 @@ Patch57:        perl-5.31.3-PATCH-perl-134325-Heap-buffer-overflow.patch
 # This is a binary patch and requires git.
 Patch58:        perl-5.30.0-PATCH-perl-134329-Use-after-free-in-regcomp.c.patch
 
+# Correct a misspelling in perlrebackslash documentation, RT#134395,
+# fixed after 5.31.3
+Patch59:        perl-5.31.3-Supply-missing-right-brace-in-regex-example.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2872,6 +2876,7 @@ git add .
 git commit --author='Nobody <nobody@localhost>' --message 'Import'
 git am < %{PATCH58}
 rm -rf .git # Perl tests examine a git repository
+%patch59 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2937,6 +2942,7 @@ perl -x patchlevel.h \
     'Fedora Patch56: Do not interpret 0x and 0b prefixes when numifying strings (RT#134230)' \
     'Fedora Patch57: Fix a buffer overread when compiling a regular expression with many escapes (RT#134325)' \
     'Fedora Patch58: Fix a buffer overflow when compiling a regular expression with many branches (RT#134329)' \
+    'Fedora Patch59: Correct a misspelling in perlrebackslash documentation (RT#134395)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5192,6 +5198,7 @@ popd
   (RT#134325)
 - Fix a buffer overflow when compiling a regular expression with many branches
   (RT#134329)
+- Correct a misspelling in perlrebackslash documentation (RT#134395)
 
 * Thu Aug 22 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.0-444
 - Fix a NULL pointer dereference in PerlIOVia_pushed()
