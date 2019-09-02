@@ -2872,8 +2872,10 @@ Perl extension for Version Objects
 # PATCH-perl-134329-Use-after-free-in-regcomp.c.patch is a binary patch
 git init-db .
 git config --replace-all gc.auto 0 # Prevent from racing with "rm -rf .git"
+git config --replace-all user.email '<nobody@localhost>'
+git config --replace-all user.name 'Nobody'
 git add .
-git commit --author='Nobody <nobody@localhost>' --message 'Import'
+git commit --message 'Import'
 git am < %{PATCH58}
 rm -rf .git # Perl tests examine a git repository
 %patch59 -p1
