@@ -83,7 +83,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        439%{?dist}
+Release:        440%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -3014,9 +3014,9 @@ Perl extension for Version Objects
 # Local patch tracking
 perl -x patchlevel.h \
     'Fedora Patch1: Removes date check, Fedora/RHEL specific' \
-%ifarch %{multilib_64_archs} \
+%ifarch %{multilib_64_archs}
     'Fedora Patch2: support for libdir64' \
-%endif \
+%endif
     'Fedora Patch3: use libresolv instead of libbind' \
     'Fedora Patch4: USE_MM_LD_RUN_PATH' \
     'Fedora Patch5: Provide MM::maybe_command independently (bug #1129443)' \
@@ -5378,6 +5378,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Sep 11 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-440
+- Adjust spec file to rpm-build-4.15.0-0.rc1.1
+
 * Wed Aug 07 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-439
 - Fix propagating non-string variables in an exception value (RT#134291)
 - Include trailing zero in scalars holding trie data (RT#134207)
