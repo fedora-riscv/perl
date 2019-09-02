@@ -279,6 +279,11 @@ Patch56:        perl-5.31.3-perl-134230-don-t-interpret-0x-0b-when-numifying-str
 # RT#134325, fixed after 5.31.3
 Patch57:        perl-5.31.3-PATCH-perl-134325-Heap-buffer-overflow.patch
 
+# Fix a buffer overflow when compiling a regular expression with many
+# branches, RT#134329, fixed after 5.31.3
+# This is a binary patch and requires git.
+Patch58:        perl-5.30.0-PATCH-perl-134329-Use-after-free-in-regcomp.c.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -296,6 +301,8 @@ BuildRequires:  gcc
 %if %{with gdbm}
 BuildRequires:  gdbm-devel
 %endif
+# git for PATCH-perl-134329-Use-after-free-in-regcomp.c.patch
+BuildRequires:  git-core
 # glibc-common for iconv
 BuildRequires:  glibc-common
 %if %{with perl_enables_groff}
@@ -2858,6 +2865,13 @@ Perl extension for Version Objects
 %patch55 -p1
 %patch56 -p1
 %patch57 -p1
+# PATCH-perl-134329-Use-after-free-in-regcomp.c.patch is a binary patch
+git init-db .
+git config --replace-all gc.auto 0 # Prevent from racing with "rm -rf .git"
+git add .
+git commit --author='Nobody <nobody@localhost>' --message 'Import'
+git am < %{PATCH58}
+rm -rf .git # Perl tests examine a git repository
 %patch200 -p1
 %patch201 -p1
 
@@ -2922,6 +2936,7 @@ perl -x patchlevel.h \
     'Fedora Patch55: Fix a buffer overread when parsing a Unicode property while compiling a regular expression (RT#134133)' \
     'Fedora Patch56: Do not interpret 0x and 0b prefixes when numifying strings (RT#134230)' \
     'Fedora Patch57: Fix a buffer overread when compiling a regular expression with many escapes (RT#134325)' \
+    'Fedora Patch58: Fix a buffer overflow when compiling a regular expression with many branches (RT#134329)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5175,6 +5190,8 @@ popd
 - Do not interpret 0x and 0b prefixes when numifying strings (RT#134230)
 - Fix a buffer overread when compiling a regular expression with many escapes
   (RT#134325)
+- Fix a buffer overflow when compiling a regular expression with many branches
+  (RT#134329)
 
 * Thu Aug 22 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.0-444
 - Fix a NULL pointer dereference in PerlIOVia_pushed()
