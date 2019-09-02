@@ -271,6 +271,10 @@ Patch54:        perl-5.31.3-regcomp.c-Fix-wrong-limit-test.patch
 # a regular expression, RT#134133, fixed after 5.31.3
 Patch55:        perl-5.31.3-PATCH-perl-134133-read-beyond-end-of-buffer.patch
 
+# Do not interpret 0x and 0b prefixes when numifying strings, RT#134230,
+# fixed after 5.31.3
+Patch56:        perl-5.31.3-perl-134230-don-t-interpret-0x-0b-when-numifying-str.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2848,6 +2852,7 @@ Perl extension for Version Objects
 %patch53 -p1
 %patch54 -p1
 %patch55 -p1
+%patch56 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2910,6 +2915,7 @@ perl -x patchlevel.h \
     'Fedora Patch53: Do not run File-Find tests in parallel' \
     'Fedora Patch54: Fix parsing a Unicode property name when compiling a regular expression' \
     'Fedora Patch55: Fix a buffer overread when parsing a Unicode property while compiling a regular expression (RT#134133)' \
+    'Fedora Patch56: Do not interpret 0x and 0b prefixes when numifying strings (RT#134230)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5160,6 +5166,7 @@ popd
 - Fix parsing a Unicode property name when compiling a regular expression
 - Fix a buffer overread when parsing a Unicode property while compiling
   a regular expression (RT#134133)
+- Do not interpret 0x and 0b prefixes when numifying strings (RT#134230)
 
 * Thu Aug 22 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.0-444
 - Fix a NULL pointer dereference in PerlIOVia_pushed()
