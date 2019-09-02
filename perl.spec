@@ -263,6 +263,10 @@ Patch52:        perl-5.31.2-perlapi-5.30-promise-not-met-change-to-5.32.patch
 # Do not run File-Find tests in parallel, fixed after 5.31.2
 Patch53:        perl-5.31.2-Run-tests-in-ext-File-Find-t-in-series.patch
 
+# Fix parsing a Unicode property name when compiling a regular expression,
+# fixed after 5.31.3
+Patch54:        perl-5.31.3-regcomp.c-Fix-wrong-limit-test.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2838,6 +2842,7 @@ Perl extension for Version Objects
 %patch51 -p1
 %patch52 -p1
 %patch53 -p1
+%patch54 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2898,6 +2903,7 @@ perl -x patchlevel.h \
     'Fedora Patch51: Fix parsing a denominator when parsing a Unicode property name' \
     'Fedora Patch52: Fix a documentation about a future API change' \
     'Fedora Patch53: Do not run File-Find tests in parallel' \
+    'Fedora Patch54: Fix parsing a Unicode property name when compiling a regular expression' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5145,6 +5151,7 @@ popd
 %changelog
 * Mon Sep 02 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.0-445
 - Adjust spec file to rpm-build-4.15.0-0.rc1.1
+- Fix parsing a Unicode property name when compiling a regular expression
 
 * Thu Aug 22 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.0-444
 - Fix a NULL pointer dereference in PerlIOVia_pushed()
