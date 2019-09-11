@@ -366,7 +366,7 @@ Patch99:        perl-5.31.2-perlapi-5.30-promise-not-met-change-to-5.32.patch
 # fixed after 5.31.3
 Patch100:       perl-5.31.3-Supply-missing-right-brace-in-regex-example.patch
 
-# Fix a memory leak when matching a UTF-8 regular expression, RT#134329,
+# Fix a memory leak when matching a UTF-8 regular expression, RT#134390,
 # fixed after 5.31.3
 Patch101:       perl-5.31.3-perl-134390-don-t-leak-the-SV-we-just-created-on-an-.patch
 
@@ -3107,7 +3107,7 @@ perl -x patchlevel.h \
     'Fedora Patch98: Fix a crash when setting $@ on unwinding a call stack (RT#134266)' \
     'Fedora Patch99: Fix a documentation about a future API change' \
     'Fedora Patch100: Correct a misspelling in perlrebackslash documentation (RT#134395)' \
-    'Fedora Patch101: Fix a memory leak when matching a UTF-8 regular expression (RT#134329)' \
+    'Fedora Patch101: Fix a memory leak when matching a UTF-8 regular expression (RT#134390)' \
     'Fedora Patch102: Fix a detection for futimes (RT#134432)' \
     'Fedora Patch103: Fix a detection for futimes (RT#134432)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
@@ -5401,7 +5401,7 @@ popd
 * Wed Sep 11 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-435
 - Adjust spec file to rpm-build-4.15.0-0.rc1.1
 - Correct a misspelling in perlrebackslash documentation (RT#134395)
-- Fix a memory leak when matching a UTF-8 regular expression (RT#134329)
+- Fix a memory leak when matching a UTF-8 regular expression (RT#134390)
 - Fix a detection for futimes (RT#134432)
 
 * Wed Aug 07 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-434
