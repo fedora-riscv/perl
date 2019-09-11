@@ -292,6 +292,10 @@ Patch59:        perl-5.31.3-Supply-missing-right-brace-in-regex-example.patch
 # fixed after 5.31.3
 Patch60:        perl-5.31.3-perl-134390-don-t-leak-the-SV-we-just-created-on-an-.patch
 
+# Fix a detection for futimes, RT#134432, fixed after 5.31.3
+Patch61:        perl-5.31.3-Configure-Include-stdlib.h-in-futimes-check.patch
+Patch62:        perl-5.31.3-Florian-Weimer-is-now-a-perl-author.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2884,6 +2888,8 @@ git am < %{PATCH58}
 rm -rf .git # Perl tests examine a git repository
 %patch59 -p1
 %patch60 -p1
+%patch61 -p1
+%patch62 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2951,6 +2957,8 @@ perl -x patchlevel.h \
     'Fedora Patch58: Fix a buffer overflow when compiling a regular expression with many branches (RT#134329)' \
     'Fedora Patch59: Correct a misspelling in perlrebackslash documentation (RT#134395)' \
     'Fedora Patch60: Fix a memory leak when matching a UTF-8 regular expression (RT#134329)' \
+    'Fedora Patch61: Fix a detection for futimes (RT#134432)' \
+    'Fedora Patch62: Fix a detection for futimes (RT#134432)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5198,6 +5206,7 @@ popd
 %changelog
 * Wed Sep 11 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.0-446
 - Fix a memory leak when matching a UTF-8 regular expression (RT#134329)
+- Fix a detection for futimes (RT#134432)
 
 * Mon Sep 02 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.0-445
 - Adjust spec file to rpm-build-4.15.0-0.rc1.1
