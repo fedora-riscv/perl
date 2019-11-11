@@ -1,4 +1,4 @@
-%global perl_version    5.30.0
+%global perl_version    5.30.1
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -85,7 +85,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        446%{?dist}
+Release:        447%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -149,10 +149,6 @@ Patch12:        perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
 # Pass the correct CFLAGS to dtrace
 Patch13:        perl-5.28.0-Pass-CFLAGS-to-dtrace.patch
 
-# Fix an out-of-buffer read while parsing a Unicode property name, RT#134134,
-# fixed after 5.31.0
-Patch14:        perl-5.31.0-PATCH-perl-134134-read-beyond-end-of-buffer.patch
-
 # Do not panic when outputting a warning, RT#134059, fixed after 5.31.0
 Patch15:        perl-5.31.0-PATCH-perl-134059-panic-outputting-a-warning.patch
 
@@ -175,11 +171,7 @@ Patch23:        perl-5.31.0-perl-122112-remove-some-interfering-debug-output.pat
 
 # Fix a crash with a negative precision in sprintf function, RT#134008,
 # fixed after 5.31.0
-Patch24:        perl-5.31.0-134008-More-carefully-ignore-negative-precision-in-s.patch
 Patch25:        perl-5.31.0-perl-134008-an-alternative-test.patch
-
-# Fix an erroneous assertion on OP_SCALAR, RT#134048, fixed after 5.31.0
-Patch26:        perl-5.31.0-perl-134048-prevent-an-erroneous-assertion-on-OP_SCA.patch
 
 # Prevent from wrapping a width in a numeric format string, RT#133913,
 # fixed after 5.31.0
@@ -189,24 +181,11 @@ Patch27:        perl-5.31.0-perl-133913-limit-numeric-format-results-to-INT_MAX.
 # fixed after 5.31.0
 Patch28:        perl-5.31.0-perl-134072-allow-foo-bar-to-work-in-main.patch
 
-# Improve retrieving a scalar value of a variable modified in a signal
-# handler, RT#134035, fixed after 5.31.0
-Patch29:        perl-5.31.0-perl-134035-ensure-sv_gets-handles-a-signal-handler-.patch
-
 # Fix changing packet destination sent from a UDP IO::Socket object,
 # RT#133936, fixed after 5.31.0
 Patch30:        perl-5.31.0-perl-133936-ensure-TO-is-honoured-for-UDP-sock-send.patch
 Patch31:        perl-5.31.0-perl-133936-document-differences-between-IO-Socket-a.patch
 Patch32:        perl-5.31.0-perl-133936-make-send-a-bit-saner.patch
-
-# Fix a stack underflow in readline() if passed an empty array as an argument,
-# RT133989, fixed after 5.31.0
-Patch33:        perl-5.31.0-perl-133989-scalar-the-argument-to-readline-if-any.patch
-
-# Fix setting supplementar group IDs, RT#134169, fixed after 5.31.0
-Patch34:        perl-5.31.0-perl-134169-mg.c-reset-endptr-after-use.patch
-Patch35:        perl-5.31.0-Add-test-for-perl-134169.patch
-Patch36:        perl-5.31.0-Manuel-Mausz-is-now-a-perl-author.patch
 
 # Fix %%{^CAPTURE_ALL} to be an alias for %%- variable, RT#131867,
 # fixed after 5.31.0
@@ -239,9 +218,6 @@ Patch45:        perl-5.31.2-perl-134291-propagate-non-PVs-in-in-bare-die.patch
 # fixed after 5.31.2
 Patch46:        perl-5.31.2-include-a-trailing-0-in-SVs-holding-trie-info.patch
 
-# Fix a use after free in /(?{...})/, RT#134208, fixed after 5.31.2
-Patch47:        perl-5.31.2-avoid-use-after-free-in.patch
-
 # Fix a use after free in debugging output of a collation,
 # in upstream after 5.31.2
 Patch48:        perl-5.31.2-locale.c-Stop-Coverity-warning.patch
@@ -267,17 +243,9 @@ Patch53:        perl-5.31.2-Run-tests-in-ext-File-Find-t-in-series.patch
 # fixed after 5.31.3
 Patch54:        perl-5.31.3-regcomp.c-Fix-wrong-limit-test.patch
 
-# Fix a buffer overread when parsing a Unicode property while compiling
-# a regular expression, RT#134133, fixed after 5.31.3
-Patch55:        perl-5.31.3-PATCH-perl-134133-read-beyond-end-of-buffer.patch
-
 # Do not interpret 0x and 0b prefixes when numifying strings, RT#134230,
 # fixed after 5.31.3
 Patch56:        perl-5.31.3-perl-134230-don-t-interpret-0x-0b-when-numifying-str.patch
-
-# Fix a buffer overread when compiling a regular expression with many escapes,
-# RT#134325, fixed after 5.31.3
-Patch57:        perl-5.31.3-PATCH-perl-134325-Heap-buffer-overflow.patch
 
 # Fix a buffer overflow when compiling a regular expression with many
 # branches, RT#134329, fixed after 5.31.3
@@ -287,10 +255,6 @@ Patch58:        perl-5.30.0-PATCH-perl-134329-Use-after-free-in-regcomp.c.patch
 # Correct a misspelling in perlrebackslash documentation, RT#134395,
 # fixed after 5.31.3
 Patch59:        perl-5.31.3-Supply-missing-right-brace-in-regex-example.patch
-
-# Fix a memory leak when matching a UTF-8 regular expression, RT#134390,
-# fixed after 5.31.3
-Patch60:        perl-5.31.3-perl-134390-don-t-leak-the-SV-we-just-created-on-an-.patch
 
 # Fix a detection for futimes, RT#134432, fixed after 5.31.3
 Patch61:        perl-5.31.3-Configure-Include-stdlib.h-in-futimes-check.patch
@@ -355,7 +319,7 @@ BuildRequires:  rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.30.0)
+%global perl_compat perl(:MODULE_COMPAT_5.30.1)
 
 Requires:       %perl_compat
 Requires:       perl-interpreter%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
@@ -507,6 +471,7 @@ Summary:        The libraries for the perl run-time
 License:        (GPL+ or Artistic) and HSRL and MIT and UCD
 # Compat provides
 Provides:       %perl_compat
+Provides:       perl(:MODULE_COMPAT_5.30.0)
 # Interpreter version to fulfil required genersted from "require 5.006;"
 Provides:       perl(:VERSION) = %{perl_version}
 # Integeres are 64-bit on all platforms
@@ -1954,7 +1919,7 @@ encoder/decoder. These encoding methods are specified in RFC 2045 - MIME
 Summary:        What modules are shipped with versions of perl
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20190522
+Version:        5.20191110
 Requires:       %perl_compat
 Requires:       perl(List::Util)
 Requires:       perl(version) >= 0.88
@@ -1972,7 +1937,7 @@ are shipped with each version of perl.
 Summary:        Tool for listing modules shipped with perl
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20190522
+Version:        5.20191110
 Requires:       %perl_compat
 Requires:       perl(feature)
 Requires:       perl(version) >= 0.88
@@ -2833,7 +2798,6 @@ Perl extension for Version Objects
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
-%patch14 -p1
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
@@ -2843,19 +2807,12 @@ Perl extension for Version Objects
 %patch21 -p1
 %patch22 -p1
 %patch23 -p1
-%patch24 -p1
 %patch25 -p1
-%patch26 -p1
 %patch27 -p1
 %patch28 -p1
-%patch29 -p1
 %patch30 -p1
 %patch31 -p1
 %patch32 -p1
-%patch33 -p1
-%patch34 -p1
-%patch35 -p1
-%patch36 -p1
 %patch37 -p1
 %patch38 -p1
 %patch39 -p1
@@ -2866,7 +2823,6 @@ Perl extension for Version Objects
 %patch44 -p1
 %patch45 -p1
 %patch46 -p1
-%patch47 -p1
 %patch48 -p1
 %patch49 -p1
 %patch50 -p1
@@ -2874,9 +2830,7 @@ Perl extension for Version Objects
 %patch52 -p1
 %patch53 -p1
 %patch54 -p1
-%patch55 -p1
 %patch56 -p1
-%patch57 -p1
 # PATCH-perl-134329-Use-after-free-in-regcomp.c.patch is a binary patch
 git init-db .
 git config --replace-all gc.auto 0 # Prevent from racing with "rm -rf .git"
@@ -2887,7 +2841,6 @@ git commit --message 'Import'
 git am < %{PATCH58}
 rm -rf .git # Perl tests examine a git repository
 %patch59 -p1
-%patch60 -p1
 %patch61 -p1
 %patch62 -p1
 %patch200 -p1
@@ -2910,7 +2863,6 @@ perl -x patchlevel.h \
     'Fedora Patch11: Replace EU::MakeMaker dependency with EU::MM::Utils in IPC::Cmd (bug #1129443)' \
     'Fedora Patch12: Link XS modules to pthread library to fix linking with -z defs' \
     'Fedora Patch13: Pass the correct CFLAGS to dtrace' \
-    'Fedora Patch14: Fix an out-of-buffer read while parsing a Unicode property name (RT#134134)' \
     'Fedora Patch15: Do not panic when outputting a warning (RT#134059)' \
     'Fedora Patch16: Fix memory handling when parsing string literals' \
     'Fedora Patch17: Fix an undefined behavior in shifting IV variables' \
@@ -2920,19 +2872,12 @@ perl -x patchlevel.h \
     'Fedora Patch21: Fix a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
     'Fedora Patch22: Fix a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
     'Fedora Patch23: Fix a crash in SIGALARM handler when waiting on a child process to be closed (RT#122112)' \
-    'Fedora Patch24: Fix a crash with a negative precision in sprintf function (RT#134008)' \
     'Fedora Patch25: Fix a crash with a negative precision in sprintf function (RT#134008)' \
-    'Fedora Patch26: Fix an erroneous assertion on OP_SCALAR (RT#134048)' \
     'Fedora Patch27: Prevent from wrapping a width in a numeric format string (RT#133913)' \
     'Fedora Patch28: Fix subroutine protypes to track reference aliases (RT#134072)' \
-    'Fedora Patch29: Improve retrieving a scalar value of a variable modified in a signal handler (RT#134035)' \
     'Fedora Patch30: Fix changing packet destination sent from a UDP IO::Socket object (RT#133936)' \
     'Fedora Patch31: Fix changing packet destination sent from a UDP IO::Socket object (RT#133936)' \
     'Fedora Patch32: Fix changing packet destination sent from a UDP IO::Socket object (RT#133936)' \
-    'Fedora Patch33: Fix a stack underflow in readline() if passed an empty array as an argument (#RT133989)' \
-    'Fedora Patch34: Fix setting supplementar group IDs (RT#134169)' \
-    'Fedora Patch35: Fix setting supplementar group IDs (RT#134169)' \
-    'Fedora Patch36: Fix setting supplementar group IDs (RT#134169)' \
     'Fedora Patch37: Fix %%{^CAPTURE_ALL} to be an alias for %%- variable (RT#131867)' \
     'Fedora Patch38: Fix %%{^CAPTURE} value when used after @{^CAPTURE} (RT#134193)' \
     'Fedora Patch39: Fix %%{^CAPTURE} value when used after @{^CAPTURE} (RT#134193)' \
@@ -2943,7 +2888,6 @@ perl -x patchlevel.h \
     'Fedora Patch44: Preserve append mode when opening anonymous files (RT#134221)' \
     'Fedora Patch45: Fix propagating non-string variables in an exception value (RT#134291)' \
     'Fedora Patch46: Include trailing zero in scalars holding trie data (RT#134207)' \
-    'Fedora Patch47: Fix a use after free in /(?{...})/ (RT#134208)' \
     'Fedora Patch48: Fix a use after free in debugging output of a collation' \
     'Fedora Patch49: Fix a NULL pointer dereference in PerlIOVia_pushed()' \
     'Fedora Patch50: Fix a crash when setting $@ on unwinding a call stack (RT#134266)' \
@@ -2951,12 +2895,9 @@ perl -x patchlevel.h \
     'Fedora Patch52: Fix a documentation about a future API change' \
     'Fedora Patch53: Do not run File-Find tests in parallel' \
     'Fedora Patch54: Fix parsing a Unicode property name when compiling a regular expression' \
-    'Fedora Patch55: Fix a buffer overread when parsing a Unicode property while compiling a regular expression (RT#134133)' \
     'Fedora Patch56: Do not interpret 0x and 0b prefixes when numifying strings (RT#134230)' \
-    'Fedora Patch57: Fix a buffer overread when compiling a regular expression with many escapes (RT#134325)' \
     'Fedora Patch58: Fix a buffer overflow when compiling a regular expression with many branches (RT#134329)' \
     'Fedora Patch59: Correct a misspelling in perlrebackslash documentation (RT#134395)' \
-    'Fedora Patch60: Fix a memory leak when matching a UTF-8 regular expression (RT#134390)' \
     'Fedora Patch61: Fix a detection for futimes (RT#134432)' \
     'Fedora Patch62: Fix a detection for futimes (RT#134432)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
@@ -5204,6 +5145,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Nov 11 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.1-447
+- 5.30.1 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.30.1/pod/perldelta.pod>
+  for release notes)
+
 * Wed Sep 11 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.0-446
 - Fix a memory leak when matching a UTF-8 regular expression (RT#134390)
 - Fix a detection for futimes (RT#134432)
