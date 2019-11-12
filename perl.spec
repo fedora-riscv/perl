@@ -378,6 +378,10 @@ Patch103:       perl-5.31.3-Florian-Weimer-is-now-a-perl-author.patch
 # RT#134409, in upstream after 5.31.3 and in 5.30.1
 Patch104:       perl-5.28.2-Avoid-panic-when-last-s-g-is-tainted-and-utf8.patch
 
+# Fix overloading for binary and octal floats, RT#125557,
+# in upstream after 5.31.3
+Patch105:       perl-5.30.1-perl-125557-correctly-handle-overload-for-bin-oct-fl.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3028,6 +3032,7 @@ Perl extension for Version Objects
 %patch102 -p1
 %patch103 -p1
 %patch104 -p1
+%patch105 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3116,6 +3121,7 @@ perl -x patchlevel.h \
     'Fedora Patch102: Fix a detection for futimes (RT#134432)' \
     'Fedora Patch103: Fix a detection for futimes (RT#134432)' \
     'Fedora Patch104: Avoid panic when last value of search-and-replace is tainted and UTF-8 (RT#134409)' \
+    'Fedora Patch105: Fix overloading for binary and octal floats (RT#125557)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5407,6 +5413,7 @@ popd
 * Fri Nov 29 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-441
 - Avoid panic when last value of search-and-replace is tainted and UTF-8
   (RT#134409)
+- Fix overloading for binary and octal floats (RT#125557)
 
 * Wed Sep 11 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-440
 - Adjust spec file to rpm-build-4.15.0-0.rc1.1
