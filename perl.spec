@@ -268,6 +268,10 @@ Patch63:        perl-5.30.1-perl-125557-correctly-handle-overload-for-bin-oct-fl
 # in upstream after 5.31.4
 Patch64:        perl-5.31.4-Handle-undefined-values-correctly.patch
 
+# Fix taint mode documentation regarding @INC, in upstream after 5.31.5
+Patch65:        perl-5.31.5-Fix-taint-mode-INC-documentation.patch
+Patch66:        perl-5.31.5-Be-clearer-about-taint-s-effect-on-INC.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2853,6 +2857,8 @@ rm -rf .git # Perl tests examine a git repository
 %patch62 -p1
 %patch63 -p1
 %patch64 -p1
+%patch65 -p1
+%patch66 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2912,6 +2918,8 @@ perl -x patchlevel.h \
     'Fedora Patch62: Fix a detection for futimes (RT#134432)' \
     'Fedora Patch63: Fix overloading for binary and octal floats (RT#125557)' \
     'Fedora Patch64: Fix handling undefined array members in Dumpvalue (RT#134441)' \
+    'Fedora Patch65: Fix taint mode documentation regarding @INC' \
+    'Fedora Patch66: Fix taint mode documentation regarding @INC' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5160,6 +5168,7 @@ popd
 * Tue Nov 12 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.1-448
 - Fix overloading for binary and octal floats (RT#125557)
 - Fix handling undefined array members in Dumpvalue (RT#134441)
+- Fix taint mode documentation regarding @INC
 
 * Mon Nov 11 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.1-447
 - 5.30.1 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.30.1/pod/perldelta.pod>
