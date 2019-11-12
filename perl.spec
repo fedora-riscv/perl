@@ -394,6 +394,11 @@ Patch108:       perl-5.31.5-Be-clearer-about-taint-s-effect-on-INC.patch
 # in upstream after 5.31.5
 Patch109:       perl-5.31.5-Tie-StdHandle-BINMODE-handle-layer-argument.patch
 
+# Fix an unintended upgrade to UTF-8 in the middle of a transliteration,
+# in upstream after 5.31.5
+Patch110:       perl-5.28.2-toke.c-Fix-bug-tr-upgrading-to-UTF-8-in-middle.patch
+Patch111:       perl-5.28.2-toke.c-comment-changes.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3049,6 +3054,8 @@ Perl extension for Version Objects
 %patch107 -p1
 %patch108 -p1
 %patch109 -p1
+%patch110 -p1
+%patch111 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3142,6 +3149,8 @@ perl -x patchlevel.h \
     'Fedora Patch107: Fix taint mode documentation regarding @INC' \
     'Fedora Patch108: Fix taint mode documentation regarding @INC' \
     'Fedora Patch109: Fix handling a layer argument in Tie::StdHandle::BINMODE() (RT#132475)' \
+    'Fedora Patch110: Fix an unintended upgrade to UTF-8 in the middle of a transliteration' \
+    'Fedora Patch111: Fix an unintended upgrade to UTF-8 in the middle of a transliteration' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5437,6 +5446,7 @@ popd
 - Fix handling undefined array members in Dumpvalue (RT#134441)
 - Fix taint mode documentation regarding @INC
 - Fix handling a layer argument in Tie::StdHandle::BINMODE() (RT#132475)
+- Fix an unintended upgrade to UTF-8 in the middle of a transliteration
 
 * Wed Sep 11 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-440
 - Adjust spec file to rpm-build-4.15.0-0.rc1.1
