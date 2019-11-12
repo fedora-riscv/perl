@@ -288,6 +288,10 @@ Patch70:        perl-5.31.5-prevent-a-race-between-name-based-stat-and-an-open-m
 # in upstream after 5.31.5
 Patch71:        perl-5.30.1-handle-s-being-updated-without-len-being-updated.patch
 
+# Fix GCC 10 version detection, proposed to upstream
+# <https://github.com/Perl/perl5/pull/17295>
+Patch72:        perl-5.31.5-Adapt-Configure-to-GCC-version-10.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2880,6 +2884,7 @@ rm -rf .git # Perl tests examine a git repository
 %patch69 -p1
 %patch70 -p1
 %patch71 -p1
+%patch72 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2946,6 +2951,7 @@ perl -x patchlevel.h \
     'Fedora Patch69: Fix an unintended upgrade to UTF-8 in the middle of a transliteration' \
     'Fedora Patch70: Fix a race in File::stat() tests (GH#17234)' \
     'Fedora Patch71: Fix a buffer overread in when parsing a number (GH#17279)' \
+    'Fedora Patch72: Fix GCC 10 version detection (GH#17295)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5199,6 +5205,7 @@ popd
 - Fix an unintended upgrade to UTF-8 in the middle of a transliteration
 - Fix a race in File::stat() tests (GH#17234)
 - Fix a buffer overread in when parsing a number (GH#17279)
+- Fix GCC 10 version detection (GH#17295)
 
 * Mon Nov 11 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.1-447
 - 5.30.1 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.30.1/pod/perldelta.pod>
