@@ -402,6 +402,10 @@ Patch111:       perl-5.28.2-toke.c-comment-changes.patch
 # Fix a race in File::stat() tests, GH#17234, in upstream after 5.31.5
 Patch112:       perl-5.31.5-prevent-a-race-between-name-based-stat-and-an-open-m.patch
 
+# Fix GCC 10 version detection, proposed to upstream
+# <https://github.com/Perl/perl5/pull/17295>
+Patch113:       perl-5.28.2-Adapt-Configure-to-GCC-version-10.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3060,6 +3064,7 @@ Perl extension for Version Objects
 %patch110 -p1
 %patch111 -p1
 %patch112 -p1
+%patch113 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3156,6 +3161,7 @@ perl -x patchlevel.h \
     'Fedora Patch110: Fix an unintended upgrade to UTF-8 in the middle of a transliteration' \
     'Fedora Patch111: Fix an unintended upgrade to UTF-8 in the middle of a transliteration' \
     'Fedora Patch112: Fix a race in File::stat() tests (GH#17234)' \
+    'Fedora Patch113: Fix GCC 10 version detection (GH#17295)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5453,6 +5459,7 @@ popd
 - Fix handling a layer argument in Tie::StdHandle::BINMODE() (RT#132475)
 - Fix an unintended upgrade to UTF-8 in the middle of a transliteration
 - Fix a race in File::stat() tests (GH#17234)
+- Fix GCC 10 version detection (GH#17295)
 
 * Wed Sep 11 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-440
 - Adjust spec file to rpm-build-4.15.0-0.rc1.1
