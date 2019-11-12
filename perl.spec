@@ -272,6 +272,10 @@ Patch64:        perl-5.31.4-Handle-undefined-values-correctly.patch
 Patch65:        perl-5.31.5-Fix-taint-mode-INC-documentation.patch
 Patch66:        perl-5.31.5-Be-clearer-about-taint-s-effect-on-INC.patch
 
+# Fix handling a layer argument in Tie::StdHandle::BINMODE(), RT#132475,
+# in upstream after 5.31.5
+Patch67:        perl-5.31.5-Tie-StdHandle-BINMODE-handle-layer-argument.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2859,6 +2863,7 @@ rm -rf .git # Perl tests examine a git repository
 %patch64 -p1
 %patch65 -p1
 %patch66 -p1
+%patch67 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2920,6 +2925,7 @@ perl -x patchlevel.h \
     'Fedora Patch64: Fix handling undefined array members in Dumpvalue (RT#134441)' \
     'Fedora Patch65: Fix taint mode documentation regarding @INC' \
     'Fedora Patch66: Fix taint mode documentation regarding @INC' \
+    'Fedora Patch67: Fix handling a layer argument in Tie::StdHandle::BINMODE() (RT#132475)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5169,6 +5175,7 @@ popd
 - Fix overloading for binary and octal floats (RT#125557)
 - Fix handling undefined array members in Dumpvalue (RT#134441)
 - Fix taint mode documentation regarding @INC
+- Fix handling a layer argument in Tie::StdHandle::BINMODE() (RT#132475)
 
 * Mon Nov 11 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.1-447
 - 5.30.1 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.30.1/pod/perldelta.pod>
