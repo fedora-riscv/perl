@@ -284,6 +284,10 @@ Patch69:        perl-5.31.5-toke.c-comment-changes.patch
 # Fix a race in File::stat() tests, GH#17234, in upstream after 5.31.5
 Patch70:        perl-5.31.5-prevent-a-race-between-name-based-stat-and-an-open-m.patch
 
+# Fix a buffer overread in when parsing a number, GH#17279,
+# in upstream after 5.31.5
+Patch71:        perl-5.30.1-handle-s-being-updated-without-len-being-updated.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2875,6 +2879,7 @@ rm -rf .git # Perl tests examine a git repository
 %patch68 -p1
 %patch69 -p1
 %patch70 -p1
+%patch71 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2940,6 +2945,7 @@ perl -x patchlevel.h \
     'Fedora Patch68: Fix an unintended upgrade to UTF-8 in the middle of a transliteration' \
     'Fedora Patch69: Fix an unintended upgrade to UTF-8 in the middle of a transliteration' \
     'Fedora Patch70: Fix a race in File::stat() tests (GH#17234)' \
+    'Fedora Patch71: Fix a buffer overread in when parsing a number (GH#17279)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5192,6 +5198,7 @@ popd
 - Fix handling a layer argument in Tie::StdHandle::BINMODE() (RT#132475)
 - Fix an unintended upgrade to UTF-8 in the middle of a transliteration
 - Fix a race in File::stat() tests (GH#17234)
+- Fix a buffer overread in when parsing a number (GH#17279)
 
 * Mon Nov 11 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.1-447
 - 5.30.1 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.30.1/pod/perldelta.pod>
