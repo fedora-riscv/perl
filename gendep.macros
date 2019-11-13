@@ -1791,7 +1791,7 @@ Provides: perl(DBM_Filter::int32) = 0.03 \
 Provides: perl(DBM_Filter::null) = 0.03 \
 Provides: perl(DBM_Filter::utf8) = 0.03 \
 Provides: perl(DirHandle) = 1.05 \
-Provides: perl(Dumpvalue) = 1.18 \
+Provides: perl(Dumpvalue) = 1.19 \
 Provides: perl(DynaLoader) = 1.45 \
 Provides: perl(EVERY::LAST) \
 Provides: perl(English) = 1.10 \
@@ -1876,7 +1876,7 @@ Provides: perl(Tie::RefHash) = 1.39 \
 Provides: perl(Tie::RefHash::Nestable) \
 Provides: perl(Tie::Scalar) = 1.04 \
 Provides: perl(Tie::StdArray) \
-Provides: perl(Tie::StdHandle) = 4.5 \
+Provides: perl(Tie::StdHandle) = 4.6 \
 Provides: perl(Tie::StdHash) \
 Provides: perl(Tie::StdScalar) \
 Provides: perl(Tie::SubstrHash) = 1.00 \
