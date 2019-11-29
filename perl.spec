@@ -402,8 +402,8 @@ Patch111:       perl-5.28.2-toke.c-comment-changes.patch
 # Fix a race in File::stat() tests, GH#17234, in upstream after 5.31.5
 Patch112:       perl-5.31.5-prevent-a-race-between-name-based-stat-and-an-open-m.patch
 
-# Fix GCC 10 version detection, proposed to upstream
-# <https://github.com/Perl/perl5/pull/17295>
+# Fix GCC 10 version detection, <https://github.com/Perl/perl5/pull/17295>,
+# in upstream after 5.31.5
 Patch113:       perl-5.28.2-Adapt-Configure-to-GCC-version-10.patch
 
 # Fix a memory leak when compiling a regular expression with a non-word class,
