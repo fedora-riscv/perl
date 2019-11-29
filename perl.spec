@@ -288,8 +288,8 @@ Patch70:        perl-5.31.5-prevent-a-race-between-name-based-stat-and-an-open-m
 # in upstream after 5.31.5
 Patch71:        perl-5.30.1-handle-s-being-updated-without-len-being-updated.patch
 
-# Fix GCC 10 version detection, proposed to upstream
-# <https://github.com/Perl/perl5/pull/17295>
+# Fix GCC 10 version detection, <https://github.com/Perl/perl5/pull/17295>,
+# in upstream after 5.31.5
 Patch72:        perl-5.31.5-Adapt-Configure-to-GCC-version-10.patch
 
 # Fix a memory leak when compiling a regular expression with a non-word class,
