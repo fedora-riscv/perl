@@ -406,6 +406,10 @@ Patch112:       perl-5.31.5-prevent-a-race-between-name-based-stat-and-an-open-m
 # <https://github.com/Perl/perl5/pull/17295>
 Patch113:       perl-5.28.2-Adapt-Configure-to-GCC-version-10.patch
 
+# Fix a memory leak when compiling a regular expression with a non-word class,
+# GH#17218, in upsream after 5.31.5
+Patch114:       perl-5.31.5-PATCH-gh-17218-memory-leak.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3065,6 +3069,7 @@ Perl extension for Version Objects
 %patch111 -p1
 %patch112 -p1
 %patch113 -p1
+%patch114 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3162,6 +3167,7 @@ perl -x patchlevel.h \
     'Fedora Patch111: Fix an unintended upgrade to UTF-8 in the middle of a transliteration' \
     'Fedora Patch112: Fix a race in File::stat() tests (GH#17234)' \
     'Fedora Patch113: Fix GCC 10 version detection (GH#17295)' \
+    'Fedora Patch114: Fix a memory leak when compiling a regular expression with a non-word class (GH#17218)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5460,6 +5466,8 @@ popd
 - Fix an unintended upgrade to UTF-8 in the middle of a transliteration
 - Fix a race in File::stat() tests (GH#17234)
 - Fix GCC 10 version detection (GH#17295)
+- Fix a memory leak when compiling a regular expression with a non-word class
+  (GH#17218)
 
 * Wed Sep 11 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-440
 - Adjust spec file to rpm-build-4.15.0-0.rc1.1
