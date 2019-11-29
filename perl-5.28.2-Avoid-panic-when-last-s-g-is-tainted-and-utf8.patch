@@ -1,0 +1,118 @@
+From d06bdcdc28609d94fe8f09f9ddba83b924aeba54 Mon Sep 17 00:00:00 2001
+From: David Mitchell <davem@iabyn.com>
+Date: Sat, 14 Sep 2019 16:18:46 +0100
+Subject: [PATCH] Avoid panic when last s///g is tainted and utf8
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+RT #134409
+
+In a repeated substitution, where the replacement is an expression,
+and when the last replacement value is both tainted and utf8, and
+everything earlier has been plain, and the final string is suitably
+shorter than the original, a panic resulted:
+
+    sv_pos_b2u: bad byte offset, blen=1, byte=6
+
+This is because when at the end, taint magic is being being added to
+the target of the s///, the target SV has already had its buffer updated
+with the shorter result string, but still has the pos() magic set which
+corresponded to the original longer string (this pos value would, in the
+normal flow of things, be reset shortly afterwards).
+
+One quirk of sv_magic(), which adds any sort of magic including taint
+magic, is that it always checks for the presence of pos() magic, and if
+so, converts the byte to utf8 offset if necessary. This was seeing the
+invalid pos() offset and panicing.
+
+The check was added by v5.19.3-111-g25fdce4a16:
+    "Stop pos() from being confused by changing utf8ness"
+It seems like a bit of hack to recalibrate pos() each time sv_magic()
+is called, but I've left that alone (sleeping dogs and all that) and
+instead added a hack in the taint code path in pp_substcont to reset pos
+before setting taint.
+
+Petr Písař: Ported to 5.28.2 from
+4a69216a74159df74779841fa79d731bcc5c6a9d.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ pp_ctl.c     | 18 ++++++++++++++++++
+ t/op/taint.t | 24 +++++++++++++++++++++++-
+ 2 files changed, 41 insertions(+), 1 deletion(-)
+
+diff --git a/pp_ctl.c b/pp_ctl.c
+index dd82069..e05b4fc 100644
+--- a/pp_ctl.c
++++ b/pp_ctl.c
+@@ -275,6 +275,24 @@ PP(pp_substcont)
+                     cBOOL(cx->sb_rxtainted &
+ 			  (SUBST_TAINT_STR|SUBST_TAINT_PAT|SUBST_TAINT_REPL))
+                 );
++
++                /* sv_magic(), when adding magic (e.g.taint magic), also
++                 * recalculates any pos() magic, converting any byte offset
++                 * to utf8 offset. Make sure pos() is reset before this
++                 * happens rather than using the now invalid value (since
++                 * we've just replaced targ's pvx buffer with the
++                 * potentially shorter dstr buffer). Normally (i.e. in
++                 * non-taint cases), pos() gets removed a few lines later
++                 * with the SvSETMAGIC().
++                 */
++                {
++                    MAGIC *mg;
++                    mg = mg_find_mglob(targ);
++                    if (mg) {
++                        MgBYTEPOS_set(mg, targ, SvPVX(targ), -1);
++                    }
++                }
++
+ 		SvTAINT(TARG);
+ 	    }
+ 	    /* PL_tainted must be correctly set for this mg_set */
+diff --git a/t/op/taint.t b/t/op/taint.t
+index 9edaa55..db8d3e6 100644
+--- a/t/op/taint.t
++++ b/t/op/taint.t
+@@ -17,7 +17,7 @@ BEGIN {
+ use strict;
+ use Config;
+ 
+-plan tests => 1041;
++plan tests => 1042;
+ 
+ $| = 1;
+ 
+@@ -2873,6 +2873,28 @@ is_tainted("$ovtaint", "overload preserves taint");
+     ok(!!($s =~ s/a/x/g), "RT #132385");
+ }
+ 
++# RT #134409
++# When the last substitution added both taint and utf8, adding taint
++# magic to the result also triggered a byte-to-utf8 recalulation of the
++# existing pos() magic, which had not yet been reset, resulting in a panic
++# about pos() being off the end of the string.
++{
++    my $utf8_taint = substr($^X,0,0);
++    utf8::upgrade($utf8_taint);
++
++    my %map = (
++        'UTF8'    => "$utf8_taint",
++        'PLAIN' => '',
++    );
++
++
++    my $v = "PLAIN UTF8";
++    my $c = eval { $v =~ s/(\w+)/$map{$1}/g; };
++    is($c, 2, "RT #134409")
++        or diag("\$@ = [$@]");
++}
++
++
+ # This may bomb out with the alarm signal so keep it last
+ SKIP: {
+     skip "No alarm()"  unless $Config{d_alarm};
+-- 
+2.21.0
+

@@ -83,7 +83,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        440%{?dist}
+Release:        441%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -373,6 +373,10 @@ Patch101:       perl-5.31.3-perl-134390-don-t-leak-the-SV-we-just-created-on-an-
 # Fix a detection for futimes, RT#134432, fixed after 5.31.3
 Patch102:       perl-5.31.3-Configure-Include-stdlib.h-in-futimes-check.patch
 Patch103:       perl-5.31.3-Florian-Weimer-is-now-a-perl-author.patch
+
+# Avoid panic when last value of search-and-replace is tainted and UTF-8,
+# RT#134409, in upstream after 5.31.3 and in 5.30.1
+Patch104:       perl-5.28.2-Avoid-panic-when-last-s-g-is-tainted-and-utf8.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -3023,6 +3027,7 @@ Perl extension for Version Objects
 %patch101 -p1
 %patch102 -p1
 %patch103 -p1
+%patch104 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3110,6 +3115,7 @@ perl -x patchlevel.h \
     'Fedora Patch101: Fix a memory leak when matching a UTF-8 regular expression (RT#134390)' \
     'Fedora Patch102: Fix a detection for futimes (RT#134432)' \
     'Fedora Patch103: Fix a detection for futimes (RT#134432)' \
+    'Fedora Patch104: Avoid panic when last value of search-and-replace is tainted and UTF-8 (RT#134409)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5398,6 +5404,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Nov 29 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-441
+- Avoid panic when last value of search-and-replace is tainted and UTF-8
+  (RT#134409)
+
 * Wed Sep 11 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-440
 - Adjust spec file to rpm-build-4.15.0-0.rc1.1
 - Correct a misspelling in perlrebackslash documentation (RT#134395)
