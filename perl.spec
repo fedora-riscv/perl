@@ -85,7 +85,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        448%{?dist}
+Release:        449%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -291,6 +291,10 @@ Patch71:        perl-5.30.1-handle-s-being-updated-without-len-being-updated.pat
 # Fix GCC 10 version detection, proposed to upstream
 # <https://github.com/Perl/perl5/pull/17295>
 Patch72:        perl-5.31.5-Adapt-Configure-to-GCC-version-10.patch
+
+# Fix a memory leak when compiling a regular expression with a non-word class,
+# GH#17218, in upsream after 5.31.5
+Patch73:        perl-5.31.5-PATCH-gh-17218-memory-leak.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2885,6 +2889,7 @@ rm -rf .git # Perl tests examine a git repository
 %patch70 -p1
 %patch71 -p1
 %patch72 -p1
+%patch73 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2952,6 +2957,7 @@ perl -x patchlevel.h \
     'Fedora Patch70: Fix a race in File::stat() tests (GH#17234)' \
     'Fedora Patch71: Fix a buffer overread when parsing a number (GH#17279)' \
     'Fedora Patch72: Fix GCC 10 version detection (GH#17295)' \
+    'Fedora Patch73: Fix a memory leak when compiling a regular expression with a non-word class (GH#17218)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5197,6 +5203,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Nov 29 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.1-449
+- Fix a memory leak when compiling a regular expression with a non-word class
+  (GH#17218)
+
 * Tue Nov 12 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.1-448
 - Fix overloading for binary and octal floats (RT#125557)
 - Fix handling undefined array members in Dumpvalue (RT#134441)
