@@ -36,6 +36,19 @@ Requires: perl(strict) \
 Requires: perl(warnings) \
 Provides: perl(Attribute::Handlers) = 1.01 \
 %{nil}
+%global gendep_perl_AutoLoader \
+Provides: perl(AutoLoader) = 5.74 \
+Requires: perl(strict) \
+%{nil}
+%global gendep_perl_AutoSplit \
+Provides: perl(AutoSplit) = 1.06 \
+Requires: perl(Config) \
+Requires: perl(Exporter) \
+Requires: perl(File::Basename) \
+Requires: perl(File::Path) \
+Requires: perl(File::Spec::Functions) \
+Requires: perl(strict) \
+%{nil}
 %global gendep_perl_CPAN \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(App::Cpan) \
@@ -1730,9 +1743,7 @@ Requires: perl(ExtUtils::Constant::Utils) \
 Requires: perl(ExtUtils::Constant::XS) \
 Requires: perl(Fcntl) \
 Requires: perl(File::Basename) \
-Requires: perl(File::Path) \
 Requires: perl(File::Spec) \
-Requires: perl(File::Spec::Functions) \
 Requires: perl(I18N::LangTags) \
 Requires: perl(IO::File) \
 Requires: perl(IPC::Open3) \
@@ -1768,8 +1779,6 @@ Requires: perl(vars) \
 Requires: perl(warnings) \
 Requires: perl(warnings::register) \
 Provides: perl(AnyDBM_File) = 1.01 \
-Provides: perl(AutoLoader) = 5.74 \
-Provides: perl(AutoSplit) = 1.06 \
 Provides: perl(B) = 1.76 \
 Provides: perl(B::Concise) = 1.004 \
 Provides: perl(B::Deparse) = 1.49 \

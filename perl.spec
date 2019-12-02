@@ -85,7 +85,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        450%{?dist}
+Release:        451%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -368,6 +368,7 @@ Requires:       perl-utils
 %endif
 
 Requires:       perl-Archive-Tar, perl-Attribute-Handlers, perl-autodie,
+Requires:       perl-AutoLoader, perl-AutoSplit,
 Requires:       perl-bignum
 Requires:       perl-Compress-Raw-Bzip2,
 Requires:       perl-Carp, perl-Compress-Raw-Zlib, perl-Config-Perl-V,
@@ -699,6 +700,42 @@ exception on failure.
 However "Fatal" has been obsoleted by the new autodie pragma. Please use
 autodie in preference to "Fatal".
 %endif
+
+%package AutoLoader
+Summary:        Load subroutines only on demand
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        5.74
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_AutoLoader
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description AutoLoader
+The AutoLoader module works with the AutoSplit module and the "__END__" token
+to defer the loading of some subroutines until they are used rather than
+loading them all at once.
+
+%package AutoSplit
+Summary:        Split a package for automatic loading
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        5.74
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_AutoSplit
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description AutoSplit
+Split up your program into files that the AutoLoader module can handle. It is
+used by both the standard Perl libraries and by the ExtUtils::MakeMaker
+utility, to automatically configure libraries for automatic loading.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package bignum
@@ -1338,7 +1375,10 @@ Epoch:          0
 Version:        2.14
 BuildArch:      noarch
 Requires:       %perl_compat
+Requires:       perl(AutoSplit)
+Requires:       perl(File::Compare)
 Requires:       perl(Data::Dumper)
+Recommends:     perl(POSIX)
 %if %{defined perl_bootstrap}
 %gendep_perl_ExtUtils_Install
 %endif
@@ -3341,6 +3381,14 @@ popd
 %exclude %{_mandir}/man3/autodie::*
 %exclude %{_mandir}/man3/Fatal.3*
 
+# AutoLoader
+%exclude %{privlib}/AutoLoader.pm
+%exclude %{_mandir}/man3/AutoLoader.3*
+
+# AutoSplit
+%exclude %{privlib}/AutoSplit.pm
+%exclude %{_mandir}/man3/AutoSplit.3*
+
 # bignum
 %exclude %{privlib}/bigint.pm
 %exclude %{privlib}/bignum.pm
@@ -4212,6 +4260,14 @@ popd
 %{_mandir}/man3/autodie::*
 %{_mandir}/man3/Fatal.3*
 %endif
+
+%files AutoLoader
+%{privlib}/AutoLoader.pm
+%{_mandir}/man3/AutoLoader.3*
+
+%files AutoSplit
+%{privlib}/AutoSplit.pm
+%{_mandir}/man3/AutoSplit.3*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files bignum
@@ -5203,6 +5259,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Feb 03 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.1-451
+- Subpackage AutoLoader and AutoSplit
+
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
