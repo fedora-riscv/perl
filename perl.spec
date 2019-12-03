@@ -379,7 +379,8 @@ Requires:       perl-Devel-Peek, perl-Devel-PPPort, perl-Devel-SelfStubber,
 Requires:       perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
 Requires:       perl-Encode, perl-Encode-devel, perl-encoding
 Requires:       perl-Env, perl-Errno, perl-experimental, perl-Exporter,
-Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Command,
+Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Constant,
+Requires:       perl-ExtUtils-Command,
 Requires:       perl-ExtUtils-Embed, perl-ExtUtils-Install,
 Requires:       perl-ExtUtils-MakeMaker, perl-ExtUtils-Manifest,
 Requires:       perl-ExtUtils-Miniperl, perl-ExtUtils-ParseXS,
@@ -1327,6 +1328,26 @@ This module can build the C portions of Perl modules by invoking the
 appropriate compilers and linkers in a cross-platform manner. It was motivated
 by the Module::Build project, but may be useful for other purposes as well.
 %endif
+
+%package ExtUtils-Constant
+Summary:        Generate XS code to import C header constants
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.25
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(Data::Dumper)
+# ExtUtils::Constant::Aaargh56Hash not used on recent Perls
+# FileHandle not used on recent Perls
+# POSIX not used on recent Perls
+Conflicts:      perl-interpreter < 4:5.30.1-451
+%if %{defined perl_bootstrap}
+%gendep_perl_ExtUtils_Constant
+%endif
+
+%description ExtUtils-Constant
+ExtUtils::Constant facilitates generating C and XS wrapper code to allow
+Perl modules to AUTOLOAD constants defined in C library header files.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package ExtUtils-Command
@@ -3565,6 +3586,12 @@ popd
 %exclude %{privlib}/ExtUtils/CBuilder.pm
 %exclude %{_mandir}/man3/ExtUtils::CBuilder*
 
+# ExtUtils-Constant
+%exclude %{privlib}/ExtUtils/Constant
+%exclude %{privlib}/ExtUtils/Constant.pm
+%exclude %{_mandir}/man3/ExtUtils::Constant::*
+%exclude %{_mandir}/man3/ExtUtils::Constant.3*
+
 # ExtUtils-Command
 %exclude %{privlib}/ExtUtils/Command.pm
 %exclude %{_mandir}/man3/ExtUtils::Command.*
@@ -4493,6 +4520,12 @@ popd
 %{_mandir}/man3/ExtUtils::CBuilder*
 %endif
 
+%files ExtUtils-Constant
+%{privlib}/ExtUtils/Constant
+%{privlib}/ExtUtils/Constant.pm
+%{_mandir}/man3/ExtUtils::Constant::*
+%{_mandir}/man3/ExtUtils::Constant.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files ExtUtils-Command
 %dir %{privlib}/ExtUtils
@@ -5258,6 +5291,7 @@ popd
 %changelog
 * Mon Feb 03 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.1-451
 - Subpackage AutoLoader and AutoSplit
+- Subpackage ExtUtils-Constant
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

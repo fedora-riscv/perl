@@ -437,6 +437,17 @@ Provides: perl(ExtUtils::CBuilder::Platform::dec_osf) = 0.280231 \
 Provides: perl(ExtUtils::CBuilder::Platform::linux) = 0.280206 \
 Provides: perl(ExtUtils::CBuilder::Platform::os2) = 0.280231 \
 %{nil}
+%global gendep_perl_ExtUtils_Constant \
+Requires: perl(ExtUtils::Constant::Base) \
+Requires: perl(ExtUtils::Constant::Utils) \
+Requires: perl(ExtUtils::Constant::XS) \
+Requires: perl(Text::Wrap) \
+Provides: perl(ExtUtils::Constant) = 0.25 \
+Provides: perl(ExtUtils::Constant::Base) = 0.06 \
+Provides: perl(ExtUtils::Constant::ProxySubs) = 0.09 \
+Provides: perl(ExtUtils::Constant::Utils) = 0.04 \
+Provides: perl(ExtUtils::Constant::XS) = 0.03 \
+%{nil}
 %global gendep_perl_ExtUtils_Command \
 Requires: perl(:VERSION) >= 5.5.30 \
 Requires: perl(Exporter) \
@@ -1738,9 +1749,6 @@ Requires: perl(Class::Struct) \
 Requires: perl(Config) \
 Requires: perl(Cwd) \
 Requires: perl(Exporter) \
-Requires: perl(ExtUtils::Constant::Base) \
-Requires: perl(ExtUtils::Constant::Utils) \
-Requires: perl(ExtUtils::Constant::XS) \
 Requires: perl(Fcntl) \
 Requires: perl(File::Basename) \
 Requires: perl(File::Spec) \
@@ -1752,7 +1760,6 @@ Requires: perl(POSIX) \
 Requires: perl(Scalar::Util) >= 1.10 \
 Requires: perl(Symbol) \
 Requires: perl(Text::Tabs) \
-Requires: perl(Text::Wrap) \
 Requires: perl(Tie::Handle) \
 Requires: perl(Tie::Hash) \
 Requires: perl(Tie::StdHandle) \
@@ -1804,11 +1811,6 @@ Provides: perl(Dumpvalue) = 1.19 \
 Provides: perl(DynaLoader) = 1.45 \
 Provides: perl(EVERY::LAST) \
 Provides: perl(English) = 1.10 \
-Provides: perl(ExtUtils::Constant) = 0.25 \
-Provides: perl(ExtUtils::Constant::Base) = 0.06 \
-Provides: perl(ExtUtils::Constant::ProxySubs) = 0.09 \
-Provides: perl(ExtUtils::Constant::Utils) = 0.04 \
-Provides: perl(ExtUtils::Constant::XS) = 0.03 \
 Provides: perl(Fcntl) = 1.13 \
 Provides: perl(File::Basename) = 2.85 \
 Provides: perl(File::Compare) = 1.1006 \
