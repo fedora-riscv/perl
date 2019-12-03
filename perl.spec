@@ -369,7 +369,7 @@ Requires:       perl-utils
 
 Requires:       perl-Archive-Tar, perl-Attribute-Handlers, perl-autodie,
 Requires:       perl-AutoLoader, perl-AutoSplit,
-Requires:       perl-bignum,
+Requires:       perl-base, perl-bignum,
 Requires:       perl-Carp, perl-Compress-Raw-Bzip2, perl-Compress-Raw-Zlib,
 Requires:       perl-Config-Perl-V, perl-constant,
 Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
@@ -384,7 +384,7 @@ Requires:       perl-ExtUtils-Command,
 Requires:       perl-ExtUtils-Embed, perl-ExtUtils-Install,
 Requires:       perl-ExtUtils-MakeMaker, perl-ExtUtils-Manifest,
 Requires:       perl-ExtUtils-Miniperl, perl-ExtUtils-ParseXS,
-Requires:       perl-File-Fetch, perl-File-Path, perl-File-Temp,
+Requires:       perl-fields, perl-File-Fetch, perl-File-Path, perl-File-Temp,
 Requires:       perl-Filter, perl-Filter-Simple,
 Requires:       perl-Getopt-Long,
 Requires:       perl-HTTP-Tiny,
@@ -753,6 +753,25 @@ Conflicts:      perl < 4:5.30.1-451
 If a module is not loaded yet, then the autouse declaration declares functions
 in the current package. When these functions are called, they load the package
 and substitute themselves with the correct definitions.
+
+%package base
+Summary:        Establish an ISA relationship with base classes at compile time
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.27
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_base
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description base
+"base" module allows you to both load one or more modules, while setting up
+inheritance from those modules at the same time.  Unless you are using the
+"fields" pragma, consider this module discouraged in favor of the
+lighter-weight "parent".
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package bignum
@@ -1545,6 +1564,23 @@ necessary to let C functions manipulate Perl values and creates the glue
 necessary to let Perl access those functions.
 %endif
 
+%package fields
+Summary:        Compile-time class fields
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.27
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(base)
+Requires:       perl(Carp)
+Requires:       perl(Hash::Util)
+%if %{defined perl_bootstrap}
+%gendep_perl_fields
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description fields
+The "fields" pragma enables compile-time and run-time verified class fields.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package File-Fetch
@@ -3469,6 +3505,10 @@ popd
 %exclude %{privlib}/autouse.pm
 %exclude %{_mandir}/man3/autouse.3*
 
+# base
+%exclude %{privlib}/base.pm
+%exclude %{_mandir}/man3/base.3*
+
 # bignum
 %exclude %{privlib}/bigint.pm
 %exclude %{privlib}/bignum.pm
@@ -3734,6 +3774,10 @@ popd
 %exclude %{_mandir}/man3/ExtUtils::Typemaps::InputMap.3*
 %exclude %{_mandir}/man3/ExtUtils::Typemaps::OutputMap.3*
 %exclude %{_mandir}/man3/ExtUtils::Typemaps::Type.3*
+
+# fields
+%exclude %{privlib}/fields.pm
+%exclude %{_mandir}/man3/fields.3*
 
 # File-Fetch
 %exclude %{privlib}/File/Fetch.pm
@@ -4367,6 +4411,10 @@ popd
 %{privlib}/autouse.pm
 %{_mandir}/man3/autouse.3*
 
+%files base
+%{privlib}/base.pm
+%{_mandir}/man3/base.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files bignum
 %{privlib}/bigint.pm
@@ -4700,6 +4748,10 @@ popd
 %{_mandir}/man3/ExtUtils::Typemaps::OutputMap.3*
 %{_mandir}/man3/ExtUtils::Typemaps::Type.3*
 %endif
+
+%files fields
+%{privlib}/fields.pm
+%{_mandir}/man3/fields.3*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files File-Fetch
@@ -5378,6 +5430,7 @@ popd
 - Subpackage NEXT
 - Subpackage Tie-RefHash
 - Subpackage autouse
+- Subpackage base and fields
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

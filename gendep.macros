@@ -53,6 +53,11 @@ Requires: perl(strict) \
 Requires: perl(:VERSION) >= 5.6.0 \
 Provides: perl(autouse) = 1.11 \
 %{nil}
+%global gendep_perl_base \
+Requires: perl(:VERSION) >= 5.8.0 \
+Requires: perl(strict) \
+Provides: perl(base) = 2.27 \
+%{nil}
 %global gendep_perl_CPAN \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(App::Cpan) \
@@ -601,6 +606,11 @@ Provides: perl(ExtUtils::Typemaps::Cmd) = 3.38 \
 Provides: perl(ExtUtils::Typemaps::InputMap) = 3.38 \
 Provides: perl(ExtUtils::Typemaps::OutputMap) = 3.38 \
 Provides: perl(ExtUtils::Typemaps::Type) = 3.38 \
+%{nil}
+%global gendep_perl_fields \
+Requires: perl(:VERSION) >= 5.8.0 \
+Requires: perl(strict) \
+Provides: perl(fields) = 2.24 \
 %{nil}
 %global gendep_perl_File_Fetch \
 Requires: perl(Carp) \
@@ -1760,7 +1770,6 @@ Requires: perl(:VERSION) >= 5.5.0 \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(:VERSION) >= 5.7.0 \
 Requires: perl(:VERSION) >= 5.7.3 \
-Requires: perl(:VERSION) >= 5.8.0 \
 Requires: perl(:VERSION) >= 5.9.1 \
 Requires: perl(:VERSION) >= 5.9.4 \
 Requires: perl(B) \
@@ -1912,7 +1921,6 @@ Provides: perl(User::grent) = 1.03 \
 Provides: perl(User::pwent) = 1.01 \
 Provides: perl(_charnames) = 1.45 \
 Provides: perl(attributes) = 0.33 \
-Provides: perl(base) = 2.27 \
 Provides: perl(blib) = 1.07 \
 Provides: perl(bytes) = 1.07 \
 Provides: perl(bytes_heavy.pl) \
@@ -1922,7 +1930,6 @@ Provides: perl(diagnostics) = 1.36 \
 Provides: perl(dumpvar.pl) \
 Provides: perl(encoding::warnings) = 0.13 \
 Provides: perl(feature) = 1.54 \
-Provides: perl(fields) = 2.24 \
 Provides: perl(filetest) = 1.03 \
 Provides: perl(if) = 0.0608 \
 Provides: perl(less) = 0.03 \
