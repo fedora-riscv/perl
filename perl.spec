@@ -735,6 +735,25 @@ Split up your program into files that the AutoLoader module can handle. It is
 used by both the standard Perl libraries and by the ExtUtils::MakeMaker
 utility, to automatically configure libraries for automatic loading.
 
+%package autouse
+Summary:        Postpone load of modules until a function is used
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.11
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(Carp)
+Requires:       perl(warnings)
+%if %{defined perl_bootstrap}
+%gendep_perl_autouse
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description autouse
+If a module is not loaded yet, then the autouse declaration declares functions
+in the current package. When these functions are called, they load the package
+and substitute themselves with the correct definitions.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package bignum
 Summary:        Transparent big number support for Perl
@@ -3446,6 +3465,10 @@ popd
 %exclude %{privlib}/AutoSplit.pm
 %exclude %{_mandir}/man3/AutoSplit.3*
 
+# autouse
+%exclude %{privlib}/autouse.pm
+%exclude %{_mandir}/man3/autouse.3*
+
 # bignum
 %exclude %{privlib}/bigint.pm
 %exclude %{privlib}/bignum.pm
@@ -4339,6 +4362,10 @@ popd
 %files AutoSplit
 %{privlib}/AutoSplit.pm
 %{_mandir}/man3/AutoSplit.3*
+
+%files autouse
+%{privlib}/autouse.pm
+%{_mandir}/man3/autouse.3*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files bignum
@@ -5350,6 +5377,7 @@ popd
 - Subpackage ExtUtils-Constant
 - Subpackage NEXT
 - Subpackage Tie-RefHash
+- Subpackage autouse
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

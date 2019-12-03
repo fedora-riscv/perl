@@ -49,6 +49,10 @@ Requires: perl(File::Path) \
 Requires: perl(File::Spec::Functions) \
 Requires: perl(strict) \
 %{nil}
+%global gendep_perl_autouse \
+Requires: perl(:VERSION) >= 5.6.0 \
+Provides: perl(autouse) = 1.11 \
+%{nil}
 %global gendep_perl_CPAN \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(App::Cpan) \
@@ -1908,7 +1912,6 @@ Provides: perl(User::grent) = 1.03 \
 Provides: perl(User::pwent) = 1.01 \
 Provides: perl(_charnames) = 1.45 \
 Provides: perl(attributes) = 0.33 \
-Provides: perl(autouse) = 1.11 \
 Provides: perl(base) = 2.27 \
 Provides: perl(blib) = 1.07 \
 Provides: perl(bytes) = 1.07 \
