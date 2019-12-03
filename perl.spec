@@ -376,7 +376,7 @@ Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
 Requires:       perl-CPAN-Meta-YAML,
 Requires:       perl-Data-Dumper, perl-DB_File,
 Requires:       perl-Devel-Peek, perl-Devel-PPPort, perl-Devel-SelfStubber,
-Requires:       perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
+Requires:       perl-Digest, perl-Digest-MD5, perl-Digest-SHA, perl-Dumpvalue,
 Requires:       perl-Encode, perl-Encode-devel, perl-encoding
 Requires:       perl-Env, perl-Errno, perl-experimental, perl-Exporter,
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Constant,
@@ -1193,6 +1193,23 @@ Standard.  It gives Perl programmers a convenient way to calculate
 SHA-1, SHA-224, SHA-256, SHA-384, and SHA-512 message digests.  The
 module can handle all types of input, including partial-byte data.
 %endif
+
+%package Dumpvalue
+Summary:        Screen dump of Perl data
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.27
+BuildArch:      noarch
+Requires:       %perl_compat
+Recommends:     perl(Devel::Peek)
+%if %{defined perl_bootstrap}
+%gendep_perl_Dumpvalue
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description Dumpvalue
+Dumpvalue module enables you to print a content of variables and other Perl
+data structures.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Encode
@@ -3646,6 +3663,10 @@ popd
 %exclude %{_mandir}/man1/shasum.1*
 %exclude %{_mandir}/man3/Digest::SHA.3*
 
+# Dumpvalue
+%exclude %{privlib}/Dumpvalue.pm
+%exclude %{_mandir}/man3/Dumpvalue.3*
+
 # Encode
 %exclude %{_bindir}/encguess
 %exclude %{_bindir}/piconv
@@ -4587,6 +4608,10 @@ popd
 %{_mandir}/man3/Digest::SHA.3*
 %endif
 
+%files Dumpvalue
+%{privlib}/Dumpvalue.pm
+%{_mandir}/man3/Dumpvalue.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Encode
 %{_bindir}/encguess
@@ -5431,6 +5456,7 @@ popd
 - Subpackage Tie-RefHash
 - Subpackage autouse
 - Subpackage base and fields
+- Subpackage Dumpvalue
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

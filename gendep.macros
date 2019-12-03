@@ -321,6 +321,10 @@ Provides: perl(Digest::SHA) = 6.02 \
 %{nil}
 %global gendep_perl_Digest_SHA_debuginfo \
 %{nil}
+%global gendep_perl_Dumpvalue \
+Requires: perl(:VERSION) >= 5.6.0 \
+Provides: perl(Dumpvalue) = 1.19 \
+%{nil}
 %global gendep_perl_Encode \
 Requires: perl(:VERSION) >= 5.8.0 \
 Requires: perl(:VERSION) >= 5.8.1 \
@@ -1838,7 +1842,6 @@ Provides: perl(DBM_Filter::int32) = 0.03 \
 Provides: perl(DBM_Filter::null) = 0.03 \
 Provides: perl(DBM_Filter::utf8) = 0.03 \
 Provides: perl(DirHandle) = 1.05 \
-Provides: perl(Dumpvalue) = 1.19 \
 Provides: perl(DynaLoader) = 1.45 \
 Provides: perl(EVERY::LAST) \
 Provides: perl(English) = 1.10 \
