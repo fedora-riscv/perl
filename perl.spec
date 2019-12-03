@@ -377,7 +377,8 @@ Requires:       perl-CPAN-Meta-YAML,
 Requires:       perl-Data-Dumper, perl-DB_File,
 Requires:       perl-Devel-Peek, perl-Devel-PPPort, perl-Devel-SelfStubber,
 Requires:       perl-Digest, perl-Digest-MD5, perl-Digest-SHA, perl-Dumpvalue,
-Requires:       perl-Encode, perl-Encode-devel, perl-encoding
+Requires:       perl-Encode, perl-Encode-devel, perl-encoding,
+Requires:       perl-encoding-warnings,
 Requires:       perl-Env, perl-Errno, perl-experimental, perl-Exporter,
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Constant,
 Requires:       perl-ExtUtils-Command,
@@ -1276,6 +1277,25 @@ enc2xs builds a Perl extension for use by Encode from either Unicode Character
 Mapping files (.ucm) or Tcl Encoding Files (.enc). You can use enc2xs to add
 your own encoding to perl. No knowledge of XS is necessary.
 %endif
+
+%package encoding-warnings
+Summary:        Warn on implicit encoding conversions
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.13
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_encoding_warnings
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description encoding-warnings
+As of Perl 5.26.0, this module has no effect. The internal Perl feature that
+was used to implement this module has been removed.  Hence, if you load this
+module on Perl 5.26.0, you will get one warning that the module is no longer
+supported; and the module will do nothing thereafter.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Env
@@ -3688,6 +3708,11 @@ popd
 %exclude %{privlib}/Encode/encode.h
 %exclude %{_mandir}/man1/enc2xs.1*
 
+# encoding-warnings
+%exclude %dir %{privlib}/encoding
+%exclude %{privlib}/encoding/warnings.pm
+%exclude %{_mandir}/man3/encoding::warnings.3*
+
 # Env
 %exclude %{privlib}/Env.pm
 %exclude %{_mandir}/man3/Env.3*
@@ -4637,6 +4662,11 @@ popd
 %{_mandir}/man1/enc2xs.1*
 %endif
 
+%files encoding-warnings
+%dir %{privlib}/encoding
+%{privlib}/encoding/warnings.pm
+%{_mandir}/man3/encoding::warnings.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Env
 %{privlib}/Env.pm
@@ -5457,6 +5487,7 @@ popd
 - Subpackage autouse
 - Subpackage base and fields
 - Subpackage Dumpvalue
+- Subpackage encoding-warnings
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
