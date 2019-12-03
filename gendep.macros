@@ -1585,6 +1585,15 @@ Requires: perl(warnings::register) \
 Provides: perl(Text::Tabs) = 2013.0523 \
 Provides: perl(Text::Wrap) = 2013.0523 \
 %{nil}
+%global gendep_perl_Tie_RefHash \
+Requires: perl(:VERSION) >= 5.5.0 \
+Requires: perl(Carp) \
+Requires: perl(Config) \
+Requires: perl(strict) \
+Requires: perl(vars) \
+Provides: perl(Tie::RefHash) = 1.39 \
+Provides: perl(Tie::RefHash::Nestable) \
+%{nil}
 %global gendep_perl_Thread_Queue \
 Requires: perl(Scalar::Util) >= 1.10 \
 Requires: perl(strict) \
@@ -1792,7 +1801,6 @@ Requires: perl(threads) \
 Requires: perl(threads::shared) \
 Requires: perl(unicore::Name) \
 Requires: perl(utf8) \
-Requires: perl(vars) \
 Requires: perl(warnings) \
 Requires: perl(warnings::register) \
 Provides: perl(AnyDBM_File) = 1.01 \
@@ -1885,8 +1893,6 @@ Provides: perl(Tie::Hash) \
 Provides: perl(Tie::Hash) = 1.05 \
 Provides: perl(Tie::Hash::NamedCapture) = 0.10 \
 Provides: perl(Tie::Memoize) = 1.1 \
-Provides: perl(Tie::RefHash) = 1.39 \
-Provides: perl(Tie::RefHash::Nestable) \
 Provides: perl(Tie::Scalar) = 1.04 \
 Provides: perl(Tie::StdArray) \
 Provides: perl(Tie::StdHandle) = 4.6 \

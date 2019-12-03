@@ -410,8 +410,8 @@ Requires:       perl-Storable, perl-Sys-Syslog,
 Requires:       perl-Term-ANSIColor, perl-Term-Cap,
 Requires:       perl-Test, perl-Test-Harness, perl-Test-Simple,
 Requires:       perl-Text-Balanced, perl-Text-ParseWords, perl-Text-Tabs+Wrap,
-Requires:       perl-Thread-Queue, perl-Time-HiRes, perl-Time-Local,
-Requires:       perl-Time-Piece,
+Requires:       perl-Thread-Queue, perl-Tie-RefHash,
+Requires:       perl-Time-HiRes, perl-Time-Local, perl-Time-Piece,
 Requires:       perl-Unicode-Collate, perl-Unicode-Normalize,
 Requires:       perl-version,
 Requires:       perl-threads, perl-threads-shared,
@@ -2735,6 +2735,28 @@ This module provides thread-safe FIFO queues that can be accessed safely by
 any number of threads.
 %endif
 
+%package Tie-RefHash
+Summary:        Use references as hash keys
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.39
+Requires:       %perl_compat
+# Scalar::Util || overload
+Requires:       perl(overload)
+Suggests:       perl(Scalar::Util)
+%if %{defined perl_bootstrap}
+%gendep_perl_Tie_RefHash
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Tie-RefHash
+This module provides the ability to use references as hash keys if you first
+"tie" the hash variable to this module. Normally, only the keys of the tied
+hash itself are preserved as references; to use references as keys in
+hashes-of-hashes, use Tie::RefHash::Nestable, included as part of
+Tie::RefHash.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Time-HiRes
 Summary:        High resolution alarm, sleep, gettimeofday, interval timers
@@ -4154,6 +4176,10 @@ popd
 %exclude %{privlib}/Thread/Queue.pm
 %exclude %{_mandir}/man3/Thread::Queue.*
 
+# Tie-RefHash
+%exclude %{privlib}/Tie/RefHash.pm
+%exclude %{_mandir}/man3/Tie::RefHash.*
+
 # Time-HiRes
 %exclude %dir %{archlib}/Time
 %exclude %{archlib}/Time/HiRes.pm
@@ -5239,6 +5265,11 @@ popd
 %{_mandir}/man3/Thread::Queue.*
 %endif
 
+%files Tie-RefHash
+%dir %{privlib}/Tie
+%{privlib}/Tie/RefHash.pm
+%{_mandir}/man3/Tie::RefHash.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Time-HiRes
 %dir %{archlib}/Time
@@ -5318,6 +5349,7 @@ popd
 - Subpackage AutoLoader and AutoSplit
 - Subpackage ExtUtils-Constant
 - Subpackage NEXT
+- Subpackage Tie-RefHash
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
