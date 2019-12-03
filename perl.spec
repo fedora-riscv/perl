@@ -398,7 +398,7 @@ Requires:       perl-Math-Complex, perl-Memoize, perl-MIME-Base64,
 Requires:       perl-Module-CoreList, perl-Module-CoreList-tools,
 Requires:       perl-Module-Load, perl-Module-Load-Conditional,
 Requires:       perl-Module-Loaded, perl-Module-Metadata,
-Requires:       perl-Net-Ping,
+Requires:       perl-Net-Ping, perl-NEXT,
 Requires:       perl-open,
 Requires:       perl-parent, perl-PathTools, perl-Params-Check, perl-perlfaq,
 Requires:       perl-PerlIO-via-QuotedPrint, perl-Perl-OSType,
@@ -2139,6 +2139,23 @@ Conflicts:      perl < 4:5.22.0-350
 %description Net-Ping
 Net::Ping module contains methods to test the reachability of remote hosts on
 a network.
+
+%package NEXT
+Summary:        Pseudo-class that allows method redispatch
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.67
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_NEXT
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description NEXT
+The NEXT module adds a pseudo-class named "NEXT" to any program that uses it.
+If a method "m" calls "$self->NEXT::m()", the call to "m" is redispatched as
+if the calling method had not originally been found.
 
 %package open
 Summary:        Perl pragma to set default PerlIO layers for input and output
@@ -3947,6 +3964,10 @@ popd
 %exclude %{privlib}/Net/Ping.pm
 %exclude %{_mandir}/man3/Net::Ping.*
 
+# NEXT
+%exclude %{privlib}/NEXT.pm
+%exclude %{_mandir}/man3/NEXT.*
+
 # PathTools
 %exclude %{archlib}/Cwd.pm
 %exclude %{archlib}/File/Spec*
@@ -4953,6 +4974,10 @@ popd
 %{privlib}/Net/Ping.pm
 %{_mandir}/man3/Net::Ping.*
 
+%files NEXT
+%{privlib}/NEXT.pm
+%{_mandir}/man3/NEXT.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files PathTools
 %{archlib}/Cwd.pm
@@ -5292,6 +5317,7 @@ popd
 * Mon Feb 03 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.1-451
 - Subpackage AutoLoader and AutoSplit
 - Subpackage ExtUtils-Constant
+- Subpackage NEXT
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

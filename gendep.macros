@@ -1021,6 +1021,16 @@ Requires: perl(constant) \
 Requires: perl(strict) \
 Provides: perl(Net::Ping) = 2.71 \
 %{nil}
+%global gendep_perl_NEXT \
+Provides: perl(NEXT) = 0.67 \
+Provides: perl(NEXT::ACTUAL) \
+Provides: perl(NEXT::ACTUAL::DISTINCT) \
+Provides: perl(NEXT::ACTUAL::UNSEEN) \
+Provides: perl(NEXT::DISTINCT) \
+Provides: perl(NEXT::DISTINCT::ACTUAL) \
+Provides: perl(NEXT::UNSEEN) \
+Provides: perl(NEXT::UNSEEN::ACTUAL) \
+%{nil}
 %global gendep_perl_Params_Check \
 Requires: perl(Carp) \
 Requires: perl(Exporter) \
@@ -1834,14 +1844,6 @@ Provides: perl(I18N::Langinfo) = 0.18 \
 Provides: perl(IPC::Open2) = 1.04 \
 Provides: perl(IPC::Open3) = 1.20 \
 Provides: perl(NDBM_File) = 1.15 \
-Provides: perl(NEXT) = 0.67 \
-Provides: perl(NEXT::ACTUAL) \
-Provides: perl(NEXT::ACTUAL::DISTINCT) \
-Provides: perl(NEXT::ACTUAL::UNSEEN) \
-Provides: perl(NEXT::DISTINCT) \
-Provides: perl(NEXT::DISTINCT::ACTUAL) \
-Provides: perl(NEXT::UNSEEN) \
-Provides: perl(NEXT::UNSEEN::ACTUAL) \
 Provides: perl(Net::hostent) = 1.02 \
 Provides: perl(Net::netent) = 1.01 \
 Provides: perl(Net::protoent) = 1.01 \
