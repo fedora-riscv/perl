@@ -390,7 +390,7 @@ Requires:       perl-Filter, perl-Filter-Simple,
 Requires:       perl-Getopt-Long,
 Requires:       perl-HTTP-Tiny,
 Requires:       perl-if, perl-IO, perl-IO-Compress, perl-IO-Socket-IP,
-Requires:       perl-I18N-Collate,
+Requires:       perl-I18N-Collate, perl-I18N-LangTags,
 Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-IPC-SysV,
 Requires:       perl-JSON-PP,
 Requires:       perl-libnet, perl-libnetcfg,
@@ -1890,6 +1890,26 @@ Conflicts:      perl-interpreter < 4:5.30.1-451
 This module provides you with objects that will collate according to your
 national character set. This module is deprecated. See the perllocale manual
 page for further information.
+
+%package I18N-LangTags
+Summary:        Functions for dealing with RFC 3066 language tags
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.43
+Requires:       %perl_compat
+Requires:       perl(integer)
+Requires:       perl(warnings)
+%if %{defined perl_bootstrap}
+%gendep_perl_I18N_LangTags
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description I18N-LangTags
+Language tags are a formalism, described in RFC 3066, for declaring what
+language form (language and possibly dialect) a given chunk of information is
+in. This library provides functions for common tasks involving language tags
+as they are needed in a variety of protocols and applications.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package HTTP-Tiny
@@ -4012,6 +4032,13 @@ popd
 %exclude %{privlib}/I18N/Collate.pm
 %exclude %{_mandir}/man3/I18N::Collate.*
 
+# I18N-LangTags
+%exclude %dir %{privlib}/I18N
+%exclude %{privlib}/I18N/LangTags
+%exclude %{privlib}/I18N/LangTags.pm
+%exclude %{_mandir}/man3/I18N::LangTags.*
+%exclude %{_mandir}/man3/I18N::LangTags::*
+
 # JSON-PP
 %exclude %{_bindir}/json_pp
 %exclude %dir %{privlib}/JSON
@@ -5034,6 +5061,13 @@ popd
 %{privlib}/I18N/Collate.pm
 %{_mandir}/man3/I18N::Collate.*
 
+%files I18N-LangTags
+%dir %{privlib}/I18N
+%{privlib}/I18N/LangTags
+%{privlib}/I18N/LangTags.pm
+%{_mandir}/man3/I18N::LangTags.*
+%{_mandir}/man3/I18N::LangTags::*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files JSON-PP
 %{_bindir}/json_pp
@@ -5541,6 +5575,7 @@ popd
 - Subpackage encoding-warnings
 - Subpackage if
 - Subpackage I18N-Collate
+- Subpackage I18N-LangTags
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
