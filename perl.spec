@@ -393,7 +393,7 @@ Requires:       perl-if, perl-IO, perl-IO-Compress, perl-IO-Socket-IP,
 Requires:       perl-I18N-Collate, perl-I18N-LangTags,
 Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-IPC-SysV,
 Requires:       perl-JSON-PP,
-Requires:       perl-libnet, perl-libnetcfg,
+Requires:       perl-lib, perl-libnet, perl-libnetcfg,
 Requires:       perl-Locale-Maketext, perl-Locale-Maketext-Simple,
 Requires:       perl-Math-BigInt, perl-Math-BigInt-FastCalc, perl-Math-BigRat,
 Requires:       perl-Math-Complex, perl-Memoize, perl-MIME-Base64,
@@ -1958,6 +1958,21 @@ JSON::XS is the fastest and most proper JSON module on CPAN. It is written by
 Marc Lehmann in C, so must be compiled and installed in the used environment.
 JSON::PP is a pure-Perl module and is compatible with JSON::XS.
 %endif
+
+%package lib
+Summary:        Manipulate @INC at compile time
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.65
+Requires:       %perl_compat
+Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_lib
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description lib
+This module simplifies the manipulation of @INC at compile time.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package libnet
@@ -4048,6 +4063,10 @@ popd
 %exclude %{_mandir}/man3/JSON::PP.3*
 %exclude %{_mandir}/man3/JSON::PP::Boolean.3pm*
 
+# lib
+%exclude %{archlib}/lib.pm
+%exclude %{_mandir}/man3/lib.*
+
 # libnet
 %exclude %{privlib}/Net/Cmd.pm
 %exclude %{privlib}/Net/Config.pm
@@ -5079,6 +5098,10 @@ popd
 %{_mandir}/man3/JSON::PP::Boolean.3pm*
 %endif
 
+%files lib
+%{archlib}/lib.pm
+%{_mandir}/man3/lib.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files libnet
 %dir %{privlib}/Net
@@ -5576,6 +5599,7 @@ popd
 - Subpackage if
 - Subpackage I18N-Collate
 - Subpackage I18N-LangTags
+- Subpackage lib
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

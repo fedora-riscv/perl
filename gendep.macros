@@ -1955,7 +1955,6 @@ Provides: perl(dumpvar.pl) \
 Provides: perl(feature) = 1.54 \
 Provides: perl(filetest) = 1.03 \
 Provides: perl(less) = 0.03 \
-Provides: perl(lib) = 0.65 \
 Provides: perl(locale) = 1.09 \
 Provides: perl(mro) = 1.22 \
 Provides: perl(ops) = 1.02 \
@@ -1971,6 +1970,11 @@ Provides: perl(vmsish) = 1.04 \
 Provides: perl(warnings::register) = 1.04 \
 %{nil}
 %global gendep_perl_interpreter_debuginfo \
+%{nil}
+%global gendep_perl_lib \
+Requires: perl(Config) \
+Requires: perl(strict) \
+Provides: perl(lib) = 0.65 \
 %{nil}
 %global gendep_perl_libnet \
 Requires: perl(:VERSION) >= 5.8.1 \
