@@ -389,7 +389,7 @@ Requires:       perl-fields, perl-File-Fetch, perl-File-Path, perl-File-Temp,
 Requires:       perl-Filter, perl-Filter-Simple,
 Requires:       perl-Getopt-Long,
 Requires:       perl-HTTP-Tiny,
-Requires:       perl-IO, perl-IO-Compress, perl-IO-Socket-IP,
+Requires:       perl-if, perl-IO, perl-IO-Compress, perl-IO-Socket-IP,
 Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-IPC-SysV,
 Requires:       perl-JSON-PP,
 Requires:       perl-libnet, perl-libnetcfg,
@@ -1746,6 +1746,22 @@ a double dash "--". Support for bundling of command line options, as was the
 case with the more traditional single-letter approach, is provided but not
 enabled by default.
 %endif
+
+%package if
+Summary:        Use a Perl module if a condition holds
+License:        GPL+ or Artistic
+Epoch:          0
+# Normalized 0.0608
+Version:        0.60.800
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_if
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description if
+The "if" module is used to conditionally load another module.
 
 %package IO
 Summary:        Perl input/output modules
@@ -3855,6 +3871,10 @@ popd
 %exclude %{privlib}/Getopt/Long.pm
 %exclude %{_mandir}/man3/Getopt::Long.3*
 
+# if
+%exclude %{privlib}/if.pm
+%exclude %{_mandir}/man3/if.3*
+
 # IO
 %exclude %dir %{archlib}/IO
 %exclude %{archlib}/IO.pm
@@ -4854,6 +4874,10 @@ popd
 %{_mandir}/man3/Getopt::Long.3*
 %endif
 
+%files if
+%{privlib}/if.pm
+%{_mandir}/man3/if.3*
+
 %files IO
 %dir %{archlib}/IO
 %{archlib}/IO.pm
@@ -5488,6 +5512,7 @@ popd
 - Subpackage base and fields
 - Subpackage Dumpvalue
 - Subpackage encoding-warnings
+- Subpackage if
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

@@ -700,6 +700,9 @@ Requires: perl(strict) \
 Requires: perl(warnings) \
 Provides: perl(HTTP::Tiny) = 0.076 \
 %{nil}
+%global gendep_perl_if \
+Provides: perl(if) = 0.0608 \
+%{nil}
 %global gendep_perl_IO \
 Requires: perl(:VERSION) >= 5.8.0 \
 Requires: perl(Carp) \
@@ -1938,7 +1941,6 @@ Provides: perl(diagnostics) = 1.36 \
 Provides: perl(dumpvar.pl) \
 Provides: perl(feature) = 1.54 \
 Provides: perl(filetest) = 1.03 \
-Provides: perl(if) = 0.0608 \
 Provides: perl(less) = 0.03 \
 Provides: perl(lib) = 0.65 \
 Provides: perl(locale) = 1.09 \
