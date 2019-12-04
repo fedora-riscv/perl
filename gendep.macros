@@ -1284,6 +1284,17 @@ Requires: perl(strict) \
 Requires: perl(vars) \
 Provides: perl(Pod::Usage) = 1.69 \
 %{nil}
+%global gendep_perl_Safe \
+Requires: perl(:VERSION) >= 5.3.0 \
+Requires: perl(B) \
+Requires: perl(Carp) \
+Requires: perl(Opcode) >= 1.01 \
+Requires: perl(Scalar::Util) \
+Requires: perl(utf8) \
+Requires: perl(strict) \
+Requires: perl(utf8) \
+Provides: perl(Safe) = 2.40 \
+%{nil}
 %global gendep_perl_Scalar_List_Utils \
 Requires: perl(Exporter) \
 Requires: perl(List::Util) \
@@ -1795,7 +1806,6 @@ Provides: perl(experimental) = 0.020 \
 %global gendep_perl_interpreter \
 Requires: perl(:VERSION) >= 5.0.0 \
 Requires: perl(:VERSION) >= 5.10.1 \
-Requires: perl(:VERSION) >= 5.3.0 \
 Requires: perl(:VERSION) >= 5.5.0 \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(:VERSION) >= 5.7.3 \
@@ -1816,7 +1826,7 @@ Requires: perl(File::Spec) \
 Requires: perl(I18N::LangTags) \
 Requires: perl(IO::File) \
 Requires: perl(IPC::Open3) \
-Requires: perl(Opcode) >= 1.01 \
+Requires: perl(Opcode) \
 Requires: perl(POSIX) \
 Requires: perl(Scalar::Util) >= 1.10 \
 Requires: perl(Symbol) \
@@ -1842,7 +1852,6 @@ Requires: perl(subs) \
 Requires: perl(threads) \
 Requires: perl(threads::shared) \
 Requires: perl(unicore::Name) \
-Requires: perl(utf8) \
 Requires: perl(warnings) \
 Requires: perl(warnings::register) \
 Provides: perl(AnyDBM_File) = 1.01 \
@@ -1907,7 +1916,6 @@ Provides: perl(PerlIO::scalar) = 0.30 \
 Provides: perl(PerlIO::via) = 0.17 \
 Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(SDBM_File) = 1.15 \
-Provides: perl(Safe) = 2.40 \
 Provides: perl(Search::Dict) = 1.07 \
 Provides: perl(SelectSaver) = 1.02 \
 Provides: perl(Symbol) = 1.08 \

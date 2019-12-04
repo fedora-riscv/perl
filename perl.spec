@@ -407,8 +407,8 @@ Requires:       perl-PerlIO-via-QuotedPrint, perl-Perl-OSType,
 Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-Html,
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Simple,
 Requires:       perl-Pod-Usage, perl-podlators,
-Requires:       perl-Scalar-List-Utils, perl-SelfLoader, perl-Socket,
-Requires:       perl-Storable, perl-Sys-Syslog,
+Requires:       perl-Safe, perl-Scalar-List-Utils, perl-SelfLoader,
+Requires:       perl-Socket, perl-Storable, perl-Sys-Syslog,
 Requires:       perl-Term-ANSIColor, perl-Term-Cap,
 Requires:       perl-Test, perl-Test-Harness, perl-Test-Simple,
 Requires:       perl-Text-Balanced, perl-Text-ParseWords, perl-Text-Tabs+Wrap,
@@ -2629,6 +2629,23 @@ includes several sub-classes of Pod::Text for formatted output to terminals
 with various capabilities.
 %endif
 
+%package Safe
+Summary:        Compile and execute code in restricted compartments
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.40
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Safe
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Safe
+The Safe extension module allows the creation of compartments in which Perl
+code can be evaluated. Please note that the restriction is not suitable for
+security purposes.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Scalar-List-Utils
 Summary:        A selection of general-utility scalar and list subroutines
@@ -4293,6 +4310,10 @@ popd
 %exclude %{privlib}/Pod/Simple.pod
 %exclude %{_mandir}/man3/Pod::Simple*
 
+# Safe
+%exclude %{privlib}/Safe.pm
+%exclude %{_mandir}/man3/Safe.*
+
 # Scalar-List-Utils
 %exclude %{archlib}/List/
 %exclude %{archlib}/Scalar/
@@ -5385,6 +5406,10 @@ popd
 %{_mandir}/man3/Pod::Simple*
 %endif
 
+%files Safe
+%{privlib}/Safe.pm
+%{_mandir}/man3/Safe.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Scalar-List-Utils
 %{archlib}/List
@@ -5600,6 +5625,7 @@ popd
 - Subpackage I18N-Collate
 - Subpackage I18N-LangTags
 - Subpackage lib
+- Subpackage Safe
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
