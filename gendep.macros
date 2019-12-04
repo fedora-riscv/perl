@@ -1308,6 +1308,12 @@ Provides: perl(Sub::Util) = 1.50 \
 %{nil}
 %global gendep_perl_Scalar_List_Utils_debuginfo \
 %{nil}
+%global gendep_perl_Search_Dict \
+Requires: perl(:VERSION) >= 5.0.0 \
+Requires: perl(Exporter) \
+Requires: perl(strict) \
+Provides: perl(Search::Dict) = 1.07 \
+%{nil}
 %global gendep_perl_SelfLoader \
 Requires: perl(:VERSION) >= 5.8.0 \
 Requires: perl(Exporter) \
@@ -1916,7 +1922,6 @@ Provides: perl(PerlIO::scalar) = 0.30 \
 Provides: perl(PerlIO::via) = 0.17 \
 Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(SDBM_File) = 1.15 \
-Provides: perl(Search::Dict) = 1.07 \
 Provides: perl(SelectSaver) = 1.02 \
 Provides: perl(Symbol) = 1.08 \
 Provides: perl(Sys::Hostname) = 1.22 \

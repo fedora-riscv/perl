@@ -407,8 +407,8 @@ Requires:       perl-PerlIO-via-QuotedPrint, perl-Perl-OSType,
 Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-Html,
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Simple,
 Requires:       perl-Pod-Usage, perl-podlators,
-Requires:       perl-Safe, perl-Scalar-List-Utils, perl-SelfLoader,
-Requires:       perl-Socket, perl-Storable, perl-Sys-Syslog,
+Requires:       perl-Safe, perl-Scalar-List-Utils, perl-Search-Dict,
+Requires:       perl-SelfLoader, perl-Socket, perl-Storable, perl-Sys-Syslog,
 Requires:       perl-Term-ANSIColor, perl-Term-Cap,
 Requires:       perl-Test, perl-Test-Harness, perl-Test-Simple,
 Requires:       perl-Text-Balanced, perl-Text-ParseWords, perl-Text-Tabs+Wrap,
@@ -2664,6 +2664,23 @@ really be high enough to warrant the use of a keyword, and the size so small
 such that being individual extensions would be wasteful.
 %endif
 
+%package Search-Dict
+Summary:        Search for a key in a dictionary file
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.07
+Requires:       %perl_compat
+Requires:       perl(feature)
+%if %{defined perl_bootstrap}
+%gendep_perl_Search_Dict
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Search-Dict
+This module sets file position in a file handle to be first line greater than
+or equal (string-wise) to a key.
+
 %package SelfLoader
 Summary:        Load functions only on demand
 License:        GPL+ or Artistic
@@ -4323,6 +4340,10 @@ popd
 %exclude %{_mandir}/man3/Scalar::Util*
 %exclude %{_mandir}/man3/Sub::Util*
 
+# Search-Dict
+%exclude %{privlib}/Search
+%exclude %{_mandir}/man3/Search::*
+
 # SelfLoader
 %exclude %{privlib}/SelfLoader.pm
 %exclude %{_mandir}/man3/SelfLoader*
@@ -5421,6 +5442,10 @@ popd
 %{_mandir}/man3/Sub::Util*
 %endif
 
+%files Search-Dict
+%{privlib}/Search
+%{_mandir}/man3/Search::*
+
 %files SelfLoader
 %{privlib}/SelfLoader.pm
 %{_mandir}/man3/SelfLoader*
@@ -5626,6 +5651,7 @@ popd
 - Subpackage I18N-LangTags
 - Subpackage lib
 - Subpackage Safe
+- Subpackage Search-Dict
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
