@@ -390,6 +390,7 @@ Requires:       perl-Filter, perl-Filter-Simple,
 Requires:       perl-Getopt-Long,
 Requires:       perl-HTTP-Tiny,
 Requires:       perl-if, perl-IO, perl-IO-Compress, perl-IO-Socket-IP,
+Requires:       perl-I18N-Collate,
 Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-IPC-SysV,
 Requires:       perl-JSON-PP,
 Requires:       perl-libnet, perl-libnetcfg,
@@ -1872,6 +1873,23 @@ Conflicts:      perl < 4:5.22.0-351
 This is an object interface for System V messages, semaphores, and
 inter-process calls.
 %endif
+
+%package I18N-Collate
+Summary:        Compare 8-bit scalar data according to the current locale
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.02
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_I18N_Collate
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description I18N-Collate
+This module provides you with objects that will collate according to your
+national character set. This module is deprecated. See the perllocale manual
+page for further information.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package HTTP-Tiny
@@ -3990,6 +4008,10 @@ popd
 %exclude %{_mandir}/man3/IPC::SharedMem.*
 %exclude %{_mandir}/man3/IPC::SysV.*
 
+# I18N-Collate
+%exclude %{privlib}/I18N/Collate.pm
+%exclude %{_mandir}/man3/I18N::Collate.*
+
 # JSON-PP
 %exclude %{_bindir}/json_pp
 %exclude %dir %{privlib}/JSON
@@ -5007,6 +5029,11 @@ popd
 %{_mandir}/man3/IPC::SysV.*
 %endif
 
+%files I18N-Collate
+%dir %{privlib}/I18N
+%{privlib}/I18N/Collate.pm
+%{_mandir}/man3/I18N::Collate.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files JSON-PP
 %{_bindir}/json_pp
@@ -5513,6 +5540,7 @@ popd
 - Subpackage Dumpvalue
 - Subpackage encoding-warnings
 - Subpackage if
+- Subpackage I18N-Collate
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

@@ -869,6 +869,14 @@ Provides: perl(IPC::SysV) = 2.07 \
 %{nil}
 %global gendep_perl_IPC_SysV_debuginfo \
 %{nil}
+%global gendep_perl_I18N_Collate \
+Requires: perl(Exporter) \
+Requires: perl(overload) \
+Requires: perl(POSIX) \
+Requires: perl(strict) \
+Requires: perl(warnings::register) \
+Provides: perl(I18N::Collate) = 1.02 \
+%{nil}
 %global gendep_perl_JSON_PP \
 Requires: perl(:VERSION) >= 5.5.0 \
 Requires: perl(Carp) \
@@ -1868,7 +1876,6 @@ Provides: perl(GDBM_File) = 1.18 \
 Provides: perl(Getopt::Std) = 1.12 \
 Provides: perl(Hash::Util) = 0.22 \
 Provides: perl(Hash::Util::FieldHash) = 1.20 \
-Provides: perl(I18N::Collate) = 1.02 \
 Provides: perl(I18N::LangTags) = 0.43 \
 Provides: perl(I18N::LangTags::Detect) = 1.07 \
 Provides: perl(I18N::LangTags::List) = 0.40 \
