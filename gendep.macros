@@ -1624,6 +1624,11 @@ Provides: perl(Test::Tester::Delegate) = 1.302162 \
 Provides: perl(Test::use::ok) = 1.302162 \
 Provides: perl(ok) = 1.302162 \
 %{nil}
+%global gendep_perl_Text_Abbrev \
+Requires: perl(:VERSION) >= 5.5.0 \
+Requires: perl(Exporter) \
+Provides: perl(Text::Abbrev) = 1.02 \
+%{nil}
 %global gendep_perl_Text_Balanced \
 Requires: perl(:VERSION) >= 5.5.0 \
 Requires: perl(Carp) \
@@ -1938,7 +1943,6 @@ Provides: perl(SDBM_File) = 1.15 \
 Provides: perl(SelectSaver) = 1.02 \
 Provides: perl(Symbol) = 1.08 \
 Provides: perl(Sys::Hostname) = 1.22 \
-Provides: perl(Text::Abbrev) = 1.02 \
 Provides: perl(Thread) = 3.04 \
 Provides: perl(Thread::Semaphore) = 2.13 \
 Provides: perl(Tie::Array) = 1.07 \

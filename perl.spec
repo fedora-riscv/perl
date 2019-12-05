@@ -412,8 +412,8 @@ Requires:       perl-SelfLoader, perl-Socket, perl-Storable, perl-Sys-Syslog,
 Requires:       perl-Term-ANSIColor, perl-Term-Cap, perl-Term-Complete,
 Requires:       perl-Term-ReadLine,
 Requires:       perl-Test, perl-Test-Harness, perl-Test-Simple,
-Requires:       perl-Text-Balanced, perl-Text-ParseWords, perl-Text-Tabs+Wrap,
-Requires:       perl-Thread-Queue, perl-Tie-RefHash,
+Requires:       perl-Text-Abbrev, perl-Text-Balanced, perl-Text-ParseWords,
+Requires:       perl-Text-Tabs+Wrap, perl-Thread-Queue, perl-Tie-RefHash,
 Requires:       perl-Time-HiRes, perl-Time-Local, perl-Time-Piece,
 Requires:       perl-Unicode-Collate, perl-Unicode-Normalize,
 Requires:       perl-version,
@@ -2888,6 +2888,22 @@ BuildArch:      noarch
 Basic utilities for writing tests.
 %endif
 
+%package Text-Abbrev
+Summary:        Create an abbreviation table from a list
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.02
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Text_Abbrev
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Text-Abbrev
+It stores all unambiguous truncations of each element of a list as keys in
+an associative array. The values are the original list elements.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Text-Balanced
 Summary:        Extract delimited text sequences from strings
@@ -4444,6 +4460,10 @@ popd
 %exclude %{_mandir}/man3/Test::use::*
 %exclude %{_mandir}/man3/Test2*
 
+# Text-Abbrev
+%exclude %{privlib}/Text/Abbrev.pm
+%exclude %{_mandir}/man3/Text::Abbrev.*
+
 # Text-Balanced
 %exclude %{privlib}/Text/Balanced.pm
 %exclude %{_mandir}/man3/Text::Balanced.*
@@ -4453,6 +4473,7 @@ popd
 %exclude %{_mandir}/man3/Text::ParseWords.*
 
 # Text-Tabs+Wrap
+%exclude %dir %{privlib}/Text
 %exclude %{privlib}/Text/Tabs.pm
 %exclude %{privlib}/Text/Wrap.pm
 %exclude %{_mandir}/man3/Text::Tabs.*
@@ -5580,6 +5601,11 @@ popd
 %{_mandir}/man3/Test2*
 %endif
 
+%files Text-Abbrev
+%dir %{privlib}/Text
+%{privlib}/Text/Abbrev.pm
+%{_mandir}/man3/Text::Abbrev.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Text-Balanced
 %dir %{privlib}/Text
@@ -5707,6 +5733,7 @@ popd
 - Subpackage Search-Dict
 - Subpackage Term-Complete
 - Subpackage Term-ReadLine
+- Subpackage Text-Abbrev
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
