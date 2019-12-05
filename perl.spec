@@ -413,11 +413,13 @@ Requires:       perl-Term-ANSIColor, perl-Term-Cap, perl-Term-Complete,
 Requires:       perl-Term-ReadLine,
 Requires:       perl-Test, perl-Test-Harness, perl-Test-Simple,
 Requires:       perl-Text-Abbrev, perl-Text-Balanced, perl-Text-ParseWords,
-Requires:       perl-Text-Tabs+Wrap, perl-Thread-Queue, perl-Tie-RefHash,
+Requires:       perl-Text-Tabs+Wrap,
+Requires:       perl-Thread-Queue, perl-Thread-Semaphore,
+Requires:       perl-threads, perl-threads-shared,
+Requires:       perl-Tie-RefHash,
 Requires:       perl-Time-HiRes, perl-Time-Local, perl-Time-Piece,
 Requires:       perl-Unicode-Collate, perl-Unicode-Normalize,
 Requires:       perl-version,
-Requires:       perl-threads, perl-threads-shared,
 
 # Full EVR is for compatibility with systems that swapped perl and perl-core
 # <https://fedoraproject.org/wiki/Changes/perl_Package_to_Install_Core_Modules>,
@@ -3060,6 +3062,28 @@ with implementations that return objects.  It does so in a backwards compatible
 manner, so that using localtime or gmtime as documented in perlfunc still
 behave as expected.
 
+%package Thread-Semaphore
+Summary:        Thread-safe semaphores
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.13
+Requires:       %perl_compat
+Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_Thread_Semaphore
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Thread-Semaphore
+Semaphores provide a mechanism to regulate access to resources. Unlike locks,
+semaphores aren't tied to particular scalars, and so may be used to control
+access to anything you care to use them for. Semaphores don't limit their
+values to zero and one, so they can be used to control access to some resource
+that there may be more than one of (e.g., file handles). Increment and
+decrement amounts aren't fixed at one either, so threads can reserve or return
+multiple resources at once.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package threads
 Summary:        Perl interpreter-based threads
@@ -4483,6 +4507,10 @@ popd
 %exclude %{privlib}/Thread/Queue.pm
 %exclude %{_mandir}/man3/Thread::Queue.*
 
+# Thread-Semaphore
+%exclude %{privlib}/Thread/Semaphore.pm
+%exclude %{_mandir}/man3/Thread::Semaphore.*
+
 # Tie-RefHash
 %exclude %{privlib}/Tie/RefHash.pm
 %exclude %{_mandir}/man3/Tie::RefHash.*
@@ -5636,6 +5664,11 @@ popd
 %{_mandir}/man3/Thread::Queue.*
 %endif
 
+%files Thread-Semaphore
+%dir %{privlib}/Thread
+%{privlib}/Thread/Semaphore.pm
+%{_mandir}/man3/Thread::Semaphore.*
+
 %files Tie-RefHash
 %dir %{privlib}/Tie
 %{privlib}/Tie/RefHash.pm
@@ -5734,6 +5767,7 @@ popd
 - Subpackage Term-Complete
 - Subpackage Term-ReadLine
 - Subpackage Text-Abbrev
+- Subpackage Thread-Semaphore
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

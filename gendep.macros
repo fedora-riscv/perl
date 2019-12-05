@@ -1674,6 +1674,13 @@ Requires: perl(threads::shared) >= 1.21 \
 Requires: perl(warnings) \
 Provides: perl(Thread::Queue) = 3.13 \
 %{nil}
+%global gendep_perl_Thread_Semaphore \
+Requires: perl(Scalar::Util) >= 1.10 \
+Requires: perl(strict) \
+Requires: perl(threads::shared) \
+Requires: perl(warnings) \
+Provides: perl(Thread::Semaphore) = 2.13 \
+%{nil}
 %global gendep_perl_Time_HiRes \
 Requires: perl(Exporter) \
 Requires: perl(XSLoader) \
@@ -1852,7 +1859,7 @@ Requires: perl(IO::File) \
 Requires: perl(IPC::Open3) \
 Requires: perl(Opcode) \
 Requires: perl(POSIX) \
-Requires: perl(Scalar::Util) >= 1.10 \
+Requires: perl(Scalar::Util) \
 Requires: perl(Symbol) \
 Requires: perl(Text::Tabs) \
 Requires: perl(Tie::Handle) \
@@ -1944,7 +1951,6 @@ Provides: perl(SelectSaver) = 1.02 \
 Provides: perl(Symbol) = 1.08 \
 Provides: perl(Sys::Hostname) = 1.22 \
 Provides: perl(Thread) = 3.04 \
-Provides: perl(Thread::Semaphore) = 2.13 \
 Provides: perl(Tie::Array) = 1.07 \
 Provides: perl(Tie::ExtraHash) \
 Provides: perl(Tie::File) = 1.02 \
