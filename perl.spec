@@ -410,6 +410,7 @@ Requires:       perl-Pod-Usage, perl-podlators,
 Requires:       perl-Safe, perl-Scalar-List-Utils, perl-Search-Dict,
 Requires:       perl-SelfLoader, perl-Socket, perl-Storable, perl-Sys-Syslog,
 Requires:       perl-Term-ANSIColor, perl-Term-Cap, perl-Term-Complete,
+Requires:       perl-Term-ReadLine,
 Requires:       perl-Test, perl-Test-Harness, perl-Test-Simple,
 Requires:       perl-Text-Balanced, perl-Text-ParseWords, perl-Text-Tabs+Wrap,
 Requires:       perl-Thread-Queue, perl-Tie-RefHash,
@@ -2817,6 +2818,24 @@ Conflicts:      perl-interpreter < 4:5.30.1-451
 %description Term-Complete
 "Complete" routine provides word completion on a list of words in the array.
 
+%package Term-ReadLine
+Summary:        Perl interface to various read-line packages
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.17
+Requires:       %perl_compat
+Requires:       perl(Term::Cap)
+%if %{defined perl_bootstrap}
+%gendep_perl_Term_ReadLine
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Term-ReadLine
+This package is just a front end to some other packages. It's a stub to
+set up a common interface to the various read-line implementations found
+on CPAN (under the "Term::ReadLine::*" name space).
+
 %package Test
 Summary:        Simple framework for writing test scripts
 License:        GPL+ or Artistic
@@ -4385,6 +4404,11 @@ popd
 %exclude %{privlib}/Term/Complete.pm
 %exclude %{_mandir}/man3/Term::Complete.*
 
+# Term-ReadLine
+%exclude %dir %{privlib}/Term
+%exclude %{privlib}/Term/ReadLine.pm
+%exclude %{_mandir}/man3/Term::ReadLine.*
+
 # Test
 %exclude %{privlib}/Test.pm
 %exclude %{_mandir}/man3/Test.*
@@ -5512,6 +5536,11 @@ popd
 %{privlib}/Term/Complete.pm
 %{_mandir}/man3/Term::Complete.*
 
+%files Term-ReadLine
+%dir %{privlib}/Term
+%{privlib}/Term/ReadLine.pm
+%{_mandir}/man3/Term::ReadLine.*
+
 %files Test
 %{privlib}/Test.pm
 %{_mandir}/man3/Test.*
@@ -5677,6 +5706,7 @@ popd
 - Subpackage Safe
 - Subpackage Search-Dict
 - Subpackage Term-Complete
+- Subpackage Term-ReadLine
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
