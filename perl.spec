@@ -409,7 +409,7 @@ Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Simple,
 Requires:       perl-Pod-Usage, perl-podlators,
 Requires:       perl-Safe, perl-Scalar-List-Utils, perl-Search-Dict,
 Requires:       perl-SelfLoader, perl-Socket, perl-Storable, perl-Sys-Syslog,
-Requires:       perl-Term-ANSIColor, perl-Term-Cap,
+Requires:       perl-Term-ANSIColor, perl-Term-Cap, perl-Term-Complete,
 Requires:       perl-Test, perl-Test-Harness, perl-Test-Simple,
 Requires:       perl-Text-Balanced, perl-Text-ParseWords, perl-Text-Tabs+Wrap,
 Requires:       perl-Thread-Queue, perl-Tie-RefHash,
@@ -2802,6 +2802,21 @@ These are low-level functions to extract and use capabilities from a terminal
 capability (termcap) database.
 %endif
 
+%package Term-Complete
+Summary:        Perl word completion
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.403
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Term_Complete
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Term-Complete
+"Complete" routine provides word completion on a list of words in the array.
+
 %package Test
 Summary:        Simple framework for writing test scripts
 License:        GPL+ or Artistic
@@ -4366,6 +4381,10 @@ popd
 %exclude %{privlib}/Term/Cap.pm
 %exclude %{_mandir}/man3/Term::Cap.*
 
+# Term-Complete
+%exclude %{privlib}/Term/Complete.pm
+%exclude %{_mandir}/man3/Term::Complete.*
+
 # Test
 %exclude %{privlib}/Test.pm
 %exclude %{_mandir}/man3/Test.*
@@ -5488,6 +5507,11 @@ popd
 %{_mandir}/man3/Term::Cap.*
 %endif
 
+%files Term-Complete
+%dir %{privlib}/Term
+%{privlib}/Term/Complete.pm
+%{_mandir}/man3/Term::Complete.*
+
 %files Test
 %{privlib}/Test.pm
 %{_mandir}/man3/Test.*
@@ -5652,6 +5676,7 @@ popd
 - Subpackage lib
 - Subpackage Safe
 - Subpackage Search-Dict
+- Subpackage Term-Complete
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

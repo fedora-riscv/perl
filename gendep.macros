@@ -1368,6 +1368,12 @@ Requires: perl(strict) \
 Requires: perl(vars) \
 Provides: perl(Term::Cap) = 1.17 \
 %{nil}
+%global gendep_perl_Term_Complete \
+Requires: perl(:VERSION) >= 5.0.0 \
+Requires: perl(Exporter) \
+Requires: perl(strict) \
+Provides: perl(Term::Complete) = 1.403 \
+%{nil}
 %global gendep_perl_Test \
 Requires: perl(:VERSION) >= 5.4.0 \
 Requires: perl(Carp) \
@@ -1925,7 +1931,6 @@ Provides: perl(SDBM_File) = 1.15 \
 Provides: perl(SelectSaver) = 1.02 \
 Provides: perl(Symbol) = 1.08 \
 Provides: perl(Sys::Hostname) = 1.22 \
-Provides: perl(Term::Complete) = 1.403 \
 Provides: perl(Term::ReadLine) = 1.17 \
 Provides: perl(Term::ReadLine::Stub) \
 Provides: perl(Term::ReadLine::TermCap) \
