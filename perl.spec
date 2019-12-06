@@ -387,6 +387,9 @@ Requires:       perl-ExtUtils-MakeMaker, perl-ExtUtils-Manifest,
 Requires:       perl-ExtUtils-Miniperl, perl-ExtUtils-ParseXS,
 Requires:       perl-fields, perl-File-Fetch, perl-File-Path, perl-File-Temp,
 Requires:       perl-Filter, perl-Filter-Simple,
+%if %{with gdbm}
+Requires:       perl-GDBM_File,
+%endif
 Requires:       perl-Getopt-Long,
 Requires:       perl-HTTP-Tiny,
 Requires:       perl-if, perl-IO, perl-IO-Compress, perl-IO-Socket-IP,
@@ -1720,6 +1723,23 @@ Requires:       perl(warnings)
 %description Filter-Simple
 The Filter::Simple Perl module provides a simplified interface to
 Filter::Util::Call; one that is sufficient for most common cases.
+%endif
+
+%if %{with gdbm}
+%package GDBM_File
+Summary:        Perl5 access to the gdbm library
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.18
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_GDBM_File
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description GDBM_File
+GDBM_File is a module which allows Perl programs to make use of the facilities
+provided by the GNU gdbm library.
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -4051,6 +4071,13 @@ popd
 %exclude %{privlib}/Filter/Simple.pm
 %exclude %{_mandir}/man3/Filter::Simple.3*
 
+%if %{with gdbm}
+# GDBM_File
+%exclude %{archlib}/GDBM_File.pm
+%exclude %{archlib}/auto/GDBM_File
+%exclude %{_mandir}/man3/GDBM_File.3*
+%endif
+
 # Getopt-Long
 %exclude %{privlib}/Getopt/Long.pm
 %exclude %{_mandir}/man3/Getopt::Long.3*
@@ -5100,6 +5127,13 @@ popd
 %{_mandir}/man3/Filter::Simple.3*
 %endif
 
+%if %{with gdbm}
+%files GDBM_File
+%{archlib}/GDBM_File.pm
+%{archlib}/auto/GDBM_File
+%{_mandir}/man3/GDBM_File.3*
+%endif
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Getopt-Long
 %dir %{privlib}/Getopt
@@ -5806,6 +5840,7 @@ popd
 - Subpackage Thread-Semaphore
 - Subpackage Tie-File
 - Move attributes module into perl-libs
+- Subpackage GDBM_File
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
