@@ -532,7 +532,6 @@ Provides:       perl(utf8_heavy.pl)
 Requires:       perl(Carp)
 Requires:       perl(Exporter)
 # Term::Cap is optional
-Requires:       perl(XSLoader)
 %if %{defined perl_bootstrap}
 %gendep_perl_libs
 %endif
@@ -3652,7 +3651,10 @@ popd
 
 # libs
 %exclude %dir %{archlib}
+%exclude %{archlib}/attributes.pm
 %exclude %dir %{archlib}/auto
+%exclude %dir %{archlib}/auto/attributes
+%exclude %{archlib}/auto/attributes/attributes.so
 %exclude %{archlib}/auto/re
 %exclude %dir %{archlib}/CORE
 %exclude %{archlib}/CORE/libperl.so
@@ -3669,6 +3671,7 @@ popd
 %exclude %{privlib}/warnings.pm
 %exclude %{privlib}/XSLoader.pm
 %exclude %dir %{perl_vendorlib}
+%exclude %{_mandir}/man3/attributes.*
 %exclude %{_mandir}/man3/integer.*
 %exclude %{_mandir}/man3/re.*
 %exclude %{_mandir}/man3/strict.*
@@ -4603,7 +4606,10 @@ popd
 %license Artistic Copying
 %doc AUTHORS README Changes
 %dir %{archlib}
+%{archlib}/attributes.pm
 %dir %{archlib}/auto
+%dir %{archlib}/auto/attributes
+%{archlib}/auto/attributes/attributes.so
 %{archlib}/auto/re
 %dir %{archlib}/CORE
 %{archlib}/CORE/libperl.so
@@ -4620,6 +4626,7 @@ popd
 %{privlib}/warnings.pm
 %{privlib}/XSLoader.pm
 %dir %{perl_vendorlib}
+%{_mandir}/man3/attributes.*
 %{_mandir}/man3/integer.*
 %{_mandir}/man3/re.*
 %{_mandir}/man3/strict.*
@@ -5798,6 +5805,7 @@ popd
 - Subpackage Text-Abbrev
 - Subpackage Thread-Semaphore
 - Subpackage Tie-File
+- Move attributes module into perl-libs
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

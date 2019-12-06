@@ -1980,7 +1980,6 @@ Provides: perl(Unicode::UCD) = 0.72 \
 Provides: perl(User::grent) = 1.03 \
 Provides: perl(User::pwent) = 1.01 \
 Provides: perl(_charnames) = 1.45 \
-Provides: perl(attributes) = 0.33 \
 Provides: perl(blib) = 1.07 \
 Provides: perl(bytes) = 1.07 \
 Provides: perl(bytes_heavy.pl) \
@@ -2059,6 +2058,7 @@ Requires: perl(strict) \
 Requires: perl(vars) \
 %{nil}
 %global gendep_perl_libs \
+Requires: perl(XSLoader) \
 Requires: perl(integer) \
 Requires: perl(strict) \
 Requires: perl(warnings) \
@@ -2070,6 +2070,7 @@ Provides: perl(:WITH_LARGEFILES) \
 Provides: perl(:WITH_PERLIO) \
 Provides: perl(:WITH_THREADS) \
 Provides: perl(XSLoader) = 0.30 \
+Provides: perl(attributes) = 0.33 \
 Provides: perl(integer) = 1.01 \
 Provides: perl(re) = 0.37 \
 Provides: perl(strict) = 1.11 \
