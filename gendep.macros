@@ -1055,6 +1055,13 @@ Requires: perl(version) >= 0.87 \
 Requires: perl(warnings) \
 Provides: perl(Module::Metadata) = 1.000036 \
 %{nil}
+%global gendep_perl_NDBM_File \
+Requires: perl(strict) \
+Requires: perl(Tie::Hash) \
+Requires: perl(warnings) \
+Requires: perl(XSLoader) \
+Provides: perl(NDBM_File) = 1.15 \
+%{nil}
 %global gendep_perl_Net_Ping \
 Requires: perl(:VERSION) >= 5.2.0 \
 Requires: perl(Carp) \
@@ -1944,7 +1951,6 @@ Provides: perl(Hash::Util::FieldHash) = 1.20 \
 Provides: perl(I18N::Langinfo) = 0.18 \
 Provides: perl(IPC::Open2) = 1.04 \
 Provides: perl(IPC::Open3) = 1.20 \
-Provides: perl(NDBM_File) = 1.15 \
 Provides: perl(Net::hostent) = 1.02 \
 Provides: perl(Net::netent) = 1.01 \
 Provides: perl(Net::protoent) = 1.01 \

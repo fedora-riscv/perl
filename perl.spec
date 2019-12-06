@@ -403,6 +403,9 @@ Requires:       perl-Math-Complex, perl-Memoize, perl-MIME-Base64,
 Requires:       perl-Module-CoreList, perl-Module-CoreList-tools,
 Requires:       perl-Module-Load, perl-Module-Load-Conditional,
 Requires:       perl-Module-Loaded, perl-Module-Metadata,
+%if %{with gdbm}
+Requires:       perl-NDBM_File,
+%endif
 Requires:       perl-Net-Ping, perl-NEXT,
 Requires:       perl-open,
 Requires:       perl-parent, perl-PathTools, perl-Params-Check, perl-perlfaq,
@@ -2304,6 +2307,25 @@ Requires:       %perl_compat
 
 %description Module-Metadata
 Gather package and POD information from perl module files
+%endif
+
+%if %{with gdbm}
+%package NDBM_File
+Summary:        Tied access to ndbm files
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.15
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_NDBM_File
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description NDBM_File
+NDBM_File establishes a connection between a Perl hash variable and a file in
+ndbm format. You can manipulate the data in the file just as if it were in
+a Perl hash, but when your program exits, the data will remain in the file, to
+be used the next time your program runs.
 %endif
 
 %package Net-Ping
@@ -4341,6 +4363,13 @@ popd
 %exclude %{privlib}/Module/Metadata.pm
 %exclude %{_mandir}/man3/Module::Metadata.3pm*
 
+%if %{with gdbm}
+# NDBM_File
+%exclude %{archlib}/NDBM_File.pm
+%exclude %{archlib}/auto/NDBM_File
+%exclude %{_mandir}/man3/NDBM_File.3*
+%endif
+
 # Net-Ping
 %exclude %{privlib}/Net/Ping.pm
 %exclude %{_mandir}/man3/Net::Ping.*
@@ -5436,6 +5465,13 @@ popd
 %{_mandir}/man3/Module::Metadata.3pm*
 %endif
 
+%if %{with gdbm}
+%files NDBM_File
+%{archlib}/NDBM_File.pm
+%{archlib}/auto/NDBM_File
+%{_mandir}/man3/NDBM_File.3*
+%endif
+
 %files Net-Ping
 %dir %{privlib}/Net
 %{privlib}/Net/Ping.pm
@@ -5841,6 +5877,7 @@ popd
 - Subpackage Tie-File
 - Move attributes module into perl-libs
 - Subpackage GDBM_File
+- Subpackage NDBM_File
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
