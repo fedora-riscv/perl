@@ -416,7 +416,8 @@ Requires:       perl-PerlIO-via-QuotedPrint, perl-Perl-OSType,
 Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-Html,
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Simple,
 Requires:       perl-Pod-Usage, perl-podlators,
-Requires:       perl-Safe, perl-Scalar-List-Utils, perl-Search-Dict,
+Requires:       perl-Safe, perl-Scalar-List-Utils,
+Requires:       perl-SDBM_File, perl-Search-Dict,
 Requires:       perl-SelfLoader, perl-Socket, perl-Storable, perl-Sys-Syslog,
 Requires:       perl-Term-ANSIColor, perl-Term-Cap, perl-Term-Complete,
 Requires:       perl-Term-ReadLine,
@@ -2730,6 +2731,23 @@ really be high enough to warrant the use of a keyword, and the size so small
 such that being individual extensions would be wasteful.
 %endif
 
+%package SDBM_File
+Summary:        Tied access to sdbm files
+License:        (GPL+ or Artistic) and Public Domain
+Epoch:          0
+Version:        1.15
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_SDBM_File
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description SDBM_File
+SDBM_File establishes a connection between a Perl hash variable and a file in
+sdbm format.  You can manipulate the data in the file just as if it were in
+a Perl hash, but when your program exits, the data will remain in the file, to
+be used the next time your program runs.
+
 %package Search-Dict
 Summary:        Search for a key in a dictionary file
 License:        GPL+ or Artistic
@@ -4522,6 +4540,11 @@ popd
 %exclude %{_mandir}/man3/Scalar::Util*
 %exclude %{_mandir}/man3/Sub::Util*
 
+# SDBM_File
+%exclude %{archlib}/SDBM_File.pm
+%exclude %{archlib}/auto/SDBM_File
+%exclude %{_mandir}/man3/SDBM_File.3*
+
 # Search-Dict
 %exclude %{privlib}/Search
 %exclude %{_mandir}/man3/Search::*
@@ -5671,6 +5694,11 @@ popd
 %{_mandir}/man3/Sub::Util*
 %endif
 
+%files SDBM_File
+%{archlib}/SDBM_File.pm
+%{archlib}/auto/SDBM_File
+%{_mandir}/man3/SDBM_File.3*
+
 %files Search-Dict
 %{privlib}/Search
 %{_mandir}/man3/Search::*
@@ -5915,6 +5943,7 @@ popd
 - Subpackage GDBM_File
 - Subpackage NDBM_File
 - Subpackage ODBM_File
+- Subpackage SDBM_File
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
