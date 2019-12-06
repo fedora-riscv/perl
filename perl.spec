@@ -416,7 +416,7 @@ Requires:       perl-Text-Abbrev, perl-Text-Balanced, perl-Text-ParseWords,
 Requires:       perl-Text-Tabs+Wrap,
 Requires:       perl-Thread-Queue, perl-Thread-Semaphore,
 Requires:       perl-threads, perl-threads-shared,
-Requires:       perl-Tie-RefHash,
+Requires:       perl-Tie-File, perl-Tie-RefHash,
 Requires:       perl-Time-HiRes, perl-Time-Local, perl-Time-Piece,
 Requires:       perl-Unicode-Collate, perl-Unicode-Normalize,
 Requires:       perl-version,
@@ -448,7 +448,7 @@ details on the Perl decomposition into packages.
 
 %package interpreter
 Summary:        Standalone executable Perl interpreter
-License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and BSD and Public Domain and UCD
+License:        (GPL+ or Artistic) and BSD and Public Domain and UCD
 # perl-interpreter denotes a package with the perl executable.
 # Full EVR is for compatibility with systems that swapped perl and perl-core
 # <https://fedoraproject.org/wiki/Changes/perl_Package_to_Install_Core_Modules>,
@@ -2982,6 +2982,26 @@ This module provides thread-safe FIFO queues that can be accessed safely by
 any number of threads.
 %endif
 
+%package Tie-File
+Summary:        Access the lines of a disk file via a Perl array
+License:        GPLv2+ or Artistic
+Epoch:          0
+Version:        1.02
+Requires:       %perl_compat
+# Symbol is not used on Perl >= 5.6.0
+%if %{defined perl_bootstrap}
+%gendep_perl_Tie_File
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Tie-File
+Tie::File represents a regular text file as a Perl array. Each element in the
+array corresponds to a record in the file. The first line of the file is
+element 0 of the array; the second line is element 1, and so on.  The file is
+not loaded into memory, so this will work even for gigantic files.  Changes to
+the array are reflected in the file immediately.
+
 %package Tie-RefHash
 Summary:        Use references as hash keys
 License:        GPL+ or Artistic
@@ -4511,6 +4531,10 @@ popd
 %exclude %{privlib}/Thread/Semaphore.pm
 %exclude %{_mandir}/man3/Thread::Semaphore.*
 
+# Tie-File
+%exclude %{privlib}/Tie/File.pm
+%exclude %{_mandir}/man3/Tie::File.*
+
 # Tie-RefHash
 %exclude %{privlib}/Tie/RefHash.pm
 %exclude %{_mandir}/man3/Tie::RefHash.*
@@ -5669,6 +5693,11 @@ popd
 %{privlib}/Thread/Semaphore.pm
 %{_mandir}/man3/Thread::Semaphore.*
 
+%files Tie-File
+%dir %{privlib}/Tie
+%{privlib}/Tie/File.pm
+%{_mandir}/man3/Tie::File.*
+
 %files Tie-RefHash
 %dir %{privlib}/Tie
 %{privlib}/Tie/RefHash.pm
@@ -5768,6 +5797,7 @@ popd
 - Subpackage Term-ReadLine
 - Subpackage Text-Abbrev
 - Subpackage Thread-Semaphore
+- Subpackage Tie-File
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

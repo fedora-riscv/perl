@@ -1658,6 +1658,16 @@ Requires: perl(warnings::register) \
 Provides: perl(Text::Tabs) = 2013.0523 \
 Provides: perl(Text::Wrap) = 2013.0523 \
 %{nil}
+%global gendep_perl_Tie_File \
+Requires: perl(:VERSION) >= 5.5.0 \
+Requires: perl(Carp) \
+Requires: perl(Fcntl) \
+Requires: perl(POSIX) \
+Requires: perl(strict) \
+Provides: perl(Tie::File) = 1.02 \
+Provides: perl(Tie::File::Cache) \
+Provides: perl(Tie::File::Heap) \
+%{nil}
 %global gendep_perl_Tie_RefHash \
 Requires: perl(:VERSION) >= 5.5.0 \
 Requires: perl(Carp) \
@@ -1837,7 +1847,6 @@ Provides: perl(experimental) = 0.020 \
 %global gendep_perl_interpreter \
 Requires: perl(:VERSION) >= 5.0.0 \
 Requires: perl(:VERSION) >= 5.10.1 \
-Requires: perl(:VERSION) >= 5.5.0 \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(:VERSION) >= 5.7.3 \
 Requires: perl(:VERSION) >= 5.9.1 \
@@ -1858,7 +1867,6 @@ Requires: perl(I18N::LangTags) \
 Requires: perl(IO::File) \
 Requires: perl(IPC::Open3) \
 Requires: perl(Opcode) \
-Requires: perl(POSIX) \
 Requires: perl(Scalar::Util) \
 Requires: perl(Symbol) \
 Requires: perl(Text::Tabs) \
@@ -1953,9 +1961,6 @@ Provides: perl(Sys::Hostname) = 1.22 \
 Provides: perl(Thread) = 3.04 \
 Provides: perl(Tie::Array) = 1.07 \
 Provides: perl(Tie::ExtraHash) \
-Provides: perl(Tie::File) = 1.02 \
-Provides: perl(Tie::File::Cache) \
-Provides: perl(Tie::File::Heap) \
 Provides: perl(Tie::Handle) = 4.2 \
 Provides: perl(Tie::Hash) \
 Provides: perl(Tie::Hash) = 1.05 \
