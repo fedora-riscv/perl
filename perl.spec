@@ -407,6 +407,9 @@ Requires:       perl-Module-Loaded, perl-Module-Metadata,
 Requires:       perl-NDBM_File,
 %endif
 Requires:       perl-Net-Ping, perl-NEXT,
+%if %{with gdbm}
+Requires:       perl-ODBM_File,
+%endif
 Requires:       perl-open,
 Requires:       perl-parent, perl-PathTools, perl-Params-Check, perl-perlfaq,
 Requires:       perl-PerlIO-via-QuotedPrint, perl-Perl-OSType,
@@ -2361,6 +2364,25 @@ Conflicts:      perl-interpreter < 4:5.30.1-451
 The NEXT module adds a pseudo-class named "NEXT" to any program that uses it.
 If a method "m" calls "$self->NEXT::m()", the call to "m" is redispatched as
 if the calling method had not originally been found.
+
+%if %{with gdbm}
+%package ODBM_File
+Summary:        Tied access to odbm files
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.16
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_ODBM_File
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description ODBM_File
+ODBM_File establishes a connection between a Perl hash variable and a file in
+odbm format. You can manipulate the data in the file just as if it were in
+a Perl hash, but when your program exits, the data will remain in the file, to
+be used the next time your program runs.
+%endif
 
 %package open
 Summary:        Perl pragma to set default PerlIO layers for input and output
@@ -4378,6 +4400,13 @@ popd
 %exclude %{privlib}/NEXT.pm
 %exclude %{_mandir}/man3/NEXT.*
 
+%if %{with gdbm}
+# ODBM_File
+%exclude %{archlib}/ODBM_File.pm
+%exclude %{archlib}/auto/ODBM_File
+%exclude %{_mandir}/man3/ODBM_File.3*
+%endif
+
 # PathTools
 %exclude %{archlib}/Cwd.pm
 %exclude %{archlib}/File/Spec*
@@ -5481,6 +5510,13 @@ popd
 %{privlib}/NEXT.pm
 %{_mandir}/man3/NEXT.*
 
+%if %{with gdbm}
+%files ODBM_File
+%{archlib}/ODBM_File.pm
+%{archlib}/auto/ODBM_File
+%{_mandir}/man3/ODBM_File.3*
+%endif
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files PathTools
 %{archlib}/Cwd.pm
@@ -5878,6 +5914,7 @@ popd
 - Move attributes module into perl-libs
 - Subpackage GDBM_File
 - Subpackage NDBM_File
+- Subpackage ODBM_File
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

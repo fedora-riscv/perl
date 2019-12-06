@@ -1075,6 +1075,13 @@ Requires: perl(constant) \
 Requires: perl(strict) \
 Provides: perl(Net::Ping) = 2.71 \
 %{nil}
+%global gendep_perl_ODBM_File \
+Requires: perl(strict) \
+Requires: perl(Tie::Hash) \
+Requires: perl(warnings) \
+Requires: perl(XSLoader) \
+Provides: perl(ODBM_File) = 1.16 \
+%{nil}
 %global gendep_perl_NEXT \
 Provides: perl(NEXT) = 0.67 \
 Provides: perl(NEXT::ACTUAL) \
@@ -1956,7 +1963,6 @@ Provides: perl(Net::netent) = 1.01 \
 Provides: perl(Net::protoent) = 1.01 \
 Provides: perl(Net::servent) = 1.02 \
 Provides: perl(O) = 1.03 \
-Provides: perl(ODBM_File) = 1.16 \
 Provides: perl(Opcode) = 1.43 \
 Provides: perl(POSIX) = 1.88 \
 Provides: perl(POSIX::SigAction) \
