@@ -1955,7 +1955,6 @@ Provides: perl(File::Compare) = 1.1006 \
 Provides: perl(File::Copy) = 2.34 \
 Provides: perl(File::DosGlob) = 1.12 \
 Provides: perl(File::Find) = 1.36 \
-Provides: perl(File::Glob) = 1.32 \
 Provides: perl(File::stat) = 1.08 \
 Provides: perl(FileCache) = 1.10 \
 Provides: perl(FileHandle) = 2.03 \
@@ -2096,6 +2095,7 @@ Provides: perl(:WITH_ITHREADS) \
 Provides: perl(:WITH_LARGEFILES) \
 Provides: perl(:WITH_PERLIO) \
 Provides: perl(:WITH_THREADS) \
+Provides: perl(File::Glob) = 1.32 \
 Provides: perl(XSLoader) = 0.30 \
 Provides: perl(attributes) = 0.33 \
 Provides: perl(integer) = 1.01 \

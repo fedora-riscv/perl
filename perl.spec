@@ -458,7 +458,7 @@ details on the Perl decomposition into packages.
 
 %package interpreter
 Summary:        Standalone executable Perl interpreter
-License:        (GPL+ or Artistic) and BSD and Public Domain and UCD
+License:        (GPL+ or Artistic) and Public Domain and UCD
 # perl-interpreter denotes a package with the perl executable.
 # Full EVR is for compatibility with systems that swapped perl and perl-core
 # <https://fedoraproject.org/wiki/Changes/perl_Package_to_Install_Core_Modules>,
@@ -518,7 +518,7 @@ Perl utils like "splain" or "perlbug" can be found in perl-utils package.
 
 %package libs
 Summary:        The libraries for the perl run-time
-License:        (GPL+ or Artistic) and HSRL and MIT and UCD
+License:        (GPL+ or Artistic) and BSD and HSRL and MIT and UCD
 # Compat provides
 Provides:       %perl_compat
 Provides:       perl(:MODULE_COMPAT_5.30.0)
@@ -3737,9 +3737,14 @@ popd
 %exclude %dir %{archlib}/auto
 %exclude %dir %{archlib}/auto/attributes
 %exclude %{archlib}/auto/attributes/attributes.so
+%exclude %dir %{archlib}/auto/File
+%exclude %dir %{archlib}/auto/File/Glob
+%exclude %{archlib}/auto/File/Glob/Glob.so
 %exclude %{archlib}/auto/re
 %exclude %dir %{archlib}/CORE
 %exclude %{archlib}/CORE/libperl.so
+%exclude %dir %{archlib}/File
+%exclude %{archlib}/File/Glob.pm
 %exclude %{archlib}/re.pm
 %exclude %{_libdir}/libperl.so.*
 %exclude %dir %{perl_vendorarch}
@@ -3754,6 +3759,7 @@ popd
 %exclude %{privlib}/XSLoader.pm
 %exclude %dir %{perl_vendorlib}
 %exclude %{_mandir}/man3/attributes.*
+%exclude %{_mandir}/man3/File::Glob.*
 %exclude %{_mandir}/man3/integer.*
 %exclude %{_mandir}/man3/re.*
 %exclude %{_mandir}/man3/strict.*
@@ -4718,9 +4724,14 @@ popd
 %dir %{archlib}/auto
 %dir %{archlib}/auto/attributes
 %{archlib}/auto/attributes/attributes.so
+%dir %{archlib}/auto/File
+%dir %{archlib}/auto/File/Glob
+%{archlib}/auto/File/Glob/Glob.so
 %{archlib}/auto/re
 %dir %{archlib}/CORE
 %{archlib}/CORE/libperl.so
+%dir %{archlib}/File
+%{archlib}/File/Glob.pm
 %{archlib}/re.pm
 %{_libdir}/libperl.so.*
 %dir %{perl_vendorarch}
@@ -4735,6 +4746,7 @@ popd
 %{privlib}/XSLoader.pm
 %dir %{perl_vendorlib}
 %{_mandir}/man3/attributes.*
+%{_mandir}/man3/File::Glob.*
 %{_mandir}/man3/integer.*
 %{_mandir}/man3/re.*
 %{_mandir}/man3/strict.*
@@ -5944,6 +5956,7 @@ popd
 - Subpackage NDBM_File
 - Subpackage ODBM_File
 - Subpackage SDBM_File
+- Move File::Glob module into perl-libs
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
