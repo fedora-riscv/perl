@@ -616,6 +616,12 @@ Requires: perl(:VERSION) >= 5.8.0 \
 Requires: perl(strict) \
 Provides: perl(fields) = 2.24 \
 %{nil}
+%global gendep_perl_File_DosGlob \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Requires: perl(XSLoader) \
+Provides: perl(File::DosGlob) = 1.12 \
+%{nil}
 %global gendep_perl_File_Fetch \
 Requires: perl(Carp) \
 Requires: perl(Cwd) \
@@ -1953,7 +1959,6 @@ Provides: perl(Fcntl) = 1.13 \
 Provides: perl(File::Basename) = 2.85 \
 Provides: perl(File::Compare) = 1.1006 \
 Provides: perl(File::Copy) = 2.34 \
-Provides: perl(File::DosGlob) = 1.12 \
 Provides: perl(File::Find) = 1.36 \
 Provides: perl(File::stat) = 1.08 \
 Provides: perl(FileCache) = 1.10 \

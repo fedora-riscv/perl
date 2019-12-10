@@ -385,7 +385,8 @@ Requires:       perl-ExtUtils-Command,
 Requires:       perl-ExtUtils-Embed, perl-ExtUtils-Install,
 Requires:       perl-ExtUtils-MakeMaker, perl-ExtUtils-Manifest,
 Requires:       perl-ExtUtils-Miniperl, perl-ExtUtils-ParseXS,
-Requires:       perl-fields, perl-File-Fetch, perl-File-Path, perl-File-Temp,
+Requires:       perl-fields, perl-File-DosGlob, perl-File-Fetch,
+Requires:       perl-File-Path, perl-File-Temp,
 Requires:       perl-Filter, perl-Filter-Simple,
 %if %{with gdbm}
 Requires:       perl-GDBM_File,
@@ -1631,6 +1632,23 @@ Conflicts:      perl < 4:5.30.1-451
 
 %description fields
 The "fields" pragma enables compile-time and run-time verified class fields.
+
+%package File-DosGlob
+Summary:        DOS-like globbing
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.12
+Requires:       %perl_compat
+Requires:       perl(Text::ParseWords)
+%if %{defined perl_bootstrap}
+%gendep_perl_File_DosGlob
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description File-DosGlob
+This Perl module implements DOS-like globbing with a few enhancements. It
+is largely compatible with perlglob.exe in all but one respect--it understands
+wild cards in directory components.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package File-Fetch
@@ -4113,6 +4131,11 @@ popd
 %exclude %{privlib}/fields.pm
 %exclude %{_mandir}/man3/fields.3*
 
+# File-DosGlob
+%exclude %{archlib}/File/DosGlob.pm
+%exclude %{archlib}/auto/File/DosGlob
+%exclude %{_mandir}/man3/File::DosGlob.3*
+
 # File-Fetch
 %exclude %{privlib}/File/Fetch.pm
 %exclude %{_mandir}/man3/File::Fetch.3*
@@ -5181,6 +5204,13 @@ popd
 %{privlib}/fields.pm
 %{_mandir}/man3/fields.3*
 
+%files File-DosGlob
+%dir %{archlib}/File
+%{archlib}/File/DosGlob.pm
+%dir %{archlib}/auto/File
+%{archlib}/auto/File/DosGlob
+%{_mandir}/man3/File::DosGlob.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files File-Fetch
 %dir %{privlib}/File
@@ -5957,6 +5987,7 @@ popd
 - Subpackage ODBM_File
 - Subpackage SDBM_File
 - Move File::Glob module into perl-libs
+- Subpackage File-DosGlob
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
