@@ -877,6 +877,17 @@ Requires: perl(strict) \
 Requires: perl(vars) \
 Provides: perl(IPC::Cmd) = 1.02 \
 %{nil}
+%global gendep_perl_IPC_Open3 \
+Requires: perl(:VERSION) >= 5.0.0 \
+Requires: perl(Carp) \
+Requires: perl(constant) \
+Requires: perl(Exporter) \
+Requires: perl(IPC::Open3) \
+Requires: perl(strict) \
+Requires: perl(Symbol) \
+Provides: perl(IPC::Open2) = 1.04 \
+Provides: perl(IPC::Open3) = 1.20 \
+%{nil}
 %global gendep_perl_IPC_SysV \
 Requires: perl(Carp) \
 Requires: perl(Class::Struct) \
@@ -1913,7 +1924,6 @@ Requires: perl(File::Basename) \
 Requires: perl(File::Spec) \
 Requires: perl(I18N::LangTags) \
 Requires: perl(IO::File) \
-Requires: perl(IPC::Open3) \
 Requires: perl(Opcode) \
 Requires: perl(Scalar::Util) \
 Requires: perl(Symbol) \
@@ -1978,8 +1988,6 @@ Provides: perl(Getopt::Std) = 1.12 \
 Provides: perl(Hash::Util) = 0.22 \
 Provides: perl(Hash::Util::FieldHash) = 1.20 \
 Provides: perl(I18N::Langinfo) = 0.18 \
-Provides: perl(IPC::Open2) = 1.04 \
-Provides: perl(IPC::Open3) = 1.20 \
 Provides: perl(Net::hostent) = 1.02 \
 Provides: perl(Net::netent) = 1.01 \
 Provides: perl(Net::protoent) = 1.01 \

@@ -394,8 +394,8 @@ Requires:       perl-GDBM_File,
 Requires:       perl-Getopt-Long,
 Requires:       perl-HTTP-Tiny,
 Requires:       perl-if, perl-IO, perl-IO-Compress, perl-IO-Socket-IP,
+Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-IPC-Open3, perl-IPC-SysV,
 Requires:       perl-I18N-Collate, perl-I18N-LangTags,
-Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-IPC-SysV,
 Requires:       perl-JSON-PP,
 Requires:       perl-lib, perl-libnet, perl-libnetcfg,
 Requires:       perl-Locale-Maketext, perl-Locale-Maketext-Simple,
@@ -1919,6 +1919,27 @@ BuildArch:      noarch
 IPC::Cmd allows you to run commands, interactively if desired, in a platform
 independent way, but have them still work.
 %endif
+
+%package IPC-Open3
+Summary:        Open a process for reading, writing, and error handling
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.20
+Requires:       %perl_compat
+Requires:       perl(Fcntl)
+Requires:       perl(IO::Pipe)
+Requires:       perl(POSIX)
+Requires:       perl(warnings)
+%if %{defined perl_bootstrap}
+%gendep_perl_IPC_Open3
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description IPC-Open3
+These are functions that spawn a given command and connects the standard
+output of the command for reading, standard output for writing, and standard
+error output for handling the errors.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package IPC-SysV
@@ -4302,6 +4323,13 @@ popd
 %exclude %{privlib}/IPC/Cmd.pm
 %exclude %{_mandir}/man3/IPC::Cmd.3*
 
+# IPC-Open3
+%exclude %dir %{privlib}/IPC
+%exclude %{privlib}/IPC/Open2.pm
+%exclude %{privlib}/IPC/Open3.pm
+%exclude %{_mandir}/man3/IPC::Open2.3*
+%exclude %{_mandir}/man3/IPC::Open3.3*
+
 # IPC-SysV
 %exclude %{archlib}/auto/IPC
 %exclude %{archlib}/IPC/Msg.pm
@@ -5409,6 +5437,13 @@ popd
 %{_mandir}/man3/IPC::Cmd.3*
 %endif
 
+%files IPC-Open3
+%dir %{privlib}/IPC
+%{privlib}/IPC/Open2.pm
+%{privlib}/IPC/Open3.pm
+%{_mandir}/man3/IPC::Open2.3*
+%{_mandir}/man3/IPC::Open3.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files IPC-SysV
 %{archlib}/auto/IPC
@@ -6015,6 +6050,7 @@ popd
 - Move File::Glob module into perl-libs
 - Subpackage File-DosGlob
 - Subpackage File-Find
+- Subpackage IPC-Open3
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
