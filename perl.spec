@@ -386,7 +386,7 @@ Requires:       perl-ExtUtils-Embed, perl-ExtUtils-Install,
 Requires:       perl-ExtUtils-MakeMaker, perl-ExtUtils-Manifest,
 Requires:       perl-ExtUtils-Miniperl, perl-ExtUtils-ParseXS,
 Requires:       perl-fields, perl-File-DosGlob, perl-File-Fetch,
-Requires:       perl-File-Path, perl-File-Temp,
+Requires:       perl-File-Find, perl-File-Path, perl-File-Temp,
 Requires:       perl-Filter, perl-Filter-Simple,
 %if %{with gdbm}
 Requires:       perl-GDBM_File,
@@ -1668,6 +1668,23 @@ BuildArch:      noarch
 %description File-Fetch
 File::Fetch is a generic file fetching mechanism.
 %endif
+
+%package File-Find
+Summary:        Traverse a directory tree
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.36
+Requires:       %perl_compat
+Recommends:     perl(Scalar::Util)
+%if %{defined perl_bootstrap}
+%gendep_perl_File_Find
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description File-Find
+These are functions for searching through directory trees doing work on each
+file found similar to the Unix find command.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package File-Path
@@ -4140,6 +4157,10 @@ popd
 %exclude %{privlib}/File/Fetch.pm
 %exclude %{_mandir}/man3/File::Fetch.3*
 
+# File-Find
+%exclude %{privlib}/File/Find.pm
+%exclude %{_mandir}/man3/File::Find.3*
+
 # File-Path
 %exclude %{privlib}/File/Path.pm
 %exclude %{_mandir}/man3/File::Path.3*
@@ -5218,6 +5239,11 @@ popd
 %{_mandir}/man3/File::Fetch.3*
 %endif
 
+%files File-Find
+%dir %{privlib}/File
+%{privlib}/File/Find.pm
+%{_mandir}/man3/File::Find.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files File-Path
 %dir %{privlib}/File
@@ -5988,6 +6014,7 @@ popd
 - Subpackage SDBM_File
 - Move File::Glob module into perl-libs
 - Subpackage File-DosGlob
+- Subpackage File-Find
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
