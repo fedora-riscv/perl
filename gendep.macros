@@ -626,6 +626,12 @@ Provides: perl(ExtUtils::Typemaps::InputMap) = 3.38 \
 Provides: perl(ExtUtils::Typemaps::OutputMap) = 3.38 \
 Provides: perl(ExtUtils::Typemaps::Type) = 3.38 \
 %{nil}
+%global gendep_perl_Fcntl \
+Requires: perl(Exporter) \
+Requires: perl(strict) \
+Requires: perl(XSLoader) \
+Provides: perl(Fcntl) = 1.13 \
+%{nil}
 %global gendep_perl_fields \
 Requires: perl(:VERSION) >= 5.8.0 \
 Requires: perl(strict) \
@@ -1979,7 +1985,6 @@ Provides: perl(DirHandle) = 1.05 \
 Provides: perl(DynaLoader) = 1.45 \
 Provides: perl(EVERY::LAST) \
 Provides: perl(English) = 1.10 \
-Provides: perl(Fcntl) = 1.13 \
 Provides: perl(File::Basename) = 2.85 \
 Provides: perl(File::Compare) = 1.1006 \
 Provides: perl(File::Copy) = 2.34 \

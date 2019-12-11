@@ -385,7 +385,7 @@ Requires:       perl-ExtUtils-Command,
 Requires:       perl-ExtUtils-Embed, perl-ExtUtils-Install,
 Requires:       perl-ExtUtils-MakeMaker, perl-ExtUtils-Manifest,
 Requires:       perl-ExtUtils-Miniperl, perl-ExtUtils-ParseXS,
-Requires:       perl-fields, perl-File-DosGlob, perl-File-Fetch,
+Requires:       perl-Fcntl, perl-fields, perl-File-DosGlob, perl-File-Fetch,
 Requires:       perl-File-Find, perl-File-Path, perl-File-Temp,
 Requires:       perl-Filter, perl-Filter-Simple,
 %if %{with gdbm}
@@ -1633,6 +1633,20 @@ ExtUtils::ParseXS will compile XS code into C code by embedding the constructs
 necessary to let C functions manipulate Perl values and creates the glue
 necessary to let Perl access those functions.
 %endif
+
+%package Fcntl
+Summary:        File operation options
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.13
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Fcntl
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Fcntl
+Fcntl module provides file operation related options.
 
 %package fields
 Summary:        Compile-time class fields
@@ -4194,6 +4208,11 @@ popd
 %exclude %{_mandir}/man3/ExtUtils::Typemaps::OutputMap.3*
 %exclude %{_mandir}/man3/ExtUtils::Typemaps::Type.3*
 
+# Fcntl
+%exclude %{archlib}/Fcntl.pm
+%exclude %{archlib}/auto/Fcntl
+%exclude %{_mandir}/man3/Fcntl.3*
+
 # fields
 %exclude %{privlib}/fields.pm
 %exclude %{_mandir}/man3/fields.3*
@@ -5288,6 +5307,11 @@ popd
 %{_mandir}/man3/ExtUtils::Typemaps::Type.3*
 %endif
 
+%files Fcntl
+%{archlib}/Fcntl.pm
+%{archlib}/auto/Fcntl
+%{_mandir}/man3/Fcntl.3*
+
 %files fields
 %{privlib}/fields.pm
 %{_mandir}/man3/fields.3*
@@ -6091,6 +6115,7 @@ popd
 - Subpackage File-Find
 - Subpackage IPC-Open3
 - Subpackage B
+- Subpackage Fcntl
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
