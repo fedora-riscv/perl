@@ -53,6 +53,21 @@ Requires: perl(strict) \
 Requires: perl(:VERSION) >= 5.6.0 \
 Provides: perl(autouse) = 1.11 \
 %{nil}
+%global gendep_perl_B \
+Requires: perl(B) \
+Requires: perl(B::Concise) \
+Requires: perl(B::Op_private) \
+Requires: perl(B::Terse) \
+Provides: perl(B) = 1.76 \
+Provides: perl(B::Concise) = 1.004 \
+Provides: perl(B::Deparse) = 1.49 \
+Provides: perl(B::OBJECT) \
+Provides: perl(B::Op_private) = 5.030000 \
+Provides: perl(B::Showlex) = 1.05 \
+Provides: perl(B::Terse) = 1.09 \
+Provides: perl(B::Xref) = 1.07 \
+Provides: perl(O) = 1.03 \
+%{nil}
 %global gendep_perl_base \
 Requires: perl(:VERSION) >= 5.8.0 \
 Requires: perl(strict) \
@@ -1910,10 +1925,6 @@ Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(:VERSION) >= 5.7.3 \
 Requires: perl(:VERSION) >= 5.9.1 \
 Requires: perl(:VERSION) >= 5.9.4 \
-Requires: perl(B) \
-Requires: perl(B::Concise) \
-Requires: perl(B::Op_private) \
-Requires: perl(B::Terse) \
 Requires: perl(Carp) \
 Requires: perl(Class::Struct) \
 Requires: perl(Config) \
@@ -1952,14 +1963,6 @@ Requires: perl(unicore::Name) \
 Requires: perl(warnings) \
 Requires: perl(warnings::register) \
 Provides: perl(AnyDBM_File) = 1.01 \
-Provides: perl(B) = 1.76 \
-Provides: perl(B::Concise) = 1.004 \
-Provides: perl(B::Deparse) = 1.49 \
-Provides: perl(B::OBJECT) \
-Provides: perl(B::Op_private) = 5.030000 \
-Provides: perl(B::Showlex) = 1.05 \
-Provides: perl(B::Terse) = 1.09 \
-Provides: perl(B::Xref) = 1.07 \
 Provides: perl(Benchmark) = 1.22 \
 Provides: perl(Class::Struct) = 0.65 \
 Provides: perl(Class::Struct::Tie_ISA) \
@@ -1992,7 +1995,6 @@ Provides: perl(Net::hostent) = 1.02 \
 Provides: perl(Net::netent) = 1.01 \
 Provides: perl(Net::protoent) = 1.01 \
 Provides: perl(Net::servent) = 1.02 \
-Provides: perl(O) = 1.03 \
 Provides: perl(Opcode) = 1.43 \
 Provides: perl(POSIX) = 1.88 \
 Provides: perl(POSIX::SigAction) \

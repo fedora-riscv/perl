@@ -369,7 +369,7 @@ Requires:       perl-utils
 
 Requires:       perl-Archive-Tar, perl-Attribute-Handlers, perl-autodie,
 Requires:       perl-AutoLoader, perl-AutoSplit,
-Requires:       perl-base, perl-bignum,
+Requires:       perl-B, perl-base, perl-bignum,
 Requires:       perl-Carp, perl-Compress-Raw-Bzip2, perl-Compress-Raw-Zlib,
 Requires:       perl-Config-Perl-V, perl-constant,
 Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
@@ -768,6 +768,25 @@ Conflicts:      perl < 4:5.30.1-451
 If a module is not loaded yet, then the autouse declaration declares functions
 in the current package. When these functions are called, they load the package
 and substitute themselves with the correct definitions.
+
+%package B
+Summary:        Perl compiler backend
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.76
+Requires:       %perl_compat
+Requires:       perl(Data::Dumper)
+Requires:       perl(overloading)
+Requires:       perl(XSLoader)
+%if %{defined perl_bootstrap}
+%gendep_perl_B
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description B
+The "B" module supplies classes which allow a Perl program to delve into its
+own innards. It is the module used to implement the backends of the Perl
+compiler.
 
 %package base
 Summary:        Establish an ISA relationship with base classes at compile time
@@ -3886,6 +3905,16 @@ popd
 %exclude %{privlib}/autouse.pm
 %exclude %{_mandir}/man3/autouse.3*
 
+# B
+%exclude %{archlib}/auto/B
+%exclude %{archlib}/B
+%exclude %{archlib}/B.pm
+%exclude %{archlib}/O.pm
+%exclude %{privlib}/B
+%exclude %{_mandir}/man3/B.*
+%exclude %{_mandir}/man3/B::*
+%exclude %{_mandir}/man3/O.*
+
 # base
 %exclude %{privlib}/base.pm
 %exclude %{_mandir}/man3/base.3*
@@ -4901,6 +4930,16 @@ popd
 %files autouse
 %{privlib}/autouse.pm
 %{_mandir}/man3/autouse.3*
+
+%files B
+%{archlib}/auto/B
+%{archlib}/B
+%{archlib}/B.pm
+%{archlib}/O.pm
+%{privlib}/B
+%{_mandir}/man3/B.*
+%{_mandir}/man3/B::*
+%{_mandir}/man3/O.*
 
 %files base
 %{privlib}/base.pm
@@ -6051,6 +6090,7 @@ popd
 - Subpackage File-DosGlob
 - Subpackage File-Find
 - Subpackage IPC-Open3
+- Subpackage B
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
