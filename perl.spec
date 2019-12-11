@@ -386,7 +386,7 @@ Requires:       perl-ExtUtils-Embed, perl-ExtUtils-Install,
 Requires:       perl-ExtUtils-MakeMaker, perl-ExtUtils-Manifest,
 Requires:       perl-ExtUtils-Miniperl, perl-ExtUtils-ParseXS,
 Requires:       perl-Fcntl, perl-fields, perl-File-DosGlob, perl-File-Fetch,
-Requires:       perl-File-Find, perl-File-Path, perl-File-Temp,
+Requires:       perl-File-Find, perl-File-Path, perl-File-Temp, perl-FileCache,
 Requires:       perl-Filter, perl-Filter-Simple,
 %if %{with gdbm}
 Requires:       perl-GDBM_File,
@@ -1761,6 +1761,24 @@ File::Temp constructor or the tempfile() function can be used to return the
 name and the open file handle of a temporary file. The tempdir() function
 can be used to create a temporary directory.
 %endif
+
+%package FileCache
+Summary:        Keep more files open than the system permits
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.10
+BuildArch:      noarch
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_FileCache
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description FileCache
+The "cacheout" function will make sure that there's a file handle open
+for reading or writing available as the path name you give it. It
+automatically closes and re-opens files if you exceed your system
+maximum number of file descriptors, or the suggested maximum.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 # FIXME Filter-Simple? version?
@@ -4238,6 +4256,10 @@ popd
 %exclude %{privlib}/File/Temp.pm
 %exclude %{_mandir}/man3/File::Temp.3*
 
+# FileCache
+%exclude %{privlib}/FileCache.pm
+%exclude %{_mandir}/man3/FileCache.3*
+
 # Filter
 %exclude %dir %{archlib}/auto/Filter
 %exclude %{archlib}/auto/Filter/Util
@@ -5349,6 +5371,10 @@ popd
 %{_mandir}/man3/File::Temp.3*
 %endif
 
+%files FileCache
+%{privlib}/FileCache.pm
+%{_mandir}/man3/FileCache.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Filter
 %dir %{archlib}/auto/Filter
@@ -6116,6 +6142,7 @@ popd
 - Subpackage IPC-Open3
 - Subpackage B
 - Subpackage Fcntl
+- Subpackage FileCache
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
