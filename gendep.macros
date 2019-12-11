@@ -747,6 +747,16 @@ Provides: perl(Getopt::Long) = 2.50 \
 Provides: perl(Getopt::Long::CallBack) \
 Provides: perl(Getopt::Long::Parser) \
 %{nil}
+%global gendep_perl_Hash_Util \
+Requires: perl(:VERSION) >= 5.7.3 \
+Requires: perl(Carp) \
+Requires: perl(Exporter) \
+Requires: perl(Scalar::Util) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Requires: perl(warnings::register) \
+Provides: perl(Hash::Util) = 0.22 \
+%{nil}
 %global gendep_perl_HTTP_Tiny \
 Requires: perl(Errno) \
 Requires: perl(IO::Socket) \
@@ -1936,7 +1946,6 @@ Provides: perl(experimental) = 0.020 \
 Requires: perl(:VERSION) >= 5.0.0 \
 Requires: perl(:VERSION) >= 5.10.1 \
 Requires: perl(:VERSION) >= 5.6.0 \
-Requires: perl(:VERSION) >= 5.7.3 \
 Requires: perl(:VERSION) >= 5.9.1 \
 Requires: perl(:VERSION) >= 5.9.4 \
 Requires: perl(Carp) \
@@ -1999,7 +2008,6 @@ Provides: perl(File::stat) = 1.08 \
 Provides: perl(FileHandle) = 2.03 \
 Provides: perl(FindBin) = 1.51 \
 Provides: perl(Getopt::Std) = 1.12 \
-Provides: perl(Hash::Util) = 0.22 \
 Provides: perl(Hash::Util::FieldHash) = 1.20 \
 Provides: perl(I18N::Langinfo) = 0.18 \
 Provides: perl(Net::hostent) = 1.02 \
