@@ -757,6 +757,14 @@ Requires: perl(warnings) \
 Requires: perl(warnings::register) \
 Provides: perl(Hash::Util) = 0.22 \
 %{nil}
+%global gendep_perl_Hash_Util_FieldHash \
+Requires: perl(:VERSION) >= 5.9.4 \
+Requires: perl(Exporter) \
+Requires: perl(Scalar::Util) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Provides: perl(Hash::Util::FieldHash) = 1.20 \
+%{nil}
 %global gendep_perl_HTTP_Tiny \
 Requires: perl(Errno) \
 Requires: perl(IO::Socket) \
@@ -1947,7 +1955,6 @@ Requires: perl(:VERSION) >= 5.0.0 \
 Requires: perl(:VERSION) >= 5.10.1 \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(:VERSION) >= 5.9.1 \
-Requires: perl(:VERSION) >= 5.9.4 \
 Requires: perl(Carp) \
 Requires: perl(Class::Struct) \
 Requires: perl(Config) \
@@ -1959,7 +1966,6 @@ Requires: perl(File::Spec) \
 Requires: perl(I18N::LangTags) \
 Requires: perl(IO::File) \
 Requires: perl(Opcode) \
-Requires: perl(Scalar::Util) \
 Requires: perl(Symbol) \
 Requires: perl(Text::Tabs) \
 Requires: perl(Tie::Handle) \
@@ -2008,7 +2014,6 @@ Provides: perl(File::stat) = 1.08 \
 Provides: perl(FileHandle) = 2.03 \
 Provides: perl(FindBin) = 1.51 \
 Provides: perl(Getopt::Std) = 1.12 \
-Provides: perl(Hash::Util::FieldHash) = 1.20 \
 Provides: perl(I18N::Langinfo) = 0.18 \
 Provides: perl(Net::hostent) = 1.02 \
 Provides: perl(Net::netent) = 1.01 \

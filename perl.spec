@@ -392,7 +392,7 @@ Requires:       perl-Filter, perl-Filter-Simple,
 Requires:       perl-GDBM_File,
 %endif
 Requires:       perl-Getopt-Long,
-Requires:       perl-Hash-Util, perl-HTTP-Tiny,
+Requires:       perl-Hash-Util, perl-Hash-Util-FieldHash, perl-HTTP-Tiny,
 Requires:       perl-if, perl-IO, perl-IO-Compress, perl-IO-Socket-IP,
 Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-IPC-Open3, perl-IPC-SysV,
 Requires:       perl-I18N-Collate, perl-I18N-LangTags,
@@ -1879,6 +1879,22 @@ Conflicts:      perl-interpreter < 4:5.30.1-451
 %description Hash-Util
 Hash::Util contains special functions for manipulating hashes that don't
 really warrant a keyword.
+
+%package Hash-Util-FieldHash
+Summary:        Support for inside-out classes
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.20
+Requires:       %perl_compat
+Requires:       perl(XSLoader)
+%if %{defined perl_bootstrap}
+%gendep_perl_Hash_Util_FieldHash
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Hash-Util-FieldHash
+Hash::Util::FieldHash offers a number of functions in support of the
+inside-out technique of class construction.
 
 %package if
 Summary:        Use a Perl module if a condition holds
@@ -4307,6 +4323,15 @@ popd
 %exclude %{archlib}/auto/Hash/Util/Util.so
 %exclude %{_mandir}/man3/Hash::Util.3*
 
+# Hash-Util-FieldHash
+%exclude %dir %{archlib}/auto/Hash
+%exclude %dir %{archlib}/auto/Hash/Util
+%exclude %{archlib}/auto/Hash/Util/FieldHash
+%exclude %dir %{archlib}/Hash
+%exclude %dir %{archlib}/Hash/Util
+%exclude %{archlib}/Hash/Util/FieldHash.pm
+%exclude %{_mandir}/man3/Hash::Util::FieldHash.3*
+
 # if
 %exclude %{privlib}/if.pm
 %exclude %{_mandir}/man3/if.3*
@@ -5437,6 +5462,15 @@ popd
 %{archlib}/auto/Hash/Util/Util.so
 %{_mandir}/man3/Hash::Util.3*
 
+%files Hash-Util-FieldHash
+%dir %{archlib}/auto/Hash
+%dir %{archlib}/auto/Hash/Util
+%{archlib}/auto/Hash/Util/FieldHash
+%dir %{archlib}/Hash
+%dir %{archlib}/Hash/Util
+%{archlib}/Hash/Util/FieldHash.pm
+%{_mandir}/man3/Hash::Util::FieldHash.3*
+
 %files if
 %{privlib}/if.pm
 %{_mandir}/man3/if.3*
@@ -6174,6 +6208,7 @@ popd
 - Subpackage Fcntl
 - Subpackage FileCache
 - Subpackage Hash-Util
+- Subpackage Hash-Util-FieldHash
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
