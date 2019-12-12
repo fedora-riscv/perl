@@ -1139,6 +1139,12 @@ Requires: perl(version) >= 0.87 \
 Requires: perl(warnings) \
 Provides: perl(Module::Metadata) = 1.000036 \
 %{nil}
+%global gendep_perl_mro \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Requires: perl(XSLoader) \
+Provides: perl(mro) = 1.22 \
+%{nil}
 %global gendep_perl_NDBM_File \
 Requires: perl(strict) \
 Requires: perl(Tie::Hash) \
@@ -2074,7 +2080,6 @@ Provides: perl(feature) = 1.54 \
 Provides: perl(filetest) = 1.03 \
 Provides: perl(less) = 0.03 \
 Provides: perl(locale) = 1.09 \
-Provides: perl(mro) = 1.22 \
 Provides: perl(ops) = 1.02 \
 Provides: perl(overload) = 1.30 \
 Provides: perl(overload::numbers) \

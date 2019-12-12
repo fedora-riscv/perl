@@ -404,6 +404,7 @@ Requires:       perl-Math-Complex, perl-Memoize, perl-MIME-Base64,
 Requires:       perl-Module-CoreList, perl-Module-CoreList-tools,
 Requires:       perl-Module-Load, perl-Module-Load-Conditional,
 Requires:       perl-Module-Loaded, perl-Module-Metadata,
+Requires:       perl-mro,
 %if %{with gdbm}
 Requires:       perl-NDBM_File,
 %endif
@@ -2469,6 +2470,21 @@ Requires:       %perl_compat
 %description Module-Metadata
 Gather package and POD information from perl module files
 %endif
+
+%package mro
+Summary:        Method resolution order
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.22
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_mro
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description mro
+The "mro" name space provides several utilities for dealing with method
+resolution order and method caching in general.
 
 %if %{with gdbm}
 %package NDBM_File
@@ -4620,6 +4636,11 @@ popd
 %exclude %{privlib}/Module/Metadata.pm
 %exclude %{_mandir}/man3/Module::Metadata.3pm*
 
+# mro
+%exclude %{archlib}/auto/mro
+%exclude %{archlib}/mro.pm
+%exclude %{_mandir}/man3/mro.3*
+
 %if %{with gdbm}
 # NDBM_File
 %exclude %{archlib}/NDBM_File.pm
@@ -5800,6 +5821,11 @@ popd
 %{_mandir}/man3/Module::Metadata.3pm*
 %endif
 
+%files mro
+%{archlib}/auto/mro
+%{archlib}/mro.pm
+%{_mandir}/man3/mro.3*
+
 %if %{with gdbm}
 %files NDBM_File
 %{archlib}/NDBM_File.pm
@@ -6237,6 +6263,7 @@ popd
 - Subpackage Hash-Util
 - Subpackage Hash-Util-FieldHash
 - Subpackage I18N-Langinfo
+- Subpackage mro
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
