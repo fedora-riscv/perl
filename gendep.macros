@@ -1819,6 +1819,11 @@ Provides: perl(Tie::File) = 1.02 \
 Provides: perl(Tie::File::Cache) \
 Provides: perl(Tie::File::Heap) \
 %{nil}
+%global gendep_perl_Tie_Memoize \
+Requires: perl(Tie::Hash) \
+Requires: perl(strict) \
+Provides: perl(Tie::Memoize) = 1.1 \
+%{nil}
 %global gendep_perl_Tie_RefHash \
 Requires: perl(:VERSION) >= 5.5.0 \
 Requires: perl(Carp) \
@@ -2013,7 +2018,6 @@ Requires: perl(IO::File) \
 Requires: perl(Symbol) \
 Requires: perl(Text::Tabs) \
 Requires: perl(Tie::Handle) \
-Requires: perl(Tie::Hash) \
 Requires: perl(Tie::StdHandle) \
 Requires: perl(Time::tm) \
 Requires: perl(Unicode::Normalize) \
@@ -2069,7 +2073,6 @@ Provides: perl(Tie::ExtraHash) \
 Provides: perl(Tie::Handle) = 4.2 \
 Provides: perl(Tie::Hash) \
 Provides: perl(Tie::Hash) = 1.05 \
-Provides: perl(Tie::Memoize) = 1.1 \
 Provides: perl(Tie::Scalar) = 1.04 \
 Provides: perl(Tie::StdArray) \
 Provides: perl(Tie::StdHandle) = 4.6 \

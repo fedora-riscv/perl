@@ -429,7 +429,7 @@ Requires:       perl-Text-Abbrev, perl-Text-Balanced, perl-Text-ParseWords,
 Requires:       perl-Text-Tabs+Wrap,
 Requires:       perl-Thread-Queue, perl-Thread-Semaphore,
 Requires:       perl-threads, perl-threads-shared,
-Requires:       perl-Tie-File, perl-Tie-RefHash,
+Requires:       perl-Tie-File, perl-Tie-Memoize, perl-Tie-RefHash,
 Requires:       perl-Time-HiRes, perl-Time-Local, perl-Time-Piece,
 Requires:       perl-Unicode-Collate, perl-Unicode-Normalize,
 Requires:       perl-version,
@@ -3307,6 +3307,24 @@ element 0 of the array; the second line is element 1, and so on.  The file is
 not loaded into memory, so this will work even for gigantic files.  Changes to
 the array are reflected in the file immediately.
 
+%package Tie-Memoize
+Summary:        Add data to a hash when needed
+License:        GPLv2+ or Artistic
+Epoch:          0
+Version:        1.1
+Requires:       %perl_compat
+Requires:       perl(Carp)
+Requires:       perl(Tie::ExtraHash)
+%if %{defined perl_bootstrap}
+%gendep_perl_Tie_Memoize
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Tie-Memoize
+This package allows a tied hash to load its values automatically on the first
+access, and to use the cached value on the following accesses.
+
 %package Tie-RefHash
 Summary:        Use references as hash keys
 License:        GPL+ or Artistic
@@ -4967,6 +4985,10 @@ popd
 %exclude %{privlib}/Tie/File.pm
 %exclude %{_mandir}/man3/Tie::File.*
 
+# Tie-Memoize
+%exclude %{privlib}/Tie/Memoize.pm
+%exclude %{_mandir}/man3/Tie::Memoize.*
+
 # Tie-RefHash
 %exclude %{privlib}/Tie/RefHash.pm
 %exclude %{_mandir}/man3/Tie::RefHash.*
@@ -6263,6 +6285,11 @@ popd
 %{privlib}/Tie/File.pm
 %{_mandir}/man3/Tie::File.*
 
+%files Tie-Memoize
+%dir %{privlib}/Tie
+%{privlib}/Tie/Memoize.pm
+%{_mandir}/man3/Tie::Memoize.*
+
 %files Tie-RefHash
 %dir %{privlib}/Tie
 %{privlib}/Tie/RefHash.pm
@@ -6384,6 +6411,7 @@ popd
 - Subpackage POSIX
 - Subpackage Sys-Hostname
 - Move Tie::Hash::NamedCapture to perl-libs
+- Subpackage Tie-Memoize
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
