@@ -1408,6 +1408,18 @@ Requires: perl(strict) \
 Requires: perl(vars) \
 Provides: perl(Pod::Usage) = 1.69 \
 %{nil}
+%global gendep_perl_POSIX \
+Requires: perl(Exporter) \
+Requires: perl(Fcntl) \
+Requires: perl(strict) \
+Requires: perl(Tie::Hash) \
+Requires: perl(warnings) \
+Requires: perl(XSLoader) \
+Provides: perl(POSIX) = 1.88 \
+Provides: perl(POSIX::SigAction) \
+Provides: perl(POSIX::SigRt) \
+Provides: perl(POSIX::SigSet) \
+%{nil}
 %global gendep_perl_Safe \
 Requires: perl(:VERSION) >= 5.3.0 \
 Requires: perl(B) \
@@ -2042,10 +2054,6 @@ Provides: perl(Net::hostent) = 1.02 \
 Provides: perl(Net::netent) = 1.01 \
 Provides: perl(Net::protoent) = 1.01 \
 Provides: perl(Net::servent) = 1.02 \
-Provides: perl(POSIX) = 1.88 \
-Provides: perl(POSIX::SigAction) \
-Provides: perl(POSIX::SigRt) \
-Provides: perl(POSIX::SigSet) \
 Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(SelectSaver) = 1.02 \
 Provides: perl(Symbol) = 1.08 \

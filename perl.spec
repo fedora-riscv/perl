@@ -417,7 +417,7 @@ Requires:       perl-parent, perl-PathTools, perl-Params-Check, perl-perlfaq,
 Requires:       perl-PerlIO-via-QuotedPrint, perl-Perl-OSType,
 Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-Html,
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Simple,
-Requires:       perl-Pod-Usage, perl-podlators,
+Requires:       perl-Pod-Usage, perl-podlators, perl-POSIX,
 Requires:       perl-Safe, perl-Scalar-List-Utils,
 Requires:       perl-SDBM_File, perl-Search-Dict,
 Requires:       perl-SelfLoader, perl-Socket, perl-Storable, perl-Sys-Syslog,
@@ -2886,6 +2886,22 @@ includes several sub-classes of Pod::Text for formatted output to terminals
 with various capabilities.
 %endif
 
+%package POSIX
+Summary:        Perl interface to IEEE Std 1003.1
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.88
+Requires:       %perl_compat
+Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_POSIX
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description POSIX
+The POSIX module permits you to access all (or nearly all) the standard POSIX
+1003.1 identifiers. Many of these identifiers have been given Perl interfaces.
+
 %package Safe
 Summary:        Compile and execute code in restricted compartments
 License:        GPL+ or Artistic
@@ -4722,6 +4738,11 @@ popd
 %exclude %{privlib}/Perl/OSType.pm
 %exclude %{_mandir}/man3/Perl::OSType.3pm*
 
+# POSIX
+%exclude %{archlib}/auto/POSIX
+%exclude %{archlib}/POSIX.*
+%exclude %{_mandir}/man3/POSIX.*
+
 # open
 %exclude %{privlib}/open.pm
 %exclude %{_mandir}/man3/open.3*
@@ -5896,6 +5917,11 @@ popd
 %{_mandir}/man3/Opcode.3*
 %{_mandir}/man3/ops.3*
 
+%files POSIX
+%{archlib}/auto/POSIX
+%{archlib}/POSIX.*
+%{_mandir}/man3/POSIX.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files PathTools
 %{archlib}/Cwd.pm
@@ -6313,6 +6339,7 @@ popd
 - Subpackage mro
 - Subpackage Opcode
 - Move PerlIO to perl-libs
+- Subpackage POSIX
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
