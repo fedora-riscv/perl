@@ -412,7 +412,7 @@ Requires:       perl-Net-Ping, perl-NEXT,
 %if %{with gdbm}
 Requires:       perl-ODBM_File,
 %endif
-Requires:       perl-open,
+Requires:       perl-Opcode, perl-open,
 Requires:       perl-parent, perl-PathTools, perl-Params-Check, perl-perlfaq,
 Requires:       perl-PerlIO-via-QuotedPrint, perl-Perl-OSType,
 Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-Html,
@@ -2558,6 +2558,23 @@ a Perl hash, but when your program exits, the data will remain in the file, to
 be used the next time your program runs.
 %endif
 
+%package Opcode
+Summary:        Disable named opcodes when compiling a perl code
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.43
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Opcode
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Opcode
+The Opcode module allows you to define an operator mask to be in effect when
+perl next compiles any code. Attempting to compile code which contains
+a masked opcode will cause the compilation to fail with an error. The code
+will not be executed.
+
 %package open
 Summary:        Perl pragma to set default PerlIO layers for input and output
 License:        GPL+ or Artistic
@@ -4663,6 +4680,13 @@ popd
 %exclude %{_mandir}/man3/ODBM_File.3*
 %endif
 
+# Opcode
+%exclude %{archlib}/auto/Opcode
+%exclude %{archlib}/Opcode.pm
+%exclude %{archlib}/ops.pm
+%exclude %{_mandir}/man3/Opcode.3*
+%exclude %{_mandir}/man3/ops.3*
+
 # PathTools
 %exclude %{archlib}/Cwd.pm
 %exclude %{archlib}/File/Spec*
@@ -5849,6 +5873,13 @@ popd
 %{_mandir}/man3/ODBM_File.3*
 %endif
 
+%files Opcode
+%{archlib}/auto/Opcode
+%{archlib}/Opcode.pm
+%{archlib}/ops.pm
+%{_mandir}/man3/Opcode.3*
+%{_mandir}/man3/ops.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files PathTools
 %{archlib}/Cwd.pm
@@ -6264,6 +6295,7 @@ popd
 - Subpackage Hash-Util-FieldHash
 - Subpackage I18N-Langinfo
 - Subpackage mro
+- Subpackage Opcode
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

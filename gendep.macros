@@ -1172,6 +1172,17 @@ Requires: perl(warnings) \
 Requires: perl(XSLoader) \
 Provides: perl(ODBM_File) = 1.16 \
 %{nil}
+%global gendep_perl_Opcode \
+Requires: perl(:VERSION) >= 5.6.0 \
+Requires: perl(Carp) \
+Requires: perl(Exporter) \
+Requires: perl(Opcode) \
+Requires: perl(strict) \
+Requires: perl(subs) \
+Requires: perl(XSLoader) \
+Provides: perl(Opcode) = 1.43 \
+Provides: perl(ops) = 1.02 \
+%{nil}
 %global gendep_perl_NEXT \
 Provides: perl(NEXT) = 0.67 \
 Provides: perl(NEXT::ACTUAL) \
@@ -1980,7 +1991,6 @@ Requires: perl(File::Basename) \
 Requires: perl(File::Spec) \
 Requires: perl(I18N::LangTags) \
 Requires: perl(IO::File) \
-Requires: perl(Opcode) \
 Requires: perl(Symbol) \
 Requires: perl(Text::Tabs) \
 Requires: perl(Tie::Handle) \
@@ -1999,7 +2009,6 @@ Requires: perl(integer) \
 Requires: perl(overload) \
 Requires: perl(re) \
 Requires: perl(strict) \
-Requires: perl(subs) \
 Requires: perl(threads) \
 Requires: perl(threads::shared) \
 Requires: perl(unicore::Name) \
@@ -2033,7 +2042,6 @@ Provides: perl(Net::hostent) = 1.02 \
 Provides: perl(Net::netent) = 1.01 \
 Provides: perl(Net::protoent) = 1.01 \
 Provides: perl(Net::servent) = 1.02 \
-Provides: perl(Opcode) = 1.43 \
 Provides: perl(POSIX) = 1.88 \
 Provides: perl(POSIX::SigAction) \
 Provides: perl(POSIX::SigRt) \
@@ -2080,7 +2088,6 @@ Provides: perl(feature) = 1.54 \
 Provides: perl(filetest) = 1.03 \
 Provides: perl(less) = 0.03 \
 Provides: perl(locale) = 1.09 \
-Provides: perl(ops) = 1.02 \
 Provides: perl(overload) = 1.30 \
 Provides: perl(overload::numbers) \
 Provides: perl(overloading) = 0.02 \
