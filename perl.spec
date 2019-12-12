@@ -367,6 +367,7 @@ Requires:       perl-utils
 %gendep_perl
 %endif
 
+Requires:       perl-AnyDBM_File,
 Requires:       perl-Archive-Tar, perl-Attribute-Handlers, perl-autodie,
 Requires:       perl-AutoLoader, perl-AutoSplit,
 Requires:       perl-B, perl-base, perl-bignum,
@@ -640,6 +641,32 @@ Several utilities which come with Perl distribution like h2ph, perlbug,
 perlthanks, pl2pm, and splain. Some utilities are provided by more specific
 packages like perldoc by perl-Pod-Perldoc.
 
+
+%package AnyDBM_File
+Summary:        Framework for multiple DBMs
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.01
+Requires:       %perl_compat
+Suggests:       perl(DB_File)
+%if %{with gdbm}
+Suggests:       perl(GDBM_File)
+Recommends:     perl(NDBM_File)
+Suggests:       perl(ODBM_File)
+%endif
+# Documentation requires SDBM_File
+Requires:       perl(SDBM_File)
+%if %{defined perl_bootstrap}
+%gendep_perl_AnyDBM_File
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description AnyDBM_File
+AnyDBM_File module inherits from one of the various DBM packages. It
+prefers ndbm for compatibility reasons with Perl 4, then Berkeley DB
+(See DB_File), GDBM, SDBM (which is always there--it comes with Perl),
+and finally ODBM.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Archive-Tar
@@ -4049,6 +4076,10 @@ popd
 %exclude %{_mandir}/man1/pl2pm.*
 %exclude %{_mandir}/man1/splain.*
 
+# AnyDBM_File
+%exclude %{privlib}/AnyDBM_File.pm
+%exclude %{_mandir}/man3/AnyDBM_File.*
+
 # Archive-Tar
 %exclude %{_bindir}/ptar
 %exclude %{_bindir}/ptardiff
@@ -5139,6 +5170,10 @@ popd
 %{_mandir}/man1/perlutil.*
 %{_mandir}/man1/pl2pm.*
 %{_mandir}/man1/splain.*
+
+%files AnyDBM_File
+%{privlib}/AnyDBM_File.pm
+%{_mandir}/man3/AnyDBM_File.*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Archive-Tar
@@ -6412,6 +6447,7 @@ popd
 - Subpackage Sys-Hostname
 - Move Tie::Hash::NamedCapture to perl-libs
 - Subpackage Tie-Memoize
+- Subpackage AnyDBM_File
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
