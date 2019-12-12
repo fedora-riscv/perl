@@ -420,7 +420,8 @@ Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Simple,
 Requires:       perl-Pod-Usage, perl-podlators, perl-POSIX,
 Requires:       perl-Safe, perl-Scalar-List-Utils,
 Requires:       perl-SDBM_File, perl-Search-Dict,
-Requires:       perl-SelfLoader, perl-Socket, perl-Storable, perl-Sys-Syslog,
+Requires:       perl-SelfLoader, perl-Socket, perl-Storable,
+Requires:       perl-Sys-Hostname, perl-Sys-Syslog,
 Requires:       perl-Term-ANSIColor, perl-Term-Cap, perl-Term-Complete,
 Requires:       perl-Term-ReadLine,
 Requires:       perl-Test, perl-Test-Harness, perl-Test-Simple,
@@ -3032,6 +3033,23 @@ containing scalar, array, hash or reference objects, i.e. anything that
 can be conveniently stored to disk and retrieved at a later time.
 %endif
 
+%package Sys-Hostname
+Summary:        Try every conceivable way to get a hostname
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.22
+Requires:       %perl_compat
+Suggests:       perl(POSIX)
+Requires:       perl(XSLoader)
+%if %{defined perl_bootstrap}
+%gendep_perl_Sys_Hostname
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Sys-Hostname
+It attempts several methods of getting the system hostname and then caches the
+result.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Sys-Syslog
 Summary:        Perl interface to the UNIX syslog(3) calls
@@ -4849,8 +4867,15 @@ popd
 %exclude %{archlib}/auto/Storable/
 %exclude %{_mandir}/man3/Storable.*
 
+# Sys-Hostname
+%exclude %{archlib}/auto/Sys/Hostname
+%exclude %{archlib}/Sys/Hostname.pm
+%exclude %{_mandir}/man3/Sys::Hostname.*
+
 # Sys-Syslog
+%exclude %dir %{archlib}/Sys
 %exclude %{archlib}/Sys/Syslog.pm
+%exclude %dir %{archlib}/auto/Sys
 %exclude %{archlib}/auto/Sys/Syslog/
 %exclude %{_mandir}/man3/Sys::Syslog.*
 
@@ -6089,6 +6114,13 @@ popd
 %{privlib}/SelfLoader.pm
 %{_mandir}/man3/SelfLoader*
 
+%files Sys-Hostname
+%dir %{archlib}/auto/Sys
+%{archlib}/auto/Sys/Hostname
+%dir %{archlib}/Sys
+%{archlib}/Sys/Hostname.pm
+%{_mandir}/man3/Sys::Hostname.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Sys-Syslog
 %dir %{archlib}/Sys
@@ -6340,6 +6372,7 @@ popd
 - Subpackage Opcode
 - Move PerlIO to perl-libs
 - Subpackage POSIX
+- Subpackage Sys-Hostname
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

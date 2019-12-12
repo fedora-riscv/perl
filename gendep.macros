@@ -1483,6 +1483,13 @@ Provides: perl(Storable) = 3.15 \
 %{nil}
 %global gendep_perl_Storable_debuginfo \
 %{nil}
+%global gendep_perl_Sys_Hostname \
+Requires: perl(perl(Carp) \
+Requires: perl(Exporter) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Provides: perl(Sys::Hostname) = 1.22 \
+%{nil}
 %global gendep_perl_Sys_Syslog \
 Requires: perl(:VERSION) >= 5.5.0 \
 Requires: perl(Carp) \
@@ -2057,7 +2064,6 @@ Provides: perl(Net::servent) = 1.02 \
 Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(SelectSaver) = 1.02 \
 Provides: perl(Symbol) = 1.08 \
-Provides: perl(Sys::Hostname) = 1.22 \
 Provides: perl(Thread) = 3.04 \
 Provides: perl(Tie::Array) = 1.07 \
 Provides: perl(Tie::ExtraHash) \
