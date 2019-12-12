@@ -2017,7 +2017,6 @@ Requires: perl(Tie::Hash) \
 Requires: perl(Tie::StdHandle) \
 Requires: perl(Time::tm) \
 Requires: perl(Unicode::Normalize) \
-Requires: perl(XSLoader) \
 Requires: perl(_charnames) \
 Requires: perl(bytes) \
 Requires: perl(charnames) \
@@ -2070,7 +2069,6 @@ Provides: perl(Tie::ExtraHash) \
 Provides: perl(Tie::Handle) = 4.2 \
 Provides: perl(Tie::Hash) \
 Provides: perl(Tie::Hash) = 1.05 \
-Provides: perl(Tie::Hash::NamedCapture) = 0.10 \
 Provides: perl(Tie::Memoize) = 1.1 \
 Provides: perl(Tie::Scalar) = 1.04 \
 Provides: perl(Tie::StdArray) \
@@ -2179,6 +2177,7 @@ Provides: perl(PerlIO::encoding) = 0.27 \
 Provides: perl(PerlIO::mmap) = 0.016 \
 Provides: perl(PerlIO::scalar) = 0.30 \
 Provides: perl(PerlIO::via) = 0.17 \
+Provides: perl(Tie::Hash::NamedCapture) = 0.10 \
 Provides: perl(XSLoader) = 0.30 \
 Provides: perl(attributes) = 0.33 \
 Provides: perl(integer) = 1.01 \

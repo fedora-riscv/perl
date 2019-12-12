@@ -3966,12 +3966,16 @@ popd
 %exclude %{archlib}/auto/File/Glob/Glob.so
 %exclude %{archlib}/auto/PerlIO
 %exclude %{archlib}/auto/re
+%exclude %dir %{archlib}/auto/Tie
+%exclude %{archlib}/auto/Tie/Hash
 %exclude %dir %{archlib}/CORE
 %exclude %{archlib}/CORE/libperl.so
 %exclude %dir %{archlib}/File
 %exclude %{archlib}/File/Glob.pm
 %exclude %{archlib}/PerlIO
 %exclude %{archlib}/re.pm
+%exclude %dir %{archlib}/Tie
+%exclude %{archlib}/Tie/Hash
 %exclude %{_libdir}/libperl.so.*
 %exclude %dir %{perl_vendorarch}
 %exclude %dir %{perl_vendorarch}/auto
@@ -3995,6 +3999,7 @@ popd
 %exclude %{_mandir}/man3/PerlIO::via.*
 %exclude %{_mandir}/man3/re.*
 %exclude %{_mandir}/man3/strict.*
+%exclude %{_mandir}/man3/Tie::Hash::*
 %exclude %{_mandir}/man3/utf8.*
 %exclude %{_mandir}/man3/warnings.*
 %exclude %{_mandir}/man3/XSLoader.*
@@ -5039,12 +5044,16 @@ popd
 %{archlib}/auto/File/Glob/Glob.so
 %{archlib}/auto/PerlIO
 %{archlib}/auto/re
+%dir %{archlib}/auto/Tie
+%{archlib}/auto/Tie/Hash
 %dir %{archlib}/CORE
 %{archlib}/CORE/libperl.so
 %dir %{archlib}/File
 %{archlib}/File/Glob.pm
 %{archlib}/PerlIO
 %{archlib}/re.pm
+%dir %{archlib}/Tie
+%{archlib}/Tie/Hash
 %{_libdir}/libperl.so.*
 %dir %{perl_vendorarch}
 %dir %{perl_vendorarch}/auto
@@ -5068,6 +5077,7 @@ popd
 %{_mandir}/man3/PerlIO::via.*
 %{_mandir}/man3/re.*
 %{_mandir}/man3/strict.*
+%{_mandir}/man3/Tie::Hash::*
 %{_mandir}/man3/utf8.*
 %{_mandir}/man3/warnings.*
 %{_mandir}/man3/XSLoader.*
@@ -6373,6 +6383,7 @@ popd
 - Move PerlIO to perl-libs
 - Subpackage POSIX
 - Subpackage Sys-Hostname
+- Move Tie::Hash::NamedCapture to perl-libs
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
