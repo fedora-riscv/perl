@@ -961,6 +961,15 @@ Requires: perl(strict) \
 Requires: perl(warnings::register) \
 Provides: perl(I18N::Collate) = 1.02 \
 %{nil}
+%global gendep_perl_I18N_Langinfo \
+Requires: perl(:VERSION) >= 5.6.0 \
+Requires: perl(Carp) \
+Requires: perl(Exporter) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Requires: perl(XSLoader) \
+Provides: perl(I18N::Langinfo) = 0.18 \
+%{nil}
 %global gendep_perl_I18N_LangTags \
 Requires: perl(:VERSION) >= 5.0.0 \
 Requires: perl(Exporter) \
@@ -2014,7 +2023,6 @@ Provides: perl(File::stat) = 1.08 \
 Provides: perl(FileHandle) = 2.03 \
 Provides: perl(FindBin) = 1.51 \
 Provides: perl(Getopt::Std) = 1.12 \
-Provides: perl(I18N::Langinfo) = 0.18 \
 Provides: perl(Net::hostent) = 1.02 \
 Provides: perl(Net::netent) = 1.01 \
 Provides: perl(Net::protoent) = 1.01 \

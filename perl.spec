@@ -395,7 +395,7 @@ Requires:       perl-Getopt-Long,
 Requires:       perl-Hash-Util, perl-Hash-Util-FieldHash, perl-HTTP-Tiny,
 Requires:       perl-if, perl-IO, perl-IO-Compress, perl-IO-Socket-IP,
 Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-IPC-Open3, perl-IPC-SysV,
-Requires:       perl-I18N-Collate, perl-I18N-LangTags,
+Requires:       perl-I18N-Collate, perl-I18N-Langinfo, perl-I18N-LangTags,
 Requires:       perl-JSON-PP,
 Requires:       perl-lib, perl-libnet, perl-libnetcfg,
 Requires:       perl-Locale-Maketext, perl-Locale-Maketext-Simple,
@@ -2059,6 +2059,23 @@ Conflicts:      perl-interpreter < 4:5.30.1-451
 This module provides you with objects that will collate according to your
 national character set. This module is deprecated. See the perllocale manual
 page for further information.
+
+%package I18N-Langinfo
+Summary:        Query locale information
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.18
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_I18N_Langinfo
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description I18N-Langinfo
+The langinfo() function queries various locale information that can be used to
+localize output and user interfaces. It uses the current underlying locale,
+regardless of whether or not it was called from within the scope of "use
+locale".
 
 %package I18N-LangTags
 Summary:        Functions for dealing with RFC 3066 language tags
@@ -4462,6 +4479,11 @@ popd
 %exclude %{privlib}/I18N/Collate.pm
 %exclude %{_mandir}/man3/I18N::Collate.*
 
+# I18N-Langinfo
+%exclude %{archlib}/auto/I18N
+%exclude %{archlib}/I18N
+%exclude %{_mandir}/man3/I18N::Langinfo.*
+
 # I18N-LangTags
 %exclude %dir %{privlib}/I18N
 %exclude %{privlib}/I18N/LangTags
@@ -5616,6 +5638,11 @@ popd
 %{privlib}/I18N/Collate.pm
 %{_mandir}/man3/I18N::Collate.*
 
+%files I18N-Langinfo
+%{archlib}/auto/I18N
+%{archlib}/I18N
+%{_mandir}/man3/I18N::Langinfo.*
+
 %files I18N-LangTags
 %dir %{privlib}/I18N
 %{privlib}/I18N/LangTags
@@ -6209,6 +6236,7 @@ popd
 - Subpackage FileCache
 - Subpackage Hash-Util
 - Subpackage Hash-Util-FieldHash
+- Subpackage I18N-Langinfo
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
