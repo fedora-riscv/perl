@@ -3930,17 +3930,20 @@ popd
 %exclude %dir %{archlib}/auto/File
 %exclude %dir %{archlib}/auto/File/Glob
 %exclude %{archlib}/auto/File/Glob/Glob.so
+%exclude %{archlib}/auto/PerlIO
 %exclude %{archlib}/auto/re
 %exclude %dir %{archlib}/CORE
 %exclude %{archlib}/CORE/libperl.so
 %exclude %dir %{archlib}/File
 %exclude %{archlib}/File/Glob.pm
+%exclude %{archlib}/PerlIO
 %exclude %{archlib}/re.pm
 %exclude %{_libdir}/libperl.so.*
 %exclude %dir %{perl_vendorarch}
 %exclude %dir %{perl_vendorarch}/auto
 %exclude %dir %{privlib}
 %exclude %{privlib}/integer.pm
+%exclude %{privlib}/PerlIO.pm
 %exclude %{privlib}/strict.pm
 %exclude %{privlib}/unicore
 %exclude %{privlib}/utf8.pm
@@ -3951,6 +3954,11 @@ popd
 %exclude %{_mandir}/man3/attributes.*
 %exclude %{_mandir}/man3/File::Glob.*
 %exclude %{_mandir}/man3/integer.*
+%exclude %{_mandir}/man3/PerlIO.*
+%exclude %{_mandir}/man3/PerlIO::encoding.*
+%exclude %{_mandir}/man3/PerlIO::mmap.*
+%exclude %{_mandir}/man3/PerlIO::scalar.*
+%exclude %{_mandir}/man3/PerlIO::via.*
 %exclude %{_mandir}/man3/re.*
 %exclude %{_mandir}/man3/strict.*
 %exclude %{_mandir}/man3/utf8.*
@@ -4983,17 +4991,20 @@ popd
 %dir %{archlib}/auto/File
 %dir %{archlib}/auto/File/Glob
 %{archlib}/auto/File/Glob/Glob.so
+%{archlib}/auto/PerlIO
 %{archlib}/auto/re
 %dir %{archlib}/CORE
 %{archlib}/CORE/libperl.so
 %dir %{archlib}/File
 %{archlib}/File/Glob.pm
+%{archlib}/PerlIO
 %{archlib}/re.pm
 %{_libdir}/libperl.so.*
 %dir %{perl_vendorarch}
 %dir %{perl_vendorarch}/auto
 %dir %{privlib}
 %{privlib}/integer.pm
+%{privlib}/PerlIO.pm
 %{privlib}/strict.pm
 %{privlib}/unicore
 %{privlib}/utf8.pm
@@ -5004,6 +5015,11 @@ popd
 %{_mandir}/man3/attributes.*
 %{_mandir}/man3/File::Glob.*
 %{_mandir}/man3/integer.*
+%{_mandir}/man3/PerlIO.*
+%{_mandir}/man3/PerlIO::encoding.*
+%{_mandir}/man3/PerlIO::mmap.*
+%{_mandir}/man3/PerlIO::scalar.*
+%{_mandir}/man3/PerlIO::via.*
 %{_mandir}/man3/re.*
 %{_mandir}/man3/strict.*
 %{_mandir}/man3/utf8.*
@@ -6296,6 +6312,7 @@ popd
 - Subpackage I18N-Langinfo
 - Subpackage mro
 - Subpackage Opcode
+- Move PerlIO to perl-libs
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
