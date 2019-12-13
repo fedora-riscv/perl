@@ -370,7 +370,7 @@ Requires:       perl-utils
 Requires:       perl-AnyDBM_File,
 Requires:       perl-Archive-Tar, perl-Attribute-Handlers, perl-autodie,
 Requires:       perl-AutoLoader, perl-AutoSplit,
-Requires:       perl-B, perl-base, perl-bignum,
+Requires:       perl-B, perl-base, perl-Benchmark, perl-bignum,
 Requires:       perl-Carp, perl-Compress-Raw-Bzip2, perl-Compress-Raw-Zlib,
 Requires:       perl-Config-Perl-V, perl-constant,
 Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
@@ -835,6 +835,22 @@ Conflicts:      perl < 4:5.30.1-451
 inheritance from those modules at the same time.  Unless you are using the
 "fields" pragma, consider this module discouraged in favor of the
 lighter-weight "parent".
+
+%package Benchmark
+Summary:        Benchmark running times of Perl code
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.22
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Benchmark
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Benchmark
+The Benchmark module encapsulates a number of routines to help you figure out
+how long it takes to execute some code.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package bignum
@@ -4130,6 +4146,10 @@ popd
 %exclude %{privlib}/base.pm
 %exclude %{_mandir}/man3/base.3*
 
+# Benchmark
+%exclude %{privlib}/Benchmark.pm
+%exclude %{_mandir}/man3/Benchmark.*
+
 # bignum
 %exclude %{privlib}/bigint.pm
 %exclude %{privlib}/bignum.pm
@@ -5228,6 +5248,10 @@ popd
 %files base
 %{privlib}/base.pm
 %{_mandir}/man3/base.3*
+
+%files Benchmark
+%{privlib}/Benchmark.pm
+%{_mandir}/man3/Benchmark.*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files bignum
@@ -6448,6 +6472,7 @@ popd
 - Move Tie::Hash::NamedCapture to perl-libs
 - Subpackage Tie-Memoize
 - Subpackage AnyDBM_File
+- Subpackage Benchmark
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

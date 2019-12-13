@@ -74,6 +74,12 @@ Provides: perl(B::Terse) = 1.09 \
 Provides: perl(B::Xref) = 1.07 \
 Provides: perl(O) = 1.03 \
 %{nil}
+%global gendep_perl_Benchmark \
+Requires: perl(Carp) \
+Requires: perl(Exporter) \
+Requires: perl(strict) \
+Provides: perl(Benchmark) = 1.22 \
+%{nil}
 %global gendep_perl_base \
 Requires: perl(:VERSION) >= 5.8.0 \
 Requires: perl(strict) \
@@ -2042,7 +2048,6 @@ Requires: perl(threads::shared) \
 Requires: perl(unicore::Name) \
 Requires: perl(warnings) \
 Requires: perl(warnings::register) \
-Provides: perl(Benchmark) = 1.22 \
 Provides: perl(Class::Struct) = 0.65 \
 Provides: perl(Class::Struct::Tie_ISA) \
 Provides: perl(Config) = 5.030000 \
