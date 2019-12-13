@@ -410,7 +410,7 @@ Requires:       perl-mro,
 %if %{with gdbm}
 Requires:       perl-NDBM_File,
 %endif
-Requires:       perl-Net-Ping, perl-NEXT,
+Requires:       perl-Net, perl-Net-Ping, perl-NEXT,
 %if %{with gdbm}
 Requires:       perl-ODBM_File,
 %endif
@@ -2607,6 +2607,23 @@ ndbm format. You can manipulate the data in the file just as if it were in
 a Perl hash, but when your program exits, the data will remain in the file, to
 be used the next time your program runs.
 %endif
+
+%package Net
+Summary:        By-name interface to Perl built-in network resolver
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.02
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(Socket)
+%if %{defined perl_bootstrap}
+%gendep_perl_Net
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Net
+This package provide object-oriented interface to Perl built-in gethost*(),
+getnet*(), getproto*(), and getserv*() functions.
 
 %package Net-Ping
 Summary:        Check a remote host for reachability
@@ -4858,7 +4875,18 @@ popd
 %exclude %{_mandir}/man3/NDBM_File.3*
 %endif
 
+# Net
+%exclude %{privlib}/Net/hostent.pm
+%exclude %{privlib}/Net/netent.pm
+%exclude %{privlib}/Net/protoent.pm
+%exclude %{privlib}/Net/servent.pm
+%exclude %{_mandir}/man3/Net::hostent.3*
+%exclude %{_mandir}/man3/Net::netent.3*
+%exclude %{_mandir}/man3/Net::protoent.3*
+%exclude %{_mandir}/man3/Net::servent.3*
+
 # Net-Ping
+%exclude %dir %{privlib}/Net
 %exclude %{privlib}/Net/Ping.pm
 %exclude %{_mandir}/man3/Net::Ping.*
 
@@ -6110,6 +6138,17 @@ popd
 %{_mandir}/man3/NDBM_File.3*
 %endif
 
+%files Net
+%dir %{privlib}/Net
+%{privlib}/Net/hostent.pm
+%{privlib}/Net/netent.pm
+%{privlib}/Net/protoent.pm
+%{privlib}/Net/servent.pm
+%{_mandir}/man3/Net::hostent.3*
+%{_mandir}/man3/Net::netent.3*
+%{_mandir}/man3/Net::protoent.3*
+%{_mandir}/man3/Net::servent.3*
+
 %files Net-Ping
 %dir %{privlib}/Net
 %{privlib}/Net/Ping.pm
@@ -6577,6 +6616,7 @@ popd
 - Move charnames to perl-libs
 - Subpackage File-stat
 - Subpackage Class-Struct
+- Subpackage Net::*ent modules into perl-Net
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

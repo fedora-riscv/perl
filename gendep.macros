@@ -1191,6 +1191,16 @@ Requires: perl(warnings) \
 Requires: perl(XSLoader) \
 Provides: perl(NDBM_File) = 1.15 \
 %{nil}
+%global gendep_perl_Net \
+Requires: perl(:VERSION) >= 5.6.0 \
+Requires: perl(Class::Struct) \
+Requires: perl(Exporter) \
+Requires: perl(strict) \
+Provides: perl(Net::hostent) = 1.02 \
+Provides: perl(Net::netent) = 1.01 \
+Provides: perl(Net::protoent) = 1.01 \
+Provides: perl(Net::servent) = 1.02 \
+%{nil}
 %global gendep_perl_Net_Ping \
 Requires: perl(:VERSION) >= 5.2.0 \
 Requires: perl(Carp) \
@@ -2087,10 +2097,6 @@ Provides: perl(File::Copy) = 2.34 \
 Provides: perl(FileHandle) = 2.03 \
 Provides: perl(FindBin) = 1.51 \
 Provides: perl(Getopt::Std) = 1.12 \
-Provides: perl(Net::hostent) = 1.02 \
-Provides: perl(Net::netent) = 1.01 \
-Provides: perl(Net::protoent) = 1.01 \
-Provides: perl(Net::servent) = 1.02 \
 Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(SelectSaver) = 1.02 \
 Provides: perl(Symbol) = 1.08 \
