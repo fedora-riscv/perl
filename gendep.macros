@@ -1896,6 +1896,16 @@ Requires: perl(threads::shared) \
 Requires: perl(warnings) \
 Provides: perl(Thread::Semaphore) = 2.13 \
 %{nil}
+%global gendep_perl_Time \
+Requires: perl(:VERSION) >= 5.6.0 \
+Requires: perl(Class::Struct) \
+Requires: perl(Exporter) \
+Requires: perl(Time::tm) \
+Requires: perl(strict) \
+Provides: perl(Time::gmtime) = 1.04 \
+Provides: perl(Time::localtime) = 1.03 \
+Provides: perl(Time::tm) = 1.00 \
+%{nil}
 %global gendep_perl_Time_HiRes \
 Requires: perl(Exporter) \
 Requires: perl(XSLoader) \
@@ -2066,7 +2076,6 @@ Requires: perl(:VERSION) >= 5.10.1 \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(:VERSION) >= 5.9.1 \
 Requires: perl(Carp) \
-Requires: perl(Class::Struct) \
 Requires: perl(Config) \
 Requires: perl(Cwd) \
 Requires: perl(Exporter) \
@@ -2078,7 +2087,6 @@ Requires: perl(Symbol) \
 Requires: perl(Text::Tabs) \
 Requires: perl(Tie::Handle) \
 Requires: perl(Tie::StdHandle) \
-Requires: perl(Time::tm) \
 Requires: perl(Unicode::Normalize) \
 Requires: perl(charnames) \
 Requires: perl(feature) \
@@ -2123,9 +2131,6 @@ Provides: perl(Tie::StdHandle) = 4.6 \
 Provides: perl(Tie::StdHash) \
 Provides: perl(Tie::StdScalar) \
 Provides: perl(Tie::SubstrHash) = 1.00 \
-Provides: perl(Time::gmtime) = 1.04 \
-Provides: perl(Time::localtime) = 1.03 \
-Provides: perl(Time::tm) = 1.00 \
 Provides: perl(UNIVERSAL) = 1.13 \
 Provides: perl(Unicode::UCD) = 0.72 \
 Provides: perl(deprecate) = 0.04 \

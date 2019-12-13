@@ -432,7 +432,7 @@ Requires:       perl-Text-Tabs+Wrap,
 Requires:       perl-Thread-Queue, perl-Thread-Semaphore,
 Requires:       perl-threads, perl-threads-shared,
 Requires:       perl-Tie-File, perl-Tie-Memoize, perl-Tie-RefHash,
-Requires:       perl-Time-HiRes, perl-Time-Local, perl-Time-Piece,
+Requires:       perl-Time, perl-Time-HiRes, perl-Time-Local, perl-Time-Piece,
 Requires:       perl-Unicode-Collate, perl-Unicode-Normalize, perl-User-pwent,
 Requires:       perl-version,
 
@@ -3466,6 +3466,22 @@ hash itself are preserved as references; to use references as keys in
 hashes-of-hashes, use Tie::RefHash::Nestable, included as part of
 Tie::RefHash.
 
+%package Time
+Summary:        By-name interface to Perl built-in time functions
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.03
+BuildArch:      noarch
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Time
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Time
+This package provides an object-oriented interface to Perl built-in gmtime()
+and localtime () functions.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Time-HiRes
 Summary:        High resolution alarm, sleep, gettimeofday, interval timers
@@ -5165,6 +5181,14 @@ popd
 %exclude %{privlib}/Tie/RefHash.pm
 %exclude %{_mandir}/man3/Tie::RefHash.*
 
+# Time
+%exclude %{privlib}/Time/gmtime.pm
+%exclude %{privlib}/Time/localtime.pm
+%exclude %{privlib}/Time/tm.pm
+%exclude %{_mandir}/man3/Time::gmtime.*
+%exclude %{_mandir}/man3/Time::localtime.*
+%exclude %{_mandir}/man3/Time::tm.*
+
 # Time-HiRes
 %exclude %dir %{archlib}/Time
 %exclude %{archlib}/Time/HiRes.pm
@@ -5173,6 +5197,7 @@ popd
 %exclude %{_mandir}/man3/Time::HiRes.*
 
 # Time-Local
+%exclude %dir %{privlib}/Time
 %exclude %{privlib}/Time/Local.pm
 %exclude %{_mandir}/man3/Time::Local.*
 
@@ -6513,6 +6538,15 @@ popd
 %{privlib}/Tie/RefHash.pm
 %{_mandir}/man3/Tie::RefHash.*
 
+%files Time
+%dir %{privlib}/Time
+%{privlib}/Time/gmtime.pm
+%{privlib}/Time/localtime.pm
+%{privlib}/Time/tm.pm
+%{_mandir}/man3/Time::gmtime.*
+%{_mandir}/man3/Time::localtime.*
+%{_mandir}/man3/Time::tm.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Time-HiRes
 %dir %{archlib}/Time
@@ -6642,6 +6676,7 @@ popd
 - Subpackage Class-Struct
 - Subpackage Net::*ent modules into perl-Net
 - Subpackage User::* modules into perl-User-pwent
+- Subpackage Time
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
