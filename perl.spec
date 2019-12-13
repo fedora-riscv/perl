@@ -387,8 +387,8 @@ Requires:       perl-ExtUtils-Embed, perl-ExtUtils-Install,
 Requires:       perl-ExtUtils-MakeMaker, perl-ExtUtils-Manifest,
 Requires:       perl-ExtUtils-Miniperl, perl-ExtUtils-ParseXS,
 Requires:       perl-Fcntl, perl-fields, perl-File-DosGlob, perl-File-Fetch,
-Requires:       perl-File-Find, perl-File-Path, perl-File-Temp, perl-FileCache,
-Requires:       perl-Filter, perl-Filter-Simple,
+Requires:       perl-File-Find, perl-File-Path, perl-File-stat, perl-File-Temp,
+Requires:       perl-FileCache, perl-Filter, perl-Filter-Simple,
 %if %{with gdbm}
 Requires:       perl-GDBM_File,
 %endif
@@ -1805,6 +1805,24 @@ Conflicts:      perl < 4:5.16.2-265
 This module provides a convenient way to create directories of arbitrary
 depth and to delete an entire directory subtree from the file system.
 %endif
+
+%package File-stat
+Summary:        By-name interface to Perl built-in stat functions
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.08
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(Symbol)
+%if %{defined perl_bootstrap}
+%gendep_perl_File_stat
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description File-stat
+This module overrides the core stat() and lstat() functions, replacing them
+with versions that return File::stat objects. This object has methods that
+return the similarly named structure field name from the stat(2) function.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package File-Temp
@@ -4484,6 +4502,10 @@ popd
 %exclude %{privlib}/File/Path.pm
 %exclude %{_mandir}/man3/File::Path.3*
 
+# File-stat
+%exclude %{privlib}/File/stat.pm
+%exclude %{_mandir}/man3/File::stat.3*
+
 # File-Temp
 %exclude %{privlib}/File/Temp.pm
 %exclude %{_mandir}/man3/File::Temp.3*
@@ -5676,6 +5698,11 @@ popd
 %{_mandir}/man3/File::Path.3*
 %endif
 
+%files File-stat
+%dir %{privlib}/File
+%{privlib}/File/stat.pm
+%{_mandir}/man3/File::stat.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files File-Temp
 %dir %{privlib}/File
@@ -6520,6 +6547,7 @@ popd
 - Subpackage Benchmark
 - Subpackage blib
 - Move charnames to perl-libs
+- Subpackage File-stat
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

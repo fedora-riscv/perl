@@ -1,5 +1,5 @@
 from Config import *
-addFilter("spelling-error .* (autoloaded|awk|cacheout|decrement|exe|gdbm|globbing|gmtime|groff|libnet|localtime|Memoizing|metapackage|ndbm|Nestable|odbm|opcodes|perlbug|perldoc|perlfunc|perlglob|perllocale|perlmain|perlpod|perlsub|reachability|redispatch|rpmbuild|sdbm|sed|splain|truncations|usr|writemain)");
+addFilter("spelling-error .* (autoloaded|awk|cacheout|decrement|exe|gdbm|globbing|gmtime|groff|libnet|localtime|lstat|Memoizing|metapackage|ndbm|Nestable|odbm|opcodes|perlbug|perldoc|perlfunc|perlglob|perllocale|perlmain|perlpod|perlsub|reachability|redispatch|rpmbuild|sdbm|sed|splain|truncations|usr|writemain)");
 addFilter("unexpanded-macro %description .* %INC");
 # POSIX module provides wrappers for libc functions
 addFilter("missing-call-to-setgroups-before-setuid .*/auto/POSIX/POSIX.so");

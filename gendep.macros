@@ -700,6 +700,19 @@ Requires: perl(strict) \
 Requires: perl(vars) \
 Provides: perl(File::Path) = 2.16 \
 %{nil}
+%global gendep_perl_File_stat \
+Requires: perl(:VERSION) >= 5.6.0 \
+Requires: perl(Carp) \
+Requires: perl(Class::Struct) \
+Requires: perl(Exporter) \
+Requires: perl(Fcntl) \
+Requires: perl(constant) \
+Requires: perl(overload) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Requires: perl(warnings::register) \
+Provides: perl(File::stat) = 1.08 \
+%{nil}
 %global gendep_perl_File_Temp \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(Carp) \
@@ -2027,7 +2040,6 @@ Requires: perl(Class::Struct) \
 Requires: perl(Config) \
 Requires: perl(Cwd) \
 Requires: perl(Exporter) \
-Requires: perl(Fcntl) \
 Requires: perl(File::Basename) \
 Requires: perl(File::Spec) \
 Requires: perl(I18N::LangTags) \
@@ -2039,11 +2051,9 @@ Requires: perl(Tie::StdHandle) \
 Requires: perl(Time::tm) \
 Requires: perl(Unicode::Normalize) \
 Requires: perl(charnames) \
-Requires: perl(constant) \
 Requires: perl(feature) \
 Requires: perl(if) \
 Requires: perl(integer) \
-Requires: perl(overload) \
 Requires: perl(strict) \
 Requires: perl(threads) \
 Requires: perl(threads::shared) \
@@ -2067,7 +2077,6 @@ Provides: perl(English) = 1.10 \
 Provides: perl(File::Basename) = 2.85 \
 Provides: perl(File::Compare) = 1.1006 \
 Provides: perl(File::Copy) = 2.34 \
-Provides: perl(File::stat) = 1.08 \
 Provides: perl(FileHandle) = 2.03 \
 Provides: perl(FindBin) = 1.51 \
 Provides: perl(Getopt::Std) = 1.12 \
