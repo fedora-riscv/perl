@@ -90,6 +90,15 @@ Requires: perl(Cwd) \
 Requires: perl(File::Spec) \
 Provides: perl(blib) = 1.07 \
 %{nil}
+%global gendep_perl_Class_Struct \
+Requires: perl(:VERSION) >= 5.6.0 \
+Requires: perl(Carp) \
+Requires: perl(Exporter) \
+Requires: perl(strict) \
+Requires: perl(warnings::register) \
+Provides: perl(Class::Struct) = 0.65 \
+Provides: perl(Class::Struct::Tie_ISA) \
+%{nil}
 %global gendep_perl_CPAN \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(App::Cpan) \
@@ -2059,8 +2068,6 @@ Requires: perl(threads) \
 Requires: perl(threads::shared) \
 Requires: perl(warnings) \
 Requires: perl(warnings::register) \
-Provides: perl(Class::Struct) = 0.65 \
-Provides: perl(Class::Struct::Tie_ISA) \
 Provides: perl(Config) = 5.030000 \
 Provides: perl(Config::Extensions) = 0.03 \
 Provides: perl(DB) = 1.08 \

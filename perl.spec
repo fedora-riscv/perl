@@ -371,7 +371,8 @@ Requires:       perl-AnyDBM_File,
 Requires:       perl-Archive-Tar, perl-Attribute-Handlers, perl-autodie,
 Requires:       perl-AutoLoader, perl-AutoSplit,
 Requires:       perl-B, perl-base, perl-Benchmark, perl-bignum, perl-blib,
-Requires:       perl-Carp, perl-Compress-Raw-Bzip2, perl-Compress-Raw-Zlib,
+Requires:       perl-Carp, perl-Class-Struct,
+Requires:       perl-Compress-Raw-Bzip2, perl-Compress-Raw-Zlib,
 Requires:       perl-Config-Perl-V, perl-constant,
 Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
 Requires:       perl-CPAN-Meta-YAML,
@@ -921,6 +922,23 @@ you can use carp or croak which report the error as being from where your
 module was called. There is no guarantee that that is where the error was,
 but it is a good educated guess.
 %endif
+
+%package Class-Struct
+Summary:        Declare struct-like data types as Perl classes
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.65
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Class_Struct
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Class-Struct
+Class::Struct module exports a single function struct(). Given a list of
+element names and types, and optionally a class name, struct() creates a
+Perl 5 class that implements a struct-like data structure.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Compress-Raw-Bzip2
@@ -4216,6 +4234,10 @@ popd
 %exclude %{privlib}/Carp.*
 %exclude %{_mandir}/man3/Carp.*
 
+# Class-Struct
+%exclude %{privlib}/Class
+%exclude %{_mandir}/man3/Class::Struct.*
+
 # Config-Perl-V
 %exclude %{privlib}/Config/Perl
 %exclude %{_mandir}/man3/Config::Perl::V.*
@@ -5337,7 +5359,13 @@ popd
 %{privlib}/Carp
 %{privlib}/Carp.*
 %{_mandir}/man3/Carp.*
+%endif
 
+%files Class-Struct
+%{privlib}/Class
+%{_mandir}/man3/Class::Struct.*
+
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Compress-Raw-Bzip2
 %dir %{archlib}/Compress
 %dir %{archlib}/Compress/Raw
@@ -6548,6 +6576,7 @@ popd
 - Subpackage blib
 - Move charnames to perl-libs
 - Subpackage File-stat
+- Subpackage Class-Struct
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
