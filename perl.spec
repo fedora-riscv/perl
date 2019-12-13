@@ -433,7 +433,7 @@ Requires:       perl-Thread-Queue, perl-Thread-Semaphore,
 Requires:       perl-threads, perl-threads-shared,
 Requires:       perl-Tie-File, perl-Tie-Memoize, perl-Tie-RefHash,
 Requires:       perl-Time-HiRes, perl-Time-Local, perl-Time-Piece,
-Requires:       perl-Unicode-Collate, perl-Unicode-Normalize,
+Requires:       perl-Unicode-Collate, perl-Unicode-Normalize, perl-User-pwent,
 Requires:       perl-version,
 
 # Full EVR is for compatibility with systems that swapped perl and perl-core
@@ -3627,6 +3627,22 @@ This package provides Perl functions that can convert strings into various
 Unicode normalization forms as defined in Unicode Standard Annex #15.
 %endif
 
+%package User-pwent
+Summary:        By-name interface to Perl built-in user name resolver
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.03
+BuildArch:      noarch
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_User_pwent
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description User-pwent
+This package provides an object-oriented interface to Perl build-in getgr*()
+and getpw*() functions.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package version
 Summary:        Perl extension for Version Objects
@@ -5202,6 +5218,10 @@ popd
 %exclude %{archlib}/Unicode/Normalize.pm
 %exclude %{_mandir}/man3/Unicode::Normalize.*
 
+# User-pwent
+%exclude %{privlib}/User
+%exclude %{_mandir}/man3/User::*
+
 # version
 %exclude %{privlib}/version.pm
 %exclude %{privlib}/version.pod
@@ -6557,6 +6577,10 @@ popd
 %{_mandir}/man3/Unicode::Normalize.*
 %endif
 
+%files User-pwent
+%{privlib}/User
+%{_mandir}/man3/User::*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files version
 %{privlib}/version.pm
@@ -6617,6 +6641,7 @@ popd
 - Subpackage File-stat
 - Subpackage Class-Struct
 - Subpackage Net::*ent modules into perl-Net
+- Subpackage User::* modules into perl-User-pwent
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

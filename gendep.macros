@@ -1961,6 +1961,17 @@ Provides: perl(Unicode::Normalize) = 1.26 \
 %{nil}
 %global gendep_perl_Unicode_Normalize_debuginfo \
 %{nil}
+%global gendep_perl_User_pwent \
+Requires: perl(:VERSION) >= 5.6.0 \
+Requires: perl(Carp) \
+Requires: perl(Class::Struct) \
+Requires: perl(Config) \
+Requires: perl(Exporter) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Provides: perl(User::grent) = 1.03 \
+Provides: perl(User::pwent) = 1.01 \
+%{nil}
 %global gendep_perl_autodie \
 Requires: perl(:VERSION) >= 5.8.0 \
 Requires: perl(Carp) \
@@ -2117,8 +2128,6 @@ Provides: perl(Time::localtime) = 1.03 \
 Provides: perl(Time::tm) = 1.00 \
 Provides: perl(UNIVERSAL) = 1.13 \
 Provides: perl(Unicode::UCD) = 0.72 \
-Provides: perl(User::grent) = 1.03 \
-Provides: perl(User::pwent) = 1.01 \
 Provides: perl(deprecate) = 0.04 \
 Provides: perl(diagnostics) = 1.36 \
 Provides: perl(dumpvar.pl) \
