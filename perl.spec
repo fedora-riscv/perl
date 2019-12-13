@@ -370,7 +370,7 @@ Requires:       perl-utils
 Requires:       perl-AnyDBM_File,
 Requires:       perl-Archive-Tar, perl-Attribute-Handlers, perl-autodie,
 Requires:       perl-AutoLoader, perl-AutoSplit,
-Requires:       perl-B, perl-base, perl-Benchmark, perl-bignum,
+Requires:       perl-B, perl-base, perl-Benchmark, perl-bignum, perl-blib,
 Requires:       perl-Carp, perl-Compress-Raw-Bzip2, perl-Compress-Raw-Zlib,
 Requires:       perl-Config-Perl-V, perl-constant,
 Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
@@ -872,7 +872,27 @@ Conflicts:      perl < 4:5.22.0-348
 %description bignum
 This package attempts to make it easier to write scripts that use BigInts and
 BigFloats in a transparent way.
+%endif
 
+%package blib
+Summary:        Use uninstalled version of a package
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.07
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_blib
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description blib
+This module looks for MakeMaker-like "blib" directory structure starting in
+given or current directory and working back up to five levels of directories.
+It is intended for use on command line with -M option as a way of testing
+arbitrary scripts against an uninstalled version of a package.
+
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Carp
 Summary:        Alternative warn and die for modules
 Epoch:          0
@@ -4160,6 +4180,10 @@ popd
 %exclude %{_mandir}/man3/bignum.*
 %exclude %{_mandir}/man3/bigrat.*
 
+# blib
+%exclude %{privlib}/blib.pm
+%exclude %{_mandir}/man3/blib.*
+
 # Carp
 %exclude %{privlib}/Carp
 %exclude %{privlib}/Carp.*
@@ -5265,7 +5289,13 @@ popd
 %{_mandir}/man3/bigint.*
 %{_mandir}/man3/bignum.*
 %{_mandir}/man3/bigrat.*
+%endif
 
+%files blib
+%{privlib}/blib.pm
+%{_mandir}/man3/blib.*
+
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Carp
 %{privlib}/Carp
 %{privlib}/Carp.*
@@ -6473,6 +6503,7 @@ popd
 - Subpackage Tie-Memoize
 - Subpackage AnyDBM_File
 - Subpackage Benchmark
+- Subpackage blib
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

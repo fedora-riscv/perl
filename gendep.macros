@@ -85,6 +85,11 @@ Requires: perl(:VERSION) >= 5.8.0 \
 Requires: perl(strict) \
 Provides: perl(base) = 2.27 \
 %{nil}
+%global gendep_perl_blib \
+Requires: perl(Cwd) \
+Requires: perl(File::Spec) \
+Provides: perl(blib) = 1.07 \
+%{nil}
 %global gendep_perl_CPAN \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(App::Cpan) \
@@ -2097,7 +2102,6 @@ Provides: perl(Unicode::UCD) = 0.72 \
 Provides: perl(User::grent) = 1.03 \
 Provides: perl(User::pwent) = 1.01 \
 Provides: perl(_charnames) = 1.45 \
-Provides: perl(blib) = 1.07 \
 Provides: perl(bytes) = 1.07 \
 Provides: perl(bytes_heavy.pl) \
 Provides: perl(charnames) = 1.45 \
