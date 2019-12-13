@@ -2038,19 +2038,15 @@ Requires: perl(Tie::Handle) \
 Requires: perl(Tie::StdHandle) \
 Requires: perl(Time::tm) \
 Requires: perl(Unicode::Normalize) \
-Requires: perl(_charnames) \
-Requires: perl(bytes) \
 Requires: perl(charnames) \
 Requires: perl(constant) \
 Requires: perl(feature) \
 Requires: perl(if) \
 Requires: perl(integer) \
 Requires: perl(overload) \
-Requires: perl(re) \
 Requires: perl(strict) \
 Requires: perl(threads) \
 Requires: perl(threads::shared) \
-Requires: perl(unicore::Name) \
 Requires: perl(warnings) \
 Requires: perl(warnings::register) \
 Provides: perl(Class::Struct) = 0.65 \
@@ -2101,10 +2097,6 @@ Provides: perl(UNIVERSAL) = 1.13 \
 Provides: perl(Unicode::UCD) = 0.72 \
 Provides: perl(User::grent) = 1.03 \
 Provides: perl(User::pwent) = 1.01 \
-Provides: perl(_charnames) = 1.45 \
-Provides: perl(bytes) = 1.07 \
-Provides: perl(bytes_heavy.pl) \
-Provides: perl(charnames) = 1.45 \
 Provides: perl(deprecate) = 0.04 \
 Provides: perl(diagnostics) = 1.36 \
 Provides: perl(dumpvar.pl) \
@@ -2178,8 +2170,12 @@ Requires: perl(vars) \
 %{nil}
 %global gendep_perl_libs \
 Requires: perl(XSLoader) \
+Requires: perl(bytes) \
+Requires: perl(_charnames) \
 Requires: perl(integer) \
+Requires: perl(re) \
 Requires: perl(strict) \
+Requires: perl(unicore::Name) \
 Requires: perl(warnings) \
 Provides: perl(:MODULE_COMPAT_5.30.0) \
 Provides: perl(:VERSION) = 5.30.0 \
@@ -2197,6 +2193,9 @@ Provides: perl(PerlIO::via) = 0.17 \
 Provides: perl(Tie::Hash::NamedCapture) = 0.10 \
 Provides: perl(XSLoader) = 0.30 \
 Provides: perl(attributes) = 0.33 \
+Provides: perl(bytes) = 1.07 \
+Provides: perl(_charnames) = 1.45 \
+Provides: perl(charnames) = 1.45 \
 Provides: perl(integer) = 1.01 \
 Provides: perl(re) = 0.37 \
 Provides: perl(strict) = 1.11 \

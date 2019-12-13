@@ -485,7 +485,6 @@ Requires(post): perl-libs
 Requires(post): perl-macros
 
 # File provides
-Provides:       perl(bytes_heavy.pl)
 Provides:       perl(dumpvar.pl)
 Provides:       perl(perl5db.pl)
 
@@ -537,6 +536,8 @@ Provides:       perl(:WITH_THREADS)
 Provides:       perl(:WITH_LARGEFILES)
 # PerlIO provides
 Provides:       perl(:WITH_PERLIO)
+# A file provide for bytes module
+Provides:       perl(bytes_heavy.pl)
 # Loaded by charnames, unicore/Name.pm does not declare unicore::Name module
 Provides:       perl(unicore::Name)
 # Keep utf8 modules in perl-libs because a sole regular expression like /\pN/
@@ -545,6 +546,8 @@ Provides:       perl(utf8_heavy.pl)
 # utf8 and utf8_heavy.pl require Carp, re, strict, warnings, XSLoader
 Requires:       perl(Carp)
 Requires:       perl(Exporter)
+# File::Spec loaded by _charnames.pm that is loaded by \N{}
+Requires:       perl(File::Spec)
 # Term::Cap is optional
 %if %{defined perl_bootstrap}
 %gendep_perl_libs
@@ -4061,6 +4064,10 @@ popd
 %exclude %dir %{perl_vendorarch}
 %exclude %dir %{perl_vendorarch}/auto
 %exclude %dir %{privlib}
+%exclude %{privlib}/bytes.pm
+%exclude %{privlib}/bytes_heavy.pl
+%exclude %{privlib}/_charnames.pm
+%exclude %{privlib}/charnames.pm
 %exclude %{privlib}/integer.pm
 %exclude %{privlib}/PerlIO.pm
 %exclude %{privlib}/strict.pm
@@ -4071,6 +4078,8 @@ popd
 %exclude %{privlib}/XSLoader.pm
 %exclude %dir %{perl_vendorlib}
 %exclude %{_mandir}/man3/attributes.*
+%exclude %{_mandir}/man3/bytes.*
+%exclude %{_mandir}/man3/charnames.*
 %exclude %{_mandir}/man3/File::Glob.*
 %exclude %{_mandir}/man3/integer.*
 %exclude %{_mandir}/man3/PerlIO.*
@@ -5155,6 +5164,10 @@ popd
 %dir %{perl_vendorarch}
 %dir %{perl_vendorarch}/auto
 %dir %{privlib}
+%{privlib}/bytes.pm
+%{privlib}/bytes_heavy.pl
+%{privlib}/_charnames.pm
+%{privlib}/charnames.pm
 %{privlib}/integer.pm
 %{privlib}/PerlIO.pm
 %{privlib}/strict.pm
@@ -5165,6 +5178,8 @@ popd
 %{privlib}/XSLoader.pm
 %dir %{perl_vendorlib}
 %{_mandir}/man3/attributes.*
+%{_mandir}/man3/bytes.*
+%{_mandir}/man3/charnames.*
 %{_mandir}/man3/File::Glob.*
 %{_mandir}/man3/integer.*
 %{_mandir}/man3/PerlIO.*
@@ -6504,6 +6519,7 @@ popd
 - Subpackage AnyDBM_File
 - Subpackage Benchmark
 - Subpackage blib
+- Move charnames to perl-libs
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
