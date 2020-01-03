@@ -2106,6 +2106,14 @@ Requires: perl(strict) \
 Requires: perl(vars) \
 Requires: perl(warnings) \
 %{nil}
+%global gendep_perl_diagnostics \
+Requires: perl(:VERSION) >= 5.9.1 \
+Requires: perl(Carp) \
+Requires: perl(Config) \
+Requires: perl(Text::Tabs) \
+Requires: perl(strict) \
+Provides: perl(diagnostics) = 1.36 \
+%{nil}
 %global gendep_perl_encoding \
 Requires: perl(Config) \
 Requires: perl(Encode) \
@@ -2131,7 +2139,6 @@ Provides: perl(experimental) = 0.020 \
 Requires: perl(:VERSION) >= 5.0.0 \
 Requires: perl(:VERSION) >= 5.10.1 \
 Requires: perl(:VERSION) >= 5.6.0 \
-Requires: perl(:VERSION) >= 5.9.1 \
 Requires: perl(Carp) \
 Requires: perl(Config) \
 Requires: perl(Cwd) \
@@ -2140,7 +2147,6 @@ Requires: perl(File::Basename) \
 Requires: perl(File::Spec) \
 Requires: perl(I18N::LangTags) \
 Requires: perl(Symbol) \
-Requires: perl(Text::Tabs) \
 Requires: perl(strict) \
 Requires: perl(warnings) \
 Requires: perl(warnings::register) \
@@ -2160,7 +2166,6 @@ Provides: perl(SelectSaver) = 1.02 \
 Provides: perl(Symbol) = 1.08 \
 Provides: perl(UNIVERSAL) = 1.13 \
 Provides: perl(deprecate) = 0.04 \
-Provides: perl(diagnostics) = 1.36 \
 Provides: perl(dumpvar.pl) \
 Provides: perl(feature) = 1.54 \
 Provides: perl(filetest) = 1.03 \
@@ -2333,14 +2338,11 @@ Provides: perl(threads::shared) = 1.60 \
 %global gendep_perl_threads_shared_debuginfo \
 %{nil}
 %global gendep_perl_utils \
-Requires: perl(:VERSION) >= 5.9.1 \
-Requires: perl(Carp) \
 Requires: perl(Config) \
 Requires: perl(File::Basename) \
 Requires: perl(File::Path) \
 Requires: perl(File::Spec) \
 Requires: perl(Getopt::Std) \
-Requires: perl(Text::Tabs) \
 Requires: perl(re) \
 Requires: perl(strict) \
 Requires: perl(vars) \

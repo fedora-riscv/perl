@@ -378,7 +378,8 @@ Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
 Requires:       perl-CPAN-Meta-YAML,
 Requires:       perl-Data-Dumper, perl-DB_File, perl-DBM_Filter,
 Requires:       perl-Devel-Peek, perl-Devel-PPPort, perl-Devel-SelfStubber,
-Requires:       perl-Digest, perl-Digest-MD5, perl-Digest-SHA, perl-Dumpvalue,
+Requires:       perl-diagnostics, perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
+Requires:       perl-Dumpvalue,
 Requires:       perl-Encode, perl-Encode-devel, perl-encoding,
 Requires:       perl-encoding-warnings,
 Requires:       perl-Env, perl-Errno, perl-experimental, perl-Exporter,
@@ -518,7 +519,7 @@ embedded into another application, the only essential package is perl-libs.
 
 Perl header files can be found in perl-devel package.
 
-Perl utils like "splain" or "perlbug" can be found in perl-utils package.
+Perl utils like "h2ph" or "perlbug" can be found in perl-utils package.
 
 
 %package libs
@@ -633,7 +634,7 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        %{perl_version}
 BuildArch:      noarch
-# Match library exactly for splain messages
+# Match library exactly for perlbug version string
 Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 # Keep /usr/sbin/sendmail and Module::CoreList optional for the perlbug tool
 %if %{defined perl_bootstrap}
@@ -643,8 +644,8 @@ Conflicts:      perl < 4:5.22.0-351
 
 %description utils
 Several utilities which come with Perl distribution like h2ph, perlbug,
-perlthanks, pl2pm, and splain. Some utilities are provided by more specific
-packages like perldoc by perl-Pod-Perldoc.
+perlthanks, and pl2pm. Some utilities are provided by more specific
+packages like perldoc by perl-Pod-Perldoc and splain by perl-diagnostics.
 
 
 %package AnyDBM_File
@@ -1270,6 +1271,29 @@ Devel::SelfStubber prints the stubs you need to put in the module before the
 __DATA__ token (or you can get it to print the entire module with stubs
 correctly placed). The stubs ensure that if a method is called, it will get
 loaded. They are needed specifically for inherited autoloaded methods.
+
+%package diagnostics
+Summary:        Produce verbose warning diagnostics
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.36
+BuildArch:      noarch
+Requires:       %perl_compat
+# Match library exactly for diagnostics messages
+Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl(Getopt::Std)
+%if %{defined perl_bootstrap}
+%gendep_perl_diagnostics
+%endif
+Conflicts:      perl-utils < 5.30.1-451
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description diagnostics
+The diagnostics module extends the terse diagnostics normally emitted by both
+the perl compiler and the perl interpreter (from running perl with a -w switch
+or "use warnings"), augmenting them with the more explicative and endearing
+descriptions found in perldiag. splain tool explains perl messages found on
+standard input.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Digest
@@ -4308,14 +4332,12 @@ popd
 %exclude %{_bindir}/perlbug
 %exclude %{_bindir}/perlthanks
 %exclude %{_bindir}/pl2pm
-%exclude %{_bindir}/splain
 %exclude %{privlib}/pod/perlutil.pod
 %exclude %{_mandir}/man1/h2ph.*
 %exclude %{_mandir}/man1/perlbug.*
 %exclude %{_mandir}/man1/perlthanks.*
 %exclude %{_mandir}/man1/perlutil.*
 %exclude %{_mandir}/man1/pl2pm.*
-%exclude %{_mandir}/man1/splain.*
 
 # AnyDBM_File
 %exclude %{privlib}/AnyDBM_File.pm
@@ -4500,6 +4522,14 @@ popd
 %exclude %dir %{privlib}/Devel
 %exclude %{privlib}/Devel/SelfStubber.pm
 %exclude %{_mandir}/man3/Devel::SelfStubber.*
+
+# diagnostics
+%exclude %{_bindir}/splain
+%exclude %{privlib}/diagnostics.pm
+%exclude %{privlib}/pod/perldiag.pod
+%exclude %{_mandir}/man1/perldiag.*
+%exclude %{_mandir}/man1/splain.*
+%exclude %{_mandir}/man3/diagnostics.*
 
 # Digest
 %exclude %{privlib}/Digest.pm
@@ -5489,7 +5519,6 @@ popd
 %{_bindir}/perlbug
 %{_bindir}/perlthanks
 %{_bindir}/pl2pm
-%{_bindir}/splain
 %dir %{privlib}/pod
 %{privlib}/pod/perlutil.pod
 %{_mandir}/man1/h2ph.*
@@ -5497,7 +5526,6 @@ popd
 %{_mandir}/man1/perlthanks.*
 %{_mandir}/man1/perlutil.*
 %{_mandir}/man1/pl2pm.*
-%{_mandir}/man1/splain.*
 
 %files AnyDBM_File
 %{privlib}/AnyDBM_File.pm
@@ -5719,6 +5747,15 @@ popd
 %dir %{privlib}/Devel
 %{privlib}/Devel/SelfStubber.pm
 %{_mandir}/man3/Devel::SelfStubber.*
+
+%files diagnostics
+%{_bindir}/splain
+%{privlib}/diagnostics.pm
+%dir %{privlib}/pod
+%{privlib}/pod/perldiag.pod
+%{_mandir}/man1/perldiag.*
+%{_mandir}/man1/splain.*
+%{_mandir}/man3/diagnostics.*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Digest
@@ -6870,6 +6907,7 @@ popd
 - Subpackage FileHandle
 - Subpackage Thread
 - Subpackage Unicode::UCD
+- Subpackage diagnostics and move splain tool from perl-utils there
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
