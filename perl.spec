@@ -376,7 +376,7 @@ Requires:       perl-Compress-Raw-Bzip2, perl-Compress-Raw-Zlib,
 Requires:       perl-Config-Perl-V, perl-constant,
 Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
 Requires:       perl-CPAN-Meta-YAML,
-Requires:       perl-Data-Dumper, perl-DB_File,
+Requires:       perl-Data-Dumper, perl-DB_File, perl-DBM_Filter,
 Requires:       perl-Devel-Peek, perl-Devel-PPPort, perl-Devel-SelfStubber,
 Requires:       perl-Digest, perl-Digest-MD5, perl-Digest-SHA, perl-Dumpvalue,
 Requires:       perl-Encode, perl-Encode-devel, perl-encoding,
@@ -495,10 +495,6 @@ Obsoletes:      perl-suidperl <= 4:5.12.2
 # <https://fedoraproject.org/wiki/Changes/perl_Package_to_Install_Core_Modules>,
 # bug #1464903.
 Obsoletes:      perl < 4:5.26.0-395
-
-# Remove private redefinitions
-# DBM_Filter redefines Tie::Hash, but does load it.
-%global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\(Tie::Hash\\)$
 
 %description interpreter
 This is a Perl interpreter as a standalone executable %{_bindir}/perl
@@ -1194,6 +1190,28 @@ provided by Berkeley DB version 1.x (if you have a newer version of DB, you
 will be limited to functionality provided by interface of version 1.x). The
 interface defined here mirrors the Berkeley DB interface closely.
 %endif
+
+%package DBM_Filter
+Summary:        Filter DBM keys and values
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.06
+Requires:       %perl_compat
+Requires:       perl(Compress::Zlib)
+Requires:       perl(Encode)
+%if %{defined perl_bootstrap}
+%gendep_perl_DBM_Filter
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+# Remove private redefinitions
+# DBM_Filter redefines Tie::Hash, but does not load it.
+%global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\(Tie::Hash\\)$
+
+%description DBM_Filter
+This module provides an interface that allows filters to be applied to tied
+hashes associated with DBM files.
 
 %package Devel-Peek
 Summary:        A data debugging tool for the XS programmer
@@ -4399,6 +4417,12 @@ popd
 %exclude %{archlib}/auto/DB_File/DB_File.so
 %exclude %{_mandir}/man3/DB_File*
 
+# DBM_Filter
+%exclude %{privlib}/DBM_Filter
+%exclude %{privlib}/DBM_Filter.pm
+%exclude %{_mandir}/man3/DBM_Filter.*
+%exclude %{_mandir}/man3/DBM_Filter::*
+
 # Devel-Peek
 %dir %exclude %{archlib}/Devel
 %exclude %{archlib}/Devel/Peek.pm
@@ -5595,6 +5619,12 @@ popd
 %{_mandir}/man3/DB_File*
 %endif
 
+%files DBM_Filter
+%{privlib}/DBM_Filter
+%{privlib}/DBM_Filter.pm
+%{_mandir}/man3/DBM_Filter.*
+%{_mandir}/man3/DBM_Filter::*
+
 %files Devel-Peek
 %dir %{archlib}/Devel
 %{archlib}/Devel/Peek.pm
@@ -6747,6 +6777,7 @@ popd
 - Subpackage base Tie::* modules into perl-Tie
 - Move Config to perl-libs
 - Move warnings::register to perl-libs
+- Subpackage DBM_Filter modules
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

@@ -304,6 +304,17 @@ Provides: perl(DB_File::RECNOINFO) \
 %{nil}
 %global gendep_perl_DB_File_debuginfo \
 %{nil}
+%global gendep_perl_DBM_Filter \
+Requires: perl(Carp) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Provides: perl(DBM_Filter) = 0.06 \
+Provides: perl(DBM_Filter::compress) = 0.03 \
+Provides: perl(DBM_Filter::encode) = 0.03 \
+Provides: perl(DBM_Filter::int32) = 0.03 \
+Provides: perl(DBM_Filter::null) = 0.03 \
+Provides: perl(DBM_Filter::utf8) = 0.03 \
+%{nil}
 %global gendep_perl_Data_Dumper \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(Carp) \
@@ -2115,12 +2126,6 @@ Requires: perl(warnings) \
 Requires: perl(warnings::register) \
 Provides: perl(Config::Extensions) = 0.03 \
 Provides: perl(DB) = 1.08 \
-Provides: perl(DBM_Filter) = 0.06 \
-Provides: perl(DBM_Filter::compress) = 0.03 \
-Provides: perl(DBM_Filter::encode) = 0.03 \
-Provides: perl(DBM_Filter::int32) = 0.03 \
-Provides: perl(DBM_Filter::null) = 0.03 \
-Provides: perl(DBM_Filter::utf8) = 0.03 \
 Provides: perl(DirHandle) = 1.05 \
 Provides: perl(DynaLoader) = 1.45 \
 Provides: perl(EVERY::LAST) \
