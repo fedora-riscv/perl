@@ -1858,6 +1858,24 @@ Requires: perl(warnings::register) \
 Provides: perl(Text::Tabs) = 2013.0523 \
 Provides: perl(Text::Wrap) = 2013.0523 \
 %{nil}
+%global gendep_perl_Tie \
+Requires: perl(:VERSION) >= 5.6.0 \
+Requires: perl(Carp) \
+Requires: perl(Tie::Handle) \
+Requires: perl(Tie::StdHandle) \
+Requires: perl(integer) \
+Requires: perl(strict) \
+Provides: perl(Tie::Array) = 1.07 \
+Provides: perl(Tie::ExtraHash) \
+Provides: perl(Tie::Handle) = 4.2 \
+Provides: perl(Tie::Hash) = 1.05 \
+Provides: perl(Tie::Scalar) = 1.04 \
+Provides: perl(Tie::StdArray) \
+Provides: perl(Tie::StdHandle) = 4.6 \
+Provides: perl(Tie::StdHash) \
+Provides: perl(Tie::StdScalar) \
+Provides: perl(Tie::SubstrHash) = 1.00 \
+%{nil}
 %global gendep_perl_Tie_File \
 Requires: perl(:VERSION) >= 5.5.0 \
 Requires: perl(Carp) \
@@ -2085,8 +2103,6 @@ Requires: perl(I18N::LangTags) \
 Requires: perl(IO::File) \
 Requires: perl(Symbol) \
 Requires: perl(Text::Tabs) \
-Requires: perl(Tie::Handle) \
-Requires: perl(Tie::StdHandle) \
 Requires: perl(Unicode::Normalize) \
 Requires: perl(charnames) \
 Requires: perl(feature) \
@@ -2120,17 +2136,6 @@ Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(SelectSaver) = 1.02 \
 Provides: perl(Symbol) = 1.08 \
 Provides: perl(Thread) = 3.04 \
-Provides: perl(Tie::Array) = 1.07 \
-Provides: perl(Tie::ExtraHash) \
-Provides: perl(Tie::Handle) = 4.2 \
-Provides: perl(Tie::Hash) \
-Provides: perl(Tie::Hash) = 1.05 \
-Provides: perl(Tie::Scalar) = 1.04 \
-Provides: perl(Tie::StdArray) \
-Provides: perl(Tie::StdHandle) = 4.6 \
-Provides: perl(Tie::StdHash) \
-Provides: perl(Tie::StdScalar) \
-Provides: perl(Tie::SubstrHash) = 1.00 \
 Provides: perl(UNIVERSAL) = 1.13 \
 Provides: perl(Unicode::UCD) = 0.72 \
 Provides: perl(deprecate) = 0.04 \

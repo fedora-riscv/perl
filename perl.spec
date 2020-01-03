@@ -431,7 +431,7 @@ Requires:       perl-Text-Abbrev, perl-Text-Balanced, perl-Text-ParseWords,
 Requires:       perl-Text-Tabs+Wrap,
 Requires:       perl-Thread-Queue, perl-Thread-Semaphore,
 Requires:       perl-threads, perl-threads-shared,
-Requires:       perl-Tie-File, perl-Tie-Memoize, perl-Tie-RefHash,
+Requires:       perl-Tie, perl-Tie-File, perl-Tie-Memoize, perl-Tie-RefHash,
 Requires:       perl-Time, perl-Time-HiRes, perl-Time-Local, perl-Time-Piece,
 Requires:       perl-Unicode-Collate, perl-Unicode-Normalize, perl-User-pwent,
 Requires:       perl-version,
@@ -496,6 +496,9 @@ Obsoletes:      perl-suidperl <= 4:5.12.2
 # bug #1464903.
 Obsoletes:      perl < 4:5.26.0-395
 
+# Remove private redefinitions
+# DBM_Filter redefines Tie::Hash, but does load it.
+%global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\(Tie::Hash\\)$
 
 %description interpreter
 This is a Perl interpreter as a standalone executable %{_bindir}/perl
@@ -3406,6 +3409,23 @@ This module provides thread-safe FIFO queues that can be accessed safely by
 any number of threads.
 %endif
 
+%package Tie
+Summary:        Base classes for tying variables
+License:        GPL+ or Artistic
+Epoch:          0
+# Version from Tie::StdHandle
+Version:        4.6
+BuildArch:      noarch
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Tie
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description Tie
+These are Perl modules that helps connecting classes with arrays, hashes,
+handles, and scalars.
+
 %package Tie-File
 Summary:        Access the lines of a disk file via a Perl array
 License:        GPLv2+ or Artistic
@@ -5169,6 +5189,21 @@ popd
 %exclude %{privlib}/Thread/Semaphore.pm
 %exclude %{_mandir}/man3/Thread::Semaphore.*
 
+# Tie
+%exclude %dir %{privlib}/Tie
+%exclude %{privlib}/Tie/Array.pm
+%exclude %{privlib}/Tie/Handle.pm
+%exclude %{privlib}/Tie/Hash.pm
+%exclude %{privlib}/Tie/Scalar.pm
+%exclude %{privlib}/Tie/StdHandle.pm
+%exclude %{privlib}/Tie/SubstrHash.pm
+%exclude %{_mandir}/man3/Tie::Array.*
+%exclude %{_mandir}/man3/Tie::Handle.*
+%exclude %{_mandir}/man3/Tie::Hash.*
+%exclude %{_mandir}/man3/Tie::Scalar.*
+%exclude %{_mandir}/man3/Tie::StdHandle.*
+%exclude %{_mandir}/man3/Tie::SubstrHash.*
+
 # Tie-File
 %exclude %{privlib}/Tie/File.pm
 %exclude %{_mandir}/man3/Tie::File.*
@@ -6523,6 +6558,21 @@ popd
 %{privlib}/Thread/Semaphore.pm
 %{_mandir}/man3/Thread::Semaphore.*
 
+%files Tie
+%dir %{privlib}/Tie
+%{privlib}/Tie/Array.pm
+%{privlib}/Tie/Handle.pm
+%{privlib}/Tie/Hash.pm
+%{privlib}/Tie/Scalar.pm
+%{privlib}/Tie/StdHandle.pm
+%{privlib}/Tie/SubstrHash.pm
+%{_mandir}/man3/Tie::Array.*
+%{_mandir}/man3/Tie::Handle.*
+%{_mandir}/man3/Tie::Hash.*
+%{_mandir}/man3/Tie::Scalar.*
+%{_mandir}/man3/Tie::StdHandle.*
+%{_mandir}/man3/Tie::SubstrHash.*
+
 %files Tie-File
 %dir %{privlib}/Tie
 %{privlib}/Tie/File.pm
@@ -6677,6 +6727,7 @@ popd
 - Subpackage Net::*ent modules into perl-Net
 - Subpackage User::* modules into perl-User-pwent
 - Subpackage Time
+- Subpackage base Tie::* modules into perl-Tie
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
