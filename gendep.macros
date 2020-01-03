@@ -2113,7 +2113,6 @@ Requires: perl(threads) \
 Requires: perl(threads::shared) \
 Requires: perl(warnings) \
 Requires: perl(warnings::register) \
-Provides: perl(Config) = 5.030000 \
 Provides: perl(Config::Extensions) = 0.03 \
 Provides: perl(DB) = 1.08 \
 Provides: perl(DBM_Filter) = 0.06 \
@@ -2225,6 +2224,7 @@ Provides: perl(:WITH_ITHREADS) \
 Provides: perl(:WITH_LARGEFILES) \
 Provides: perl(:WITH_PERLIO) \
 Provides: perl(:WITH_THREADS) \
+Provides: perl(Config) = 5.030001 \
 Provides: perl(File::Glob) = 1.32 \
 Provides: perl(PerlIO) = 1.10 \
 Provides: perl(PerlIO::encoding) = 0.27 \

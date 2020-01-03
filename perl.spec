@@ -4162,6 +4162,9 @@ popd
 %exclude %{archlib}/auto/re
 %exclude %dir %{archlib}/auto/Tie
 %exclude %{archlib}/auto/Tie/Hash
+%exclude %{archlib}/Config.*
+%exclude %{archlib}/Config_heavy.pl
+%exclude %{archlib}/Config_git.pl
 %exclude %dir %{archlib}/CORE
 %exclude %{archlib}/CORE/libperl.so
 %exclude %dir %{archlib}/File
@@ -4190,6 +4193,7 @@ popd
 %exclude %{_mandir}/man3/attributes.*
 %exclude %{_mandir}/man3/bytes.*
 %exclude %{_mandir}/man3/charnames.*
+%exclude %{_mandir}/man3/Config.*
 %exclude %{_mandir}/man3/File::Glob.*
 %exclude %{_mandir}/man3/integer.*
 %exclude %{_mandir}/man3/PerlIO.*
@@ -5309,6 +5313,9 @@ popd
 %{archlib}/auto/re
 %dir %{archlib}/auto/Tie
 %{archlib}/auto/Tie/Hash
+%{archlib}/Config.*
+%{archlib}/Config_git.pl
+%{archlib}/Config_heavy.pl
 %dir %{archlib}/CORE
 %{archlib}/CORE/libperl.so
 %dir %{archlib}/File
@@ -5337,6 +5344,7 @@ popd
 %{_mandir}/man3/attributes.*
 %{_mandir}/man3/bytes.*
 %{_mandir}/man3/charnames.*
+%{_mandir}/man3/Config.*
 %{_mandir}/man3/File::Glob.*
 %{_mandir}/man3/integer.*
 %{_mandir}/man3/PerlIO.*
@@ -6733,6 +6741,7 @@ popd
 - Subpackage User::* modules into perl-User-pwent
 - Subpackage Time
 - Subpackage base Tie::* modules into perl-Tie
+- Move Config to perl-libs
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
