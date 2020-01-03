@@ -2769,6 +2769,11 @@ Epoch:          0
 Version:        3.78
 Requires:       %perl_compat
 Requires:       perl(Carp)
+Requires:       perl(Errno)
+Requires:       perl(Scalar::Util)
+# XSLoader is optional only because miniperl does not support XS. With perl we
+# almost certainly want it.
+Recommends:     perl(XSLoader)
 %if %{defined perl_bootstrap}
 %gendep_perl_PathTools
 %endif
