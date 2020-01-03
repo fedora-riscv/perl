@@ -389,7 +389,8 @@ Requires:       perl-ExtUtils-MakeMaker, perl-ExtUtils-Manifest,
 Requires:       perl-ExtUtils-Miniperl, perl-ExtUtils-ParseXS,
 Requires:       perl-Fcntl, perl-fields, perl-File-DosGlob, perl-File-Fetch,
 Requires:       perl-File-Find, perl-File-Path, perl-File-stat, perl-File-Temp,
-Requires:       perl-FileCache, perl-Filter, perl-Filter-Simple,
+Requires:       perl-FileCache, perl-FileHandle,
+Requires:       perl-Filter, perl-Filter-Simple,
 %if %{with gdbm}
 Requires:       perl-GDBM_File,
 %endif
@@ -1904,6 +1905,24 @@ The "cacheout" function will make sure that there's a file handle open
 for reading or writing available as the path name you give it. It
 automatically closes and re-opens files if you exceed your system
 maximum number of file descriptors, or the suggested maximum.
+
+%package FileHandle
+Summary:        Object methods for file handles
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.03
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(Exporter)
+Recommends:     perl(Fcntl)
+%if %{defined perl_bootstrap}
+%gendep_perl_FileHandle
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description FileHandle
+This is an object-oriented interface for opening files and performing
+input/output operations on them.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 # FIXME Filter-Simple? version?
@@ -4640,6 +4659,10 @@ popd
 %exclude %{privlib}/FileCache.pm
 %exclude %{_mandir}/man3/FileCache.3*
 
+# FileHandle
+%exclude %{privlib}/FileHandle.pm
+%exclude %{_mandir}/man3/FileHandle.3*
+
 # Filter
 %exclude %dir %{archlib}/auto/Filter
 %exclude %{archlib}/auto/Filter/Util
@@ -5897,6 +5920,10 @@ popd
 %{privlib}/FileCache.pm
 %{_mandir}/man3/FileCache.3*
 
+%files FileHandle
+%{privlib}/FileHandle.pm
+%{_mandir}/man3/FileHandle.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Filter
 %dir %{archlib}/auto/Filter
@@ -6778,6 +6805,7 @@ popd
 - Move Config to perl-libs
 - Move warnings::register to perl-libs
 - Subpackage DBM_Filter modules
+- Subpackage FileHandle
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

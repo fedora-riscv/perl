@@ -760,6 +760,12 @@ Requires: perl(parent) \
 Requires: perl(strict) \
 Provides: perl(FileCache) = 1.10 \
 %{nil}
+%global gendep_perl_FileHandle \
+Requires: perl(:VERSION) >= 5.6.0 \
+Requires: perl(IO::File) \
+Requires: perl(strict) \
+Provides: perl(FileHandle) = 2.03 \
+%{nil}
 %global gendep_perl_Filter \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(Exporter) \
@@ -2111,7 +2117,6 @@ Requires: perl(Exporter) \
 Requires: perl(File::Basename) \
 Requires: perl(File::Spec) \
 Requires: perl(I18N::LangTags) \
-Requires: perl(IO::File) \
 Requires: perl(Symbol) \
 Requires: perl(Text::Tabs) \
 Requires: perl(Unicode::Normalize) \
@@ -2133,7 +2138,6 @@ Provides: perl(English) = 1.10 \
 Provides: perl(File::Basename) = 2.85 \
 Provides: perl(File::Compare) = 1.1006 \
 Provides: perl(File::Copy) = 2.34 \
-Provides: perl(FileHandle) = 2.03 \
 Provides: perl(FindBin) = 1.51 \
 Provides: perl(Getopt::Std) = 1.12 \
 Provides: perl(Pod::Functions) = 1.13 \
