@@ -434,7 +434,8 @@ Requires:       perl-Thread, perl-Thread-Queue, perl-Thread-Semaphore,
 Requires:       perl-threads, perl-threads-shared,
 Requires:       perl-Tie, perl-Tie-File, perl-Tie-Memoize, perl-Tie-RefHash,
 Requires:       perl-Time, perl-Time-HiRes, perl-Time-Local, perl-Time-Piece,
-Requires:       perl-Unicode-Collate, perl-Unicode-Normalize, perl-User-pwent,
+Requires:       perl-Unicode-Collate, perl-Unicode-Normalize, perl-Unicode-UCD,
+Requires:       perl-User-pwent,
 Requires:       perl-version,
 
 # Full EVR is for compatibility with systems that swapped perl and perl-core
@@ -3730,6 +3731,23 @@ This package provides Perl functions that can convert strings into various
 Unicode normalization forms as defined in Unicode Standard Annex #15.
 %endif
 
+%package Unicode-UCD
+Summary:        Unicode character database
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.72
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(Storable)
+%if %{defined perl_bootstrap}
+%gendep_perl_Unicode_UCD
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description Unicode-UCD
+The Unicode::UCD module offers a series of functions that provide a simple
+interface to the Unicode Character Database.
+
 %package User-pwent
 Summary:        By-name interface to Perl built-in user name resolver
 License:        GPL+ or Artistic
@@ -5366,6 +5384,11 @@ popd
 %exclude %{archlib}/Unicode/Normalize.pm
 %exclude %{_mandir}/man3/Unicode::Normalize.*
 
+# Unicode-UCD
+%exclude %dir %{privlib}/Unicode
+%exclude %{privlib}/Unicode/UCD.pm
+%exclude %{_mandir}/man3/Unicode::UCD.*
+
 # User-pwent
 %exclude %{privlib}/User
 %exclude %{_mandir}/man3/User::*
@@ -6769,6 +6792,11 @@ popd
 %{_mandir}/man3/Unicode::Normalize.*
 %endif
 
+%files Unicode-UCD
+%dir %{privlib}/Unicode
+%{privlib}/Unicode/UCD.pm
+%{_mandir}/man3/Unicode::UCD.*
+
 %files User-pwent
 %{privlib}/User
 %{_mandir}/man3/User::*
@@ -6841,6 +6869,7 @@ popd
 - Subpackage DBM_Filter modules
 - Subpackage FileHandle
 - Subpackage Thread
+- Subpackage Unicode::UCD
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

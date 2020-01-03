@@ -2015,6 +2015,19 @@ Provides: perl(Unicode::Normalize) = 1.26 \
 %{nil}
 %global gendep_perl_Unicode_Normalize_debuginfo \
 %{nil}
+%global gendep_perl_Unicode_UCD \
+Requires: perl(Carp) \
+Requires: perl(Exporter) \
+Requires: perl(File::Spec) \
+Requires: perl(Unicode::Normalize) \
+Requires: perl(charnames) \
+Requires: perl(feature) \
+Requires: perl(if) \
+Requires: perl(integer) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Provides: perl(Unicode::UCD) = 0.72 \
+%{nil}
 %global gendep_perl_User_pwent \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(Carp) \
@@ -2128,11 +2141,6 @@ Requires: perl(File::Spec) \
 Requires: perl(I18N::LangTags) \
 Requires: perl(Symbol) \
 Requires: perl(Text::Tabs) \
-Requires: perl(Unicode::Normalize) \
-Requires: perl(charnames) \
-Requires: perl(feature) \
-Requires: perl(if) \
-Requires: perl(integer) \
 Requires: perl(strict) \
 Requires: perl(warnings) \
 Requires: perl(warnings::register) \
@@ -2151,7 +2159,6 @@ Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(SelectSaver) = 1.02 \
 Provides: perl(Symbol) = 1.08 \
 Provides: perl(UNIVERSAL) = 1.13 \
-Provides: perl(Unicode::UCD) = 0.72 \
 Provides: perl(deprecate) = 0.04 \
 Provides: perl(diagnostics) = 1.36 \
 Provides: perl(dumpvar.pl) \
