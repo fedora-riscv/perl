@@ -4187,6 +4187,7 @@ popd
 %exclude %{privlib}/unicore
 %exclude %{privlib}/utf8.pm
 %exclude %{privlib}/utf8_heavy.pl
+%exclude %{privlib}/warnings
 %exclude %{privlib}/warnings.pm
 %exclude %{privlib}/XSLoader.pm
 %exclude %dir %{perl_vendorlib}
@@ -4206,6 +4207,7 @@ popd
 %exclude %{_mandir}/man3/Tie::Hash::*
 %exclude %{_mandir}/man3/utf8.*
 %exclude %{_mandir}/man3/warnings.*
+%exclude %{_mandir}/man3/warnings::*
 %exclude %{_mandir}/man3/XSLoader.*
 
 # devel
@@ -5338,6 +5340,7 @@ popd
 %{privlib}/unicore
 %{privlib}/utf8.pm
 %{privlib}/utf8_heavy.pl
+%{privlib}/warnings
 %{privlib}/warnings.pm
 %{privlib}/XSLoader.pm
 %dir %{perl_vendorlib}
@@ -5357,6 +5360,7 @@ popd
 %{_mandir}/man3/Tie::Hash::*
 %{_mandir}/man3/utf8.*
 %{_mandir}/man3/warnings.*
+%{_mandir}/man3/warnings::*
 %{_mandir}/man3/XSLoader.*
 
 %files devel
@@ -6742,6 +6746,7 @@ popd
 - Subpackage Time
 - Subpackage base Tie::* modules into perl-Tie
 - Move Config to perl-libs
+- Move warnings::register to perl-libs
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

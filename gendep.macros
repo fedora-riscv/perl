@@ -2153,7 +2153,6 @@ Provides: perl(sort) = 2.04 \
 Provides: perl(subs) = 1.03 \
 Provides: perl(vars) = 1.05 \
 Provides: perl(vmsish) = 1.04 \
-Provides: perl(warnings::register) = 1.04 \
 %{nil}
 %global gendep_perl_interpreter_debuginfo \
 %{nil}
@@ -2244,6 +2243,7 @@ Provides: perl(unicore::Name) \
 Provides: perl(utf8) = 1.22 \
 Provides: perl(utf8_heavy.pl) \
 Provides: perl(warnings) = 1.44 \
+Provides: perl(warnings::register) = 1.04 \
 %{nil}
 %global gendep_perl_libs_debuginfo \
 %{nil}
