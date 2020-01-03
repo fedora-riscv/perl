@@ -1917,6 +1917,15 @@ Requires: perl(vars) \
 Provides: perl(Tie::RefHash) = 1.39 \
 Provides: perl(Tie::RefHash::Nestable) \
 %{nil}
+%global gendep_perl_Thread \
+Requires: perl(Config) \
+Requires: perl(Exporter) \
+Requires: perl(strict) \
+Requires: perl(threads) \
+Requires: perl(threads::shared) \
+Requires: perl(warnings) \
+Provides: perl(Thread) = 3.04 \
+%{nil}
 %global gendep_perl_Thread_Queue \
 Requires: perl(Scalar::Util) >= 1.10 \
 Requires: perl(strict) \
@@ -2125,8 +2134,6 @@ Requires: perl(feature) \
 Requires: perl(if) \
 Requires: perl(integer) \
 Requires: perl(strict) \
-Requires: perl(threads) \
-Requires: perl(threads::shared) \
 Requires: perl(warnings) \
 Requires: perl(warnings::register) \
 Provides: perl(Config::Extensions) = 0.03 \
@@ -2143,7 +2150,6 @@ Provides: perl(Getopt::Std) = 1.12 \
 Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(SelectSaver) = 1.02 \
 Provides: perl(Symbol) = 1.08 \
-Provides: perl(Thread) = 3.04 \
 Provides: perl(UNIVERSAL) = 1.13 \
 Provides: perl(Unicode::UCD) = 0.72 \
 Provides: perl(deprecate) = 0.04 \

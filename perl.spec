@@ -430,7 +430,7 @@ Requires:       perl-Term-ReadLine,
 Requires:       perl-Test, perl-Test-Harness, perl-Test-Simple,
 Requires:       perl-Text-Abbrev, perl-Text-Balanced, perl-Text-ParseWords,
 Requires:       perl-Text-Tabs+Wrap,
-Requires:       perl-Thread-Queue, perl-Thread-Semaphore,
+Requires:       perl-Thread, perl-Thread-Queue, perl-Thread-Semaphore,
 Requires:       perl-threads, perl-threads-shared,
 Requires:       perl-Tie, perl-Tie-File, perl-Tie-Memoize, perl-Tie-RefHash,
 Requires:       perl-Time, perl-Time-HiRes, perl-Time-Local, perl-Time-Piece,
@@ -3432,6 +3432,31 @@ Text::Wrap::wrap() will reformat lines into paragraphs. All it does is break
 up long lines, it will not join short lines together.
 %endif
 
+%package Thread
+Summary:        Manipulate threads in Perl (for old code only)
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        3.04
+BuildArch:      noarch
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Thread
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description Thread
+This Thread module served as the front end to the old-style thread model,
+called 5005threads, that has been removed in version 5.10.
+
+For old code and interim backwards compatibility, the Thread module has been
+reworked to function as a front end for the new interpreter threads (ithreads)
+model. However, some previous functionality is not available. Further, the
+data sharing models between the two thread models are completely different,
+and anything to do with data sharing has to be thought differently.
+
+You are strongly encouraged to migrate any existing threaded code to the new
+model (i.e., use the threads and threads::shared modules) as soon as possible.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Thread-Queue
 Summary:        Thread-safe queues
@@ -5239,11 +5264,16 @@ popd
 %exclude %{_mandir}/man3/Text::Tabs.*
 %exclude %{_mandir}/man3/Text::Wrap.*
 
+# Thread
+%exclude %{privlib}/Thread.pm
+%exclude %{_mandir}/man3/Thread.*
+
 # Thread-Queue
 %exclude %{privlib}/Thread/Queue.pm
 %exclude %{_mandir}/man3/Thread::Queue.*
 
 # Thread-Semaphore
+%exclude %dir %{privlib}/Thread
 %exclude %{privlib}/Thread/Semaphore.pm
 %exclude %{_mandir}/man3/Thread::Semaphore.*
 
@@ -6620,6 +6650,10 @@ popd
 %{_mandir}/man3/Text::Wrap.*
 %endif
 
+%files Thread
+%{privlib}/Thread.pm
+%{_mandir}/man3/Thread.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Thread-Queue
 %dir %{privlib}/Thread
@@ -6806,6 +6840,7 @@ popd
 - Move warnings::register to perl-libs
 - Subpackage DBM_Filter modules
 - Subpackage FileHandle
+- Subpackage Thread
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
