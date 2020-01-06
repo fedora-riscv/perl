@@ -674,6 +674,13 @@ Requires: perl(:VERSION) >= 5.8.0 \
 Requires: perl(strict) \
 Provides: perl(fields) = 2.24 \
 %{nil}
+%global gendep_perl_File_Basename \
+Requires: perl(:VERSION) >= 5.6.0 \
+Requires: perl(Exporter) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Provides: perl(File::Basename) = 2.85 \
+%{nil}
 %global gendep_perl_File_DosGlob \
 Requires: perl(strict) \
 Requires: perl(warnings) \
@@ -2163,7 +2170,6 @@ Provides: perl(DirHandle) = 1.05 \
 Provides: perl(DynaLoader) = 1.45 \
 Provides: perl(EVERY::LAST) \
 Provides: perl(English) = 1.10 \
-Provides: perl(File::Basename) = 2.85 \
 Provides: perl(File::Compare) = 1.1006 \
 Provides: perl(File::Copy) = 2.34 \
 Provides: perl(Getopt::Std) = 1.12 \

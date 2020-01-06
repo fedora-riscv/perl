@@ -388,7 +388,8 @@ Requires:       perl-ExtUtils-Command,
 Requires:       perl-ExtUtils-Embed, perl-ExtUtils-Install,
 Requires:       perl-ExtUtils-MakeMaker, perl-ExtUtils-Manifest,
 Requires:       perl-ExtUtils-Miniperl, perl-ExtUtils-ParseXS,
-Requires:       perl-Fcntl, perl-fields, perl-File-DosGlob, perl-File-Fetch,
+Requires:       perl-Fcntl, perl-fields,
+Requires:       perl-File-Basename, perl-File-DosGlob, perl-File-Fetch,
 Requires:       perl-File-Find, perl-File-Path, perl-File-stat, perl-File-Temp,
 Requires:       perl-FileCache, perl-FileHandle,
 Requires:       perl-Filter, perl-Filter-Simple,
@@ -1799,6 +1800,24 @@ Conflicts:      perl < 4:5.30.1-451
 
 %description fields
 The "fields" pragma enables compile-time and run-time verified class fields.
+
+%package File-Basename
+Summary:        Parse file paths into directory, file name, and suffix
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.85
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(Carp)
+Requires:       perl(re)
+%if %{defined perl_bootstrap}
+%gendep_perl_File_Basename
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description File-Basename
+These routines allow you to parse file paths into their directory, file name,
+and suffix.
 
 %package File-DosGlob
 Summary:        DOS-like globbing
@@ -4720,6 +4739,10 @@ popd
 %exclude %{privlib}/fields.pm
 %exclude %{_mandir}/man3/fields.3*
 
+# File-Basename
+%exclude %{privlib}/File/Basename.pm
+%exclude %{_mandir}/man3/File::Basename.3*
+
 # File-DosGlob
 %exclude %{archlib}/File/DosGlob.pm
 %exclude %{archlib}/auto/File/DosGlob
@@ -5989,6 +6012,11 @@ popd
 %{privlib}/fields.pm
 %{_mandir}/man3/fields.3*
 
+%files File-Basename
+%dir %{privlib}/File
+%{privlib}/File/Basename.pm
+%{_mandir}/man3/File::Basename.3*
+
 %files File-DosGlob
 %dir %{archlib}/File
 %{archlib}/File/DosGlob.pm
@@ -6934,6 +6962,7 @@ popd
 - Subpackage Unicode::UCD
 - Subpackage diagnostics and move splain tool from perl-utils there
 - Subpackage FindBin
+- Subpackage File::Basename
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
