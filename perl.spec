@@ -419,7 +419,7 @@ Requires:       perl-Net, perl-Net-Ping, perl-NEXT,
 %if %{with gdbm}
 Requires:       perl-ODBM_File,
 %endif
-Requires:       perl-Opcode, perl-open,
+Requires:       perl-Opcode, perl-open, perl-overload,
 Requires:       perl-parent, perl-PathTools, perl-Params-Check, perl-perlfaq,
 Requires:       perl-PerlIO-via-QuotedPrint, perl-Perl-OSType,
 Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-Html,
@@ -2852,6 +2852,26 @@ BuildArch:      noarch
 The "open" pragma serves as one of the interfaces to declare default "layers"
 (also known as "disciplines") for all I/O.
 
+%package overload
+Summary:        Overloading Perl operations
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.30
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(mro)
+Requires:       perl(Scalar::Util)
+Requires:       perl(overloading)
+%if %{defined perl_bootstrap}
+%gendep_perl_overload
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description overload
+The "overload" pragma allows overloading of Perl operators for a class. To
+overload built-in functions, see "Overriding Built-in Functions" in perlsub
+POD instead.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package parent
 Summary:        Establish an ISA relationship with base classes at compile time
@@ -5217,6 +5237,10 @@ popd
 %exclude %{privlib}/open.pm
 %exclude %{_mandir}/man3/open.3*
 
+# overload
+%exclude %{privlib}/overload.pm
+%exclude %{_mandir}/man3/overload.3*
+
 # parent
 %exclude %{privlib}/parent.pm
 %exclude %{_mandir}/man3/parent.3*
@@ -6550,6 +6574,10 @@ popd
 %{privlib}/open.pm
 %{_mandir}/man3/open.3*
 
+%files overload
+%{privlib}/overload.pm
+%{_mandir}/man3/overload.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files parent
 %{privlib}/parent.pm
@@ -7021,6 +7049,7 @@ popd
 - Subpackage File::Basename
 - Subpackage File::Compare
 - Subpackage File::Copy
+- Subpackage overload
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
