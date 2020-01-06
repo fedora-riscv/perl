@@ -419,7 +419,7 @@ Requires:       perl-Net, perl-Net-Ping, perl-NEXT,
 %if %{with gdbm}
 Requires:       perl-ODBM_File,
 %endif
-Requires:       perl-Opcode, perl-open, perl-overload,
+Requires:       perl-Opcode, perl-open, perl-overload, perl-overloading,
 Requires:       perl-parent, perl-PathTools, perl-Params-Check, perl-perlfaq,
 Requires:       perl-PerlIO-via-QuotedPrint, perl-Perl-OSType,
 Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-Html,
@@ -2872,6 +2872,22 @@ The "overload" pragma allows overloading of Perl operators for a class. To
 overload built-in functions, see "Overriding Built-in Functions" in perlsub
 POD instead.
 
+%package overloading
+Summary:        Perl pragma to lexically control overloading
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.02
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_overloading
+%endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description overloading
+Overloading pragma allows you to lexically disable or enable overloading.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package parent
 Summary:        Establish an ISA relationship with base classes at compile time
@@ -5241,6 +5257,12 @@ popd
 %exclude %{privlib}/overload.pm
 %exclude %{_mandir}/man3/overload.3*
 
+# overloading
+%exclude %dir %{privlib}/overload
+%exclude %{privlib}/overload/numbers.pm
+%exclude %{privlib}/overloading.pm
+%exclude %{_mandir}/man3/overloading.3*
+
 # parent
 %exclude %{privlib}/parent.pm
 %exclude %{_mandir}/man3/parent.3*
@@ -6578,6 +6600,12 @@ popd
 %{privlib}/overload.pm
 %{_mandir}/man3/overload.3*
 
+%files overloading
+%dir %{privlib}/overload
+%{privlib}/overload/numbers.pm
+%{privlib}/overloading.pm
+%{_mandir}/man3/overloading.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files parent
 %{privlib}/parent.pm
@@ -7050,6 +7078,7 @@ popd
 - Subpackage File::Compare
 - Subpackage File::Copy
 - Subpackage overload
+- Subpackage overloading
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

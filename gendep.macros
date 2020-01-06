@@ -2169,7 +2169,6 @@ Provides: perl(experimental) = 0.020 \
 %{nil}
 %global gendep_perl_interpreter \
 Requires: perl(:VERSION) >= 5.0.0 \
-Requires: perl(:VERSION) >= 5.10.1 \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(Carp) \
 Requires: perl(Config) \
@@ -2196,8 +2195,6 @@ Provides: perl(feature) = 1.54 \
 Provides: perl(filetest) = 1.03 \
 Provides: perl(less) = 0.03 \
 Provides: perl(locale) = 1.09 \
-Provides: perl(overload::numbers) \
-Provides: perl(overloading) = 0.02 \
 Provides: perl(perl5db.pl) \
 Provides: perl(sigtrap) = 1.09 \
 Provides: perl(sort) = 2.04 \
@@ -2308,6 +2305,12 @@ Provides: perl(open) = 1.11 \
 %global gendep_perl_overload \
 Requires: perl(warnings::register) \
 Provides: perl(overload) = 1.30 \
+%{nil}
+%global gendep_perl_overloading \
+Requires: perl(:VERSION) >= 5.10.1 \
+Requires: perl(warnings) \
+Provides: perl(overload::numbers) \
+Provides: perl(overloading) = 0.02 \
 %{nil}
 %global gendep_perl_parent \
 Requires: perl(strict) \
