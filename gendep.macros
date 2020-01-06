@@ -688,6 +688,15 @@ Requires: perl(strict) \
 Requires: perl(warnings) \
 Provides: perl(File::Compare) = 1.1006 \
 %{nil}
+%global gendep_perl_File_Copy \
+Requires: perl(:VERSION) >= 5.6.0 \
+Requires: perl(Config) \
+Requires: perl(Exporter) \
+Requires: perl(File::Spec) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Provides: perl(File::Copy) = 2.34 \
+%{nil}
 %global gendep_perl_File_DosGlob \
 Requires: perl(strict) \
 Requires: perl(warnings) \
@@ -2165,7 +2174,6 @@ Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(Carp) \
 Requires: perl(Config) \
 Requires: perl(Exporter) \
-Requires: perl(File::Spec) \
 Requires: perl(I18N::LangTags) \
 Requires: perl(Symbol) \
 Requires: perl(strict) \
@@ -2177,7 +2185,6 @@ Provides: perl(DirHandle) = 1.05 \
 Provides: perl(DynaLoader) = 1.45 \
 Provides: perl(EVERY::LAST) \
 Provides: perl(English) = 1.10 \
-Provides: perl(File::Copy) = 2.34 \
 Provides: perl(Getopt::Std) = 1.12 \
 Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(SelectSaver) = 1.02 \

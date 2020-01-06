@@ -389,7 +389,7 @@ Requires:       perl-ExtUtils-Embed, perl-ExtUtils-Install,
 Requires:       perl-ExtUtils-MakeMaker, perl-ExtUtils-Manifest,
 Requires:       perl-ExtUtils-Miniperl, perl-ExtUtils-ParseXS,
 Requires:       perl-Fcntl, perl-fields,
-Requires:       perl-File-Basename, perl-File-Compare,
+Requires:       perl-File-Basename, perl-File-Compare, perl-File-Copy,
 Requires:       perl-File-DosGlob, perl-File-Fetch,
 Requires:       perl-File-Find, perl-File-Path, perl-File-stat, perl-File-Temp,
 Requires:       perl-FileCache, perl-FileHandle,
@@ -1837,6 +1837,24 @@ Conflicts:      perl < 4:5.30.1-451
 %description File-Compare
 A File::Compare Perl module provides functions for comparing a content of two
 files specified by a file name or a file handle.
+
+%package File-Copy
+Summary:        Copy files or file handles
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.34
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(Carp)
+Requires:       perl(File::Basename)
+%if %{defined perl_bootstrap}
+%gendep_perl_File_Copy
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description File-Copy
+A File::Copy module provides two basic functions, copy and move, which are
+useful for getting the contents of a file from one place to another.
 
 %package File-DosGlob
 Summary:        DOS-like globbing
@@ -4766,6 +4784,10 @@ popd
 %exclude %{privlib}/File/Compare.pm
 %exclude %{_mandir}/man3/File::Compare.3*
 
+# File-Copy
+%exclude %{privlib}/File/Copy.pm
+%exclude %{_mandir}/man3/File::Copy.3*
+
 # File-DosGlob
 %exclude %{archlib}/File/DosGlob.pm
 %exclude %{archlib}/auto/File/DosGlob
@@ -4788,6 +4810,7 @@ popd
 %exclude %{_mandir}/man3/File::stat.3*
 
 # File-Temp
+%dir %exclude %{privlib}/File
 %exclude %{privlib}/File/Temp.pm
 %exclude %{_mandir}/man3/File::Temp.3*
 
@@ -6045,6 +6068,11 @@ popd
 %{privlib}/File/Compare.pm
 %{_mandir}/man3/File::Compare.3*
 
+%files File-Copy
+%dir %{privlib}/File
+%{privlib}/File/Copy.pm
+%{_mandir}/man3/File::Copy.3*
+
 %files File-DosGlob
 %dir %{archlib}/File
 %{archlib}/File/DosGlob.pm
@@ -6992,6 +7020,7 @@ popd
 - Subpackage FindBin
 - Subpackage File::Basename
 - Subpackage File::Compare
+- Subpackage File::Copy
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
