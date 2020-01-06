@@ -392,6 +392,7 @@ Requires:       perl-Fcntl, perl-fields, perl-File-DosGlob, perl-File-Fetch,
 Requires:       perl-File-Find, perl-File-Path, perl-File-stat, perl-File-Temp,
 Requires:       perl-FileCache, perl-FileHandle,
 Requires:       perl-Filter, perl-Filter-Simple,
+Requires:       perl-FindBin,
 %if %{with gdbm}
 Requires:       perl-GDBM_File,
 %endif
@@ -1986,6 +1987,22 @@ Requires:       perl(warnings)
 The Filter::Simple Perl module provides a simplified interface to
 Filter::Util::Call; one that is sufficient for most common cases.
 %endif
+
+%package FindBin
+Summary:        Locate a directory of an original Perl script
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.51
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_FindBin
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description FindBin
+Locates the full path to the script bin directory to allow the use of paths
+relative to the bin directory.
 
 %if %{with gdbm}
 %package GDBM_File
@@ -4750,6 +4767,10 @@ popd
 %exclude %{privlib}/Filter/Simple.pm
 %exclude %{_mandir}/man3/Filter::Simple.3*
 
+# FindBin
+%exclude %{privlib}/FindBin.pm
+%exclude %{_mandir}/man3/FindBin.*
+
 %if %{with gdbm}
 # GDBM_File
 %exclude %{archlib}/GDBM_File.pm
@@ -6032,6 +6053,10 @@ popd
 %{_mandir}/man3/Filter::Simple.3*
 %endif
 
+%files FindBin
+%{privlib}/FindBin.pm
+%{_mandir}/man3/FindBin.*
+
 %if %{with gdbm}
 %files GDBM_File
 %{archlib}/GDBM_File.pm
@@ -6908,6 +6933,7 @@ popd
 - Subpackage Thread
 - Subpackage Unicode::UCD
 - Subpackage diagnostics and move splain tool from perl-utils there
+- Subpackage FindBin
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

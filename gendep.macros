@@ -791,6 +791,15 @@ Requires: perl(warnings) \
 Requires: perl(XSLoader) \
 Provides: perl(GDBM_File) = 1.18 \
 %{nil}
+%global gendep_perl_FindBin \
+Requires: perl(:VERSION) >= 5.0.0 \
+Requires: perl(Carp) \
+Requires: perl(Cwd) \
+Requires: perl(Exporter) \
+Requires: perl(File::Basename) \
+Requires: perl(File::Spec) \
+Provides: perl(FindBin) = 1.51 \
+%{nil}
 %global gendep_perl_Getopt_Long \
 Requires: perl(:VERSION) >= 5.4.0 \
 Requires: perl(Exporter) \
@@ -2141,9 +2150,7 @@ Requires: perl(:VERSION) >= 5.10.1 \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(Carp) \
 Requires: perl(Config) \
-Requires: perl(Cwd) \
 Requires: perl(Exporter) \
-Requires: perl(File::Basename) \
 Requires: perl(File::Spec) \
 Requires: perl(I18N::LangTags) \
 Requires: perl(Symbol) \
@@ -2159,7 +2166,6 @@ Provides: perl(English) = 1.10 \
 Provides: perl(File::Basename) = 2.85 \
 Provides: perl(File::Compare) = 1.1006 \
 Provides: perl(File::Copy) = 2.34 \
-Provides: perl(FindBin) = 1.51 \
 Provides: perl(Getopt::Std) = 1.12 \
 Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(SelectSaver) = 1.02 \
