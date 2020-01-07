@@ -455,6 +455,10 @@ Requires: perl(strict) \
 Requires: perl(vars) \
 Requires: perl(warnings) \
 %{nil}
+%global gendep_perl_English \
+Requires: perl(Exporter) \
+Provides: perl(English) = 1.10 \
+%{nil}
 %global gendep_perl_Env \
 Requires: perl(Config) \
 Requires: perl(Tie::Array) \
@@ -2188,7 +2192,6 @@ Provides: perl(DB) = 1.08 \
 Provides: perl(DirHandle) = 1.05 \
 Provides: perl(DynaLoader) = 1.45 \
 Provides: perl(EVERY::LAST) \
-Provides: perl(English) = 1.10 \
 Provides: perl(Getopt::Std) = 1.12 \
 Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(SelectSaver) = 1.02 \

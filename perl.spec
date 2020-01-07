@@ -381,7 +381,7 @@ Requires:       perl-Devel-Peek, perl-Devel-PPPort, perl-Devel-SelfStubber,
 Requires:       perl-diagnostics, perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
 Requires:       perl-Dumpvalue,
 Requires:       perl-Encode, perl-Encode-devel, perl-encoding,
-Requires:       perl-encoding-warnings,
+Requires:       perl-encoding-warnings, perl-English,
 Requires:       perl-Env, perl-Errno, perl-experimental, perl-Exporter,
 Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Constant,
 Requires:       perl-ExtUtils-Command,
@@ -1481,6 +1481,24 @@ As of Perl 5.26.0, this module has no effect. The internal Perl feature that
 was used to implement this module has been removed.  Hence, if you load this
 module on Perl 5.26.0, you will get one warning that the module is no longer
 supported; and the module will do nothing thereafter.
+
+%package English
+Summary:        Nice English or awk names for ugly punctuation variables
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.10
+Requires:       %perl_compat
+Requires:       perl(Carp)
+Requires:       perl(warnings)
+%if %{defined perl_bootstrap}
+%gendep_perl_English
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description English
+This module provides aliases for the built-in variables whose names no one
+seems to like to read.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Env
@@ -4716,6 +4734,10 @@ popd
 %exclude %{privlib}/encoding/warnings.pm
 %exclude %{_mandir}/man3/encoding::warnings.3*
 
+# English
+%exclude %{privlib}/English.pm
+%exclude %{_mandir}/man3/English.3*
+
 # Env
 %exclude %{privlib}/Env.pm
 %exclude %{_mandir}/man3/Env.3*
@@ -5984,6 +6006,10 @@ popd
 %{privlib}/encoding/warnings.pm
 %{_mandir}/man3/encoding::warnings.3*
 
+%files English
+%{privlib}/English.pm
+%{_mandir}/man3/English.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Env
 %{privlib}/Env.pm
@@ -7106,6 +7132,7 @@ popd
 - Subpackage overload
 - Subpackage overloading
 - Subpackage Config::Extensions
+- Subpackage English
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
