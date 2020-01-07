@@ -281,6 +281,12 @@ Provides: perl(Compress::Raw::Zlib) = 2.084 \
 %{nil}
 %global gendep_perl_Compress_Raw_Zlib_debuginfo \
 %{nil}
+%global gendep_perl_Config_Extensions \
+Requires: perl(Config) \
+Requires: perl(Exporter) \
+Requires: perl(strict) \
+Provides: perl(Config::Extensions) = 0.03 \
+%{nil}
 %global gendep_perl_Config_Perl_V \
 Requires: perl(Config) \
 Requires: perl(Exporter) \
@@ -2178,7 +2184,6 @@ Requires: perl(Symbol) \
 Requires: perl(strict) \
 Requires: perl(warnings) \
 Requires: perl(warnings::register) \
-Provides: perl(Config::Extensions) = 0.03 \
 Provides: perl(DB) = 1.08 \
 Provides: perl(DirHandle) = 1.05 \
 Provides: perl(DynaLoader) = 1.45 \

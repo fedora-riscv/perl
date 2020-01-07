@@ -1,6 +1,6 @@
 from Config import *
 addFilter("spelling-error .* (autoloaded|awk|cacheout|decrement|exe|explicative|gdbm|getgr|gethost|getnet|getproto|getpw|getserv|globbing|gmtime|groff|ithreads|lexically|libnet|localtime|lstat|Memoizing|metapackage|ndbm|Nestable|odbm|opcodes|perlbug|perldoc|perlfunc|perlglob|perllocale|perldiag|perlmain|perlpod|perlsub|reachability|redispatch|rpmbuild|sdbm|sed|splain|truncations|usr|writemain)");
-addFilter("unexpanded-macro %description .* %INC");
+addFilter("unexpanded-macro %description .* %(Extensions|INC)");
 # POSIX module provides wrappers for libc functions
 addFilter("missing-call-to-setgroups-before-setuid .*/auto/POSIX/POSIX.so");
 # Applied with "git am"

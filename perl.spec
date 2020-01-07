@@ -373,7 +373,7 @@ Requires:       perl-AutoLoader, perl-AutoSplit,
 Requires:       perl-B, perl-base, perl-Benchmark, perl-bignum, perl-blib,
 Requires:       perl-Carp, perl-Class-Struct,
 Requires:       perl-Compress-Raw-Bzip2, perl-Compress-Raw-Zlib,
-Requires:       perl-Config-Perl-V, perl-constant,
+Requires:       perl-Config-Extensions, perl-Config-Perl-V, perl-constant,
 Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
 Requires:       perl-CPAN-Meta-YAML,
 Requires:       perl-Data-Dumper, perl-DB_File, perl-DBM_Filter,
@@ -974,6 +974,22 @@ Requires:       %perl_compat
 This module provides a Perl interface to the zlib compression library.
 It is used by IO::Compress::Zlib.
 %endif
+
+%package Config-Extensions
+Summary:        Hash lookup of which Perl core extensions were built
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.03
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Config_Extensions
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Config-Extensions
+The Config::Extensions module provides a hash %%Extensions containing all the
+core extensions that were enabled for this perl.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Config-Perl-V
@@ -4529,6 +4545,11 @@ popd
 %exclude %{privlib}/Class
 %exclude %{_mandir}/man3/Class::Struct.*
 
+# Config-Extensions
+%exclude %dir %{privlib}/Config
+%exclude %{privlib}/Config/Extensions.pm
+%exclude %{_mandir}/man3/Config::Extensions.*
+
 # Config-Perl-V
 %exclude %{privlib}/Config/Perl
 %exclude %{_mandir}/man3/Config::Perl::V.*
@@ -5773,6 +5794,11 @@ popd
 %{archlib}/auto/Compress/Raw/Zlib
 %{_mandir}/man3/Compress::Raw::Zlib*
 %endif
+
+%files Config-Extensions
+%dir %{privlib}/Config
+%{privlib}/Config/Extensions.pm
+%{_mandir}/man3/Config::Extensions.*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Config-Perl-V
@@ -7079,6 +7105,7 @@ popd
 - Subpackage File::Copy
 - Subpackage overload
 - Subpackage overloading
+- Subpackage Config::Extensions
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
