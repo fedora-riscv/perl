@@ -1097,6 +1097,10 @@ Provides: perl(JSON::PP) = 4.02 \
 Provides: perl(JSON::PP::Boolean) = 4.02 \
 Provides: perl(JSON::PP::IncrParser) = 1.01 \
 %{nil}
+%global gendep_perl_locale \
+Requires: perl(Config) \
+Provides: perl(locale) = 1.09 \
+%{nil}
 %global gendep_perl_Locale_Maketext \
 Requires: perl(Carp) \
 Requires: perl(I18N::LangTags) \
@@ -2206,7 +2210,6 @@ Provides: perl(dumpvar.pl) \
 Provides: perl(feature) = 1.54 \
 Provides: perl(filetest) = 1.03 \
 Provides: perl(less) = 0.03 \
-Provides: perl(locale) = 1.09 \
 Provides: perl(perl5db.pl) \
 Provides: perl(sigtrap) = 1.09 \
 Provides: perl(sort) = 2.04 \

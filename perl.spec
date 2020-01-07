@@ -405,7 +405,7 @@ Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-IPC-Open3, perl-IPC-SysV,
 Requires:       perl-I18N-Collate, perl-I18N-Langinfo, perl-I18N-LangTags,
 Requires:       perl-JSON-PP,
 Requires:       perl-lib, perl-libnet, perl-libnetcfg,
-Requires:       perl-Locale-Maketext, perl-Locale-Maketext-Simple,
+Requires:       perl-locale, perl-Locale-Maketext, perl-Locale-Maketext-Simple,
 Requires:       perl-Math-BigInt, perl-Math-BigInt-FastCalc, perl-Math-BigRat,
 Requires:       perl-Math-Complex, perl-Memoize, perl-MIME-Base64,
 Requires:       perl-Module-CoreList, perl-Module-CoreList-tools,
@@ -2493,6 +2493,27 @@ Conflicts:      perl-devel < 4:5.22.0-347
 
 %description libnetcfg
 The libnetcfg utility can be used to configure the libnet.
+
+%package locale
+Summary:        Pragma to use or avoid POSIX locales for built-in operations
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.09
+Requires:       %perl_compat
+Requires:       perl(Carp)
+Requires:       perl(POSIX)
+%if %{defined perl_bootstrap}
+%gendep_perl_locale
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description locale
+This pragma tells the compiler to enable (or disable) the use of POSIX locales
+for built-in operations (for example, LC_CTYPE for regular expressions,
+LC_COLLATE for string comparison, and LC_NUMERIC for number formatting). Each
+"use locale" or "no locale" affects statements to the end of the enclosing
+block.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Locale-Maketext
@@ -5148,6 +5169,10 @@ popd
 %exclude %{_bindir}/libnetcfg
 %exclude %{_mandir}/man1/libnetcfg*
 
+# locale
+%exclude %{privlib}/locale.pm
+%exclude %{_mandir}/man3/locale.*
+
 # Locale-Maketext
 %exclude %dir %{privlib}/Locale
 %exclude %dir %{privlib}/Locale/Maketext
@@ -6499,6 +6524,10 @@ popd
 %{_bindir}/libnetcfg
 %{_mandir}/man1/libnetcfg*
 
+%files locale
+%{privlib}/locale.pm
+%{_mandir}/man3/locale.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Locale-Maketext
 %dir %{privlib}/Locale
@@ -7161,6 +7190,7 @@ popd
 - Subpackage Config::Extensions
 - Subpackage English
 - Subpackage Getopt::Std
+- Subpackage locale
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
