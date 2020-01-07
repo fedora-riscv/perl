@@ -398,7 +398,7 @@ Requires:       perl-FindBin,
 %if %{with gdbm}
 Requires:       perl-GDBM_File,
 %endif
-Requires:       perl-Getopt-Long,
+Requires:       perl-Getopt-Long, perl-Getopt-Std,
 Requires:       perl-Hash-Util, perl-Hash-Util-FieldHash, perl-HTTP-Tiny,
 Requires:       perl-if, perl-IO, perl-IO-Compress, perl-IO-Socket-IP,
 Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-IPC-Open3, perl-IPC-SysV,
@@ -2138,6 +2138,23 @@ a double dash "--". Support for bundling of command line options, as was the
 case with the more traditional single-letter approach, is provided but not
 enabled by default.
 %endif
+
+%package Getopt-Std
+Summary:        Process single-character switches with switch clustering
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.12
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Getopt_Std
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description Getopt-Std
+The Getopt::Std module provides functions for processing single-character
+switches with switch clustering. Pass one argument which is a string
+containing all switches to be recognized.
 
 %package Hash-Util
 Summary:        General-utility hash subroutines
@@ -4930,6 +4947,11 @@ popd
 %exclude %{privlib}/Getopt/Long.pm
 %exclude %{_mandir}/man3/Getopt::Long.3*
 
+# Getopt-Std
+%exclude %dir %{privlib}/Getopt
+%exclude %{privlib}/Getopt/Std.pm
+%exclude %{_mandir}/man3/Getopt::Std.3*
+
 # Hash-Util
 %exclude %{archlib}/Hash/Util.pm
 %exclude %{archlib}/auto/Hash/Util/Util.so
@@ -6253,6 +6275,11 @@ popd
 %{_mandir}/man3/Getopt::Long.3*
 %endif
 
+%files Getopt-Std
+%dir %{privlib}/Getopt
+%{privlib}/Getopt/Std.pm
+%{_mandir}/man3/Getopt::Std.3*
+
 %files Hash-Util
 %dir %{archlib}/Hash
 %{archlib}/Hash/Util.pm
@@ -7133,6 +7160,7 @@ popd
 - Subpackage overloading
 - Subpackage Config::Extensions
 - Subpackage English
+- Subpackage Getopt::Std
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

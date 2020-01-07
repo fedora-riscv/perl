@@ -845,6 +845,11 @@ Provides: perl(Getopt::Long) = 2.50 \
 Provides: perl(Getopt::Long::CallBack) \
 Provides: perl(Getopt::Long::Parser) \
 %{nil}
+%global gendep_perl_Getopt_Std \
+Requires: perl(:VERSION) >= 5.0.0 \
+Requires: perl(Exporter) \
+Provides: perl(Getopt::Std) = 1.12 \
+%{nil}
 %global gendep_perl_Hash_Util \
 Requires: perl(:VERSION) >= 5.7.3 \
 Requires: perl(Carp) \
@@ -2192,7 +2197,6 @@ Provides: perl(DB) = 1.08 \
 Provides: perl(DirHandle) = 1.05 \
 Provides: perl(DynaLoader) = 1.45 \
 Provides: perl(EVERY::LAST) \
-Provides: perl(Getopt::Std) = 1.12 \
 Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(SelectSaver) = 1.02 \
 Provides: perl(Symbol) = 1.08 \
