@@ -377,6 +377,7 @@ Requires:       perl-Config-Extensions, perl-Config-Perl-V, perl-constant,
 Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
 Requires:       perl-CPAN-Meta-YAML,
 Requires:       perl-Data-Dumper, perl-DB_File, perl-DBM_Filter,
+Requires:       perl-deprecate,
 Requires:       perl-Devel-Peek, perl-Devel-PPPort, perl-Devel-SelfStubber,
 Requires:       perl-diagnostics, perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
 Requires:       perl-Dumpvalue,
@@ -1234,6 +1235,28 @@ Conflicts:      perl-interpreter < 4:5.30.1-451
 %description DBM_Filter
 This module provides an interface that allows filters to be applied to tied
 hashes associated with DBM files.
+
+%package deprecate
+Summary:        Perl pragma for deprecating the inclusion of a module in core
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.04
+Requires:       %perl_compat
+Requires:       perl(Carp)
+Requires:       perl(Config)
+%if %{defined perl_bootstrap}
+%gendep_perl_deprecate
+%endif
+BuildArch:      noarch
+Conflicts:      perl-interpreter < 4:5.30.1-451
+
+%description deprecate
+"deprecate" pragma simplifies the maintenance of dual-life modules that will no
+longer be included in the Perl core in a future Perl release, but are
+still included currently. The purpose of the pragma is to alert users to the
+status of such a module by issuing a warning that encourages them to install
+the module from CPAN, so that a future upgrade to a perl which omits the
+module will not break their code.
 
 %package Devel-Peek
 Summary:        A data debugging tool for the XS programmer
@@ -4693,6 +4716,10 @@ popd
 %exclude %{_mandir}/man3/DBM_Filter.*
 %exclude %{_mandir}/man3/DBM_Filter::*
 
+# deprecate
+%exclude %{privlib}/deprecate.pm
+%exclude %{_mandir}/man3/deprecate.*
+
 # Devel-Peek
 %dir %exclude %{archlib}/Devel
 %exclude %{archlib}/Devel/Peek.pm
@@ -5960,6 +5987,10 @@ popd
 %{_mandir}/man3/DBM_Filter.*
 %{_mandir}/man3/DBM_Filter::*
 
+%files deprecate
+%{privlib}/deprecate.pm
+%{_mandir}/man3/deprecate.*
+
 %files Devel-Peek
 %dir %{archlib}/Devel
 %{archlib}/Devel/Peek.pm
@@ -7191,6 +7222,7 @@ popd
 - Subpackage English
 - Subpackage Getopt::Std
 - Subpackage locale
+- Subpackage deprecate
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

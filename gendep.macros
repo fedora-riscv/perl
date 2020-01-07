@@ -335,6 +335,11 @@ Requires: perl(strict) \
 Requires: perl(vars) \
 Provides: perl(Devel::PPPort) = 3.52 \
 %{nil}
+%global gendep_perl_deprecate \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Provides: perl(deprecate) = 0.04 \
+%{nil}
 %global gendep_perl_Devel_Peek \
 Requires: perl(Exporter) \
 Requires: perl(XSLoader) \
@@ -2205,7 +2210,6 @@ Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(SelectSaver) = 1.02 \
 Provides: perl(Symbol) = 1.08 \
 Provides: perl(UNIVERSAL) = 1.13 \
-Provides: perl(deprecate) = 0.04 \
 Provides: perl(dumpvar.pl) \
 Provides: perl(feature) = 1.54 \
 Provides: perl(filetest) = 1.03 \
