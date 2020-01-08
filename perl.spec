@@ -550,6 +550,8 @@ Provides:       perl(unicore::Name)
 # Keep utf8 modules in perl-libs because a sole regular expression like /\pN/
 # causes loading utf8 and unicore/Heave.pl and unicore/lib files.
 Provides:       perl(utf8_heavy.pl)
+# Loaded by dbmopen() function.
+Requires:       perl(AnyDBM_File)
 # utf8 and utf8_heavy.pl require Carp, re, strict, warnings, XSLoader
 Requires:       perl(Carp)
 Requires:       perl(Exporter)
@@ -7223,6 +7225,7 @@ popd
 - Subpackage Getopt::Std
 - Subpackage locale
 - Subpackage deprecate
+- Require AnyDBM_File by perl-libs because of dbmopen function
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
