@@ -429,7 +429,7 @@ Requires:       perl-Pod-Usage, perl-podlators, perl-POSIX,
 Requires:       perl-Safe, perl-Scalar-List-Utils,
 Requires:       perl-Search-Dict,
 Requires:       perl-SelfLoader, perl-Socket, perl-Storable,
-Requires:       perl-Sys-Hostname, perl-Sys-Syslog,
+Requires:       perl-Symbol, perl-Sys-Hostname, perl-Sys-Syslog,
 Requires:       perl-Term-ANSIColor, perl-Term-Cap, perl-Term-Complete,
 Requires:       perl-Term-ReadLine,
 Requires:       perl-Test, perl-Test-Harness, perl-Test-Simple,
@@ -3409,6 +3409,21 @@ containing scalar, array, hash or reference objects, i.e. anything that
 can be conveniently stored to disk and retrieved at a later time.
 %endif
 
+%package Symbol
+Summary:        Manipulate Perl symbols and their names
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.08
+BuildArch:      noarch
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_Symbol
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description Symbol
+The Symbol module provides functions for manipulating Perl symbols.
+
 %package Sys-Hostname
 Summary:        Try every conceivable way to get a hostname
 License:        GPL+ or Artistic
@@ -5467,6 +5482,10 @@ popd
 %exclude %{archlib}/auto/Storable/
 %exclude %{_mandir}/man3/Storable.*
 
+# Symbol
+%exclude %{privlib}/Symbol.pm
+%exclude %{_mandir}/man3/Symbol.*
+
 # Sys-Hostname
 %exclude %{archlib}/auto/Sys/Hostname
 %exclude %{archlib}/Sys/Hostname.pm
@@ -6878,6 +6897,10 @@ popd
 %{privlib}/SelfLoader.pm
 %{_mandir}/man3/SelfLoader*
 
+%files Symbol
+%{privlib}/Symbol.pm
+%{_mandir}/man3/Symbol.*
+
 %files Sys-Hostname
 %dir %{archlib}/auto/Sys
 %{archlib}/auto/Sys/Hostname
@@ -7207,6 +7230,7 @@ popd
 - Subpackage deprecate
 - Move AnyDBM_File, SDBM_File, Tie::Hash to perl-libs because of dbmopen function
 - Subpackage DirHandle
+- Subpackage Symbol
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

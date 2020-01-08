@@ -1597,6 +1597,10 @@ Provides: perl(Storable) = 3.15 \
 %{nil}
 %global gendep_perl_Storable_debuginfo \
 %{nil}
+%global gendep_perl_Symbol \
+Requires: perl(Exporter) \
+Provides: perl(Symbol) = 1.08 \
+%{nil}
 %global gendep_perl_Sys_Hostname \
 Requires: perl(perl(Carp) \
 Requires: perl(Exporter) \
@@ -2196,7 +2200,6 @@ Provides: perl(DynaLoader) = 1.45 \
 Provides: perl(EVERY::LAST) \
 Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(SelectSaver) = 1.02 \
-Provides: perl(Symbol) = 1.08 \
 Provides: perl(UNIVERSAL) = 1.13 \
 Provides: perl(dumpvar.pl) \
 Provides: perl(feature) = 1.54 \
