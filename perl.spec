@@ -367,7 +367,6 @@ Requires:       perl-utils
 %gendep_perl
 %endif
 
-Requires:       perl-AnyDBM_File,
 Requires:       perl-Archive-Tar, perl-Attribute-Handlers, perl-autodie,
 Requires:       perl-AutoLoader, perl-AutoSplit,
 Requires:       perl-B, perl-base, perl-Benchmark, perl-bignum, perl-blib,
@@ -427,7 +426,7 @@ Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-Html,
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Simple,
 Requires:       perl-Pod-Usage, perl-podlators, perl-POSIX,
 Requires:       perl-Safe, perl-Scalar-List-Utils,
-Requires:       perl-SDBM_File, perl-Search-Dict,
+Requires:       perl-Search-Dict,
 Requires:       perl-SelfLoader, perl-Socket, perl-Storable,
 Requires:       perl-Sys-Hostname, perl-Sys-Syslog,
 Requires:       perl-Term-ANSIColor, perl-Term-Cap, perl-Term-Complete,
@@ -528,7 +527,7 @@ Perl utils like "h2ph" or "perlbug" can be found in perl-utils package.
 
 %package libs
 Summary:        The libraries for the perl run-time
-License:        (GPL+ or Artistic) and BSD and HSRL and MIT and UCD
+License:        (GPL+ or Artistic) and BSD and HSRL and MIT and UCD and Public domain
 # Compat provides
 Provides:       %perl_compat
 Provides:       perl(:MODULE_COMPAT_5.30.0)
@@ -550,13 +549,19 @@ Provides:       perl(unicore::Name)
 # Keep utf8 modules in perl-libs because a sole regular expression like /\pN/
 # causes loading utf8 and unicore/Heave.pl and unicore/lib files.
 Provides:       perl(utf8_heavy.pl)
-# Loaded by dbmopen() function.
-Requires:       perl(AnyDBM_File)
 # utf8 and utf8_heavy.pl require Carp, re, strict, warnings, XSLoader
 Requires:       perl(Carp)
+# For AnyDBM_File
+Suggests:       perl(DB_File)
 Requires:       perl(Exporter)
 # File::Spec loaded by _charnames.pm that is loaded by \N{}
 Requires:       perl(File::Spec)
+%if %{with gdbm}
+# For AnyDBM_File
+Suggests:       perl(GDBM_File)
+Recommends:     perl(NDBM_File)
+Suggests:       perl(ODBM_File)
+%endif
 # Term::Cap is optional
 %if %{defined perl_bootstrap}
 %gendep_perl_libs
@@ -652,33 +657,6 @@ Conflicts:      perl < 4:5.22.0-351
 Several utilities which come with Perl distribution like h2ph, perlbug,
 perlthanks, and pl2pm. Some utilities are provided by more specific
 packages like perldoc by perl-Pod-Perldoc and splain by perl-diagnostics.
-
-
-%package AnyDBM_File
-Summary:        Framework for multiple DBMs
-License:        GPL+ or Artistic
-Epoch:          0
-Version:        1.01
-Requires:       %perl_compat
-Suggests:       perl(DB_File)
-%if %{with gdbm}
-Suggests:       perl(GDBM_File)
-Recommends:     perl(NDBM_File)
-Suggests:       perl(ODBM_File)
-%endif
-# Documentation requires SDBM_File
-Requires:       perl(SDBM_File)
-%if %{defined perl_bootstrap}
-%gendep_perl_AnyDBM_File
-%endif
-BuildArch:      noarch
-Conflicts:      perl-interpreter < 4:5.30.1-451
-
-%description AnyDBM_File
-AnyDBM_File module inherits from one of the various DBM packages. It
-prefers ndbm for compatibility reasons with Perl 4, then Berkeley DB
-(See DB_File), GDBM, SDBM (which is always there--it comes with Perl),
-and finally ODBM.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Archive-Tar
@@ -3333,23 +3311,6 @@ really be high enough to warrant the use of a keyword, and the size so small
 such that being individual extensions would be wasteful.
 %endif
 
-%package SDBM_File
-Summary:        Tied access to sdbm files
-License:        (GPL+ or Artistic) and Public Domain
-Epoch:          0
-Version:        1.15
-Requires:       %perl_compat
-%if %{defined perl_bootstrap}
-%gendep_perl_SDBM_File
-%endif
-Conflicts:      perl-interpreter < 4:5.30.1-451
-
-%description SDBM_File
-SDBM_File establishes a connection between a Perl hash variable and a file in
-sdbm format.  You can manipulate the data in the file just as if it were in
-a Perl hash, but when your program exits, the data will remain in the file, to
-be used the next time your program runs.
-
 %package Search-Dict
 Summary:        Search for a key in a dictionary file
 License:        GPL+ or Artistic
@@ -4470,6 +4431,7 @@ popd
 %exclude %{archlib}/auto/File/Glob/Glob.so
 %exclude %{archlib}/auto/PerlIO
 %exclude %{archlib}/auto/re
+%exclude %{archlib}/auto/SDBM_File
 %exclude %dir %{archlib}/auto/Tie
 %exclude %{archlib}/auto/Tie/Hash
 %exclude %{archlib}/Config.*
@@ -4481,12 +4443,14 @@ popd
 %exclude %{archlib}/File/Glob.pm
 %exclude %{archlib}/PerlIO
 %exclude %{archlib}/re.pm
+%exclude %{archlib}/SDBM_File.pm
 %exclude %dir %{archlib}/Tie
 %exclude %{archlib}/Tie/Hash
 %exclude %{_libdir}/libperl.so.*
 %exclude %dir %{perl_vendorarch}
 %exclude %dir %{perl_vendorarch}/auto
 %exclude %dir %{privlib}
+%exclude %{privlib}/AnyDBM_File.pm
 %exclude %{privlib}/bytes.pm
 %exclude %{privlib}/bytes_heavy.pl
 %exclude %{privlib}/_charnames.pm
@@ -4500,7 +4464,9 @@ popd
 %exclude %{privlib}/warnings
 %exclude %{privlib}/warnings.pm
 %exclude %{privlib}/XSLoader.pm
+%exclude %{privlib}/Tie/Hash.pm
 %exclude %dir %{perl_vendorlib}
+%exclude %{_mandir}/man3/AnyDBM_File.*
 %exclude %{_mandir}/man3/attributes.*
 %exclude %{_mandir}/man3/bytes.*
 %exclude %{_mandir}/man3/charnames.*
@@ -4513,7 +4479,9 @@ popd
 %exclude %{_mandir}/man3/PerlIO::scalar.*
 %exclude %{_mandir}/man3/PerlIO::via.*
 %exclude %{_mandir}/man3/re.*
+%exclude %{_mandir}/man3/SDBM_File.3*
 %exclude %{_mandir}/man3/strict.*
+%exclude %{_mandir}/man3/Tie::Hash.*
 %exclude %{_mandir}/man3/Tie::Hash::*
 %exclude %{_mandir}/man3/utf8.*
 %exclude %{_mandir}/man3/warnings.*
@@ -4544,10 +4512,6 @@ popd
 %exclude %{_mandir}/man1/perlthanks.*
 %exclude %{_mandir}/man1/perlutil.*
 %exclude %{_mandir}/man1/pl2pm.*
-
-# AnyDBM_File
-%exclude %{privlib}/AnyDBM_File.pm
-%exclude %{_mandir}/man3/AnyDBM_File.*
 
 # Archive-Tar
 %exclude %{_bindir}/ptar
@@ -5466,11 +5430,6 @@ popd
 %exclude %{_mandir}/man3/Scalar::Util*
 %exclude %{_mandir}/man3/Sub::Util*
 
-# SDBM_File
-%exclude %{archlib}/SDBM_File.pm
-%exclude %{archlib}/auto/SDBM_File
-%exclude %{_mandir}/man3/SDBM_File.3*
-
 # Search-Dict
 %exclude %{privlib}/Search
 %exclude %{_mandir}/man3/Search::*
@@ -5584,13 +5543,11 @@ popd
 %exclude %dir %{privlib}/Tie
 %exclude %{privlib}/Tie/Array.pm
 %exclude %{privlib}/Tie/Handle.pm
-%exclude %{privlib}/Tie/Hash.pm
 %exclude %{privlib}/Tie/Scalar.pm
 %exclude %{privlib}/Tie/StdHandle.pm
 %exclude %{privlib}/Tie/SubstrHash.pm
 %exclude %{_mandir}/man3/Tie::Array.*
 %exclude %{_mandir}/man3/Tie::Handle.*
-%exclude %{_mandir}/man3/Tie::Hash.*
 %exclude %{_mandir}/man3/Tie::Scalar.*
 %exclude %{_mandir}/man3/Tie::StdHandle.*
 %exclude %{_mandir}/man3/Tie::SubstrHash.*
@@ -5698,6 +5655,7 @@ popd
 %{archlib}/auto/File/Glob/Glob.so
 %{archlib}/auto/PerlIO
 %{archlib}/auto/re
+%{archlib}/auto/SDBM_File
 %dir %{archlib}/auto/Tie
 %{archlib}/auto/Tie/Hash
 %{archlib}/Config.*
@@ -5709,12 +5667,14 @@ popd
 %{archlib}/File/Glob.pm
 %{archlib}/PerlIO
 %{archlib}/re.pm
+%{archlib}/SDBM_File.pm
 %dir %{archlib}/Tie
 %{archlib}/Tie/Hash
 %{_libdir}/libperl.so.*
 %dir %{perl_vendorarch}
 %dir %{perl_vendorarch}/auto
 %dir %{privlib}
+%{privlib}/AnyDBM_File.pm
 %{privlib}/bytes.pm
 %{privlib}/bytes_heavy.pl
 %{privlib}/_charnames.pm
@@ -5727,8 +5687,11 @@ popd
 %{privlib}/utf8_heavy.pl
 %{privlib}/warnings
 %{privlib}/warnings.pm
+%dir %{privlib}/Tie
+%{privlib}/Tie/Hash.pm
 %{privlib}/XSLoader.pm
 %dir %{perl_vendorlib}
+%{_mandir}/man3/AnyDBM_File.*
 %{_mandir}/man3/attributes.*
 %{_mandir}/man3/bytes.*
 %{_mandir}/man3/charnames.*
@@ -5741,7 +5704,9 @@ popd
 %{_mandir}/man3/PerlIO::scalar.*
 %{_mandir}/man3/PerlIO::via.*
 %{_mandir}/man3/re.*
+%{_mandir}/man3/SDBM_File.3*
 %{_mandir}/man3/strict.*
+%{_mandir}/man3/Tie::Hash.*
 %{_mandir}/man3/Tie::Hash::*
 %{_mandir}/man3/utf8.*
 %{_mandir}/man3/warnings.*
@@ -5781,10 +5746,6 @@ popd
 %{_mandir}/man1/perlthanks.*
 %{_mandir}/man1/perlutil.*
 %{_mandir}/man1/pl2pm.*
-
-%files AnyDBM_File
-%{privlib}/AnyDBM_File.pm
-%{_mandir}/man3/AnyDBM_File.*
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Archive-Tar
@@ -6881,11 +6842,6 @@ popd
 %{_mandir}/man3/Sub::Util*
 %endif
 
-%files SDBM_File
-%{archlib}/SDBM_File.pm
-%{archlib}/auto/SDBM_File
-%{_mandir}/man3/SDBM_File.3*
-
 %files Search-Dict
 %{privlib}/Search
 %{_mandir}/man3/Search::*
@@ -7036,13 +6992,11 @@ popd
 %dir %{privlib}/Tie
 %{privlib}/Tie/Array.pm
 %{privlib}/Tie/Handle.pm
-%{privlib}/Tie/Hash.pm
 %{privlib}/Tie/Scalar.pm
 %{privlib}/Tie/StdHandle.pm
 %{privlib}/Tie/SubstrHash.pm
 %{_mandir}/man3/Tie::Array.*
 %{_mandir}/man3/Tie::Handle.*
-%{_mandir}/man3/Tie::Hash.*
 %{_mandir}/man3/Tie::Scalar.*
 %{_mandir}/man3/Tie::StdHandle.*
 %{_mandir}/man3/Tie::SubstrHash.*
@@ -7179,7 +7133,6 @@ popd
 - Subpackage GDBM_File
 - Subpackage NDBM_File
 - Subpackage ODBM_File
-- Subpackage SDBM_File
 - Move File::Glob module into perl-libs
 - Subpackage File-DosGlob
 - Subpackage File-Find
@@ -7197,7 +7150,6 @@ popd
 - Subpackage Sys-Hostname
 - Move Tie::Hash::NamedCapture to perl-libs
 - Subpackage Tie-Memoize
-- Subpackage AnyDBM_File
 - Subpackage Benchmark
 - Subpackage blib
 - Move charnames to perl-libs
@@ -7225,7 +7177,7 @@ popd
 - Subpackage Getopt::Std
 - Subpackage locale
 - Subpackage deprecate
-- Require AnyDBM_File by perl-libs because of dbmopen function
+- Move AnyDBM_File, SDBM_File, Tie::Hash to perl-libs because of dbmopen function
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

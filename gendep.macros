@@ -1,11 +1,5 @@
 %global gendep_perl \
 %{nil}
-%global gendep_perl_AnyDBM_File \
-Requires: perl(:VERSION) >= 5.6.0 \
-Requires: perl(strict) \
-Requires: perl(warnings) \
-Provides: perl(AnyDBM_File) = 1.01 \
-%{nil}
 %global gendep_perl_Archive_Tar \
 Requires: perl(:VERSION) >= 5.5.0 \
 Requires: perl(Archive::Tar) \
@@ -1566,14 +1560,6 @@ Provides: perl(Sub::Util) = 1.50 \
 %{nil}
 %global gendep_perl_Scalar_List_Utils_debuginfo \
 %{nil}
-%global gendep_perl_SDBM_File \
-Requires: perl(Exporter) \
-Requires: perl(strict) \
-Requires: perl(Tie::Hash) \
-Requires: perl(warnings) \
-Requires: perl(XSLoader) \
-Provides: perl(SDBM_File) = 1.15 \
-%{nil}
 %global gendep_perl_Search_Dict \
 Requires: perl(:VERSION) >= 5.0.0 \
 Requires: perl(Exporter) \
@@ -1939,13 +1925,10 @@ Requires: perl(Tie::StdHandle) \
 Requires: perl(integer) \
 Requires: perl(strict) \
 Provides: perl(Tie::Array) = 1.07 \
-Provides: perl(Tie::ExtraHash) \
 Provides: perl(Tie::Handle) = 4.2 \
-Provides: perl(Tie::Hash) = 1.05 \
 Provides: perl(Tie::Scalar) = 1.04 \
 Provides: perl(Tie::StdArray) \
 Provides: perl(Tie::StdHandle) = 4.6 \
-Provides: perl(Tie::StdHash) \
 Provides: perl(Tie::StdScalar) \
 Provides: perl(Tie::SubstrHash) = 1.00 \
 %{nil}
@@ -2275,6 +2258,10 @@ Requires: perl(strict) \
 Requires: perl(vars) \
 %{nil}
 %global gendep_perl_libs \
+Requires: perl(:VERSION) >= 5.6.0 \
+Requires: perl(Carp) \
+Requires: perl(Exporter) \
+Requires: perl(Tie::Hash) \
 Requires: perl(XSLoader) \
 Requires: perl(bytes) \
 Requires: perl(_charnames) \
@@ -2290,6 +2277,7 @@ Provides: perl(:WITH_ITHREADS) \
 Provides: perl(:WITH_LARGEFILES) \
 Provides: perl(:WITH_PERLIO) \
 Provides: perl(:WITH_THREADS) \
+Provides: perl(AnyDBM_File) = 1.01 \
 Provides: perl(Config) = 5.030001 \
 Provides: perl(File::Glob) = 1.32 \
 Provides: perl(PerlIO) = 1.10 \
@@ -2297,7 +2285,11 @@ Provides: perl(PerlIO::encoding) = 0.27 \
 Provides: perl(PerlIO::mmap) = 0.016 \
 Provides: perl(PerlIO::scalar) = 0.30 \
 Provides: perl(PerlIO::via) = 0.17 \
+Provides: perl(SDBM_File) = 1.15 \
+Provides: perl(Tie::ExtraHash) \
+Provides: perl(Tie::Hash) = 1.05 \
 Provides: perl(Tie::Hash::NamedCapture) = 0.10 \
+Provides: perl(Tie::StdHash) \
 Provides: perl(XSLoader) = 0.30 \
 Provides: perl(attributes) = 0.33 \
 Provides: perl(bytes) = 1.07 \
