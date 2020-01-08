@@ -378,6 +378,12 @@ Provides: perl(Digest::SHA) = 6.02 \
 %{nil}
 %global gendep_perl_Digest_SHA_debuginfo \
 %{nil}
+%global gendep_perl_DirHandle \
+Requires: perl(:VERSION) >= 5.0.0 \
+Requires: perl(Carp) \
+Requires: perl(Symbol) \
+Provides: perl(DirHandle) = 1.05 \
+%{nil}
 %global gendep_perl_Dumpvalue \
 Requires: perl(:VERSION) >= 5.6.0 \
 Provides: perl(Dumpvalue) = 1.19 \
@@ -2186,7 +2192,6 @@ Requires: perl(strict) \
 Requires: perl(warnings) \
 Requires: perl(warnings::register) \
 Provides: perl(DB) = 1.08 \
-Provides: perl(DirHandle) = 1.05 \
 Provides: perl(DynaLoader) = 1.45 \
 Provides: perl(EVERY::LAST) \
 Provides: perl(Pod::Functions) = 1.13 \
