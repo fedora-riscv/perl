@@ -1572,6 +1572,12 @@ Requires: perl(Exporter) \
 Requires: perl(strict) \
 Provides: perl(Search::Dict) = 1.07 \
 %{nil}
+%global gendep_perl_SelectSaver \
+Requires: perl(:VERSION) >= 5.0.0 \
+Requires: perl(Carp) \
+Requires: perl(Symbol) \
+Provides: perl(SelectSaver) = 1.02 \
+%{nil}
 %global gendep_perl_SelfLoader \
 Requires: perl(:VERSION) >= 5.8.0 \
 Requires: perl(Exporter) \
@@ -2191,7 +2197,6 @@ Requires: perl(Carp) \
 Requires: perl(Config) \
 Requires: perl(Exporter) \
 Requires: perl(I18N::LangTags) \
-Requires: perl(Symbol) \
 Requires: perl(strict) \
 Requires: perl(warnings) \
 Requires: perl(warnings::register) \
@@ -2199,7 +2204,6 @@ Provides: perl(DB) = 1.08 \
 Provides: perl(DynaLoader) = 1.45 \
 Provides: perl(EVERY::LAST) \
 Provides: perl(Pod::Functions) = 1.13 \
-Provides: perl(SelectSaver) = 1.02 \
 Provides: perl(UNIVERSAL) = 1.13 \
 Provides: perl(dumpvar.pl) \
 Provides: perl(feature) = 1.54 \

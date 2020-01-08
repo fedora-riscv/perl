@@ -427,7 +427,7 @@ Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-Html,
 Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Simple,
 Requires:       perl-Pod-Usage, perl-podlators, perl-POSIX,
 Requires:       perl-Safe, perl-Scalar-List-Utils,
-Requires:       perl-Search-Dict,
+Requires:       perl-Search-Dict, perl-SelectSaver,
 Requires:       perl-SelfLoader, perl-Socket, perl-Storable,
 Requires:       perl-Symbol, perl-Sys-Hostname, perl-Sys-Syslog,
 Requires:       perl-Term-ANSIColor, perl-Term-Cap, perl-Term-Complete,
@@ -3348,6 +3348,23 @@ Conflicts:      perl-interpreter < 4:5.30.1-451
 This module sets file position in a file handle to be first line greater than
 or equal (string-wise) to a key.
 
+%package SelectSaver
+Summary:        Save and restore selected file handle
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.02
+BuildArch:      noarch
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_SelectSaver
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description SelectSaver
+A "SelectSaver" object contains a reference to the file handle that was
+selected when it was created. When the object is destroyed, it re-selects the
+file handle that was selected when it was created.
+
 %package SelfLoader
 Summary:        Load functions only on demand
 License:        GPL+ or Artistic
@@ -5473,6 +5490,10 @@ popd
 %exclude %{privlib}/Search
 %exclude %{_mandir}/man3/Search::*
 
+# SelectSaver
+%exclude %{privlib}/SelectSaver.pm
+%exclude %{_mandir}/man3/SelectSaver.*
+
 # SelfLoader
 %exclude %{privlib}/SelfLoader.pm
 %exclude %{_mandir}/man3/SelfLoader*
@@ -6893,6 +6914,10 @@ popd
 %{privlib}/Search
 %{_mandir}/man3/Search::*
 
+%files SelectSaver
+%{privlib}/SelectSaver.pm
+%{_mandir}/man3/SelectSaver.*
+
 %files SelfLoader
 %{privlib}/SelfLoader.pm
 %{_mandir}/man3/SelfLoader*
@@ -7231,6 +7256,7 @@ popd
 - Move AnyDBM_File, SDBM_File, Tie::Hash to perl-libs because of dbmopen function
 - Subpackage DirHandle
 - Subpackage Symbol
+- Subpackage SelectSaver
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
