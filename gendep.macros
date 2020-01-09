@@ -688,6 +688,9 @@ Requires: perl(strict) \
 Requires: perl(XSLoader) \
 Provides: perl(Fcntl) = 1.13 \
 %{nil}
+%global gendep_perl_feature \
+Provides: perl(feature) = 1.54 \
+%{nil}
 %global gendep_perl_fields \
 Requires: perl(:VERSION) >= 5.8.0 \
 Requires: perl(strict) \
@@ -2207,7 +2210,6 @@ Provides: perl(DB) = 1.08 \
 Provides: perl(EVERY::LAST) \
 Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(dumpvar.pl) \
-Provides: perl(feature) = 1.54 \
 Provides: perl(filetest) = 1.03 \
 Provides: perl(less) = 0.03 \
 Provides: perl(perl5db.pl) \

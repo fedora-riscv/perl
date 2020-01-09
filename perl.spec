@@ -390,7 +390,7 @@ Requires:       perl-ExtUtils-Command,
 Requires:       perl-ExtUtils-Embed, perl-ExtUtils-Install,
 Requires:       perl-ExtUtils-MakeMaker, perl-ExtUtils-Manifest,
 Requires:       perl-ExtUtils-Miniperl, perl-ExtUtils-ParseXS,
-Requires:       perl-Fcntl, perl-fields,
+Requires:       perl-Fcntl, perl-feature, perl-fields,
 Requires:       perl-File-Basename, perl-File-Compare, perl-File-Copy,
 Requires:       perl-File-DosGlob, perl-File-Fetch,
 Requires:       perl-File-Find, perl-File-Path, perl-File-stat, perl-File-Temp,
@@ -1859,6 +1859,26 @@ Conflicts:      perl-interpreter < 4:5.30.1-451
 
 %description Fcntl
 Fcntl module provides file operation related options.
+
+%package feature
+Summary:        Pragma to enable new Perl features
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.54
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_feature
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description feature
+It is usually impossible to add new syntax to Perl without breaking some
+existing programs. This pragma provides a way to minimize that risk. New
+syntactic constructs, or new semantic meanings to older constructs, can be
+enabled by "use feature 'foo'", and will be parsed only when the appropriate
+feature pragma is in scope.
 
 %package fields
 Summary:        Compile-time class fields
@@ -4963,6 +4983,10 @@ popd
 %exclude %{archlib}/auto/Fcntl
 %exclude %{_mandir}/man3/Fcntl.3*
 
+# feature
+%exclude %{privlib}/feature.pm
+%exclude %{_mandir}/man3/feature.3*
+
 # fields
 %exclude %{privlib}/fields.pm
 %exclude %{_mandir}/man3/fields.3*
@@ -6292,6 +6316,10 @@ popd
 %{archlib}/auto/Fcntl
 %{_mandir}/man3/Fcntl.3*
 
+%files feature
+%{privlib}/feature.pm
+%{_mandir}/man3/feature.3*
+
 %files fields
 %{privlib}/fields.pm
 %{_mandir}/man3/fields.3*
@@ -7290,6 +7318,7 @@ popd
 - Subpackage SelectSaver
 - Move UNIVERSAL to perl-libs
 - Subpackage DynaLoader
+- Subpackage feature
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
