@@ -381,6 +381,7 @@ Requires:       perl-Devel-Peek, perl-Devel-PPPort, perl-Devel-SelfStubber,
 Requires:       perl-diagnostics, perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
 Requires:       perl-DirHandle,
 Requires:       perl-Dumpvalue,
+Requires:       perl-DynaLoader,
 Requires:       perl-Encode, perl-Encode-devel, perl-encoding,
 Requires:       perl-encoding-warnings, perl-English,
 Requires:       perl-Env, perl-Errno, perl-experimental, perl-Exporter,
@@ -1419,6 +1420,24 @@ Conflicts:      perl < 4:5.30.1-451
 %description Dumpvalue
 Dumpvalue module enables you to print a content of variables and other Perl
 data structures.
+
+%package DynaLoader
+Summary:        Dynamically load C libraries into Perl code
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.45
+Requires:       %perl_compat
+Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_DynaLoader
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description DynaLoader
+The DynaLoader module defines a standard generic interface to the dynamic
+linking mechanisms available on many platforms. Its primary purpose is to
+implement automatic dynamic loading of Perl modules. For a simpler interface,
+see XSLoader module.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Encode
@@ -4797,6 +4816,10 @@ popd
 %exclude %{privlib}/Dumpvalue.pm
 %exclude %{_mandir}/man3/Dumpvalue.3*
 
+# DynaLoader
+%exclude %{archlib}/DynaLoader.pm
+%exclude %{_mandir}/man3/DynaLoader.3*
+
 # Encode
 %exclude %{_bindir}/encguess
 %exclude %{_bindir}/piconv
@@ -6089,6 +6112,10 @@ popd
 %{privlib}/Dumpvalue.pm
 %{_mandir}/man3/Dumpvalue.3*
 
+%files DynaLoader
+%{archlib}/DynaLoader.pm
+%{_mandir}/man3/DynaLoader.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Encode
 %{_bindir}/encguess
@@ -7262,6 +7289,7 @@ popd
 - Subpackage Symbol
 - Subpackage SelectSaver
 - Move UNIVERSAL to perl-libs
+- Subpackage DynaLoader
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

@@ -388,6 +388,10 @@ Provides: perl(DirHandle) = 1.05 \
 Requires: perl(:VERSION) >= 5.6.0 \
 Provides: perl(Dumpvalue) = 1.19 \
 %{nil}
+%global gendep_perl_DynaLoader \
+Requires: perl(Config) \
+Provides: perl(DynaLoader) = 1.45 \
+%{nil}
 %global gendep_perl_Encode \
 Requires: perl(:VERSION) >= 5.8.0 \
 Requires: perl(:VERSION) >= 5.8.1 \
@@ -2194,14 +2198,12 @@ Provides: perl(experimental) = 0.020 \
 Requires: perl(:VERSION) >= 5.0.0 \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(Carp) \
-Requires: perl(Config) \
 Requires: perl(Exporter) \
 Requires: perl(I18N::LangTags) \
 Requires: perl(strict) \
 Requires: perl(warnings) \
 Requires: perl(warnings::register) \
 Provides: perl(DB) = 1.08 \
-Provides: perl(DynaLoader) = 1.45 \
 Provides: perl(EVERY::LAST) \
 Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(dumpvar.pl) \
