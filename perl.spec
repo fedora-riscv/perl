@@ -406,6 +406,7 @@ Requires:       perl-if, perl-IO, perl-IO-Compress, perl-IO-Socket-IP,
 Requires:       perl-IO-Zlib, perl-IPC-Cmd, perl-IPC-Open3, perl-IPC-SysV,
 Requires:       perl-I18N-Collate, perl-I18N-Langinfo, perl-I18N-LangTags,
 Requires:       perl-JSON-PP,
+Requires:       perl-less,
 Requires:       perl-lib, perl-libnet, perl-libnetcfg,
 Requires:       perl-locale, perl-Locale-Maketext, perl-Locale-Maketext-Simple,
 Requires:       perl-Math-BigInt, perl-Math-BigInt-FastCalc, perl-Math-BigRat,
@@ -2519,6 +2520,23 @@ JSON::XS is the fastest and most proper JSON module on CPAN. It is written by
 Marc Lehmann in C, so must be compiled and installed in the used environment.
 JSON::PP is a pure-Perl module and is compatible with JSON::XS.
 %endif
+
+%package less
+Summary:        Perl pragma to request less of something
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        0.03
+BuildArch:      noarch
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_less
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description less
+"use less ...;" is a Perl user-pragma. If you're very lucky some code you're
+using will know that you asked for less CPU usage or RAM or fat or... we just
+can't know.
 
 %package lib
 Summary:        Manipulate @INC at compile time
@@ -5260,6 +5278,10 @@ popd
 %exclude %{_mandir}/man3/JSON::PP.3*
 %exclude %{_mandir}/man3/JSON::PP::Boolean.3pm*
 
+# less
+%exclude %{privlib}/less.pm
+%exclude %{_mandir}/man3/less.*
+
 # lib
 %exclude %{archlib}/lib.pm
 %exclude %{_mandir}/man3/lib.*
@@ -6639,6 +6661,10 @@ popd
 %{_mandir}/man3/JSON::PP::Boolean.3pm*
 %endif
 
+%files less
+%{privlib}/less.pm
+%{_mandir}/man3/less.*
+
 %files lib
 %{archlib}/lib.pm
 %{_mandir}/man3/lib.*
@@ -7348,6 +7374,7 @@ popd
 - Subpackage DynaLoader
 - Subpackage feature
 - Subpackage filetest
+- Subpackage less
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

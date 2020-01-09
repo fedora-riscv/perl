@@ -2213,7 +2213,6 @@ Provides: perl(DB) = 1.08 \
 Provides: perl(EVERY::LAST) \
 Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(dumpvar.pl) \
-Provides: perl(less) = 0.03 \
 Provides: perl(perl5db.pl) \
 Provides: perl(sigtrap) = 1.09 \
 Provides: perl(sort) = 2.04 \
@@ -2222,6 +2221,11 @@ Provides: perl(vars) = 1.05 \
 Provides: perl(vmsish) = 1.04 \
 %{nil}
 %global gendep_perl_interpreter_debuginfo \
+%{nil}
+%global gendep_perl_less \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Provides: perl(less) = 0.03 \
 %{nil}
 %global gendep_perl_lib \
 Requires: perl(Config) \
