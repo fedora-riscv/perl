@@ -4511,6 +4511,7 @@ popd
 %exclude %{privlib}/PerlIO.pm
 %exclude %{privlib}/strict.pm
 %exclude %{privlib}/unicore
+%exclude %{privlib}/UNIVERSAL.pm
 %exclude %{privlib}/utf8.pm
 %exclude %{privlib}/utf8_heavy.pl
 %exclude %{privlib}/warnings
@@ -4538,6 +4539,7 @@ popd
 %exclude %{_mandir}/man3/utf8.*
 %exclude %{_mandir}/man3/warnings.*
 %exclude %{_mandir}/man3/warnings::*
+%exclude %{_mandir}/man3/UNIVERSAL.*
 %exclude %{_mandir}/man3/XSLoader.*
 
 # devel
@@ -5747,6 +5749,7 @@ popd
 %{privlib}/PerlIO.pm
 %{privlib}/strict.pm
 %{privlib}/unicore
+%{privlib}/UNIVERSAL.pm
 %{privlib}/utf8.pm
 %{privlib}/utf8_heavy.pl
 %{privlib}/warnings
@@ -5775,6 +5778,7 @@ popd
 %{_mandir}/man3/utf8.*
 %{_mandir}/man3/warnings.*
 %{_mandir}/man3/warnings::*
+%{_mandir}/man3/UNIVERSAL.*
 %{_mandir}/man3/XSLoader.*
 
 %files devel
@@ -7257,6 +7261,7 @@ popd
 - Subpackage DirHandle
 - Subpackage Symbol
 - Subpackage SelectSaver
+- Move UNIVERSAL to perl-libs
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

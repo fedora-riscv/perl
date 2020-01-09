@@ -2204,7 +2204,6 @@ Provides: perl(DB) = 1.08 \
 Provides: perl(DynaLoader) = 1.45 \
 Provides: perl(EVERY::LAST) \
 Provides: perl(Pod::Functions) = 1.13 \
-Provides: perl(UNIVERSAL) = 1.13 \
 Provides: perl(dumpvar.pl) \
 Provides: perl(feature) = 1.54 \
 Provides: perl(filetest) = 1.03 \
@@ -2302,6 +2301,7 @@ Provides: perl(Tie::ExtraHash) \
 Provides: perl(Tie::Hash) = 1.05 \
 Provides: perl(Tie::Hash::NamedCapture) = 0.10 \
 Provides: perl(Tie::StdHash) \
+Provides: perl(UNIVERSAL) = 1.13 \
 Provides: perl(XSLoader) = 0.30 \
 Provides: perl(attributes) = 0.33 \
 Provides: perl(bytes) = 1.07 \
