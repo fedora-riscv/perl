@@ -394,7 +394,7 @@ Requires:       perl-Fcntl, perl-feature, perl-fields,
 Requires:       perl-File-Basename, perl-File-Compare, perl-File-Copy,
 Requires:       perl-File-DosGlob, perl-File-Fetch,
 Requires:       perl-File-Find, perl-File-Path, perl-File-stat, perl-File-Temp,
-Requires:       perl-FileCache, perl-FileHandle,
+Requires:       perl-FileCache, perl-FileHandle, perl-filetest,
 Requires:       perl-Filter, perl-Filter-Simple,
 Requires:       perl-FindBin,
 %if %{with gdbm}
@@ -2101,6 +2101,26 @@ Conflicts:      perl-interpreter < 4:5.30.1-451
 %description FileHandle
 This is an object-oriented interface for opening files and performing
 input/output operations on them.
+
+%package filetest
+Summary:        Perl pragma to control the filetest permission operators
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.03
+BuildArch:      noarch
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_filetest
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description filetest
+The default behavior of file test operators (e.g. "-r") is to use the simple
+mode bits as returned by the stat() family of system calls. However, many
+operating systems have additional features to define more complex access
+rights, for example ACLs (Access Control Lists). For such environments, "use
+filetest" may help the permission operators to return results more consistent
+with other tools.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 # FIXME Filter-Simple? version?
@@ -5037,6 +5057,10 @@ popd
 %exclude %{privlib}/FileHandle.pm
 %exclude %{_mandir}/man3/FileHandle.3*
 
+# filetest
+%exclude %{privlib}/filetest.pm
+%exclude %{_mandir}/man3/filetest.3*
+
 # Filter
 %exclude %dir %{archlib}/auto/Filter
 %exclude %{archlib}/auto/Filter/Util
@@ -6385,6 +6409,10 @@ popd
 %{privlib}/FileHandle.pm
 %{_mandir}/man3/FileHandle.3*
 
+%files filetest
+%{privlib}/filetest.pm
+%{_mandir}/man3/filetest.3*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Filter
 %dir %{archlib}/auto/Filter
@@ -7319,6 +7347,7 @@ popd
 - Move UNIVERSAL to perl-libs
 - Subpackage DynaLoader
 - Subpackage feature
+- Subpackage filetest
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

@@ -811,6 +811,9 @@ Requires: perl(IO::File) \
 Requires: perl(strict) \
 Provides: perl(FileHandle) = 2.03 \
 %{nil}
+%global gendep_perl_filetest \
+Provides: perl(filetest) = 1.03 \
+%{nil}
 %global gendep_perl_Filter \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(Exporter) \
@@ -2210,7 +2213,6 @@ Provides: perl(DB) = 1.08 \
 Provides: perl(EVERY::LAST) \
 Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(dumpvar.pl) \
-Provides: perl(filetest) = 1.03 \
 Provides: perl(less) = 0.03 \
 Provides: perl(perl5db.pl) \
 Provides: perl(sigtrap) = 1.09 \
