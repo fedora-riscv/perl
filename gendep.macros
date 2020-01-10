@@ -2214,7 +2214,6 @@ Provides: perl(EVERY::LAST) \
 Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(dumpvar.pl) \
 Provides: perl(perl5db.pl) \
-Provides: perl(vmsish) = 1.04 \
 %{nil}
 %global gendep_perl_interpreter_debuginfo \
 %{nil}
@@ -2433,4 +2432,7 @@ Requires: perl(version::regex) \
 Requires: perl(warnings::register) \
 Provides: perl(version) = 0.9924 \
 Provides: perl(version::regex) = 0.9924 \
+%{nil}
+%global gendep_perl_vmsish \
+Provides: perl(vmsish) = 1.04 \
 %{nil}

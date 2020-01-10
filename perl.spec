@@ -446,7 +446,7 @@ Requires:       perl-Tie, perl-Tie-File, perl-Tie-Memoize, perl-Tie-RefHash,
 Requires:       perl-Time, perl-Time-HiRes, perl-Time-Local, perl-Time-Piece,
 Requires:       perl-Unicode-Collate, perl-Unicode-Normalize, perl-Unicode-UCD,
 Requires:       perl-User-pwent,
-Requires:       perl-vars, perl-version,
+Requires:       perl-vars, perl-version, perl-vmsish,
 
 # Full EVR is for compatibility with systems that swapped perl and perl-core
 # <https://fedoraproject.org/wiki/Changes/perl_Package_to_Install_Core_Modules>,
@@ -4199,6 +4199,22 @@ BuildArch:      noarch
 Perl extension for Version Objects
 %endif
 
+%package vmsish
+Summary:        Perl pragma to control VMS-specific language features
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.04
+BuildArch:      noarch
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_vmsish
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description vmsish
+The "vmsish" pragma control VMS-specific features of the Perl language. If
+you're not running VMS, this module does nothing.
+
 %prep
 %setup -q -n perl-%{perl_version}
 %patch1 -p1
@@ -5917,6 +5933,10 @@ popd
 %exclude %{_mandir}/man3/version.3*
 %exclude %{_mandir}/man3/version::Internals.3*
 
+# vmsish
+%exclude %{privlib}/vmsish.pm
+%exclude %{_mandir}/man3/vmsish.*
+
 %files libs
 %license Artistic Copying
 %doc AUTHORS README Changes
@@ -7431,6 +7451,10 @@ popd
 %{_mandir}/man3/version::Internals.3*
 %endif
 
+%files vmsish
+%{privlib}/vmsish.pm
+%{_mandir}/man3/vmsish.*
+
 # Old changelog entries are preserved in CVS.
 %changelog
 * Mon Feb 03 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.1-451
@@ -7515,6 +7539,7 @@ popd
 - Subpackage sort
 - Subpackage subs
 - Subpackage vars
+- Subpackage vmsish
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
