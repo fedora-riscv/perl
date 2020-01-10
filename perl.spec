@@ -433,6 +433,7 @@ Requires:       perl-Safe, perl-Scalar-List-Utils,
 Requires:       perl-Search-Dict, perl-SelectSaver,
 Requires:       perl-SelfLoader, perl-sigtrap, perl-Socket, perl-sort,
 Requires:       perl-Storable,
+Requires:       perl-subs,
 Requires:       perl-Symbol, perl-Sys-Hostname, perl-Sys-Syslog,
 Requires:       perl-Term-ANSIColor, perl-Term-Cap, perl-Term-Complete,
 Requires:       perl-Term-ReadLine,
@@ -3559,6 +3560,23 @@ containing scalar, array, hash or reference objects, i.e. anything that
 can be conveniently stored to disk and retrieved at a later time.
 %endif
 
+%package subs
+Summary:        Perl pragma to predeclare subroutine names
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.03
+BuildArch:      noarch
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_subs
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description subs
+This will predeclare all the subroutines whose names are in the list,
+allowing you to use them without parentheses (as list operators) even
+before they're declared.
+
 %package Symbol
 Summary:        Manipulate Perl symbols and their names
 License:        GPL+ or Artistic
@@ -5665,6 +5683,10 @@ popd
 %exclude %{archlib}/auto/Storable/
 %exclude %{_mandir}/man3/Storable.*
 
+# subs
+%exclude %{privlib}/subs.pm
+%exclude %{_mandir}/man3/subs.*
+
 # Symbol
 %exclude %{privlib}/Symbol.pm
 %exclude %{_mandir}/man3/Symbol.*
@@ -7113,6 +7135,10 @@ popd
 %{privlib}/sort.pm
 %{_mandir}/man3/sort.*
 
+%files subs
+%{privlib}/subs.pm
+%{_mandir}/man3/subs.*
+
 %files Symbol
 %{privlib}/Symbol.pm
 %{_mandir}/man3/Symbol.*
@@ -7456,6 +7482,7 @@ popd
 - Subpackage meta_notation
 - Subpackage sigtrap
 - Subpackage sort
+- Subpackage subs
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

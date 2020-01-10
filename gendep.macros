@@ -2205,7 +2205,6 @@ Requires: perl(warnings) \
 Provides: perl(experimental) = 0.020 \
 %{nil}
 %global gendep_perl_interpreter \
-Requires: perl(:VERSION) >= 5.0.0 \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(Exporter) \
 Requires: perl(I18N::LangTags) \
@@ -2217,7 +2216,6 @@ Provides: perl(EVERY::LAST) \
 Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(dumpvar.pl) \
 Provides: perl(perl5db.pl) \
-Provides: perl(subs) = 1.03 \
 Provides: perl(vars) = 1.05 \
 Provides: perl(vmsish) = 1.04 \
 %{nil}
@@ -2386,6 +2384,10 @@ Provides: perl(sigtrap) = 1.09 \
 %global gendep_perl_sort \
 Requires: perl(strict) \
 Provides: perl(sort) = 2.04 \
+%{nil}
+%global gendep_perl_subs \
+Requires: perl(:VERSION) >= 5.0.0 \
+Provides: perl(subs) = 1.03 \
 %{nil}
 %global gendep_perl_tests \
 %{nil}
