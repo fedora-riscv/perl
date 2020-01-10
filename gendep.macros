@@ -1388,6 +1388,11 @@ Requires: perl(vars) \
 Requires: perl(warnings) \
 Provides: perl(Pod::Escapes) = 1.07 \
 %{nil}
+%global gendep_perl_Pod_Functions \
+Requires: perl(Exporter) \
+Requires: perl(strict) \
+Provides: perl(Pod::Functions) = 1.13 \
+%{nil}
 %global gendep_perl_Pod_Html \
 Requires: perl(Carp) \
 Requires: perl(Config) \
@@ -2205,13 +2210,11 @@ Requires: perl(warnings) \
 Provides: perl(experimental) = 0.020 \
 %{nil}
 %global gendep_perl_interpreter \
-Requires: perl(Exporter) \
 Requires: perl(I18N::LangTags) \
 Requires: perl(strict) \
 Requires: perl(warnings) \
 Provides: perl(DB) = 1.08 \
 Provides: perl(EVERY::LAST) \
-Provides: perl(Pod::Functions) = 1.13 \
 Provides: perl(dumpvar.pl) \
 Provides: perl(perl5db.pl) \
 %{nil}

@@ -426,9 +426,9 @@ Requires:       perl-ODBM_File,
 Requires:       perl-Opcode, perl-open, perl-overload, perl-overloading,
 Requires:       perl-parent, perl-PathTools, perl-Params-Check, perl-perlfaq,
 Requires:       perl-PerlIO-via-QuotedPrint, perl-Perl-OSType,
-Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-Html,
-Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Simple,
-Requires:       perl-Pod-Usage, perl-podlators, perl-POSIX,
+Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-Functions,
+Requires:       perl-Pod-Html, perl-Pod-Parser, perl-Pod-Perldoc,
+Requires:       perl-Pod-Simple, perl-Pod-Usage, perl-podlators, perl-POSIX,
 Requires:       perl-Safe, perl-Scalar-List-Utils,
 Requires:       perl-Search-Dict, perl-SelectSaver,
 Requires:       perl-SelfLoader, perl-sigtrap, perl-Socket, perl-sort,
@@ -3242,6 +3242,23 @@ BuildArch:      noarch
 This module provides things that are useful in decoding Pod E<...> sequences.
 %endif
 
+%package Pod-Functions
+Summary:        Group Perl functions as in perlfunc POD
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.13
+BuildArch:      noarch
+Requires:       %perl_compat
+# Match perl the functions come from
+Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
+%if %{defined perl_bootstrap}
+%gendep_perl_Pod_Functions
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description Pod-Functions
+This module enumerates the Perl functions that are documented in perlfunc POD.
+
 %package Pod-Html
 Summary:        Convert POD files to HTML
 License:        GPL+ or Artistic
@@ -5627,6 +5644,9 @@ popd
 %exclude %{privlib}/Pod/Escapes.pm
 %exclude %{_mandir}/man3/Pod::Escapes.*
 
+# Pod-Functions
+%exclude %{privlib}/Pod/Functions.pm
+
 # Pod-Html
 %exclude %{_bindir}/pod2html
 %exclude %{privlib}/Pod/Html.pm
@@ -5659,6 +5679,7 @@ popd
 
 # Pod-Usage
 %exclude %{_bindir}/pod2usage
+%exclude %dir %{privlib}/Pod
 %exclude %{privlib}/Pod/Usage.pm
 %exclude %{_mandir}/man1/pod2usage.*
 %exclude %{_mandir}/man3/Pod::Usage.*
@@ -7073,6 +7094,10 @@ popd
 %{_mandir}/man3/Pod::Escapes.*
 %endif
 
+%files Pod-Functions
+%dir %{privlib}/Pod
+%{privlib}/Pod/Functions.pm
+
 %files Pod-Html
 %license Pod-Html-license-clarification
 %dir %{privlib}/Pod
@@ -7540,6 +7565,7 @@ popd
 - Subpackage subs
 - Subpackage vars
 - Subpackage vmsish
+- Subpackage Pod-Functions
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
