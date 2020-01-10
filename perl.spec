@@ -410,7 +410,8 @@ Requires:       perl-less,
 Requires:       perl-lib, perl-libnet, perl-libnetcfg,
 Requires:       perl-locale, perl-Locale-Maketext, perl-Locale-Maketext-Simple,
 Requires:       perl-Math-BigInt, perl-Math-BigInt-FastCalc, perl-Math-BigRat,
-Requires:       perl-Math-Complex, perl-Memoize, perl-MIME-Base64,
+Requires:       perl-Math-Complex, perl-Memoize, perl-meta-notation,
+Requires:       perl-MIME-Base64,
 Requires:       perl-Module-CoreList, perl-Module-CoreList-tools,
 Requires:       perl-Module-Load, perl-Module-Load-Conditional,
 Requires:       perl-Module-Loaded, perl-Module-Metadata,
@@ -483,6 +484,7 @@ Epoch:          %{perl_epoch}
 Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
 # Require this till perl-interpreter sub-package provides any modules
 Requires:       %perl_compat
+Requires:       perl(meta_notation) = %{perl_version}
 %if %{defined perl_bootstrap}
 %gendep_perl_interpreter
 %endif
@@ -2748,6 +2750,24 @@ this by caching the return values of the function in a table. If you call
 the function again with the same arguments, memoize jumps in and gives
 you the value out of the table, instead of letting the function compute
 the value all over again.
+
+%package meta-notation
+Summary:        Change nonprintable characters below 0x100 into printables
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        %{perl_version}
+BuildArch:      noarch
+Provides:       perl(meta_notation) = %{perl_version}
+Requires:       %perl_compat
+%if %{defined perl_bootstrap}
+%gendep_perl_meta_notation
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description meta-notation
+Returns a copy of the input string with the nonprintable characters below
+0x100 changed into printables. Any ASCII printables or above 0xFF are
+unchanged.
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %package MIME-Base64
@@ -5370,6 +5390,9 @@ popd
 %exclude %{_mandir}/man3/Memoize::*
 %exclude %{_mandir}/man3/Memoize.*
 
+# meta-notation
+%exclude %{privlib}/meta_notation.pm
+
 # MIME-Base64
 %exclude %{archlib}/auto/MIME
 %exclude %{archlib}/MIME
@@ -6762,6 +6785,9 @@ popd
 %{_mandir}/man3/Memoize::*
 %{_mandir}/man3/Memoize.*
 
+%files meta-notation
+%{privlib}/meta_notation.pm
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files MIME-Base64
 %{archlib}/auto/MIME
@@ -7375,6 +7401,7 @@ popd
 - Subpackage feature
 - Subpackage filetest
 - Subpackage less
+- Subpackage meta_notation
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

@@ -1261,6 +1261,10 @@ Requires: perl(version) >= 0.87 \
 Requires: perl(warnings) \
 Provides: perl(Module::Metadata) = 1.000036 \
 %{nil}
+%global gendep_meta_notation \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+%{nil}
 %global gendep_perl_mro \
 Requires: perl(strict) \
 Requires: perl(warnings) \
