@@ -431,7 +431,8 @@ Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Simple,
 Requires:       perl-Pod-Usage, perl-podlators, perl-POSIX,
 Requires:       perl-Safe, perl-Scalar-List-Utils,
 Requires:       perl-Search-Dict, perl-SelectSaver,
-Requires:       perl-SelfLoader, perl-sigtrap, perl-Socket, perl-Storable,
+Requires:       perl-SelfLoader, perl-sigtrap, perl-Socket, perl-sort,
+Requires:       perl-Storable,
 Requires:       perl-Symbol, perl-Sys-Hostname, perl-Sys-Syslog,
 Requires:       perl-Term-ANSIColor, perl-Term-Cap, perl-Term-Complete,
 Requires:       perl-Term-ReadLine,
@@ -3516,6 +3517,24 @@ that it has a far more likely chance of getting the numbers right.  This
 includes all of the commonly used pound-defines like AF_INET, SOCK_STREAM, etc.
 %endif
 
+%package sort
+Summary:        Perl pragma to control sort() behavior
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        2.04
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(Carp)
+Requires:       perl(warnings)
+%if %{defined perl_bootstrap}
+%gendep_perl_sort
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description sort
+With the "sort" pragma you can control the behavior of the builtin "sort()"
+function.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Storable
 Summary:        Persistence for Perl data structures
@@ -5637,6 +5656,10 @@ popd
 %exclude %{privlib}/sigtrap.pm
 %exclude %{_mandir}/man3/sigtrap.*
 
+# sort
+%exclude %{privlib}/sort.pm
+%exclude %{_mandir}/man3/sort.*
+
 # Storable
 %exclude %{archlib}/Storable.pm
 %exclude %{archlib}/auto/Storable/
@@ -7086,6 +7109,10 @@ popd
 %{privlib}/sigtrap.pm
 %{_mandir}/man3/sigtrap.*
 
+%files sort
+%{privlib}/sort.pm
+%{_mandir}/man3/sort.*
+
 %files Symbol
 %{privlib}/Symbol.pm
 %{_mandir}/man3/Symbol.*
@@ -7428,6 +7455,7 @@ popd
 - Subpackage less
 - Subpackage meta_notation
 - Subpackage sigtrap
+- Subpackage sort
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
