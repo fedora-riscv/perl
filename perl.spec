@@ -446,7 +446,7 @@ Requires:       perl-Tie, perl-Tie-File, perl-Tie-Memoize, perl-Tie-RefHash,
 Requires:       perl-Time, perl-Time-HiRes, perl-Time-Local, perl-Time-Piece,
 Requires:       perl-Unicode-Collate, perl-Unicode-Normalize, perl-Unicode-UCD,
 Requires:       perl-User-pwent,
-Requires:       perl-version,
+Requires:       perl-vars, perl-version,
 
 # Full EVR is for compatibility with systems that swapped perl and perl-core
 # <https://fedoraproject.org/wiki/Changes/perl_Package_to_Install_Core_Modules>,
@@ -4158,6 +4158,29 @@ Conflicts:      perl-interpreter < 4:5.30.1-451
 This package provides an object-oriented interface to Perl build-in getgr*()
 and getpw*() functions.
 
+%package vars
+Summary:        Perl pragma to predeclare global variable names
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.05
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(Carp)
+%if %{defined perl_bootstrap}
+%gendep_perl_vars
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description vars
+This pragma will predeclare all the variables whose names are in the
+list, allowing you to use them under "use strict", and disabling any
+typo warnings for them.
+
+For use with variables in the current package for a single scope, the
+functionality provided by this pragma has been superseded by "our"
+declarations, available in Perl v5.6.0 or later, and use of this pragma is
+discouraged.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package version
 Summary:        Perl extension for Version Objects
@@ -5883,6 +5906,10 @@ popd
 %exclude %{privlib}/User
 %exclude %{_mandir}/man3/User::*
 
+# vars
+%exclude %{privlib}/vars.pm
+%exclude %{_mandir}/man3/vars.*
+
 # version
 %exclude %{privlib}/version.pm
 %exclude %{privlib}/version.pod
@@ -7391,6 +7418,10 @@ popd
 %{privlib}/User
 %{_mandir}/man3/User::*
 
+%files vars
+%{privlib}/vars.pm
+%{_mandir}/man3/vars.*
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %files version
 %{privlib}/version.pm
@@ -7483,6 +7514,7 @@ popd
 - Subpackage sigtrap
 - Subpackage sort
 - Subpackage subs
+- Subpackage vars
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
