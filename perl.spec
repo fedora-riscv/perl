@@ -431,7 +431,7 @@ Requires:       perl-Pod-Parser, perl-Pod-Perldoc, perl-Pod-Simple,
 Requires:       perl-Pod-Usage, perl-podlators, perl-POSIX,
 Requires:       perl-Safe, perl-Scalar-List-Utils,
 Requires:       perl-Search-Dict, perl-SelectSaver,
-Requires:       perl-SelfLoader, perl-Socket, perl-Storable,
+Requires:       perl-SelfLoader, perl-sigtrap, perl-Socket, perl-Storable,
 Requires:       perl-Symbol, perl-Sys-Hostname, perl-Sys-Syslog,
 Requires:       perl-Term-ANSIColor, perl-Term-Cap, perl-Term-Complete,
 Requires:       perl-Term-ReadLine,
@@ -3480,6 +3480,23 @@ This Perl module tells its users that functions in a package are to be
 autoloaded from after the "__DATA__" token. See also "Autoloading" in
 perlsub.
 
+%package sigtrap
+Summary:        Perl pragma to enable simple signal handling
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.09
+BuildArch:      noarch
+Requires:       %perl_compat
+Requires:       perl(meta_notation) = %{perl_version}
+Requires:       perl(Symbol)
+%if %{defined perl_bootstrap}
+%gendep_perl_sigtrap
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description sigtrap
+The sigtrap pragma is a simple interface for installing signal handlers.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Socket
 Summary:        C socket.h defines and structure manipulators
@@ -5614,7 +5631,11 @@ popd
 
 # SelfLoader
 %exclude %{privlib}/SelfLoader.pm
-%exclude %{_mandir}/man3/SelfLoader*
+%exclude %{_mandir}/man3/SelfLoader.*
+
+# sigtrap
+%exclude %{privlib}/sigtrap.pm
+%exclude %{_mandir}/man3/sigtrap.*
 
 # Storable
 %exclude %{archlib}/Storable.pm
@@ -7059,7 +7080,11 @@ popd
 
 %files SelfLoader
 %{privlib}/SelfLoader.pm
-%{_mandir}/man3/SelfLoader*
+%{_mandir}/man3/SelfLoader.*
+
+%files sigtrap
+%{privlib}/sigtrap.pm
+%{_mandir}/man3/sigtrap.*
 
 %files Symbol
 %{privlib}/Symbol.pm
@@ -7402,6 +7427,7 @@ popd
 - Subpackage filetest
 - Subpackage less
 - Subpackage meta_notation
+- Subpackage sigtrap
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
