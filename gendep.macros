@@ -688,9 +688,6 @@ Requires: perl(strict) \
 Requires: perl(XSLoader) \
 Provides: perl(Fcntl) = 1.13 \
 %{nil}
-%global gendep_perl_feature \
-Provides: perl(feature) = 1.54 \
-%{nil}
 %global gendep_perl_fields \
 Requires: perl(:VERSION) >= 5.8.0 \
 Requires: perl(strict) \
@@ -2315,6 +2312,7 @@ Provides: perl(attributes) = 0.33 \
 Provides: perl(bytes) = 1.07 \
 Provides: perl(_charnames) = 1.45 \
 Provides: perl(charnames) = 1.45 \
+Provides: perl(feature) = 1.54 \
 Provides: perl(integer) = 1.01 \
 Provides: perl(re) = 0.37 \
 Provides: perl(strict) = 1.11 \
