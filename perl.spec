@@ -1881,6 +1881,7 @@ Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_ExtUtils_ParseXS
 %endif
+Conflicts:      perl-interpreter < 4:5.30.1-451
 BuildArch:      noarch
 
 %description ExtUtils-ParseXS
@@ -4776,7 +4777,6 @@ popd
 %exclude %{_mandir}/man1/perlivp*
 %exclude %{archlib}/CORE/*.h
 %exclude %{_libdir}/libperl.so
-%exclude %{_mandir}/man1/perlxs*
 %if %{with perl_enables_systemtap}
 %exclude %dir %{_datadir}/systemtap
 %exclude %dir %{_datadir}/systemtap/tapset
@@ -5162,7 +5162,11 @@ popd
 %exclude %{privlib}/ExtUtils/Typemaps/OutputMap.pm
 %exclude %{privlib}/ExtUtils/Typemaps/Type.pm
 %exclude %{privlib}/ExtUtils/xsubpp
+%exclude %{privlib}/pod/perlxs.pod
+%exclude %{privlib}/pod/perlxstut.pod
+%exclude %{privlib}/pod/perlxstypemap.pod
 %exclude %{_bindir}/xsubpp
+%exclude %{_mandir}/man1/perlxs*
 %exclude %{_mandir}/man1/xsubpp*
 %exclude %{_mandir}/man3/ExtUtils::ParseXS.3*
 %exclude %{_mandir}/man3/ExtUtils::ParseXS::Constants.3*
@@ -6065,7 +6069,6 @@ popd
 %{_mandir}/man1/perlivp*
 %{archlib}/CORE/*.h
 %{_libdir}/libperl.so
-%{_mandir}/man1/perlxs*
 %if %{with perl_enables_systemtap}
 %dir %{_datadir}/systemtap
 %dir %{_datadir}/systemtap/tapset
@@ -6537,7 +6540,12 @@ popd
 %{privlib}/ExtUtils/Typemaps/OutputMap.pm
 %{privlib}/ExtUtils/Typemaps/Type.pm
 %{privlib}/ExtUtils/xsubpp
+%dir %{privlib}/pod
+%{privlib}/pod/perlxs.pod
+%{privlib}/pod/perlxstut.pod
+%{privlib}/pod/perlxstypemap.pod
 %{_bindir}/xsubpp
+%{_mandir}/man1/perlxs*
 %{_mandir}/man1/xsubpp*
 %{_mandir}/man3/ExtUtils::ParseXS.3*
 %{_mandir}/man3/ExtUtils::ParseXS::Constants.3*
@@ -7599,6 +7607,7 @@ popd
 - Subpackage Pod-Functions
 - Move feature to perl-libs
 - Move debugger files into perl-debugger
+- Move perlxs* POD to perl-ExtUtils-ParseXS
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
