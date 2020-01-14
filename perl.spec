@@ -4776,6 +4776,8 @@ popd
 %exclude %{_bindir}/perlivp
 %exclude %{_mandir}/man1/perlivp*
 %exclude %{archlib}/CORE/*.h
+%exclude %dir %{privlib}/ExtUtils
+%exclude %{privlib}/ExtUtils/typemap
 %exclude %{_libdir}/libperl.so
 %if %{with perl_enables_systemtap}
 %exclude %dir %{_datadir}/systemtap
@@ -6068,6 +6070,8 @@ popd
 %{_bindir}/perlivp
 %{_mandir}/man1/perlivp*
 %{archlib}/CORE/*.h
+%dir %{privlib}/ExtUtils
+%{privlib}/ExtUtils/typemap
 %{_libdir}/libperl.so
 %if %{with perl_enables_systemtap}
 %dir %{_datadir}/systemtap
@@ -7608,6 +7612,7 @@ popd
 - Move feature to perl-libs
 - Move debugger files into perl-debugger
 - Move perlxs* POD to perl-ExtUtils-ParseXS
+- Move ExtUtils/typemap to perl-devel
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
