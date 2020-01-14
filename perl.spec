@@ -5398,6 +5398,7 @@ popd
 
 # IPC-SysV
 %exclude %{archlib}/auto/IPC
+%exclude %dir %{archlib}/IPC
 %exclude %{archlib}/IPC/Msg.pm
 %exclude %{archlib}/IPC/Semaphore.pm
 %exclude %{archlib}/IPC/SharedMem.pm
