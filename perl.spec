@@ -376,7 +376,7 @@ Requires:       perl-Config-Extensions, perl-Config-Perl-V, perl-constant,
 Requires:       perl-CPAN, perl-CPAN-Meta, perl-CPAN-Meta-Requirements,
 Requires:       perl-CPAN-Meta-YAML,
 Requires:       perl-Data-Dumper, perl-DB_File, perl-DBM_Filter,
-Requires:       perl-deprecate,
+Requires:       perl-debugger, perl-deprecate,
 Requires:       perl-Devel-Peek, perl-Devel-PPPort, perl-Devel-SelfStubber,
 Requires:       perl-diagnostics, perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
 Requires:       perl-DirHandle,
@@ -486,7 +486,6 @@ Epoch:          %{perl_epoch}
 Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
 # Require this till perl-interpreter sub-package provides any modules
 Requires:       %perl_compat
-Requires:       perl(meta_notation) = %{perl_version}
 %if %{defined perl_bootstrap}
 %gendep_perl_interpreter
 %endif
@@ -497,10 +496,6 @@ Requires(post): perl-libs
 # Same as perl-libs. We need macros in basic buildroot, where Perl is only
 # because of git.
 Requires(post): perl-macros
-
-# File provides
-Provides:       perl(dumpvar.pl)
-Provides:       perl(perl5db.pl)
 
 # suidperl isn't created by upstream since 5.12.0
 Obsoletes:      perl-suidperl <= 4:5.12.2
@@ -530,6 +525,9 @@ embedded into another application, the only essential package is perl-libs.
 Perl header files can be found in perl-devel package.
 
 Perl utils like "h2ph" or "perlbug" can be found in perl-utils package.
+
+Perl debugger, usually invoked with "perl -d", is available in perl-debugger
+package.
 
 
 %package libs
@@ -1222,6 +1220,46 @@ Conflicts:      perl-interpreter < 4:5.30.1-451
 %description DBM_Filter
 This module provides an interface that allows filters to be applied to tied
 hashes associated with DBM files.
+
+%package debugger
+Summary:        Perl debugger
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        1.55
+BuildArch:      noarch
+# File provides
+Provides:       perl(dumpvar.pl) = %{perl_version}
+Provides:       perl(perl5db.pl) = %{version}
+Requires:       %perl_compat
+Recommends:     perl(Carp)
+Recommends:     perl(Config)
+Requires:       perl(Cwd)
+Recommends:     perl(Devel::Peek)
+Requires:       perl(feature)
+Recommends:     perl(IO::Handle)
+Recommends:     perl(File::Basename)
+Recommends:     perl(File::Path)
+Requires:       perl(IO::Socket)
+Requires:       perl(meta_notation) = %{perl_version}
+%if !%{defined perl_bootstrap}
+Suggests:       perl(PadWalker) >= 0.08
+%endif
+Recommends:     perl(POSIX)
+Requires:       perl(Term::ReadLine)
+# ??? Term::Rendezvous
+Requires:       perl(threads)
+Requires:       perl(threads::shared)
+Requires:       perl(vars)
+Requires:       perl(warnings)
+%if %{defined perl_bootstrap}
+%gendep_perl_debugger
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description debugger
+This is the perl debugger. It is loaded automatically by Perl when you invoke
+a script with "perl -d". There is also "DB" module contained for
+a programmatic interface to the debugging API.
 
 %package deprecate
 Summary:        Perl pragma for deprecating the inclusion of a module in core
@@ -4925,6 +4963,14 @@ popd
 %exclude %{_mandir}/man3/DBM_Filter.*
 %exclude %{_mandir}/man3/DBM_Filter::*
 
+# debugger
+%exclude %{privlib}/DB.pm
+%exclude %{privlib}/dumpvar.pl
+%exclude %{privlib}/perl5db.pl
+%exclude %{privlib}/pod/perldebug.pod
+%exclude %{_mandir}/man1/perldebug.*
+%exclude %{_mandir}/man3/DB.*
+
 # deprecate
 %exclude %{privlib}/deprecate.pm
 %exclude %{_mandir}/man3/deprecate.*
@@ -6248,6 +6294,15 @@ popd
 %{_mandir}/man3/DBM_Filter.*
 %{_mandir}/man3/DBM_Filter::*
 
+%files debugger
+%{privlib}/DB.pm
+%{privlib}/dumpvar.pl
+%{privlib}/perl5db.pl
+%dir %{privlib}/pod
+%{privlib}/pod/perldebug.pod
+%{_mandir}/man1/perldebug.*
+%{_mandir}/man3/DB.*
+
 %files deprecate
 %{privlib}/deprecate.pm
 %{_mandir}/man3/deprecate.*
@@ -7542,6 +7597,7 @@ popd
 - Subpackage vmsish
 - Subpackage Pod-Functions
 - Move feature to perl-libs
+- Move debugger files into perl-debugger
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild

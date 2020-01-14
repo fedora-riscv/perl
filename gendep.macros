@@ -329,6 +329,10 @@ Requires: perl(strict) \
 Requires: perl(vars) \
 Provides: perl(Devel::PPPort) = 3.52 \
 %{nil}
+%global gendep_perl_debugger \
+Requires: perl(strict) \
+Provides: perl(DB) = 1.08 \
+%{nil}
 %global gendep_perl_deprecate \
 Requires: perl(strict) \
 Requires: perl(warnings) \
@@ -2208,12 +2212,8 @@ Provides: perl(experimental) = 0.020 \
 %{nil}
 %global gendep_perl_interpreter \
 Requires: perl(I18N::LangTags) \
-Requires: perl(strict) \
 Requires: perl(warnings) \
-Provides: perl(DB) = 1.08 \
 Provides: perl(EVERY::LAST) \
-Provides: perl(dumpvar.pl) \
-Provides: perl(perl5db.pl) \
 %{nil}
 %global gendep_perl_interpreter_debuginfo \
 %{nil}
