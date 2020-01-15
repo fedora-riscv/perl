@@ -4611,6 +4611,9 @@ rm %{build_archlib}/.packlist
 # We cannot remove it in %%prep because dist/Cwd/t/Spec.t test needs it.
 rm %{build_archlib}/File/Spec/VMS.pm
 rm $RPM_BUILD_ROOT%{_mandir}/man3/File::Spec::VMS.3*
+# ExtUtils::XSSymSet module is not isntalled, do not install its manual
+# (GH#17424)
+rm $RPM_BUILD_ROOT%{_mandir}/man3/ExtUtils::XSSymSet.3*
 
 # Fix some manpages to be UTF-8
 mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1/
@@ -7613,6 +7616,7 @@ popd
 - Move debugger files into perl-debugger
 - Move perlxs* POD to perl-ExtUtils-ParseXS
 - Move ExtUtils/typemap to perl-devel
+- Remove ExtUtils::XSSymSet manual without the code (GH#17424)
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
