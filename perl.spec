@@ -426,6 +426,7 @@ Requires:       perl-ODBM_File,
 Requires:       perl-Opcode, perl-open, perl-overload, perl-overloading,
 Requires:       perl-parent, perl-PathTools, perl-Params-Check, perl-perlfaq,
 Requires:       perl-PerlIO-via-QuotedPrint, perl-Perl-OSType,
+Requires:       perl-ph,
 Requires:       perl-Pod-Checker, perl-Pod-Escapes, perl-Pod-Functions,
 Requires:       perl-Pod-Html, perl-Pod-Parser, perl-Pod-Perldoc,
 Requires:       perl-Pod-Simple, perl-Pod-Usage, perl-podlators, perl-POSIX,
@@ -3227,6 +3228,31 @@ provided in Module::Build and ExtUtils::CBuilder (thus, Microsoft operating
 systems are given the type 'Windows' rather than 'Win32').
 %endif
 
+%package ph
+Summary:        Selected system header files converted to Perl headers
+License:        GPL+ or Artistic
+Epoch:          0
+Version:        %{perl_version}
+Requires:       %perl_compat
+# Match header files used when building perl.
+Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl(warnings)
+# We deliver this package only for these three files mentioned in
+# a documentation.
+Provides:       perl(sys/ioctl.ph) = %{perl_version}
+Provides:       perl(sys/syscall.ph) = %{perl_version}
+Provides:       perl(syscall.ph) = %{perl_version}
+%if %{defined perl_bootstrap}
+%gendep_perl_ph
+%endif
+Conflicts:      perl < 4:5.30.1-451
+
+%description ph
+Contemporary Perl still refers to some Perl header (ph) files although it does
+not build them anymore. This is a prebuilt collection of the referred files.
+If you miss other ones, you can generate them with h2ph tool from perl-utils
+package.
+
 %if %{dual_life} || %{rebuild_from_scratch}
 %package Pod-Checker
 Summary:        Check POD documents for syntax errors
@@ -4572,8 +4598,10 @@ rm -f "%{build_archlib}/CORE/%{soname}"
 
 install -p -m 755 utils/pl2pm %{build_bindir}/pl2pm
 
-for i in asm/termios.h syscall.h syslimits.h syslog.h \
-    sys/ioctl.h sys/socket.h sys/time.h wait.h
+# perlfunc/ioctl() recommends sys/ioctl.ph.
+# perlfaq5 recommends sys/syscall.ph.
+# perlfunc/syscall() recommends syscall.ph.
+for i in sys/ioctl.h sys/syscall.h syscall.h
 do
     %{new_perl} %{build_bindir}/h2ph -a -d %{build_archlib} $i || true
 done
@@ -5644,6 +5672,18 @@ popd
 %exclude %dir %{privlib}/Perl
 %exclude %{privlib}/Perl/OSType.pm
 %exclude %{_mandir}/man3/Perl::OSType.3pm*
+
+# ph
+%exclude %{archlib}/asm
+%exclude %{archlib}/asm-generic
+%exclude %{archlib}/bits
+%exclude %{archlib}/features.ph
+%exclude %{archlib}/gnu
+%exclude %{archlib}/_h2ph_pre.ph
+%exclude %{archlib}/linux
+%exclude %{archlib}/stdc-predef.ph
+%exclude %{archlib}/sys
+%exclude %{archlib}/syscall.ph
 
 # POSIX
 %exclude %{archlib}/auto/POSIX
@@ -7061,6 +7101,18 @@ popd
 %{_mandir}/man3/Opcode.3*
 %{_mandir}/man3/ops.3*
 
+%files ph
+%{archlib}/asm
+%{archlib}/asm-generic
+%{archlib}/bits
+%{archlib}/features.ph
+%{archlib}/gnu
+%{archlib}/_h2ph_pre.ph
+%{archlib}/linux
+%{archlib}/stdc-predef.ph
+%{archlib}/sys
+%{archlib}/syscall.ph
+
 %files POSIX
 %{archlib}/auto/POSIX
 %{archlib}/POSIX.*
@@ -7617,6 +7669,7 @@ popd
 - Move perlxs* POD to perl-ExtUtils-ParseXS
 - Move ExtUtils/typemap to perl-devel
 - Remove ExtUtils::XSSymSet manual without the code (GH#17424)
+- Reduce and move remaining ph files to perl-ph
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
