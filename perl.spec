@@ -380,6 +380,7 @@ Requires:       perl-debugger, perl-deprecate,
 Requires:       perl-Devel-Peek, perl-Devel-PPPort, perl-Devel-SelfStubber,
 Requires:       perl-diagnostics, perl-Digest, perl-Digest-MD5, perl-Digest-SHA,
 Requires:       perl-DirHandle,
+Requires:       perl-doc,
 Requires:       perl-Dumpvalue,
 Requires:       perl-DynaLoader,
 Requires:       perl-Encode, perl-Encode-devel, perl-encoding,
@@ -476,7 +477,7 @@ details on the Perl decomposition into packages.
 
 %package interpreter
 Summary:        Standalone executable Perl interpreter
-License:        (GPL+ or Artistic) and Public Domain and UCD
+License:        GPL+ or Artistic
 # perl-interpreter denotes a package with the perl executable.
 # Full EVR is for compatibility with systems that swapped perl and perl-core
 # <https://fedoraproject.org/wiki/Changes/perl_Package_to_Install_Core_Modules>,
@@ -487,6 +488,7 @@ Epoch:          %{perl_epoch}
 Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
 # Require this till perl-interpreter sub-package provides any modules
 Requires:       %perl_compat
+Suggests:       perl-doc = %{perl_version}-%{release}
 %if %{defined perl_bootstrap}
 %gendep_perl_interpreter
 %endif
@@ -584,7 +586,7 @@ directories).
 
 
 %package devel
-Summary:        Header #files for use in perl development
+Summary:        Header files for use in perl development
 # l1_char_class_tab.h is generated from lib/unicore sources:    UCD
 License:        (GPL+ or Artistic) and UCD
 %if %{with perl_enables_systemtap}
@@ -594,6 +596,7 @@ Requires:       perl(ExtUtils::ParseXS)
 Requires:       %perl_compat
 # Match library and header files when downgrading releases
 Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
+Recommends:     perl-doc = %{perl_version}-%{release}
 # Devel::PPPort for h2xs script
 Requires:       perl(Devel::PPPort)
 # Compiler and linker options stored into perl and used when building XS
@@ -1447,6 +1450,21 @@ There is no reason to use this module nowadays. The DirHandle module provides
 an alternative interface to the opendir(), closedir(), readdir(), and
 rewinddir() functions. Since Perl 5.6, opendir() alone has been all you need
 for lexical handles.
+
+%package doc
+Summary:        Perl language documentation
+License:        (GPL+ or Artistic) and UCD and Public Domain
+Epoch:          0
+Version:        %{perl_version}
+BuildArch:      noarch
+Requires:       %perl_compat
+# For perldoc tool
+Recommends:     perl-Pod-Perldoc
+Conflicts:      perl < 4:5.30.1-451
+
+%description doc
+This is a documentation for Perl language. It's provided in POD and manual
+page format.
 
 %package Dumpvalue
 Summary:        Screen dump of Perl data
@@ -4764,8 +4782,10 @@ popd
 %exclude %{privlib}/bytes_heavy.pl
 %exclude %{privlib}/_charnames.pm
 %exclude %{privlib}/charnames.pm
+%exclude %{privlib}/CORE.pod
 %exclude %{privlib}/feature.pm
 %exclude %{privlib}/integer.pm
+%exclude %{privlib}/Internals.pod
 %exclude %{privlib}/PerlIO.pm
 %exclude %{privlib}/strict.pm
 %exclude %{privlib}/unicore
@@ -4782,9 +4802,11 @@ popd
 %exclude %{_mandir}/man3/bytes.*
 %exclude %{_mandir}/man3/charnames.*
 %exclude %{_mandir}/man3/Config.*
+%exclude %{_mandir}/man3/CORE.*
 %exclude %{_mandir}/man3/feature.3*
 %exclude %{_mandir}/man3/File::Glob.*
 %exclude %{_mandir}/man3/integer.*
+%exclude %{_mandir}/man3/Internals.*
 %exclude %{_mandir}/man3/PerlIO.*
 %exclude %{_mandir}/man3/PerlIO::encoding.*
 %exclude %{_mandir}/man3/PerlIO::mmap.*
@@ -5060,6 +5082,253 @@ popd
 # DirHandle
 %exclude %{privlib}/DirHandle.pm
 %exclude %{_mandir}/man3/DirHandle.3*
+
+# doc
+%exclude %dir %{privlib}/pod
+%exclude %{privlib}/pod/perl5*delta.pod
+%exclude %{privlib}/pod/perlaix.pod
+%exclude %{privlib}/pod/perlamiga.pod
+%exclude %{privlib}/pod/perlandroid.pod
+%exclude %{privlib}/pod/perlapi.pod
+%exclude %{privlib}/pod/perlapio.pod
+%exclude %{privlib}/pod/perlartistic.pod
+%exclude %{privlib}/pod/perlbook.pod
+%exclude %{privlib}/pod/perlboot.pod
+%exclude %{privlib}/pod/perlbot.pod
+%exclude %{privlib}/pod/perlbs2000.pod
+%exclude %{privlib}/pod/perlcall.pod
+%exclude %{privlib}/pod/perlce.pod
+%exclude %{privlib}/pod/perlcheat.pod
+%exclude %{privlib}/pod/perlclib.pod
+%exclude %{privlib}/pod/perlcn.pod
+%exclude %{privlib}/pod/perlcommunity.pod
+%exclude %{privlib}/pod/perlcygwin.pod
+%exclude %{privlib}/pod/perldata.pod
+%exclude %{privlib}/pod/perldbmfilter.pod
+%exclude %{privlib}/pod/perldebguts.pod
+%exclude %{privlib}/pod/perldebtut.pod
+%exclude %{privlib}/pod/perldelta.pod
+%exclude %{privlib}/pod/perldeprecation.pod
+%exclude %{privlib}/pod/perldos.pod
+%exclude %{privlib}/pod/perldsc.pod
+%exclude %{privlib}/pod/perldtrace.pod
+%exclude %{privlib}/pod/perlebcdic.pod
+%exclude %{privlib}/pod/perlembed.pod
+%exclude %{privlib}/pod/perlexperiment.pod
+%exclude %{privlib}/pod/perlfork.pod
+%exclude %{privlib}/pod/perlform.pod
+%exclude %{privlib}/pod/perlfreebsd.pod
+%exclude %{privlib}/pod/perlfunc.pod
+%exclude %{privlib}/pod/perlgit.pod
+%exclude %{privlib}/pod/perlgpl.pod
+%exclude %{privlib}/pod/perlguts.pod
+%exclude %{privlib}/pod/perlhack.pod
+%exclude %{privlib}/pod/perlhacktips.pod
+%exclude %{privlib}/pod/perlhacktut.pod
+%exclude %{privlib}/pod/perlhaiku.pod
+%exclude %{privlib}/pod/perlhist.pod
+%exclude %{privlib}/pod/perlhpux.pod
+%exclude %{privlib}/pod/perlhurd.pod
+%exclude %{privlib}/pod/perlintern.pod
+%exclude %{privlib}/pod/perlinterp.pod
+%exclude %{privlib}/pod/perlintro.pod
+%exclude %{privlib}/pod/perliol.pod
+%exclude %{privlib}/pod/perlipc.pod
+%exclude %{privlib}/pod/perlirix.pod
+%exclude %{privlib}/pod/perljp.pod
+%exclude %{privlib}/pod/perlko.pod
+%exclude %{privlib}/pod/perllexwarn.pod
+%exclude %{privlib}/pod/perllinux.pod
+%exclude %{privlib}/pod/perllocale.pod
+%exclude %{privlib}/pod/perllol.pod
+%exclude %{privlib}/pod/perlmacos.pod
+%exclude %{privlib}/pod/perlmacosx.pod
+%exclude %{privlib}/pod/perlmod.pod
+%exclude %{privlib}/pod/perlmodinstall.pod
+%exclude %{privlib}/pod/perlmodlib.pod
+%exclude %{privlib}/pod/perlmodstyle.pod
+%exclude %{privlib}/pod/perlmroapi.pod
+%exclude %{privlib}/pod/perlnetware.pod
+%exclude %{privlib}/pod/perlnewmod.pod
+%exclude %{privlib}/pod/perlnumber.pod
+%exclude %{privlib}/pod/perlobj.pod
+%exclude %{privlib}/pod/perlootut.pod
+%exclude %{privlib}/pod/perlop.pod
+%exclude %{privlib}/pod/perlopenbsd.pod
+%exclude %{privlib}/pod/perlopentut.pod
+%exclude %{privlib}/pod/perlos2.pod
+%exclude %{privlib}/pod/perlos390.pod
+%exclude %{privlib}/pod/perlos400.pod
+%exclude %{privlib}/pod/perlpacktut.pod
+%exclude %{privlib}/pod/perlperf.pod
+%exclude %{privlib}/pod/perlplan9.pod
+%exclude %{privlib}/pod/perlpod.pod
+%exclude %{privlib}/pod/perlpodspec.pod
+%exclude %{privlib}/pod/perlpolicy.pod
+%exclude %{privlib}/pod/perlport.pod
+%exclude %{privlib}/pod/perlpragma.pod
+%exclude %{privlib}/pod/perlqnx.pod
+%exclude %{privlib}/pod/perlre.pod
+%exclude %{privlib}/pod/perlreapi.pod
+%exclude %{privlib}/pod/perlrebackslash.pod
+%exclude %{privlib}/pod/perlrecharclass.pod
+%exclude %{privlib}/pod/perlref.pod
+%exclude %{privlib}/pod/perlreftut.pod
+%exclude %{privlib}/pod/perlreguts.pod
+%exclude %{privlib}/pod/perlrepository.pod
+%exclude %{privlib}/pod/perlrequick.pod
+%exclude %{privlib}/pod/perlreref.pod
+%exclude %{privlib}/pod/perlretut.pod
+%exclude %{privlib}/pod/perlriscos.pod
+%exclude %{privlib}/pod/perlsec.pod
+%exclude %{privlib}/pod/perlsolaris.pod
+%exclude %{privlib}/pod/perlsource.pod
+%exclude %{privlib}/pod/perlstyle.pod
+%exclude %{privlib}/pod/perlsub.pod
+%exclude %{privlib}/pod/perlsymbian.pod
+%exclude %{privlib}/pod/perlsyn.pod
+%exclude %{privlib}/pod/perlsynology.pod
+%exclude %{privlib}/pod/perlthrtut.pod
+%exclude %{privlib}/pod/perltie.pod
+%exclude %{privlib}/pod/perltoc.pod
+%exclude %{privlib}/pod/perltodo.pod
+%exclude %{privlib}/pod/perltooc.pod
+%exclude %{privlib}/pod/perltoot.pod
+%exclude %{privlib}/pod/perltrap.pod
+%exclude %{privlib}/pod/perltru64.pod
+%exclude %{privlib}/pod/perltw.pod
+%exclude %{privlib}/pod/perlunicode.pod
+%exclude %{privlib}/pod/perlunicook.pod
+%exclude %{privlib}/pod/perlunifaq.pod
+%exclude %{privlib}/pod/perluniintro.pod
+%exclude %{privlib}/pod/perluniprops.pod
+%exclude %{privlib}/pod/perlunitut.pod
+%exclude %{privlib}/pod/perlvar.pod
+%exclude %{privlib}/pod/perlvms.pod
+%exclude %{privlib}/pod/perlvos.pod
+%exclude %{privlib}/pod/perlwin32.pod
+%exclude %{_mandir}/man1/perl5*delta.*
+%exclude %{_mandir}/man1/perlaix.*
+%exclude %{_mandir}/man1/perlamiga.*
+%exclude %{_mandir}/man1/perlandroid.*
+%exclude %{_mandir}/man1/perlapi.*
+%exclude %{_mandir}/man1/perlapio.*
+%exclude %{_mandir}/man1/perlartistic.*
+%exclude %{_mandir}/man1/perlbook.*
+%exclude %{_mandir}/man1/perlboot.*
+%exclude %{_mandir}/man1/perlbot.*
+%exclude %{_mandir}/man1/perlbs2000.*
+%exclude %{_mandir}/man1/perlcall.*
+%exclude %{_mandir}/man1/perlce.*
+%exclude %{_mandir}/man1/perlcheat.*
+%exclude %{_mandir}/man1/perlclib.*
+%exclude %{_mandir}/man1/perlcn.*
+%exclude %{_mandir}/man1/perlcommunity.*
+%exclude %{_mandir}/man1/perlcygwin.*
+%exclude %{_mandir}/man1/perldata.*
+%exclude %{_mandir}/man1/perldbmfilter.*
+%exclude %{_mandir}/man1/perldebguts.*
+%exclude %{_mandir}/man1/perldebtut.*
+%exclude %{_mandir}/man1/perldelta.*
+%exclude %{_mandir}/man1/perldeprecation.*
+%exclude %{_mandir}/man1/perldos.*
+%exclude %{_mandir}/man1/perldsc.*
+%exclude %{_mandir}/man1/perldtrace.*
+%exclude %{_mandir}/man1/perlebcdic.*
+%exclude %{_mandir}/man1/perlembed.*
+%exclude %{_mandir}/man1/perlexperiment.*
+%exclude %{_mandir}/man1/perlfork.*
+%exclude %{_mandir}/man1/perlform.*
+%exclude %{_mandir}/man1/perlfreebsd.*
+%exclude %{_mandir}/man1/perlfunc.*
+%exclude %{_mandir}/man1/perlgit.*
+%exclude %{_mandir}/man1/perlgpl.*
+%exclude %{_mandir}/man1/perlguts.*
+%exclude %{_mandir}/man1/perlhack.*
+%exclude %{_mandir}/man1/perlhacktips.*
+%exclude %{_mandir}/man1/perlhacktut.*
+%exclude %{_mandir}/man1/perlhaiku.*
+%exclude %{_mandir}/man1/perlhist.*
+%exclude %{_mandir}/man1/perlhpux.*
+%exclude %{_mandir}/man1/perlhurd.*
+%exclude %{_mandir}/man1/perlintern.*
+%exclude %{_mandir}/man1/perlinterp.*
+%exclude %{_mandir}/man1/perlintro.*
+%exclude %{_mandir}/man1/perliol.*
+%exclude %{_mandir}/man1/perlipc.*
+%exclude %{_mandir}/man1/perlirix.*
+%exclude %{_mandir}/man1/perljp.*
+%exclude %{_mandir}/man1/perlko.*
+%exclude %{_mandir}/man1/perllexwarn.*
+%exclude %{_mandir}/man1/perllinux.*
+%exclude %{_mandir}/man1/perllocale.*
+%exclude %{_mandir}/man1/perllol.*
+%exclude %{_mandir}/man1/perlmacos.*
+%exclude %{_mandir}/man1/perlmacosx.*
+%exclude %{_mandir}/man1/perlmod.*
+%exclude %{_mandir}/man1/perlmodinstall.*
+%exclude %{_mandir}/man1/perlmodlib.*
+%exclude %{_mandir}/man1/perlmodstyle.*
+%exclude %{_mandir}/man1/perlmroapi.*
+%exclude %{_mandir}/man1/perlnetware.*
+%exclude %{_mandir}/man1/perlnewmod.*
+%exclude %{_mandir}/man1/perlnumber.*
+%exclude %{_mandir}/man1/perlobj.*
+%exclude %{_mandir}/man1/perlootut.*
+%exclude %{_mandir}/man1/perlop.*
+%exclude %{_mandir}/man1/perlopenbsd.*
+%exclude %{_mandir}/man1/perlopentut.*
+%exclude %{_mandir}/man1/perlos2.*
+%exclude %{_mandir}/man1/perlos390.*
+%exclude %{_mandir}/man1/perlos400.*
+%exclude %{_mandir}/man1/perlpacktut.*
+%exclude %{_mandir}/man1/perlperf.*
+%exclude %{_mandir}/man1/perlplan9.*
+%exclude %{_mandir}/man1/perlpod.*
+%exclude %{_mandir}/man1/perlpodspec.*
+%exclude %{_mandir}/man1/perlpolicy.*
+%exclude %{_mandir}/man1/perlport.*
+%exclude %{_mandir}/man1/perlpragma.*
+%exclude %{_mandir}/man1/perlqnx.*
+%exclude %{_mandir}/man1/perlre.*
+%exclude %{_mandir}/man1/perlreapi.*
+%exclude %{_mandir}/man1/perlrebackslash.*
+%exclude %{_mandir}/man1/perlrecharclass.*
+%exclude %{_mandir}/man1/perlref.*
+%exclude %{_mandir}/man1/perlreftut.*
+%exclude %{_mandir}/man1/perlreguts.*
+%exclude %{_mandir}/man1/perlrepository.*
+%exclude %{_mandir}/man1/perlrequick.*
+%exclude %{_mandir}/man1/perlreref.*
+%exclude %{_mandir}/man1/perlretut.*
+%exclude %{_mandir}/man1/perlriscos.*
+%exclude %{_mandir}/man1/perlsec.*
+%exclude %{_mandir}/man1/perlsolaris.*
+%exclude %{_mandir}/man1/perlsource.*
+%exclude %{_mandir}/man1/perlstyle.*
+%exclude %{_mandir}/man1/perlsub.*
+%exclude %{_mandir}/man1/perlsymbian.*
+%exclude %{_mandir}/man1/perlsyn.*
+%exclude %{_mandir}/man1/perlsynology.*
+%exclude %{_mandir}/man1/perlthrtut.*
+%exclude %{_mandir}/man1/perltie.*
+%exclude %{_mandir}/man1/perltoc.*
+%exclude %{_mandir}/man1/perltodo.*
+%exclude %{_mandir}/man1/perltooc.*
+%exclude %{_mandir}/man1/perltoot.*
+%exclude %{_mandir}/man1/perltrap.*
+%exclude %{_mandir}/man1/perltru64.*
+%exclude %{_mandir}/man1/perltw.*
+%exclude %{_mandir}/man1/perlunicode.*
+%exclude %{_mandir}/man1/perlunicook.*
+%exclude %{_mandir}/man1/perlunifaq.*
+%exclude %{_mandir}/man1/perluniintro.*
+%exclude %{_mandir}/man1/perluniprops.*
+%exclude %{_mandir}/man1/perlunitut.*
+%exclude %{_mandir}/man1/perlvar.*
+%exclude %{_mandir}/man1/perlvms.*
+%exclude %{_mandir}/man1/perlvos.*
+%exclude %{_mandir}/man1/perlwin32.*
 
 # Dumpvalue
 %exclude %{privlib}/Dumpvalue.pm
@@ -6069,8 +6338,10 @@ popd
 %{privlib}/bytes_heavy.pl
 %{privlib}/_charnames.pm
 %{privlib}/charnames.pm
+%{privlib}/CORE.pod
 %{privlib}/feature.pm
 %{privlib}/integer.pm
+%{privlib}/Internals.pod
 %{privlib}/PerlIO.pm
 %{privlib}/strict.pm
 %{privlib}/unicore
@@ -6088,9 +6359,11 @@ popd
 %{_mandir}/man3/bytes.*
 %{_mandir}/man3/charnames.*
 %{_mandir}/man3/Config.*
+%{_mandir}/man3/CORE.*
 %{_mandir}/man3/feature.3*
 %{_mandir}/man3/File::Glob.*
 %{_mandir}/man3/integer.*
+%{_mandir}/man3/Internals.*
 %{_mandir}/man3/PerlIO.*
 %{_mandir}/man3/PerlIO::encoding.*
 %{_mandir}/man3/PerlIO::mmap.*
@@ -6420,6 +6693,253 @@ popd
 %files DirHandle
 %{privlib}/DirHandle.pm
 %{_mandir}/man3/DirHandle.3*
+
+%files doc
+%dir %{privlib}/pod
+%{privlib}/pod/perl5*delta.pod
+%{privlib}/pod/perlaix.pod
+%{privlib}/pod/perlamiga.pod
+%{privlib}/pod/perlandroid.pod
+%{privlib}/pod/perlapi.pod
+%{privlib}/pod/perlapio.pod
+%{privlib}/pod/perlartistic.pod
+%{privlib}/pod/perlbook.pod
+%{privlib}/pod/perlboot.pod
+%{privlib}/pod/perlbot.pod
+%{privlib}/pod/perlbs2000.pod
+%{privlib}/pod/perlcall.pod
+%{privlib}/pod/perlce.pod
+%{privlib}/pod/perlcheat.pod
+%{privlib}/pod/perlclib.pod
+%{privlib}/pod/perlcn.pod
+%{privlib}/pod/perlcommunity.pod
+%{privlib}/pod/perlcygwin.pod
+%{privlib}/pod/perldata.pod
+%{privlib}/pod/perldbmfilter.pod
+%{privlib}/pod/perldebguts.pod
+%{privlib}/pod/perldebtut.pod
+%{privlib}/pod/perldelta.pod
+%{privlib}/pod/perldeprecation.pod
+%{privlib}/pod/perldos.pod
+%{privlib}/pod/perldsc.pod
+%{privlib}/pod/perldtrace.pod
+%{privlib}/pod/perlebcdic.pod
+%{privlib}/pod/perlembed.pod
+%{privlib}/pod/perlexperiment.pod
+%{privlib}/pod/perlfork.pod
+%{privlib}/pod/perlform.pod
+%{privlib}/pod/perlfreebsd.pod
+%{privlib}/pod/perlfunc.pod
+%{privlib}/pod/perlgit.pod
+%{privlib}/pod/perlgpl.pod
+%{privlib}/pod/perlguts.pod
+%{privlib}/pod/perlhack.pod
+%{privlib}/pod/perlhacktips.pod
+%{privlib}/pod/perlhacktut.pod
+%{privlib}/pod/perlhaiku.pod
+%{privlib}/pod/perlhist.pod
+%{privlib}/pod/perlhpux.pod
+%{privlib}/pod/perlhurd.pod
+%{privlib}/pod/perlintern.pod
+%{privlib}/pod/perlinterp.pod
+%{privlib}/pod/perlintro.pod
+%{privlib}/pod/perliol.pod
+%{privlib}/pod/perlipc.pod
+%{privlib}/pod/perlirix.pod
+%{privlib}/pod/perljp.pod
+%{privlib}/pod/perlko.pod
+%{privlib}/pod/perllexwarn.pod
+%{privlib}/pod/perllinux.pod
+%{privlib}/pod/perllocale.pod
+%{privlib}/pod/perllol.pod
+%{privlib}/pod/perlmacos.pod
+%{privlib}/pod/perlmacosx.pod
+%{privlib}/pod/perlmod.pod
+%{privlib}/pod/perlmodinstall.pod
+%{privlib}/pod/perlmodlib.pod
+%{privlib}/pod/perlmodstyle.pod
+%{privlib}/pod/perlmroapi.pod
+%{privlib}/pod/perlnetware.pod
+%{privlib}/pod/perlnewmod.pod
+%{privlib}/pod/perlnumber.pod
+%{privlib}/pod/perlobj.pod
+%{privlib}/pod/perlootut.pod
+%{privlib}/pod/perlop.pod
+%{privlib}/pod/perlopenbsd.pod
+%{privlib}/pod/perlopentut.pod
+%{privlib}/pod/perlos2.pod
+%{privlib}/pod/perlos390.pod
+%{privlib}/pod/perlos400.pod
+%{privlib}/pod/perlpacktut.pod
+%{privlib}/pod/perlperf.pod
+%{privlib}/pod/perlplan9.pod
+%{privlib}/pod/perlpod.pod
+%{privlib}/pod/perlpodspec.pod
+%{privlib}/pod/perlpolicy.pod
+%{privlib}/pod/perlport.pod
+%{privlib}/pod/perlpragma.pod
+%{privlib}/pod/perlqnx.pod
+%{privlib}/pod/perlre.pod
+%{privlib}/pod/perlreapi.pod
+%{privlib}/pod/perlrebackslash.pod
+%{privlib}/pod/perlrecharclass.pod
+%{privlib}/pod/perlref.pod
+%{privlib}/pod/perlreftut.pod
+%{privlib}/pod/perlreguts.pod
+%{privlib}/pod/perlrepository.pod
+%{privlib}/pod/perlrequick.pod
+%{privlib}/pod/perlreref.pod
+%{privlib}/pod/perlretut.pod
+%{privlib}/pod/perlriscos.pod
+%{privlib}/pod/perlsec.pod
+%{privlib}/pod/perlsolaris.pod
+%{privlib}/pod/perlsource.pod
+%{privlib}/pod/perlstyle.pod
+%{privlib}/pod/perlsub.pod
+%{privlib}/pod/perlsymbian.pod
+%{privlib}/pod/perlsyn.pod
+%{privlib}/pod/perlsynology.pod
+%{privlib}/pod/perlthrtut.pod
+%{privlib}/pod/perltie.pod
+%{privlib}/pod/perltoc.pod
+%{privlib}/pod/perltodo.pod
+%{privlib}/pod/perltooc.pod
+%{privlib}/pod/perltoot.pod
+%{privlib}/pod/perltrap.pod
+%{privlib}/pod/perltru64.pod
+%{privlib}/pod/perltw.pod
+%{privlib}/pod/perlunicode.pod
+%{privlib}/pod/perlunicook.pod
+%{privlib}/pod/perlunifaq.pod
+%{privlib}/pod/perluniintro.pod
+%{privlib}/pod/perluniprops.pod
+%{privlib}/pod/perlunitut.pod
+%{privlib}/pod/perlvar.pod
+%{privlib}/pod/perlvms.pod
+%{privlib}/pod/perlvos.pod
+%{privlib}/pod/perlwin32.pod
+%{_mandir}/man1/perl5*delta.*
+%{_mandir}/man1/perlaix.*
+%{_mandir}/man1/perlamiga.*
+%{_mandir}/man1/perlandroid.*
+%{_mandir}/man1/perlapi.*
+%{_mandir}/man1/perlapio.*
+%{_mandir}/man1/perlartistic.*
+%{_mandir}/man1/perlbook.*
+%{_mandir}/man1/perlboot.*
+%{_mandir}/man1/perlbot.*
+%{_mandir}/man1/perlbs2000.*
+%{_mandir}/man1/perlcall.*
+%{_mandir}/man1/perlce.*
+%{_mandir}/man1/perlcheat.*
+%{_mandir}/man1/perlclib.*
+%{_mandir}/man1/perlcn.*
+%{_mandir}/man1/perlcommunity.*
+%{_mandir}/man1/perlcygwin.*
+%{_mandir}/man1/perldata.*
+%{_mandir}/man1/perldbmfilter.*
+%{_mandir}/man1/perldebguts.*
+%{_mandir}/man1/perldebtut.*
+%{_mandir}/man1/perldelta.*
+%{_mandir}/man1/perldeprecation.*
+%{_mandir}/man1/perldos.*
+%{_mandir}/man1/perldsc.*
+%{_mandir}/man1/perldtrace.*
+%{_mandir}/man1/perlebcdic.*
+%{_mandir}/man1/perlembed.*
+%{_mandir}/man1/perlexperiment.*
+%{_mandir}/man1/perlfork.*
+%{_mandir}/man1/perlform.*
+%{_mandir}/man1/perlfreebsd.*
+%{_mandir}/man1/perlfunc.*
+%{_mandir}/man1/perlgit.*
+%{_mandir}/man1/perlgpl.*
+%{_mandir}/man1/perlguts.*
+%{_mandir}/man1/perlhack.*
+%{_mandir}/man1/perlhacktips.*
+%{_mandir}/man1/perlhacktut.*
+%{_mandir}/man1/perlhaiku.*
+%{_mandir}/man1/perlhist.*
+%{_mandir}/man1/perlhpux.*
+%{_mandir}/man1/perlhurd.*
+%{_mandir}/man1/perlintern.*
+%{_mandir}/man1/perlinterp.*
+%{_mandir}/man1/perlintro.*
+%{_mandir}/man1/perliol.*
+%{_mandir}/man1/perlipc.*
+%{_mandir}/man1/perlirix.*
+%{_mandir}/man1/perljp.*
+%{_mandir}/man1/perlko.*
+%{_mandir}/man1/perllexwarn.*
+%{_mandir}/man1/perllinux.*
+%{_mandir}/man1/perllocale.*
+%{_mandir}/man1/perllol.*
+%{_mandir}/man1/perlmacos.*
+%{_mandir}/man1/perlmacosx.*
+%{_mandir}/man1/perlmod.*
+%{_mandir}/man1/perlmodinstall.*
+%{_mandir}/man1/perlmodlib.*
+%{_mandir}/man1/perlmodstyle.*
+%{_mandir}/man1/perlmroapi.*
+%{_mandir}/man1/perlnetware.*
+%{_mandir}/man1/perlnewmod.*
+%{_mandir}/man1/perlnumber.*
+%{_mandir}/man1/perlobj.*
+%{_mandir}/man1/perlootut.*
+%{_mandir}/man1/perlop.*
+%{_mandir}/man1/perlopenbsd.*
+%{_mandir}/man1/perlopentut.*
+%{_mandir}/man1/perlos2.*
+%{_mandir}/man1/perlos390.*
+%{_mandir}/man1/perlos400.*
+%{_mandir}/man1/perlpacktut.*
+%{_mandir}/man1/perlperf.*
+%{_mandir}/man1/perlplan9.*
+%{_mandir}/man1/perlpod.*
+%{_mandir}/man1/perlpodspec.*
+%{_mandir}/man1/perlpolicy.*
+%{_mandir}/man1/perlport.*
+%{_mandir}/man1/perlpragma.*
+%{_mandir}/man1/perlqnx.*
+%{_mandir}/man1/perlre.*
+%{_mandir}/man1/perlreapi.*
+%{_mandir}/man1/perlrebackslash.*
+%{_mandir}/man1/perlrecharclass.*
+%{_mandir}/man1/perlref.*
+%{_mandir}/man1/perlreftut.*
+%{_mandir}/man1/perlreguts.*
+%{_mandir}/man1/perlrepository.*
+%{_mandir}/man1/perlrequick.*
+%{_mandir}/man1/perlreref.*
+%{_mandir}/man1/perlretut.*
+%{_mandir}/man1/perlriscos.*
+%{_mandir}/man1/perlsec.*
+%{_mandir}/man1/perlsolaris.*
+%{_mandir}/man1/perlsource.*
+%{_mandir}/man1/perlstyle.*
+%{_mandir}/man1/perlsub.*
+%{_mandir}/man1/perlsymbian.*
+%{_mandir}/man1/perlsyn.*
+%{_mandir}/man1/perlsynology.*
+%{_mandir}/man1/perlthrtut.*
+%{_mandir}/man1/perltie.*
+%{_mandir}/man1/perltoc.*
+%{_mandir}/man1/perltodo.*
+%{_mandir}/man1/perltooc.*
+%{_mandir}/man1/perltoot.*
+%{_mandir}/man1/perltrap.*
+%{_mandir}/man1/perltru64.*
+%{_mandir}/man1/perltw.*
+%{_mandir}/man1/perlunicode.*
+%{_mandir}/man1/perlunicook.*
+%{_mandir}/man1/perlunifaq.*
+%{_mandir}/man1/perluniintro.*
+%{_mandir}/man1/perluniprops.*
+%{_mandir}/man1/perlunitut.*
+%{_mandir}/man1/perlvar.*
+%{_mandir}/man1/perlvms.*
+%{_mandir}/man1/perlvos.*
+%{_mandir}/man1/perlwin32.*
 
 %files Dumpvalue
 %{privlib}/Dumpvalue.pm
@@ -7670,6 +8190,7 @@ popd
 - Move ExtUtils/typemap to perl-devel
 - Remove ExtUtils::XSSymSet manual without the code (GH#17424)
 - Reduce and move remaining ph files to perl-ph
+- Move most of the generic POD files to perl-doc
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
