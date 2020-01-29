@@ -85,7 +85,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        449%{?dist}
+Release:        450%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -5203,6 +5203,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
 * Fri Nov 29 2019 Petr Pisar <ppisar@redhat.com> - 4:5.30.1-449
 - Fix a memory leak when compiling a regular expression with a non-word class
   (GH#17218)
