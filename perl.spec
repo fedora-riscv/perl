@@ -57,26 +57,41 @@ Name:           perl
 # cpan/Encode/bin/encguess:             Artistic 2.0
 # cpan/libnet/lib/Net/libnetFAQ.pod:    Artistic    (CPAN RT#117888)
 # cpan/Unicode-Collate/Collate/allkeys.txt:     Unicode
+# inline.h:                             MIT
 # lib/unicore:                          UCD
 # ext/SDBM_File/sdbm.{c,h}:             Public domain
 # regexec.c, regcomp.c:                 HSRL
 # cpan/Locale-Maketext-Simple/lib/Locale/Maketext/Simple.pm:    MIT (with
 #                                       exception for Perl)
 # time64.c:                             MIT
+# perly.h:                              GPLv3+ with Bison exception
 # pod/perlpodstyle.pod:                 MIT
 # pod/perlunicook.pod:                  (GPL+ or Artistic) and Public Domain
 # pod/perlgpl.pod:                      GPL text
 # pod/perlartistic.pod:                 Artistic text
 # ext/File-Glob/bsd_glob.{c,h}:         BSD
 # Other files:                          GPL+ or Artistic
-## Not is a binary package
-# cpan/podlators/t/style/minimum-version.t          MIT
+## Not in a binary package
+# ebcdic_tables.h:                                  MIT
+# cpan/podlators/t/docs/pod.t:                      MIT
+# cpan/podlators/t/docs/pod-spelling.t:             MIT
+# cpan/podlators/t/docs/spdx-license.t:             MIT
+# cpan/podlators/t/docs/synopsis.t:                 MIT
+# cpan/podlators/t/docs/urls.t :                    MIT
+# cpan/podlators/t/lib/Test/RRA.pm:                 MIT
+# cpan/podlators/t/lib/Test/RRA/Config.pm:          MIT
+# cpan/podlators/t/lib/Test/RRA/ModuleVersion.pm:   MIT
+# cpan/podlators/t/style/minimum-version.t:         MIT
+# cpan/podlators/t/style/module-version.t:          MIT
+# cpan/podlators/t/style/strict.t:                  MIT
 # cpan/Term-ANSIColor/t/lib/Test/RRA/Config.pm:     MIT
 ## Unbundled
 # cpan/Compress-Raw-Bzip2/bzip2-src:    BSD
 # cpan/Compress-Raw-Zlib/zlib-src:      zlib
+# perl.h (EBDIC parts)                              MIT
 ## perl sub-package notice
 # perluniprops.pod is generated from lib/unicore sources:   UCD
+# uni_keywords.h is generated from lib/unicore sources:     UCD
 #
 # This sub-subpackage doesn't contain any copyrightable material.
 # Nevertheless, it needs a License tag, so we'll use the generic
