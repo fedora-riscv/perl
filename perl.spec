@@ -573,10 +573,8 @@ Provides:       perl(unicore::Name)
 # causes loading utf8 and unicore/Heave.pl and unicore/lib files.
 Provides:       perl(utf8_heavy.pl)
 # utf8 and utf8_heavy.pl require Carp, re, strict, warnings, XSLoader
-Requires:       perl(Carp)
 # For AnyDBM_File
 Suggests:       perl(DB_File)
-Requires:       perl(Exporter)
 # File::Spec loaded by _charnames.pm that is loaded by \N{}
 Requires:       perl(File::Spec)
 %if %{with gdbm}
