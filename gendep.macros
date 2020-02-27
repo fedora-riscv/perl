@@ -37,61 +37,48 @@ Requires: perl(warnings) \
 Provides: perl(Attribute::Handlers) = 1.01 \
 %{nil}
 %global gendep_perl_AutoLoader \
-Provides: perl(AutoLoader) = 5.74 \
+Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(strict) \
+Provides: perl(AutoLoader) = 5.74 \
 %{nil}
 %global gendep_perl_AutoSplit \
-Provides: perl(AutoSplit) = 1.06 \
 Requires: perl(Config) \
 Requires: perl(Exporter) \
 Requires: perl(File::Basename) \
 Requires: perl(File::Path) \
 Requires: perl(File::Spec::Functions) \
 Requires: perl(strict) \
-%{nil}
-%global gendep_perl_autouse \
-Requires: perl(:VERSION) >= 5.6.0 \
-Provides: perl(autouse) = 1.11 \
+Provides: perl(AutoSplit) = 1.06 \
 %{nil}
 %global gendep_perl_B \
 Requires: perl(B) \
 Requires: perl(B::Concise) \
 Requires: perl(B::Op_private) \
 Requires: perl(B::Terse) \
+Requires: perl(Carp) \
+Requires: perl(Config) \
+Requires: perl(Exporter) \
+Requires: perl(feature) \
+Requires: perl(re) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
 Provides: perl(B) = 1.76 \
 Provides: perl(B::Concise) = 1.004 \
 Provides: perl(B::Deparse) = 1.49 \
 Provides: perl(B::OBJECT) \
-Provides: perl(B::Op_private) = 5.030000 \
+Provides: perl(B::Op_private) = 5.030001 \
 Provides: perl(B::Showlex) = 1.05 \
 Provides: perl(B::Terse) = 1.09 \
 Provides: perl(B::Xref) = 1.07 \
 Provides: perl(O) = 1.03 \
+%{nil}
+%global gendep_perl_B_debuginfo \
 %{nil}
 %global gendep_perl_Benchmark \
 Requires: perl(Carp) \
 Requires: perl(Exporter) \
 Requires: perl(strict) \
 Provides: perl(Benchmark) = 1.22 \
-%{nil}
-%global gendep_perl_base \
-Requires: perl(:VERSION) >= 5.8.0 \
-Requires: perl(strict) \
-Provides: perl(base) = 2.27 \
-%{nil}
-%global gendep_perl_blib \
-Requires: perl(Cwd) \
-Requires: perl(File::Spec) \
-Provides: perl(blib) = 1.07 \
-%{nil}
-%global gendep_perl_Class_Struct \
-Requires: perl(:VERSION) >= 5.6.0 \
-Requires: perl(Carp) \
-Requires: perl(Exporter) \
-Requires: perl(strict) \
-Requires: perl(warnings::register) \
-Provides: perl(Class::Struct) = 0.65 \
-Provides: perl(Class::Struct::Tie_ISA) \
 %{nil}
 %global gendep_perl_CPAN \
 Requires: perl(:VERSION) >= 5.6.0 \
@@ -251,6 +238,15 @@ Provides: perl(Carp) = 1.50 \
 Provides: perl(Carp::Heavy) = 1.50 \
 Provides: perl(Carp::Heavy) = 1.50 \
 %{nil}
+%global gendep_perl_Class_Struct \
+Requires: perl(:VERSION) >= 5.6.0 \
+Requires: perl(Carp) \
+Requires: perl(Exporter) \
+Requires: perl(strict) \
+Requires: perl(warnings::register) \
+Provides: perl(Class::Struct) = 0.65 \
+Provides: perl(Class::Struct::Tie_ISA) \
+%{nil}
 %global gendep_perl_Compress_Raw_Bzip2 \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(Carp) \
@@ -289,6 +285,17 @@ Requires: perl(vars) \
 Requires: perl(warnings) \
 Provides: perl(Config::Perl::V) = 0.32 \
 %{nil}
+%global gendep_perl_DBM_Filter \
+Requires: perl(Carp) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Provides: perl(DBM_Filter) = 0.06 \
+Provides: perl(DBM_Filter::compress) = 0.03 \
+Provides: perl(DBM_Filter::encode) = 0.03 \
+Provides: perl(DBM_Filter::int32) = 0.03 \
+Provides: perl(DBM_Filter::null) = 0.03 \
+Provides: perl(DBM_Filter::utf8) = 0.03 \
+%{nil}
 %global gendep_perl_DB_File \
 Requires: perl(:VERSION) >= 5.8.3 \
 Requires: perl(Carp) \
@@ -304,17 +311,6 @@ Provides: perl(DB_File::RECNOINFO) \
 %{nil}
 %global gendep_perl_DB_File_debuginfo \
 %{nil}
-%global gendep_perl_DBM_Filter \
-Requires: perl(Carp) \
-Requires: perl(strict) \
-Requires: perl(warnings) \
-Provides: perl(DBM_Filter) = 0.06 \
-Provides: perl(DBM_Filter::compress) = 0.03 \
-Provides: perl(DBM_Filter::encode) = 0.03 \
-Provides: perl(DBM_Filter::int32) = 0.03 \
-Provides: perl(DBM_Filter::null) = 0.03 \
-Provides: perl(DBM_Filter::utf8) = 0.03 \
-%{nil}
 %global gendep_perl_Data_Dumper \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(Carp) \
@@ -328,15 +324,6 @@ Provides: perl(Data::Dumper) = 2.174 \
 Requires: perl(strict) \
 Requires: perl(vars) \
 Provides: perl(Devel::PPPort) = 3.52 \
-%{nil}
-%global gendep_perl_debugger \
-Requires: perl(strict) \
-Provides: perl(DB) = 1.08 \
-%{nil}
-%global gendep_perl_deprecate \
-Requires: perl(strict) \
-Requires: perl(warnings) \
-Provides: perl(deprecate) = 0.04 \
 %{nil}
 %global gendep_perl_Devel_Peek \
 Requires: perl(Exporter) \
@@ -390,6 +377,7 @@ Provides: perl(DirHandle) = 1.05 \
 %{nil}
 %global gendep_perl_Dumpvalue \
 Requires: perl(:VERSION) >= 5.6.0 \
+Requires: perl(strict) \
 Provides: perl(Dumpvalue) = 1.19 \
 %{nil}
 %global gendep_perl_DynaLoader \
@@ -525,23 +513,28 @@ Provides: perl(ExtUtils::CBuilder::Platform::dec_osf) = 0.280231 \
 Provides: perl(ExtUtils::CBuilder::Platform::linux) = 0.280206 \
 Provides: perl(ExtUtils::CBuilder::Platform::os2) = 0.280231 \
 %{nil}
-%global gendep_perl_ExtUtils_Constant \
-Requires: perl(ExtUtils::Constant::Base) \
-Requires: perl(ExtUtils::Constant::Utils) \
-Requires: perl(ExtUtils::Constant::XS) \
-Requires: perl(Text::Wrap) \
-Provides: perl(ExtUtils::Constant) = 0.25 \
-Provides: perl(ExtUtils::Constant::Base) = 0.06 \
-Provides: perl(ExtUtils::Constant::ProxySubs) = 0.09 \
-Provides: perl(ExtUtils::Constant::Utils) = 0.04 \
-Provides: perl(ExtUtils::Constant::XS) = 0.03 \
-%{nil}
 %global gendep_perl_ExtUtils_Command \
 Requires: perl(:VERSION) >= 5.5.30 \
 Requires: perl(Exporter) \
 Requires: perl(strict) \
 Requires: perl(vars) \
 Provides: perl(ExtUtils::Command) = 7.34 \
+%{nil}
+%global gendep_perl_ExtUtils_Constant \
+Requires: perl(Carp) \
+Requires: perl(Exporter) \
+Requires: perl(ExtUtils::Constant::Base) \
+Requires: perl(ExtUtils::Constant::Utils) \
+Requires: perl(ExtUtils::Constant::XS) \
+Requires: perl(Text::Wrap) \
+Requires: perl(constant) \
+Requires: perl(strict) \
+Requires: perl(vars) \
+Provides: perl(ExtUtils::Constant) = 0.25 \
+Provides: perl(ExtUtils::Constant::Base) = 0.06 \
+Provides: perl(ExtUtils::Constant::ProxySubs) = 0.09 \
+Provides: perl(ExtUtils::Constant::Utils) = 0.04 \
+Provides: perl(ExtUtils::Constant::XS) = 0.03 \
 %{nil}
 %global gendep_perl_ExtUtils_Embed \
 Requires: perl(Config) \
@@ -688,14 +681,11 @@ Provides: perl(ExtUtils::Typemaps::Type) = 3.38 \
 %{nil}
 %global gendep_perl_Fcntl \
 Requires: perl(Exporter) \
-Requires: perl(strict) \
 Requires: perl(XSLoader) \
+Requires: perl(strict) \
 Provides: perl(Fcntl) = 1.13 \
 %{nil}
-%global gendep_perl_fields \
-Requires: perl(:VERSION) >= 5.8.0 \
-Requires: perl(strict) \
-Provides: perl(fields) = 2.24 \
+%global gendep_perl_Fcntl_debuginfo \
 %{nil}
 %global gendep_perl_File_Basename \
 Requires: perl(:VERSION) >= 5.6.0 \
@@ -721,10 +711,12 @@ Requires: perl(warnings) \
 Provides: perl(File::Copy) = 2.34 \
 %{nil}
 %global gendep_perl_File_DosGlob \
+Requires: perl(XSLoader) \
 Requires: perl(strict) \
 Requires: perl(warnings) \
-Requires: perl(XSLoader) \
 Provides: perl(File::DosGlob) = 1.12 \
+%{nil}
+%global gendep_perl_File_DosGlob_debuginfo \
 %{nil}
 %global gendep_perl_File_Fetch \
 Requires: perl(Carp) \
@@ -766,19 +758,6 @@ Requires: perl(strict) \
 Requires: perl(vars) \
 Provides: perl(File::Path) = 2.16 \
 %{nil}
-%global gendep_perl_File_stat \
-Requires: perl(:VERSION) >= 5.6.0 \
-Requires: perl(Carp) \
-Requires: perl(Class::Struct) \
-Requires: perl(Exporter) \
-Requires: perl(Fcntl) \
-Requires: perl(constant) \
-Requires: perl(overload) \
-Requires: perl(strict) \
-Requires: perl(warnings) \
-Requires: perl(warnings::register) \
-Provides: perl(File::stat) = 1.08 \
-%{nil}
 %global gendep_perl_File_Temp \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(Carp) \
@@ -798,6 +777,19 @@ Requires: perl(parent) >= 0.221 \
 Requires: perl(strict) \
 Provides: perl(File::Temp) = 0.2309 \
 %{nil}
+%global gendep_perl_File_stat \
+Requires: perl(:VERSION) >= 5.6.0 \
+Requires: perl(Carp) \
+Requires: perl(Class::Struct) \
+Requires: perl(Exporter) \
+Requires: perl(Fcntl) \
+Requires: perl(constant) \
+Requires: perl(overload) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Requires: perl(warnings::register) \
+Provides: perl(File::stat) = 1.08 \
+%{nil}
 %global gendep_perl_FileCache \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(Carp) \
@@ -811,9 +803,6 @@ Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(IO::File) \
 Requires: perl(strict) \
 Provides: perl(FileHandle) = 2.03 \
-%{nil}
-%global gendep_perl_filetest \
-Provides: perl(filetest) = 1.03 \
 %{nil}
 %global gendep_perl_Filter \
 Requires: perl(:VERSION) >= 5.6.0 \
@@ -831,15 +820,6 @@ Provides: perl(Filter::Simple) = 0.95 \
 %{nil}
 %global gendep_perl_Filter_debuginfo \
 %{nil}
-%global gendep_perl_GDBM_File \
-Requires: perl(Carp) \
-Requires: perl(Exporter) \
-Requires: perl(strict) \
-Requires: perl(Tie::Hash) \
-Requires: perl(warnings) \
-Requires: perl(XSLoader) \
-Provides: perl(GDBM_File) = 1.18 \
-%{nil}
 %global gendep_perl_FindBin \
 Requires: perl(:VERSION) >= 5.0.0 \
 Requires: perl(Carp) \
@@ -848,6 +828,17 @@ Requires: perl(Exporter) \
 Requires: perl(File::Basename) \
 Requires: perl(File::Spec) \
 Provides: perl(FindBin) = 1.51 \
+%{nil}
+%global gendep_perl_GDBM_File \
+Requires: perl(Carp) \
+Requires: perl(Exporter) \
+Requires: perl(Tie::Hash) \
+Requires: perl(XSLoader) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Provides: perl(GDBM_File) = 1.18 \
+%{nil}
+%global gendep_perl_GDBM_File_debuginfo \
 %{nil}
 %global gendep_perl_Getopt_Long \
 Requires: perl(:VERSION) >= 5.4.0 \
@@ -865,6 +856,14 @@ Provides: perl(Getopt::Long::Parser) \
 Requires: perl(:VERSION) >= 5.0.0 \
 Requires: perl(Exporter) \
 Provides: perl(Getopt::Std) = 1.12 \
+%{nil}
+%global gendep_perl_HTTP_Tiny \
+Requires: perl(Errno) \
+Requires: perl(IO::Socket) \
+Requires: perl(Socket) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Provides: perl(HTTP::Tiny) = 0.076 \
 %{nil}
 %global gendep_perl_Hash_Util \
 Requires: perl(:VERSION) >= 5.7.3 \
@@ -884,16 +883,37 @@ Requires: perl(strict) \
 Requires: perl(warnings) \
 Provides: perl(Hash::Util::FieldHash) = 1.20 \
 %{nil}
-%global gendep_perl_HTTP_Tiny \
-Requires: perl(Errno) \
-Requires: perl(IO::Socket) \
-Requires: perl(Socket) \
+%global gendep_perl_Hash_Util_FieldHash_debuginfo \
+%{nil}
+%global gendep_perl_Hash_Util_debuginfo \
+%{nil}
+%global gendep_perl_I18N_Collate \
+Requires: perl(Exporter) \
+Requires: perl(POSIX) \
+Requires: perl(overload) \
+Requires: perl(strict) \
+Requires: perl(warnings::register) \
+Provides: perl(I18N::Collate) = 1.02 \
+%{nil}
+%global gendep_perl_I18N_LangTags \
+Requires: perl(:VERSION) >= 5.0.0 \
+Requires: perl(Exporter) \
+Requires: perl(I18N::LangTags) \
+Requires: perl(strict) \
+Provides: perl(I18N::LangTags) = 0.43 \
+Provides: perl(I18N::LangTags::Detect) = 1.07 \
+Provides: perl(I18N::LangTags::List) = 0.40 \
+%{nil}
+%global gendep_perl_I18N_Langinfo \
+Requires: perl(:VERSION) >= 5.6.0 \
+Requires: perl(Carp) \
+Requires: perl(Exporter) \
+Requires: perl(XSLoader) \
 Requires: perl(strict) \
 Requires: perl(warnings) \
-Provides: perl(HTTP::Tiny) = 0.076 \
+Provides: perl(I18N::Langinfo) = 0.18 \
 %{nil}
-%global gendep_perl_if \
-Provides: perl(if) = 0.0608 \
+%global gendep_perl_I18N_Langinfo_debuginfo \
 %{nil}
 %global gendep_perl_IO \
 Requires: perl(:VERSION) >= 5.8.0 \
@@ -1008,7 +1028,6 @@ Provides: perl(Zlib::OldInflate) \
 Requires: perl(Carp) \
 Requires: perl(Errno) \
 Requires: perl(IO::Socket) \
-Requires: perl(IO::Socket::IP) \
 Requires: perl(POSIX) \
 Requires: perl(Socket) >= 1.97 \
 Requires: perl(base) \
@@ -1046,11 +1065,11 @@ Provides: perl(IPC::Cmd) = 1.02 \
 %global gendep_perl_IPC_Open3 \
 Requires: perl(:VERSION) >= 5.0.0 \
 Requires: perl(Carp) \
-Requires: perl(constant) \
 Requires: perl(Exporter) \
 Requires: perl(IPC::Open3) \
-Requires: perl(strict) \
 Requires: perl(Symbol) \
+Requires: perl(constant) \
+Requires: perl(strict) \
 Provides: perl(IPC::Open2) = 1.04 \
 Provides: perl(IPC::Open3) = 1.20 \
 %{nil}
@@ -1072,32 +1091,6 @@ Provides: perl(IPC::SysV) = 2.07 \
 %{nil}
 %global gendep_perl_IPC_SysV_debuginfo \
 %{nil}
-%global gendep_perl_I18N_Collate \
-Requires: perl(Exporter) \
-Requires: perl(overload) \
-Requires: perl(POSIX) \
-Requires: perl(strict) \
-Requires: perl(warnings::register) \
-Provides: perl(I18N::Collate) = 1.02 \
-%{nil}
-%global gendep_perl_I18N_Langinfo \
-Requires: perl(:VERSION) >= 5.6.0 \
-Requires: perl(Carp) \
-Requires: perl(Exporter) \
-Requires: perl(strict) \
-Requires: perl(warnings) \
-Requires: perl(XSLoader) \
-Provides: perl(I18N::Langinfo) = 0.18 \
-%{nil}
-%global gendep_perl_I18N_LangTags \
-Requires: perl(:VERSION) >= 5.0.0 \
-Requires: perl(Exporter) \
-Requires: perl(I18N::LangTags) \
-Requires: perl(strict) \
-Provides: perl(I18N::LangTags) = 0.43 \
-Provides: perl(I18N::LangTags::Detect) = 1.07 \
-Provides: perl(I18N::LangTags::List) = 0.40 \
-%{ni}
 %global gendep_perl_JSON_PP \
 Requires: perl(:VERSION) >= 5.5.0 \
 Requires: perl(Carp) \
@@ -1112,10 +1105,6 @@ Requires: perl(strict) \
 Provides: perl(JSON::PP) = 4.02 \
 Provides: perl(JSON::PP::Boolean) = 4.02 \
 Provides: perl(JSON::PP::IncrParser) = 1.01 \
-%{nil}
-%global gendep_perl_locale \
-Requires: perl(Config) \
-Provides: perl(locale) = 1.09 \
 %{nil}
 %global gendep_perl_Locale_Maketext \
 Requires: perl(Carp) \
@@ -1215,8 +1204,8 @@ Requires: perl(Module::CoreList) \
 Requires: perl(strict) \
 Requires: perl(version) \
 Requires: perl(warnings) \
-Provides: perl(Module::CoreList) = 5.20190522 \
-Provides: perl(Module::CoreList::Utils) = 5.20190522 \
+Provides: perl(Module::CoreList) = 5.20191110 \
+Provides: perl(Module::CoreList::Utils) = 5.20191110 \
 %{nil}
 %global gendep_perl_Module_CoreList_tools \
 Requires: perl(Getopt::Long) \
@@ -1262,22 +1251,29 @@ Requires: perl(version) >= 0.87 \
 Requires: perl(warnings) \
 Provides: perl(Module::Metadata) = 1.000036 \
 %{nil}
-%global gendep_meta_notation \
-Requires: perl(strict) \
-Requires: perl(warnings) \
-%{nil}
-%global gendep_perl_mro \
-Requires: perl(strict) \
-Requires: perl(warnings) \
-Requires: perl(XSLoader) \
-Provides: perl(mro) = 1.22 \
-%{nil}
 %global gendep_perl_NDBM_File \
-Requires: perl(strict) \
 Requires: perl(Tie::Hash) \
-Requires: perl(warnings) \
 Requires: perl(XSLoader) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
 Provides: perl(NDBM_File) = 1.15 \
+%{nil}
+%global gendep_perl_NDBM_File_debuginfo \
+%{nil}
+%global gendep_perl_NEXT \
+Requires: perl(Carp) \
+Requires: perl(overload) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Provides: perl(EVERY::LAST) \
+Provides: perl(NEXT) = 0.67 \
+Provides: perl(NEXT::ACTUAL) \
+Provides: perl(NEXT::ACTUAL::DISTINCT) \
+Provides: perl(NEXT::ACTUAL::UNSEEN) \
+Provides: perl(NEXT::DISTINCT) \
+Provides: perl(NEXT::DISTINCT::ACTUAL) \
+Provides: perl(NEXT::UNSEEN) \
+Provides: perl(NEXT::UNSEEN::ACTUAL) \
 %{nil}
 %global gendep_perl_Net \
 Requires: perl(:VERSION) >= 5.6.0 \
@@ -1303,32 +1299,40 @@ Requires: perl(strict) \
 Provides: perl(Net::Ping) = 2.71 \
 %{nil}
 %global gendep_perl_ODBM_File \
-Requires: perl(strict) \
 Requires: perl(Tie::Hash) \
-Requires: perl(warnings) \
 Requires: perl(XSLoader) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
 Provides: perl(ODBM_File) = 1.16 \
+%{nil}
+%global gendep_perl_ODBM_File_debuginfo \
 %{nil}
 %global gendep_perl_Opcode \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(Carp) \
 Requires: perl(Exporter) \
 Requires: perl(Opcode) \
+Requires: perl(XSLoader) \
 Requires: perl(strict) \
 Requires: perl(subs) \
-Requires: perl(XSLoader) \
 Provides: perl(Opcode) = 1.43 \
 Provides: perl(ops) = 1.02 \
 %{nil}
-%global gendep_perl_NEXT \
-Provides: perl(NEXT) = 0.67 \
-Provides: perl(NEXT::ACTUAL) \
-Provides: perl(NEXT::ACTUAL::DISTINCT) \
-Provides: perl(NEXT::ACTUAL::UNSEEN) \
-Provides: perl(NEXT::DISTINCT) \
-Provides: perl(NEXT::DISTINCT::ACTUAL) \
-Provides: perl(NEXT::UNSEEN) \
-Provides: perl(NEXT::UNSEEN::ACTUAL) \
+%global gendep_perl_Opcode_debuginfo \
+%{nil}
+%global gendep_perl_POSIX \
+Requires: perl(Exporter) \
+Requires: perl(Fcntl) \
+Requires: perl(Tie::Hash) \
+Requires: perl(XSLoader) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Provides: perl(POSIX) = 1.88 \
+Provides: perl(POSIX::SigAction) \
+Provides: perl(POSIX::SigRt) \
+Provides: perl(POSIX::SigSet) \
+%{nil}
+%global gendep_perl_POSIX_debuginfo \
 %{nil}
 %global gendep_perl_Params_Check \
 Requires: perl(Carp) \
@@ -1550,25 +1554,12 @@ Requires: perl(strict) \
 Requires: perl(vars) \
 Provides: perl(Pod::Usage) = 1.69 \
 %{nil}
-%global gendep_perl_POSIX \
-Requires: perl(Exporter) \
-Requires: perl(Fcntl) \
-Requires: perl(strict) \
-Requires: perl(Tie::Hash) \
-Requires: perl(warnings) \
-Requires: perl(XSLoader) \
-Provides: perl(POSIX) = 1.88 \
-Provides: perl(POSIX::SigAction) \
-Provides: perl(POSIX::SigRt) \
-Provides: perl(POSIX::SigSet) \
-%{nil}
 %global gendep_perl_Safe \
 Requires: perl(:VERSION) >= 5.3.0 \
 Requires: perl(B) \
 Requires: perl(Carp) \
 Requires: perl(Opcode) >= 1.01 \
 Requires: perl(Scalar::Util) \
-Requires: perl(utf8) \
 Requires: perl(strict) \
 Requires: perl(utf8) \
 Provides: perl(Safe) = 2.40 \
@@ -1628,11 +1619,13 @@ Requires: perl(Exporter) \
 Provides: perl(Symbol) = 1.08 \
 %{nil}
 %global gendep_perl_Sys_Hostname \
-Requires: perl(perl(Carp) \
+Requires: perl(Carp) \
 Requires: perl(Exporter) \
 Requires: perl(strict) \
 Requires: perl(warnings) \
 Provides: perl(Sys::Hostname) = 1.22 \
+%{nil}
+%global gendep_perl_Sys_Hostname_debuginfo \
 %{nil}
 %global gendep_perl_Sys_Syslog \
 Requires: perl(:VERSION) >= 5.5.0 \
@@ -1953,6 +1946,29 @@ Requires: perl(warnings::register) \
 Provides: perl(Text::Tabs) = 2013.0523 \
 Provides: perl(Text::Wrap) = 2013.0523 \
 %{nil}
+%global gendep_perl_Thread \
+Requires: perl(Config) \
+Requires: perl(Exporter) \
+Requires: perl(strict) \
+Requires: perl(threads) \
+Requires: perl(threads::shared) \
+Requires: perl(warnings) \
+Provides: perl(Thread) = 3.04 \
+%{nil}
+%global gendep_perl_Thread_Queue \
+Requires: perl(Scalar::Util) >= 1.10 \
+Requires: perl(strict) \
+Requires: perl(threads::shared) >= 1.21 \
+Requires: perl(warnings) \
+Provides: perl(Thread::Queue) = 3.13 \
+%{nil}
+%global gendep_perl_Thread_Semaphore \
+Requires: perl(Scalar::Util) >= 1.10 \
+Requires: perl(strict) \
+Requires: perl(threads::shared) \
+Requires: perl(warnings) \
+Provides: perl(Thread::Semaphore) = 2.13 \
+%{nil}
 %global gendep_perl_Tie \
 Requires: perl(:VERSION) >= 5.6.0 \
 Requires: perl(Carp) \
@@ -1960,6 +1976,7 @@ Requires: perl(Tie::Handle) \
 Requires: perl(Tie::StdHandle) \
 Requires: perl(integer) \
 Requires: perl(strict) \
+Requires: perl(warnings::register) \
 Provides: perl(Tie::Array) = 1.07 \
 Provides: perl(Tie::Handle) = 4.2 \
 Provides: perl(Tie::Scalar) = 1.04 \
@@ -1987,33 +2004,11 @@ Provides: perl(Tie::Memoize) = 1.1 \
 Requires: perl(:VERSION) >= 5.5.0 \
 Requires: perl(Carp) \
 Requires: perl(Config) \
+Requires: perl(Tie::Hash) \
 Requires: perl(strict) \
 Requires: perl(vars) \
 Provides: perl(Tie::RefHash) = 1.39 \
 Provides: perl(Tie::RefHash::Nestable) \
-%{nil}
-%global gendep_perl_Thread \
-Requires: perl(Config) \
-Requires: perl(Exporter) \
-Requires: perl(strict) \
-Requires: perl(threads) \
-Requires: perl(threads::shared) \
-Requires: perl(warnings) \
-Provides: perl(Thread) = 3.04 \
-%{nil}
-%global gendep_perl_Thread_Queue \
-Requires: perl(Scalar::Util) >= 1.10 \
-Requires: perl(strict) \
-Requires: perl(threads::shared) >= 1.21 \
-Requires: perl(warnings) \
-Provides: perl(Thread::Queue) = 3.13 \
-%{nil}
-%global gendep_perl_Thread_Semaphore \
-Requires: perl(Scalar::Util) >= 1.10 \
-Requires: perl(strict) \
-Requires: perl(threads::shared) \
-Requires: perl(warnings) \
-Provides: perl(Thread::Semaphore) = 2.13 \
 %{nil}
 %global gendep_perl_Time \
 Requires: perl(:VERSION) >= 5.6.0 \
@@ -2142,6 +2137,15 @@ Provides: perl(autodie::exception::system) = 2.29 \
 Provides: perl(autodie::hints) = 2.29001 \
 Provides: perl(autodie::skip) = 2.29 \
 %{nil}
+%global gendep_perl_autouse \
+Requires: perl(:VERSION) >= 5.6.0 \
+Provides: perl(autouse) = 1.11 \
+%{nil}
+%global gendep_perl_base \
+Requires: perl(:VERSION) >= 5.8.0 \
+Requires: perl(strict) \
+Provides: perl(base) = 2.27 \
+%{nil}
 %global gendep_perl_bignum \
 Requires: perl(:VERSION) >= 5.10.0 \
 Requires: perl(Exporter) \
@@ -2158,15 +2162,31 @@ Provides: perl(bigint) = 0.51 \
 Provides: perl(bignum) = 0.51 \
 Provides: perl(bigrat) = 0.51 \
 %{nil}
+%global gendep_perl_blib \
+Requires: perl(Cwd) \
+Requires: perl(File::Spec) \
+Provides: perl(blib) = 1.07 \
+%{nil}
 %global gendep_perl_constant \
 Requires: perl(:VERSION) >= 5.8.0 \
 Requires: perl(strict) \
 Requires: perl(warnings::register) \
 Provides: perl(constant) = 1.33 \
 %{nil}
+%global gendep_perl_debugger \
+Requires: perl(strict) \
+Provides: perl(DB) = 1.08 \
+Provides: perl(dumpvar.pl) = 5.30.1 \
+Provides: perl(perl5db.pl) = 1.55 \
+%{nil}
 %global gendep_perl_debuginfo \
 %{nil}
 %global gendep_perl_debugsource \
+%{nil}
+%global gendep_perl_deprecate \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Provides: perl(deprecate) = 0.04 \
 %{nil}
 %global gendep_perl_devel \
 Requires: perl(Config) \
@@ -2189,6 +2209,8 @@ Requires: perl(Text::Tabs) \
 Requires: perl(strict) \
 Provides: perl(diagnostics) = 1.36 \
 %{nil}
+%global gendep_perl_doc \
+%{nil}
 %global gendep_perl_encoding \
 Requires: perl(Config) \
 Requires: perl(Encode) \
@@ -2210,10 +2232,18 @@ Requires: perl(version) \
 Requires: perl(warnings) \
 Provides: perl(experimental) = 0.020 \
 %{nil}
+%global gendep_perl_fields \
+Requires: perl(:VERSION) >= 5.8.0 \
+Requires: perl(strict) \
+Provides: perl(fields) = 2.24 \
+%{nil}
+%global gendep_perl_filetest \
+Provides: perl(filetest) = 1.03 \
+%{nil}
+%global gendep_perl_if \
+Provides: perl(if) = 0.0608 \
+%{nil}
 %global gendep_perl_interpreter \
-Requires: perl(I18N::LangTags) \
-Requires: perl(warnings) \
-Provides: perl(EVERY::LAST) \
 %{nil}
 %global gendep_perl_interpreter_debuginfo \
 %{nil}
@@ -2279,15 +2309,17 @@ Requires: perl(Carp) \
 Requires: perl(Exporter) \
 Requires: perl(Tie::Hash) \
 Requires: perl(XSLoader) \
-Requires: perl(bytes) \
 Requires: perl(_charnames) \
+Requires: perl(bytes) \
 Requires: perl(integer) \
 Requires: perl(re) \
 Requires: perl(strict) \
 Requires: perl(unicore::Name) \
 Requires: perl(warnings) \
+Requires: perl(warnings::register) \
 Provides: perl(:MODULE_COMPAT_5.30.0) \
-Provides: perl(:VERSION) = 5.30.0 \
+Provides: perl(:MODULE_COMPAT_5.30.1) \
+Provides: perl(:VERSION) = 5.30.1 \
 Provides: perl(:WITH_64BIT) \
 Provides: perl(:WITH_ITHREADS) \
 Provides: perl(:WITH_LARGEFILES) \
@@ -2308,9 +2340,10 @@ Provides: perl(Tie::Hash::NamedCapture) = 0.10 \
 Provides: perl(Tie::StdHash) \
 Provides: perl(UNIVERSAL) = 1.13 \
 Provides: perl(XSLoader) = 0.30 \
+Provides: perl(_charnames) = 1.45 \
 Provides: perl(attributes) = 0.33 \
 Provides: perl(bytes) = 1.07 \
-Provides: perl(_charnames) = 1.45 \
+Provides: perl(bytes_heavy.pl) \
 Provides: perl(charnames) = 1.45 \
 Provides: perl(feature) = 1.54 \
 Provides: perl(integer) = 1.01 \
@@ -2324,7 +2357,24 @@ Provides: perl(warnings::register) = 1.04 \
 %{nil}
 %global gendep_perl_libs_debuginfo \
 %{nil}
+%global gendep_perl_locale \
+Requires: perl(Config) \
+Provides: perl(locale) = 1.09 \
+%{nil}
 %global gendep_perl_macros \
+%{nil}
+%global gendep_perl_meta_notation \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Provides: perl(meta_notation) = 5.30.1 \
+%{nil}
+%global gendep_perl_mro \
+Requires: perl(XSLoader) \
+Requires: perl(strict) \
+Requires: perl(warnings) \
+Provides: perl(mro) = 1.22 \
+%{nil}
+%global gendep_perl_mro_debuginfo \
 %{nil}
 %global gendep_perl_open \
 Requires: perl(:VERSION) >= 5.8.1 \
@@ -2349,6 +2399,11 @@ Provides: perl(parent) = 0.237 \
 Requires: perl(strict) \
 Requires: perl(warnings) \
 Provides: perl(perlfaq) = 5.20190126 \
+%{nil}
+%global gendep_perl_ph \
+Provides: perl(sys/ioctl.ph) = 5.30.1 \
+Provides: perl(sys/syscall.ph) = 5.30.1 \
+Provides: perl(syscall.ph) = 5.30.1 \
 %{nil}
 %global gendep_perl_podlators \
 Requires: perl(:VERSION) >= 5.6.0 \
