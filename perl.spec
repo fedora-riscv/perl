@@ -4749,7 +4749,29 @@ popd
 %ldconfig_scriptlets libs
 
 %files
-# Main perl package is a meta package.
+# Main perl package is an empty meta package.
+%if !(%{dual_life} || %{rebuild_from_scratch})
+# These excludes are here to work around a bug in debuginfo generator
+# <https://github.com/rpm-software-management/rpm/issues/1094> that would
+# otherwise leave debuginfo files in the buildroot tree. It seems that
+# the excludes in noarch files sections are ignorered by the debuginfo
+# generator.
+%exclude %{archlib}/auto/Compress/Raw/Bzip2/Bzip2.so
+%exclude %{archlib}/auto/Compress/Raw/Zlib/Zlib.so
+%exclude %{archlib}/auto/Cwd/Cwd.so
+%exclude %{archlib}/auto/DB_File/DB_File.so
+%exclude %{archlib}/auto/Data/Dumper/Dumper.so
+%exclude %{archlib}/auto/Digest/MD5/MD5.so
+%exclude %{archlib}/auto/Digest/SHA/SHA.so
+%exclude %{archlib}/auto/Filter/Util/Call/Call.so
+%exclude %{archlib}/auto/IPC/SysV/SysV.so
+%exclude %{archlib}/auto/List/Util/Util.so
+%exclude %{archlib}/auto/MIME/Base64/Base64.so
+%exclude %{archlib}/auto/Math/BigInt/FastCalc/FastCalc.so
+%exclude %{archlib}/auto/Socket/Socket.so
+%exclude %{archlib}/auto/Storable/Storable.so
+%exclude %{archlib}/auto/Time/HiRes/HiRes.so
+%endif
 
 %files interpreter
 %{_bindir}/perl
