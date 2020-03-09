@@ -3326,7 +3326,7 @@ Version:        1.13
 BuildArch:      noarch
 Requires:       %perl_compat
 # Match perl the functions come from
-Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
+Requires:       perl-libs = %{perl_epoch}:%{perl_version}-%{release}
 %if %{defined perl_bootstrap}
 %gendep_perl_Pod_Functions
 %endif
