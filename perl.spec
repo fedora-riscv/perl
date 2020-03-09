@@ -6622,7 +6622,9 @@ popd
 %{archlib}/features.ph
 %{archlib}/gnu
 %{archlib}/_h2ph_pre.ph
+%ifnarch ppc64le
 %{archlib}/linux
+%endif
 %{archlib}/stdc-predef.ph
 %{archlib}/sys
 %{archlib}/syscall.ph
