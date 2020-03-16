@@ -1,4 +1,4 @@
-%global perl_version    5.30.1
+%global perl_version    5.30.2
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -85,7 +85,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        450%{?dist}
+Release:        451%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -148,9 +148,6 @@ Patch12:        perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
 
 # Pass the correct CFLAGS to dtrace
 Patch13:        perl-5.28.0-Pass-CFLAGS-to-dtrace.patch
-
-# Do not panic when outputting a warning, RT#134059, fixed after 5.31.0
-Patch15:        perl-5.31.0-PATCH-perl-134059-panic-outputting-a-warning.patch
 
 # Fix memory handling when parsing string literals, fixed after 5.31.0
 Patch16:        perl-5.31.0-S_scan_const-Properly-test-if-need-to-grow.patch
@@ -247,11 +244,6 @@ Patch54:        perl-5.31.3-regcomp.c-Fix-wrong-limit-test.patch
 # fixed after 5.31.3
 Patch56:        perl-5.31.3-perl-134230-don-t-interpret-0x-0b-when-numifying-str.patch
 
-# Fix a buffer overflow when compiling a regular expression with many
-# branches, RT#134329, fixed after 5.31.3
-# This is a binary patch and requires git.
-Patch58:        perl-5.30.0-PATCH-perl-134329-Use-after-free-in-regcomp.c.patch
-
 # Correct a misspelling in perlrebackslash documentation, RT#134395,
 # fixed after 5.31.3
 Patch59:        perl-5.31.3-Supply-missing-right-brace-in-regex-example.patch
@@ -288,14 +280,6 @@ Patch70:        perl-5.31.5-prevent-a-race-between-name-based-stat-and-an-open-m
 # in upstream after 5.31.5
 Patch71:        perl-5.30.1-handle-s-being-updated-without-len-being-updated.patch
 
-# Fix GCC 10 version detection, <https://github.com/Perl/perl5/pull/17295>,
-# in upstream after 5.31.5
-Patch72:        perl-5.31.5-Adapt-Configure-to-GCC-version-10.patch
-
-# Fix a memory leak when compiling a regular expression with a non-word class,
-# GH#17218, in upsream after 5.31.5
-Patch73:        perl-5.31.5-PATCH-gh-17218-memory-leak.patch
-
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -313,8 +297,6 @@ BuildRequires:  gcc
 %if %{with gdbm}
 BuildRequires:  gdbm-devel
 %endif
-# git for PATCH-perl-134329-Use-after-free-in-regcomp.c.patch
-BuildRequires:  git-core
 # glibc-common for iconv
 BuildRequires:  glibc-common
 %if %{with perl_enables_groff}
@@ -355,7 +337,7 @@ BuildRequires:  rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.30.1)
+%global perl_compat perl(:MODULE_COMPAT_5.30.2)
 
 Requires:       %perl_compat
 Requires:       perl-interpreter%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
@@ -455,6 +437,8 @@ Epoch:          %{perl_epoch}
 Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
 # Require this till perl-interpreter sub-package provides any modules
 Requires:       %perl_compat
+Provides:       perl-debugger
+Provides:       perl-doc
 %if %{defined perl_bootstrap}
 %gendep_perl_interpreter
 %endif
@@ -508,6 +492,7 @@ License:        (GPL+ or Artistic) and HSRL and MIT and UCD
 # Compat provides
 Provides:       %perl_compat
 Provides:       perl(:MODULE_COMPAT_5.30.0)
+Provides:       perl(:MODULE_COMPAT_5.30.1)
 # Interpreter version to fulfil required genersted from "require 5.006;"
 Provides:       perl(:VERSION) = %{perl_version}
 # Integeres are 64-bit on all platforms
@@ -1955,7 +1940,7 @@ encoder/decoder. These encoding methods are specified in RFC 2045 - MIME
 Summary:        What modules are shipped with versions of perl
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20191110
+Version:        5.20200314
 Requires:       %perl_compat
 Requires:       perl(List::Util)
 Requires:       perl(version) >= 0.88
@@ -1973,7 +1958,7 @@ are shipped with each version of perl.
 Summary:        Tool for listing modules shipped with perl
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20191110
+Version:        5.20200314
 Requires:       %perl_compat
 Requires:       perl(feature)
 Requires:       perl(version) >= 0.88
@@ -2834,7 +2819,6 @@ Perl extension for Version Objects
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
-%patch15 -p1
 %patch16 -p1
 %patch17 -p1
 %patch18 -p1
@@ -2867,15 +2851,6 @@ Perl extension for Version Objects
 %patch53 -p1
 %patch54 -p1
 %patch56 -p1
-# PATCH-perl-134329-Use-after-free-in-regcomp.c.patch is a binary patch
-git init-db .
-git config --replace-all gc.auto 0 # Prevent from racing with "rm -rf .git"
-git config --replace-all user.email '<nobody@localhost>'
-git config --replace-all user.name 'Nobody'
-git add .
-git commit --message 'Import'
-git am < %{PATCH58}
-rm -rf .git # Perl tests examine a git repository
 %patch59 -p1
 %patch61 -p1
 %patch62 -p1
@@ -2888,8 +2863,6 @@ rm -rf .git # Perl tests examine a git repository
 %patch69 -p1
 %patch70 -p1
 %patch71 -p1
-%patch72 -p1
-%patch73 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2910,7 +2883,6 @@ perl -x patchlevel.h \
     'Fedora Patch11: Replace EU::MakeMaker dependency with EU::MM::Utils in IPC::Cmd (bug #1129443)' \
     'Fedora Patch12: Link XS modules to pthread library to fix linking with -z defs' \
     'Fedora Patch13: Pass the correct CFLAGS to dtrace' \
-    'Fedora Patch15: Do not panic when outputting a warning (RT#134059)' \
     'Fedora Patch16: Fix memory handling when parsing string literals' \
     'Fedora Patch17: Fix an undefined behavior in shifting IV variables' \
     'Fedora Patch18: Fix an undefined behavior in shifting IV variables' \
@@ -2943,7 +2915,6 @@ perl -x patchlevel.h \
     'Fedora Patch53: Do not run File-Find tests in parallel' \
     'Fedora Patch54: Fix parsing a Unicode property name when compiling a regular expression' \
     'Fedora Patch56: Do not interpret 0x and 0b prefixes when numifying strings (RT#134230)' \
-    'Fedora Patch58: Fix a buffer overflow when compiling a regular expression with many branches (RT#134329)' \
     'Fedora Patch59: Correct a misspelling in perlrebackslash documentation (RT#134395)' \
     'Fedora Patch61: Fix a detection for futimes (RT#134432)' \
     'Fedora Patch62: Fix a detection for futimes (RT#134432)' \
@@ -2956,8 +2927,6 @@ perl -x patchlevel.h \
     'Fedora Patch69: Fix an unintended upgrade to UTF-8 in the middle of a transliteration' \
     'Fedora Patch70: Fix a race in File::stat() tests (GH#17234)' \
     'Fedora Patch71: Fix a buffer overread when parsing a number (GH#17279)' \
-    'Fedora Patch72: Fix GCC 10 version detection (GH#17295)' \
-    'Fedora Patch73: Fix a memory leak when compiling a regular expression with a non-word class (GH#17218)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5203,6 +5172,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Mar 16 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.2-451
+- 5.30.2 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.30.2/pod/perldelta.pod>
+  for release notes)
+
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.30.1-450
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
