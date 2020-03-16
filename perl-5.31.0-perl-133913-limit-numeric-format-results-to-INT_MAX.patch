@@ -56,7 +56,7 @@ diff --git a/t/op/sprintf2.t b/t/op/sprintf2.t
 index 84259a4afd..5fee8efede 100644
 --- a/t/op/sprintf2.t
 +++ b/t/op/sprintf2.t
-@@ -1153,4 +1153,11 @@ foreach(
+@@ -1153,6 +1153,14 @@ foreach(
      is sprintf("%.0f", $_), sprintf("%-.0f", $_), "special-case %.0f on $_";
  }
  
@@ -67,7 +67,10 @@ index 84259a4afd..5fee8efede 100644
 +    like($@, qr/^Numeric format result too large at /,
 +         "croak for very large numeric format results");
 +}
- done_testing();
++
+ {
+     # gh #17221
+     my ($off1, $off2);
 -- 
 2.20.1
 

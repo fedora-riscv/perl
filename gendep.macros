@@ -66,7 +66,7 @@ Provides: perl(B) = 1.76 \
 Provides: perl(B::Concise) = 1.004 \
 Provides: perl(B::Deparse) = 1.49 \
 Provides: perl(B::OBJECT) \
-Provides: perl(B::Op_private) = 5.030001 \
+Provides: perl(B::Op_private) = 5.030002 \
 Provides: perl(B::Showlex) = 1.05 \
 Provides: perl(B::Terse) = 1.09 \
 Provides: perl(B::Xref) = 1.07 \
@@ -255,7 +255,7 @@ Requires: perl(bytes) \
 Requires: perl(constant) \
 Requires: perl(strict) \
 Requires: perl(warnings) \
-Provides: perl(Compress::Raw::Bzip2) = 2.084 \
+Provides: perl(Compress::Raw::Bzip2) = 2.089 \
 %{nil}
 %global gendep_perl_Compress_Raw_Bzip2_debuginfo \
 %{nil}
@@ -1204,8 +1204,8 @@ Requires: perl(Module::CoreList) \
 Requires: perl(strict) \
 Requires: perl(version) \
 Requires: perl(warnings) \
-Provides: perl(Module::CoreList) = 5.20191110 \
-Provides: perl(Module::CoreList::Utils) = 5.20191110 \
+Provides: perl(Module::CoreList) = 5.20200314 \
+Provides: perl(Module::CoreList::Utils) = 5.20200314 \
 %{nil}
 %global gendep_perl_Module_CoreList_tools \
 Requires: perl(Getopt::Long) \
@@ -2176,7 +2176,7 @@ Provides: perl(constant) = 1.33 \
 %global gendep_perl_debugger \
 Requires: perl(strict) \
 Provides: perl(DB) = 1.08 \
-Provides: perl(dumpvar.pl) = 5.30.1 \
+Provides: perl(dumpvar.pl) = 5.30.2 \
 Provides: perl(perl5db.pl) = 1.55 \
 %{nil}
 %global gendep_perl_debuginfo \
@@ -2319,14 +2319,15 @@ Requires: perl(warnings) \
 Requires: perl(warnings::register) \
 Provides: perl(:MODULE_COMPAT_5.30.0) \
 Provides: perl(:MODULE_COMPAT_5.30.1) \
-Provides: perl(:VERSION) = 5.30.1 \
+Provides: perl(:MODULE_COMPAT_5.30.2) \
+Provides: perl(:VERSION) = 5.30.2 \
 Provides: perl(:WITH_64BIT) \
 Provides: perl(:WITH_ITHREADS) \
 Provides: perl(:WITH_LARGEFILES) \
 Provides: perl(:WITH_PERLIO) \
 Provides: perl(:WITH_THREADS) \
 Provides: perl(AnyDBM_File) = 1.01 \
-Provides: perl(Config) = 5.030001 \
+Provides: perl(Config) = 5.030002 \
 Provides: perl(File::Glob) = 1.32 \
 Provides: perl(PerlIO) = 1.10 \
 Provides: perl(PerlIO::encoding) = 0.27 \
@@ -2366,7 +2367,7 @@ Provides: perl(locale) = 1.09 \
 %global gendep_perl_meta_notation \
 Requires: perl(strict) \
 Requires: perl(warnings) \
-Provides: perl(meta_notation) = 5.30.1 \
+Provides: perl(meta_notation) = 5.30.2 \
 %{nil}
 %global gendep_perl_mro \
 Requires: perl(XSLoader) \
@@ -2401,9 +2402,9 @@ Requires: perl(warnings) \
 Provides: perl(perlfaq) = 5.20190126 \
 %{nil}
 %global gendep_perl_ph \
-Provides: perl(sys/ioctl.ph) = 5.30.1 \
-Provides: perl(sys/syscall.ph) = 5.30.1 \
-Provides: perl(syscall.ph) = 5.30.1 \
+Provides: perl(sys/ioctl.ph) = 5.30.2 \
+Provides: perl(sys/syscall.ph) = 5.30.2 \
+Provides: perl(syscall.ph) = 5.30.2 \
 %{nil}
 %global gendep_perl_podlators \
 Requires: perl(:VERSION) >= 5.6.0 \
