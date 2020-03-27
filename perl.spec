@@ -6840,9 +6840,9 @@ popd
 %{archlib}/auto/Sys/Syslog
 %{_mandir}/man3/Sys::Syslog.*
 %else
-%exclude %dir %{archlib}/Sys
+# %%dir %%{archlib}/Sys not excluded. It would be removed from the previous packagge.
 %exclude %{archlib}/Sys/Syslog.pm
-%exclude %dir %{archlib}/auto/Sys
+# %%dir %%{archlib}/auto/Sys not excluded. It would be removed from the previous packagge.
 %exclude %{archlib}/auto/Sys/Syslog/
 %exclude %{_mandir}/man3/Sys::Syslog.*
 %endif
@@ -7174,6 +7174,7 @@ popd
 %changelog
 * Fri Mar 27 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.2-453
 - Make perl-macros package noarch
+- Fix a directory ownership in perl-Sys-Hostname
 
 * Mon Mar 16 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.2-452
 - 5.30.2 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.30.2/pod/perldelta.pod>
