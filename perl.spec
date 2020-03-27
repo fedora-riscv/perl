@@ -422,6 +422,9 @@ Patch116:       perl-5.31.6-PATCH-GH-17081-Workaround-glibc-bug-with-LC_MESSAGES
 # Fix POSIX:setlocale() documentation, in upstream after 5.31.7
 Patch117:       perl-5.31.7-POSIX.pod-Update-setlocale-docs.patch
 
+# Prevent from an integer overflow in POSIX::SigSet(), in upstream after 5.31.7
+Patch118:       perl-5.31.7-error-check-the-calls-to-sigaddset-in-POSIX-SigSet-n.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3085,6 +3088,7 @@ Perl extension for Version Objects
 %patch115 -p1
 %patch116 -p1
 %patch117 -p1
+%patch118 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3186,6 +3190,7 @@ perl -x patchlevel.h \
     'Fedora Patch115: Fix Time-Local tests to pass after year 2019 (CPAN RT#124787)' \
     'Fedora Patch116: Work around a glibc bug in caching LC_MESSAGES (GH#17081)' \
     'Fedora Patch117: Fix POSIX:setlocale() documentation' \
+    'Fedora Patch118: Prevent from an integer overflow in POSIX::SigSet()' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5478,6 +5483,7 @@ popd
 - Make perl-macros package noarch
 - Work around a glibc bug in caching LC_MESSAGES (GH#17081)
 - Fix POSIX:setlocale() documentation
+- Prevent from an integer overflow in POSIX::SigSet()
 
 * Fri Feb 14 2020 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-442
 - Fix Time-Local tests to pass after year 2019 (CPAN RT#124787)
