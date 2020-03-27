@@ -311,6 +311,9 @@ Patch81:        perl-5.31.8-pp_sort.c-fix-fencepost-error-in-call-to-av_extend.p
 # in upstream after 5.31.8
 Patch82:        perl-5.30.2-toke.c-fix-Multidimensional-array-heuristic-to-ignor.patch
 
+# Fix a warning about an uninitialized value in B::Deparse, GH#17537
+Patch83:        perl-5.31.9-B-Deparse-fixup-uninitialized-error-in-deparsing-wei.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2905,6 +2908,7 @@ Perl extension for Version Objects
 %patch80 -p1
 %patch81 -p1
 %patch82 -p1
+%patch83 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2980,6 +2984,7 @@ perl -x patchlevel.h \
     'Fedora Patch80: Fix sorting tied arrays (GH#17496)' \
     'Fedora Patch81: Fix sorting tied arrays (GH#17496)' \
     'Fedora Patch82: Fix a spurious warning about a multidimensional syntax (GH#16535)' \
+    'Fedora Patch83: Fix a warning about an uninitialized value in B::Deparse (GH#17537)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5235,6 +5240,7 @@ popd
 - Fix sorting tied arrays (GH#17496)
 - Fix a spurious warning about a multidimensional syntax (GH#16535)
 - Normalize "#!/perl" shebangs in the tests
+- Fix a warning about an uninitialized value in B::Deparse (GH#17537)
 
 * Mon Mar 16 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.2-450
 - 5.30.2 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.30.2/pod/perldelta.pod>
