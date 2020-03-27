@@ -414,6 +414,11 @@ Patch114:       perl-5.31.5-PATCH-gh-17218-memory-leak.patch
 # in Time-Local-1.26
 Patch115:       perl-5.28.2-Only-pass-2-digit-years-to-tests-when-testing-2-digi.patch
 
+# Work around a glibc bug in caching LC_MESSAGES, GH#17081,
+# <https://sourceware.org/bugzilla/show_bug.cgi?id=24936>,
+# in upstream after 5.31.6
+Patch116:       perl-5.31.6-PATCH-GH-17081-Workaround-glibc-bug-with-LC_MESSAGES.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3075,6 +3080,7 @@ Perl extension for Version Objects
 %patch113 -p1
 %patch114 -p1
 %patch115 -p1
+%patch116 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3174,6 +3180,7 @@ perl -x patchlevel.h \
     'Fedora Patch113: Fix GCC 10 version detection (GH#17295)' \
     'Fedora Patch114: Fix a memory leak when compiling a regular expression with a non-word class (GH#17218)' \
     'Fedora Patch115: Fix Time-Local tests to pass after year 2019 (CPAN RT#124787)' \
+    'Fedora Patch116: Work around a glibc bug in caching LC_MESSAGES (GH#17081)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5464,6 +5471,7 @@ popd
 %changelog
 * Fri Mar 27 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.2-443
 - Make perl-macros package noarch
+- Work around a glibc bug in caching LC_MESSAGES (GH#17081)
 
 * Fri Feb 14 2020 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-442
 - Fix Time-Local tests to pass after year 2019 (CPAN RT#124787)
