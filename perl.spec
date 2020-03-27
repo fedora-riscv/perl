@@ -445,6 +445,10 @@ Patch124:       perl-5.31.8-only-install-ExtUtils-XSSymSet-man-page-on-VMS.patch
 Patch125:       perl-5.31.8-perltie.pod-rework-example-code-so-EXTEND-is-a-no-op.patch
 Patch126:       perl-5.31.8-pp_sort.c-fix-fencepost-error-in-call-to-av_extend.patch
 
+# Fix a spurious warning about a multidimensional syntax, GH#16535,
+# in upstream after 5.31.8
+Patch127:       perl-5.28.2-toke.c-fix-Multidimensional-array-heuristic-to-ignor.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3117,6 +3121,7 @@ Perl extension for Version Objects
 %patch124 -p1
 %patch125 -p1
 %patch126 -p1
+%patch127 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3227,6 +3232,7 @@ perl -x patchlevel.h \
     'Fedora Patch124: Only install ExtUtils::XSSymSet manual page on VMS (GH#17424)' \
     'Fedora Patch125: Fix sorting tied arrays (GH#17496)' \
     'Fedora Patch126: Fix sorting tied arrays (GH#17496)' \
+    'Fedora Patch127: Fix a spurious warning about a multidimensional syntax (GH#16535)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5524,6 +5530,7 @@ popd
 - Close :unix PerlIO layers properly
 - Fix counting a recursion limit when matching in a postponed eval (GH#17490)
 - Fix sorting tied arrays (GH#17496)
+- Fix a spurious warning about a multidimensional syntax (GH#16535)
 
 * Fri Feb 14 2020 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-442
 - Fix Time-Local tests to pass after year 2019 (CPAN RT#124787)
