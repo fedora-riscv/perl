@@ -295,6 +295,11 @@ Patch70:        perl-5.31.5-prevent-a-race-between-name-based-stat-and-an-open-m
 # in upstream after 5.31.5
 Patch71:        perl-5.30.1-handle-s-being-updated-without-len-being-updated.patch
 
+# Work around a glibc bug in caching LC_MESSAGES, GH#17081,
+# <https://sourceware.org/bugzilla/show_bug.cgi?id=24936>,
+# in upstream after 5.31.6
+Patch72:        perl-5.31.6-PATCH-GH-17081-Workaround-glibc-bug-with-LC_MESSAGES.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4352,6 +4357,7 @@ you're not running VMS, this module does nothing.
 %patch69 -p1
 %patch70 -p1
 %patch71 -p1
+%patch72 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4416,6 +4422,7 @@ perl -x patchlevel.h \
     'Fedora Patch69: Fix an unintended upgrade to UTF-8 in the middle of a transliteration' \
     'Fedora Patch70: Fix a race in File::stat() tests (GH#17234)' \
     'Fedora Patch71: Fix a buffer overread when parsing a number (GH#17279)' \
+    'Fedora Patch72: Work around a glibc bug in caching LC_MESSAGES (GH#17081)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -7175,6 +7182,7 @@ popd
 * Fri Mar 27 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.2-453
 - Make perl-macros package noarch
 - Fix a directory ownership in perl-Sys-Hostname
+- Work around a glibc bug in caching LC_MESSAGES (GH#17081)
 
 * Mon Mar 16 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.2-452
 - 5.30.2 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.30.2/pod/perldelta.pod>
