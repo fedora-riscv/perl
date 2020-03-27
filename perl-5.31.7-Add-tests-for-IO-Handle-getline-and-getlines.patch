@@ -1,0 +1,200 @@
+From 7a992ccc8be4ce4c27268e1980edb4701f9948d9 Mon Sep 17 00:00:00 2001
+From: Nicholas Clark <nick@ccl4.org>
+Date: Sun, 3 Nov 2019 11:06:59 +0100
+Subject: [PATCH] Add tests for IO::Handle getline() and getlines().
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Extend the tests for <> and the open pragma to verify that the behaviour
+changes with/without the open pragma.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ MANIFEST                |   1 +
+ dist/IO/README          |   1 -
+ dist/IO/t/io_getline.t  | 117 ++++++++++++++++++++++++++++++++++++++++
+ dist/IO/t/io_utf8argv.t |  13 +++--
+ 4 files changed, 128 insertions(+), 4 deletions(-)
+ create mode 100644 dist/IO/t/io_getline.t
+
+diff --git a/MANIFEST b/MANIFEST
+index cb5c0bb1b4..85d3283231 100644
+--- a/MANIFEST
++++ b/MANIFEST
+@@ -3676,6 +3676,7 @@ dist/IO/t/io_dir.t		See if directory-related methods from IO work
+ dist/IO/t/io_dup.t		See if dup()-related methods from IO work
+ dist/IO/t/io_file.t		See if binmode()-related methods on IO::File work
+ dist/IO/t/io_file_export.t	Test IO::File exports
++dist/IO/t/io_getline.t		Test getline and getlines
+ dist/IO/t/io_leak.t		See if IO leaks SVs (only run in core)
+ dist/IO/t/io_linenum.t		See if I/O line numbers are tracked correctly
+ dist/IO/t/io_multihomed.t	See if INET sockets work with multi-homed hosts
+diff --git a/dist/IO/README b/dist/IO/README
+index 3783750c89..5457a632c2 100644
+--- a/dist/IO/README
++++ b/dist/IO/README
+@@ -24,4 +24,3 @@ To build, test and install this distribution type:
+ 
+ Share and Enjoy!
+ Graham Barr <gbarr@pobox.com>
+-
+diff --git a/dist/IO/t/io_getline.t b/dist/IO/t/io_getline.t
+new file mode 100644
+index 0000000000..22361e6b7e
+--- /dev/null
++++ b/dist/IO/t/io_getline.t
+@@ -0,0 +1,117 @@
++#!./perl -w
++use strict;
++
++use Test::More tests => 37;
++
++my $File = 'README';
++
++use IO::File;
++
++my $io = IO::File->new($File);
++isa_ok($io, 'IO::File', "Opening $File");
++
++my $line = $io->getline();
++like($line, qr/^This is the/, "Read first line");
++
++my ($list, $context) = $io->getline();
++is($list, "\n", "Read second line");
++is($context, undef, "Did not read third line with getline() in list context");
++
++$line = $io->getline();
++like($line, qr/^This distribution/, "Read third line");
++
++my @lines = $io->getlines();
++cmp_ok(@lines, '>', 3, "getlines reads lots of lines");
++like($lines[-2], qr/^Share and Enjoy!/, "Share and Enjoy!");
++
++$line = $io->getline();
++is($line, undef, "geline reads no more at EOF");
++
++@lines = $io->getlines();
++is(@lines, 0, "gelines reads no more at EOF");
++
++# And again
++$io = IO::File->new($File);
++isa_ok($io, 'IO::File', "Opening $File");
++
++$line = $io->getline();
++like($line, qr/^This is the/, "Read first line again");
++
++is(eval {
++    $line = $io->getline("Boom");
++    1;
++   }, undef, "eval caught an exception");
++like($@, qr/^usage.*getline\(\) at .*\bio_getline\.t line /, 'getline usage');
++like($line, qr/^This is the/, '$line unchanged');
++
++is(eval {
++    ($list, $context) = $io->getlines("Boom");
++    1;
++   }, undef, "eval caught an exception");
++like($@, qr/^usage.*getlines\(\) at .*\bio_getline\.t line /, 'getlines usage');
++is($list, "\n", '$list unchanged');
++
++is(eval {
++    $line = $io->getlines();
++    1;
++   }, undef, "eval caught an exception");
++like($@, qr/^Can't call .*getlines in a scalar context.* at .*\bio_getline\.t line /,
++     'getlines in scalar context croaks');
++like($line, qr/^This is the/, '$line unchanged');
++
++is(eval {
++    $io->getlines();
++    1;
++   }, undef, "eval caught an exception");
++like($@, qr/^Can't call .*getlines in a scalar context.* at .*\bio_getline\.t line /,
++     'getlines in void context croaks');
++like($line, qr/^This is the/, '$line unchanged');
++
++($list, $context) = $io->getlines();
++is($list, "\n", "Read second line");
++like($context, qr/^This distribution/, "Read third line");
++
++{
++    package TiedHandle;
++
++    sub TIEHANDLE {
++        return bless ["Tick", "tick", "tick"];
++    }
++
++    sub READLINE {
++        my $fh = shift;
++        die "Boom!"
++            unless @$fh;
++        return shift @$fh
++            unless wantarray;
++        return splice @$fh;
++    }
++}
++
++tie *FH, 'TiedHandle';
++
++is(*FH->getline(), "Tick", "tied handle read works");
++($list, $context) = *FH->getline();
++is($list, "tick", "tied handle read works in list context 0");
++is($context, undef, "tied handle read works in list context 1");
++is(*FH->getline(), "tick", "tied handle read works again");
++is(eval {
++    $line = *FH->getline();
++    1;
++   }, undef, "eval on tied handle caught an exception");
++like($@, qr/^Boom!/,
++     'getline on tied handle propagates exception');
++like($line, qr/^This is the/, '$line unchanged');
++
++tie *FH, 'TiedHandle';
++
++($list, $context) = *FH->getlines();
++is($list, "Tick", "tied handle read works in list context 2");
++is($context, "tick", "tied handle read works in list context 3");
++is(eval {
++    ($list, $context) = *FH->getlines();
++    1;
++   }, undef, "eval on tied handle caught an exception again");
++like($@, qr/^Boom!/,
++     'getlines on tied handle propagates exception');
++is($list, "Tick", '$line unchanged');
+diff --git a/dist/IO/t/io_utf8argv.t b/dist/IO/t/io_utf8argv.t
+index 89f726a7a7..adc95d999c 100644
+--- a/dist/IO/t/io_utf8argv.t
++++ b/dist/IO/t/io_utf8argv.t
+@@ -13,7 +13,7 @@ use utf8;
+ skip_all("EBCDIC platform; testing not core")
+                                            if $::IS_EBCDIC && ! $ENV{PERL_CORE};
+ 
+-plan(tests => 2);
++plan(tests => 4);
+ 
+ my $bytes =
+             "\xce\x9c\xe1\xbd\xb7\xce\xb1\x20\xcf\x80\xe1\xbd\xb1\xcf\x80\xce".
+@@ -31,10 +31,17 @@ print $fh $bytes;
+ close $fh or die "close: $!";
+ 
+ 
+-use open ":std", ":utf8";
+-
+ use IO::Handle;
+ 
++@ARGV = ('io_utf8argv') x 2;
++is *ARGV->getline, $bytes,
++  'getline (no open pragma) when magically opening ARGV';
++
++is join('',*ARGV->getlines), $bytes,
++  'getlines (no open pragma) when magically opening ARGV';
++
++use open ":std", ":utf8";
++
+ @ARGV = ('io_utf8argv') x 2;
+ is *ARGV->getline, "Μία πάπια, μὰ ποιὰ πάπια;\n",
+   'getline respects open pragma when magically opening ARGV';
+-- 
+2.21.1
+
