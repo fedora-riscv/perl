@@ -85,7 +85,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        451%{?dist}
+Release:        452%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -446,8 +446,7 @@ Provides:       perl-doc
 # We need this to break the dependency loop, and ensure that perl-libs 
 # gets installed before perl-interpreter.
 Requires(post): perl-libs
-# Same as perl-libs. We need macros in basic buildroot, where Perl is only
-# because of git.
+# Same as perl-libs. We need macros in basic buildroot.
 Requires(post): perl-macros
 
 # File provides
@@ -561,6 +560,7 @@ Most perl packages will need to install perl-devel to build.
 %package macros
 Summary:        Macros for rpmbuild
 License:        GPL+ or Artistic
+BuildArch:      noarch
 Requires:       %perl_compat
 Requires:       perl-interpreter
 %if %{defined perl_bootstrap}
@@ -5172,6 +5172,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Mar 27 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.2-452
+- Make perl-macros package noarch
+
 * Mon Mar 16 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.2-451
 - 5.30.2 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.30.2/pod/perldelta.pod>
   for release notes)
