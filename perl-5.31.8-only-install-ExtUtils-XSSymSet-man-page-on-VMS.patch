@@ -1,0 +1,37 @@
+From a04fd069805e872c2784733b5dbb94c872ef73d9 Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Mon, 20 Jan 2020 14:47:38 +1100
+Subject: [PATCH] only install ExtUtils::XSSymSet man page on VMS
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This module is only installed on VMS, so there's not much point in
+installing the man page.
+
+An alternative would be to install the module on VMS, but it tries
+to use configuration only set on VMS.
+
+fixes #17424
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ Porting/pod_lib.pl | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Porting/pod_lib.pl b/Porting/pod_lib.pl
+index f2d854408e..1098074f32 100644
+--- a/Porting/pod_lib.pl
++++ b/Porting/pod_lib.pl
+@@ -330,6 +330,8 @@ sub pods_to_install {
+     # manpages not to be installed
+     my %do_not_install = map { ($_ => 1) }
+         qw(Pod::Functions XS::APItest XS::Typemap);
++    $do_not_install{"ExtUtils::XSSymSet"} = 1
++        unless $^O eq "VMS";
+ 
+     my (%done, %found);
+ 
+-- 
+2.21.1
+

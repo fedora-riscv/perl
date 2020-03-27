@@ -314,6 +314,10 @@ Patch77:        perl-5.31.7-Skip-the-new-open-pragma-tests-for-no-utf8-under-PER
 # Close :unix PerlIO layers properly, in upstream after 5.31.8
 Patch78:        perl-5.31.8-perlio.c-make-unix-close-method-call-underlaying-lay.patch
 
+# Only install ExtUtils::XSSymSet manual page on VMS, GH#17424,
+# in upstream after 5.31.8
+Patch79:        perl-5.31.8-only-install-ExtUtils-XSSymSet-man-page-on-VMS.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4378,6 +4382,7 @@ you're not running VMS, this module does nothing.
 %patch76 -p1
 %patch77 -p1
 %patch78 -p1
+%patch79 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4449,6 +4454,7 @@ perl -x patchlevel.h \
     'Fedora Patch76: Fix thread-safety of IO::Handle (GH#14816)' \
     'Fedora Patch77: Fix thread-safety of IO::Handle (GH#14816)' \
     'Fedora Patch78: Close :unix PerlIO layers properly' \
+    'Fedora Patch79: Only install ExtUtils::XSSymSet manual page on VMS (GH#17424)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -4670,9 +4676,6 @@ rm %{build_archlib}/.packlist
 # We cannot remove it in %%prep because dist/Cwd/t/Spec.t test needs it.
 rm %{build_archlib}/File/Spec/VMS.pm
 rm $RPM_BUILD_ROOT%{_mandir}/man3/File::Spec::VMS.3*
-# ExtUtils::XSSymSet module is not isntalled, do not install its manual
-# (GH#17424)
-rm $RPM_BUILD_ROOT%{_mandir}/man3/ExtUtils::XSSymSet.3*
 
 # Fix some manpages to be UTF-8
 mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1/
