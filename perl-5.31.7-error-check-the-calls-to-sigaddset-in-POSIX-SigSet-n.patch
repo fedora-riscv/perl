@@ -1,0 +1,86 @@
+From 3a5c73f344d9d5d89b2881b2c3569cac3ca89ad9 Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Mon, 25 Nov 2019 09:27:16 +1100
+Subject: [PATCH] error check the calls to sigaddset in POSIX::SigSet->new
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Coverity complained that SvIV() could return negative numbers,
+but doesn't complain about the similar call in the sigaddset()
+method, which is error checked.
+
+So error check sigaddset() and throw an error if it fails.
+
+CID 244386.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ ext/POSIX/POSIX.xs      |  7 +++++--
+ ext/POSIX/lib/POSIX.pod |  3 +++
+ ext/POSIX/t/sigset.t    | 19 +++++++++++++++++++
+ 3 files changed, 27 insertions(+), 2 deletions(-)
+
+diff --git a/ext/POSIX/POSIX.xs b/ext/POSIX/POSIX.xs
+index 42c4d0f4b5..03342c3ea4 100644
+--- a/ext/POSIX/POSIX.xs
++++ b/ext/POSIX/POSIX.xs
+@@ -1844,8 +1844,11 @@ new(packname = "POSIX::SigSet", ...)
+ 					       sizeof(sigset_t),
+ 					       packname);
+ 	    sigemptyset(s);
+-	    for (i = 1; i < items; i++)
+-		sigaddset(s, SvIV(ST(i)));
++	    for (i = 1; i < items; i++) {
++                IV sig = SvIV(ST(i));
++		if (sigaddset(s, sig) < 0)
++                    croak("POSIX::Sigset->new: failed to add signal %" IVdf, sig);
++            }
+ 	    XSRETURN(1);
+ 	}
+ 
+diff --git a/ext/POSIX/lib/POSIX.pod b/ext/POSIX/lib/POSIX.pod
+index 10e12e88db..923198477d 100644
+--- a/ext/POSIX/lib/POSIX.pod
++++ b/ext/POSIX/lib/POSIX.pod
+@@ -2267,6 +2267,9 @@ Create a set with C<SIGUSR1>.
+ 
+ 	$sigset = POSIX::SigSet->new( &POSIX::SIGUSR1 );
+ 
++Throws an error if any of the signals supplied cannot be added to the
++set.
++
+ =item C<addset>
+ 
+ Add a signal to a SigSet object.
+diff --git a/ext/POSIX/t/sigset.t b/ext/POSIX/t/sigset.t
+index e65e4076b4..807aa3a1fd 100644
+--- a/ext/POSIX/t/sigset.t
++++ b/ext/POSIX/t/sigset.t
+@@ -93,4 +93,23 @@ foreach ([$signo[0]],
+     expected_signals($sigset, "new(@$_)", @$_);
+ }
+ 
++SKIP:
++{
++    # CID 244386
++    # linux and freebsd do validate for positive and very large signal numbers
++    # darwin uses a macro that simply ignores large signals and shifts by
++    # a negative number for negative signals, always succeeding
++    #
++    # since the idea is to validate our code rather than the implementation
++    # of sigaddset, just test the platforms we know can fail
++    skip "Not all systems validate the signal number", 2
++      unless $^O =~ /^(linux|freebsd)$/;
++    my $badsig = -1;
++    note "badsig $badsig";
++    ok(!eval{ POSIX::SigSet->new($badsig); 1 },
++       "POSIX::SigSet->new should throw on large signal number");
++    like($@."", qr/POSIX::Sigset->new: failed to add signal $badsig/,
++         "check message");
++}
++
+ done_testing();
+-- 
+2.21.1
+
