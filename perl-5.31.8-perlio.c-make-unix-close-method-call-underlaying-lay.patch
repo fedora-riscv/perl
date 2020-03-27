@@ -1,0 +1,29 @@
+From d55a14617a40beb0dfda90ca2decc55918c0810c Mon Sep 17 00:00:00 2001
+From: Leon Timmermans <fawaka@gmail.com>
+Date: Sat, 25 Jan 2020 00:51:44 +0100
+Subject: [PATCH] perlio.c: make :unix close method call underlaying layers as
+ well
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ perlio.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/perlio.c b/perlio.c
+index e6e4312949..39481eeb10 100644
+--- a/perlio.c
++++ b/perlio.c
+@@ -2818,6 +2818,7 @@ PerlIOUnix_close(pTHX_ PerlIO *f)
+     const int fd = PerlIOSelf(f, PerlIOUnix)->fd;
+     int code = 0;
+     if (PerlIOBase(f)->flags & PERLIO_F_OPEN) {
++        code = PerlIOBase_close(aTHX_ f);
+ 	if (PerlIOUnix_refcnt_dec(fd) > 0) {
+ 	    PerlIOBase(f)->flags &= ~PERLIO_F_OPEN;
+ 	    return 0;
+-- 
+2.21.1
+
