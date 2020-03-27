@@ -3481,7 +3481,7 @@ done
 # Normalize shell bangs in tests.
 # brp-mangle-shebangs executed by rpm-build chokes on t/TEST.
 %{new_perl} -MConfig -i -pn \
-    -e 's"\A#!(?:perl|\./perl|/usr/bin/perl|/usr/bin/env perl)\b"$Config{startperl}"' \
+    -e 's"\A#!(?:perl|\./perl|/perl|/usr/bin/perl|/usr/bin/env perl)\b"$Config{startperl}"' \
     $(find %{buildroot}%{perl5_testdir}/perl-tests -type f)
 
 %if %{with perl_enables_systemtap}
@@ -5531,6 +5531,7 @@ popd
 - Fix counting a recursion limit when matching in a postponed eval (GH#17490)
 - Fix sorting tied arrays (GH#17496)
 - Fix a spurious warning about a multidimensional syntax (GH#16535)
+- Normalize "#!/perl" shebangs in the tests
 
 * Fri Feb 14 2020 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-442
 - Fix Time-Local tests to pass after year 2019 (CPAN RT#124787)
