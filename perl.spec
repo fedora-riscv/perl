@@ -285,6 +285,9 @@ Patch71:        perl-5.30.1-handle-s-being-updated-without-len-being-updated.pat
 # in upstream after 5.31.6
 Patch72:        perl-5.31.6-PATCH-GH-17081-Workaround-glibc-bug-with-LC_MESSAGES.patch
 
+# Fix POSIX:setlocale() documentation, in upstream after 5.31.7
+Patch73:        perl-5.31.7-POSIX.pod-Update-setlocale-docs.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2869,6 +2872,7 @@ Perl extension for Version Objects
 %patch70 -p1
 %patch71 -p1
 %patch72 -p1
+%patch73 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2934,6 +2938,7 @@ perl -x patchlevel.h \
     'Fedora Patch70: Fix a race in File::stat() tests (GH#17234)' \
     'Fedora Patch71: Fix a buffer overread when parsing a number (GH#17279)' \
     'Fedora Patch72: Work around a glibc bug in caching LC_MESSAGES (GH#17081)' \
+    'Fedora Patch73: Fix POSIX:setlocale() documentation' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5182,6 +5187,7 @@ popd
 * Fri Mar 27 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.2-452
 - Make perl-macros package noarch
 - Work around a glibc bug in caching LC_MESSAGES (GH#17081)
+- Fix POSIX:setlocale() documentation
 
 * Mon Mar 16 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.2-451
 - 5.30.2 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.30.2/pod/perldelta.pod>
