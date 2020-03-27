@@ -1,0 +1,66 @@
+From fbe6adf2e4213395a34c891a7568c6e3c7812645 Mon Sep 17 00:00:00 2001
+From: Yves Orton <demerphq@gmail.com>
+Date: Thu, 6 Feb 2020 07:11:20 +0100
+Subject: [PATCH] B::Deparse fixup uninitialized error in deparsing weird glob
+ statement
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This fixes issue #17537, and adds tests
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ lib/B/Deparse.pm |  2 +-
+ lib/B/Deparse.t  | 15 +++++++++++++++
+ 2 files changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/lib/B/Deparse.pm b/lib/B/Deparse.pm
+index ee126b1552..aa6e6de4e4 100644
+--- a/lib/B/Deparse.pm
++++ b/lib/B/Deparse.pm
+@@ -3393,7 +3393,7 @@ sub pp_glob {
+     my $kid = $op->first->sibling;  # skip pushmark
+     my $keyword =
+ 	$op->flags & OPf_SPECIAL ? 'glob' : $self->keyword('glob');
+-    my $text = $self->deparse($kid);
++    my $text = $self->deparse($kid, $cx);
+     return $cx >= 5 || $self->{'parens'}
+ 	? "$keyword($text)"
+ 	: "$keyword $text";
+diff --git a/lib/B/Deparse.t b/lib/B/Deparse.t
+index 07c915067e..e06ef6e966 100644
+--- a/lib/B/Deparse.t
++++ b/lib/B/Deparse.t
+@@ -20,6 +20,8 @@ my $deparse = B::Deparse->new();
+ isa_ok($deparse, 'B::Deparse', 'instantiate a B::Deparse object');
+ my %deparse;
+ 
++sub dummy_sub {42}
++
+ $/ = "\n####\n";
+ while (<DATA>) {
+     chomp;
+@@ -679,6 +681,19 @@ readline $foo;
+ glob $foo;
+ glob $foo;
+ ####
++# more <>
++no warnings;
++no strict;
++my $fh;
++if (dummy_sub < $fh > /bar/g) { 1 }
++>>>>
++no warnings;
++no strict;
++my $fh;
++if (dummy_sub(glob((' ' . $fh . ' ')) / 'bar' / 'g')) {
++    1;
++}
++####
+ # readline
+ readline 'FH';
+ readline *$_;
+-- 
+2.21.1
+
