@@ -1,0 +1,272 @@
+From 1c8a3be06814f8b86459ad53b2f903fd50c4c4d8 Mon Sep 17 00:00:00 2001
+From: Nicholas Clark <nick@ccl4.org>
+Date: Mon, 4 Nov 2019 16:58:03 +0100
+Subject: [PATCH] Loading IO is now threadsafe, avoiding the core bug reported
+ as GH #14816.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Re-implement getline() and getlines() as XS code.
+
+The underlying problem that we're trying to solve here is making
+getline() and getlines() in IO::Handle respect the open pragma.
+
+That bug was first addressed in Sept 2011 by commit 986a805c4b258067:
+    Make IO::Handle::getline(s) respect the open pragma
+
+However, that fix introduced a more subtle bug, hence this reworking.
+Including the entirety of the rest of that commit message because it
+explains both the bug the previous approach:
+
+    See <https://rt.cpan.org/Ticket/Display.html?id=66474>.  Also, this
+    came up in <https://rt.perl.org/rt3/Ticket/Display.html?id=92728>.
+
+    The <> operator, when reading from the magic ARGV handle, automatic-
+    ally opens the next file.  Layers set by the lexical open pragma are
+    applied, if they are in scope at the point where <> is used.
+
+    This works almost all the time, because the common convention is:
+
+        use open ":utf8";
+
+        while(<>) {
+            ...
+        }
+
+    IO::Handle’s getline and getlines methods are Perl subroutines
+    that call <> themselves.  But that happens within the scope of
+    IO/Handle.pm, so the caller’s I/O layer settings are ignored.  That
+    means that these two expressions are not equivalent within in a
+    ‘use open’ scope:
+
+        <>
+        *ARGV->getline
+
+    The latter will open the next file with no layers applied.
+
+    This commit solves that by putting PL_check hooks in place in
+    IO::Handle before compiling the getline and getlines subroutines.
+    Those hooks cause every state op (nextstate, or dbstate under the
+    debugger) to have a custom pp function that saves the previous value
+    of PL_curcop, calls the default pp function, and then restores
+    PL_curcop.
+
+    That means that getline and getlines run with the caller’s compile-
+    time hints.  Another way to see it is that getline and getlines’s own
+    lexical hints are never activated.
+
+    (A state op carries all the lexical pragmata.  Every statement
+    has one.  When any op executes, it’s ‘pp’ function is called.
+    pp_nextstate and pp_dbstate both set PL_curcop to the op itself.  Any
+    code that checks hints looks at PL_curcop, which contains the current
+    run-time hints.)
+
+The problem with this approach is that the (current) design and implementation
+of PL_check hooks is actually not threadsafe. There's one array (as a global),
+which is used by all interpreters in the process. But as the code added to
+IO.xs demonstrates, realistically it needs to be possible to change the hook
+just for this interpreter.
+
+GH #14816 has a fix for that bug for blead. However, it will be tricky (to
+impossible) to backport to earlier perl versions.
+
+Hence it's also worthwhile to change IO.xs to use a different approach to
+solve the original bug. As described above, the bug is fixed by having the
+readline OP (that implements getline() and getlines()) see the caller's
+lexical state, not their "own". Unlike Perl subroutines, XS subroutines don't
+have any lexical hints of their own. getline() and getlines() are very
+simple, mostly parameter checking, ending with a one line that maps to
+a single core OP, whose values are directly returned.
+
+Hence "all" we need to do re-implement the Perl code as XS. This might look
+easy, but turns out to be trickier than expected. There isn't any API to be
+called for the OP in question, pp_readline(). The body of the OP inspects
+interpreter state, it directly calls pp_rv2gv() which also inspects state,
+and then it tail calls Perl_do_readline(), which inspects state.
+
+The easiest approach seems to be to set up enough state, and then call
+pp_readline() directly. This leaves us very tightly coupled to the
+internals, but so do all other approaches to try to tackle this bug.
+
+The current implementation of PL_check (and possibly other arrays) still
+needs to be addressed.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ META.json                |  1 +
+ META.yml                 |  1 +
+ dist/IO/IO.xs            | 93 +++++++++++++++++++++++++++-------------
+ dist/IO/lib/IO/Handle.pm | 20 ---------
+ 4 files changed, 66 insertions(+), 49 deletions(-)
+
+diff --git a/META.json b/META.json
+index e023606..53c1e79 100644
+--- a/META.json
++++ b/META.json
+@@ -86,6 +86,7 @@
+          "dist/IO/t/io_dup.t",
+          "dist/IO/t/io_file.t",
+          "dist/IO/t/io_file_export.t",
++         "dist/IO/t/io_getline.t",
+          "dist/IO/t/io_leak.t",
+          "dist/IO/t/io_linenum.t",
+          "dist/IO/t/io_multihomed.t",
+diff --git a/META.yml b/META.yml
+index 85fb097..f71108e 100644
+--- a/META.yml
++++ b/META.yml
+@@ -83,6 +83,7 @@ no_index:
+     - dist/IO/t/io_dup.t
+     - dist/IO/t/io_file.t
+     - dist/IO/t/io_file_export.t
++    - dist/IO/t/io_getline.t
+     - dist/IO/t/io_leak.t
+     - dist/IO/t/io_linenum.t
+     - dist/IO/t/io_multihomed.t
+diff --git a/dist/IO/IO.xs b/dist/IO/IO.xs
+index 8e857f8..68b7352 100644
+--- a/dist/IO/IO.xs
++++ b/dist/IO/IO.xs
+@@ -185,26 +185,6 @@ io_blocking(pTHX_ InputStream f, int block)
+ #endif
+ }
+ 
+-static OP *
+-io_pp_nextstate(pTHX)
+-{
+-    dVAR;
+-    COP *old_curcop = PL_curcop;
+-    OP *next = PL_ppaddr[PL_op->op_type](aTHX);
+-    PL_curcop = old_curcop;
+-    return next;
+-}
+-
+-static OP *
+-io_ck_lineseq(pTHX_ OP *o)
+-{
+-    OP *kid = cBINOPo->op_first;
+-    for (; kid; kid = OpSIBLING(kid))
+-	if (kid->op_type == OP_NEXTSTATE || kid->op_type == OP_DBSTATE)
+-	    kid->op_ppaddr = io_pp_nextstate;
+-    return o;
+-}
+-
+ 
+ MODULE = IO	PACKAGE = IO::Seekable	PREFIX = f
+ 
+@@ -558,16 +538,71 @@ fsync(arg)
+     OUTPUT:
+ 	RETVAL
+ 
+-SV *
+-_create_getline_subs(const char *code)
+-    CODE:
+-	OP *(*io_old_ck_lineseq)(pTHX_ OP *) = PL_check[OP_LINESEQ];
+-	PL_check[OP_LINESEQ] = io_ck_lineseq;
+-	RETVAL = SvREFCNT_inc(eval_pv(code,FALSE));
+-	PL_check[OP_LINESEQ] = io_old_ck_lineseq;
+-    OUTPUT:
+-	RETVAL
++# To make these two work correctly with the open pragma, the readline op
++# needs to pick up the lexical hints at the method's callsite. This doesn't
++# work in pure Perl, because the hints are read from the most recent nextstate,
++# and the nextstate of the Perl subroutines show *here* hold the lexical state
++# for the IO package.
++#
++# There's no clean way to implement this - this approach, while complex, seems
++# to be the most robust, and avoids manipulating external state (ie op checkers)
++#
++# sub getline {
++#     @_ == 1 or croak 'usage: $io->getline()';
++#     my $this = shift;
++#     return scalar <$this>;
++# }
++#
++# sub getlines {
++#     @_ == 1 or croak 'usage: $io->getlines()';
++#     wantarray or
++# 	croak 'Can\'t call $io->getlines in a scalar context, use $io->getline';
++#     my $this = shift;
++#     return <$this>;
++# }
++
++# If this is deprecated, should it warn, and should it be removed at some point?
++# *gets = \&getline;  # deprecated
+ 
++void
++getlines(...)
++ALIAS:
++    IO::Handle::getline       =  1
++    IO::Handle::gets          =  2
++INIT:
++    UNOP myop;
++    SV *io;
++    OP *was = PL_op;
++PPCODE:
++    if (items != 1)
++        Perl_croak(aTHX_ "usage: $io->%s()", ix ? "getline" : "getlines");
++    if (!ix && GIMME_V != G_ARRAY)
++        Perl_croak(aTHX_ "Can't call $io->getlines in a scalar context, use $io->getline");
++    Zero(&myop, 1, UNOP);
++    myop.op_flags = (ix ? OPf_WANT_SCALAR : OPf_WANT_LIST ) | OPf_STACKED;
++    myop.op_ppaddr = PL_ppaddr[OP_READLINE];
++    myop.op_type = OP_READLINE;
++    /* I don't know if we need this, but it's correct as far as the control flow
++       goes. However, if we *do* need it, do we need to set anything else up? */
++    myop.op_next = PL_op->op_next;
++    /* Sigh, because pp_readline calls pp_rv2gv, and *it* has this wonderful
++       state check for PL_op->op_type == OP_READLINE */
++    PL_op = (OP *) &myop;
++    io = ST(0);
++    /* Our target (which we need to provide, as we don't have a pad entry.
++       I think that this is only needed for G_SCALAR - maybe we can get away
++       with NULL for list context? */
++    PUSHs(sv_newmortal());
++    XPUSHs(io);
++    PUTBACK;
++    /* And effectively we get away with tail calling pp_readline, as it stacks
++       exactly the return value(s) we need to return. */
++    PL_ppaddr[OP_READLINE](aTHX);
++    PL_op = was;
++    /* And we don't want to reach the line
++       PL_stack_sp = sp;
++       that xsubpp adds after our body becase PL_stack_sp is correct, not sp */
++    return;
+ 
+ MODULE = IO	PACKAGE = IO::Socket
+ 
+diff --git a/dist/IO/lib/IO/Handle.pm b/dist/IO/lib/IO/Handle.pm
+index a257024..d48a4d1 100644
+--- a/dist/IO/lib/IO/Handle.pm
++++ b/dist/IO/lib/IO/Handle.pm
+@@ -431,26 +431,6 @@ sub say {
+     print $this @_;
+ }
+ 
+-# Special XS wrapper to make them inherit lexical hints from the caller.
+-_create_getline_subs( <<'END' ) or die $@;
+-sub getline {
+-    @_ == 1 or croak 'usage: $io->getline()';
+-    my $this = shift;
+-    return scalar <$this>;
+-} 
+-
+-sub getlines {
+-    @_ == 1 or croak 'usage: $io->getlines()';
+-    wantarray or
+-	croak 'Can\'t call $io->getlines in a scalar context, use $io->getline';
+-    my $this = shift;
+-    return <$this>;
+-}
+-1; # return true for error checking
+-END
+-
+-*gets = \&getline;  # deprecated
+-
+ sub truncate {
+     @_ == 2 or croak 'usage: $io->truncate(LEN)';
+     truncate($_[0], $_[1]);
+-- 
+2.21.1
+
