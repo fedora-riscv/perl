@@ -1,0 +1,114 @@
+From bb3b785585fde69384a8581957368ca235d0016e Mon Sep 17 00:00:00 2001
+From: Yves Orton <demerphq@gmail.com>
+Date: Fri, 31 Jan 2020 15:02:46 +0100
+Subject: [PATCH] toke.c: fix Multidimensional array heuristic to ignore
+ function calls
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fix issue #16535 - $t[index $x, $y] should not throw Multidimensional
+array warnings.
+
+The heuristic for detecting lists in array subscripts is implemented
+in toke.c, which means it is not particularly reliable. There are
+lots of ways that code might return a list in an array subscript.
+
+So for instance $t[do{ $x, $y }] should throw a warning but doesn't.
+
+On the other hand, we can make this warning less likely to happen
+by being a touch more careful about how we parse the inside of the
+square brackets so we do not throw an exception from $t[index $x,$y].
+
+Really this should be moved to the parser so we do not need to rely
+on fallable heuristics, and also into the runtime so that if we have
+
+    $t[f()]
+
+and f() returns a list we can also warn there. But for now this
+improves things somewhat.
+
+Petr Písař: Ported from 41eecd54c335a0342b04dbea635695db80579946 to
+5.30.2.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ t/lib/warnings/toke | 13 +++++++++++++
+ toke.c              | 39 +++++++++++++++++++++++++++++++++------
+ 2 files changed, 46 insertions(+), 6 deletions(-)
+
+diff --git a/t/lib/warnings/toke b/t/lib/warnings/toke
+index 83641e5..e36e116 100644
+--- a/t/lib/warnings/toke
++++ b/t/lib/warnings/toke
+@@ -1691,3 +1691,16 @@ EXPECT
+ OPTION regex
+ Malformed UTF-8 character: .*non-continuation.*
+ The eval did not crash the program
++########
++# NAME Check that our Multidimensional array heuristic doesn't false positive on function calls
++use warnings;
++my $str= "rst";
++my $substr= "s";
++my @array="A".."C";
++# force a numeric warning, but we should NOT see a Multidimensional warning here
++my $trigger_num_warn= $array[index $str,$substr] + 1;
++# this should trigger a Multidimensional warning
++my $should_warn_multi= $array[0x1,0x2];
++EXPECT
++Multidimensional syntax $array[0x1,0x2] not supported at - line 8.
++Argument "B" isn't numeric in addition (+) at - line 6.
+diff --git a/toke.c b/toke.c
+index 10849f8..ede6f63 100644
+--- a/toke.c
++++ b/toke.c
+@@ -6784,13 +6784,40 @@ Perl_yylex(pTHX)
+ 		    if (ckWARN(WARN_SYNTAX)) {
+ 			char *t = s+1;
+ 
+-                        while (   isSPACE(*t)
+-                               || isWORDCHAR_lazy_if_safe(t, PL_bufend, UTF)
+-                               || *t == '$')
+-                        {
+-			    t += UTF ? UTF8SKIP(t) : 1;
++			while ( t < PL_bufend ) {
++			    if (isSPACE(*t)) {
++				do { t += UTF ? UTF8SKIP(t) : 1; } while (t < PL_bufend && isSPACE(*t));
++				/* consumed one or more space chars */
++			    } else if (*t == '$' || *t == '@') {
++				/* could be more than one '$' like $$ref or @$ref */
++				do { t++; } while (t < PL_bufend && *t == '$');
++
++				/* could be an abigail style identifier like $ foo */
++				while (t < PL_bufend && *t == ' ') t++;
++
++				/* strip off the name of the var */
++				while (isWORDCHAR_lazy_if_safe(t, PL_bufend, UTF))
++				    t += UTF ? UTF8SKIP(t) : 1;
++				/* consumed a varname */
++			    } else if (isDIGIT(*t)) {
++				/* deal with hex constants like 0x11 */
++				if (t[0] == '0' && t[1] == 'x') {
++				    t += 2;
++				    while (t < PL_bufend && isXDIGIT(*t)) t++;
++				} else {
++				    /* deal with decimal/octal constants like 1 and 0123 */
++				    do { t++; } while (isDIGIT(*t));
++				    if (t<PL_bufend && *t == '.') {
++					do { t++; } while (isDIGIT(*t));
++				    }
++				}
++				/* consumed a number */
++			    } else {
++				/* not a var nor a space nor a number */
++				break;
++			    }
+                         }
+-			if (*t++ == ',') {
++                        if (t < PL_bufend && *t++ == ',') {
+ 			    PL_bufptr = skipspace(PL_bufptr); /* XXX can realloc */
+ 			    while (t < PL_bufend && *t != ']')
+ 				t++;
+-- 
+2.21.1
+

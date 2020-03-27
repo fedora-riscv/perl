@@ -322,6 +322,10 @@ Patch79:        perl-5.31.8-only-install-ExtUtils-XSSymSet-man-page-on-VMS.patch
 Patch80:        perl-5.31.8-perltie.pod-rework-example-code-so-EXTEND-is-a-no-op.patch
 Patch81:        perl-5.31.8-pp_sort.c-fix-fencepost-error-in-call-to-av_extend.patch
 
+# Fix a spurious warning about a multidimensional syntax, GH#16535,
+# in upstream after 5.31.8
+Patch82:        perl-5.30.2-toke.c-fix-Multidimensional-array-heuristic-to-ignor.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4389,6 +4393,7 @@ you're not running VMS, this module does nothing.
 %patch79 -p1
 %patch80 -p1
 %patch81 -p1
+%patch82 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4463,6 +4468,7 @@ perl -x patchlevel.h \
     'Fedora Patch79: Only install ExtUtils::XSSymSet manual page on VMS (GH#17424)' \
     'Fedora Patch80: Fix sorting tied arrays (GH#17496)' \
     'Fedora Patch81: Fix sorting tied arrays (GH#17496)' \
+    'Fedora Patch82: Fix a spurious warning about a multidimensional syntax (GH#16535)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -7225,6 +7231,7 @@ popd
 - Fix thread-safety of IO::Handle (GH#14816)
 - Close :unix PerlIO layers properly
 - Fix sorting tied arrays (GH#17496)
+- Fix a spurious warning about a multidimensional syntax (GH#16535)
 
 * Mon Mar 16 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.2-452
 - 5.30.2 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.30.2/pod/perldelta.pod>
