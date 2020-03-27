@@ -425,6 +425,11 @@ Patch117:       perl-5.31.7-POSIX.pod-Update-setlocale-docs.patch
 # Prevent from an integer overflow in POSIX::SigSet(), in upstream after 5.31.7
 Patch118:       perl-5.31.7-error-check-the-calls-to-sigaddset-in-POSIX-SigSet-n.patch
 
+# Fix thread-safety of IO::Handle, GH#14816, in upstream after 5.31.7
+Patch119:       perl-5.31.7-Add-tests-for-IO-Handle-getline-and-getlines.patch
+Patch120:       perl-5.30.2-Loading-IO-is-now-threadsafe-avoiding-the-core-bug-r.patch
+Patch121:       perl-5.31.7-Skip-the-new-open-pragma-tests-for-no-utf8-under-PER.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3089,6 +3094,9 @@ Perl extension for Version Objects
 %patch116 -p1
 %patch117 -p1
 %patch118 -p1
+%patch119 -p1
+%patch120 -p1
+%patch121 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3191,6 +3199,9 @@ perl -x patchlevel.h \
     'Fedora Patch116: Work around a glibc bug in caching LC_MESSAGES (GH#17081)' \
     'Fedora Patch117: Fix POSIX:setlocale() documentation' \
     'Fedora Patch118: Prevent from an integer overflow in POSIX::SigSet()' \
+    'Fedora Patch119: Fix thread-safety of IO::Handle (GH#14816)' \
+    'Fedora Patch120: Fix thread-safety of IO::Handle (GH#14816)' \
+    'Fedora Patch121: Fix thread-safety of IO::Handle (GH#14816)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5484,6 +5495,7 @@ popd
 - Work around a glibc bug in caching LC_MESSAGES (GH#17081)
 - Fix POSIX:setlocale() documentation
 - Prevent from an integer overflow in POSIX::SigSet()
+- Fix thread-safety of IO::Handle (GH#14816)
 
 * Fri Feb 14 2020 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-442
 - Fix Time-Local tests to pass after year 2019 (CPAN RT#124787)
