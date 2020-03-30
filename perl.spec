@@ -433,6 +433,10 @@ Patch121:       perl-5.31.7-Skip-the-new-open-pragma-tests-for-no-utf8-under-PER
 # Close :unix PerlIO layers properly, in upstream after 5.31.8
 Patch122:       perl-5.31.8-perlio.c-make-unix-close-method-call-underlaying-lay.patch
 
+# Fix counting a recursion limit when matching in a postponed eval, GH#17490,
+# in upstream after 5.31.8
+Patch123:       perl-5.28.2-regexec-don-t-increment-recursion-counter-for-non-po.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3101,6 +3105,7 @@ Perl extension for Version Objects
 %patch120 -p1
 %patch121 -p1
 %patch122 -p1
+%patch123 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3207,6 +3212,7 @@ perl -x patchlevel.h \
     'Fedora Patch120: Fix thread-safety of IO::Handle (GH#14816)' \
     'Fedora Patch121: Fix thread-safety of IO::Handle (GH#14816)' \
     'Fedora Patch122: Close :unix PerlIO layers properly' \
+    'Fedora Patch123: Fix counting a recursion limit when matching in a postponed eval (GH#17490)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5502,6 +5508,7 @@ popd
 - Prevent from an integer overflow in POSIX::SigSet()
 - Fix thread-safety of IO::Handle (GH#14816)
 - Close :unix PerlIO layers properly
+- Fix counting a recursion limit when matching in a postponed eval (GH#17490)
 
 * Fri Feb 14 2020 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-442
 - Fix Time-Local tests to pass after year 2019 (CPAN RT#124787)

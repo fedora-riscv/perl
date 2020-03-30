@@ -1,0 +1,66 @@
+From ccaaaf60fc1a35798edc4953b108f09052a92612 Mon Sep 17 00:00:00 2001
+From: Hugo van der Sanden <hv@crypt.org>
+Date: Sun, 26 Jan 2020 18:28:43 +0000
+Subject: [PATCH] regexec: don't increment recursion counter for non-postponed
+ EVAL
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+It wasn't intended to be part of the recursion logic, and doesn't get
+decremented again (GH 17490).
+
+Petr Písař: Ported from af6880c950bceae5aa17dc228f139d0b4e797594 to
+5.28.2.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ regexec.c  |  2 +-
+ t/re/pat.t | 11 ++++++++++-
+ 2 files changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/regexec.c b/regexec.c
+index c286979..df31490 100644
+--- a/regexec.c
++++ b/regexec.c
+@@ -7142,7 +7142,7 @@ S_regmatch(pTHX_ regmatch_info *reginfo, char *startpos, regnode *prog)
+             /* NOTREACHED */
+ 
+         case EVAL:  /*   /(?{...})B/   /(??{A})B/  and  /(?(?{...})X|Y)B/   */
+-            if (cur_eval && cur_eval->locinput==locinput) {
++            if (logical == 2 && cur_eval && cur_eval->locinput==locinput) {
+ 		if ( ++nochange_depth > max_nochange_depth )
+                     Perl_croak(aTHX_ "EVAL without pos change exceeded limit in regex");
+             } else {
+diff --git a/t/re/pat.t b/t/re/pat.t
+index a96bf56..ddbeb3c 100644
+--- a/t/re/pat.t
++++ b/t/re/pat.t
+@@ -23,7 +23,7 @@ BEGIN {
+     skip_all('no re module') unless defined &DynaLoader::boot_DynaLoader;
+     skip_all_without_unicode_tables();
+ 
+-plan tests => 849;  # Update this when adding/deleting tests.
++plan tests => 851;  # Update this when adding/deleting tests.
+ 
+ run_tests() unless caller;
+ 
+@@ -1956,6 +1956,15 @@ while( "\N{U+100}bc" =~ /(..?)(?{$^N})/g ) {
+ CODE
+     }
+ 
++    # gh17490: test recursion check
++    {
++        my $eval = '(?{1})';
++        my $re = sprintf '(?&FOO)(?(DEFINE)(?<FOO>%sfoo))', $eval x 20;
++        my $result = eval qq{"foo" =~ /$re/};
++        is($@ // '', '', "many evals did not die");
++        ok($result, "regexp correctly matched");
++    }
++
+ } # End of sub run_tests
+ 
+ 1;
+-- 
+2.21.1
+
