@@ -5172,7 +5172,7 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Mon Mar 16 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.2-451
+* Mon Mar 16 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.2-450
 - 5.30.2 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.30.2/pod/perldelta.pod>
   for release notes)
 
