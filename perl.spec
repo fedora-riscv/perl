@@ -83,7 +83,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        443%{?dist}
+Release:        444%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -605,6 +605,8 @@ Epoch:          %{perl_epoch}
 Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
 # Require this till perl-interpreter sub-package provides any modules
 Requires:       %perl_compat
+Provides:       perl-doc
+Provides:       perl-debugger
 %if %{defined perl_bootstrap}
 %gendep_perl_interpreter
 %endif
@@ -5526,6 +5528,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Apr 01 2020 Petr Pisar <ppisar@redhat.com> - 4:5.28.2-444
+- Provide perl-debugger and perl-doc by perl-interpreter
+
 * Fri Mar 27 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.2-443
 - Make perl-macros package noarch
 - Work around a glibc bug in caching LC_MESSAGES (GH#17081)
