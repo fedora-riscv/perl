@@ -296,7 +296,7 @@ Patch75:        perl-5.31.7-Add-tests-for-IO-Handle-getline-and-getlines.patch
 Patch76:        perl-5.30.2-Loading-IO-is-now-threadsafe-avoiding-the-core-bug-r.patch
 Patch77:        perl-5.31.7-Skip-the-new-open-pragma-tests-for-no-utf8-under-PER.patch
 
-# Close :unix PerlIO layers properly, in upstream after 5.31.8
+# Close :unix PerlIO layers properly, bug #987118, in upstream after 5.31.8
 Patch78:        perl-5.31.8-perlio.c-make-unix-close-method-call-underlaying-lay.patch
 
 # Only install ExtUtils::XSSymSet manual page on VMS, GH#17424,
@@ -5236,7 +5236,7 @@ popd
 - Fix POSIX:setlocale() documentation
 - Prevent from an integer overflow in POSIX::SigSet()
 - Fix thread-safety of IO::Handle (GH#14816)
-- Close :unix PerlIO layers properly
+- Close :unix PerlIO layers properly (bug #987118)
 - Fix sorting tied arrays (GH#17496)
 - Fix a spurious warning about a multidimensional syntax (GH#16535)
 - Normalize "#!/perl" shebangs in the tests
