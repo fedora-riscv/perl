@@ -430,7 +430,7 @@ Patch119:       perl-5.31.7-Add-tests-for-IO-Handle-getline-and-getlines.patch
 Patch120:       perl-5.30.2-Loading-IO-is-now-threadsafe-avoiding-the-core-bug-r.patch
 Patch121:       perl-5.31.7-Skip-the-new-open-pragma-tests-for-no-utf8-under-PER.patch
 
-# Close :unix PerlIO layers properly, in upstream after 5.31.8
+# Close :unix PerlIO layers properly, bug #987118, in upstream after 5.31.8
 Patch122:       perl-5.31.8-perlio.c-make-unix-close-method-call-underlaying-lay.patch
 
 # Fix counting a recursion limit when matching in a postponed eval, GH#17490,
@@ -5537,7 +5537,7 @@ popd
 - Fix POSIX:setlocale() documentation
 - Prevent from an integer overflow in POSIX::SigSet()
 - Fix thread-safety of IO::Handle (GH#14816)
-- Close :unix PerlIO layers properly
+- Close :unix PerlIO layers properly (bug #987118)
 - Fix counting a recursion limit when matching in a postponed eval (GH#17490)
 - Fix sorting tied arrays (GH#17496)
 - Fix a spurious warning about a multidimensional syntax (GH#16535)
