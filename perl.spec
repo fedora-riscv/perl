@@ -1,4 +1,4 @@
-%global perl_version    5.30.2
+%global perl_version    5.30.3
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -85,7 +85,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        452%{?dist}
+Release:        453%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -371,7 +371,7 @@ BuildRequires:  rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.30.2)
+%global perl_compat perl(:MODULE_COMPAT_5.30.3)
 
 Requires:       %perl_compat
 Requires:       perl-interpreter%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
@@ -526,6 +526,7 @@ License:        (GPL+ or Artistic) and HSRL and MIT and UCD
 Provides:       %perl_compat
 Provides:       perl(:MODULE_COMPAT_5.30.0)
 Provides:       perl(:MODULE_COMPAT_5.30.1)
+Provides:       perl(:MODULE_COMPAT_5.30.2)
 # Interpreter version to fulfil required genersted from "require 5.006;"
 Provides:       perl(:VERSION) = %{perl_version}
 # Integeres are 64-bit on all platforms
@@ -1974,7 +1975,7 @@ encoder/decoder. These encoding methods are specified in RFC 2045 - MIME
 Summary:        What modules are shipped with versions of perl
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20200314
+Version:        5.20200601
 Requires:       %perl_compat
 Requires:       perl(List::Util)
 Requires:       perl(version) >= 0.88
@@ -1992,7 +1993,7 @@ are shipped with each version of perl.
 Summary:        Tool for listing modules shipped with perl
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20200314
+Version:        5.20200601
 Requires:       %perl_compat
 Requires:       perl(feature)
 Requires:       perl(version) >= 0.88
@@ -5230,6 +5231,11 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jun 02 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.3-453
+- 5.30.3 bump (see <https://metacpan.org/pod/release/XSAWYERX/perl-5.30.3/pod/perldelta.pod>
+  for release notes)
+- Security release fixes CVE-2020-10543, CVE-2020-10878 and CVE-2020-12723
+
 * Fri Mar 27 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.2-452
 - Make perl-macros package noarch
 - Work around a glibc bug in caching LC_MESSAGES (GH#17081)
