@@ -1033,6 +1033,8 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.174
 Requires:       %perl_compat
+Requires:       perl(B::Deparse)
+Requires:       perl(bytes)
 Requires:       perl(Scalar::Util)
 Requires:       perl(XSLoader)
 %if %{defined perl_bootstrap}
