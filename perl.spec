@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        455%{?dist}
+Release:        456%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -4324,7 +4324,7 @@ BUILD_BZIP2=0
 BZIP2_LIB=%{_libdir}
 export BUILD_BZIP2 BZIP2_LIB
 
-# Prepapre a symlink from proper DSO name to libperl.so now so that new perl
+# Prepare a symlink from proper DSO name to libperl.so now so that new perl
 # can be executed from make.
 %global soname libperl.so.%{perl_abi}
 test -L %soname || ln -s libperl.so %soname
@@ -6894,6 +6894,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jun 26 2020 Jitka Plesnikova <jplesnik@redhat.com>
+- Perl 5.32 re-rebuild of bootstrapped packages
+
 * Mon Jun 22 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.32.0-455
 - 5.32.0 bump (see <https://metacpan.org/pod/release/XSAWYERX/perl-5.32.0/pod/perldelta.pod>
   or release notes)
