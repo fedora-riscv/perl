@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        456%{?dist}
+Release:        457%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -4232,6 +4232,10 @@ sed -i '\|cpan/Memoize/Memoize/NDBM_File.pm|d' MANIFEST
 
 
 %build
+# This package has static probes which do not work with LTO
+# Disable LTO
+%define _lto_cflags %{nil}
+
 echo "RPM Build arch: %{_arch}"
 
 # use "lib", not %%{_lib}, for privlib, sitelib, and vendorlib
@@ -6896,10 +6900,13 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jun 30 2020 Jeff Law <law@redhat.com>- 4:5.32.0-457
+Disable LTO
+
 * Fri Jun 26 2020 Jitka Plesnikova <jplesnik@redhat.com>
 - Perl 5.32 re-rebuild of bootstrapped packages
 
-* Mon Jun 22 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.32.0-455
+* Mon Jun 22 2020 Jitka Plesnikova <jplesnik@redhat.com>- 4:5.32.0-455
 - 5.32.0 bump (see <https://metacpan.org/pod/release/XSAWYERX/perl-5.32.0/pod/perldelta.pod>
   or release notes)
 
