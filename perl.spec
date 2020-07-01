@@ -6900,13 +6900,13 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Tue Jun 30 2020 Jeff Law <law@redhat.com>- 4:5.32.0-457
-Disable LTO
+* Tue Jun 30 2020 Jeff Law <law@redhat.com> - 4:5.32.0-457
+- Disable LTO
 
-* Fri Jun 26 2020 Jitka Plesnikova <jplesnik@redhat.com>
+* Fri Jun 26 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.32.0-456
 - Perl 5.32 re-rebuild of bootstrapped packages
 
-* Mon Jun 22 2020 Jitka Plesnikova <jplesnik@redhat.com>- 4:5.32.0-455
+* Mon Jun 22 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.32.0-455
 - 5.32.0 bump (see <https://metacpan.org/pod/release/XSAWYERX/perl-5.32.0/pod/perldelta.pod>
   or release notes)
 
