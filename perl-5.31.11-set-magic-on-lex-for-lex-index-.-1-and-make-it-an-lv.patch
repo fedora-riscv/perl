@@ -1,0 +1,91 @@
+From e2d0e9a5d1dd29d4005ca9a3e73222eeabd9e2b7 Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Wed, 22 Apr 2020 15:01:40 +1000
+Subject: [PATCH] set magic on $lex for $lex = (index(...) == -1) and make it
+ an lvalue
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+related to #17737 and fixes #17739
+
+re-work of my original patch that only pushes the final result
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ pp.c         | 13 +++++++++----
+ t/op/index.t | 28 +++++++++++++++++++++++++++-
+ 2 files changed, 36 insertions(+), 5 deletions(-)
+
+diff --git a/pp.c b/pp.c
+index a061fae363..c3b18b57f8 100644
+--- a/pp.c
++++ b/pp.c
+@@ -3520,11 +3520,16 @@ PP(pp_index)
+   push_result:
+     /* OPpTRUEBOOL indicates an '== -1' has been optimised away */
+     if (PL_op->op_private & OPpTRUEBOOL) {
+-        PUSHs( ((retval != -1) ^ cBOOL(PL_op->op_private & OPpINDEX_BOOLNEG))
+-                    ? &PL_sv_yes : &PL_sv_no);
+-        if (PL_op->op_private & OPpTARGET_MY)
++        SV *result = ((retval != -1) ^ cBOOL(PL_op->op_private & OPpINDEX_BOOLNEG))
++            ? &PL_sv_yes : &PL_sv_no;
++        if (PL_op->op_private & OPpTARGET_MY) {
+             /* $lex = (index() == -1) */
+-            sv_setsv(TARG, TOPs);
++            sv_setsv_mg(TARG, result);
++            PUSHs(TARG);
++        }
++        else {
++            PUSHs(result);
++        }
+     }
+     else
+         PUSHi(retval);
+diff --git a/t/op/index.t b/t/op/index.t
+index 858d03deb4..2f0834e8d1 100644
+--- a/t/op/index.t
++++ b/t/op/index.t
+@@ -8,7 +8,7 @@ BEGIN {
+ }
+ 
+ use strict;
+-plan( tests => 412 );
++plan( tests => 414 );
+ 
+ run_tests() unless caller;
+ 
+@@ -332,4 +332,30 @@ sub run_tests {
+ 
+     }
+ 
++    {
++        my $store = 100;
++        package MyTie {
++            require Tie::Scalar;
++            our @ISA = qw(Tie::StdScalar);
++            sub STORE {
++                my ($self, $value) = @_;
++
++                $store = $value;
++            }
++        };
++        my $x;
++        tie $x, "MyTie";
++        $x = (index("foo", "o") == -1);
++        ok(!$store, 'magic called on $lexical = (index(...) == -1)');
++    }
++    {
++        is(eval <<'EOS', "a", 'optimized $lex = (index(...) == -1) is an lvalue');
++my $y = "foo";
++my $z = "o";
++my $x;
++($x = (index($y, $z) == -1)) =~ s/^/a/;
++$x;
++EOS
++    }
++
+ } # end of sub run_tests
+-- 
+2.25.4
+
