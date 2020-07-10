@@ -1,0 +1,68 @@
+From 637363550a44b619bc73820bf6ee4487a6d95a75 Mon Sep 17 00:00:00 2001
+From: Karl Williamson <khw@cpan.org>
+Date: Sat, 4 Apr 2020 21:24:55 -0600
+Subject: [PATCH] regcomp.c: Die on relative group number overflow
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+That this code was doing in the presence of an illegally large (or
+small) relative capturing group number was to set it to about the
+furthest away from zero it could get, and silently carry on, where it
+likely overflowed a few lines down.
+
+Instead die immediately with a proper message.
+
+Petr Písař: Ported to 5.30.3 from 5c1c42cb3b1c905ab450445eaf8010952dd1f9e5.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ regcomp.c           | 10 ++++++++--
+ t/re/pat_advanced.t | 10 ++++++++++
+ 2 files changed, 18 insertions(+), 2 deletions(-)
+
+diff --git a/regcomp.c b/regcomp.c
+index b60ec0c..7426e83 100644
+--- a/regcomp.c
++++ b/regcomp.c
+@@ -11697,8 +11697,14 @@ S_reg(pTHX_ RExC_state_t *pRExC_state, I32 paren, I32 *flagp, U32 depth)
+                     ) {
+                         num = (I32)unum;
+                         RExC_parse = (char*)endptr;
+-                    } else
+-                        num = I32_MAX;
++                    }
++                    else {  /* Overflow, or something like that.  Position
++                               beyond all digits for the message */
++                        while (RExC_parse < RExC_end && isDIGIT(*RExC_parse))  {
++                            RExC_parse++;
++                        }
++                        vFAIL(impossible_group);
++                    }
+                     if (is_neg) {
+                         /* Some limit for num? */
+                         num = -num;
+diff --git a/t/re/pat_advanced.t b/t/re/pat_advanced.t
+index 10204da..704741d 100644
+--- a/t/re/pat_advanced.t
++++ b/t/re/pat_advanced.t
+@@ -2529,6 +2529,16 @@ EOF
+                       "Invalid reference to group in regex; marked by <--"
+                     . " HERE in m/((?+2147483647) <-- HERE )/ at - line 1.",
+                       {}, "integer overflow, undefined behavior in ASAN");
++        fresh_perl_is('qr/((?+18446744073709551615))/',
++                      "Invalid reference to group in regex; marked by <--"
++                    . " HERE in m/((?+18446744073709551615 <-- HERE ))/ at -"
++                    . " line 1.",
++                      {}, "Too large relative group number");
++        fresh_perl_is('qr/((?-18446744073709551615))/',
++                      "Invalid reference to group in regex; marked by <--"
++                    . " HERE in m/((?-18446744073709551615 <-- HERE ))/ at -"
++                    . " line 1.",
++                      {}, "Too large negative relative group number");
+     }
+ 
+     # !!! NOTE that tests that aren't at all likely to crash perl should go
+-- 
+2.25.4
+

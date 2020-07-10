@@ -314,6 +314,11 @@ Patch82:        perl-5.30.2-toke.c-fix-Multidimensional-array-heuristic-to-ignor
 # Fix a warning about an uninitialized value in B::Deparse, GH#17537
 Patch83:        perl-5.31.9-B-Deparse-fixup-uninitialized-error-in-deparsing-wei.patch
 
+# Fix an integer overflow in a relative capture group number,
+# GH#17593, in upstream after 5.31.10
+Patch84:        perl-5.30.3-regcomp.c-Avoid-a-segfault.patch
+Patch85:        perl-5.30.3-regcomp.c-Die-on-relative-group-number-overflow.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2910,6 +2915,8 @@ Perl extension for Version Objects
 %patch81 -p1
 %patch82 -p1
 %patch83 -p1
+%patch84 -p1
+%patch85 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2986,6 +2993,8 @@ perl -x patchlevel.h \
     'Fedora Patch81: Fix sorting tied arrays (GH#17496)' \
     'Fedora Patch82: Fix a spurious warning about a multidimensional syntax (GH#16535)' \
     'Fedora Patch83: Fix a warning about an uninitialized value in B::Deparse (GH#17537)' \
+    'Fedora Patch84: Fix an integer overflow in a relative capture group number (GH#17593)' \
+    'Fedora Patch85: Fix an integer overflow in a relative capture group number (GH#17593)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5237,6 +5246,7 @@ popd
 %changelog
 * Fri Jul 10 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-454
 - Disable LTO
+- Fix an integer overflow in a relative capture group number (GH#17593)
 
 * Tue Jun 02 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.3-453
 - 5.30.3 bump (see <https://metacpan.org/pod/release/XSAWYERX/perl-5.30.3/pod/perldelta.pod>
