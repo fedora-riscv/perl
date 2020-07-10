@@ -1,0 +1,60 @@
+From 69d4d9c8182035ceb44091b35b4b34a326a6f058 Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Wed, 22 Apr 2020 11:02:16 +1000
+Subject: [PATCH] fix utf8 length magic handling for scalar reverse
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+fixes #17737
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ pp.c           |  1 +
+ t/op/reverse.t | 11 ++++++++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/pp.c b/pp.c
+index 999275f429..a061fae363 100644
+--- a/pp.c
++++ b/pp.c
+@@ -5898,6 +5898,7 @@ PP(pp_reverse)
+ 	    sv_setsv(TARG, DEFSV);
+ 	    XPUSHs(TARG);
+ 	}
++        SvSETMAGIC(TARG); /* remove any utf8 length magic */
+ 
+ 	up = SvPV_force(TARG, len);
+ 	if (len > 1) {
+diff --git a/t/op/reverse.t b/t/op/reverse.t
+index 16c732bc3f..babf3cf3ac 100644
+--- a/t/op/reverse.t
++++ b/t/op/reverse.t
+@@ -6,7 +6,7 @@ BEGIN {
+     set_up_inc('../lib');
+ }
+ 
+-plan tests => 24;
++plan tests => 25;
+ 
+ is(reverse("abc"), "cba", 'simple reverse');
+ 
+@@ -92,6 +92,15 @@ use Tie::Array;
+     is($a, $c, 'Unicode string double reversal matches original');
+ }
+ 
++{
++    # https://github.com/Perl/perl5/issues/17737
++    # utf8 length magic handling
++    # threw an assertion failure with -DDEBUGGING
++    my @x;
++    push @x, length reverse for split "-", "\x{100}--0";
++    is($x[1], 0, "check set magic being called to clear length magic");
++}
++
+ # [perl #132544] stack pointer used to go wild when nullary reverse
+ # required extending the stack
+ for(0..1000){()=(0..$_,scalar reverse )}
+-- 
+2.25.4
+
