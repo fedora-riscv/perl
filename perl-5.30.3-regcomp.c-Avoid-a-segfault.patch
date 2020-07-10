@@ -1,0 +1,125 @@
+From 0c74069f6bc38368886a56c6db0d51bccbf89773 Mon Sep 17 00:00:00 2001
+From: Karl Williamson <khw@cpan.org>
+Date: Sat, 4 Apr 2020 21:17:24 -0600
+Subject: [PATCH] regcomp.c: Avoid a segfault
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This was resulting in C undefined behavior reported by asan.  Check that
+won't overflow before doing the operation; then die instead of going
+ahead anyway.
+
+This fixes #17593
+
+Petr Písař: Ported to 5.30.3 from daa7401031a7a416e6bc05379a3e6f56744ff93d.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ pod/perldiag.pod    |  6 ++++++
+ regcomp.c           | 30 +++++++++++++++++++++++-------
+ t/re/pat_advanced.t |  6 ++++++
+ 3 files changed, 35 insertions(+), 7 deletions(-)
+
+diff --git a/pod/perldiag.pod b/pod/perldiag.pod
+index 37478c5..f3af2a2 100644
+--- a/pod/perldiag.pod
++++ b/pod/perldiag.pod
+@@ -3123,6 +3123,12 @@ problem was discovered.  See L<perlre>.
+ (F) The range specified in the tr/// or y/// operator had a minimum
+ character greater than the maximum character.  See L<perlop>.
+ 
++=item Invalid reference to group in regex; marked by S<<-- HERE> in m/%s/
++
++(F) The capture group you specified can't possibly exist because the
++number you used is not within the legal range of possible values for
++this machine.
++
+ =item Invalid separator character %s in attribute list
+ 
+ (F) Something other than a colon or whitespace was seen between the
+diff --git a/regcomp.c b/regcomp.c
+index 0cbfcd8..b60ec0c 100644
+--- a/regcomp.c
++++ b/regcomp.c
+@@ -11472,6 +11472,7 @@ S_reg(pTHX_ RExC_state_t *pRExC_state, I32 paren, I32 *flagp, U32 depth)
+ 	    bool is_logical = 0;
+ 	    const char * const seqstart = RExC_parse;
+             const char * endptr;
++            const char impossible_group[] = "Invalid reference to group";
+             if (has_intervening_patws) {
+                 RExC_parse++;
+                 vFAIL("In '(?...)', the '(' and '?' must be adjacent");
+@@ -11707,21 +11708,38 @@ S_reg(pTHX_ RExC_state_t *pRExC_state, I32 paren, I32 *flagp, U32 depth)
+ 	            vFAIL("Expecting close bracket");
+ 
+               gen_recurse_regop:
+-                if ( paren == '-' ) {
++                if (paren == '-' || paren == '+') {
++
++                    /* Don't overflow */
++                    if (UNLIKELY(I32_MAX - RExC_npar < num)) {
++                        RExC_parse++;
++                        vFAIL(impossible_group);
++                    }
++
+                     /*
+                     Diagram of capture buffer numbering.
+                     Top line is the normal capture buffer numbers
+                     Bottom line is the negative indexing as from
+                     the X (the (?-2))
+ 
+-                    +   1 2    3 4 5 X          6 7
++                        1 2    3 4 5 X   Y      6 7
++                       /(a(x)y)(a(b(c(?+2)d)e)f)(g(h))/
+                        /(a(x)y)(a(b(c(?-2)d)e)f)(g(h))/
+-                    -   5 4    3 2 1 X          x x
++                    -   5 4    3 2 1 X   Y      x x
+ 
++                    Resolve to absolute group.  Recall that RExC_npar is +1 of
++                    the actual parenthesis group number.  For lookahead, we
++                    have to compensate for that.  Using the above example, when
++                    we get to Y in the parse, num is 2 and RExC_npar is 6.  We
++                    want 7 for +2, and 4 for -2.
+                     */
+-                    num = RExC_npar + num;
+-                    if (num < 1)  {
++                    if ( paren == '+' ) {
++                        num--;
++                    }
++
++                    num += RExC_npar;
+ 
++                    if (paren == '-' && num < 1) {
+                         /* It might be a forward reference; we can't fail until
+                          * we know, by completing the parse to get all the
+                          * groups, and then reparsing */
+@@ -11733,8 +11751,6 @@ S_reg(pTHX_ RExC_state_t *pRExC_state, I32 paren, I32 *flagp, U32 depth)
+                             REQUIRE_PARENS_PASS;
+                         }
+                     }
+-                } else if ( paren == '+' ) {
+-                    num = RExC_npar + num - 1;
+                 }
+                 /* We keep track how many GOSUB items we have produced.
+                    To start off the ARG2L() of the GOSUB holds its "id",
+diff --git a/t/re/pat_advanced.t b/t/re/pat_advanced.t
+index b4f32ee..10204da 100644
+--- a/t/re/pat_advanced.t
++++ b/t/re/pat_advanced.t
+@@ -2524,6 +2524,12 @@ EOF
+                       "", {}, "*COMMIT caused positioning beyond EOS");
+     }
+ 
++    {   # [GH #17593]
++        fresh_perl_is('qr/((?+2147483647))/',
++                      "Invalid reference to group in regex; marked by <--"
++                    . " HERE in m/((?+2147483647) <-- HERE )/ at - line 1.",
++                      {}, "integer overflow, undefined behavior in ASAN");
++    }
+ 
+     # !!! NOTE that tests that aren't at all likely to crash perl should go
+     # a ways above, above these last ones.  There's a comment there that, like
+-- 
+2.25.4
+
