@@ -319,6 +319,10 @@ Patch83:        perl-5.31.9-B-Deparse-fixup-uninitialized-error-in-deparsing-wei
 Patch84:        perl-5.30.3-regcomp.c-Avoid-a-segfault.patch
 Patch85:        perl-5.30.3-regcomp.c-Die-on-relative-group-number-overflow.patch
 
+# Fix handling UTF-8 length magic for a scalar reverse, GH#17737,
+# in upstream after 5.31.11
+Patch86:        perl-5.31.11-fix-utf8-length-magic-handling-for-scalar-reverse.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2917,6 +2921,7 @@ Perl extension for Version Objects
 %patch83 -p1
 %patch84 -p1
 %patch85 -p1
+%patch86 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -2995,6 +3000,7 @@ perl -x patchlevel.h \
     'Fedora Patch83: Fix a warning about an uninitialized value in B::Deparse (GH#17537)' \
     'Fedora Patch84: Fix an integer overflow in a relative capture group number (GH#17593)' \
     'Fedora Patch85: Fix an integer overflow in a relative capture group number (GH#17593)' \
+    'Fedora Patch86: Fix handling UTF-8 length magic for a scalar reverse (GH#17737)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5247,6 +5253,7 @@ popd
 * Fri Jul 10 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-453
 - Disable LTO
 - Fix an integer overflow in a relative capture group number (GH#17593)
+- Fix handling UTF-8 length magic for a scalar reverse (GH#17737)
 
 * Tue Jun 02 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.30.3-452
 - 5.30.3 bump (see <https://metacpan.org/pod/release/XSAWYERX/perl-5.30.3/pod/perldelta.pod>
