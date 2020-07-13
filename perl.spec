@@ -85,7 +85,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        454%{?dist}
+Release:        455%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -326,6 +326,10 @@ Patch86:        perl-5.31.11-fix-utf8-length-magic-handling-for-scalar-reverse.p
 # Fix a missing magic and a value when index() is uses as left-value,
 # GH#17739, in upstream after 5.31.11
 Patch87:        perl-5.31.11-set-magic-on-lex-for-lex-index-.-1-and-make-it-an-lv.patch
+
+# Preload utf8_heavy.pl by Safe in perl 5.30, GH#17271,
+# a similar patch already proposed to upstream, not needed after 5.31.6
+Patch88:        perl-5.30.3-Preload-utf8_heavy.pl-by-Safe-in-perl-5.30.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -2927,6 +2931,7 @@ Perl extension for Version Objects
 %patch85 -p1
 %patch86 -p1
 %patch87 -p1
+%patch88 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3007,6 +3012,7 @@ perl -x patchlevel.h \
     'Fedora Patch85: Fix an integer overflow in a relative capture group number (GH#17593)' \
     'Fedora Patch86: Fix handling UTF-8 length magic for a scalar reverse (GH#17737)' \
     'Fedora Patch87: Fix a missing magic and a value when index() is uses as left-value (GH#17739)' \
+    'Fedora Patch88: Preload utf8_heavy.pl by Safe in perl 5.30 (GH#17271)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5256,6 +5262,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jul 13 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-455
+- Preload utf8_heavy.pl by Safe in perl 5.30 (bug #1855963)
+
 * Fri Jul 10 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-454
 - Disable LTO
 - Fix an integer overflow in a relative capture group number (GH#17593)

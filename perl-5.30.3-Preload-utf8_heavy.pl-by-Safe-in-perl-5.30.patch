@@ -1,0 +1,70 @@
+From 4dec90575e3cf949e09fa958787d721d09b0e537 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20P=C3=ADsa=C5=99?= <ppisar@redhat.com>
+Date: Mon, 13 Jul 2020 14:23:39 +0200
+Subject: [PATCH] Preload utf8_heavy.pl by Safe in perl 5.30
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Compiling tr/// with a 255-above code point after creating a Safe
+object fails in perl 5.30.3:
+
+    #!/usr/bin/perl
+    BEGIN {
+	require Safe;
+	Safe->new;
+    }
+    tr/\x{100}//;
+
+    $ perl main.pl
+    Undefined subroutine utf8::SWASHNEW called at main.pl line 6.
+
+This is not a problem since perl 5.31.6 when utf8_heavy.pl was
+removed.
+
+https://github.com/Perl/perl5/issues/17271
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ dist/Safe/Safe.pm      | 7 +++++--
+ dist/Safe/t/safeutf8.t | 3 ++-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/dist/Safe/Safe.pm b/dist/Safe/Safe.pm
+index e9f0967..0a200cc 100644
+--- a/dist/Safe/Safe.pm
++++ b/dist/Safe/Safe.pm
+@@ -62,12 +62,15 @@ use Opcode 1.01, qw(
+ require utf8;
+ # we must ensure that utf8_heavy.pl, where SWASHNEW is defined, is loaded
+ # but without depending on too much knowledge of that implementation detail.
+-# This code (//i on a unicode string) should ensure utf8 is fully loaded
++# This code (//i on a unicode string and tr/// with a Unicode character)
++# should ensure utf8 is fully loaded
+ # and also loads the ToFold SWASH, unless things change so that these
+ # particular code points don't cause it to load.
+ # (Swashes are cached internally by perl in PL_utf8_* variables
+ # independent of being inside/outside of Safe. So once loaded they can be)
+-do { my $a = pack('U',0x100); my $b = chr 0x101; utf8::upgrade $b; $a =~ /$b/i };
++do { my $a = pack('U',0x100); my $b = chr 0x101; utf8::upgrade $b; $a =~ /$b/i;
++    $a =~ tr/\x{1234}//;
++};
+ # now we can safely include utf8::SWASHNEW in $default_share defined below.
+ 
+ my $default_root  = 0;
+diff --git a/dist/Safe/t/safeutf8.t b/dist/Safe/t/safeutf8.t
+index 9a87aa9..3425833 100644
+--- a/dist/Safe/t/safeutf8.t
++++ b/dist/Safe/t/safeutf8.t
+@@ -26,7 +26,8 @@ my $trigger = q{ my $a = pack('U',0xC4); my $b = chr }
+             . (($] lt 5.007_003) ? "" : 'utf8::unicode_to_native(')
+             . '0xE4'
+             . (($] lt 5.007_003) ? "" : ')')
+-            . q{; utf8::upgrade $b; $a =~ /$b/i };
++            . q{; utf8::upgrade $b; $a =~ /$b/i }
++            . q{ and $a =~ tr/\x{1234}//r }; # GH#17271
+ 
+ ok $safe->reval( $trigger ), 'trigger expression should return true';
+ is $@, '', 'trigger expression should not die';
+-- 
+2.25.4
+
