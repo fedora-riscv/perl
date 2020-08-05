@@ -344,6 +344,12 @@ Patch91:        perl-5.33.0-ext-XS-APItest-t-utf8_warn_base.pl-Fix-a-couple-test
 Patch92:        perl-5.33.0-make-fh-error-report-errors-from-both-input-and-outp.patch
 Patch93:        perl-5.33.0-IO-Handle-clear-the-error-on-both-input-and-output-s.patch
 
+# Fix running actions after stepping in a debugger, GH#17901,
+# in upstream after 5.33.0
+Patch94:        perl-5.30.3-After-running-an-action-in-the-debugger-turn-it-off.patch
+Patch95:        perl-5.33.0-Clearing-DB-action-at-the-end-is-no-longer-needed.patch
+Patch96:        perl-5.33.0-Add-missing-MANIFEST-entry-from-fix-for-debugger.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2950,6 +2956,9 @@ Perl extension for Version Objects
 %patch91 -p1
 %patch92 -p1
 %patch93 -p1
+%patch94 -p1
+%patch95 -p1
+%patch96 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3036,6 +3045,9 @@ perl -x patchlevel.h \
     'Fedora Patch91: Fix ext/XS-APItest/t/utf8_warn_base.pl tests' \
     'Fedora Patch92: Fix IO::Handle::error() to report write errors (GH#6799)' \
     'Fedora Patch93: Fix IO::Handle::error() to report write errors (GH#6799)' \
+    'Fedora Patch94: Fix running actions after stepping in a debugger (GH#17901)' \
+    'Fedora Patch95: Fix running actions after stepping in a debugger (GH#17901)' \
+    'Fedora Patch96: Fix running actions after stepping in a debugger (GH#17901)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5290,6 +5302,7 @@ popd
 - Fix SvUV_nomg() macro definition
 - Fix ext/XS-APItest/t/utf8_warn_base.pl tests
 - Fix IO::Handle::error() to report write errors (GH#6799)
+- Fix running actions after stepping in a debugger (GH#17901)
 
 * Mon Jul 13 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-455
 - Preload utf8_heavy.pl by Safe in perl 5.30 (bug #1855963)
