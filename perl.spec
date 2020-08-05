@@ -201,6 +201,10 @@ Patch25:        perl-5.33.0-reentr.c-Buffer-sizes-for-asctime_r-ctime_r-are-smal
 # in upstream after 5.33.0
 Patch26:        perl-5.33.0-reentr.c-Prevent-infinite-looping.patch
 
+# Fix a buffer overread in when reallocating formats, GH#17844,
+# in upstream after 5.33.0
+Patch27:        perl-5.33.0-perl-17844-don-t-update-SvCUR-until-after-we-ve-done.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4213,6 +4217,7 @@ you're not running VMS, this module does nothing.
 %patch24 -p1
 %patch25 -p1
 %patch26 -p1
+%patch27 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4246,6 +4251,7 @@ perl -x patchlevel.h \
     'Fedora Patch24: Fix running actions after stepping in a debugger (GH#17901)' \
     'Fedora Patch25: Fix a buffer size for asctime_r() and ctime_r() functions' \
     'Fedora Patch26: Prevent from an integer overflow in RenewDouble() macro' \
+    'Fedora Patch27: Fix a buffer overread in when reallocating formats (GH#17844)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -6974,6 +6980,7 @@ popd
 - Fix running actions after stepping in a debugger (GH#17901)
 - Fix a buffer size for asctime_r() and ctime_r() functions
 - Prevent from an integer overflow in RenewDouble() macro
+- Fix a buffer overread in when reallocating formats (GH#17844)
 
 * Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.32.0-458
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
