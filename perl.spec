@@ -173,6 +173,9 @@ Patch15:        perl-5.33.0-sv.h-Wanted-UOK-but-said-IOK.patch
 # Fix SvTRUE() documentation, in upstream after 5.33.0
 Patch16:        perl-5.33.0-Update-pod-for-SvTRUE-to-indicate-single-param-evalu.patch
 
+# Fix ext/XS-APItest/t/utf8_warn_base.pl tests, in upstream after 5.33.0
+Patch17:        perl-5.33.0-ext-XS-APItest-t-utf8_warn_base.pl-Fix-a-couple-test.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4175,6 +4178,7 @@ you're not running VMS, this module does nothing.
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4198,6 +4202,7 @@ perl -x patchlevel.h \
     'Fedora Patch14: Do not use a C compiler reserved identifiers' \
     'Fedora Patch15: Fix SvUV_nomg() macro definition' \
     'Fedora Patch16: Fix SvTRUE() documentation' \
+    'Fedora Patch17: Fix ext/XS-APItest/t/utf8_warn_base.pl tests' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -6919,6 +6924,7 @@ popd
 - Do not use a C compiler reserved identifiers
 - Fix SvUV_nomg() macro definition
 - Fix SvTRUE() documentation
+- Fix ext/XS-APItest/t/utf8_warn_base.pl tests
 
 * Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.32.0-458
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
