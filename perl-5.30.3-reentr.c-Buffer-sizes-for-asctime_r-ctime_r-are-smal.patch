@@ -1,0 +1,59 @@
+From 990f4199abde5f6ff6ba4686fd6d8a2c68106f4c Mon Sep 17 00:00:00 2001
+From: Karl Williamson <khw@cpan.org>
+Date: Tue, 10 Mar 2020 15:19:57 -0600
+Subject: [PATCH] reentr.c: Buffer sizes for asctime_r,ctime_r are small
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The needed sizes of these are stated in the man pages, and are much
+smaller than were being allocated.
+
+Petr Písař: Ported to 5.30.3 from
+81169c06a76f62ff987ed990ac910c2ae08b3f91.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ reentr.c        | 4 ++--
+ regen/reentr.pl | 5 ++++-
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/reentr.c b/reentr.c
+index 166777e..c873ab2 100644
+--- a/reentr.c
++++ b/reentr.c
+@@ -47,12 +47,12 @@ Perl_reentrant_size(pTHX) {
+ #define REENTRANTSMALLSIZE	 256	/* Make something up. */
+ #define REENTRANTUSUALSIZE	4096	/* Make something up. */
+ #ifdef HAS_ASCTIME_R
+-	PL_reentrant_buffer->_asctime_size = REENTRANTSMALLSIZE;
++	PL_reentrant_buffer->_asctime_size = 26;
+ #endif /* HAS_ASCTIME_R */
+ #ifdef HAS_CRYPT_R
+ #endif /* HAS_CRYPT_R */
+ #ifdef HAS_CTIME_R
+-	PL_reentrant_buffer->_ctime_size = REENTRANTSMALLSIZE;
++	PL_reentrant_buffer->_ctime_size = 26;
+ #endif /* HAS_CTIME_R */
+ #ifdef HAS_GETGRNAM_R
+ #   if defined(HAS_SYSCONF) && defined(_SC_GETGR_R_SIZE_MAX) && !defined(__GLIBC__)
+diff --git a/regen/reentr.pl b/regen/reentr.pl
+index 0dbb79b..d0d2e7a 100644
+--- a/regen/reentr.pl
++++ b/regen/reentr.pl
+@@ -477,8 +477,11 @@ for my $func (@seenf) {
+ 	char*	_${func}_buffer;
+ 	size_t	_${func}_size;
+ EOF
++            my $size = ($func =~ /^(asctime|ctime)$/)
++                       ? 26
++                       : "REENTRANTSMALLSIZE";
+ 	    push @size, <<EOF;
+-	PL_reentrant_buffer->_${func}_size = REENTRANTSMALLSIZE;
++	PL_reentrant_buffer->_${func}_size = $size;
+ EOF
+ 	    pushinitfree $func;
+ 	    pushssif $endif;
+-- 
+2.25.4
+

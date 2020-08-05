@@ -350,6 +350,10 @@ Patch94:        perl-5.30.3-After-running-an-action-in-the-debugger-turn-it-off.
 Patch95:        perl-5.33.0-Clearing-DB-action-at-the-end-is-no-longer-needed.patch
 Patch96:        perl-5.33.0-Add-missing-MANIFEST-entry-from-fix-for-debugger.patch
 
+# Fix a buffer size for asctime_r() and ctime_r() functions,
+# in upstream after 5.33.0
+Patch97:        perl-5.30.3-reentr.c-Buffer-sizes-for-asctime_r-ctime_r-are-smal.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2959,6 +2963,7 @@ Perl extension for Version Objects
 %patch94 -p1
 %patch95 -p1
 %patch96 -p1
+%patch97 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3048,6 +3053,7 @@ perl -x patchlevel.h \
     'Fedora Patch94: Fix running actions after stepping in a debugger (GH#17901)' \
     'Fedora Patch95: Fix running actions after stepping in a debugger (GH#17901)' \
     'Fedora Patch96: Fix running actions after stepping in a debugger (GH#17901)' \
+    'Fedora Patch97: Fix a buffer size for asctime_r() and ctime_r() functions' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5303,6 +5309,7 @@ popd
 - Fix ext/XS-APItest/t/utf8_warn_base.pl tests
 - Fix IO::Handle::error() to report write errors (GH#6799)
 - Fix running actions after stepping in a debugger (GH#17901)
+- Fix a buffer size for asctime_r() and ctime_r() functions
 
 * Mon Jul 13 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-455
 - Preload utf8_heavy.pl by Safe in perl 5.30 (bug #1855963)
