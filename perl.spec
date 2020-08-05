@@ -340,6 +340,10 @@ Patch90:        perl-5.33.0-sv.h-Wanted-UOK-but-said-IOK.patch
 # Fix ext/XS-APItest/t/utf8_warn_base.pl tests, in upstream after 5.33.0
 Patch91:        perl-5.33.0-ext-XS-APItest-t-utf8_warn_base.pl-Fix-a-couple-test.patch
 
+# Fix IO::Handle::error() to report write errors, GH#6799, in upstream after 5.33.0
+Patch92:        perl-5.33.0-make-fh-error-report-errors-from-both-input-and-outp.patch
+Patch93:        perl-5.33.0-IO-Handle-clear-the-error-on-both-input-and-output-s.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2944,6 +2948,8 @@ Perl extension for Version Objects
 %patch89 -p1
 %patch90 -p1
 %patch91 -p1
+%patch92 -p1
+%patch93 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3028,6 +3034,8 @@ perl -x patchlevel.h \
     'Fedora Patch89: Do not use a C compiler reserved identifiers' \
     'Fedora Patch90: Fix SvUV_nomg() macro definition' \
     'Fedora Patch91: Fix ext/XS-APItest/t/utf8_warn_base.pl tests' \
+    'Fedora Patch92: Fix IO::Handle::error() to report write errors (GH#6799)' \
+    'Fedora Patch93: Fix IO::Handle::error() to report write errors (GH#6799)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5281,6 +5289,7 @@ popd
 - Do not use a C compiler reserved identifiers
 - Fix SvUV_nomg() macro definition
 - Fix ext/XS-APItest/t/utf8_warn_base.pl tests
+- Fix IO::Handle::error() to report write errors (GH#6799)
 
 * Mon Jul 13 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-454
 - Preload utf8_heavy.pl by Safe in perl 5.30 (bug #1855963)
