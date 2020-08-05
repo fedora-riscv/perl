@@ -183,6 +183,10 @@ Patch19:        perl-5.33.0-IO-Handle-clear-the-error-on-both-input-and-output-s
 # Fix a link to Unicode Technical Standard #18, GH#17881, in upstream after 5.33.0
 Patch20:        perl-5.32.0-Fix-404-and-text-in-New-Unicode-properties-section.patch
 
+# Fix setting a non-blocking mode in IO::Socket::UNIX, GH#17787,
+# in upstream after 5.33.0
+Patch21:        perl-5.33.0-IO-Socket-UNIX-synchronize-behavior-with-module-docu.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4189,6 +4193,7 @@ you're not running VMS, this module does nothing.
 %patch18 -p1
 %patch19 -p1
 %patch20 -p1
+%patch21 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4216,6 +4221,7 @@ perl -x patchlevel.h \
     'Fedora Patch18: Fix IO::Handle::error() to report write errors (GH#6799)' \
     'Fedora Patch19: Fix IO::Handle::error() to report write errors (GH#6799)' \
     'Fedora Patch20: Fix a link to Unicode Technical Standard #18 (GH#17881)' \
+    'Fedora Patch21: Fix setting a non-blocking mode in IO::Socket::UNIX (GH#17787)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -6940,6 +6946,7 @@ popd
 - Fix ext/XS-APItest/t/utf8_warn_base.pl tests
 - Fix IO::Handle::error() to report write errors (GH#6799)
 - Fix a link to Unicode Technical Standard #18 (GH#17881)
+- Fix setting a non-blocking mode in IO::Socket::UNIX (GH#17787)
 
 * Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.32.0-458
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
