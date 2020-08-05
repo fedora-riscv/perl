@@ -205,6 +205,10 @@ Patch26:        perl-5.33.0-reentr.c-Prevent-infinite-looping.patch
 # in upstream after 5.33.0
 Patch27:        perl-5.33.0-perl-17844-don-t-update-SvCUR-until-after-we-ve-done.patch
 
+# Fix a number of arguments passed to a BOOT XS subroutine, GH#17755,
+# in upstream after 5.33.0
+Patch28:        perl-5.33.0-XSUB.h-fix-MARK-and-items-variables-inside-BOOT-XSUB.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4218,6 +4222,7 @@ you're not running VMS, this module does nothing.
 %patch25 -p1
 %patch26 -p1
 %patch27 -p1
+%patch28 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4252,6 +4257,7 @@ perl -x patchlevel.h \
     'Fedora Patch25: Fix a buffer size for asctime_r() and ctime_r() functions' \
     'Fedora Patch26: Prevent from an integer overflow in RenewDouble() macro' \
     'Fedora Patch27: Fix a buffer overread in when reallocating formats (GH#17844)' \
+    'Fedora Patch28: Fix a number of arguments passed to a BOOT XS subroutine (GH#17755)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -6981,6 +6987,7 @@ popd
 - Fix a buffer size for asctime_r() and ctime_r() functions
 - Prevent from an integer overflow in RenewDouble() macro
 - Fix a buffer overread in when reallocating formats (GH#17844)
+- Fix a number of arguments passed to a BOOT XS subroutine (GH#17755)
 
 * Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.32.0-458
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
