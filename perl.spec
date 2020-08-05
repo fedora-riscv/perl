@@ -176,6 +176,10 @@ Patch16:        perl-5.33.0-Update-pod-for-SvTRUE-to-indicate-single-param-evalu
 # Fix ext/XS-APItest/t/utf8_warn_base.pl tests, in upstream after 5.33.0
 Patch17:        perl-5.33.0-ext-XS-APItest-t-utf8_warn_base.pl-Fix-a-couple-test.patch
 
+# Fix IO::Handle::error() to report write errors, GH#6799, in upstream after 5.33.0
+Patch18:        perl-5.33.0-make-fh-error-report-errors-from-both-input-and-outp.patch
+Patch19:        perl-5.33.0-IO-Handle-clear-the-error-on-both-input-and-output-s.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4179,6 +4183,8 @@ you're not running VMS, this module does nothing.
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
+%patch18 -p1
+%patch19 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4203,6 +4209,8 @@ perl -x patchlevel.h \
     'Fedora Patch15: Fix SvUV_nomg() macro definition' \
     'Fedora Patch16: Fix SvTRUE() documentation' \
     'Fedora Patch17: Fix ext/XS-APItest/t/utf8_warn_base.pl tests' \
+    'Fedora Patch18: Fix IO::Handle::error() to report write errors (GH#6799)' \
+    'Fedora Patch19: Fix IO::Handle::error() to report write errors (GH#6799)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -6925,6 +6933,7 @@ popd
 - Fix SvUV_nomg() macro definition
 - Fix SvTRUE() documentation
 - Fix ext/XS-APItest/t/utf8_warn_base.pl tests
+- Fix IO::Handle::error() to report write errors (GH#6799)
 
 * Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.32.0-458
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
