@@ -187,6 +187,12 @@ Patch20:        perl-5.32.0-Fix-404-and-text-in-New-Unicode-properties-section.p
 # in upstream after 5.33.0
 Patch21:        perl-5.33.0-IO-Socket-UNIX-synchronize-behavior-with-module-docu.patch
 
+# Fix running actions after stepping in a debugger, GH#17901,
+# in upstream after 5.33.0
+Patch22:        perl-5.33.0-After-running-an-action-in-the-debugger-turn-it-off.patch
+Patch23:        perl-5.33.0-Clearing-DB-action-at-the-end-is-no-longer-needed.patch
+Patch24:        perl-5.33.0-Add-missing-MANIFEST-entry-from-fix-for-debugger.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4194,6 +4200,9 @@ you're not running VMS, this module does nothing.
 %patch19 -p1
 %patch20 -p1
 %patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4222,6 +4231,9 @@ perl -x patchlevel.h \
     'Fedora Patch19: Fix IO::Handle::error() to report write errors (GH#6799)' \
     'Fedora Patch20: Fix a link to Unicode Technical Standard #18 (GH#17881)' \
     'Fedora Patch21: Fix setting a non-blocking mode in IO::Socket::UNIX (GH#17787)' \
+    'Fedora Patch22: Fix running actions after stepping in a debugger (GH#17901)' \
+    'Fedora Patch23: Fix running actions after stepping in a debugger (GH#17901)' \
+    'Fedora Patch24: Fix running actions after stepping in a debugger (GH#17901)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -6947,6 +6959,7 @@ popd
 - Fix IO::Handle::error() to report write errors (GH#6799)
 - Fix a link to Unicode Technical Standard #18 (GH#17881)
 - Fix setting a non-blocking mode in IO::Socket::UNIX (GH#17787)
+- Fix running actions after stepping in a debugger (GH#17901)
 
 * Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.32.0-458
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
