@@ -362,6 +362,10 @@ Patch98:        perl-5.33.0-reentr.c-Prevent-infinite-looping.patch
 # in upstream after 5.33.0
 Patch99:        perl-5.30.3-perl-17844-don-t-update-SvCUR-until-after-we-ve-done.patch
 
+# Fix a number of arguments passed to a BOOT XS subroutine, GH#17755,
+# in upstream after 5.33.0
+Patch100:       perl-5.33.0-XSUB.h-fix-MARK-and-items-variables-inside-BOOT-XSUB.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2974,6 +2978,7 @@ Perl extension for Version Objects
 %patch97 -p1
 %patch98 -p1
 %patch99 -p1
+%patch100 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3066,6 +3071,7 @@ perl -x patchlevel.h \
     'Fedora Patch97: Fix a buffer size for asctime_r() and ctime_r() functions' \
     'Fedora Patch98: Prevent from an integer overflow in RenewDouble() macro' \
     'Fedora Patch99: Fix a buffer overread in when reallocating formats (GH#17844)' \
+    'Fedora Patch100: Fix a number of arguments passed to a BOOT XS subroutine (GH#17755)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5324,6 +5330,7 @@ popd
 - Fix a buffer size for asctime_r() and ctime_r() functions
 - Prevent from an integer overflow in RenewDouble() macro
 - Fix a buffer overread in when reallocating formats (GH#17844)
+- Fix a number of arguments passed to a BOOT XS subroutine (GH#17755)
 
 * Mon Jul 13 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-455
 - Preload utf8_heavy.pl by Safe in perl 5.30 (bug #1855963)
