@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        458%{?dist}
+Release:        459%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -163,6 +163,9 @@ Patch12:        perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
 
 # Pass the correct CFLAGS to dtrace
 Patch13:        perl-5.28.0-Pass-CFLAGS-to-dtrace.patch
+
+# Do not use a C compiler reserved identifiers, in upstream after 5.33.0
+Patch14:        perl-5.33.0-MUTABLE_PTR-Rmv-non-standard-syntax.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -4163,6 +4166,7 @@ you're not running VMS, this module does nothing.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4183,6 +4187,7 @@ perl -x patchlevel.h \
     'Fedora Patch11: Replace EU::MakeMaker dependency with EU::MM::Utils in IPC::Cmd (bug #1129443)' \
     'Fedora Patch12: Link XS modules to pthread library to fix linking with -z defs' \
     'Fedora Patch13: Pass the correct CFLAGS to dtrace' \
+    'Fedora Patch14: Do not use a C compiler reserved identifiers' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -6900,6 +6905,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Aug 05 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-459
+- Do not use a C compiler reserved identifiers
+
 * Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.32.0-458
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
 
