@@ -337,6 +337,9 @@ Patch89:        perl-5.33.0-MUTABLE_PTR-Rmv-non-standard-syntax.patch
 # Fix SvUV_nomg() macro definition, in upstream after 5.33.0
 Patch90:        perl-5.33.0-sv.h-Wanted-UOK-but-said-IOK.patch
 
+# Fix ext/XS-APItest/t/utf8_warn_base.pl tests, in upstream after 5.33.0
+Patch91:        perl-5.33.0-ext-XS-APItest-t-utf8_warn_base.pl-Fix-a-couple-test.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2940,6 +2943,7 @@ Perl extension for Version Objects
 %patch88 -p1
 %patch89 -p1
 %patch90 -p1
+%patch91 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3023,6 +3027,7 @@ perl -x patchlevel.h \
     'Fedora Patch88: Preload utf8_heavy.pl by Safe in perl 5.30 (GH#17271)' \
     'Fedora Patch89: Do not use a C compiler reserved identifiers' \
     'Fedora Patch90: Fix SvUV_nomg() macro definition' \
+    'Fedora Patch91: Fix ext/XS-APItest/t/utf8_warn_base.pl tests' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5275,6 +5280,7 @@ popd
 * Wed Aug 05 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-456
 - Do not use a C compiler reserved identifiers
 - Fix SvUV_nomg() macro definition
+- Fix ext/XS-APItest/t/utf8_warn_base.pl tests
 
 * Mon Jul 13 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-455
 - Preload utf8_heavy.pl by Safe in perl 5.30 (bug #1855963)
