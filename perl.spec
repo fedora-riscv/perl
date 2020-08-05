@@ -193,6 +193,10 @@ Patch22:        perl-5.33.0-After-running-an-action-in-the-debugger-turn-it-off.
 Patch23:        perl-5.33.0-Clearing-DB-action-at-the-end-is-no-longer-needed.patch
 Patch24:        perl-5.33.0-Add-missing-MANIFEST-entry-from-fix-for-debugger.patch
 
+# Fix a buffer size for asctime_r() and ctime_r() functions,
+# in upstream after 5.33.0
+Patch25:        perl-5.33.0-reentr.c-Buffer-sizes-for-asctime_r-ctime_r-are-smal.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4203,6 +4207,7 @@ you're not running VMS, this module does nothing.
 %patch22 -p1
 %patch23 -p1
 %patch24 -p1
+%patch25 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4234,6 +4239,7 @@ perl -x patchlevel.h \
     'Fedora Patch22: Fix running actions after stepping in a debugger (GH#17901)' \
     'Fedora Patch23: Fix running actions after stepping in a debugger (GH#17901)' \
     'Fedora Patch24: Fix running actions after stepping in a debugger (GH#17901)' \
+    'Fedora Patch25: Fix a buffer size for asctime_r() and ctime_r() functions' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -6960,6 +6966,7 @@ popd
 - Fix a link to Unicode Technical Standard #18 (GH#17881)
 - Fix setting a non-blocking mode in IO::Socket::UNIX (GH#17787)
 - Fix running actions after stepping in a debugger (GH#17901)
+- Fix a buffer size for asctime_r() and ctime_r() functions
 
 * Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.32.0-458
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
