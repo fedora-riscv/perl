@@ -170,6 +170,9 @@ Patch14:        perl-5.33.0-MUTABLE_PTR-Rmv-non-standard-syntax.patch
 # Fix SvUV_nomg() macro definition, in upstream after 5.33.0
 Patch15:        perl-5.33.0-sv.h-Wanted-UOK-but-said-IOK.patch
 
+# Fix SvTRUE() documentation, in upstream after 5.33.0
+Patch16:        perl-5.33.0-Update-pod-for-SvTRUE-to-indicate-single-param-evalu.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4171,6 +4174,7 @@ you're not running VMS, this module does nothing.
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4193,6 +4197,7 @@ perl -x patchlevel.h \
     'Fedora Patch13: Pass the correct CFLAGS to dtrace' \
     'Fedora Patch14: Do not use a C compiler reserved identifiers' \
     'Fedora Patch15: Fix SvUV_nomg() macro definition' \
+    'Fedora Patch16: Fix SvTRUE() documentation' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -6913,6 +6918,7 @@ popd
 * Wed Aug 05 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-459
 - Do not use a C compiler reserved identifiers
 - Fix SvUV_nomg() macro definition
+- Fix SvTRUE() documentation
 
 * Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.32.0-458
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
