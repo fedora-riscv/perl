@@ -366,6 +366,10 @@ Patch99:        perl-5.30.3-perl-17844-don-t-update-SvCUR-until-after-we-ve-done
 # in upstream after 5.33.0
 Patch100:       perl-5.33.0-XSUB.h-fix-MARK-and-items-variables-inside-BOOT-XSUB.patch
 
+# Fix an IO::Handle spurious error reported for regular file handles,
+# GH#18019, proposed to upstream
+Patch101:       perl-5.33.0-IO-Handle-Fix-a-spurious-error-reported-for-regular-.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2979,6 +2983,7 @@ Perl extension for Version Objects
 %patch98 -p1
 %patch99 -p1
 %patch100 -p1
+%patch101 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3072,6 +3077,7 @@ perl -x patchlevel.h \
     'Fedora Patch98: Prevent from an integer overflow in RenewDouble() macro' \
     'Fedora Patch99: Fix a buffer overread in when reallocating formats (GH#17844)' \
     'Fedora Patch100: Fix a number of arguments passed to a BOOT XS subroutine (GH#17755)' \
+    'Fedora Patch101: Fix an IO::Handle spurious error reported for regular file handles (GH#18019)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5331,6 +5337,7 @@ popd
 - Prevent from an integer overflow in RenewDouble() macro
 - Fix a buffer overread in when reallocating formats (GH#17844)
 - Fix a number of arguments passed to a BOOT XS subroutine (GH#17755)
+- Fix an IO::Handle spurious error reported for regular file handles (GH#18019)
 
 * Mon Jul 13 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-454
 - Preload utf8_heavy.pl by Safe in perl 5.30 (bug #1855963)
