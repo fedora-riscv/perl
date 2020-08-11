@@ -1,4 +1,4 @@
-From 5efd3a36c094745739b964706aece5de29e0653e Mon Sep 17 00:00:00 2001
+From 8a2562bec7cd9f8eff6812f340f99dddd028bb33 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Petr=20P=C3=ADsa=C5=99?= <ppisar@redhat.com>
 Date: Thu, 6 Aug 2020 10:51:56 +0200
 Subject: [PATCH] IO::Handle: Fix a spurious error reported for regular file
