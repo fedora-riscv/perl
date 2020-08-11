@@ -367,7 +367,7 @@ Patch99:        perl-5.30.3-perl-17844-don-t-update-SvCUR-until-after-we-ve-done
 Patch100:       perl-5.33.0-XSUB.h-fix-MARK-and-items-variables-inside-BOOT-XSUB.patch
 
 # Fix an IO::Handle spurious error reported for regular file handles,
-# GH#18019, proposed to upstream
+# GH#18019, in upstream after 5.33.0
 Patch101:       perl-5.33.0-IO-Handle-Fix-a-spurious-error-reported-for-regular-.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
