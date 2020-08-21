@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        460%{?dist}
+Release:        461%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -4313,10 +4313,6 @@ sed -i '\|cpan/Memoize/Memoize/NDBM_File.pm|d' MANIFEST
 
 
 %build
-# This package has static probes which do not work with LTO
-# Disable LTO
-%define _lto_cflags %{nil}
-
 echo "RPM Build arch: %{_arch}"
 
 # use "lib", not %%{_lib}, for privlib, sitelib, and vendorlib
@@ -6981,6 +6977,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Aug 21 2020 Jeff Law <law@redhat.com> - 4:5.32.0-461
+- Re-enable LTO
+
 * Thu Aug 06 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-460
 - Fix an IO::Handle spurious error reported for regular file handles (GH#18019)
 
