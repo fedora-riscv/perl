@@ -3127,10 +3127,6 @@ sed -i '\|cpan/Memoize/Memoize/NDBM_File.pm|d' MANIFEST
 
 
 %build
-# This package has static probes which do not work with LTO
-# Disable LTO
-%define _lto_cflags %{nil}
-
 echo "RPM Build arch: %{_arch}"
 
 # use "lib", not %%{_lib}, for privlib, sitelib, and vendorlib
@@ -5338,6 +5334,7 @@ popd
 - Fix a buffer overread in when reallocating formats (GH#17844)
 - Fix a number of arguments passed to a BOOT XS subroutine (GH#17755)
 - Fix an IO::Handle spurious error reported for regular file handles (GH#18019)
+- Re-enable LTO
 
 * Mon Jul 13 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-454
 - Preload utf8_heavy.pl by Safe in perl 5.30 (bug #1855963)
