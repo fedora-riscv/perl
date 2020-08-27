@@ -233,6 +233,10 @@ Patch33:        perl-5.33.0-Fix-leak-GH-18054.patch
 # in upstream after 5.33.1
 Patch34:        perl-5.33.1-die_unwind-global-destruction.patch
 
+# Fix sorting with a block that calls return, GH#18081,
+# in upstream after 5.33.1
+Patch35:        perl-5.33.1-sort-return-foo.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4254,6 +4258,7 @@ you're not running VMS, this module does nothing.
 %patch32 -p1
 %patch33 -p1
 %patch34 -p1
+%patch35 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4295,6 +4300,7 @@ perl -x patchlevel.h \
     'Fedora Patch32: Fix handling left-hand-side undef when assigning a list (GH#16685)' \
     'Fedora Patch33: Fix a memory leak when compiling a long regular expression (GH#18054)' \
     'Fedora Patch34: Fix handling exceptions in a global destruction (GH#18063)' \
+    'Fedora Patch35: Fix sorting with a block that calls return (GH#18081)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -7014,6 +7020,7 @@ popd
 - Fix handling left-hand-side undef when assigning a list (GH#16685)
 - Fix a memory leak when compiling a long regular expression (GH#18054)
 - Fix handling exceptions in a global destruction (GH#18063)
+- Fix sorting with a block that calls return (GH#18081)
 
 * Fri Aug 21 2020 Jeff Law <law@redhat.com> - 4:5.32.0-461
 - Re-enable LTO
