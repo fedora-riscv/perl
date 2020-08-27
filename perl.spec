@@ -374,6 +374,10 @@ Patch101:       perl-5.33.0-IO-Handle-Fix-a-spurious-error-reported-for-regular-
 # in upstream after 5.33.0
 Patch102:       perl-5.30.3-fix-C-i-obj-where-obj-is-a-lexical.patch
 
+# Fix a misoptimization when assignig a list in a list context, GH#17816,
+# in upstream after 5.33.0
+Patch103:       perl-5.30.3-list-assign-in-list-context-was-over-optimising.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2989,6 +2993,7 @@ Perl extension for Version Objects
 %patch100 -p1
 %patch101 -p1
 %patch102 -p1
+%patch103 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3084,6 +3089,7 @@ perl -x patchlevel.h \
     'Fedora Patch100: Fix a number of arguments passed to a BOOT XS subroutine (GH#17755)' \
     'Fedora Patch101: Fix an IO::Handle spurious error reported for regular file handles (GH#18019)' \
     'Fedora Patch102: Fix inheritance resolution of lexial objects in a debugger (GH#17661)' \
+    'Fedora Patch103: Fix a misoptimization when assignig a list in a list context (GH#17816)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5342,6 +5348,7 @@ popd
 - Fix an IO::Handle spurious error reported for regular file handles (GH#18019)
 - Re-enable LTO
 - Fix inheritance resolution of lexial objects in a debugger (GH#17661)
+- Fix a misoptimization when assignig a list in a list context (GH#17816)
 
 * Mon Jul 13 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-454
 - Preload utf8_heavy.pl by Safe in perl 5.30 (bug #1855963)
