@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        461%{?dist}
+Release:        462%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -212,6 +212,10 @@ Patch28:        perl-5.33.0-XSUB.h-fix-MARK-and-items-variables-inside-BOOT-XSUB
 # Fix an IO::Handle spurious error reported for regular file handles,
 # GH#18019, in upstream after 5.33.0
 Patch29:        perl-5.33.0-IO-Handle-Fix-a-spurious-error-reported-for-regular-.patch
+
+# Fix inheritance resolution of lexial objects in a debugger, GH#17661,
+# in upstream after 5.33.0
+Patch30:        perl-5.33.0-fix-C-i-obj-where-obj-is-a-lexical.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -1160,6 +1164,7 @@ Recommends:     perl(File::Basename)
 Recommends:     perl(File::Path)
 Requires:       perl(IO::Socket)
 Requires:       perl(meta_notation) = %{perl_version}
+Requires:       perl(mro)
 %if !%{defined perl_bootstrap}
 Suggests:       perl(PadWalker) >= 0.08
 %endif
@@ -4228,6 +4233,7 @@ you're not running VMS, this module does nothing.
 %patch27 -p1
 %patch28 -p1
 %patch29 -p1
+%patch30 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4264,6 +4270,7 @@ perl -x patchlevel.h \
     'Fedora Patch27: Fix a buffer overread in when reallocating formats (GH#17844)' \
     'Fedora Patch28: Fix a number of arguments passed to a BOOT XS subroutine (GH#17755)' \
     'Fedora Patch29: Fix an IO::Handle spurious error reported for regular file handles (GH#18019)' \
+    'Fedora Patch30: Fix inheritance resolution of lexial objects in a debugger (GH#17661)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -6977,6 +6984,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Aug 27 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-462
+- Fix inheritance resolution of lexial objects in a debugger (GH#17661)
+
 * Fri Aug 21 2020 Jeff Law <law@redhat.com> - 4:5.32.0-461
 - Re-enable LTO
 
