@@ -229,6 +229,10 @@ Patch32:        perl-5.33.0-list-assign-in-list-context-honour-LHS-undef.patch
 # in upstream after 5.33.0
 Patch33:        perl-5.33.0-Fix-leak-GH-18054.patch
 
+# Fix handling exceptions in a global destruction, GH#18063,
+# in upstream after 5.33.1
+Patch34:        perl-5.33.1-die_unwind-global-destruction.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4249,6 +4253,7 @@ you're not running VMS, this module does nothing.
 %patch31 -p1
 %patch32 -p1
 %patch33 -p1
+%patch34 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4289,6 +4294,7 @@ perl -x patchlevel.h \
     'Fedora Patch31: Fix a misoptimization when assignig a list in a list context (GH#17816)' \
     'Fedora Patch32: Fix handling left-hand-side undef when assigning a list (GH#16685)' \
     'Fedora Patch33: Fix a memory leak when compiling a long regular expression (GH#18054)' \
+    'Fedora Patch34: Fix handling exceptions in a global destruction (GH#18063)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -7007,6 +7013,7 @@ popd
 - Fix a misoptimization when assignig a list in a list context (GH#17816)
 - Fix handling left-hand-side undef when assigning a list (GH#16685)
 - Fix a memory leak when compiling a long regular expression (GH#18054)
+- Fix handling exceptions in a global destruction (GH#18063)
 
 * Fri Aug 21 2020 Jeff Law <law@redhat.com> - 4:5.32.0-461
 - Re-enable LTO
