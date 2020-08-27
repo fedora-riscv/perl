@@ -378,6 +378,10 @@ Patch102:       perl-5.30.3-fix-C-i-obj-where-obj-is-a-lexical.patch
 # in upstream after 5.33.0
 Patch103:       perl-5.30.3-list-assign-in-list-context-was-over-optimising.patch
 
+# Fix handling left-hand-side undef when assigning a list, GH#16685,
+# in upstream after 5.33.0
+Patch104:       perl-5.33.0-list-assign-in-list-context-honour-LHS-undef.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -2994,6 +2998,7 @@ Perl extension for Version Objects
 %patch101 -p1
 %patch102 -p1
 %patch103 -p1
+%patch104 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3090,6 +3095,7 @@ perl -x patchlevel.h \
     'Fedora Patch101: Fix an IO::Handle spurious error reported for regular file handles (GH#18019)' \
     'Fedora Patch102: Fix inheritance resolution of lexial objects in a debugger (GH#17661)' \
     'Fedora Patch103: Fix a misoptimization when assignig a list in a list context (GH#17816)' \
+    'Fedora Patch104: Fix handling left-hand-side undef when assigning a list (GH#16685)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5349,6 +5355,7 @@ popd
 - Re-enable LTO
 - Fix inheritance resolution of lexial objects in a debugger (GH#17661)
 - Fix a misoptimization when assignig a list in a list context (GH#17816)
+- Fix handling left-hand-side undef when assigning a list (GH#16685)
 
 * Mon Jul 13 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-454
 - Preload utf8_heavy.pl by Safe in perl 5.30 (bug #1855963)
