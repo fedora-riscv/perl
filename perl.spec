@@ -5509,6 +5509,7 @@ popd
 %endif
 
 %files ExtUtils-Constant
+%dir %{privlib}/ExtUtils
 %{privlib}/ExtUtils/Constant
 %{privlib}/ExtUtils/Constant.pm
 %{_mandir}/man3/ExtUtils::Constant::*
@@ -5758,7 +5759,6 @@ popd
 %{privlib}/File/Temp.pm
 %{_mandir}/man3/File::Temp.3*
 %else
-%dir %exclude %{privlib}/File
 %exclude %{privlib}/File/Temp.pm
 %exclude %{_mandir}/man3/File::Temp.3*
 %endif
@@ -6280,7 +6280,6 @@ popd
 %{privlib}/Module/CoreList.pod
 %{_mandir}/man3/Module::CoreList*
 %else
-%exclude %dir %{privlib}/Module
 %exclude %{privlib}/Module/CoreList
 %exclude %{privlib}/Module/CoreList.pm
 %exclude %{privlib}/Module/CoreList.pod
@@ -6302,7 +6301,6 @@ popd
 %{privlib}/Module/Load.pm
 %{_mandir}/man3/Module::Load.*
 %else
-%exclude %dir %{privlib}/Module
 %exclude %{privlib}/Module/Load.pm
 %exclude %{_mandir}/man3/Module::Load.*
 %endif
@@ -6313,7 +6311,6 @@ popd
 %{privlib}/Module/Load
 %{_mandir}/man3/Module::Load::Conditional* 
 %else
-%exclude %dir %{privlib}/Module
 %exclude %{privlib}/Module/Load
 %exclude %{_mandir}/man3/Module::Load::Conditional*
 %endif
@@ -6329,7 +6326,6 @@ popd
 %{privlib}/Module/Metadata.pm
 %{_mandir}/man3/Module::Metadata.3pm*
 %else
-%exclude %dir %{privlib}/Module
 %exclude %{privlib}/Module/Metadata.pm
 %exclude %{_mandir}/man3/Module::Metadata.3pm*
 %endif
@@ -6826,7 +6822,6 @@ popd
 %{_mandir}/man3/Text::Tabs.*
 %{_mandir}/man3/Text::Wrap.*
 %else
-%exclude %dir %{privlib}/Text
 %exclude %{privlib}/Text/Tabs.pm
 %exclude %{privlib}/Text/Wrap.pm
 %exclude %{_mandir}/man3/Text::Tabs.*
@@ -6910,7 +6905,6 @@ popd
 %{privlib}/Time/Local.pm
 %{_mandir}/man3/Time::Local.*
 %else
-%exclude %dir %{privlib}/Time
 %exclude %{privlib}/Time/Local.pm
 %exclude %{_mandir}/man3/Time::Local.*
 %endif
@@ -7024,6 +7018,7 @@ popd
 - Run-require complete perl by perl-CPAN
 - Remove a useless post-install dependency on perl-macros from
   perl-interpreter
+- Fix ownership of /usr/share/perl5/{ExtUtils,File,Module,Text,Time} directories
 
 * Thu Aug 27 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-462
 - Fix inheritance resolution of lexial objects in a debugger (GH#17661)
