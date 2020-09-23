@@ -435,8 +435,6 @@ Suggests:       perl-doc = %{perl_version}-%{release}
 # We need this to break the dependency loop, and ensure that perl-libs 
 # gets installed before perl-interpreter.
 Requires(post): perl-libs
-# Same as perl-libs. We need macros in basic buildroot.
-Requires(post): perl-macros
 
 # suidperl isn't created by upstream since 5.12.0
 Obsoletes:      perl-suidperl <= 4:5.12.2
@@ -7024,6 +7022,8 @@ popd
 %changelog
 * Wed Sep 23 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-463
 - Run-require complete perl by perl-CPAN
+- Remove a useless post-install dependency on perl-macros from
+  perl-interpreter
 
 * Thu Aug 27 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-462
 - Fix inheritance resolution of lexial objects in a debugger (GH#17661)
