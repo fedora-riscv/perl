@@ -1,0 +1,56 @@
+From f4cd5e29bc15621f2ab8fc5d7de0e68e62d43999 Mon Sep 17 00:00:00 2001
+From: Hugo van der Sanden <hv@crypt.org>
+Date: Tue, 15 Sep 2020 14:02:54 +0100
+Subject: [PATCH] [gh18096] assume worst-case for GOSUBs we don't analyse
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+During study_chunk, under various conditions we avoid recursing into
+a GOSUB. But we must avoid giving the enclosing scope the idea that
+this GOSUB would match only an empty string, since that could trigger
+wrong optimizations (eg CURLYX => CURLYM in the ticket).
+
+So we mark the construct as infinite, as in the code branch where we
+_do_ recurse into it.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ regcomp.c     | 7 ++++++-
+ t/re/re_tests | 2 ++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/regcomp.c b/regcomp.c
+index 124ea5b90b..fae3f8079d 100644
+--- a/regcomp.c
++++ b/regcomp.c
+@@ -5212,7 +5212,12 @@ S_study_chunk(pTHX_ RExC_state_t *pRExC_state, regnode **scanp,
+                      * might result in a minlen of 1 and not of 4,
+                      * but this doesn't make us mismatch, just try a bit
+                      * harder than we should.
+-                     * */
++                     *
++                     * However we must assume this GOSUB is infinite, to
++                     * avoid wrongly applying other optimizations in the
++                     * enclosing scope - see GH 18096, for example.
++                     */
++                    is_inf = is_inf_internal = 1;
+                     scan= regnext(scan);
+                     continue;
+                 }
+diff --git a/t/re/re_tests b/t/re/re_tests
+index 554a7004a2..ab5a0d8012 100644
+--- a/t/re/re_tests
++++ b/t/re/re_tests
+@@ -2023,6 +2023,8 @@ AB\s+\x{100}	AB \x{100}X	y	-	-
+ /(?iaax:A? \K +)/	African_Feh	c	-	\\K + is forbidden - matches null string many times in regex
+ /(?iaa:A?\K+)/	African_Feh	c	-	\\K+ is forbidden - matches null string many times in regex
+ /(?iaa:A?\K*)/	African_Feh	c	-	\\K* is forbidden - matches null string many times in regex
++^((\w|<(\s)*(?1)(?3)*>)(?:(?3)*\+(?3)*(?2))*)(?3)*\+	a + b + <c + d>	y	$1	a + b		# [GH #18096]
++^((\w|<(\s)*(?1)(?3)*>)(?:(?3)*\+(?3)*(?2))*)(?3)*\+	a + <b> + c	y	$1	a + <b>		# [GH #18096]
+ # Keep these lines at the end of the file
+ # pat	string	y/n/etc	expr	expected-expr	skip-reason	comment
+ # vim: softtabstop=0 noexpandtab
+-- 
+2.25.4
+
