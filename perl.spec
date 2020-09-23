@@ -386,6 +386,10 @@ Patch104:       perl-5.33.0-list-assign-in-list-context-honour-LHS-undef.patch
 # in upstream after 5.33.1
 Patch105:       perl-5.33.1-die_unwind-global-destruction.patch
 
+# Fix a mismatch with the recursive subpatterns, GH#18096,
+# in upstream after 5.33.2
+Patch106:       perl-5.30.3-gh18096-assume-worst-case-for-GOSUBs-we-don-t-analys.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3012,6 +3016,7 @@ Perl extension for Version Objects
 %patch103 -p1
 %patch104 -p1
 %patch105 -p1
+%patch106 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3110,6 +3115,7 @@ perl -x patchlevel.h \
     'Fedora Patch103: Fix a misoptimization when assignig a list in a list context (GH#17816)' \
     'Fedora Patch104: Fix handling left-hand-side undef when assigning a list (GH#16685)' \
     'Fedora Patch105: Fix handling exceptions in a global destruction (GH#18063)' \
+    'Fedora Patch106: Fix a mismatch with the recursive subpatterns (GH#18096)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5357,6 +5363,7 @@ popd
 %changelog
 * Wed Sep 23 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-456
 - Run-require complete perl by perl-CPAN
+- Fix a mismatch with the recursive subpatterns (GH#18096)
 
 * Wed Aug 05 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-455
 - Do not use a C compiler reserved identifiers
