@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        462%{?dist}
+Release:        463%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -977,6 +977,15 @@ License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.27
 Requires:       make
+Requires:       %perl_compat
+# Some subpackaged modules are not dual-lived. E.g. "open". If a distribution
+# on CPAN declares a dependency on such module, CPAN client will fail,
+# because the only provider is a perl distribution.
+# Another issue is with dual-lived modules whose distribution actually does
+# not declare all needed core dependencies and the installation would also
+# fail.
+# As a result, any CPAN client must run-require the complete perl.
+Requires:       perl
 # Prefer Archive::Tar and Compress::Zlib over tar and gzip
 Requires:       perl(Archive::Tar) >= 1.50
 Requires:       perl(base)
@@ -1020,7 +1029,6 @@ Requires:       perl(Module::Build)
 %if ! %{defined perl_bootstrap}
 Requires:       perl(Text::Glob)
 %endif
-Requires:       %perl_compat
 Provides:       cpan = %{version}
 %if %{defined perl_bootstrap}
 %gendep_perl_CPAN
@@ -7014,6 +7022,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Sep 23 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-463
+- Run-require complete perl by perl-CPAN
+
 * Thu Aug 27 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-462
 - Fix inheritance resolution of lexial objects in a debugger (GH#17661)
 - Fix a misoptimization when assignig a list in a list context (GH#17816)
