@@ -2340,6 +2340,7 @@ sockets, as a drop-in replacement for IO::Socket::INET. Most constructor
 arguments and methods are provided in a backward-compatible way.
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package IO-Zlib
 Summary:        Perl IO:: style interface to Compress::Zlib
 License:        GPL+ or Artistic
@@ -2363,6 +2364,7 @@ BuildArch:      noarch
 IO::Zlib provides an IO:: style interface to Compress::Zlib and hence to
 gzip/zlib-compressed files. It provides many of the same methods as the
 IO::Handle interface.
+%endif
 
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6024,10 +6026,16 @@ popd
 %exclude %{_mandir}/man3/IO::Socket::IP.*
 %endif
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files IO-Zlib
 %dir %{privlib}/IO
 %{privlib}/IO/Zlib.pm
 %{_mandir}/man3/IO::Zlib.*
+%else
+%exclude %dir %{privlib}/IO
+%exclude %{privlib}/IO/Zlib.pm
+%exclude %{_mandir}/man3/IO::Zlib.*
+%endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files HTTP-Tiny
@@ -7033,6 +7041,7 @@ popd
 %changelog
 * Fri Sep 25 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-464
 - Update perl-IO-Zlib metadata
+- Disable dual-lived perl-IO-Zlib (bug #1882415)
 
 * Wed Sep 23 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-463
 - Run-require complete perl by perl-CPAN
