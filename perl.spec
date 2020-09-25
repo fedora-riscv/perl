@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        463%{?dist}
+Release:        464%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -2346,7 +2346,13 @@ License:        GPL+ or Artistic
 # Epoch bump for clean upgrade over old standalone package
 Epoch:          1
 Version:        1.10
-Requires:       perl(Compress::Zlib)
+BuildRequires:  gzip
+# The code defaults to Compress::Zlib, but a user can override it to gzip by
+# importing :gzip_external symbol
+Requires:       gzip
+Requires:       perl(Compress::Zlib) >= 2
+# IO::Handle used if gzip backend is requested
+Requires:       perl(IO::Handle)
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_IO_Zlib
@@ -2354,10 +2360,9 @@ Requires:       %perl_compat
 BuildArch:      noarch
 
 %description IO-Zlib
-This modules provides an IO:: style interface to the Compress::Zlib package.
-The main advantage is that you can use an IO::Zlib object in much the same way
-as an IO::File object so you can have common code that doesn't know which sort
-of file it is using.
+IO::Zlib provides an IO:: style interface to Compress::Zlib and hence to
+gzip/zlib-compressed files. It provides many of the same methods as the
+IO::Handle interface.
 
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -7026,6 +7031,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Sep 25 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-464
+- Update perl-IO-Zlib metadata
+
 * Wed Sep 23 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-463
 - Run-require complete perl by perl-CPAN
 - Remove a useless post-install dependency on perl-macros from
