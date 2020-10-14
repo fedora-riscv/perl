@@ -1,0 +1,36 @@
+From e17dadf36f7b4348e59076240c880d0c78b33fa9 Mon Sep 17 00:00:00 2001
+From: Karl Williamson <khw@cpan.org>
+Date: Tue, 22 Sep 2020 08:47:52 -0600
+Subject: [PATCH] sv.h: sv_collxfrm didn't work properly
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+It is supposed to be a wrapper for sv_collxfrm_flags, but it was just
+calling sv_cmp_flags instead.  The consequences are none except under
+'use locale' in which case you always got the C locale.  I did not add
+tests, because it is really a pain to write portable locale tests, and
+this doesn't seem to be much used.  In core the '_flags' form was always
+used.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ sv.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sv.h b/sv.h
+index 19ce718ac3..44414b35a9 100644
+--- a/sv.h
++++ b/sv.h
+@@ -2045,7 +2045,7 @@ Like C<sv_catsv> but doesn't process magic.
+ #define sv_eq(sv1, sv2) sv_eq_flags(sv1, sv2, SV_GMAGIC)
+ #define sv_cmp(sv1, sv2) sv_cmp_flags(sv1, sv2, SV_GMAGIC)
+ #define sv_cmp_locale(sv1, sv2) sv_cmp_locale_flags(sv1, sv2, SV_GMAGIC)
+-#define sv_collxfrm(sv, nxp) sv_cmp_flags(sv, nxp, SV_GMAGIC)
++#define sv_collxfrm(sv, nxp) sv_collxfrm_flags(sv, nxp, SV_GMAGIC)
+ #define sv_2bool(sv) sv_2bool_flags(sv, SV_GMAGIC)
+ #define sv_2bool_nomg(sv) sv_2bool_flags(sv, 0)
+ #define sv_insert(bigstr, offset, len, little, littlelen)		\
+-- 
+2.25.4
+
