@@ -3962,6 +3962,7 @@ Conflicts:      perl-interpreter < 4:5.30.1-451
 This package allows a tied hash to load its values automatically on the first
 access, and to use the cached value on the following accesses.
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Tie-RefHash
 Summary:        Use references as hash keys
 License:        GPL+ or Artistic
@@ -3983,6 +3984,7 @@ This module provides the ability to use references as hash keys if you first
 hash itself are preserved as references; to use references as keys in
 hashes-of-hashes, use Tie::RefHash::Nestable, included as part of
 Tie::RefHash.
+%endif
 
 %package Time
 Summary:        By-name interface to Perl built-in time functions
@@ -6911,10 +6913,15 @@ popd
 %{privlib}/Tie/Memoize.pm
 %{_mandir}/man3/Tie::Memoize.*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Tie-RefHash
 %dir %{privlib}/Tie
 %{privlib}/Tie/RefHash.pm
 %{_mandir}/man3/Tie::RefHash.*
+%else
+%exclude %{privlib}/Tie/RefHash.pm
+%exclude %{_mandir}/man3/Tie::RefHash.*
+%endif
 
 %files Time
 %dir %{privlib}/Time
@@ -7059,6 +7066,7 @@ popd
 - Fix sv_collxfrm macro to respect locale
 - Fix an iterator signedness in handling a mro exception (GH#18155)
 - Fix a code flow in Perl_sv_inc_nomg()
+- Disable a dual-lived perl-Tie-RefHash subpackage (bug #1887937)
 
 * Fri Sep 25 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-464
 - Update perl-IO-Zlib metadata
