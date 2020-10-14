@@ -397,6 +397,9 @@ Patch107:       perl-5.33.2-sv.h-sv_collxfrm-didn-t-work-properly.patch
 # in upstream after 5.33.2
 Patch108:       perl-5.33.2-mro.xs-Fix-compiler-warning.patch
 
+# Fix a code flow in Perl_sv_inc_nomg(), in upstream after 5.33.2
+Patch109:       perl-5.33.2-sv.c-Added-missing-braces-in-Perl_sv_inc_nomg.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3031,6 +3034,7 @@ Perl extension for Version Objects
 %patch106 -p1
 %patch107 -p1
 %patch108 -p1
+%patch109 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3132,6 +3136,7 @@ perl -x patchlevel.h \
     'Fedora Patch106: Fix a mismatch with the recursive subpatterns (GH#18096)' \
     'Fedora Patch107: Fix sv_collxfrm macro to respect locale' \
     'Fedora Patch108: Fix an iterator signedness in handling a mro exception (GH#18155)' \
+    'Fedora Patch109: Fix a code flow in Perl_sv_inc_nomg()' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5383,6 +5388,7 @@ popd
 - Update perl-IO-Zlib metadata
 - Fix sv_collxfrm macro to respect locale
 - Fix an iterator signedness in handling a mro exception (GH#18155)
+- Fix a code flow in Perl_sv_inc_nomg()
 
 * Wed Aug 05 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-455
 - Do not use a C compiler reserved identifiers
