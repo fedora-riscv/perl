@@ -252,6 +252,9 @@ Patch38:        perl-5.33.2-sv.h-sv_collxfrm-didn-t-work-properly.patch
 # in upstream after 5.33.2
 Patch39:        perl-5.33.2-mro.xs-Fix-compiler-warning.patch
 
+# Fix a code flow in Perl_sv_inc_nomg(), in upstream after 5.33.2
+Patch40:        perl-5.33.2-sv.c-Added-missing-braces-in-Perl_sv_inc_nomg.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4291,6 +4294,7 @@ you're not running VMS, this module does nothing.
 %patch37 -p1
 %patch38 -p1
 %patch39 -p1
+%patch40 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4337,6 +4341,7 @@ perl -x patchlevel.h \
     'Fedora Patch37: Fix a mismatch with the recursive subpatterns (GH#18096)' \
     'Fedora Patch38: Fix sv_collxfrm macro to respect locale' \
     'Fedora Patch39: Fix an iterator signedness in handling a mro exception (GH#18155)' \
+    'Fedora Patch40: Fix a code flow in Perl_sv_inc_nomg()' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -7053,6 +7058,7 @@ popd
 * Wed Oct 14 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-465
 - Fix sv_collxfrm macro to respect locale
 - Fix an iterator signedness in handling a mro exception (GH#18155)
+- Fix a code flow in Perl_sv_inc_nomg()
 
 * Fri Sep 25 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-464
 - Update perl-IO-Zlib metadata
