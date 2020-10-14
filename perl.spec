@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        464%{?dist}
+Release:        465%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -244,6 +244,9 @@ Patch36:        perl-5.33.1-Heap-buffer-overflow-in-regex-bracket-group-whitespa
 # Fix a mismatch with the recursive subpatterns, GH#18096,
 # in upstream after 5.33.2
 Patch37:        perl-5.33.2-gh18096-assume-worst-case-for-GOSUBs-we-don-t-analys.patch
+
+# Fix sv_collxfrm macro to respect locale, in upstream after 5.33.2
+Patch38:        perl-5.33.2-sv.h-sv_collxfrm-didn-t-work-properly.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -4282,6 +4285,7 @@ you're not running VMS, this module does nothing.
 %patch35 -p1
 %patch36 -p1
 %patch37 -p1
+%patch38 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4326,6 +4330,7 @@ perl -x patchlevel.h \
     'Fedora Patch35: Fix sorting with a block that calls return (GH#18081)' \
     'Fedora Patch36: Fix a buffer overflow when compiling a regular expression with a bracketed character class with a white space' \
     'Fedora Patch37: Fix a mismatch with the recursive subpatterns (GH#18096)' \
+    'Fedora Patch38: Fix sv_collxfrm macro to respect locale' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -7039,6 +7044,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Oct 14 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-465
+- Fix sv_collxfrm macro to respect locale
+
 * Fri Sep 25 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-464
 - Update perl-IO-Zlib metadata
 - Disable dual-lived perl-IO-Zlib (bug #1882415)
