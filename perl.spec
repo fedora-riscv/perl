@@ -390,6 +390,9 @@ Patch105:       perl-5.33.1-die_unwind-global-destruction.patch
 # in upstream after 5.33.2
 Patch106:       perl-5.30.3-gh18096-assume-worst-case-for-GOSUBs-we-don-t-analys.patch
 
+# Fix sv_collxfrm macro to respect locale, in upstream after 5.33.2
+Patch107:       perl-5.33.2-sv.h-sv_collxfrm-didn-t-work-properly.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3022,6 +3025,7 @@ Perl extension for Version Objects
 %patch104 -p1
 %patch105 -p1
 %patch106 -p1
+%patch107 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3121,6 +3125,7 @@ perl -x patchlevel.h \
     'Fedora Patch104: Fix handling left-hand-side undef when assigning a list (GH#16685)' \
     'Fedora Patch105: Fix handling exceptions in a global destruction (GH#18063)' \
     'Fedora Patch106: Fix a mismatch with the recursive subpatterns (GH#18096)' \
+    'Fedora Patch107: Fix sv_collxfrm macro to respect locale' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5366,10 +5371,11 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Fri Sep 25 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-457
+* Wed Sep 23 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-457
 - Run-require complete perl by perl-CPAN
 - Fix a mismatch with the recursive subpatterns (GH#18096)
 - Update perl-IO-Zlib metadata
+- Fix sv_collxfrm macro to respect locale
 
 * Wed Aug 05 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-456
 - Do not use a C compiler reserved identifiers
