@@ -4004,7 +4004,7 @@ and localtime () functions.
 %package Time-HiRes
 Summary:        High resolution alarm, sleep, gettimeofday, interval timers
 License:        GPL+ or Artistic
-Epoch:          0
+Epoch:          4
 Version:        1.9764
 Requires:       %perl_compat
 Requires:       perl(Carp)
