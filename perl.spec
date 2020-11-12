@@ -259,6 +259,9 @@ Patch40:        perl-5.33.2-sv.c-Added-missing-braces-in-Perl_sv_inc_nomg.patch
 # in upstream after 5.33.3
 Patch41:        perl-5.33.3-Perl_custom_op_get_field-remove-undef-behaviour.patch
 
+# Fix Config variable names in in t/op tests, in upstream after 5.33.3
+Patch42:        perl-5.33.3-t-op-inc.t-t-op-hexfp.t-t-op-sprintf2.t-Add-missing-.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4302,6 +4305,7 @@ you're not running VMS, this module does nothing.
 %patch39 -p1
 %patch40 -p1
 %patch41 -p1
+%patch42 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4350,6 +4354,7 @@ perl -x patchlevel.h \
     'Fedora Patch39: Fix an iterator signedness in handling a mro exception (GH#18155)' \
     'Fedora Patch40: Fix a code flow in Perl_sv_inc_nomg()' \
     'Fedora Patch41: Fix un undefined behavior in Perl_custom_op_get_field()' \
+    'Fedora Patch42: Fix Config variable names in in t/op tests' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -7070,6 +7075,7 @@ popd
 %changelog
 * Thu Nov 12 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-466
 - Fix un undefined behavior in Perl_custom_op_get_field()
+- Fix Config variable names in in t/op tests
 
 * Wed Oct 14 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-465
 - Fix sv_collxfrm macro to respect locale
