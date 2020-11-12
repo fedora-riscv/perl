@@ -262,6 +262,10 @@ Patch41:        perl-5.33.3-Perl_custom_op_get_field-remove-undef-behaviour.patc
 # Fix Config variable names in in t/op tests, in upstream after 5.33.3
 Patch42:        perl-5.33.3-t-op-inc.t-t-op-hexfp.t-t-op-sprintf2.t-Add-missing-.patch
 
+# Fix fetching a magic on the stacked file test operators,
+# in upstream after 5.33.3
+Patch43:        perl-5.33.3-fetch-magic-on-the-first-stacked-filetest-not-the-la.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4306,6 +4310,7 @@ you're not running VMS, this module does nothing.
 %patch40 -p1
 %patch41 -p1
 %patch42 -p1
+%patch43 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4355,6 +4360,7 @@ perl -x patchlevel.h \
     'Fedora Patch40: Fix a code flow in Perl_sv_inc_nomg()' \
     'Fedora Patch41: Fix un undefined behavior in Perl_custom_op_get_field()' \
     'Fedora Patch42: Fix Config variable names in in t/op tests' \
+    'Fedora Patch43: Fix fetching a magic on the stacked file test operators' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -7076,6 +7082,7 @@ popd
 * Thu Nov 12 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-466
 - Fix un undefined behavior in Perl_custom_op_get_field()
 - Fix Config variable names in in t/op tests
+- Fix fetching a magic on the stacked file test operators
 
 * Wed Oct 14 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-465
 - Fix sv_collxfrm macro to respect locale
