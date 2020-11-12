@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        463%{?dist}
+Release:        464%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -254,6 +254,10 @@ Patch39:        perl-5.33.2-mro.xs-Fix-compiler-warning.patch
 
 # Fix a code flow in Perl_sv_inc_nomg(), in upstream after 5.33.2
 Patch40:        perl-5.33.2-sv.c-Added-missing-braces-in-Perl_sv_inc_nomg.patch
+
+# Fix un undefined behavior in Perl_custom_op_get_field(),
+# in upstream after 5.33.3
+Patch41:        perl-5.33.3-Perl_custom_op_get_field-remove-undef-behaviour.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -4295,6 +4299,7 @@ you're not running VMS, this module does nothing.
 %patch38 -p1
 %patch39 -p1
 %patch40 -p1
+%patch41 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4342,6 +4347,7 @@ perl -x patchlevel.h \
     'Fedora Patch38: Fix sv_collxfrm macro to respect locale' \
     'Fedora Patch39: Fix an iterator signedness in handling a mro exception (GH#18155)' \
     'Fedora Patch40: Fix a code flow in Perl_sv_inc_nomg()' \
+    'Fedora Patch41: Fix un undefined behavior in Perl_custom_op_get_field()' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -7049,6 +7055,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Nov 12 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-464
+- Fix un undefined behavior in Perl_custom_op_get_field()
+
 * Wed Sep 23 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-463
 - Run-require complete perl by perl-CPAN
 - Fix ownership of /usr/share/perl5/{ExtUtils,File,Module,Text,Time} directories
