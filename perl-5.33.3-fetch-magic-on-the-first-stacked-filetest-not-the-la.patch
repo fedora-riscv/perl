@@ -1,0 +1,57 @@
+From f877e124a20d4f94c82c36e6b7a99b4e9663e204 Mon Sep 17 00:00:00 2001
+From: Tony Cook <tony@develop-help.com>
+Date: Tue, 10 Nov 2020 15:50:27 +1100
+Subject: [PATCH] fetch magic on the first stacked filetest, not the last
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+fixes #18293
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ pp_sys.c        |  2 +-
+ t/op/filetest.t | 10 +++++++++-
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/pp_sys.c b/pp_sys.c
+index 66c5d9aade..5c9f768eaf 100644
+--- a/pp_sys.c
++++ b/pp_sys.c
+@@ -3067,7 +3067,7 @@ S_try_amagic_ftest(pTHX_ char chr) {
+     SV *const arg = *PL_stack_sp;
+ 
+     assert(chr != '?');
+-    if (!(PL_op->op_private & OPpFT_STACKING)) SvGETMAGIC(arg);
++    if (!(PL_op->op_private & OPpFT_STACKED)) SvGETMAGIC(arg);
+ 
+     if (SvAMAGIC(arg))
+     {
+diff --git a/t/op/filetest.t b/t/op/filetest.t
+index fe9724c59a..7c471c050c 100644
+--- a/t/op/filetest.t
++++ b/t/op/filetest.t
+@@ -9,7 +9,7 @@ BEGIN {
+     set_up_inc(qw '../lib ../cpan/Perl-OSType/lib');
+ }
+ 
+-plan(tests => 57 + 27*14);
++plan(tests => 58 + 27*14);
+ 
+ if ($^O =~ /MSWin32|cygwin|msys/ && !is_miniperl) {
+   require Win32; # for IsAdminUser()
+@@ -385,3 +385,11 @@ SKIP: {
+     ok(!-f "TEST\0-", '-f on name with \0');
+     ok(!-r "TEST\0-", '-r on name with \0');
+ }
++
++{
++    # github #18293
++    "" =~ /(.*)/;
++    my $x = $1; # call magic on $1, setting the pv to ""
++    "test.pl" =~ /(.*)/;
++    ok(-f -r $1, "stacked handles on a name with magic");
++}
+-- 
+2.25.4
+
