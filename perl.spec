@@ -407,6 +407,10 @@ Patch110:       perl-5.33.3-Perl_custom_op_get_field-remove-undef-behaviour.patc
 # Fix Config variable names in in t/op tests, in upstream after 5.33.3
 Patch111:       perl-5.33.3-t-op-inc.t-t-op-hexfp.t-t-op-sprintf2.t-Add-missing-.patch
 
+# Fix fetching a magic on the stacked file test operators,
+# in upstream after 5.33.3
+Patch112:       perl-5.33.3-fetch-magic-on-the-first-stacked-filetest-not-the-la.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3044,6 +3048,7 @@ Perl extension for Version Objects
 %patch109 -p1
 %patch110 -p1
 %patch111 -p1
+%patch112 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3148,6 +3153,7 @@ perl -x patchlevel.h \
     'Fedora Patch109: Fix a code flow in Perl_sv_inc_nomg()' \
     'Fedora Patch110: Fix un undefined behavior in Perl_custom_op_get_field()' \
     'Fedora Patch111: Fix Config variable names in in t/op tests' \
+    'Fedora Patch112: Fix fetching a magic on the stacked file test operators' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5396,6 +5402,7 @@ popd
 * Thu Nov 12 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-458
 - Fix un undefined behavior in Perl_custom_op_get_field()
 - Fix Config variable names in in t/op tests
+- Fix fetching a magic on the stacked file test operators
 
 * Wed Sep 23 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-457
 - Run-require complete perl by perl-CPAN
