@@ -2986,13 +2986,16 @@ Conflicts:      perl-interpreter < 4:5.30.1-451
 This package provide object-oriented interface to Perl built-in gethost*(),
 getnet*(), getproto*(), and getserv*() functions.
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %package Net-Ping
 Summary:        Check a remote host for reachability
 License:        GPL+ or Artistic
 Epoch:          0
 Version:        2.72
 Requires:       %perl_compat
+Requires:       perl(IO::Socket::INET)
 # Keep Net::Ping::External optional
+Suggests:       perl(Net::Ping::External)
 %if %{defined perl_bootstrap}
 %gendep_perl_Net_Ping
 %endif
@@ -3002,6 +3005,7 @@ Conflicts:      perl < 4:5.22.0-350
 %description Net-Ping
 Net::Ping module contains methods to test the reachability of remote hosts on
 a network.
+%endif
 
 %package NEXT
 Summary:        Pseudo-class that allows method redispatch
@@ -6427,10 +6431,15 @@ popd
 %{_mandir}/man3/Net::protoent.3*
 %{_mandir}/man3/Net::servent.3*
 
+%if %{dual_life} || %{rebuild_from_scratch}
 %files Net-Ping
 %dir %{privlib}/Net
 %{privlib}/Net/Ping.pm
 %{_mandir}/man3/Net::Ping.*
+%else
+%exclude %{privlib}/Net/Ping.pm
+%exclude %{_mandir}/man3/Net::Ping.*
+%endif
 
 %files NEXT
 %{privlib}/NEXT.pm
@@ -7095,6 +7104,7 @@ popd
 %changelog
 * Thu Nov 19 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-467
 - Fix a crash in optimizing split() (GH#18232)
+- Disable a dual-lived perl-Net-Ping (bug #1898132)
 
 * Thu Nov 12 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-466
 - Fix un undefined behavior in Perl_custom_op_get_field()
