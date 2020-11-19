@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        466%{?dist}
+Release:        467%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -265,6 +265,12 @@ Patch42:        perl-5.33.3-t-op-inc.t-t-op-hexfp.t-t-op-sprintf2.t-Add-missing-
 # Fix fetching a magic on the stacked file test operators,
 # in upstream after 5.33.3
 Patch43:        perl-5.33.3-fetch-magic-on-the-first-stacked-filetest-not-the-la.patch
+
+# Fix a crash in optimizing split(), GH#18232, in upstream after 5.33.3
+Patch44:        perl-5.32.0-Add-av_count.patch
+Patch45:        perl-5.33.2-Remove-Perl_av_top_index.patch
+Patch46:        perl-5.32.0-pp_split-no-SWITCHSTACK-in-ary-split-.-optimisation.patch
+Patch47:        perl-5.33.3-pp_split-add-TonyC-s-stack-not-refcounted-suggestion.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -4311,6 +4317,10 @@ you're not running VMS, this module does nothing.
 %patch41 -p1
 %patch42 -p1
 %patch43 -p1
+%patch44 -p1
+%patch45 -p1
+%patch46 -p1
+%patch47 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4361,6 +4371,10 @@ perl -x patchlevel.h \
     'Fedora Patch41: Fix un undefined behavior in Perl_custom_op_get_field()' \
     'Fedora Patch42: Fix Config variable names in in t/op tests' \
     'Fedora Patch43: Fix fetching a magic on the stacked file test operators' \
+    'Fedora Patch44: Fix a crash in optimizing split() (GH#18232)' \
+    'Fedora Patch45: Fix a crash in optimizing split() (GH#18232)' \
+    'Fedora Patch46: Fix a crash in optimizing split() (GH#18232)' \
+    'Fedora Patch47: Fix a crash in optimizing split() (GH#18232)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -7079,6 +7093,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Nov 19 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-467
+- Fix a crash in optimizing split() (GH#18232)
+
 * Thu Nov 12 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-466
 - Fix un undefined behavior in Perl_custom_op_get_field()
 - Fix Config variable names in in t/op tests

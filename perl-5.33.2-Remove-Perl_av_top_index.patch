@@ -1,0 +1,77 @@
+From bd5fa06648085e8c17efd55abeb6424aeeb1018e Mon Sep 17 00:00:00 2001
+From: Karl Williamson <khw@cpan.org>
+Date: Tue, 29 Sep 2020 00:48:19 -0600
+Subject: [PATCH] Remove Perl_av_top_index
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+I created this in 87306e0674dfe3af29804b4641347cd5ac9b0521, thinking it
+was needed to preserve backward compatibility if someone were using this
+instead of the macro.  But it turned out that there never was such a
+function, it was inlined, and the name was S_av_top_index, so there is
+no reason to create a new function that no one has ever been able to
+call.  So just remove it, and let all accesses go through the macro
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ av.c      | 10 ----------
+ embed.fnc |  2 +-
+ proto.h   |  7 +++----
+ 3 files changed, 4 insertions(+), 15 deletions(-)
+
+diff --git a/av.c b/av.c
+index ada09cde9a..ad2429f90d 100644
+--- a/av.c
++++ b/av.c
+@@ -1095,16 +1095,6 @@ Perl_av_nonelem(pTHX_ AV *av, SSize_t ix) {
+     return sv;
+ }
+ 
+-SSize_t
+-Perl_av_top_index(pTHX_ AV *av)
+-{
+-    PERL_ARGS_ASSERT_AV_TOP_INDEX;
+-    assert(SvTYPE(av) == SVt_PVAV);
+-
+-    return AvFILL(av);
+-}
+-
+-
+ /*
+  * ex: set ts=8 sts=4 sw=4 et:
+  */
+diff --git a/embed.fnc b/embed.fnc
+index a6b4d0350f..f5c5b29c2d 100644
+--- a/embed.fnc
++++ b/embed.fnc
+@@ -637,7 +637,7 @@ Apd	|void	|av_push	|NN AV *av|NN SV *val
+ EXp	|void	|av_reify	|NN AV *av
+ ApdR	|SV*	|av_shift	|NN AV *av
+ Apd	|SV**	|av_store	|NN AV *av|SSize_t key|NULLOK SV *val
+-AMdRp	|SSize_t|av_top_index	|NN AV *av
++AmdR	|SSize_t|av_top_index	|NN AV *av
+ AidRp	|Size_t	|av_count	|NN AV *av
+ AmdR	|SSize_t|av_tindex	|NN AV *av
+ Apd	|void	|av_undef	|NN AV *av
+diff --git a/proto.h b/proto.h
+index c4490fc46e..2da1a07761 100644
+--- a/proto.h
++++ b/proto.h
+@@ -291,10 +291,9 @@ PERL_CALLCONV SV**	Perl_av_store(pTHX_ AV *av, SSize_t key, SV *val);
+ 			__attribute__warn_unused_result__; */
+ #define PERL_ARGS_ASSERT_AV_TINDEX
+ 
+-PERL_CALLCONV SSize_t	Perl_av_top_index(pTHX_ AV *av)
+-			__attribute__warn_unused_result__;
+-#define PERL_ARGS_ASSERT_AV_TOP_INDEX	\
+-	assert(av)
++/* PERL_CALLCONV SSize_t	av_top_index(pTHX_ AV *av)
++			__attribute__warn_unused_result__; */
++#define PERL_ARGS_ASSERT_AV_TOP_INDEX
+ 
+ PERL_CALLCONV void	Perl_av_undef(pTHX_ AV *av);
+ #define PERL_ARGS_ASSERT_AV_UNDEF	\
+-- 
+2.25.4
+
