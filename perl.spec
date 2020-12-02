@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        467%{?dist}
+Release:        468%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -530,6 +530,8 @@ Provides:       perl(utf8_heavy.pl)
 # utf8 and utf8_heavy.pl require Carp, re, strict, warnings, XSLoader
 # For AnyDBM_File
 Suggests:       perl(DB_File)
+# Encode is loaded in BOOT section of PerlIO::encoding
+Requires:       perl(Encode)
 # File::Spec loaded by _charnames.pm that is loaded by \N{}
 Requires:       perl(File::Spec)
 %if %{with gdbm}
@@ -7102,6 +7104,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Dec 02 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.32.0-468
+- Run-require perl(Encode) by perl-libs
+
 * Thu Nov 19 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-467
 - Fix a crash in optimizing split() (GH#18232)
 - Disable a dual-lived perl-Net-Ping (bug #1898132)
