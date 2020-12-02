@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        464%{?dist}
+Release:        465%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -526,6 +526,8 @@ Provides:       perl(utf8_heavy.pl)
 # utf8 and utf8_heavy.pl require Carp, re, strict, warnings, XSLoader
 # For AnyDBM_File
 Suggests:       perl(DB_File)
+# Encode is loaded in BOOT section of PerlIO::encoding
+Requires:       perl(Encode)
 # File::Spec loaded by _charnames.pm that is loaded by \N{}
 Requires:       perl(File::Spec)
 %if %{with gdbm}
@@ -7066,6 +7068,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Dec 02 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.32.0-465
+- Run-require perl(Encode) by perl-libs
+
 * Thu Nov 12 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-464
 - Fix un undefined behavior in Perl_custom_op_get_field()
 - Fix Config variable names in in t/op tests
