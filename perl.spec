@@ -85,7 +85,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        458%{?dist}
+Release:        459%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -568,6 +568,8 @@ Epoch:          %{perl_epoch}
 Requires:       perl-libs%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
 # Require this till perl-interpreter sub-package provides any modules
 Requires:       %perl_compat
+# Encode is loaded in BOOT section of PerlIO::encoding
+Requires:       perl(Encode)
 Provides:       perl-debugger
 Provides:       perl-doc
 %if %{defined perl_bootstrap}
@@ -5399,6 +5401,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Feb 10 2021 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-459
+- Run-require perl(Encode) by perl-interpreter
+
 * Thu Nov 12 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-458
 - Fix un undefined behavior in Perl_custom_op_get_field()
 - Fix Config variable names in in t/op tests
