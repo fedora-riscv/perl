@@ -1,4 +1,4 @@
-%global perl_version    5.32.0
+%global perl_version    5.32.1
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        465%{?dist}
+Release:        466%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -180,9 +180,6 @@ Patch17:        perl-5.33.0-ext-XS-APItest-t-utf8_warn_base.pl-Fix-a-couple-test
 Patch18:        perl-5.33.0-make-fh-error-report-errors-from-both-input-and-outp.patch
 Patch19:        perl-5.33.0-IO-Handle-clear-the-error-on-both-input-and-output-s.patch
 
-# Fix a link to Unicode Technical Standard #18, GH#17881, in upstream after 5.33.0
-Patch20:        perl-5.32.0-Fix-404-and-text-in-New-Unicode-properties-section.patch
-
 # Fix setting a non-blocking mode in IO::Socket::UNIX, GH#17787,
 # in upstream after 5.33.0
 Patch21:        perl-5.33.0-IO-Socket-UNIX-synchronize-behavior-with-module-docu.patch
@@ -201,10 +198,6 @@ Patch25:        perl-5.33.0-reentr.c-Buffer-sizes-for-asctime_r-ctime_r-are-smal
 # in upstream after 5.33.0
 Patch26:        perl-5.33.0-reentr.c-Prevent-infinite-looping.patch
 
-# Fix a buffer overread in when reallocating formats, GH#17844,
-# in upstream after 5.33.0
-Patch27:        perl-5.33.0-perl-17844-don-t-update-SvCUR-until-after-we-ve-done.patch
-
 # Fix a number of arguments passed to a BOOT XS subroutine, GH#17755,
 # in upstream after 5.33.0
 Patch28:        perl-5.33.0-XSUB.h-fix-MARK-and-items-variables-inside-BOOT-XSUB.patch
@@ -217,33 +210,9 @@ Patch29:        perl-5.33.0-IO-Handle-Fix-a-spurious-error-reported-for-regular-
 # in upstream after 5.33.0
 Patch30:        perl-5.33.0-fix-C-i-obj-where-obj-is-a-lexical.patch
 
-# Fix a misoptimization when assignig a list in a list context, GH#17816,
-# in upstream after 5.33.0
-Patch31:        perl-5.33.0-list-assign-in-list-context-was-over-optimising.patch
-
-# Fix handling left-hand-side undef when assigning a list, GH#16685,
-# in upstream after 5.33.0
-Patch32:        perl-5.33.0-list-assign-in-list-context-honour-LHS-undef.patch
-
-# Fix a memory leak when compiling a long regular expression, GH#18054,
-# in upstream after 5.33.0
-Patch33:        perl-5.33.0-Fix-leak-GH-18054.patch
-
-# Fix handling exceptions in a global destruction, GH#18063,
-# in upstream after 5.33.1
-Patch34:        perl-5.33.1-die_unwind-global-destruction.patch
-
 # Fix sorting with a block that calls return, GH#18081,
 # in upstream after 5.33.1
 Patch35:        perl-5.33.1-sort-return-foo.patch
-
-# Fix a buffer overflow when compiling a regular expression with a bracketed
-# character class with a white space, in upstream after 5.33.1
-Patch36:        perl-5.33.1-Heap-buffer-overflow-in-regex-bracket-group-whitespa.patch
-
-# Fix a mismatch with the recursive subpatterns, GH#18096,
-# in upstream after 5.33.2
-Patch37:        perl-5.33.2-gh18096-assume-worst-case-for-GOSUBs-we-don-t-analys.patch
 
 # Fix sv_collxfrm macro to respect locale, in upstream after 5.33.2
 Patch38:        perl-5.33.2-sv.h-sv_collxfrm-didn-t-work-properly.patch
@@ -323,7 +292,7 @@ BuildRequires:  rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.32.0)
+%global perl_compat perl(:MODULE_COMPAT_5.32.1)
 
 Requires:       %perl_compat
 Requires:       perl-interpreter%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
@@ -505,6 +474,7 @@ Summary:        The libraries for the perl run-time
 License:        (GPL+ or Artistic) and BSD and HSRL and MIT and UCD and Public domain
 # Compat provides
 Provides:       %perl_compat
+Provides:       perl(:MODULE_COMPAT_5.32.0)
 # Interpreter version to fulfil required genersted from "require 5.006;"
 Provides:       perl(:VERSION) = %{perl_version}
 # Integeres are 64-bit on all platforms
@@ -2821,7 +2791,7 @@ encoder/decoder. These encoding methods are specified in RFC 2045 - MIME
 Summary:        What modules are shipped with versions of perl
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20200620
+Version:        5.20210123
 Requires:       %perl_compat
 Requires:       perl(List::Util)
 Requires:       perl(version) >= 0.88
@@ -2839,7 +2809,7 @@ are shipped with each version of perl.
 Summary:        Tool for listing modules shipped with perl
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20200620
+Version:        5.20210123
 Requires:       %perl_compat
 Requires:       perl(feature)
 Requires:       perl(version) >= 0.88
@@ -3039,7 +3009,7 @@ be used the next time your program runs.
 Summary:        Disable named opcodes when compiling a perl code
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.47
+Version:        1.48
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_Opcode
@@ -4287,24 +4257,16 @@ you're not running VMS, this module does nothing.
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
-%patch20 -p1
 %patch21 -p1
 %patch22 -p1
 %patch23 -p1
 %patch24 -p1
 %patch25 -p1
 %patch26 -p1
-%patch27 -p1
 %patch28 -p1
 %patch29 -p1
 %patch30 -p1
-%patch31 -p1
-%patch32 -p1
-%patch33 -p1
-%patch34 -p1
 %patch35 -p1
-%patch36 -p1
-%patch37 -p1
 %patch38 -p1
 %patch39 -p1
 %patch40 -p1
@@ -4337,24 +4299,16 @@ perl -x patchlevel.h \
     'Fedora Patch17: Fix ext/XS-APItest/t/utf8_warn_base.pl tests' \
     'Fedora Patch18: Fix IO::Handle::error() to report write errors (GH#6799)' \
     'Fedora Patch19: Fix IO::Handle::error() to report write errors (GH#6799)' \
-    'Fedora Patch20: Fix a link to Unicode Technical Standard #18 (GH#17881)' \
     'Fedora Patch21: Fix setting a non-blocking mode in IO::Socket::UNIX (GH#17787)' \
     'Fedora Patch22: Fix running actions after stepping in a debugger (GH#17901)' \
     'Fedora Patch23: Fix running actions after stepping in a debugger (GH#17901)' \
     'Fedora Patch24: Fix running actions after stepping in a debugger (GH#17901)' \
     'Fedora Patch25: Fix a buffer size for asctime_r() and ctime_r() functions' \
     'Fedora Patch26: Prevent from an integer overflow in RenewDouble() macro' \
-    'Fedora Patch27: Fix a buffer overread in when reallocating formats (GH#17844)' \
     'Fedora Patch28: Fix a number of arguments passed to a BOOT XS subroutine (GH#17755)' \
     'Fedora Patch29: Fix an IO::Handle spurious error reported for regular file handles (GH#18019)' \
     'Fedora Patch30: Fix inheritance resolution of lexial objects in a debugger (GH#17661)' \
-    'Fedora Patch31: Fix a misoptimization when assignig a list in a list context (GH#17816)' \
-    'Fedora Patch32: Fix handling left-hand-side undef when assigning a list (GH#16685)' \
-    'Fedora Patch33: Fix a memory leak when compiling a long regular expression (GH#18054)' \
-    'Fedora Patch34: Fix handling exceptions in a global destruction (GH#18063)' \
     'Fedora Patch35: Fix sorting with a block that calls return (GH#18081)' \
-    'Fedora Patch36: Fix a buffer overflow when compiling a regular expression with a bracketed character class with a white space' \
-    'Fedora Patch37: Fix a mismatch with the recursive subpatterns (GH#18096)' \
     'Fedora Patch38: Fix sv_collxfrm macro to respect locale' \
     'Fedora Patch39: Fix an iterator signedness in handling a mro exception (GH#18155)' \
     'Fedora Patch40: Fix a code flow in Perl_sv_inc_nomg()' \
@@ -5246,6 +5200,7 @@ popd
 %{privlib}/pod/perlfreebsd.pod
 %{privlib}/pod/perlfunc.pod
 %{privlib}/pod/perlgit.pod
+%{privlib}/pod/perlgov.pod
 %{privlib}/pod/perlgpl.pod
 %{privlib}/pod/perlguts.pod
 %{privlib}/pod/perlhack.pod
@@ -5307,6 +5262,7 @@ popd
 %{privlib}/pod/perlretut.pod
 %{privlib}/pod/perlriscos.pod
 %{privlib}/pod/perlsec.pod
+%{privlib}/pod/perlsecpolicy.pod
 %{privlib}/pod/perlsolaris.pod
 %{privlib}/pod/perlsource.pod
 %{privlib}/pod/perlstyle.pod
@@ -5367,6 +5323,7 @@ popd
 %{_mandir}/man1/perlfreebsd.*
 %{_mandir}/man1/perlfunc.*
 %{_mandir}/man1/perlgit.*
+%{_mandir}/man1/perlgov.*
 %{_mandir}/man1/perlgpl.*
 %{_mandir}/man1/perlguts.*
 %{_mandir}/man1/perlhack.*
@@ -5428,6 +5385,7 @@ popd
 %{_mandir}/man1/perlretut.*
 %{_mandir}/man1/perlriscos.*
 %{_mandir}/man1/perlsec.*
+%{_mandir}/man1/perlsecpolicy.*
 %{_mandir}/man1/perlsolaris.*
 %{_mandir}/man1/perlsource.*
 %{_mandir}/man1/perlstyle.*
@@ -7068,6 +7026,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Jan 25 2021 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.32.1-466
+- 5.32.1 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.32.1/pod/perldelta.pod>
+  or release notes)
+
 * Wed Dec 02 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.32.0-465
 - Run-require perl(Encode) by perl-libs
 
