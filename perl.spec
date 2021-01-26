@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        469%{?dist}
+Release:        470%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -7062,6 +7062,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.32.1-470
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
+
 * Mon Jan 25 2021 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.32.1-469
 - 5.32.1 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.32.1/pod/perldelta.pod>
   or release notes)
