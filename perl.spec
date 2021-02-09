@@ -418,6 +418,9 @@ Patch113:       perl-5.32.1-DynaLoader-use-PerlEnv_getenv.patch
 # Use duplocale() if available, in upstream after 5.33.4
 Patch114:       perl-5.33.4-locale.c-Fix-typo-in-ifdef.patch
 
+# Fix fc() in Turkish locale, in upstream after 5.33.5
+Patch115:       perl-5.33.5-Fix-buggy-fc-in-Turkish-locale.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3060,6 +3063,7 @@ Perl extension for Version Objects
 %patch112 -p1
 %patch113 -p1
 %patch114 -p1
+%patch115 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3167,6 +3171,7 @@ perl -x patchlevel.h \
     'Fedora Patch112: Fix fetching a magic on the stacked file test operators' \
     'Fedora Patch113: Make accessing environment by DynaLoader thread-safe' \
     'Fedora Patch114: Use duplocale() if available' \
+    'Fedora Patch115: Fix fc() in Turkish locale' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5416,6 +5421,7 @@ popd
 - Run-require perl(Encode) by perl-interpreter
 - Make accessing environment by DynaLoader thread-safe
 - Use duplocale() if available
+- Fix fc() in Turkish locale
 
 * Thu Nov 12 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-458
 - Fix un undefined behavior in Perl_custom_op_get_field()
