@@ -245,6 +245,9 @@ Patch47:        perl-5.33.3-pp_split-add-TonyC-s-stack-not-refcounted-suggestion
 # in upstream after 5.33.4
 Patch48:        perl-5.32.1-DynaLoader-use-PerlEnv_getenv.patch
 
+# Use duplocale() if available, in upstream after 5.33.4
+Patch49:        perl-5.33.4-locale.c-Fix-typo-in-ifdef.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4288,6 +4291,7 @@ you're not running VMS, this module does nothing.
 %patch46 -p1
 %patch47 -p1
 %patch48 -p1
+%patch49 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4335,6 +4339,7 @@ perl -x patchlevel.h \
     'Fedora Patch46: Fix a crash in optimizing split() (GH#18232)' \
     'Fedora Patch47: Fix a crash in optimizing split() (GH#18232)' \
     'Fedora Patch48: Make accessing environment by DynaLoader thread-safe' \
+    'Fedora Patch49: Use duplocale() if available' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -7049,6 +7054,7 @@ popd
 * Tue Feb 09 2021 Petr Pisar <ppisar@redhat.com> - 4:5.32.1-467
 - Fix a crash in optimizing split() (GH#18232)
 - Make accessing environment by DynaLoader thread-safe
+- Use duplocale() if available
 
 * Mon Jan 25 2021 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.32.1-466
 - 5.32.1 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.32.1/pod/perldelta.pod>
