@@ -258,6 +258,9 @@ Patch51:        perl-5.33.5-op.c-croak-on-my-_-when-use-utf8-is-in-effect.patch
 # Fix PERL_UNUSED_ARG() definition in XSUB.h, in upstream after 5.33.5
 Patch52:        perl-5.33.5-Use-perl.h-versions-of-PERL_UNUSED_foo-in-XSUB.h.patch
 
+# Add missing entries to perldiag, GH#18276, in upstream after 5.33.6
+Patch53:        perl-5.33.6-Add-missing-entries-to-perldiag-GH-18276.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4305,6 +4308,7 @@ you're not running VMS, this module does nothing.
 %patch50 -p1
 %patch51 -p1
 %patch52 -p1
+%patch53 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4356,6 +4360,7 @@ perl -x patchlevel.h \
     'Fedora Patch50: Fix fc() in Turkish locale' \
     'Fedora Patch51: Fix croaking on "my $_" when "use utf8" is in effect (GH#18449)' \
     'Fedora Patch52: Fix PERL_UNUSED_ARG() definition in XSUB.h' \
+    'Fedora Patch53: Add missing entries to perldiag (GH#18276)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -7074,6 +7079,7 @@ popd
 - Fix fc() in Turkish locale
 - Fix croaking on "my $_" when "use utf8" is in effect (GH#18449)
 - Fix PERL_UNUSED_ARG() definition in XSUB.h
+- Add missing entries to perldiag (GH#18276)
 
 * Mon Jan 25 2021 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.32.1-466
 - 5.32.1 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.32.1/pod/perldelta.pod>
