@@ -251,6 +251,10 @@ Patch49:        perl-5.33.4-locale.c-Fix-typo-in-ifdef.patch
 # Fix fc() in Turkish locale, in upstream after 5.33.5
 Patch50:        perl-5.33.5-Fix-buggy-fc-in-Turkish-locale.patch
 
+# Fix croaking on "my $_" when "use utf8" is in effect, GH#18449,
+# in upstream after 5.33.5
+Patch51:        perl-5.33.5-op.c-croak-on-my-_-when-use-utf8-is-in-effect.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4296,6 +4300,7 @@ you're not running VMS, this module does nothing.
 %patch48 -p1
 %patch49 -p1
 %patch50 -p1
+%patch51 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4345,6 +4350,7 @@ perl -x patchlevel.h \
     'Fedora Patch48: Make accessing environment by DynaLoader thread-safe' \
     'Fedora Patch49: Use duplocale() if available' \
     'Fedora Patch50: Fix fc() in Turkish locale' \
+    'Fedora Patch51: Fix croaking on "my $_" when "use utf8" is in effect (GH#18449)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -7061,6 +7067,7 @@ popd
 - Make accessing environment by DynaLoader thread-safe
 - Use duplocale() if available
 - Fix fc() in Turkish locale
+- Fix croaking on "my $_" when "use utf8" is in effect (GH#18449)
 
 * Mon Jan 25 2021 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.32.1-466
 - 5.32.1 bump (see <https://metacpan.org/pod/release/SHAY/perl-5.32.1/pod/perldelta.pod>
