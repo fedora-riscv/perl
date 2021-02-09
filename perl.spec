@@ -255,6 +255,9 @@ Patch50:        perl-5.33.5-Fix-buggy-fc-in-Turkish-locale.patch
 # in upstream after 5.33.5
 Patch51:        perl-5.33.5-op.c-croak-on-my-_-when-use-utf8-is-in-effect.patch
 
+# Fix PERL_UNUSED_ARG() definition in XSUB.h, in upstream after 5.33.5
+Patch52:        perl-5.33.5-Use-perl.h-versions-of-PERL_UNUSED_foo-in-XSUB.h.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -4307,6 +4310,7 @@ you're not running VMS, this module does nothing.
 %patch49 -p1
 %patch50 -p1
 %patch51 -p1
+%patch52 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4357,6 +4361,7 @@ perl -x patchlevel.h \
     'Fedora Patch49: Use duplocale() if available' \
     'Fedora Patch50: Fix fc() in Turkish locale' \
     'Fedora Patch51: Fix croaking on "my $_" when "use utf8" is in effect (GH#18449)' \
+    'Fedora Patch52: Fix PERL_UNUSED_ARG() definition in XSUB.h' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -7089,6 +7094,7 @@ popd
 - Use duplocale() if available
 - Fix fc() in Turkish locale
 - Fix croaking on "my $_" when "use utf8" is in effect (GH#18449)
+- Fix PERL_UNUSED_ARG() definition in XSUB.h
 
 * Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.32.1-470
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
