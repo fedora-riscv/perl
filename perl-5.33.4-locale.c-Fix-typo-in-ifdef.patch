@@ -1,0 +1,32 @@
+From 9289d4dc7a3d24b20c6e25045e687321ee3e8faf Mon Sep 17 00:00:00 2001
+From: Karl Williamson <khw@cpan.org>
+Date: Mon, 30 Nov 2020 09:25:52 -0700
+Subject: [PATCH] locale.c: Fix typo in #ifdef
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This misspelling led to the code assuming that the platform didn't have
+a feature that, if used, would result in faster execution.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ locale.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/locale.c b/locale.c
+index 9500ab7960..5970423404 100644
+--- a/locale.c
++++ b/locale.c
+@@ -2621,7 +2621,7 @@ S_my_nl_langinfo(const int item, bool toggle)
+ #if defined(HAS_NL_LANGINFO) /* nl_langinfo() is available.  */
+ #  if   ! defined(HAS_THREAD_SAFE_NL_LANGINFO_L)      \
+      || ! defined(HAS_POSIX_2008_LOCALE)              \
+-     || ! defined(DUPLOCALE)
++     || ! defined(HAS_DUPLOCALE)
+ 
+     /* Here, use plain nl_langinfo(), switching to the underlying LC_NUMERIC
+      * for those items dependent on it.  This must be copied to a buffer before
+-- 
+2.26.2
+
