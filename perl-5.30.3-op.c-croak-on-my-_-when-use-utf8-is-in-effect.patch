@@ -1,0 +1,81 @@
+From 0acb0d5467244a611ba3c80736dd4120e244db9f Mon Sep 17 00:00:00 2001
+From: Tomasz Konojacki <me@xenu.pl>
+Date: Wed, 30 Dec 2020 14:03:02 +0100
+Subject: [PATCH] op.c: croak on "my $_" when "use utf8" is in effect
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes #18449
+
+Petr Písař: Ported from 07319fdbb283f93cb655c3106b5237cbc7272038 to
+5.30.3.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ op.c         | 16 +++++++++-------
+ t/op/mydef.t | 11 +++++++++--
+ 2 files changed, 18 insertions(+), 9 deletions(-)
+
+diff --git a/op.c b/op.c
+index 51ca217..8fa58ac 100644
+--- a/op.c
++++ b/op.c
+@@ -702,6 +702,7 @@ PADOFFSET
+ Perl_allocmy(pTHX_ const char *const name, const STRLEN len, const U32 flags)
+ {
+     PADOFFSET off;
++    bool is_idfirst, is_default;
+     const bool is_our = (PL_parser->in_my == KEY_our);
+ 
+     PERL_ARGS_ASSERT_ALLOCMY;
+@@ -710,14 +711,15 @@ Perl_allocmy(pTHX_ const char *const name, const STRLEN len, const U32 flags)
+ 	Perl_croak(aTHX_ "panic: allocmy illegal flag bits 0x%" UVxf,
+ 		   (UV)flags);
+ 
++    is_idfirst = flags & SVf_UTF8
++        ? isIDFIRST_utf8_safe((U8*)name + 1, name + len)
++        : isIDFIRST_A(name[1]);
++
++    /* $_, @_, etc. */
++    is_default = len == 2 && name[1] == '_';
++
+     /* complain about "my $<special_var>" etc etc */
+-    if (   len
+-        && !(  is_our
+-            || isALPHA(name[1])
+-            || (   (flags & SVf_UTF8)
+-                && isIDFIRST_utf8_safe((U8 *)name+1, name + len))
+-            || (name[1] == '_' && len > 2)))
+-    {
++    if (!is_our && (!is_idfirst || is_default)) {
+ 	if (!(flags & SVf_UTF8 && UTF8_IS_START(name[1]))
+ 	 && isASCII(name[1])
+ 	 && (!isPRINT(name[1]) || strchr("\t\n\r\f", name[1]))) {
+diff --git a/t/op/mydef.t b/t/op/mydef.t
+index 42a81d9..225ce98 100644
+--- a/t/op/mydef.t
++++ b/t/op/mydef.t
+@@ -6,10 +6,17 @@ BEGIN {
+     set_up_inc('../lib');
+ }
+ 
+-plan tests => 1;
+-
+ use strict;
+ 
+ eval 'my $_';
+ like $@, qr/^Can't use global \$_ in "my" at /;
+ 
++{
++    # using utf8 allows $_ to be declared with 'my'
++    # GH #18449
++    use utf8;
++    eval 'my $_;';
++    like $@, qr/^Can't use global \$_ in "my" at /;
++}
++
++done_testing;
+-- 
+2.26.2
+
