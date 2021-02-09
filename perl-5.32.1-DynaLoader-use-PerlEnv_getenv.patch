@@ -1,0 +1,34 @@
+From ab72b7bd043df0f0ad6090a4c95f378624fad9fc Mon Sep 17 00:00:00 2001
+From: Karl Williamson <khw@cpan.org>
+Date: Sat, 7 Mar 2020 12:54:19 -0700
+Subject: [PATCH] DynaLoader: use PerlEnv_getenv()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Doing so invokes thread-safe guards
+
+Petr Písař: Ported from b0312014d6c1804920d2b687a5fa5645b445ce9f to
+5.32.1.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ ext/DynaLoader/dlutils.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ext/DynaLoader/dlutils.c b/ext/DynaLoader/dlutils.c
+index 8584f89..1a27fbd 100644
+--- a/ext/DynaLoader/dlutils.c
++++ b/ext/DynaLoader/dlutils.c
+@@ -115,7 +115,7 @@ dl_generic_private_init(pTHX)	/* called by dl_*.xs dl_private_init() */
+ #endif
+ 
+ #if defined(PERL_IN_DL_HPUX_XS) || defined(PERL_IN_DL_DLOPEN_XS)
+-    if ( (perl_dl_nonlazy = getenv("PERL_DL_NONLAZY")) != NULL
++    if ( (perl_dl_nonlazy = PerlEnv_getenv("PERL_DL_NONLAZY")) != NULL
+ 	&& grok_atoUV(perl_dl_nonlazy, &uv, NULL)
+ 	&& uv <= INT_MAX
+     ) {
+-- 
+2.26.2
+
