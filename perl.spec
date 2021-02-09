@@ -428,6 +428,9 @@ Patch116:       perl-5.30.3-op.c-croak-on-my-_-when-use-utf8-is-in-effect.patch
 # Fix PERL_UNUSED_ARG() definition in XSUB.h, in upstream after 5.33.5
 Patch117:       perl-5.33.5-Use-perl.h-versions-of-PERL_UNUSED_foo-in-XSUB.h.patch
 
+# Add missing entries to perldiag, GH#18276, in upstream after 5.33.6
+Patch118:       perl-5.30.3-Add-missing-entries-to-perldiag-GH-18276.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3073,6 +3076,7 @@ Perl extension for Version Objects
 %patch115 -p1
 %patch116 -p1
 %patch117 -p1
+%patch118 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3183,6 +3187,7 @@ perl -x patchlevel.h \
     'Fedora Patch115: Fix fc() in Turkish locale' \
     'Fedora Patch116: Fix croaking on "my $_" when "use utf8" is in effect (GH#18449)' \
     'Fedora Patch117: Fix PERL_UNUSED_ARG() definition in XSUB.h' \
+    'Fedora Patch118: Add missing entries to perldiag (GH#18276)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5435,6 +5440,7 @@ popd
 - Fix fc() in Turkish locale
 - Fix croaking on "my $_" when "use utf8" is in effect (GH#18449)
 - Fix PERL_UNUSED_ARG() definition in XSUB.h
+- Add missing entries to perldiag (GH#18276)
 
 * Thu Nov 12 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-458
 - Fix un undefined behavior in Perl_custom_op_get_field()
