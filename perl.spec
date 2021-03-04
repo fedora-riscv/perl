@@ -435,6 +435,10 @@ Patch118:       perl-5.30.3-Add-missing-entries-to-perldiag-GH-18276.patch
 # in upstream after 5.33.6
 Patch119:       perl-5.33.6-t-run-locale.t-Rmv-LANGUAGE-from-environment.patch
 
+# Prevent the number of buckets in a hash from getting too large,
+# in upstream after 5.33.6
+Patch120:       perl-5.32.1-hv.c-add-a-guard-clause-to-prevent-the-number-of-buc.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3082,6 +3086,7 @@ Perl extension for Version Objects
 %patch117 -p1
 %patch118 -p1
 %patch119 -p1
+%patch120 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3194,6 +3199,7 @@ perl -x patchlevel.h \
     'Fedora Patch117: Fix PERL_UNUSED_ARG() definition in XSUB.h' \
     'Fedora Patch118: Add missing entries to perldiag (GH#18276)' \
     'Fedora Patch119: Protect locale tests from LANGUAGE environment variable' \
+    'Fedora Patch120: Prevent the number of buckets in a hash from getting too large' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5441,6 +5447,7 @@ popd
 %changelog
 * Thu Mar 04 2021 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-460
 - Protect locale tests from LANGUAGE environment variable
+- Prevent the number of buckets in a hash from getting too large
 
 * Wed Feb 10 2021 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-459
 - Run-require perl(Encode) by perl-interpreter
