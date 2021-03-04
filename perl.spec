@@ -164,7 +164,7 @@ Patch12:        perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
 # Pass the correct CFLAGS to dtrace
 Patch13:        perl-5.28.0-Pass-CFLAGS-to-dtrace.patch
 
-# Do not use a C compiler reserved identifiers, in upstream after 5.33.0
+# Do not use C compiler reserved identifiers, in upstream after 5.33.0
 Patch14:        perl-5.33.0-MUTABLE_PTR-Rmv-non-standard-syntax.patch
 
 # Fix SvUV_nomg() macro definition, in upstream after 5.33.0
@@ -217,14 +217,14 @@ Patch35:        perl-5.33.1-sort-return-foo.patch
 # Fix sv_collxfrm macro to respect locale, in upstream after 5.33.2
 Patch38:        perl-5.33.2-sv.h-sv_collxfrm-didn-t-work-properly.patch
 
-# Fix an iterator signedness in handling a mro exception, GH#18155,
+# Fix an iterator signedness in handling an mro exception, GH#18155,
 # in upstream after 5.33.2
 Patch39:        perl-5.33.2-mro.xs-Fix-compiler-warning.patch
 
 # Fix a code flow in Perl_sv_inc_nomg(), in upstream after 5.33.2
 Patch40:        perl-5.33.2-sv.c-Added-missing-braces-in-Perl_sv_inc_nomg.patch
 
-# Fix un undefined behavior in Perl_custom_op_get_field(),
+# Fix an undefined behavior in Perl_custom_op_get_field(),
 # in upstream after 5.33.3
 Patch41:        perl-5.33.3-Perl_custom_op_get_field-remove-undef-behaviour.patch
 
@@ -4350,7 +4350,7 @@ perl -x patchlevel.h \
     'Fedora Patch11: Replace EU::MakeMaker dependency with EU::MM::Utils in IPC::Cmd (bug #1129443)' \
     'Fedora Patch12: Link XS modules to pthread library to fix linking with -z defs' \
     'Fedora Patch13: Pass the correct CFLAGS to dtrace' \
-    'Fedora Patch14: Do not use a C compiler reserved identifiers' \
+    'Fedora Patch14: Do not use C compiler reserved identifiers' \
     'Fedora Patch15: Fix SvUV_nomg() macro definition' \
     'Fedora Patch16: Fix SvTRUE() documentation' \
     'Fedora Patch17: Fix ext/XS-APItest/t/utf8_warn_base.pl tests' \
@@ -4367,9 +4367,9 @@ perl -x patchlevel.h \
     'Fedora Patch30: Fix inheritance resolution of lexial objects in a debugger (GH#17661)' \
     'Fedora Patch35: Fix sorting with a block that calls return (GH#18081)' \
     'Fedora Patch38: Fix sv_collxfrm macro to respect locale' \
-    'Fedora Patch39: Fix an iterator signedness in handling a mro exception (GH#18155)' \
+    'Fedora Patch39: Fix an iterator signedness in handling an mro exception (GH#18155)' \
     'Fedora Patch40: Fix a code flow in Perl_sv_inc_nomg()' \
-    'Fedora Patch41: Fix un undefined behavior in Perl_custom_op_get_field()' \
+    'Fedora Patch41: Fix an undefined behavior in Perl_custom_op_get_field()' \
     'Fedora Patch42: Fix Config variable names in in t/op tests' \
     'Fedora Patch43: Fix fetching a magic on the stacked file test operators' \
     'Fedora Patch44: Fix a crash in optimizing split() (GH#18232)' \
@@ -7146,7 +7146,7 @@ popd
 
 * Wed Oct 14 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-465
 - Fix sv_collxfrm macro to respect locale
-- Fix an iterator signedness in handling a mro exception (GH#18155)
+- Fix an iterator signedness in handling an mro exception (GH#18155)
 - Fix a code flow in Perl_sv_inc_nomg()
 - Disable a dual-lived perl-Tie-RefHash subpackage (bug #1887937)
 
@@ -7178,7 +7178,7 @@ popd
 - Fix an IO::Handle spurious error reported for regular file handles (GH#18019)
 
 * Wed Aug 05 2020 Petr Pisar <ppisar@redhat.com> - 4:5.32.0-459
-- Do not use a C compiler reserved identifiers
+- Do not use C compiler reserved identifiers
 - Fix SvUV_nomg() macro definition
 - Fix SvTRUE() documentation
 - Fix ext/XS-APItest/t/utf8_warn_base.pl tests
@@ -7457,7 +7457,7 @@ popd
 - Fix reporting a line number for non-terminated prototypes (RT#133524)
 - Fix first eof() return value (RT#133721)
 - Fix a crash when compiling a malformed form (RT#132158)
-- Fix un undefined C behavior in NULL pointer arithmetics (RT#133223)
+- Fix an undefined C behavior in NULL pointer arithmetics (RT#133223)
 - Prevent long jumps from clobbering local variables (RT#133575)
 - Fix a mismatch with a case-insesitive regular expression on a text with ligatures
   (RT#133756)
