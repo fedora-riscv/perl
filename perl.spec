@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        471%{?dist}
+Release:        472%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -4637,7 +4637,672 @@ sed \
   > %{buildroot}%{tapsetdir}/%{libperl_stp}
 %endif
 
+%if ! %{dual_life} && ! %{rebuild_from_scratch}
+# Archive-Tar
+rm %{buildroot}%{_bindir}/ptar
+rm %{buildroot}%{_bindir}/ptardiff
+rm %{buildroot}%{_bindir}/ptargrep
+rm -rf %{buildroot}%{privlib}/Archive/Tar
+rm %{buildroot}%{privlib}/Archive/Tar.pm
+rm -rf %{buildroot}%{privlib}/Archive
+rm %{buildroot}%{_mandir}/man1/ptar.1*
+rm %{buildroot}%{_mandir}/man1/ptardiff.1*
+rm %{buildroot}%{_mandir}/man1/ptargrep.1*
+rm %{buildroot}%{_mandir}/man3/Archive::Tar*
+
+# autodie
+rm -rf %{buildroot}%{privlib}/autodie/
+rm %{buildroot}%{privlib}/autodie.pm
+rm %{buildroot}%{privlib}/Fatal.pm
+rm %{buildroot}%{_mandir}/man3/autodie.3*
+rm %{buildroot}%{_mandir}/man3/autodie::*
+rm %{buildroot}%{_mandir}/man3/Fatal.3*
+
+# bignum
+rm %{buildroot}%{privlib}/bigint.pm
+rm %{buildroot}%{privlib}/bignum.pm
+rm %{buildroot}%{privlib}/bigrat.pm
+rm -rf %{buildroot}%{privlib}/Math/BigFloat
+rm %{buildroot}%{privlib}/Math/BigInt/Trace.pm
+rm %{buildroot}%{_mandir}/man3/bigint.*
+rm %{buildroot}%{_mandir}/man3/bignum.*
+rm %{buildroot}%{_mandir}/man3/bigrat.*
+
+# Carp
+rm -rf %{buildroot}%{privlib}/Carp
+rm %{buildroot}%{privlib}/Carp.*
+rm %{buildroot}%{_mandir}/man3/Carp.*
+
+# Compress-Raw-Bzip2
+rm %{buildroot}%{archlib}/Compress/Raw/Bzip2.pm
+rm -rf %{buildroot}%{archlib}/auto/Compress/Raw/Bzip2
+rm %{buildroot}%{_mandir}/man3/Compress::Raw::Bzip2*
+
+# Compress-Raw-Zlib
+rm %{buildroot}%{archlib}/Compress/Raw/Zlib.pm
+rm -rf %{buildroot}%{archlib}/Compress/Raw
+rm -rf %{buildroot}%{archlib}/Compress
+rm -rf %{buildroot}%{archlib}/auto/Compress/Raw/Zlib
+rm -rf %{buildroot}%{archlib}/auto/Compress/Raw
+rm -rf %{buildroot}%{archlib}/auto/Compress
+rm %{buildroot}%{_mandir}/man3/Compress::Raw::Zlib*
+
+# Config-Perl-V
+rm -rf %{buildroot}%{privlib}/Config/Perl
+rm %{buildroot}%{_mandir}/man3/Config::Perl::V.*
+
+# constant
+rm %{buildroot}%{privlib}/constant.pm
+rm %{buildroot}%{_mandir}/man3/constant.3*
+
+# CPAN-Meta-Requirements
+rm %{buildroot}%{privlib}/CPAN/Meta/Requirements.pm
+rm %{buildroot}%{_mandir}/man3/CPAN::Meta::Requirements.3*
+
+# CPAN-Meta-YAML
+rm %{buildroot}%{privlib}/CPAN/Meta/YAML.pm
+rm %{buildroot}%{_mandir}/man3/CPAN::Meta::YAML*
+
+# CPAN-Meta
+rm %{buildroot}%{privlib}/CPAN/Meta.pm
+rm %{buildroot}%{privlib}/CPAN/Meta/Converter.pm
+rm %{buildroot}%{privlib}/CPAN/Meta/Feature.pm
+rm -rf %{buildroot}%{privlib}/CPAN/Meta/History
+rm %{buildroot}%{privlib}/CPAN/Meta/History.pm
+rm %{buildroot}%{privlib}/CPAN/Meta/Merge.pm
+rm %{buildroot}%{privlib}/CPAN/Meta/Prereqs.pm
+rm %{buildroot}%{privlib}/CPAN/Meta/Spec.pm
+rm %{buildroot}%{privlib}/CPAN/Meta/Validator.pm
+rm -rf %{buildroot}%{privlib}/CPAN/Meta
+rm %{buildroot}%{privlib}/Parse/CPAN/Meta.pm
+rm -rf %{buildroot}%{privlib}/Parse/CPAN
+rm -rf %{buildroot}%{privlib}/Parse
+rm %{buildroot}%{_mandir}/man3/CPAN::Meta*
+rm %{buildroot}%{_mandir}/man3/Parse::CPAN::Meta.3*
+
+# CPAN
+rm %{buildroot}%{_bindir}/cpan
+rm %{buildroot}%{privlib}/App/Cpan.pm
+rm -rf %{buildroot}%{privlib}/CPAN
+rm %{buildroot}%{privlib}/CPAN.pm
+rm %{buildroot}%{_mandir}/man1/cpan.1*
+rm %{buildroot}%{_mandir}/man3/App::Cpan.*
+rm %{buildroot}%{_mandir}/man3/CPAN.*
+rm %{buildroot}%{_mandir}/man3/CPAN:*
+
+# Data-Dumper
+rm %{buildroot}%{archlib}/auto/Data/Dumper/Dumper.so
+rm %{buildroot}%{archlib}/Data/Dumper.pm
+rm -rf %{buildroot}%{archlib}/auto/Data/Dumper
+rm -rf %{buildroot}%{archlib}/auto/Data
+rm -rf %{buildroot}%{archlib}/Data
+rm %{buildroot}%{_mandir}/man3/Data::Dumper.3*
+
+# DB_File
+rm %{buildroot}%{archlib}/DB_File.pm
+rm %{buildroot}%{archlib}/auto/DB_File/DB_File.so
+rm -rf %{buildroot}%{archlib}/auto/DB_File
+rm %{buildroot}%{_mandir}/man3/DB_File*
+
+# Devel-PPPort
+rm %{buildroot}%{archlib}/Devel/PPPort.pm
+rm %{buildroot}%{_mandir}/man3/Devel::PPPort.3*
+
+# Digest
+rm %{buildroot}%{privlib}/Digest.pm
+rm %{buildroot}%{privlib}/Digest/base.pm
+rm %{buildroot}%{privlib}/Digest/file.pm
+rm -rf %{buildroot}%{privlib}/Digest
+rm %{buildroot}%{_mandir}/man3/Digest.3*
+rm %{buildroot}%{_mandir}/man3/Digest::base.3*
+rm %{buildroot}%{_mandir}/man3/Digest::file.3*
+
+# Digest-MD5
+rm %{buildroot}%{archlib}/Digest/MD5.pm
+rm -rf %{buildroot}%{archlib}/auto/Digest/MD5
+rm %{buildroot}%{_mandir}/man3/Digest::MD5.3*
+
+# Digest-SHA
+rm %{buildroot}%{_bindir}/shasum
+rm %{buildroot}%{archlib}/Digest/SHA.pm
+rm -rf %{buildroot}%{archlib}/Digest
+rm -rf %{buildroot}%{archlib}/auto/Digest/SHA
+rm -rf %{buildroot}%{archlib}/auto/Digest
+rm %{buildroot}%{_mandir}/man1/shasum.1*
+rm %{buildroot}%{_mandir}/man3/Digest::SHA.3*
+
+# Encode
+rm %{buildroot}%{_bindir}/encguess
+rm %{buildroot}%{_bindir}/piconv
+rm -rf %{buildroot}%{archlib}/Encode*
+rm -rf %{buildroot}%{archlib}/auto/Encode*
+rm %{buildroot}%{_mandir}/man1/encguess.1*
+rm %{buildroot}%{_mandir}/man1/piconv.1*
+rm %{buildroot}%{_mandir}/man3/Encode*.3*
+
+# encoding
+rm %{buildroot}%{archlib}/encoding.pm
+rm %{buildroot}%{_mandir}/man3/encoding.3*
+
+# Encode-devel
+rm %{buildroot}%{_bindir}/enc2xs
+rm %{buildroot}%{privlib}/Encode/*.e2x
+rm %{buildroot}%{privlib}/Encode/encode.h
+rm -rf %{buildroot}%{privlib}/Encode
+rm %{buildroot}%{_mandir}/man1/enc2xs.1*
+
+# Env
+rm %{buildroot}%{privlib}/Env.pm
+rm %{buildroot}%{_mandir}/man3/Env.3*
+
+# Exporter
+rm -rf %{buildroot}%{privlib}/Exporter*
+rm %{buildroot}%{_mandir}/man3/Exporter*
+
+# experimental
+rm %{buildroot}%{privlib}/experimental*
+rm %{buildroot}%{_mandir}/man3/experimental*
+
+# ExtUtils-CBuilder
+rm %{buildroot}%{privlib}/ExtUtils/CBuilder.pm
+rm -rf %{buildroot}%{privlib}/ExtUtils/CBuilder
+rm %{buildroot}%{_mandir}/man3/ExtUtils::CBuilder*
+
+# ExtUtils-Command
+rm %{buildroot}%{privlib}/ExtUtils/Command.pm
+rm %{buildroot}%{_mandir}/man3/ExtUtils::Command.*
+
+# ExtUtils-Install
+rm %{buildroot}%{privlib}/ExtUtils/Install.pm
+rm %{buildroot}%{privlib}/ExtUtils/Installed.pm
+rm %{buildroot}%{privlib}/ExtUtils/Packlist.pm
+rm %{buildroot}%{_mandir}/man3/ExtUtils::Install.3*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::Installed.3*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::Packlist.3*
+
+# ExtUtils-Manifest
+rm %{buildroot}%{privlib}/ExtUtils/Manifest.pm
+rm %{buildroot}%{privlib}/ExtUtils/MANIFEST.SKIP
+rm %{buildroot}%{_mandir}/man3/ExtUtils::Manifest.3*
+
+# ExtUtils-MakeMaker
+rm %{buildroot}%{_bindir}/instmodsh
+rm -rf %{buildroot}%{privlib}/ExtUtils/Command
+rm -rf %{buildroot}%{privlib}/ExtUtils/Liblist
+rm %{buildroot}%{privlib}/ExtUtils/Liblist.pm
+rm -rf %{buildroot}%{privlib}/ExtUtils/MakeMaker
+rm %{buildroot}%{privlib}/ExtUtils/MakeMaker.pm
+rm %{buildroot}%{privlib}/ExtUtils/MM.pm
+rm %{buildroot}%{privlib}/ExtUtils/MM_*.pm
+rm %{buildroot}%{privlib}/ExtUtils/MY.pm
+rm %{buildroot}%{privlib}/ExtUtils/Mkbootstrap.pm
+rm %{buildroot}%{privlib}/ExtUtils/Mksymlists.pm
+rm %{buildroot}%{privlib}/ExtUtils/testlib.pm
+rm %{buildroot}%{_mandir}/man1/instmodsh.1*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::Command::MM*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::Liblist.3*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::MM.3*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::MM_*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::MY.3*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::MakeMaker*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::Mkbootstrap.3*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::Mksymlists.3*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::testlib.3*
+
+# ExtUtils-MM-Utils
+rm %{buildroot}%{privlib}/ExtUtils/MM/Utils.pm
+rm -rf %{buildroot}%{privlib}/ExtUtils/MM
+rm %{buildroot}%{_mandir}/man3/ExtUtils::MM::Utils.*
+
+# ExtUtils-ParseXS
+rm %{buildroot}%{privlib}/ExtUtils/ParseXS.pm
+rm %{buildroot}%{privlib}/ExtUtils/ParseXS.pod
+rm %{buildroot}%{privlib}/ExtUtils/ParseXS/Constants.pm
+rm %{buildroot}%{privlib}/ExtUtils/ParseXS/CountLines.pm
+rm %{buildroot}%{privlib}/ExtUtils/ParseXS/Eval.pm
+rm %{buildroot}%{privlib}/ExtUtils/ParseXS/Utilities.pm
+rm -rf %{buildroot}%{privlib}/ExtUtils/ParseXS
+rm %{buildroot}%{privlib}/ExtUtils/Typemaps.pm
+rm %{buildroot}%{privlib}/ExtUtils/Typemaps/Cmd.pm
+rm %{buildroot}%{privlib}/ExtUtils/Typemaps/InputMap.pm
+rm %{buildroot}%{privlib}/ExtUtils/Typemaps/OutputMap.pm
+rm %{buildroot}%{privlib}/ExtUtils/Typemaps/Type.pm
+rm -rf %{buildroot}%{privlib}/ExtUtils/Typemaps
+rm %{buildroot}%{privlib}/ExtUtils/xsubpp
+rm %{buildroot}%{privlib}/pod/perlxs.pod
+rm %{buildroot}%{privlib}/pod/perlxstut.pod
+rm %{buildroot}%{privlib}/pod/perlxstypemap.pod
+rm %{buildroot}%{_bindir}/xsubpp
+rm %{buildroot}%{_mandir}/man1/perlxs*
+rm %{buildroot}%{_mandir}/man1/xsubpp*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::ParseXS.3*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::ParseXS::Constants.3*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::ParseXS::Eval.3*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::ParseXS::Utilities.3*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::Typemaps.3*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::Typemaps::Cmd.3*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::Typemaps::InputMap.3*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::Typemaps::OutputMap.3*
+rm %{buildroot}%{_mandir}/man3/ExtUtils::Typemaps::Type.3*
+
+# File-Fetch
+rm %{buildroot}%{privlib}/File/Fetch.pm
+rm %{buildroot}%{_mandir}/man3/File::Fetch.3*
+
+# File-Path
+rm %{buildroot}%{privlib}/File/Path.pm
+rm %{buildroot}%{_mandir}/man3/File::Path.3*
+
+# File-Temp
+rm %{buildroot}%{privlib}/File/Temp.pm
+rm %{buildroot}%{_mandir}/man3/File::Temp.3*
+
+# Filter
+rm -rf %{buildroot}%{archlib}/auto/Filter/Util
+rm -rf %{buildroot}%{archlib}/auto/Filter
+rm -rf %{buildroot}%{archlib}/Filter/Util
+rm -rf %{buildroot}%{archlib}/Filter
+rm %{buildroot}%{privlib}/pod/perlfilter.pod
+rm %{buildroot}%{_mandir}/man1/perlfilter.*
+rm %{buildroot}%{_mandir}/man3/Filter::Util::*
+
+# Filter-Simple
+rm %{buildroot}%{privlib}/Filter/Simple.pm
+rm -rf %{buildroot}%{privlib}/Filter
+rm %{buildroot}%{_mandir}/man3/Filter::Simple.3*
+
+# Getopt-Long
+rm %{buildroot}%{privlib}/Getopt/Long.pm
+rm %{buildroot}%{_mandir}/man3/Getopt::Long.3*
+
+# IO-Compress
+rm %{buildroot}%{_bindir}/streamzip
+rm %{buildroot}%{_bindir}/zipdetails
+rm %{buildroot}%{privlib}/IO/Compress/FAQ.pod
+rm %{buildroot}%{_mandir}/man1/streamzip.*
+rm %{buildroot}%{_mandir}/man1/zipdetails.*
+rm %{buildroot}%{_mandir}/man3/IO::Compress::FAQ.*
+# Compress-Zlib
+rm %{buildroot}%{privlib}/Compress/Zlib.pm
+rm -rf %{buildroot}%{privlib}/Compress
+rm %{buildroot}%{_mandir}/man3/Compress::Zlib*
+# IO-Compress-Base
+rm %{buildroot}%{privlib}/File/GlobMapper.pm
+rm %{buildroot}%{privlib}/IO/Compress/Base.pm
+rm -rf %{buildroot}%{privlib}/IO/Compress/Base
+rm %{buildroot}%{privlib}/IO/Uncompress/AnyUncompress.pm
+rm %{buildroot}%{privlib}/IO/Uncompress/Base.pm
+rm %{buildroot}%{_mandir}/man3/File::GlobMapper.*
+rm %{buildroot}%{_mandir}/man3/IO::Compress::Base.*
+rm %{buildroot}%{_mandir}/man3/IO::Uncompress::AnyUncompress.*
+rm %{buildroot}%{_mandir}/man3/IO::Uncompress::Base.*
+# IO-Compress-Zlib
+rm %{buildroot}%{privlib}/IO/Compress/Bzip2.pm
+rm %{buildroot}%{privlib}/IO/Compress/Deflate.pm
+rm %{buildroot}%{privlib}/IO/Compress/Gzip.pm
+rm %{buildroot}%{privlib}/IO/Compress/RawDeflate.pm
+rm %{buildroot}%{privlib}/IO/Compress/Zip.pm
+rm -rf %{buildroot}%{privlib}/IO/Compress/Adapter
+rm -rf %{buildroot}%{privlib}/IO/Compress/Gzip
+rm -rf %{buildroot}%{privlib}/IO/Compress/Zip
+rm -rf %{buildroot}%{privlib}/IO/Compress/Zlib
+rm -rf %{buildroot}%{privlib}/IO/Compress
+rm %{buildroot}%{privlib}/IO/Uncompress/AnyInflate.pm
+rm %{buildroot}%{privlib}/IO/Uncompress/Bunzip2.pm
+rm %{buildroot}%{privlib}/IO/Uncompress/Gunzip.pm
+rm %{buildroot}%{privlib}/IO/Uncompress/Inflate.pm
+rm %{buildroot}%{privlib}/IO/Uncompress/RawInflate.pm
+rm %{buildroot}%{privlib}/IO/Uncompress/Unzip.pm
+rm -rf %{buildroot}%{privlib}/IO/Uncompress/Adapter
+rm -rf %{buildroot}%{privlib}/IO/Uncompress
+rm %{buildroot}%{_mandir}/man3/IO::Compress::Deflate*
+rm %{buildroot}%{_mandir}/man3/IO::Compress::Bzip2*
+rm %{buildroot}%{_mandir}/man3/IO::Compress::Gzip*
+rm %{buildroot}%{_mandir}/man3/IO::Compress::RawDeflate*
+rm %{buildroot}%{_mandir}/man3/IO::Compress::Zip*
+rm %{buildroot}%{_mandir}/man3/IO::Uncompress::AnyInflate*
+rm %{buildroot}%{_mandir}/man3/IO::Uncompress::Bunzip2*
+rm %{buildroot}%{_mandir}/man3/IO::Uncompress::Gunzip*
+rm %{buildroot}%{_mandir}/man3/IO::Uncompress::Inflate*
+rm %{buildroot}%{_mandir}/man3/IO::Uncompress::RawInflate*
+rm %{buildroot}%{_mandir}/man3/IO::Uncompress::Unzip*
+
+# IO-Socket-IP
+rm %{buildroot}%{privlib}/IO/Socket/IP.pm
+rm -rf %{buildroot}%{privlib}/IO/Socket
+rm %{buildroot}%{_mandir}/man3/IO::Socket::IP.*
+
+# IO-Zlib
+rm %{buildroot}%{privlib}/IO/Zlib.pm
+rm -rf %{buildroot}%{privlib}/IO
+rm %{buildroot}%{_mandir}/man3/IO::Zlib.*
+
+# HTTP-Tiny
+rm %{buildroot}%{privlib}/HTTP/Tiny.pm
+rm -rf %{buildroot}%{privlib}/HTTP
+rm %{buildroot}%{_mandir}/man3/HTTP::Tiny*
+
+# IPC-Cmd
+rm %{buildroot}%{privlib}/IPC/Cmd.pm
+rm %{buildroot}%{_mandir}/man3/IPC::Cmd.3*
+
+# IPC-SysV
+rm -rf %{buildroot}%{archlib}/auto/IPC
+rm %{buildroot}%{archlib}/IPC/Msg.pm
+rm %{buildroot}%{archlib}/IPC/Semaphore.pm
+rm %{buildroot}%{archlib}/IPC/SharedMem.pm
+rm %{buildroot}%{archlib}/IPC/SysV.pm
+rm -rf %{buildroot}%{archlib}/IPC
+rm %{buildroot}%{_mandir}/man3/IPC::Msg.*
+rm %{buildroot}%{_mandir}/man3/IPC::Semaphore.*
+rm %{buildroot}%{_mandir}/man3/IPC::SharedMem.*
+rm %{buildroot}%{_mandir}/man3/IPC::SysV.*
+
+# JSON-PP
+rm %{buildroot}%{_bindir}/json_pp
+rm %{buildroot}%{privlib}/JSON/PP.pm
+rm -rf %{buildroot}%{privlib}/JSON/PP
+rm -rf %{buildroot}%{privlib}/JSON
+rm %{buildroot}%{_mandir}/man1/json_pp.1*
+rm %{buildroot}%{_mandir}/man3/JSON::PP.3*
+rm %{buildroot}%{_mandir}/man3/JSON::PP::Boolean.3pm*
+
+# libnet
+rm %{buildroot}%{privlib}/Net/Cmd.pm
+rm %{buildroot}%{privlib}/Net/Config.pm
+rm %{buildroot}%{privlib}/Net/Domain.pm
+rm %{buildroot}%{privlib}/Net/FTP.pm
+rm -rf %{buildroot}%{privlib}/Net/FTP
+rm %{buildroot}%{privlib}/Net/libnetFAQ.pod
+rm %{buildroot}%{privlib}/Net/NNTP.pm
+rm %{buildroot}%{privlib}/Net/Netrc.pm
+rm %{buildroot}%{privlib}/Net/POP3.pm
+rm %{buildroot}%{privlib}/Net/SMTP.pm
+rm %{buildroot}%{privlib}/Net/Time.pm
+rm %{buildroot}%{_mandir}/man3/Net::Cmd.*
+rm %{buildroot}%{_mandir}/man3/Net::Config.*
+rm %{buildroot}%{_mandir}/man3/Net::Domain.*
+rm %{buildroot}%{_mandir}/man3/Net::FTP.*
+rm %{buildroot}%{_mandir}/man3/Net::libnetFAQ.*
+rm %{buildroot}%{_mandir}/man3/Net::NNTP.*
+rm %{buildroot}%{_mandir}/man3/Net::Netrc.*
+rm %{buildroot}%{_mandir}/man3/Net::POP3.*
+rm %{buildroot}%{_mandir}/man3/Net::SMTP.*
+rm %{buildroot}%{_mandir}/man3/Net::Time.*
+
+# Locale-Maketext
+rm %{buildroot}%{privlib}/Locale/Maketext.*
+rm %{buildroot}%{privlib}/Locale/Maketext/Cookbook.*
+rm %{buildroot}%{privlib}/Locale/Maketext/Guts.*
+rm %{buildroot}%{privlib}/Locale/Maketext/GutsLoader.*
+rm %{buildroot}%{privlib}/Locale/Maketext/TPJ13.*
+rm %{buildroot}%{_mandir}/man3/Locale::Maketext.*
+rm %{buildroot}%{_mandir}/man3/Locale::Maketext::Cookbook.*
+rm %{buildroot}%{_mandir}/man3/Locale::Maketext::Guts.*
+rm %{buildroot}%{_mandir}/man3/Locale::Maketext::GutsLoader.*
+rm %{buildroot}%{_mandir}/man3/Locale::Maketext::TPJ13.*
+
+# Math-BigInt
+rm %{buildroot}%{privlib}/Math/BigFloat.pm
+rm %{buildroot}%{privlib}/Math/BigInt.pm
+rm %{buildroot}%{privlib}/Math/BigInt/Calc.pm
+rm %{buildroot}%{privlib}/Math/BigInt/Lib.pm
+rm -rf %{buildroot}%{privlib}/Math/BigInt
+rm %{buildroot}%{_mandir}/man3/Math::BigFloat.*
+rm %{buildroot}%{_mandir}/man3/Math::BigInt.*
+rm %{buildroot}%{_mandir}/man3/Math::BigInt::Calc.*
+rm %{buildroot}%{_mandir}/man3/Math::BigInt::Lib.*
+
+# Math-BigInt-FastCalc
+rm -rf %{buildroot}%{archlib}/Math
+rm -rf %{buildroot}%{archlib}/auto/Math
+rm %{buildroot}%{_mandir}/man3/Math::BigInt::FastCalc.*
+
+# Math-BigRat
+rm %{buildroot}%{privlib}/Math/BigRat.pm
+rm %{buildroot}%{_mandir}/man3/Math::BigRat.*
+
+# MIME-Base64
+rm -rf %{buildroot}%{archlib}/auto/MIME
+rm -rf %{buildroot}%{archlib}/MIME
+rm %{buildroot}%{_mandir}/man3/MIME::*
+
+# Module-CoreList
+rm -rf %{buildroot}%{privlib}/Module/CoreList
+rm %{buildroot}%{privlib}/Module/CoreList.pm
+rm %{buildroot}%{privlib}/Module/CoreList.pod
+rm %{buildroot}%{_mandir}/man3/Module::CoreList*
+
+# Module-CoreList-tools
+rm %{buildroot}%{_bindir}/corelist
+rm %{buildroot}%{_mandir}/man1/corelist*
+
+# Module-Load
+rm %{buildroot}%{privlib}/Module/Load.pm
+rm %{buildroot}%{_mandir}/man3/Module::Load.*
+
+# Module-Load-Conditional
+rm -rf %{buildroot}%{privlib}/Module/Load
+rm %{buildroot}%{_mandir}/man3/Module::Load::Conditional*
+
+# Module-Metadata
+rm %{buildroot}%{privlib}/Module/Metadata.pm
+rm %{buildroot}%{_mandir}/man3/Module::Metadata.3pm*
+
+# Net-Ping
+rm %{buildroot}%{privlib}/Net/Ping.pm
+rm %{buildroot}%{_mandir}/man3/Net::Ping.*
+
+# parent
+rm %{buildroot}%{privlib}/parent.pm
+rm %{buildroot}%{_mandir}/man3/parent.3*
+
+# Params-Check
+rm -rf %{buildroot}%{privlib}/Params/
+rm %{buildroot}%{_mandir}/man3/Params::Check*
+
+# PathTools
+rm %{buildroot}%{archlib}/Cwd.pm
+rm -rf %{buildroot}%{archlib}/File/Spec*
+rm -rf %{buildroot}%{archlib}/auto/Cwd/
+rm %{buildroot}%{_mandir}/man3/Cwd*
+rm %{buildroot}%{_mandir}/man3/File::Spec*
+
+# Perl-OSType
+rm %{buildroot}%{privlib}/Perl/OSType.pm
+rm -rf %{buildroot}%{privlib}/Perl
+rm %{buildroot}%{_mandir}/man3/Perl::OSType.3pm*
+
+# perlfaq
+rm %{buildroot}%{privlib}/perlfaq.pm
+rm %{buildroot}%{privlib}/pod/perlfaq*
+rm %{buildroot}%{privlib}/pod/perlglossary.pod
+rm %{buildroot}%{_mandir}/man1/perlfaq*
+rm %{buildroot}%{_mandir}/man1/perlglossary.*
+
+# PerlIO-via-QuotedPrint
+rm -rf %{buildroot}%{privlib}/PerlIO
+rm %{buildroot}%{_mandir}/man3/PerlIO::via::QuotedPrint.*
+
+# Pod-Checker
+rm %{buildroot}%{_bindir}/podchecker
+rm %{buildroot}%{privlib}/Pod/Checker.pm
+rm %{buildroot}%{_mandir}/man1/podchecker.*
+rm %{buildroot}%{_mandir}/man3/Pod::Checker.*
+
+# Pod-Escapes
+rm %{buildroot}%{privlib}/Pod/Escapes.pm
+rm %{buildroot}%{_mandir}/man3/Pod::Escapes.*
+
+# Pod-Perldoc
+rm %{buildroot}%{_bindir}/perldoc
+rm %{buildroot}%{privlib}/pod/perldoc.pod
+rm %{buildroot}%{privlib}/Pod/Perldoc.pm
+rm -rf %{buildroot}%{privlib}/Pod/Perldoc/
+rm %{buildroot}%{_mandir}/man1/perldoc.1*
+rm %{buildroot}%{_mandir}/man3/Pod::Perldoc*
+
+# Pod-Usage
+rm %{buildroot}%{_bindir}/pod2usage
+rm %{buildroot}%{privlib}/Pod/Usage.pm
+rm %{buildroot}%{_mandir}/man1/pod2usage.*
+rm %{buildroot}%{_mandir}/man3/Pod::Usage.*
+
+# podlators
+rm %{buildroot}%{_bindir}/pod2man
+rm %{buildroot}%{_bindir}/pod2text
+rm %{buildroot}%{privlib}/pod/perlpodstyle.pod
+rm %{buildroot}%{privlib}/Pod/Man.pm
+rm %{buildroot}%{privlib}/Pod/ParseLink.pm
+rm %{buildroot}%{privlib}/Pod/Text.pm
+rm -rf %{buildroot}%{privlib}/Pod/Text
+rm %{buildroot}%{_mandir}/man1/pod2man.1*
+rm %{buildroot}%{_mandir}/man1/pod2text.1*
+rm %{buildroot}%{_mandir}/man1/perlpodstyle.1*
+rm %{buildroot}%{_mandir}/man3/Pod::Man*
+rm %{buildroot}%{_mandir}/man3/Pod::ParseLink*
+rm %{buildroot}%{_mandir}/man3/Pod::Text*
+
+# Pod-Simple
+rm %{buildroot}%{privlib}/Pod/Simple.pm
+rm %{buildroot}%{privlib}/Pod/Simple.pod
+rm -rf %{buildroot}%{privlib}/Pod/Simple/
+rm %{buildroot}%{_mandir}/man3/Pod::Simple*
+
+# Scalar-List-Utils
+rm -rf %{buildroot}%{archlib}/List/
+rm -rf %{buildroot}%{archlib}/Scalar/
+rm -rf %{buildroot}%{archlib}/Sub/
+rm -rf %{buildroot}%{archlib}/auto/List/
+rm %{buildroot}%{_mandir}/man3/List::Util*
+rm %{buildroot}%{_mandir}/man3/Scalar::Util*
+rm %{buildroot}%{_mandir}/man3/Sub::Util*
+
+# Socket
+rm %{buildroot}%{archlib}/auto/Socket/Socket.*
+rm -rf %{buildroot}%{archlib}/auto/Socket
+rm %{buildroot}%{archlib}/Socket.pm
+rm %{buildroot}%{_mandir}/man3/Socket.3*
+
+# Storable
+rm %{buildroot}%{archlib}/Storable.pm
+rm -rf %{buildroot}%{archlib}/auto/Storable/
+rm %{buildroot}%{_mandir}/man3/Storable.*
+
+# Sys-Syslog
+# %%dir %%{archlib}/Sys not excluded. It would be removed from the previous package.
+rm %{buildroot}%{archlib}/Sys/Syslog.pm
+# %%dir %%{archlib}/auto/Sys not excluded. It would be removed from the previous package.
+rm -rf %{buildroot}%{archlib}/auto/Sys/Syslog/
+rm %{buildroot}%{_mandir}/man3/Sys::Syslog.*
+
+# Term-ANSIColor
+rm %{buildroot}%{privlib}/Term/ANSIColor.pm
+rm %{buildroot}%{_mandir}/man3/Term::ANSIColor*
+
+# Term-Cap
+rm %{buildroot}%{privlib}/Term/Cap.pm
+rm %{buildroot}%{_mandir}/man3/Term::Cap.*
+
+# Test-Harness
+rm %{buildroot}%{_bindir}/prove
+rm -rf %{buildroot}%{privlib}/App/Prove*
+rm -rf %{buildroot}%{privlib}/App
+rm -rf %{buildroot}%{privlib}/TAP*
+rm %{buildroot}%{privlib}/Test/Harness*
+rm %{buildroot}%{_mandir}/man1/prove.1*
+rm %{buildroot}%{_mandir}/man3/App::Prove*
+rm %{buildroot}%{_mandir}/man3/TAP*
+rm %{buildroot}%{_mandir}/man3/Test::Harness*
+
+# Test-Simple
+rm %{buildroot}%{privlib}/ok*
+rm %{buildroot}%{privlib}/Test/More*
+rm -rf %{buildroot}%{privlib}/Test/Builder*
+rm -rf %{buildroot}%{privlib}/Test/Tester*
+rm %{buildroot}%{privlib}/Test/Simple*
+rm %{buildroot}%{privlib}/Test/Tutorial*
+rm -rf %{buildroot}%{privlib}/Test/use
+rm -rf %{buildroot}%{privlib}/Test
+rm -rf %{buildroot}%{privlib}/Test2*
+rm %{buildroot}%{_mandir}/man3/ok*
+rm %{buildroot}%{_mandir}/man3/Test::More*
+rm %{buildroot}%{_mandir}/man3/Test::Builder*
+rm %{buildroot}%{_mandir}/man3/Test::Tester*
+rm %{buildroot}%{_mandir}/man3/Test::Simple*
+rm %{buildroot}%{_mandir}/man3/Test::Tutorial*
+rm %{buildroot}%{_mandir}/man3/Test::use::*
+rm %{buildroot}%{_mandir}/man3/Test2*
+
+# Text-Balanced
+rm %{buildroot}%{privlib}/Text/Balanced.pm
+rm %{buildroot}%{_mandir}/man3/Text::Balanced.*
+
+# Text-ParseWords
+rm %{buildroot}%{privlib}/Text/ParseWords.pm
+rm %{buildroot}%{_mandir}/man3/Text::ParseWords.*
+
+# Text-Tabs+Wrap
+rm %{buildroot}%{privlib}/Text/Tabs.pm
+rm %{buildroot}%{privlib}/Text/Wrap.pm
+rm %{buildroot}%{_mandir}/man3/Text::Tabs.*
+rm %{buildroot}%{_mandir}/man3/Text::Wrap.*
+
+# Thread-Queue
+rm %{buildroot}%{privlib}/Thread/Queue.pm
+rm %{buildroot}%{_mandir}/man3/Thread::Queue.*
+
+# Tie-RefHash
+rm %{buildroot}%{privlib}/Tie/RefHash.pm
+rm %{buildroot}%{_mandir}/man3/Tie::RefHash.*
+
+# Time-HiRes
+rm %{buildroot}%{archlib}/Time/HiRes.pm
+rm -rf %{buildroot}%{archlib}/auto/Time/HiRes
+rm %{buildroot}%{_mandir}/man3/Time::HiRes.*
+
+# Time-Local
+rm %{buildroot}%{privlib}/Time/Local.pm
+rm %{buildroot}%{_mandir}/man3/Time::Local.*
+
+# threads
+rm %{buildroot}%{archlib}/auto/threads/threads*
+rm %{buildroot}%{archlib}/threads.pm
+rm %{buildroot}%{_mandir}/man3/threads.3*
+
+# threads-shared
+rm -rf %{buildroot}%{archlib}/auto/threads/shared*
+rm -rf %{buildroot}%{archlib}/auto/threads
+rm %{buildroot}%{archlib}/threads/shared*
+rm -rf %{buildroot}%{archlib}/threads
+rm %{buildroot}%{_mandir}/man3/threads::shared*
+
+# Unicode-Collate
+rm -rf %{buildroot}%{archlib}/auto/Unicode/Collate
+rm -rf %{buildroot}%{archlib}/auto/Unicode
+rm %{buildroot}%{archlib}/Unicode/Collate.pm
+rm -rf %{buildroot}%{archlib}/Unicode/Collate
+rm -rf %{buildroot}%{privlib}/Unicode/Collate
+rm %{buildroot}%{_mandir}/man3/Unicode::Collate.*
+rm %{buildroot}%{_mandir}/man3/Unicode::Collate::*
+
+# Unicode-Normalize
+rm -rf %{buildroot}%{archlib}/auto/Unicode/Normalize
+rm %{buildroot}%{archlib}/Unicode/Normalize.pm
+rm -rf %{buildroot}%{archlib}/Unicode
+rm %{buildroot}%{_mandir}/man3/Unicode::Normalize.*
+
+# version
+rm %{buildroot}%{privlib}/version.pm
+rm %{buildroot}%{privlib}/version.pod
+rm -rf %{buildroot}%{privlib}/version/
+rm %{buildroot}%{_mandir}/man3/version.3*
+rm %{buildroot}%{_mandir}/man3/version::Internals.3*
+%endif
+
+
 # TODO: Canonicalize test files (rewrite intrerpreter path, fix permissions)
+
 # XXX: We cannot rewrite ./perl before %%check phase. Otherwise the test
 # would run against system perl at build-time.
 # See __spec_check_pre global macro in macros.perl.
@@ -4665,28 +5330,6 @@ popd
 
 %files
 # Main perl package is an empty meta package.
-%if !(%{dual_life} || %{rebuild_from_scratch})
-# These excludes are here to work around a bug in debuginfo generator
-# <https://github.com/rpm-software-management/rpm/issues/1094> that would
-# otherwise leave debuginfo files in the buildroot tree. It seems that
-# the excludes in noarch files sections are ignorered by the debuginfo
-# generator.
-%exclude %{archlib}/auto/Compress/Raw/Bzip2/Bzip2.so
-%exclude %{archlib}/auto/Compress/Raw/Zlib/Zlib.so
-%exclude %{archlib}/auto/Cwd/Cwd.so
-%exclude %{archlib}/auto/DB_File/DB_File.so
-%exclude %{archlib}/auto/Data/Dumper/Dumper.so
-%exclude %{archlib}/auto/Digest/MD5/MD5.so
-%exclude %{archlib}/auto/Digest/SHA/SHA.so
-%exclude %{archlib}/auto/Filter/Util/Call/Call.so
-%exclude %{archlib}/auto/IPC/SysV/SysV.so
-%exclude %{archlib}/auto/List/Util/Util.so
-%exclude %{archlib}/auto/MIME/Base64/Base64.so
-%exclude %{archlib}/auto/Math/BigInt/FastCalc/FastCalc.so
-%exclude %{archlib}/auto/Socket/Socket.so
-%exclude %{archlib}/auto/Storable/Storable.so
-%exclude %{archlib}/auto/Time/HiRes/HiRes.so
-%endif
 
 %files interpreter
 %{_bindir}/perl
@@ -4820,17 +5463,6 @@ popd
 %{_mandir}/man1/ptardiff.1*
 %{_mandir}/man1/ptargrep.1*
 %{_mandir}/man3/Archive::Tar* 
-%else
-%exclude %{_bindir}/ptar
-%exclude %{_bindir}/ptardiff
-%exclude %{_bindir}/ptargrep
-%exclude %dir %{privlib}/Archive
-%exclude %{privlib}/Archive/Tar
-%exclude %{privlib}/Archive/Tar.pm
-%exclude %{_mandir}/man1/ptar.1*
-%exclude %{_mandir}/man1/ptardiff.1*
-%exclude %{_mandir}/man1/ptargrep.1*
-%exclude %{_mandir}/man3/Archive::Tar*
 %endif
 
 %files Attribute-Handlers
@@ -4845,13 +5477,6 @@ popd
 %{_mandir}/man3/autodie.3*
 %{_mandir}/man3/autodie::*
 %{_mandir}/man3/Fatal.3*
-%else
-%exclude %{privlib}/autodie/
-%exclude %{privlib}/autodie.pm
-%exclude %{privlib}/Fatal.pm
-%exclude %{_mandir}/man3/autodie.3*
-%exclude %{_mandir}/man3/autodie::*
-%exclude %{_mandir}/man3/Fatal.3*
 %endif
 
 %files AutoLoader
@@ -4896,15 +5521,6 @@ popd
 %{_mandir}/man3/bigint.*
 %{_mandir}/man3/bignum.*
 %{_mandir}/man3/bigrat.*
-%else
-%exclude %{privlib}/bigint.pm
-%exclude %{privlib}/bignum.pm
-%exclude %{privlib}/bigrat.pm
-%exclude %{privlib}/Math/BigFloat
-%exclude %{privlib}/Math/BigInt/Trace.pm
-%exclude %{_mandir}/man3/bigint.*
-%exclude %{_mandir}/man3/bignum.*
-%exclude %{_mandir}/man3/bigrat.*
 %endif
 
 %files blib
@@ -4916,10 +5532,6 @@ popd
 %{privlib}/Carp
 %{privlib}/Carp.*
 %{_mandir}/man3/Carp.*
-%else
-%exclude %{privlib}/Carp
-%exclude %{privlib}/Carp.*
-%exclude %{_mandir}/man3/Carp.*
 %endif
 
 %files Class-Struct
@@ -4935,14 +5547,6 @@ popd
 %dir %{archlib}/auto/Compress/Raw
 %{archlib}/auto/Compress/Raw/Bzip2
 %{_mandir}/man3/Compress::Raw::Bzip2*
-%else
-%exclude %dir %{archlib}/Compress
-%exclude %dir %{archlib}/Compress/Raw
-%exclude %{archlib}/Compress/Raw/Bzip2.pm
-%exclude %dir %{archlib}/auto/Compress
-%exclude %dir %{archlib}/auto/Compress/Raw
-%exclude %{archlib}/auto/Compress/Raw/Bzip2
-%exclude %{_mandir}/man3/Compress::Raw::Bzip2*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -4954,14 +5558,6 @@ popd
 %dir %{archlib}/auto/Compress/Raw
 %{archlib}/auto/Compress/Raw/Zlib
 %{_mandir}/man3/Compress::Raw::Zlib*
-%else
-%exclude %dir %{archlib}/Compress
-%exclude %dir %{archlib}/Compress/Raw
-%exclude %{archlib}/Compress/Raw/Zlib.pm
-%exclude %dir %{archlib}/auto/Compress
-%exclude %dir %{archlib}/auto/Compress/Raw
-%exclude %{archlib}/auto/Compress/Raw/Zlib
-%exclude %{_mandir}/man3/Compress::Raw::Zlib*
 %endif
 
 %files Config-Extensions
@@ -4974,18 +5570,12 @@ popd
 %dir %{privlib}/Config
 %{privlib}/Config/Perl
 %{_mandir}/man3/Config::Perl::V.*
-%else
-%exclude %{privlib}/Config/Perl
-%exclude %{_mandir}/man3/Config::Perl::V.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files constant
 %{privlib}/constant.pm
 %{_mandir}/man3/constant.3*
-%else
-%exclude %{privlib}/constant.pm
-%exclude %{_mandir}/man3/constant.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -5002,16 +5592,6 @@ popd
 %exclude %{privlib}/CPAN/Meta/
 %exclude %{privlib}/CPAN/Meta.pm
 %exclude %{_mandir}/man3/CPAN::Meta*
-%else
-%exclude %{_bindir}/cpan
-%exclude %dir %{privlib}/App
-%exclude %{privlib}/App/Cpan.pm
-%exclude %{privlib}/CPAN
-%exclude %{privlib}/CPAN.pm
-%exclude %{_mandir}/man1/cpan.1*
-%exclude %{_mandir}/man3/App::Cpan.*
-%exclude %{_mandir}/man3/CPAN.*
-%exclude %{_mandir}/man3/CPAN:*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -5034,23 +5614,6 @@ popd
 %{_mandir}/man3/Parse::CPAN::Meta.3*
 %exclude %{_mandir}/man3/CPAN::Meta::YAML*
 %exclude %{_mandir}/man3/CPAN::Meta::Requirements*
-%else
-%exclude %dir %{privlib}/CPAN
-%exclude %{privlib}/CPAN/Meta.pm
-%exclude %dir %{privlib}/CPAN/Meta
-%exclude %{privlib}/CPAN/Meta/Converter.pm
-%exclude %{privlib}/CPAN/Meta/Feature.pm
-%exclude %dir %{privlib}/CPAN/Meta/History
-%exclude %{privlib}/CPAN/Meta/History.pm
-%exclude %{privlib}/CPAN/Meta/Merge.pm
-%exclude %{privlib}/CPAN/Meta/Prereqs.pm
-%exclude %{privlib}/CPAN/Meta/Spec.pm
-%exclude %{privlib}/CPAN/Meta/Validator.pm
-%exclude %dir %{privlib}/Parse
-%exclude %dir %{privlib}/Parse/CPAN
-%exclude %{privlib}/Parse/CPAN/Meta.pm
-%exclude %{_mandir}/man3/CPAN::Meta*
-%exclude %{_mandir}/man3/Parse::CPAN::Meta.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -5059,11 +5622,6 @@ popd
 %dir %{privlib}/CPAN/Meta
 %{privlib}/CPAN/Meta/Requirements.pm
 %{_mandir}/man3/CPAN::Meta::Requirements.3*
-%else
-%exclude %dir %{privlib}/CPAN
-%exclude %dir %{privlib}/CPAN/Meta
-%exclude %{privlib}/CPAN/Meta/Requirements.pm
-%exclude %{_mandir}/man3/CPAN::Meta::Requirements.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -5072,11 +5630,6 @@ popd
 %dir %{privlib}/CPAN/Meta
 %{privlib}/CPAN/Meta/YAML.pm
 %{_mandir}/man3/CPAN::Meta::YAML*
-%else
-%exclude %dir %{privlib}/CPAN
-%exclude %dir %{privlib}/CPAN/Meta
-%exclude %{privlib}/CPAN/Meta/YAML.pm
-%exclude %{_mandir}/man3/CPAN::Meta::YAML*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -5087,13 +5640,6 @@ popd
 %dir %{archlib}/Data
 %{archlib}/Data/Dumper.pm
 %{_mandir}/man3/Data::Dumper.3*
-%else
-%exclude %dir %{archlib}/auto/Data
-%exclude %dir %{archlib}/auto/Data/Dumper
-%exclude %{archlib}/auto/Data/Dumper/Dumper.so
-%exclude %dir %{archlib}/Data
-%exclude %{archlib}/Data/Dumper.pm
-%exclude %{_mandir}/man3/Data::Dumper.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -5102,11 +5648,6 @@ popd
 %dir %{archlib}/auto/DB_File
 %{archlib}/auto/DB_File/DB_File.so
 %{_mandir}/man3/DB_File*
-%else
-%exclude %{archlib}/DB_File.pm
-%exclude %dir %{archlib}/auto/DB_File
-%exclude %{archlib}/auto/DB_File/DB_File.so
-%exclude %{_mandir}/man3/DB_File*
 %endif
 
 %files DBM_Filter
@@ -5140,9 +5681,6 @@ popd
 %dir %{archlib}/Devel
 %{archlib}/Devel/PPPort.pm
 %{_mandir}/man3/Devel::PPPort.3*
-%else
-%exclude %{archlib}/Devel/PPPort.pm
-%exclude %{_mandir}/man3/Devel::PPPort.3*
 %endif
 
 %files Devel-SelfStubber
@@ -5168,14 +5706,6 @@ popd
 %{_mandir}/man3/Digest.3*
 %{_mandir}/man3/Digest::base.3*
 %{_mandir}/man3/Digest::file.3*
-%else
-%exclude %{privlib}/Digest.pm
-%exclude %dir %{privlib}/Digest
-%exclude %{privlib}/Digest/base.pm
-%exclude %{privlib}/Digest/file.pm
-%exclude %{_mandir}/man3/Digest.3*
-%exclude %{_mandir}/man3/Digest::base.3*
-%exclude %{_mandir}/man3/Digest::file.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -5185,12 +5715,6 @@ popd
 %dir %{archlib}/auto/Digest
 %{archlib}/auto/Digest/MD5
 %{_mandir}/man3/Digest::MD5.3*
-%else
-%exclude %dir %{archlib}/Digest
-%exclude %{archlib}/Digest/MD5.pm
-%exclude %dir %{archlib}/auto/Digest
-%exclude %{archlib}/auto/Digest/MD5
-%exclude %{_mandir}/man3/Digest::MD5.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -5202,14 +5726,6 @@ popd
 %{archlib}/auto/Digest/SHA
 %{_mandir}/man1/shasum.1*
 %{_mandir}/man3/Digest::SHA.3*
-%else
-%exclude %{_bindir}/shasum
-%exclude %dir %{archlib}/Digest
-%exclude %{archlib}/Digest/SHA.pm
-%exclude %dir %{archlib}/auto/Digest
-%exclude %{archlib}/auto/Digest/SHA
-%exclude %{_mandir}/man1/shasum.1*
-%exclude %{_mandir}/man3/Digest::SHA.3*
 %endif
 
 %files DirHandle
@@ -5485,24 +6001,12 @@ popd
 %{_mandir}/man1/encguess.1*
 %{_mandir}/man1/piconv.1*
 %{_mandir}/man3/Encode*.3*
-%else
-%exclude %{_bindir}/encguess
-%exclude %{_bindir}/piconv
-%exclude %{archlib}/Encode*
-%exclude %{archlib}/auto/Encode*
-%exclude %{privlib}/Encode
-%exclude %{_mandir}/man1/encguess.1*
-%exclude %{_mandir}/man1/piconv.1*
-%exclude %{_mandir}/man3/Encode*.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files encoding
 %{archlib}/encoding.pm
 %{_mandir}/man3/encoding.3*
-%else
-%exclude %{archlib}/encoding.pm
-%exclude %{_mandir}/man3/encoding.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -5512,12 +6016,6 @@ popd
 %{privlib}/Encode/*.e2x
 %{privlib}/Encode/encode.h
 %{_mandir}/man1/enc2xs.1*
-%else
-%exclude %{_bindir}/enc2xs
-%exclude %dir %{privlib}/Encode
-%exclude %{privlib}/Encode/*.e2x
-%exclude %{privlib}/Encode/encode.h
-%exclude %{_mandir}/man1/enc2xs.1*
 %endif
 
 %files encoding-warnings
@@ -5533,9 +6031,6 @@ popd
 %files Env
 %{privlib}/Env.pm
 %{_mandir}/man3/Env.3*
-%else
-%exclude %{privlib}/Env.pm
-%exclude %{_mandir}/man3/Env.3*
 %endif
 
 %files Errno
@@ -5546,18 +6041,12 @@ popd
 %files Exporter
 %{privlib}/Exporter*
 %{_mandir}/man3/Exporter*
-%else
-%exclude %{privlib}/Exporter*
-%exclude %{_mandir}/man3/Exporter*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files experimental
 %{privlib}/experimental*
 %{_mandir}/man3/experimental*
-%else
-%exclude %{privlib}/experimental*
-%exclude %{_mandir}/man3/experimental*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -5566,10 +6055,6 @@ popd
 %{privlib}/ExtUtils/CBuilder
 %{privlib}/ExtUtils/CBuilder.pm
 %{_mandir}/man3/ExtUtils::CBuilder*
-%else
-%exclude %{privlib}/ExtUtils/CBuilder
-%exclude %{privlib}/ExtUtils/CBuilder.pm
-%exclude %{_mandir}/man3/ExtUtils::CBuilder*
 %endif
 
 %files ExtUtils-Constant
@@ -5584,9 +6069,6 @@ popd
 %dir %{privlib}/ExtUtils
 %{privlib}/ExtUtils/Command.pm
 %{_mandir}/man3/ExtUtils::Command.*
-%else
-%exclude %{privlib}/ExtUtils/Command.pm
-%exclude %{_mandir}/man3/ExtUtils::Command.*
 %endif
 
 %files ExtUtils-Embed
@@ -5603,13 +6085,6 @@ popd
 %{_mandir}/man3/ExtUtils::Install.3*
 %{_mandir}/man3/ExtUtils::Installed.3*
 %{_mandir}/man3/ExtUtils::Packlist.3*
-%else
-%exclude %{privlib}/ExtUtils/Install.pm
-%exclude %{privlib}/ExtUtils/Installed.pm
-%exclude %{privlib}/ExtUtils/Packlist.pm
-%exclude %{_mandir}/man3/ExtUtils::Install.3*
-%exclude %{_mandir}/man3/ExtUtils::Installed.3*
-%exclude %{_mandir}/man3/ExtUtils::Packlist.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -5618,10 +6093,6 @@ popd
 %{privlib}/ExtUtils/Manifest.pm
 %{privlib}/ExtUtils/MANIFEST.SKIP
 %{_mandir}/man3/ExtUtils::Manifest.3*
-%else
-%exclude %{privlib}/ExtUtils/Manifest.pm
-%exclude %{privlib}/ExtUtils/MANIFEST.SKIP
-%exclude %{_mandir}/man3/ExtUtils::Manifest.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -5649,29 +6120,6 @@ popd
 %{_mandir}/man3/ExtUtils::Mkbootstrap.3*
 %{_mandir}/man3/ExtUtils::Mksymlists.3*
 %{_mandir}/man3/ExtUtils::testlib.3*
-%else
-%exclude %{_bindir}/instmodsh
-%exclude %{privlib}/ExtUtils/Command
-%exclude %{privlib}/ExtUtils/Liblist
-%exclude %{privlib}/ExtUtils/Liblist.pm
-%exclude %{privlib}/ExtUtils/MakeMaker
-%exclude %{privlib}/ExtUtils/MakeMaker.pm
-%exclude %{privlib}/ExtUtils/MM.pm
-%exclude %{privlib}/ExtUtils/MM_*.pm
-%exclude %{privlib}/ExtUtils/MY.pm
-%exclude %{privlib}/ExtUtils/Mkbootstrap.pm
-%exclude %{privlib}/ExtUtils/Mksymlists.pm
-%exclude %{privlib}/ExtUtils/testlib.pm
-%exclude %{_mandir}/man1/instmodsh.1*
-%exclude %{_mandir}/man3/ExtUtils::Command::MM*
-%exclude %{_mandir}/man3/ExtUtils::Liblist.3*
-%exclude %{_mandir}/man3/ExtUtils::MM.3*
-%exclude %{_mandir}/man3/ExtUtils::MM_*
-%exclude %{_mandir}/man3/ExtUtils::MY.3*
-%exclude %{_mandir}/man3/ExtUtils::MakeMaker*
-%exclude %{_mandir}/man3/ExtUtils::Mkbootstrap.3*
-%exclude %{_mandir}/man3/ExtUtils::Mksymlists.3*
-%exclude %{_mandir}/man3/ExtUtils::testlib.3*
 %endif
 
 %files ExtUtils-Miniperl
@@ -5685,10 +6133,6 @@ popd
 %dir %{privlib}/ExtUtils/MM
 %{privlib}/ExtUtils/MM/Utils.pm
 %{_mandir}/man3/ExtUtils::MM::Utils.*
-%else
-%exclude %dir %{privlib}/ExtUtils/MM
-%exclude %{privlib}/ExtUtils/MM/Utils.pm
-%exclude %{_mandir}/man3/ExtUtils::MM::Utils.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -5724,36 +6168,6 @@ popd
 %{_mandir}/man3/ExtUtils::Typemaps::InputMap.3*
 %{_mandir}/man3/ExtUtils::Typemaps::OutputMap.3*
 %{_mandir}/man3/ExtUtils::Typemaps::Type.3*
-%else
-%exclude %dir %{privlib}/ExtUtils/ParseXS
-%exclude %{privlib}/ExtUtils/ParseXS.pm
-%exclude %{privlib}/ExtUtils/ParseXS.pod
-%exclude %{privlib}/ExtUtils/ParseXS/Constants.pm
-%exclude %{privlib}/ExtUtils/ParseXS/CountLines.pm
-%exclude %{privlib}/ExtUtils/ParseXS/Eval.pm
-%exclude %{privlib}/ExtUtils/ParseXS/Utilities.pm
-%exclude %dir %{privlib}/ExtUtils/Typemaps
-%exclude %{privlib}/ExtUtils/Typemaps.pm
-%exclude %{privlib}/ExtUtils/Typemaps/Cmd.pm
-%exclude %{privlib}/ExtUtils/Typemaps/InputMap.pm
-%exclude %{privlib}/ExtUtils/Typemaps/OutputMap.pm
-%exclude %{privlib}/ExtUtils/Typemaps/Type.pm
-%exclude %{privlib}/ExtUtils/xsubpp
-%exclude %{privlib}/pod/perlxs.pod
-%exclude %{privlib}/pod/perlxstut.pod
-%exclude %{privlib}/pod/perlxstypemap.pod
-%exclude %{_bindir}/xsubpp
-%exclude %{_mandir}/man1/perlxs*
-%exclude %{_mandir}/man1/xsubpp*
-%exclude %{_mandir}/man3/ExtUtils::ParseXS.3*
-%exclude %{_mandir}/man3/ExtUtils::ParseXS::Constants.3*
-%exclude %{_mandir}/man3/ExtUtils::ParseXS::Eval.3*
-%exclude %{_mandir}/man3/ExtUtils::ParseXS::Utilities.3*
-%exclude %{_mandir}/man3/ExtUtils::Typemaps.3*
-%exclude %{_mandir}/man3/ExtUtils::Typemaps::Cmd.3*
-%exclude %{_mandir}/man3/ExtUtils::Typemaps::InputMap.3*
-%exclude %{_mandir}/man3/ExtUtils::Typemaps::OutputMap.3*
-%exclude %{_mandir}/man3/ExtUtils::Typemaps::Type.3*
 %endif
 
 %files Fcntl
@@ -5792,9 +6206,6 @@ popd
 %dir %{privlib}/File
 %{privlib}/File/Fetch.pm
 %{_mandir}/man3/File::Fetch.3*
-%else
-%exclude %{privlib}/File/Fetch.pm
-%exclude %{_mandir}/man3/File::Fetch.3*
 %endif
 
 %files File-Find
@@ -5807,9 +6218,6 @@ popd
 %dir %{privlib}/File
 %{privlib}/File/Path.pm
 %{_mandir}/man3/File::Path.3*
-%else
-%exclude %{privlib}/File/Path.pm
-%exclude %{_mandir}/man3/File::Path.3*
 %endif
 
 %files File-stat
@@ -5822,9 +6230,6 @@ popd
 %dir %{privlib}/File
 %{privlib}/File/Temp.pm
 %{_mandir}/man3/File::Temp.3*
-%else
-%exclude %{privlib}/File/Temp.pm
-%exclude %{_mandir}/man3/File::Temp.3*
 %endif
 
 %files FileCache
@@ -5848,14 +6253,6 @@ popd
 %{privlib}/pod/perlfilter.pod
 %{_mandir}/man1/perlfilter.*
 %{_mandir}/man3/Filter::Util::*
-%else
-%exclude %dir %{archlib}/auto/Filter
-%exclude %{archlib}/auto/Filter/Util
-%exclude %dir %{archlib}/Filter
-%exclude %{archlib}/Filter/Util
-%exclude %{privlib}/pod/perlfilter.pod
-%exclude %{_mandir}/man1/perlfilter.*
-%exclude %{_mandir}/man3/Filter::Util::*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -5863,10 +6260,6 @@ popd
 %dir %{privlib}/Filter
 %{privlib}/Filter/Simple.pm
 %{_mandir}/man3/Filter::Simple.3*
-%else
-%exclude %dir %{privlib}/Filter
-%exclude %{privlib}/Filter/Simple.pm
-%exclude %{_mandir}/man3/Filter::Simple.3*
 %endif
 
 %files FindBin
@@ -5885,9 +6278,6 @@ popd
 %dir %{privlib}/Getopt
 %{privlib}/Getopt/Long.pm
 %{_mandir}/man3/Getopt::Long.3*
-%else
-%exclude %{privlib}/Getopt/Long.pm
-%exclude %{_mandir}/man3/Getopt::Long.3*
 %endif
 
 %files Getopt-Std
@@ -5999,63 +6389,6 @@ popd
 %{_mandir}/man3/IO::Uncompress::Inflate*
 %{_mandir}/man3/IO::Uncompress::RawInflate*
 %{_mandir}/man3/IO::Uncompress::Unzip*
-%else
-%exclude %{_bindir}/streamzip
-%exclude %{_bindir}/zipdetails
-%exclude %dir %{privlib}/IO
-%exclude %dir %{privlib}/IO/Compress
-%exclude %{privlib}/IO/Compress/FAQ.pod
-%exclude %{_mandir}/man1/streamzip.*
-%exclude %{_mandir}/man1/zipdetails.*
-%exclude %{_mandir}/man3/IO::Compress::FAQ.*
-# Compress-Zlib
-%exclude %dir %{privlib}/Compress
-%exclude %{privlib}/Compress/Zlib.pm
-%exclude %{_mandir}/man3/Compress::Zlib*
-# IO-Compress-Base
-%exclude %{privlib}/File/GlobMapper.pm
-%exclude %dir %{privlib}/IO
-%exclude %dir %{privlib}/IO/Compress
-%exclude %{privlib}/IO/Compress/Base
-%exclude %{privlib}/IO/Compress/Base.pm
-%exclude %dir %{privlib}/IO/Uncompress
-%exclude %{privlib}/IO/Uncompress/AnyUncompress.pm
-%exclude %{privlib}/IO/Uncompress/Base.pm
-%exclude %{_mandir}/man3/File::GlobMapper.*
-%exclude %{_mandir}/man3/IO::Compress::Base.*
-%exclude %{_mandir}/man3/IO::Uncompress::AnyUncompress.*
-%exclude %{_mandir}/man3/IO::Uncompress::Base.*
-# IO-Compress-Zlib
-%exclude %dir %{privlib}/IO
-%exclude %dir %{privlib}/IO/Compress
-%exclude %{privlib}/IO/Compress/Adapter
-%exclude %{privlib}/IO/Compress/Deflate.pm
-%exclude %{privlib}/IO/Compress/Gzip
-%exclude %{privlib}/IO/Compress/Gzip.pm
-%exclude %{privlib}/IO/Compress/RawDeflate.pm
-%exclude %{privlib}/IO/Compress/Bzip2.pm
-%exclude %{privlib}/IO/Compress/Zip
-%exclude %{privlib}/IO/Compress/Zip.pm
-%exclude %{privlib}/IO/Compress/Zlib
-%exclude %dir %{privlib}/IO/Uncompress
-%exclude %{privlib}/IO/Uncompress/Adapter
-%exclude %{privlib}/IO/Uncompress/AnyInflate.pm
-%exclude %{privlib}/IO/Uncompress/Bunzip2.pm
-%exclude %{privlib}/IO/Uncompress/Gunzip.pm
-%exclude %{privlib}/IO/Uncompress/Inflate.pm
-%exclude %{privlib}/IO/Uncompress/RawInflate.pm
-%exclude %{privlib}/IO/Uncompress/Unzip.pm
-%exclude %{_mandir}/man3/IO::Compress::Deflate*
-%exclude %{_mandir}/man3/IO::Compress::Bzip2*
-%exclude %{_mandir}/man3/IO::Compress::Gzip*
-%exclude %{_mandir}/man3/IO::Compress::RawDeflate*
-%exclude %{_mandir}/man3/IO::Compress::Zip*
-%exclude %{_mandir}/man3/IO::Uncompress::AnyInflate*
-%exclude %{_mandir}/man3/IO::Uncompress::Bunzip2*
-%exclude %{_mandir}/man3/IO::Uncompress::Gunzip*
-%exclude %{_mandir}/man3/IO::Uncompress::Inflate*
-%exclude %{_mandir}/man3/IO::Uncompress::RawInflate*
-%exclude %{_mandir}/man3/IO::Uncompress::Unzip*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6064,11 +6397,6 @@ popd
 %dir %{privlib}/IO/Socket
 %{privlib}/IO/Socket/IP.pm
 %{_mandir}/man3/IO::Socket::IP.*
-%else
-%exclude %dir %{privlib}/IO
-%exclude %dir %{privlib}/IO/Socket
-%exclude %{privlib}/IO/Socket/IP.pm
-%exclude %{_mandir}/man3/IO::Socket::IP.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6076,10 +6404,6 @@ popd
 %dir %{privlib}/IO
 %{privlib}/IO/Zlib.pm
 %{_mandir}/man3/IO::Zlib.*
-%else
-%exclude %dir %{privlib}/IO
-%exclude %{privlib}/IO/Zlib.pm
-%exclude %{_mandir}/man3/IO::Zlib.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6087,10 +6411,6 @@ popd
 %dir %{privlib}/HTTP
 %{privlib}/HTTP/Tiny.pm
 %{_mandir}/man3/HTTP::Tiny*
-%else
-%exclude %dir %{privlib}/HTTP
-%exclude %{privlib}/HTTP/Tiny.pm
-%exclude %{_mandir}/man3/HTTP::Tiny*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6098,9 +6418,6 @@ popd
 %dir %{privlib}/IPC
 %{privlib}/IPC/Cmd.pm
 %{_mandir}/man3/IPC::Cmd.3*
-%else
-%exclude %{privlib}/IPC/Cmd.pm
-%exclude %{_mandir}/man3/IPC::Cmd.3*
 %endif
 
 %files IPC-Open3
@@ -6122,17 +6439,6 @@ popd
 %{_mandir}/man3/IPC::Semaphore.*
 %{_mandir}/man3/IPC::SharedMem.*
 %{_mandir}/man3/IPC::SysV.*
-%else
-%exclude %{archlib}/auto/IPC
-%exclude %dir %{archlib}/IPC
-%exclude %{archlib}/IPC/Msg.pm
-%exclude %{archlib}/IPC/Semaphore.pm
-%exclude %{archlib}/IPC/SharedMem.pm
-%exclude %{archlib}/IPC/SysV.pm
-%exclude %{_mandir}/man3/IPC::Msg.*
-%exclude %{_mandir}/man3/IPC::Semaphore.*
-%exclude %{_mandir}/man3/IPC::SharedMem.*
-%exclude %{_mandir}/man3/IPC::SysV.*
 %endif
 
 %files I18N-Collate
@@ -6161,14 +6467,6 @@ popd
 %{_mandir}/man1/json_pp.1*
 %{_mandir}/man3/JSON::PP.3*
 %{_mandir}/man3/JSON::PP::Boolean.3pm*
-%else
-%exclude %{_bindir}/json_pp
-%exclude %dir %{privlib}/JSON
-%exclude %{privlib}/JSON/PP
-%exclude %{privlib}/JSON/PP.pm
-%exclude %{_mandir}/man1/json_pp.1*
-%exclude %{_mandir}/man3/JSON::PP.3*
-%exclude %{_mandir}/man3/JSON::PP::Boolean.3pm*
 %endif
 
 %files less
@@ -6203,28 +6501,6 @@ popd
 %{_mandir}/man3/Net::POP3.*
 %{_mandir}/man3/Net::SMTP.*
 %{_mandir}/man3/Net::Time.*
-%else
-%exclude %{privlib}/Net/Cmd.pm
-%exclude %{privlib}/Net/Config.pm
-%exclude %{privlib}/Net/Domain.pm
-%exclude %{privlib}/Net/FTP
-%exclude %{privlib}/Net/FTP.pm
-%exclude %{privlib}/Net/libnetFAQ.pod
-%exclude %{privlib}/Net/NNTP.pm
-%exclude %{privlib}/Net/Netrc.pm
-%exclude %{privlib}/Net/POP3.pm
-%exclude %{privlib}/Net/SMTP.pm
-%exclude %{privlib}/Net/Time.pm
-%exclude %{_mandir}/man3/Net::Cmd.*
-%exclude %{_mandir}/man3/Net::Config.*
-%exclude %{_mandir}/man3/Net::Domain.*
-%exclude %{_mandir}/man3/Net::FTP.*
-%exclude %{_mandir}/man3/Net::libnetFAQ.*
-%exclude %{_mandir}/man3/Net::NNTP.*
-%exclude %{_mandir}/man3/Net::Netrc.*
-%exclude %{_mandir}/man3/Net::POP3.*
-%exclude %{_mandir}/man3/Net::SMTP.*
-%exclude %{_mandir}/man3/Net::Time.*
 %endif
 
 %files libnetcfg
@@ -6249,19 +6525,6 @@ popd
 %{_mandir}/man3/Locale::Maketext::Guts.*
 %{_mandir}/man3/Locale::Maketext::GutsLoader.*
 %{_mandir}/man3/Locale::Maketext::TPJ13.*
-%else
-%exclude %dir %{privlib}/Locale
-%exclude %dir %{privlib}/Locale/Maketext
-%exclude %{privlib}/Locale/Maketext.*
-%exclude %{privlib}/Locale/Maketext/Cookbook.*
-%exclude %{privlib}/Locale/Maketext/Guts.*
-%exclude %{privlib}/Locale/Maketext/GutsLoader.*
-%exclude %{privlib}/Locale/Maketext/TPJ13.*
-%exclude %{_mandir}/man3/Locale::Maketext.*
-%exclude %{_mandir}/man3/Locale::Maketext::Cookbook.*
-%exclude %{_mandir}/man3/Locale::Maketext::Guts.*
-%exclude %{_mandir}/man3/Locale::Maketext::GutsLoader.*
-%exclude %{_mandir}/man3/Locale::Maketext::TPJ13.*
 %endif
 
 %files Locale-Maketext-Simple
@@ -6282,16 +6545,6 @@ popd
 %{_mandir}/man3/Math::BigInt.*
 %{_mandir}/man3/Math::BigInt::Calc.*
 %{_mandir}/man3/Math::BigInt::Lib.*
-%else
-%exclude %{privlib}/Math/BigFloat.pm
-%exclude %{privlib}/Math/BigInt.pm
-%exclude %dir %exclude %{privlib}/Math/BigInt
-%exclude %{privlib}/Math/BigInt/Calc.pm
-%exclude %{privlib}/Math/BigInt/Lib.pm
-%exclude %{_mandir}/man3/Math::BigFloat.*
-%exclude %{_mandir}/man3/Math::BigInt.*
-%exclude %{_mandir}/man3/Math::BigInt::Calc.*
-%exclude %{_mandir}/man3/Math::BigInt::Lib.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6299,10 +6552,6 @@ popd
 %{archlib}/Math
 %{archlib}/auto/Math
 %{_mandir}/man3/Math::BigInt::FastCalc.*
-%else
-%exclude %{archlib}/Math
-%exclude %{archlib}/auto/Math
-%exclude %{_mandir}/man3/Math::BigInt::FastCalc.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6310,9 +6559,6 @@ popd
 %dir %{privlib}/Math
 %{privlib}/Math/BigRat.pm
 %{_mandir}/man3/Math::BigRat.*
-%else
-%exclude %{privlib}/Math/BigRat.pm
-%exclude %{_mandir}/man3/Math::BigRat.*
 %endif
 
 %files Math-Complex
@@ -6336,10 +6582,6 @@ popd
 %{archlib}/auto/MIME
 %{archlib}/MIME
 %{_mandir}/man3/MIME::*
-%else
-%exclude %{archlib}/auto/MIME
-%exclude %{archlib}/MIME
-%exclude %{_mandir}/man3/MIME::*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6349,20 +6591,12 @@ popd
 %{privlib}/Module/CoreList.pm
 %{privlib}/Module/CoreList.pod
 %{_mandir}/man3/Module::CoreList*
-%else
-%exclude %{privlib}/Module/CoreList
-%exclude %{privlib}/Module/CoreList.pm
-%exclude %{privlib}/Module/CoreList.pod
-%exclude %{_mandir}/man3/Module::CoreList*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Module-CoreList-tools
 %{_bindir}/corelist
 %{_mandir}/man1/corelist*
-%else
-%exclude %{_bindir}/corelist
-%exclude %{_mandir}/man1/corelist*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6370,9 +6604,6 @@ popd
 %dir %{privlib}/Module
 %{privlib}/Module/Load.pm
 %{_mandir}/man3/Module::Load.*
-%else
-%exclude %{privlib}/Module/Load.pm
-%exclude %{_mandir}/man3/Module::Load.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6380,9 +6611,6 @@ popd
 %dir %{privlib}/Module
 %{privlib}/Module/Load
 %{_mandir}/man3/Module::Load::Conditional* 
-%else
-%exclude %{privlib}/Module/Load
-%exclude %{_mandir}/man3/Module::Load::Conditional*
 %endif
 
 %files Module-Loaded
@@ -6395,9 +6623,6 @@ popd
 %dir %{privlib}/Module
 %{privlib}/Module/Metadata.pm
 %{_mandir}/man3/Module::Metadata.3pm*
-%else
-%exclude %{privlib}/Module/Metadata.pm
-%exclude %{_mandir}/man3/Module::Metadata.3pm*
 %endif
 
 %files mro
@@ -6428,9 +6653,6 @@ popd
 %dir %{privlib}/Net
 %{privlib}/Net/Ping.pm
 %{_mandir}/man3/Net::Ping.*
-%else
-%exclude %{privlib}/Net/Ping.pm
-%exclude %{_mandir}/man3/Net::Ping.*
 %endif
 
 %files NEXT
@@ -6469,18 +6691,12 @@ popd
 %files parent
 %{privlib}/parent.pm
 %{_mandir}/man3/parent.3*
-%else
-%exclude %{privlib}/parent.pm
-%exclude %{_mandir}/man3/parent.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files Params-Check
 %{privlib}/Params/
 %{_mandir}/man3/Params::Check*
-%else
-%exclude %{privlib}/Params/
-%exclude %{_mandir}/man3/Params::Check*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6491,12 +6707,6 @@ popd
 %{archlib}/auto/Cwd
 %{_mandir}/man3/Cwd*
 %{_mandir}/man3/File::Spec*
-%else
-%exclude %{archlib}/Cwd.pm
-%exclude %{archlib}/File/Spec*
-%exclude %{archlib}/auto/Cwd/
-%exclude %{_mandir}/man3/Cwd*
-%exclude %{_mandir}/man3/File::Spec*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6504,10 +6714,6 @@ popd
 %dir %{privlib}/Perl
 %{privlib}/Perl/OSType.pm
 %{_mandir}/man3/Perl::OSType.3pm*
-%else
-%exclude %dir %{privlib}/Perl
-%exclude %{privlib}/Perl/OSType.pm
-%exclude %{_mandir}/man3/Perl::OSType.3pm*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6518,21 +6724,12 @@ popd
 %{privlib}/pod/perlglossary.pod
 %{_mandir}/man1/perlfaq*
 %{_mandir}/man1/perlglossary.*
-%else
-%exclude %{privlib}/perlfaq.pm
-%exclude %{privlib}/pod/perlfaq*
-%exclude %{privlib}/pod/perlglossary.pod
-%exclude %{_mandir}/man1/perlfaq*
-%exclude %{_mandir}/man1/perlglossary.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
 %files PerlIO-via-QuotedPrint
 %{privlib}/PerlIO
 %{_mandir}/man3/PerlIO::via::QuotedPrint.*
-%else
-%exclude %{privlib}/PerlIO
-%exclude %{_mandir}/man3/PerlIO::via::QuotedPrint.*
 %endif
 
 %files ph
@@ -6556,11 +6753,6 @@ popd
 %{privlib}/Pod/Checker.pm
 %{_mandir}/man1/podchecker.*
 %{_mandir}/man3/Pod::Checker.*
-%else
-%exclude %{_bindir}/podchecker
-%exclude %{privlib}/Pod/Checker.pm
-%exclude %{_mandir}/man1/podchecker.*
-%exclude %{_mandir}/man3/Pod::Checker.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6568,9 +6760,6 @@ popd
 %dir %{privlib}/Pod
 %{privlib}/Pod/Escapes.pm
 %{_mandir}/man3/Pod::Escapes.*
-%else
-%exclude %{privlib}/Pod/Escapes.pm
-%exclude %{_mandir}/man3/Pod::Escapes.*
 %endif
 
 %files Pod-Functions
@@ -6594,13 +6783,6 @@ popd
 %{privlib}/Pod/Perldoc.pm
 %{_mandir}/man1/perldoc.1*
 %{_mandir}/man3/Pod::Perldoc*
-%else
-%exclude %{_bindir}/perldoc
-%exclude %{privlib}/pod/perldoc.pod
-%exclude %{privlib}/Pod/Perldoc.pm
-%exclude %{privlib}/Pod/Perldoc/
-%exclude %{_mandir}/man1/perldoc.1*
-%exclude %{_mandir}/man3/Pod::Perldoc*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6610,12 +6792,6 @@ popd
 %{privlib}/Pod/Usage.pm
 %{_mandir}/man1/pod2usage.*
 %{_mandir}/man3/Pod::Usage.*
-%else
-%exclude %{_bindir}/pod2usage
-%exclude %dir %{privlib}/Pod
-%exclude %{privlib}/Pod/Usage.pm
-%exclude %{_mandir}/man1/pod2usage.*
-%exclude %{_mandir}/man3/Pod::Usage.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6634,20 +6810,6 @@ popd
 %{_mandir}/man3/Pod::Man*
 %{_mandir}/man3/Pod::ParseLink*
 %{_mandir}/man3/Pod::Text*
-%else
-%exclude %{_bindir}/pod2man
-%exclude %{_bindir}/pod2text
-%exclude %{privlib}/pod/perlpodstyle.pod
-%exclude %{privlib}/Pod/Man.pm
-%exclude %{privlib}/Pod/ParseLink.pm
-%exclude %{privlib}/Pod/Text
-%exclude %{privlib}/Pod/Text.pm
-%exclude %{_mandir}/man1/pod2man.1*
-%exclude %{_mandir}/man1/pod2text.1*
-%exclude %{_mandir}/man1/perlpodstyle.1*
-%exclude %{_mandir}/man3/Pod::Man*
-%exclude %{_mandir}/man3/Pod::ParseLink*
-%exclude %{_mandir}/man3/Pod::Text*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6657,11 +6819,6 @@ popd
 %{privlib}/Pod/Simple.pm
 %{privlib}/Pod/Simple.pod
 %{_mandir}/man3/Pod::Simple*
-%else
-%exclude %{privlib}/Pod/Simple/
-%exclude %{privlib}/Pod/Simple.pm
-%exclude %{privlib}/Pod/Simple.pod
-%exclude %{_mandir}/man3/Pod::Simple*
 %endif
 
 %files POSIX
@@ -6682,14 +6839,6 @@ popd
 %{_mandir}/man3/List::Util*
 %{_mandir}/man3/Scalar::Util*
 %{_mandir}/man3/Sub::Util*
-%else
-%exclude %{archlib}/List/
-%exclude %{archlib}/Scalar/
-%exclude %{archlib}/Sub/
-%exclude %{archlib}/auto/List/
-%exclude %{_mandir}/man3/List::Util*
-%exclude %{_mandir}/man3/Scalar::Util*
-%exclude %{_mandir}/man3/Sub::Util*
 %endif
 
 %files Search-Dict
@@ -6714,11 +6863,6 @@ popd
 %{archlib}/auto/Socket/Socket.*
 %{archlib}/Socket.pm
 %{_mandir}/man3/Socket.3*
-%else
-%exclude %dir %{archlib}/auto/Socket
-%exclude %{archlib}/auto/Socket/Socket.*
-%exclude %{archlib}/Socket.pm
-%exclude %{_mandir}/man3/Socket.3*
 %endif
 
 %files sort
@@ -6730,10 +6874,6 @@ popd
 %{archlib}/Storable.pm
 %{archlib}/auto/Storable
 %{_mandir}/man3/Storable.*
-%else
-%exclude %{archlib}/Storable.pm
-%exclude %{archlib}/auto/Storable/
-%exclude %{_mandir}/man3/Storable.*
 %endif
 
 %files subs
@@ -6758,12 +6898,6 @@ popd
 %dir %{archlib}/auto/Sys
 %{archlib}/auto/Sys/Syslog
 %{_mandir}/man3/Sys::Syslog.*
-%else
-# %%dir %%{archlib}/Sys not excluded. It would be removed from the previous packagge.
-%exclude %{archlib}/Sys/Syslog.pm
-# %%dir %%{archlib}/auto/Sys not excluded. It would be removed from the previous packagge.
-%exclude %{archlib}/auto/Sys/Syslog/
-%exclude %{_mandir}/man3/Sys::Syslog.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6771,9 +6905,6 @@ popd
 %dir %{privlib}/Term
 %{privlib}/Term/ANSIColor.pm
 %{_mandir}/man3/Term::ANSIColor*
-%else
-%exclude %{privlib}/Term/ANSIColor.pm
-%exclude %{_mandir}/man3/Term::ANSIColor*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6781,9 +6912,6 @@ popd
 %dir %{privlib}/Term
 %{privlib}/Term/Cap.pm
 %{_mandir}/man3/Term::Cap.*
-%else
-%exclude %{privlib}/Term/Cap.pm
-%exclude %{_mandir}/man3/Term::Cap.*
 %endif
 
 %files Term-Complete
@@ -6812,17 +6940,6 @@ popd
 %{_mandir}/man3/App::Prove*
 %{_mandir}/man3/TAP*
 %{_mandir}/man3/Test::Harness*
-%else
-%exclude %{_bindir}/prove
-%exclude %dir %{privlib}/App
-%exclude %{privlib}/App/Prove*
-%exclude %{privlib}/TAP*
-%exclude %dir %{privlib}/Test
-%exclude %{privlib}/Test/Harness*
-%exclude %{_mandir}/man1/prove.1*
-%exclude %{_mandir}/man3/App::Prove*
-%exclude %{_mandir}/man3/TAP*
-%exclude %{_mandir}/man3/Test::Harness*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6844,24 +6961,6 @@ popd
 %{_mandir}/man3/Test::Tutorial*
 %{_mandir}/man3/Test::use::*
 %{_mandir}/man3/Test2*
-%else
-%exclude %{privlib}/ok*
-%exclude %dir %{privlib}/Test
-%exclude %{privlib}/Test/More*
-%exclude %{privlib}/Test/Builder*
-%exclude %{privlib}/Test/Tester*
-%exclude %{privlib}/Test/Simple*
-%exclude %{privlib}/Test/Tutorial*
-%exclude %{privlib}/Test/use
-%exclude %{privlib}/Test2*
-%exclude %{_mandir}/man3/ok*
-%exclude %{_mandir}/man3/Test::More*
-%exclude %{_mandir}/man3/Test::Builder*
-%exclude %{_mandir}/man3/Test::Tester*
-%exclude %{_mandir}/man3/Test::Simple*
-%exclude %{_mandir}/man3/Test::Tutorial*
-%exclude %{_mandir}/man3/Test::use::*
-%exclude %{_mandir}/man3/Test2*
 %endif
 
 %files Text-Abbrev
@@ -6874,9 +6973,6 @@ popd
 %dir %{privlib}/Text
 %{privlib}/Text/Balanced.pm
 %{_mandir}/man3/Text::Balanced.*
-%else
-%exclude %{privlib}/Text/Balanced.pm
-%exclude %{_mandir}/man3/Text::Balanced.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6884,9 +6980,6 @@ popd
 %dir %{privlib}/Text
 %{privlib}/Text/ParseWords.pm
 %{_mandir}/man3/Text::ParseWords.*
-%else
-%exclude %{privlib}/Text/ParseWords.pm
-%exclude %{_mandir}/man3/Text::ParseWords.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6896,11 +6989,6 @@ popd
 %{privlib}/Text/Wrap.pm
 %{_mandir}/man3/Text::Tabs.*
 %{_mandir}/man3/Text::Wrap.*
-%else
-%exclude %{privlib}/Text/Tabs.pm
-%exclude %{privlib}/Text/Wrap.pm
-%exclude %{_mandir}/man3/Text::Tabs.*
-%exclude %{_mandir}/man3/Text::Wrap.*
 %endif
 
 %files Thread
@@ -6912,9 +7000,6 @@ popd
 %dir %{privlib}/Thread
 %{privlib}/Thread/Queue.pm
 %{_mandir}/man3/Thread::Queue.*
-%else
-%exclude %{privlib}/Thread/Queue.pm
-%exclude %{_mandir}/man3/Thread::Queue.*
 %endif
 
 %files Thread-Semaphore
@@ -6950,9 +7035,6 @@ popd
 %dir %{privlib}/Tie
 %{privlib}/Tie/RefHash.pm
 %{_mandir}/man3/Tie::RefHash.*
-%else
-%exclude %{privlib}/Tie/RefHash.pm
-%exclude %{_mandir}/man3/Tie::RefHash.*
 %endif
 
 %files Time
@@ -6971,12 +7053,6 @@ popd
 %dir %{archlib}/auto/Time
 %{archlib}/auto/Time/HiRes
 %{_mandir}/man3/Time::HiRes.*
-%else
-%exclude %dir %{archlib}/Time
-%exclude %{archlib}/Time/HiRes.pm
-%exclude %dir %{archlib}/auto/Time
-%exclude %{archlib}/auto/Time/HiRes
-%exclude %{_mandir}/man3/Time::HiRes.*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -6984,9 +7060,6 @@ popd
 %dir %{privlib}/Time
 %{privlib}/Time/Local.pm
 %{_mandir}/man3/Time::Local.*
-%else
-%exclude %{privlib}/Time/Local.pm
-%exclude %{_mandir}/man3/Time::Local.*
 %endif
 
 %files Time-Piece
@@ -7004,11 +7077,6 @@ popd
 %{archlib}/auto/threads/threads*
 %{archlib}/threads.pm
 %{_mandir}/man3/threads.3*
-%else
-%dir %exclude %{archlib}/auto/threads
-%exclude %{archlib}/auto/threads/threads*
-%exclude %{archlib}/threads.pm
-%exclude %{_mandir}/man3/threads.3*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -7018,11 +7086,6 @@ popd
 %dir %{archlib}/threads
 %{archlib}/threads/shared*
 %{_mandir}/man3/threads::shared*
-%else
-%exclude %{archlib}/auto/threads/shared*
-%exclude %dir %{archlib}/threads
-%exclude %{archlib}/threads/shared*
-%exclude %{_mandir}/man3/threads::shared*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -7036,15 +7099,6 @@ popd
 %{privlib}/Unicode/Collate
 %{_mandir}/man3/Unicode::Collate.*
 %{_mandir}/man3/Unicode::Collate::*
-%else
-%dir %exclude %{archlib}/auto/Unicode
-%exclude %{archlib}/auto/Unicode/Collate
-%dir %exclude %{archlib}/Unicode
-%exclude %{archlib}/Unicode/Collate
-%exclude %{archlib}/Unicode/Collate.pm
-%exclude %{privlib}/Unicode/Collate
-%exclude %{_mandir}/man3/Unicode::Collate.*
-%exclude %{_mandir}/man3/Unicode::Collate::*
 %endif
 
 %if %{dual_life} || %{rebuild_from_scratch}
@@ -7054,10 +7108,6 @@ popd
 %dir %{archlib}/Unicode
 %{archlib}/Unicode/Normalize.pm
 %{_mandir}/man3/Unicode::Normalize.*
-%else
-%exclude %{archlib}/auto/Unicode/Normalize
-%exclude %{archlib}/Unicode/Normalize.pm
-%exclude %{_mandir}/man3/Unicode::Normalize.*
 %endif
 
 %files Unicode-UCD
@@ -7080,12 +7130,6 @@ popd
 %{privlib}/version/
 %{_mandir}/man3/version.3*
 %{_mandir}/man3/version::Internals.3*
-%else
-%exclude %{privlib}/version.pm
-%exclude %{privlib}/version.pod
-%exclude %{privlib}/version/
-%exclude %{_mandir}/man3/version.3*
-%exclude %{_mandir}/man3/version::Internals.3*
 %endif
 
 %files vmsish
@@ -7094,6 +7138,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue Mar 02 2021 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.32.1-472
+- Remove files excluded from dual-lived subpackages
+
 * Tue Feb 09 2021 Petr Pisar <ppisar@redhat.com> - 4:5.32.1-471
 - Make accessing environment by DynaLoader thread-safe
 - Use duplocale() if available
