@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        471%{?dist}
+Release:        472%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -260,6 +260,10 @@ Patch52:        perl-5.33.5-Use-perl.h-versions-of-PERL_UNUSED_foo-in-XSUB.h.pat
 
 # Add missing entries to perldiag, GH#18276, in upstream after 5.33.6
 Patch53:        perl-5.33.6-Add-missing-entries-to-perldiag-GH-18276.patch
+
+# Protect locale tests from LANGUAGE environment variable,
+# in upstream after 5.33.6
+Patch54:        perl-5.33.6-t-run-locale.t-Rmv-LANGUAGE-from-environment.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -4315,6 +4319,7 @@ you're not running VMS, this module does nothing.
 %patch51 -p1
 %patch52 -p1
 %patch53 -p1
+%patch54 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4367,6 +4372,7 @@ perl -x patchlevel.h \
     'Fedora Patch51: Fix croaking on "my $_" when "use utf8" is in effect (GH#18449)' \
     'Fedora Patch52: Fix PERL_UNUSED_ARG() definition in XSUB.h' \
     'Fedora Patch53: Add missing entries to perldiag (GH#18276)' \
+    'Fedora Patch54: Protect locale tests from LANGUAGE environment variable' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -7094,6 +7100,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Mar 04 2021 Petr Pisar <ppisar@redhat.com> - 4:5.32.1-472
+- Protect locale tests from LANGUAGE environment variable
+
 * Tue Feb 09 2021 Petr Pisar <ppisar@redhat.com> - 4:5.32.1-471
 - Make accessing environment by DynaLoader thread-safe
 - Use duplocale() if available
