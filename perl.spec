@@ -331,7 +331,7 @@ Patch87:        perl-5.31.11-set-magic-on-lex-for-lex-index-.-1-and-make-it-an-l
 # a similar patch already proposed to upstream, not needed after 5.31.6
 Patch88:        perl-5.30.3-Preload-utf8_heavy.pl-by-Safe-in-perl-5.30.patch
 
-# Do not use a C compiler reserved identifiers, in upstream after 5.33.0
+# Do not use C compiler reserved identifiers, in upstream after 5.33.0
 Patch89:        perl-5.33.0-MUTABLE_PTR-Rmv-non-standard-syntax.patch
 
 # Fix SvUV_nomg() macro definition, in upstream after 5.33.0
@@ -393,14 +393,14 @@ Patch106:       perl-5.30.3-gh18096-assume-worst-case-for-GOSUBs-we-don-t-analys
 # Fix sv_collxfrm macro to respect locale, in upstream after 5.33.2
 Patch107:       perl-5.33.2-sv.h-sv_collxfrm-didn-t-work-properly.patch
 
-# Fix an iterator signedness in handling a mro exception, GH#18155,
+# Fix an iterator signedness in handling an mro exception, GH#18155,
 # in upstream after 5.33.2
 Patch108:       perl-5.33.2-mro.xs-Fix-compiler-warning.patch
 
 # Fix a code flow in Perl_sv_inc_nomg(), in upstream after 5.33.2
 Patch109:       perl-5.33.2-sv.c-Added-missing-braces-in-Perl_sv_inc_nomg.patch
 
-# Fix un undefined behavior in Perl_custom_op_get_field(),
+# Fix an undefined behavior in Perl_custom_op_get_field(),
 # in upstream after 5.33.3
 Patch110:       perl-5.33.3-Perl_custom_op_get_field-remove-undef-behaviour.patch
 
@@ -3168,7 +3168,7 @@ perl -x patchlevel.h \
     'Fedora Patch86: Fix handling UTF-8 length magic for a scalar reverse (GH#17737)' \
     'Fedora Patch87: Fix a missing magic and a value when index() is uses as left-value (GH#17739)' \
     'Fedora Patch88: Preload utf8_heavy.pl by Safe in perl 5.30 (GH#17271)' \
-    'Fedora Patch89: Do not use a C compiler reserved identifiers' \
+    'Fedora Patch89: Do not use C compiler reserved identifiers' \
     'Fedora Patch90: Fix SvUV_nomg() macro definition' \
     'Fedora Patch91: Fix ext/XS-APItest/t/utf8_warn_base.pl tests' \
     'Fedora Patch92: Fix IO::Handle::error() to report write errors (GH#6799)' \
@@ -3187,9 +3187,9 @@ perl -x patchlevel.h \
     'Fedora Patch105: Fix handling exceptions in a global destruction (GH#18063)' \
     'Fedora Patch106: Fix a mismatch with the recursive subpatterns (GH#18096)' \
     'Fedora Patch107: Fix sv_collxfrm macro to respect locale' \
-    'Fedora Patch108: Fix an iterator signedness in handling a mro exception (GH#18155)' \
+    'Fedora Patch108: Fix an iterator signedness in handling an mro exception (GH#18155)' \
     'Fedora Patch109: Fix a code flow in Perl_sv_inc_nomg()' \
-    'Fedora Patch110: Fix un undefined behavior in Perl_custom_op_get_field()' \
+    'Fedora Patch110: Fix an undefined behavior in Perl_custom_op_get_field()' \
     'Fedora Patch111: Fix Config variable names in in t/op tests' \
     'Fedora Patch112: Fix fetching a magic on the stacked file test operators' \
     'Fedora Patch113: Make accessing environment by DynaLoader thread-safe' \
@@ -5459,7 +5459,7 @@ popd
 - Add missing entries to perldiag (GH#18276)
 
 * Thu Nov 12 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-458
-- Fix un undefined behavior in Perl_custom_op_get_field()
+- Fix an undefined behavior in Perl_custom_op_get_field()
 - Fix Config variable names in in t/op tests
 - Fix fetching a magic on the stacked file test operators
 
@@ -5468,11 +5468,11 @@ popd
 - Fix a mismatch with the recursive subpatterns (GH#18096)
 - Update perl-IO-Zlib metadata
 - Fix sv_collxfrm macro to respect locale
-- Fix an iterator signedness in handling a mro exception (GH#18155)
+- Fix an iterator signedness in handling an mro exception (GH#18155)
 - Fix a code flow in Perl_sv_inc_nomg()
 
 * Wed Aug 05 2020 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-456
-- Do not use a C compiler reserved identifiers
+- Do not use C compiler reserved identifiers
 - Fix SvUV_nomg() macro definition
 - Fix ext/XS-APItest/t/utf8_warn_base.pl tests
 - Fix IO::Handle::error() to report write errors (GH#6799)
@@ -5649,7 +5649,7 @@ popd
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
 * Wed Jan 16 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-431
-- Remove a fix for un undefined C behavior in NULL pointer arithmetics
+- Remove a fix for an undefined C behavior in NULL pointer arithmetics
   (RT#133223) because it changes perl ABI
 
 * Mon Jan 14 2019 Petr Pisar <ppisar@redhat.com> - 4:5.28.1-430
@@ -5658,7 +5658,7 @@ popd
 - Fix reporting a line number for non-terminated prototypes (RT#133524)
 - Fix first eof() return value (RT#133721)
 - Fix a crash when compiling a malformed form (RT#132158)
-- Fix un undefined C behavior in NULL pointer arithmetics (RT#133223)
+- Fix an undefined C behavior in NULL pointer arithmetics (RT#133223)
 - Prevent long jumps from clobbering local variables (RT#133575)
 - Fix a mismatch with a case-insesitive regular expression on a text with ligatures
   (RT#133756)
