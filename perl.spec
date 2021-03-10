@@ -4656,6 +4656,10 @@ sed \
 %endif
 
 %if ! %{dual_life} && ! %{rebuild_from_scratch}
+# All dual_life files/directories are deleted here instead of %%exclude in
+# %%files. So that debuginfo does not find unpacked binaries and blindly
+# symlinks to them at random packages.
+
 # Archive-Tar
 rm %{buildroot}%{_bindir}/ptar
 rm %{buildroot}%{_bindir}/ptardiff
