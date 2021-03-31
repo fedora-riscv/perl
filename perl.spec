@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        468%{?dist}
+Release:        469%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -272,6 +272,9 @@ Patch55:        perl-5.32.1-hv.c-add-a-guard-clause-to-prevent-the-number-of-buc
 # Fix a memory leak when compiling a regular expression, GH#18604,
 # in upstream after 5.33.7
 Patch56:        perl-5.33.7-regcomp.c-Remove-memory-leak.patch
+
+# Fix dumping a hash entry of PL_strtab type, in upstream after 5.33.7
+Patch57:        perl-5.32.1-Perl_do_sv_dump-handle-PL_strtab.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -4324,6 +4327,7 @@ you're not running VMS, this module does nothing.
 %patch54 -p1
 %patch55 -p1
 %patch56 -p1
+%patch57 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4379,6 +4383,7 @@ perl -x patchlevel.h \
     'Fedora Patch54: Protect locale tests from LANGUAGE environment variable' \
     'Fedora Patch55: Prevent the number of buckets in a hash from getting too large' \
     'Fedora Patch56: Fix a memory leak when compiling a regular expression (GH#18604)' \
+    'Fedora Patch57: Fix dumping a hash entry of PL_strtab type' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -7090,6 +7095,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Mar 31 2021 Petr Pisar <ppisar@redhat.com> - 4:5.32.1-469
+- Fix dumping a hash entry of PL_strtab type
+
 * Thu Mar 04 2021 Petr Pisar <ppisar@redhat.com> - 4:5.32.1-468
 - Protect locale tests from LANGUAGE environment variable
 - Prevent the number of buckets in a hash from getting too large
