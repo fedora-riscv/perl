@@ -442,6 +442,10 @@ Patch120:       perl-5.32.1-hv.c-add-a-guard-clause-to-prevent-the-number-of-buc
 # Fix dumping a hash entry of PL_strtab type, in upstream after 5.33.7
 Patch121:       perl-5.32.1-Perl_do_sv_dump-handle-PL_strtab.patch
 
+# Fix an arithmetic left shift of a minimal integer value, GH#18639,
+# in upstream after 5.33.8
+Patch122:       perl-5.30.3-Fix-broken-left-shift-of-IV_MIN-under-use-integer.patch
+
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -3091,6 +3095,7 @@ Perl extension for Version Objects
 %patch119 -p1
 %patch120 -p1
 %patch121 -p1
+%patch122 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3205,6 +3210,7 @@ perl -x patchlevel.h \
     'Fedora Patch119: Protect locale tests from LANGUAGE environment variable' \
     'Fedora Patch120: Prevent the number of buckets in a hash from getting too large' \
     'Fedora Patch121: Fix dumping a hash entry of PL_strtab type' \
+    'Fedora Patch122: Fix an arithmetic left shift of a minimal integer value (GH#18639)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5452,6 +5458,7 @@ popd
 %changelog
 * Wed Mar 31 2021 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-461
 - Fix dumping a hash entry of PL_strtab type
+- Fix an arithmetic left shift of a minimal integer value (GH#18639)
 
 * Thu Mar 04 2021 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-460
 - Protect locale tests from LANGUAGE environment variable
