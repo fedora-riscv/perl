@@ -85,7 +85,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        460%{?dist}
+Release:        461%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -438,6 +438,9 @@ Patch119:       perl-5.33.6-t-run-locale.t-Rmv-LANGUAGE-from-environment.patch
 # Prevent the number of buckets in a hash from getting too large,
 # in upstream after 5.33.6
 Patch120:       perl-5.32.1-hv.c-add-a-guard-clause-to-prevent-the-number-of-buc.patch
+
+# Fix dumping a hash entry of PL_strtab type, in upstream after 5.33.7
+Patch121:       perl-5.32.1-Perl_do_sv_dump-handle-PL_strtab.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -3087,6 +3090,7 @@ Perl extension for Version Objects
 %patch118 -p1
 %patch119 -p1
 %patch120 -p1
+%patch121 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -3200,6 +3204,7 @@ perl -x patchlevel.h \
     'Fedora Patch118: Add missing entries to perldiag (GH#18276)' \
     'Fedora Patch119: Protect locale tests from LANGUAGE environment variable' \
     'Fedora Patch120: Prevent the number of buckets in a hash from getting too large' \
+    'Fedora Patch121: Fix dumping a hash entry of PL_strtab type' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -5445,6 +5450,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Mar 31 2021 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-461
+- Fix dumping a hash entry of PL_strtab type
+
 * Thu Mar 04 2021 Petr Pisar <ppisar@redhat.com> - 4:5.30.3-460
 - Protect locale tests from LANGUAGE environment variable
 - Prevent the number of buckets in a hash from getting too large
