@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        474%{?dist}
+Release:        475%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -539,6 +539,8 @@ Provides:       perl(utf8_heavy.pl)
 # utf8 and utf8_heavy.pl require Carp, re, strict, warnings, XSLoader
 # For AnyDBM_File
 Suggests:       perl(DB_File)
+# XSLoader requires DynaLoder
+Requires:       perl(DynaLoader)
 # Encode is loaded in BOOT section of PerlIO::encoding
 Requires:       perl(Encode)
 # File::Spec loaded by _charnames.pm that is loaded by \N{}
@@ -555,8 +557,8 @@ Suggests:       perl(ODBM_File)
 %endif
 
 # Remove private redefinitions
-# XSLoader redefines DynaLoader name space for compatibility, but does not
-# load the DynaLoader.pm (though the DynaLoader.xs is compiled into libperl).
+# XSLoader redefines DynaLoader name space for compatibility, but it still
+# loads DynaLoader.pm (though DynaLoader.xs is compiled into libperl).
 %global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\((charnames|DynaLoader)\\)$
 
 %description libs
@@ -7170,6 +7172,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue May 04 2021 Petr Pisar <ppisar@redhat.com> - 4:5.32.1-475
+- XSLoader requires DynaLoader
+
 * Wed Mar 31 2021 Petr Pisar <ppisar@redhat.com> - 4:5.32.1-474
 - Fix dumping a hash entry of PL_strtab type
 - Fix an arithmetic left shift of a minimal integer value (GH#18639)
