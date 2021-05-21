@@ -1,11 +1,7 @@
-From f793042f2bac2ace9a5c0030b47b41c4db561a5b Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Petr=20P=C3=ADsa=C5=99?= <ppisar@redhat.com>
-Date: Fri, 6 Jun 2014 14:31:59 +0200
+From 8067179e65a28d91f00df7d36778229a07514471 Mon Sep 17 00:00:00 2001
+From: Jitka Plesnikova <jplesnik@redhat.com>
+Date: Thu, 29 Apr 2021 12:21:18 +0200
 Subject: [PATCH] Destroy {GDBM,NDBM,ODBM,SDBM}_File objects only from original
- thread context
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
 This patch fixes a crash when destroing a hash tied to a *_File
 database after spawning a thread:
@@ -20,17 +16,17 @@ This crashed or paniced depending on how perl was configured.
 
 Closes RT#61912.
 
-Signed-off-by: Petr Písař <ppisar@redhat.com>
+Updated original ppisar's patch for perl 5.18.2
 ---
- ext/GDBM_File/GDBM_File.xs | 16 ++++++++++------
+ ext/GDBM_File/GDBM_File.xs | 20 ++++++++++++--------
  ext/NDBM_File/NDBM_File.xs | 16 ++++++++++------
  ext/ODBM_File/ODBM_File.xs | 18 +++++++++++-------
  ext/SDBM_File/SDBM_File.xs |  4 +++-
  t/lib/dbmt_common.pl       | 35 +++++++++++++++++++++++++++++++++++
- 5 files changed, 69 insertions(+), 20 deletions(-)
+ 5 files changed, 71 insertions(+), 22 deletions(-)
 
 diff --git a/ext/GDBM_File/GDBM_File.xs b/ext/GDBM_File/GDBM_File.xs
-index 33e08e2..7160f54 100644
+index cd0bb6f..0c395ac 100644
 --- a/ext/GDBM_File/GDBM_File.xs
 +++ b/ext/GDBM_File/GDBM_File.xs
 @@ -13,6 +13,7 @@
@@ -41,7 +37,7 @@ index 33e08e2..7160f54 100644
  	GDBM_FILE 	dbp ;
  	SV *    filter[4];
  	int     filtering ;
-@@ -98,6 +99,7 @@ gdbm_TIEHASH(dbtype, name, read_write, m
+@@ -276,6 +277,7 @@ gdbm_TIEHASH(dbtype, name, read_write, mode)
  	}
  	if (dbp) {
  	    RETVAL = (GDBM_File)safecalloc(1, sizeof(GDBM_File_type));
@@ -49,29 +45,34 @@ index 33e08e2..7160f54 100644
  	    RETVAL->dbp = dbp;
  	} else {
  	    RETVAL = NULL;
-@@ -118,12 +120,14 @@ gdbm_DESTROY(db)
+@@ -289,15 +291,17 @@ gdbm_DESTROY(db)
  	PREINIT:
  	int i = store_value;
- 	CODE:
--	gdbm_close(db);
+     CODE:
+-        if (gdbm_file_close(db)) {
+-            croak("gdbm_close: %s; %s", gdbm_strerror(gdbm_errno),
+-                  strerror(errno));
++        if (db && db->owner == aTHX) {
++            if (gdbm_file_close(db)) {
++                croak("gdbm_close: %s; %s", gdbm_strerror(gdbm_errno),
++                      strerror(errno));
++	    }
++	    do {
++	        if (db->filter[i])
++		    SvREFCNT_dec(db->filter[i]);
++	    } while (i-- > 0);
++	    safefree(db);
+ 	}
 -	do {
 -	    if (db->filter[i])
 -		SvREFCNT_dec(db->filter[i]);
 -	} while (i-- > 0);
 -	safefree(db);
-+	if (db && db->owner == aTHX) {
-+	    gdbm_close(db);
-+	    do {
-+		if (db->filter[i])
-+		    SvREFCNT_dec(db->filter[i]);
-+	    } while (i-- > 0);
-+	    safefree(db);
-+	}
  
- #define gdbm_FETCH(db,key)			gdbm_fetch(db->dbp,key)
- datum_value
+ void
+ gdbm_UNTIE(db, count)
 diff --git a/ext/NDBM_File/NDBM_File.xs b/ext/NDBM_File/NDBM_File.xs
-index 52e60fc..af223e5 100644
+index eed671a..651fe0f 100644
 --- a/ext/NDBM_File/NDBM_File.xs
 +++ b/ext/NDBM_File/NDBM_File.xs
 @@ -33,6 +33,7 @@ END_EXTERN_C
@@ -103,7 +104,7 @@ index 52e60fc..af223e5 100644
 +	if (db && db->owner == aTHX) {
 +	    dbm_close(db->dbp);
 +	    do {
-+		if (db->filter[i])
++	        if (db->filter[i])
 +		    SvREFCNT_dec(db->filter[i]);
 +	    } while (i-- > 0);
 +	    safefree(db);
@@ -112,7 +113,7 @@ index 52e60fc..af223e5 100644
  #define ndbm_FETCH(db,key)			dbm_fetch(db->dbp,key)
  datum_value
 diff --git a/ext/ODBM_File/ODBM_File.xs b/ext/ODBM_File/ODBM_File.xs
-index d1ece7f..f7e00a0 100644
+index 38e6dbf..4b15a42 100644
 --- a/ext/ODBM_File/ODBM_File.xs
 +++ b/ext/ODBM_File/ODBM_File.xs
 @@ -49,6 +49,7 @@ datum	nextkey(datum key);
@@ -146,7 +147,7 @@ index d1ece7f..f7e00a0 100644
 +	    dbmrefcnt--;
 +	    dbmclose();
 +	    do {
-+		if (db->filter[i])
++	        if (db->filter[i])
 +		    SvREFCNT_dec(db->filter[i]);
 +	    } while (i-- > 0);
 +	    safefree(db);
@@ -155,7 +156,7 @@ index d1ece7f..f7e00a0 100644
  datum_value
  odbm_FETCH(db, key)
 diff --git a/ext/SDBM_File/SDBM_File.xs b/ext/SDBM_File/SDBM_File.xs
-index 291e41b..0bdae9a 100644
+index 0df2855..0e2bd58 100644
 --- a/ext/SDBM_File/SDBM_File.xs
 +++ b/ext/SDBM_File/SDBM_File.xs
 @@ -10,6 +10,7 @@
@@ -166,7 +167,7 @@ index 291e41b..0bdae9a 100644
  	DBM * 	dbp ;
  	SV *    filter[4];
  	int     filtering ;
-@@ -51,6 +52,7 @@ sdbm_TIEHASH(dbtype, filename, flags, mode)
+@@ -51,6 +52,7 @@ sdbm_TIEHASH(dbtype, filename, flags, mode, pagname=NULL)
  	    }
  	    if (dbp) {
  	        RETVAL = (SDBM_File)safecalloc(1, sizeof(SDBM_File_type));
@@ -184,7 +185,7 @@ index 291e41b..0bdae9a 100644
  	    sdbm_close(db->dbp);
  	    do {
 diff --git a/t/lib/dbmt_common.pl b/t/lib/dbmt_common.pl
-index 5d4098c..a0a4d52 100644
+index 60c66ae..a7f81fe 100644
 --- a/t/lib/dbmt_common.pl
 +++ b/t/lib/dbmt_common.pl
 @@ -510,5 +510,40 @@ unlink <Op_dbmx*>, $Dfile;
@@ -229,5 +230,5 @@ index 5d4098c..a0a4d52 100644
  done_testing();
  1;
 -- 
-1.9.3
+2.26.3
 
