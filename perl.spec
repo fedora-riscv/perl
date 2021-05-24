@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        476%{?dist}
+Release:        477%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -6985,6 +6985,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon May 24 2021 Jitka Plesnikova <jplesnik@redhat.com>
+- Perl 5.34 re-rebuild of bootstrapped packages
+
 * Thu May 20 2021 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.34.0-476
 - 5.34.0 bump (see <https://metacpan.org/pod/release/XSAWYERX/perl-5.34.0/pod/perldelta.pod>
   or release notes)
