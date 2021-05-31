@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        474%{?dist}
+Release:        475%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -350,7 +350,7 @@ Requires:       perl-utils
 %endif
 
 Requires:       perl-Archive-Tar, perl-Attribute-Handlers, perl-autodie,
-Requires:       perl-AutoLoader, perl-AutoSplit,
+Requires:       perl-AutoLoader, perl-AutoSplit, perl-autouse,
 Requires:       perl-B, perl-base, perl-Benchmark, perl-bignum, perl-blib,
 Requires:       perl-Carp, perl-Class-Struct,
 Requires:       perl-Compress-Raw-Bzip2, perl-Compress-Raw-Zlib,
@@ -372,7 +372,8 @@ Requires:       perl-ExtUtils-CBuilder, perl-ExtUtils-Constant,
 Requires:       perl-ExtUtils-Command,
 Requires:       perl-ExtUtils-Embed, perl-ExtUtils-Install,
 Requires:       perl-ExtUtils-MakeMaker, perl-ExtUtils-Manifest,
-Requires:       perl-ExtUtils-Miniperl, perl-ExtUtils-ParseXS,
+Requires:       perl-ExtUtils-Miniperl, perl-ExtUtils-MM-Utils,
+Requires:       perl-ExtUtils-ParseXS,
 Requires:       perl-Fcntl, perl-fields,
 Requires:       perl-File-Basename, perl-File-Compare, perl-File-Copy,
 Requires:       perl-File-DosGlob, perl-File-Fetch,
@@ -7170,6 +7171,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon May 31 2021 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.34.0-475
+- Added perl-autouse and perl-ExtUtils-MM-Utils to perl meta-package
+
 * Wed Mar 31 2021 Petr Pisar <ppisar@redhat.com> - 4:5.32.1-474
 - Fix dumping a hash entry of PL_strtab type
 - Fix an arithmetic left shift of a minimal integer value (GH#18639)
