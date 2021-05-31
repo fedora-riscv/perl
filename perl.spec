@@ -7171,7 +7171,7 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Mon May 31 2021 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.34.0-475
+* Mon May 31 2021 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.32.1-475
 - Added perl-autouse and perl-ExtUtils-MM-Utils to perl meta-package
 
 * Wed Mar 31 2021 Petr Pisar <ppisar@redhat.com> - 4:5.32.1-474
