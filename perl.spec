@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        475%{?dist}
+Release:        476%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -6769,7 +6769,7 @@ popd
 %{archlib}/asm
 %{archlib}/asm-generic
 %{archlib}/bits
-%{archlib}/features.ph
+%{archlib}/features*.ph
 %{archlib}/gnu
 %{archlib}/_h2ph_pre.ph
 %ifnarch ppc64le
@@ -7171,6 +7171,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Jun 16 2021 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.32.1-476
+- Updated list of *.ph files (bug#1972637)
+
 * Mon May 31 2021 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.32.1-475
 - Added perl-autouse and perl-ExtUtils-MM-Utils to perl meta-package
 
