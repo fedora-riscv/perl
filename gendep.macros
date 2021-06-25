@@ -840,7 +840,7 @@ Requires: perl(Tie::Hash) \
 Requires: perl(XSLoader) \
 Requires: perl(strict) \
 Requires: perl(warnings) \
-Provides: perl(GDBM_File) = 1.19 \
+Provides: perl(GDBM_File) = 1.20 \
 %{nil}
 %global gendep_perl_GDBM_File_debuginfo \
 %{nil}
