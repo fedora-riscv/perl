@@ -100,7 +100,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        483%{?dist}
+Release:        484%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -169,6 +169,9 @@ Patch13:        perl-5.28.0-Pass-CFLAGS-to-dtrace.patch
 Patch14:        perl-5.35.1-Fix-GDBM_File-to-compile-with-version-1.20-and-earli.patch
 Patch15:        perl-5.35.1-Raise-version-number-in-ext-GDBM_File-GDBM_File.pm.patch
 Patch16:        perl-5.35.1-Fix-definition-of-ITEM_NOT_FOUND-for-pre-1.13-versio.patch
+
+# Fix test XS-APItest/t/printf.t failing with GCC 12 on ppc64le
+Patch17:        perl-5.34.0-Fix-XS-APItest-with-GCC12.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -4197,6 +4200,9 @@ you're not running VMS, this module does nothing.
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%ifarch ppc64le
+%patch17 -p1
+%endif
 %patch200 -p1
 %patch201 -p1
 
@@ -6996,6 +7002,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Feb 02 2022 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.34.0-484
+- Fix failing test XS-APItest/t/printf.t (bug#2046802)
+
 * Thu Jan 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.34.0-483
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
 
