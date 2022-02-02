@@ -38,6 +38,10 @@
 # We can skip %%check phase
 %bcond_without test
 
+# The additional linker flags break binary perl- packages.
+# https://bugzilla.redhat.com/show_bug.cgi?id=2043092
+%undefine _package_note_file
+
 Name:           perl
 # These are all found licenses. They are distributed among various
 # subpackages.
@@ -7004,6 +7008,7 @@ popd
 %changelog
 * Wed Feb 02 2022 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.34.0-484
 - Fix failing test XS-APItest/t/printf.t (bug#2046802)
+- Disable package notes to prevent perl-* build breakage
 
 * Thu Jan 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 4:5.34.0-483
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
