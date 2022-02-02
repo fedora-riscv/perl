@@ -38,6 +38,10 @@
 # We can skip %%check phase
 %bcond_without test
 
+# The additional linker flags break binary perl- packages.
+# https://bugzilla.redhat.com/show_bug.cgi?id=2043092
+%undefine _package_note_file
+
 Name:           perl
 # These are all found licenses. They are distributed among various
 # subpackages.
