@@ -104,7 +104,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        482%{?dist}
+Release:        486%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -1116,7 +1116,7 @@ hashes associated with DBM files.
 Summary:        Perl debugger
 License:        GPL+ or Artistic
 Epoch:          0
-Version:        1.56
+Version:        1.60
 BuildArch:      noarch
 # File provides
 Provides:       perl(dumpvar.pl) = %{perl_version}
@@ -7000,6 +7000,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Thu Mar 03 2022 Michal Josef Špaček <mspacek@redhat.com> - 4:5.34.0-486
+- Fix minimal version for Perl debugger
+
 * Mon Oct 18 2021 Petr Pisar <ppisar@redhat.com> - 4:5.34.0-482
 - Rebuild with new RPM_LD_FLAGS
 
