@@ -1,4 +1,4 @@
-%global perl_version    5.34.0
+%global perl_version    5.34.1
 %global perl_epoch      4
 %global perl_arch_stem -thread-multi
 %global perl_archname %{_arch}-%{_os}%{perl_arch_stem}
@@ -168,12 +168,6 @@ Patch12:        perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
 # Pass the correct CFLAGS to dtrace
 Patch13:        perl-5.28.0-Pass-CFLAGS-to-dtrace.patch
 
-# Fix GDBM_File to compile with gdbm version 1.20 and earlier, GH#18915
-# in upstream after 5.35.1
-Patch14:        perl-5.35.1-Fix-GDBM_File-to-compile-with-version-1.20-and-earli.patch
-Patch15:        perl-5.35.1-Raise-version-number-in-ext-GDBM_File-GDBM_File.pm.patch
-Patch16:        perl-5.35.1-Fix-definition-of-ITEM_NOT_FOUND-for-pre-1.13-versio.patch
-
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
 
@@ -231,7 +225,7 @@ BuildRequires:  rsyslog
 
 
 # compat macro needed for rebuild
-%global perl_compat perl(:MODULE_COMPAT_5.34.0)
+%global perl_compat perl(:MODULE_COMPAT_5.34.1)
 
 Requires:       %perl_compat
 Requires:       perl-interpreter%{?_isa} = %{perl_epoch}:%{perl_version}-%{release}
@@ -412,6 +406,7 @@ Summary:        The libraries for the perl run-time
 License:        (GPL+ or Artistic) and BSD and HSRL and MIT and UCD and Public domain
 # Compat provides
 Provides:       %perl_compat
+Provides:       perl(:MODULE_COMPAT_5.34.0)
 # Interpreter version to fulfil required genersted from "require 5.006;"
 Provides:       perl(:VERSION) = %{perl_version}
 # Integeres are 64-bit on all platforms
@@ -2114,8 +2109,8 @@ relative to the bin directory.
 %package GDBM_File
 Summary:        Perl5 access to the gdbm library
 License:        GPL+ or Artistic
-Epoch:          0
-Version:        1.20
+Epoch:          1
+Version:        1.19
 Requires:       %perl_compat
 %if %{defined perl_bootstrap}
 %gendep_perl_GDBM_File
@@ -2732,7 +2727,7 @@ encoder/decoder. These encoding methods are specified in RFC 2045 - MIME
 Summary:        What modules are shipped with versions of perl
 License:        GPL+ or Artistic
 Epoch:          1
-Version:        5.20210520
+Version:        5.20220313
 Requires:       %perl_compat
 Requires:       perl(List::Util)
 Requires:       perl(version) >= 0.88
@@ -4198,9 +4193,6 @@ you're not running VMS, this module does nothing.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
-%patch14 -p1
-%patch15 -p1
-%patch16 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -4221,7 +4213,6 @@ perl -x patchlevel.h \
     'Fedora Patch11: Replace EU::MakeMaker dependency with EU::MM::Utils in IPC::Cmd (bug #1129443)' \
     'Fedora Patch12: Link XS modules to pthread library to fix linking with -z defs' \
     'Fedora Patch13: Pass the correct CFLAGS to dtrace' \
-    'Fedora Patch14: Fix GDBM_File to compile with gdbm version 1.20 (bug#1974288)' \
     'Fedora Patch200: Link XS modules to libperl.so with EU::CBuilder on Linux' \
     'Fedora Patch201: Link XS modules to libperl.so with EU::MM on Linux' \
     %{nil}
@@ -7000,8 +6991,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
-* Thu Mar 03 2022 Michal Josef Špaček <mspacek@redhat.com> - 4:5.34.0-486
+* Tue Mar 15 2022 Michal Josef Špaček <mspacek@redhat.com> - 4:5.34.1-486
 - Fix minimal version for Perl debugger
+- 5.34.1 bump
 
 * Mon Feb 07 2022 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.34.0-485
 - The test XS-APItest/t/printf.t was fixed by gcc-12.0.1-0.6.fc36
