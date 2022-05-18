@@ -557,6 +557,10 @@ Recommends:     perl(NDBM_File)
 Suggests:       perl(ODBM_File)
 %endif
 # Term::Cap is optional
+# perl-Pod-Parser removed from perl:5.32, bug #2053213
+%if "%{_module_name}" == "perl" && ("%{_module_stream}" == "5.32" || "%{_module_stream}" == "5.34")
+Obsoletes: perl-Pod-Parser < 0:1.63-441
+%endif
 %if %{defined perl_bootstrap}
 %gendep_perl_libs
 %endif
