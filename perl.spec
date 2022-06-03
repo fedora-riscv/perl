@@ -104,7 +104,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        487%{?dist}
+Release:        488%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -6998,6 +6998,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Fri Jun 03 2022 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.36.0-488
+- Perl 5.36 re-rebuild of bootstrapped packages
+
 * Mon May 30 2022 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.36.0-487
 - 5.36.0 bump (see <https://metacpan.org/pod/release/RJBS/perl-5.36.0/pod/perldelta.pod>
   or release notes)
