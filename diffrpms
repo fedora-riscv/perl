@@ -22,8 +22,8 @@ function process_dir() {
         if [ ! -e "$OLD_RPM" ]; then echo "+ Package ${F}"; continue; fi
         if [ ! -e "$NEW_RPM" ]; then echo "- Package ${F}"; continue; fi
 
-        DIFF=$(rpmdiff -i S -i 5 -i T "$OLD_RPM" "$NEW_RPM" | \
-            grep -vE 'REQUIRES perl = | REQUIRES rpmlib\(' )
+        DIFF=$(rpmdiff "$OLD_RPM" "$NEW_RPM" -i S 5 T | \
+            grep -vE 'REQUIRES perl = | REQUIRES rpmlib\(|build-id' )
 
         test -n "$DIFF" && printf '* %s:\n%s\n' "$F" "$DIFF"
     done
