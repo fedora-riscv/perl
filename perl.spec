@@ -104,7 +104,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        486%{?dist}
+Release:        487%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -167,6 +167,10 @@ Patch12:        perl-5.27.8-hints-linux-Add-lphtread-to-lddlflags.patch
 
 # Pass the correct CFLAGS to dtrace
 Patch13:        perl-5.28.0-Pass-CFLAGS-to-dtrace.patch
+
+# Fix the tests to build with zlib 1.2.12 - is part of Fedora 37 and higher
+Patch14:        perl-5.34.1-Fix-Compress-Raw-Zlib-test-for-zlib-1.2.12.patch
+Patch15:        perl-5.34.1-Fix-IO-Compress-test-for-zlib-1.2.12.patch
 
 # Link XS modules to libperl.so with EU::CBuilder on Linux, bug #960048
 Patch200:       perl-5.16.3-Link-XS-modules-to-libperl.so-with-EU-CBuilder-on-Li.patch
@@ -4193,6 +4197,8 @@ you're not running VMS, this module does nothing.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
+%patch15 -p1
 %patch200 -p1
 %patch201 -p1
 
@@ -6991,6 +6997,10 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Mon Aug 22 2022 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.34.1-487
+- Fix the tests of Compress-Raw-Zlib and IO-Compress to build with
+  zlib 1.2.12
+
 * Tue Mar 15 2022 Michal Josef Špaček <mspacek@redhat.com> - 4:5.34.1-486
 - Fix minimal version for Perl debugger
 - 5.34.1 bump
