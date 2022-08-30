@@ -1254,6 +1254,8 @@ Provides: perl(Module::Load::Conditional) = 0.74 \
 %{nil}
 %global gendep_perl_Module_Loaded \
 Requires: perl(Carp) \
+Requires: perl(Exporter) \
+Requires: perl(base) \
 Requires: perl(strict) \
 Requires: perl(vars) \
 Provides: perl(Module::Loaded) = 0.08 \
@@ -1603,6 +1605,7 @@ Provides: perl(Socket) = 2.033 \
 %global gendep_perl_Storable \
 Requires: perl(Carp) \
 Requires: perl(Exporter) \
+Requires: perl(XSLoader) \
 Provides: perl(Storable) = 3.26 \
 %{nil}
 %global gendep_perl_Storable_debuginfo \
@@ -1802,6 +1805,7 @@ Requires: perl(Test2::API::InterceptResult::Facet) \
 Requires: perl(Test2::API::InterceptResult::Hub) \
 Requires: perl(Test2::API::InterceptResult::Squasher) \
 Requires: perl(Test2::API::Stack) \
+Requires: perl(Test2::Event) \
 Requires: perl(Test2::Event::Bail) \
 Requires: perl(Test2::Event::Diag) \
 Requires: perl(Test2::Event::Exception) \
@@ -1811,6 +1815,7 @@ Requires: perl(Test2::Event::Plan) \
 Requires: perl(Test2::Event::Skip) \
 Requires: perl(Test2::Event::Subtest) \
 Requires: perl(Test2::Event::Waiting) \
+Requires: perl(Test2::EventFacet) \
 Requires: perl(Test2::EventFacet::About) \
 Requires: perl(Test2::EventFacet::Amnesty) \
 Requires: perl(Test2::EventFacet::Assert) \
@@ -1822,10 +1827,13 @@ Requires: perl(Test2::EventFacet::Meta) \
 Requires: perl(Test2::EventFacet::Parent) \
 Requires: perl(Test2::EventFacet::Plan) \
 Requires: perl(Test2::EventFacet::Trace) \
+Requires: perl(Test2::Formatter) \
+Requires: perl(Test2::Formatter::TAP) \
 Requires: perl(Test2::Hub) \
 Requires: perl(Test2::Hub::Interceptor) \
 Requires: perl(Test2::Hub::Interceptor::Terminator) \
 Requires: perl(Test2::Hub::Subtest) \
+Requires: perl(Test2::IPC::Driver) \
 Requires: perl(Test2::Util) \
 Requires: perl(Test2::Util::ExternalMeta) \
 Requires: perl(Test2::Util::Facets2Legacy) \
@@ -1942,6 +1950,7 @@ Requires: perl(warnings) \
 Provides: perl(Text::ParseWords) = 3.31 \
 %{nil}
 %global gendep_perl_Text_Tabs_Wrap \
+Requires: perl(Exporter) \
 Requires: perl(Text::Tabs) \
 Requires: perl(re) \
 Requires: perl(strict) \
