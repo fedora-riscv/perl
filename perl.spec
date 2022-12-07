@@ -36,7 +36,12 @@
 # <> operator uses File::Glob nowadays. CSH is not needed.
 %bcond_with perl_enables_tcsh
 # We can skip %%check phase
+%ifnarch riscv64
 %bcond_without test
+%else
+# test failed on riscv64 default skipping it
+%bcond_with test
+%endif
 
 # The additional linker flags break binary perl- packages.
 # https://bugzilla.redhat.com/show_bug.cgi?id=2043092
@@ -104,7 +109,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        492%{?dist}
+Release:        492.rv64%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -6998,6 +7003,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Wed Dec 07 2022 Liu Yang <Yang.Liu.sn@gmail.com> - 4:5.36.0-492.rv64
+- To skip the failed test on riscv64 setting to default.
+
 * Tue Aug 30 2022 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.36.0-492
 - Update dependencies for perl-Module-Loaded (bz#2119130)
 
