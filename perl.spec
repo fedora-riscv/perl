@@ -104,7 +104,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        496%{?dist}
+Release:        497%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -3348,6 +3348,7 @@ Epoch:          0
 Version:        2.03
 Requires:       %perl_compat
 Requires:       perl(Carp)
+Requires:       perl(locale)
 %if %{defined perl_bootstrap}
 %gendep_perl_POSIX
 %endif
@@ -7004,6 +7005,9 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Tue May 16 2023 Petr Pisar <ppisar@redhat.com> - 4:5.36.1-497
+- Require perl(locale) in perl-POSIX (bug #2207594)
+
 * Mon Apr 24 2023 Jitka Plesnikova <jplesnik@redhat.com> - 4:5.36.1-496
 - 5.36.1 bump (see <https://metacpan.org/release/SHAY/perl-5.36.1/view/pod/perldelta.pod>
   or release notes
