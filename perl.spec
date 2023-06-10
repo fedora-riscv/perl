@@ -109,7 +109,7 @@ License:        GPL+ or Artistic
 Epoch:          %{perl_epoch}
 Version:        %{perl_version}
 # release number must be even higher, because dual-lived modules will be broken otherwise
-Release:        496.rv64%{?dist}
+Release:        497.rv64%{?dist}
 Summary:        Practical Extraction and Report Language
 Url:            https://www.perl.org/
 Source0:        https://www.cpan.org/src/5.0/perl-%{perl_version}.tar.xz
@@ -3353,6 +3353,7 @@ Epoch:          0
 Version:        2.03
 Requires:       %perl_compat
 Requires:       perl(Carp)
+Requires:       perl(locale)
 %if %{defined perl_bootstrap}
 %gendep_perl_POSIX
 %endif
@@ -7009,6 +7010,12 @@ popd
 
 # Old changelog entries are preserved in CVS.
 %changelog
+* Sun Jun 11 2023 Liu Yang <Yang.Liu.sn@gmail.com> - 4:5.36.1-497.rv64
+- Merge upstream to perl-5.36.1-497
+
+* Tue May 16 2023 Petr Pisar <ppisar@redhat.com> - 4:5.36.1-497
+- Require perl(locale) in perl-POSIX (bug #2207594)
+
 * Thu Apr 27 2023 Liu Yang <Yang.Liu.sn@gmail.com> - 4:5.36.1-496.rv64
 - To skip the failed test on riscv64 setting to default.
 
